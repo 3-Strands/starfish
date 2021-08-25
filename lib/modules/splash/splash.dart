@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/modules/phone_authentication/phone_authentication.dart';
+import 'package:sizer/sizer.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -39,7 +41,11 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(ImagePath.logoSplash),
+            Container(
+              width: 80.w,
+              height: 35.h,
+              child: SvgPicture.asset(ImagePath.logoSplash),
+            )
           ],
         ),
       ),

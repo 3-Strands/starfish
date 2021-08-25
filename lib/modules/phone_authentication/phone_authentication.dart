@@ -191,7 +191,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                         ),
                       ),
                     ),
-                    // SizedBox(width: 10.0),
                     Container(
                       width: MediaQuery.of(context).size.width / 2 - 50.0,
                       height: 40.0,
