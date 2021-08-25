@@ -7,7 +7,7 @@ class GrpcFlutterClient {
   GrpcFlutterClient._internal() {
     client = ClientChannel(
       "",// i.e 192.168.31.74
-      port: 3000,
+      port: 443,
       options: ChannelOptions(
         //Change to secure with server certificates
         credentials: ChannelCredentials.insecure(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'config/routes/routes.dart';
 import 'modules/splash/splash.dart';
 
 class Starfish extends StatelessWidget {
@@ -10,6 +11,7 @@ class Starfish extends StatelessWidget {
       title: '',
       theme: ThemeData.light(),
       home: SplashScreen(),
+      routes: Routes.routes,
     );
   }
 }
