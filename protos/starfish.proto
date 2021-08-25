@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package sil.starfish;
+
+option java_multiple_files = true;
+option java_outer_classname = "StarfishProto";
+option java_package = "org.sil.starfish";
+
+import "google/type/date.proto";
+import "google/protobuf/empty.proto";
+
+// The Starfish API, for communicating with Starfish app.
+service Starfish {
+
+    // Get the current user.
+    rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
+
+}
+
+// Action and Results tab each have the same two sub-tabs "Mine" and "My Groups"
+enum SubTab {
+    MINE = 0;
+    MY_GROUPS = 1;
+}
+
+message User {
+
+    string id = 1;
+
+    string name = 2;
+
+    string phone = 3;
+
+    repeated string country_ids = 4;
+
+    repeated string language_ids = 5;
+
+    // If true, then this user has given approval for the groups they administer to be connected to projects in everylanguage.app
+    bool link_groups = 6;
+
+    repeated GroupUser groups = 7;
+
+    repeated ActionUser actions = 8;
+
+    SubTab selected_actions_tab = 9;
+
+    SubTab selected_results_tab = 10;
+
+}
+
+// Connection between a User and a Group
+message GroupUser {
+
+    enum Role {
+        LEARNER = 0;
+        TEACHER = 1;
+        ADMIN = 2;
+    }
+
+    string group_id = 2;
+
+    string user_id = 3;
+
+    Role role = 4;
+
+}
+
+// Connection between a User and an Action
+message ActionUser {
+
+    enum Status {
+        INCOMPLETE = 0;
+        COMPLETE = 1;
+    }
+
+    string action_id = 2;
+
+    string user_id = 3;
+
+    Status status = 4;
+
+    string teacher_response = 5;
+
+    google.type.Date date_due = 6;
+
+}
