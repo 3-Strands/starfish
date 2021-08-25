@@ -59,7 +59,7 @@ flutter:
   assets:
     - config_reader/
     - assets/
-     #images
+    #images
     - assets/images/
-      #Custom font files
+    #Custom font files
     - assets/fonts/
