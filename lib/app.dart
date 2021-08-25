@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:starfish/config/app_config.dart';
+import 'modules/splash/splash.dart';
 
 class Starfish extends StatelessWidget {
-  Starfish({Key? key}) : super(key: key);
-
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color:FlavorConfig.isDevelopment()? Colors.green : Colors.red,
+    return MaterialApp(
+      debugShowCheckedModeBanner: true,
+      title: '',
+      theme: ThemeData.light(),
+      home: SplashScreen(),
     );
   }
 }
