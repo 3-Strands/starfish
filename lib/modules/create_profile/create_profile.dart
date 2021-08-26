@@ -112,7 +112,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset(ImagePath.logo),
+                          Image.asset(ImagePath.logoStarfish),
                           SizedBox(height: 50.0),
                           Container(
                             width: MediaQuery.of(context).size.width - 60.0,

@@ -40,7 +40,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset(ImagePath.logo),
+                          Image.asset(ImagePath.logoStarfish),
                           SizedBox(height: 50.0),
                           Text(
                             Strings.enterOneTimePassword,

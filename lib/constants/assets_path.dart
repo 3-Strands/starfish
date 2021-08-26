@@ -1,9 +1,6 @@
 import 'dart:core';
 
-class ImagePath {
-  static const String logoSplash = 'assets/images/icon_starfish.svg';
-  //static const String logoSplash = 'assets/images/logo_spl.png';
-  static const String logo = 'assets/images/logo.png';
+class AssetsPath {
+  static const String logoSplash = 'assets/images/logo_splash.svg';
+  static const String logoStarfish = 'assets/images/starfish_logo.svg';
 }
-
-class FontPath {}

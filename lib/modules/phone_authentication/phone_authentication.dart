@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/modules/otp_verification/otp_verification.dart';
+import 'package:sizer/sizer.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -28,7 +30,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       FocusScope.of(context).requestFocus(nextFocus);
     }
 
-    Widget getCountryCodeField() {
+    Widget _countryCodeField() {
       return TextFormField(
         controller: _countryCodeController,
         focusNode: _countryCodeFocus,
@@ -57,7 +59,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       );
     }
 
-    Widget getPhoneNumberField() {
+    Widget _phoneNumberField() {
       return TextFormField(
         controller: _phoneNumberController,
         focusNode: _phoneNumberFocus,
@@ -91,14 +93,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         child: Stack(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
+              height: 100.h,
+              width: 100.h,
               color: Colors.transparent,
               child: Center(
                 child: SingleChildScrollView(
                   child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
+                    height: 100.h,
+                    width: 100.h,
                     color: Colors.transparent,
                     child: Padding(
                       padding: const EdgeInsets.all(36.0),
@@ -106,15 +108,16 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          CircleAvatar(
-                            radius: 80,
-                            backgroundColor: Colors.white,
-                            child: Image.asset(ImagePath.logo),
-                          ),
+                          _logo(),
                           SizedBox(height: 50.0),
                           Text(
                             Strings.phoneAuthenticationTitle,
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontFamily: 'OpenSans',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
+                                color: Colors.black),
                           ),
                           SizedBox(height: 30.0),
                           Padding(
@@ -147,14 +150,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                                 Container(
                                   height: 50,
                                   width: 100.0,
-                                  child: getCountryCodeField(),
+                                  child: _countryCodeField(),
                                 ),
                                 SizedBox(width: 10.0),
                                 Container(
                                   height: 50,
                                   width:
                                       MediaQuery.of(context).size.width - 190,
-                                  child: getPhoneNumberField(),
+                                  child: _phoneNumberField(),
                                 )
                               ],
                             ),
@@ -171,28 +174,12 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               child: Container(
                 color: Colors.grey[200],
                 width: MediaQuery.of(context).size.width,
-                height: 75,
+                height: 9.h,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 - 50.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
-                        color: Colors.grey[400],
-                      ),
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          Strings.exit,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2 - 50.0,
+                      width: MediaQuery.of(context).size.width - 40.0,
                       height: 40.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(
@@ -219,6 +206,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Container _logo() {
+    return Container(
+      height: 19.h,
+      width: 43.h,
+      child: SvgPicture.asset(ImagePath.logoStarfish),
     );
   }
 }
