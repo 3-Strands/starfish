@@ -213,7 +213,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     return Container(
       height: 19.h,
       width: 43.h,
-      child: SvgPicture.asset(ImagePath.logoStarfish),
+      child: SvgPicture.asset(AssetsPath.logoStarfish),
     );
   }
 }
