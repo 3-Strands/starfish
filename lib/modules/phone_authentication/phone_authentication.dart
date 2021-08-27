@@ -24,67 +24,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _fieldFocusChange(
-        BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
-      currentFocus.unfocus();
-      FocusScope.of(context).requestFocus(nextFocus);
-    }
-
-    Widget _countryCodeField() {
-      return TextFormField(
-        controller: _countryCodeController,
-        focusNode: _countryCodeFocus,
-        onFieldSubmitted: (term) {
-          _fieldFocusChange(context, _countryCodeFocus, _phoneNumberFocus);
-        },
-        obscureText: false,
-        keyboardType: TextInputType.phone,
-        decoration: InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-            hintText: Strings.countryCodeHint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(
-                color: Colors.blue,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(
-                color: Colors.white,
-              ),
-            ),
-            filled: true,
-            fillColor: Colors.grey[200]),
-      );
-    }
-
-    Widget _phoneNumberField() {
-      return TextFormField(
-        controller: _phoneNumberController,
-        focusNode: _phoneNumberFocus,
-        onFieldSubmitted: (term) {
-          _phoneNumberFocus.unfocus();
-        },
-        obscureText: false,
-        keyboardType: TextInputType.phone,
-        decoration: InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-            hintText: Strings.phoneNumberHint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(
-                color: Colors.white,
-              ),
-            ),
-            filled: true,
-            fillColor: Colors.grey[200]),
-      );
-    }
-
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -215,5 +154,66 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       width: 43.h,
       child: SvgPicture.asset(AssetsPath.logoStarfish),
     );
+  }
+
+  TextFormField _phoneNumberField() {
+    return TextFormField(
+      controller: _phoneNumberController,
+      focusNode: _phoneNumberFocus,
+      onFieldSubmitted: (term) {
+        _phoneNumberFocus.unfocus();
+      },
+      obscureText: false,
+      keyboardType: TextInputType.phone,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: Strings.phoneNumberHint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: Colors.white,
+            ),
+          ),
+          filled: true,
+          fillColor: Colors.grey[200]),
+    );
+  }
+
+  TextFormField _countryCodeField() {
+    return TextFormField(
+      controller: _countryCodeController,
+      focusNode: _countryCodeFocus,
+      onFieldSubmitted: (term) {
+        _fieldFocusChange(context, _countryCodeFocus, _phoneNumberFocus);
+      },
+      obscureText: false,
+      keyboardType: TextInputType.phone,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: Strings.countryCodeHint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: Colors.blue,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: Colors.white,
+            ),
+          ),
+          filled: true,
+          fillColor: Colors.grey[200]),
+    );
+  }
+
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 }

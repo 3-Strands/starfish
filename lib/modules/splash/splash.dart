@@ -35,12 +35,8 @@ class SplashPageState extends State<SplashScreen> {
       body: Container(
         height: 100.h,
         width: 100.w,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _logo(),
-          ],
+        child: Center(
+          child: _logo(),
         ),
       ),
     );
