@@ -27,4 +27,12 @@ class GlobalWidgets {
       style: titleTextStyle,
     );
   }
+
+  static Widget italicDetailText(BuildContext context, String title) {
+    return Text(
+      title,
+      textAlign: TextAlign.left,
+      style: italicDetailTextTextStyle,
+    );
+  }
 }

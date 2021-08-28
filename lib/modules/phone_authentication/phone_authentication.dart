@@ -4,6 +4,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/modules/otp_verification/otp_verification.dart';
 import 'package:sizer/sizer.dart';
 import 'package:starfish/widgets/global_app_logo.dart';
+import 'package:starfish/constants/text_styles.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -47,7 +48,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       GlobalWidgets.title(
                           context, Strings.phoneAuthenticationTitle),
                       SizedBox(height: 3.7.h),
-                      _selectCountyField(),
+                      _selectCountyContainer(),
                       SizedBox(height: 3.7.h),
                       _phoneNumberContainer()
                     ],
@@ -62,7 +63,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  Container _selectCountyField() {
+  Container _selectCountyContainer() {
     return Container(
       height: 6.4.h,
       width: 92.0.w,
@@ -193,7 +194,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
               ),
-              color: Colors.blue,
+              color: AppColors.selectedButtonBG,
             ),
             child: TextButton(
               onPressed: () {
@@ -206,12 +207,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               },
               child: Text(
                 Strings.next,
-                style: TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16.0.sp,
-                  color: Colors.white,
-                ),
+                style: textButtonTextStyle,
               ),
             ),
           ),

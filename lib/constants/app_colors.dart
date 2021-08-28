@@ -10,5 +10,6 @@ class AppColors {
 
   static Color appTitle = HexColor('#4F4F4F');
   static Color txtFieldTextColor = HexColor('#434141');
-  static Color resentOPT = HexColor('#3475F0');
+  static Color selectedButtonBG = HexColor('#3475F0');
+  static Color unselectedButtonBG = HexColor('#ADADAD');
 }

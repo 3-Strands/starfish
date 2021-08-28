@@ -9,3 +9,25 @@ var titleTextStyle = TextStyle(
   fontSize: 16.0.sp,
   color: AppColors.appTitle,
 );
+
+var italicDetailTextTextStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontStyle: FontStyle.italic,
+  fontWeight: FontWeight.normal,
+  fontSize: 10.0.sp,
+  color: AppColors.appTitle,
+);
+
+var resentOTPTextStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.bold,
+  fontSize: 16.0.sp,
+  color: AppColors.selectedButtonBG,
+);
+
+var textButtonTextStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.bold,
+  fontSize: 16.0.sp,
+  color: AppColors.background,
+);
