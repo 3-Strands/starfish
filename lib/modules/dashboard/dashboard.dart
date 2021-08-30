@@ -4,7 +4,6 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
-import 'package:starfish/widgets/global_app_logo.dart';
 import '../material_view/materials_view.dart';
 import 'package:sizer/sizer.dart';
 
