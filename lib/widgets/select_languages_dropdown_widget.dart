@@ -5,73 +5,71 @@ import 'expanded_section_widget.dart';
 import 'scrollbar_widget.dart';
 import 'package:sizer/sizer.dart';
 
-class CountryListTileModel {
+class LanguageListTileModel {
   int id;
   String name;
-  String code;
   bool isCheck;
 
-  CountryListTileModel(
-      {required this.id,
-      required this.name,
-      required this.code,
-      required this.isCheck});
+  LanguageListTileModel(
+      {required this.id, required this.name, required this.isCheck});
 
-  static List<CountryListTileModel> getCountries() {
-    return <CountryListTileModel>[
-      CountryListTileModel(id: 1, name: "America", code: '+1', isCheck: false),
-      CountryListTileModel(id: 2, name: "India", code: '+91', isCheck: false),
-      CountryListTileModel(
-          id: 3, name: "Australia", code: '+61', isCheck: false),
-      CountryListTileModel(id: 4, name: "UK", code: '+44', isCheck: false),
+  static List<LanguageListTileModel> getLanguages() {
+    return <LanguageListTileModel>[
+      LanguageListTileModel(id: 1, name: "English", isCheck: false),
     ];
   }
 }
 
-class CountryDropDown extends StatefulWidget {
-  final Function(CountryListTileModel country) onCountrySelect;
-  CountryDropDown({Key? key, required this.onCountrySelect}) : super(key: key);
+class LanguageDropDown extends StatefulWidget {
+  final Function(LanguageListTileModel country) onCountrySelect;
+  LanguageDropDown({Key? key, required this.onCountrySelect}) : super(key: key);
 
   @override
-  _CountryDropDownState createState() => _CountryDropDownState();
+  _LanguageDropDownState createState() => _LanguageDropDownState();
 }
 
-class _CountryDropDownState extends State<CountryDropDown> {
+class _LanguageDropDownState extends State<LanguageDropDown> {
   bool isStrechedDropDown = false;
   late int groupValue;
-  String title = 'Select Country';
-  String selectedCountry = Strings.selectCountry;
-
+  String title = 'Select Language';
   TextEditingController _textController = TextEditingController();
-  List<CountryListTileModel> filteredCountryList =
-      CountryListTileModel.getCountries();
+  List<LanguageListTileModel> filteredLanguageList =
+      LanguageListTileModel.getLanguages();
 
-  // Copy Main List into New List.
-  List<CountryListTileModel> countryDataList =
-      List.from(CountryListTileModel.getCountries());
+  List<LanguageListTileModel> languageDataList =
+      List.from(LanguageListTileModel.getLanguages());
 
   onTextChanged(String value) {
     setState(() {
-      countryDataList = filteredCountryList
+      languageDataList = filteredLanguageList
           .where((string) =>
               string.name.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
 
-  void onCountrySelect(bool val, int index) {
-    widget.onCountrySelect(countryDataList[index]);
-    final findIndex = filteredCountryList
-        .indexWhere((element) => element.id == countryDataList[index].id);
+  void onLanguageSelect(bool val, int index) {
+    widget.onCountrySelect(languageDataList[index]);
+    final findIndex = filteredLanguageList
+        .indexWhere((element) => element.id == languageDataList[index].id);
 
     setState(() {
       if (findIndex >= 0) {
-        filteredCountryList[findIndex].isCheck = val;
+        filteredLanguageList[findIndex].isCheck = val;
       }
-      selectedCountry = countryDataList[index].name;
-      countryDataList[index].isCheck = val;
+      languageDataList[index].isCheck = val;
       isStrechedDropDown = !isStrechedDropDown;
     });
+  }
+
+  String formatString(List<LanguageListTileModel> x) {
+    String formatted = '';
+    for (var i in x) {
+      formatted += '${i.name}, ';
+    }
+    return x.isNotEmpty
+        ? formatted.replaceRange(formatted.length - 2, formatted.length, '')
+        : title;
   }
 
   @override
@@ -95,7 +93,7 @@ class _CountryDropDownState extends State<CountryDropDown> {
               });
             },
             child: Text(
-              selectedCountry,
+              Strings.selectCountry,
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontWeight: FontWeight.normal,
@@ -140,23 +138,22 @@ class _CountryDropDownState extends State<CountryDropDown> {
                   child: MyScrollbar(
                     builder: (context, scrollController) =>
                         new ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      controller: scrollController,
-                      shrinkWrap: true,
-                      itemCount: countryDataList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 18.0),
-                          child: CheckboxListTile(
-                            value: countryDataList[index].isCheck,
-                            title: Text(countryDataList[index].name),
-                            onChanged: (bool? value) {
-                              onCountrySelect(value!, index);
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                            padding: EdgeInsets.all(0),
+                            controller: scrollController,
+                            shrinkWrap: true,
+                            itemCount: languageDataList.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 18.0),
+                                child: CheckboxListTile(
+                                  value: languageDataList[index].isCheck,
+                                  title: Text(languageDataList[index].name),
+                                  onChanged: (bool? value) {
+                                    onLanguageSelect(value!, index);
+                                  },
+                                ),
+                              );
+                            }),
                   ),
                 ),
               ],
