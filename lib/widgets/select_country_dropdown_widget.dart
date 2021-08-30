@@ -109,57 +109,62 @@ class _CountryDropDownState extends State<CountryDropDown> {
         Visibility(
           visible: isStrechedDropDown,
           child: Container(
-            decoration: BoxDecoration(
+            child: Container(
+              margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 15.0),
+              decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffbbbbbb)),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Column(
-              children: [
-                Visibility(
-                  visible: isStrechedDropDown,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        //here your padding
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                          borderSide: BorderSide(color: Colors.black, width: 2),
-                        ),
-                        hintText: "search",
-                      ),
-                      onChanged: onTextChanged,
-                    ),
-                  ),
-                ),
-                ExpandedSection(
-                  expand: isStrechedDropDown,
-                  height: 10,
-                  child: MyScrollbar(
-                    builder: (context, scrollController) =>
-                        new ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      controller: scrollController,
-                      shrinkWrap: true,
-                      itemCount: countryDataList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 18.0),
-                          child: CheckboxListTile(
-                            value: countryDataList[index].isCheck,
-                            title: Text(countryDataList[index].name),
-                            onChanged: (bool? value) {
-                              onCountrySelect(value!, index);
-                            },
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Column(
+                children: [
+                  Visibility(
+                    visible: isStrechedDropDown,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          //here your padding
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(22)),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2),
                           ),
-                        );
-                      },
+                          hintText: "earch Country",
+                        ),
+                        onChanged: onTextChanged,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  ExpandedSection(
+                    expand: isStrechedDropDown,
+                    height: 10,
+                    child: MyScrollbar(
+                      builder: (context, scrollController) =>
+                          new ListView.builder(
+                        padding: EdgeInsets.all(0),
+                        controller: scrollController,
+                        shrinkWrap: true,
+                        itemCount: countryDataList.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 18.0),
+                            child: CheckboxListTile(
+                              value: countryDataList[index].isCheck,
+                              title: Text(countryDataList[index].name),
+                              onChanged: (bool? value) {
+                                onCountrySelect(value!, index);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         )

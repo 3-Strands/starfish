@@ -27,35 +27,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
 
-  bool isStrechedDropDown = false;
-  String title = 'Select Technology';
-  TextEditingController _textController = TextEditingController();
-  List<CountryListTileModel> checkBoxListTileModel =
-      CountryListTileModel.getCountries();
-  List<CountryListTileModel> newDataList =
-      List.from(CountryListTileModel.getCountries());
-
-  onItemChanged(String value) {
-    setState(() {
-      newDataList = checkBoxListTileModel
-          .where((string) =>
-              string.name.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-    });
-  }
-
-  void itemChange(bool val, int index) {
-    final findIndex = checkBoxListTileModel
-        .indexWhere((element) => element.id == newDataList[index].id);
-
-    setState(() {
-      if (findIndex >= 0) {
-        checkBoxListTileModel[findIndex].isCheck = val;
-      }
-      newDataList[index].isCheck = val;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
