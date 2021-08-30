@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
-import 'package:starfish/widgets/global_app_logo.dart';
+import 'package:starfish/widgets/title_label_widget.dart';
 
 class GroupsScreen extends StatefulWidget {
   GroupsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -34,7 +33,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      GlobalWidgets.title(context, "Groups"),
+                      TitleLabel(title: 'Groups'),
                     ],
                   ),
                 ),

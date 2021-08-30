@@ -5,8 +5,9 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/modules/create_profile/create_profile.dart';
 import 'package:sizer/sizer.dart';
-import 'package:starfish/widgets/global_app_logo.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/widgets/title_label_widget.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   OTPVerificationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -33,15 +34,14 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               color: AppColors.background,
               child: SingleChildScrollView(
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(4.0.w, 14.5.h, 4.0.w, 4.0.h),
+                  padding: EdgeInsets.fromLTRB(0.0.w, 14.5.h, 0.0.w, 4.0.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      GlobalWidgets.logo(context),
+                      AppLogo(hight: 19.4.h, width: 43.0.w),
                       SizedBox(height: 8.8.h),
-                      GlobalWidgets.title(
-                          context, Strings.enterOneTimePassword),
+                      TitleLabel(title: Strings.enterOneTimePassword),
                       SizedBox(height: 3.7.h),
                       _pinCodeContiner(),
                       SizedBox(height: 5.0.h),

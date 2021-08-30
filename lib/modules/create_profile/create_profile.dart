@@ -4,8 +4,10 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
-import 'package:starfish/widgets/global_app_logo.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/widgets/italic_title_label_widget.dart';
+import 'package:starfish/widgets/title_label_widget.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
@@ -37,11 +39,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               child: Container(
                 height: 100.0.h,
                 width: 100.0.w,
-                padding: EdgeInsets.fromLTRB(4.0.w, 14.0.h, 4.0.w, 4.0.h),
+                padding: EdgeInsets.fromLTRB(0.0.w, 14.0.h, 0.0.w, 4.0.h),
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      GlobalWidgets.logo(context),
+                      AppLogo(hight: 19.4.h, width: 43.0.w),
                       SizedBox(height: 4.0.h),
                       _nameTextFieldContainer(),
                       _selectCountryContainer(),
@@ -62,15 +64,15 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     return Container(
       width: 100.0.w,
       height: 18.25.h,
+      margin: EdgeInsets.only(left: 4.0.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          GlobalWidgets.title(context, Strings.enterName),
+          TitleLabel(title: Strings.enterName),
           SizedBox(height: 1.0.h),
           _getNameField(),
           SizedBox(height: 1.0.h),
-          GlobalWidgets.italicDetailText(context, Strings.enterNameDetail),
+          ItalicitleLabel(title: Strings.enterNameDetail),
         ],
       ),
     );
@@ -111,15 +113,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     return Container(
       width: 100.0.w,
       height: 18.25.h,
+      margin: EdgeInsets.only(left: 4.0.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          GlobalWidgets.title(context, Strings.selectCountry),
+          TitleLabel(title: Strings.selectCountry),
           SizedBox(height: 1.0.h),
           _getSelectCountryOption(),
           SizedBox(height: 1.0.h),
-          GlobalWidgets.italicDetailText(context, Strings.selectCountryDetail),
+          ItalicitleLabel(title: Strings.selectCountryDetail),
         ],
       ),
     );
@@ -155,16 +158,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     return Container(
       width: 100.0.w,
       height: 18.25.h,
+      margin: EdgeInsets.only(left: 4.0.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          GlobalWidgets.title(context, Strings.selectLanugages),
+          TitleLabel(title: Strings.selectLanugages),
           SizedBox(height: 1.0.h),
           _getSelectLanguagesOption(),
           SizedBox(height: 1.0.h),
-          GlobalWidgets.italicDetailText(
-              context, Strings.selectLanugagesDetail),
+          ItalicitleLabel(title: Strings.selectLanugagesDetail),
         ],
       ),
     );

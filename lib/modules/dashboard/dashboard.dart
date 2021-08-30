@@ -65,6 +65,7 @@ class _DashboardState extends State<_DashboardView> {
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   //   children: <Widget>[
+                  //    AppLogo(hight: 4.4.h, width: 9.6.w),
                   //     GlobalWidgets.navigationLogo(context),
                   //     Text(
                   //       title,
