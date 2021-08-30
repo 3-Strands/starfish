@@ -59,35 +59,35 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Stack(
-          children: <Widget>[
+          fit: StackFit.loose,
+          children: [
             Container(
-              height: 100.h,
-              width: 100.h,
-              color: AppColors.background,
               child: SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(0.0.w, 14.5.h, 0.0.w, 4.0.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      AppLogo(hight: 19.4.h, width: 43.0.w),
-                      SizedBox(height: 6.1.h),
-                      TitleLabel(title: Strings.phoneAuthenticationTitle),
-                      // SizedBox(height: 3.7.h),
-                      // _selectCountyContainer(),
-                      SizedBox(height: 3.7.h),
-                      CountryDropDown(),
-                      SizedBox(height: 3.7.h),
-                      _phoneNumberContainer()
-                    ],
-                  ),
+                reverse: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 17.7.h),
+                    AppLogo(hight: 19.4.h, width: 43.0.w),
+                    SizedBox(height: 6.1.h),
+                    TitleLabel(title: Strings.phoneAuthenticationTitle),
+                    // SizedBox(height: 3.7.h),
+                    // _selectCountyContainer(),
+                    SizedBox(height: 3.7.h),
+                    CountryDropDown(),
+                    SizedBox(height: 3.7.h),
+                    _phoneNumberContainer(),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom)),
+                  ],
                 ),
               ),
             ),
@@ -132,61 +132,64 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         SizedBox(height: 2),
         Visibility(
           visible: isStrechedDropDown,
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Color(0xffbbbbbb)),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Column(
-              children: [
-                Visibility(
-                  visible: isStrechedDropDown,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        //here your padding
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                          borderSide: BorderSide(color: Colors.black, width: 2),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10,right: 10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Color(0xffbbbbbb)),
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Column(
+                children: [
+                  Visibility(
+                    visible: isStrechedDropDown,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          //here your padding
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(22)),
+                            borderSide: BorderSide(color: Colors.black, width: 2),
+                          ),
+                          hintText: "search",
                         ),
-                        hintText: "search",
+                        onChanged: onItemChanged,
                       ),
-                      onChanged: onItemChanged,
                     ),
                   ),
-                ),
-                ExpandedSection(
-                  expand: isStrechedDropDown,
-                  height: 10,
-                  child:
-                      // Container(
-                      //   child: Text('This is contianer'),
-                      // ),
-                      MyScrollbar(
-                    builder: (context, scrollController) =>
-                        new ListView.builder(
-                            padding: EdgeInsets.all(0),
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            itemCount: newDataList.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.only(right: 18.0),
-                                child: CheckboxListTile(
-                                  value: newDataList[index].isCheck,
-                                  title: Text(newDataList[index].name),
-                                  onChanged: (bool? value) {
-                                    itemChange(value!, index);
-                                  },
-                                ),
-                              );
-                            }),
+                  ExpandedSection(
+                    expand: isStrechedDropDown,
+                    height: 10,
+                    child:
+                        // Container(
+                        //   child: Text('This is contianer'),
+                        // ),
+                        MyScrollbar(
+                      builder: (context, scrollController) =>
+                          new ListView.builder(
+                              padding: EdgeInsets.all(0),
+                              controller: scrollController,
+                              shrinkWrap: true,
+                              itemCount: newDataList.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(right: 18.0),
+                                  child: CheckboxListTile(
+                                    value: newDataList[index].isCheck,
+                                    title: Text(newDataList[index].name),
+                                    onChanged: (bool? value) {
+                                      itemChange(value!, index);
+                                    },
+                                  ),
+                                );
+                              }),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         )
@@ -281,8 +284,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  Positioned _footer() {
-    return Positioned(bottom: 0, child: _nextButton());
+  Align _footer() {
+    return Align(
+      alignment: FractionalOffset.bottomCenter,
+      child: Padding(
+          padding: EdgeInsets.only(bottom: 0.0),
+          child: _nextButton() //Your widget here,
+          ),
+    );
   }
 
   Container _nextButton() {
