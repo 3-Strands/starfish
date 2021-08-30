@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
+import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/widgets/global_app_logo.dart';
 import 'package:starfish/constants/text_styles.dart';
 
@@ -35,12 +35,14 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               width: 100.0.w,
               color: AppColors.background,
               child: Container(
-                padding: EdgeInsets.fromLTRB(4.0.w, 14.5.h, 4.0.w, 4.0.h),
+                height: 100.0.h,
+                width: 100.0.w,
+                padding: EdgeInsets.fromLTRB(4.0.w, 14.0.h, 4.0.w, 4.0.h),
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
                       GlobalWidgets.logo(context),
-                      SizedBox(height: 8.8.h),
+                      SizedBox(height: 4.0.h),
                       _nameTextFieldContainer(),
                       _selectCountryContainer(),
                       _selectLanguagesContainer(),
@@ -58,17 +60,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   Container _nameTextFieldContainer() {
     return Container(
-      width: MediaQuery.of(context).size.width - 60.0,
-      height: 170.0,
-      color: Colors.transparent,
+      width: 100.0.w,
+      height: 18.25.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           GlobalWidgets.title(context, Strings.enterName),
-          SizedBox(height: 10.0),
+          SizedBox(height: 1.0.h),
           _getNameField(),
-          SizedBox(height: 10.0),
+          SizedBox(height: 1.0.h),
           GlobalWidgets.italicDetailText(context, Strings.enterNameDetail),
         ],
       ),
@@ -108,17 +109,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   Container _selectCountryContainer() {
     return Container(
-      width: MediaQuery.of(context).size.width - 60.0,
-      height: 170.0,
-      color: Colors.transparent,
+      width: 100.0.w,
+      height: 18.25.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           GlobalWidgets.title(context, Strings.selectCountry),
-          SizedBox(height: 10.0),
+          SizedBox(height: 1.0.h),
           _getSelectCountryOption(),
-          SizedBox(height: 10.0),
+          SizedBox(height: 1.0.h),
           GlobalWidgets.italicDetailText(context, Strings.selectCountryDetail),
         ],
       ),
@@ -153,17 +153,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   Container _selectLanguagesContainer() {
     return Container(
-      width: MediaQuery.of(context).size.width - 60.0,
-      height: 170.0,
-      color: Colors.transparent,
+      width: 100.0.w,
+      height: 18.25.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           GlobalWidgets.title(context, Strings.selectLanugages),
-          SizedBox(height: 10.0),
+          SizedBox(height: 1.0.h),
           _getSelectLanguagesOption(),
-          SizedBox(height: 10.0),
+          SizedBox(height: 1.0.h),
           GlobalWidgets.italicDetailText(
               context, Strings.selectLanugagesDetail),
         ],
@@ -210,19 +209,40 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width - 40.0,
-            height: 40.0,
+            width: 85.0.w,
+            height: 4.5.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
               ),
               color: AppColors.selectedButtonBG,
             ),
-            child: TextButton(
-              onPressed: () {},
-              child: Text(
-                Strings.finish,
-                style: textButtonTextStyle,
+            child: Padding(
+              padding: EdgeInsets.all(0.0),
+              child: SizedBox(
+                height: 4.5.h,
+                width: 85.0.w,
+                child: ElevatedButton(
+                  child: Text(
+                    Strings.finish,
+                    textAlign: TextAlign.start,
+                    style: textButtonTextStyle,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Dashboard(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.selectedButtonBG,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

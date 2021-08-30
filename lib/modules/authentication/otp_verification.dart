@@ -129,11 +129,28 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
               color: AppColors.unselectedButtonBG,
             ),
-            child: TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(Strings.back, style: textButtonTextStyle),
+            child: Padding(
+              padding: EdgeInsets.all(0.0),
+              child: SizedBox(
+                width: 38.6.w,
+                height: 40.0,
+                child: ElevatedButton(
+                  child: Text(
+                    Strings.back,
+                    textAlign: TextAlign.start,
+                    style: textButtonTextStyle,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.unselectedButtonBG,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
           Container(
@@ -145,18 +162,32 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               ),
               color: AppColors.selectedButtonBG,
             ),
-            child: TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateProfileScreen(),
+            child: Padding(
+              padding: EdgeInsets.all(0.0),
+              child: SizedBox(
+                width: 38.6.w,
+                height: 40.0,
+                child: ElevatedButton(
+                  child: Text(
+                    Strings.next,
+                    textAlign: TextAlign.start,
+                    style: textButtonTextStyle,
                   ),
-                );
-              },
-              child: Text(
-                Strings.next,
-                style: textButtonTextStyle,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateProfileScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.selectedButtonBG,
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
