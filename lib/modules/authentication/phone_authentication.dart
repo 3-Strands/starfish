@@ -83,7 +83,13 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       // SizedBox(height: 3.7.h),
                       // _selectCountyContainer(),
                       SizedBox(height: 3.7.h),
-                      CountryDropDown(),
+                      CountryDropDown(
+                        onCountrySelect: (CountryListTileModel country) {
+                          print('selected country');
+                          print(country.name);
+                          _countryCodeController.text = country.code;
+                        },
+                      ),
                       SizedBox(height: 3.7.h),
                       _phoneNumberContainer()
                     ],
