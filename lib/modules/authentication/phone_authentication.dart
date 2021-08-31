@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/services/grpc_client.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/select_country_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
-import '../../mobile_grpc.dart';
 import 'otp_verification.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
@@ -208,8 +209,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 style: textButtonTextStyle,
               ),
               onPressed: () {
-                MobileGrpc obj = MobileGrpc();
-                obj.doRemoteCall().then((value) => print(value));
+                GrpcClient grpcClient = GrpcClient();
+                grpcClient.doRemoteCall().then((User value) =>
+                    {print(value.name), print(value.countryIds)});
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute(
