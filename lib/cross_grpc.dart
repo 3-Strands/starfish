@@ -5,7 +5,7 @@ import 'cross_grpc_stub.dart'
     if (dart.library.html) 'web_grpc.dart';
 
 abstract class CrossGrpc {
-  Future<String> doRemoteCall();
+  Future doRemoteCall();
 
   factory CrossGrpc() => getGrpc();
 }

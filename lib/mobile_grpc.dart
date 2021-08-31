@@ -7,13 +7,17 @@ import 'src/generated/starfish.pbgrpc.dart';
 
 class MobileGrpc implements CrossGrpc {
   @override
-  Future<String> doRemoteCall() async {
+  Future doRemoteCall() async {
     final channel = ClientChannel('https://sandbox-api.everylanguage.app');
-    final client = StarfishClient(channel,
-        options: CallOptions(metadata: {
+    final client = StarfishClient(
+      channel,
+      options: CallOptions(
+        metadata: {
           'authorization': '4952564404',
           'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
-        }));
+        },
+      ),
+    );
 
     return (await client.getCurrentUser(Empty())).name;
   }

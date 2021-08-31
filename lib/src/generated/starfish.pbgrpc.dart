@@ -10,6 +10,7 @@ import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:grpc/service_api.dart' as $grpc;
+// ignore: import_of_legacy_library_into_null_safe
 import 'google/protobuf/empty.pb.dart' as $0;
 import 'starfish.pb.dart' as $1;
 export 'starfish.pb.dart';
