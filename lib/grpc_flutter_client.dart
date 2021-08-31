@@ -6,7 +6,7 @@ class GrpcFlutterClient {
   factory GrpcFlutterClient() => _singleton;
   GrpcFlutterClient._internal() {
     client = ClientChannel(
-      "",// i.e 192.168.31.74
+      "https://sandbox-api.everylanguage.app", // i.e 192.168.31.74
       port: 443,
       options: ChannelOptions(
         //Change to secure with server certificates
