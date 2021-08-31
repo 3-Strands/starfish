@@ -40,18 +40,31 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               child: SingleChildScrollView(
                 reverse: true,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: 17.7.h),
                     AppLogo(hight: 19.4.h, width: 43.0.w),
                     SizedBox(height: 6.1.h),
-                    TitleLabel(title: Strings.phoneAuthenticationTitle),
+                    TitleLabel(
+                      title: Strings.phoneAuthenticationTitle,
+                      align: TextAlign.center,
+                    ),
                     // SizedBox(height: 3.7.h),
                     // _selectCountyContainer(),
                     SizedBox(height: 3.7.h),
                     CountryDropDown(
-                      onCountrySelect: (selectedCountry) {},
+                      onCountrySelect: (selectedCountry) {
+                        if (selectedCountry.isCheck == true) {
+                          setState(() {
+                            _countryCodeController.text = selectedCountry.code;
+                          });
+                        } else {
+                          setState(() {
+                            _countryCodeController.text = '+1';
+                          });
+                        }
+                      },
                     ),
                     SizedBox(height: 3.7.h),
                     _phoneNumberContainer(),

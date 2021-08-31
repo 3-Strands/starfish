@@ -17,7 +17,9 @@ class AppLogo extends StatelessWidget {
     return Container(
       height: hight,
       width: width,
-      child: SvgPicture.asset(AssetsPath.logoStarfish),
+      child: Center(
+        child: SvgPicture.asset(AssetsPath.logoStarfish),
+      ),
     );
   }
 }

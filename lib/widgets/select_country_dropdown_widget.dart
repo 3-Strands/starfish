@@ -60,7 +60,18 @@ class _CountryDropDownState extends State<CountryDropDown> {
   }
 
   void onCountrySelect(bool val, int index) {
-    widget.onCountrySelect(countryDataList[index]);
+    final selectedFilteredCountryIndex =
+        filteredCountryList.indexWhere((element) => element.isCheck == true);
+    if (selectedFilteredCountryIndex >= 0) {
+      filteredCountryList[selectedFilteredCountryIndex].isCheck = false;
+    }
+
+    final selectedCountryIndex =
+        countryDataList.indexWhere((element) => element.isCheck == true);
+    if (selectedCountryIndex >= 0) {
+      countryDataList[selectedCountryIndex].isCheck = false;
+    }
+
     final findIndex = filteredCountryList
         .indexWhere((element) => element.id == countryDataList[index].id);
 
@@ -68,10 +79,14 @@ class _CountryDropDownState extends State<CountryDropDown> {
       if (findIndex >= 0) {
         filteredCountryList[findIndex].isCheck = val;
       }
-      selectedCountry = countryDataList[index].name;
       countryDataList[index].isCheck = val;
+      selectedCountry = (countryDataList[index].isCheck == true)
+          ? countryDataList[index].name
+          : Strings.selectCountry;
       isStrechedDropDown = !isStrechedDropDown;
     });
+
+    widget.onCountrySelect(countryDataList[index]);
   }
 
   @override
@@ -81,6 +96,7 @@ class _CountryDropDownState extends State<CountryDropDown> {
         Container(
           height: 6.4.h,
           width: 92.0.w,
+          margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: AppColors.txtFieldBackground,

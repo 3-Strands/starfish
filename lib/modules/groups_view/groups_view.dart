@@ -33,7 +33,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      TitleLabel(title: 'Groups'),
+                      TitleLabel(
+                        title: 'Groups',
+                        align: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),

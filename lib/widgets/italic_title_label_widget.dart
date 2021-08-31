@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:sizer/sizer.dart';
 
 class ItalicitleLabel extends StatelessWidget {
   final String title;
@@ -10,10 +11,14 @@ class ItalicitleLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      textAlign: TextAlign.center,
-      style: italicDetailTextTextStyle,
+    return Container(
+      decoration: BoxDecoration(color: Colors.transparent),
+      margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
+      child: Text(
+        title,
+        textAlign: TextAlign.left,
+        style: italicDetailTextTextStyle,
+      ),
     );
   }
 }

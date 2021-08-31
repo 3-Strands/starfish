@@ -33,7 +33,10 @@ class _ActionsScreenState extends State<ActionsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      TitleLabel(title: 'Actions'),
+                      TitleLabel(
+                        title: 'Actions',
+                        align: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),

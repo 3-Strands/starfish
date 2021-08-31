@@ -33,7 +33,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      TitleLabel(title: 'Materials'),
+                      TitleLabel(
+                        title: 'Materials',
+                        align: TextAlign.center,
+                      ),
                     ],
                   ),
                 ),

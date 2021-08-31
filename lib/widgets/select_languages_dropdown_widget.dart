@@ -16,13 +16,17 @@ class LanguageListTileModel {
   static List<LanguageListTileModel> getLanguages() {
     return <LanguageListTileModel>[
       LanguageListTileModel(id: 1, name: "English", isCheck: false),
+      LanguageListTileModel(id: 2, name: "Hindi", isCheck: false),
+      LanguageListTileModel(id: 2, name: "French", isCheck: false),
+      LanguageListTileModel(id: 2, name: "Spanish", isCheck: false),
     ];
   }
 }
 
 class LanguageDropDown extends StatefulWidget {
-  final Function(LanguageListTileModel country) onCountrySelect;
-  LanguageDropDown({Key? key, required this.onCountrySelect}) : super(key: key);
+  final Function(LanguageListTileModel country) onLanguageSelect;
+  LanguageDropDown({Key? key, required this.onLanguageSelect})
+      : super(key: key);
 
   @override
   _LanguageDropDownState createState() => _LanguageDropDownState();
@@ -49,7 +53,7 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
   }
 
   void onLanguageSelect(bool val, int index) {
-    widget.onCountrySelect(languageDataList[index]);
+    widget.onLanguageSelect(languageDataList[index]);
     final findIndex = filteredLanguageList
         .indexWhere((element) => element.id == languageDataList[index].id);
 
@@ -58,7 +62,6 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
         filteredLanguageList[findIndex].isCheck = val;
       }
       languageDataList[index].isCheck = val;
-      isStrechedDropDown = !isStrechedDropDown;
     });
   }
 
@@ -79,6 +82,7 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
         Container(
           height: 6.4.h,
           width: 92.0.w,
+          margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: AppColors.txtFieldBackground,
@@ -93,7 +97,7 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
               });
             },
             child: Text(
-              Strings.selectCountry,
+              Strings.selectLanugages,
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontWeight: FontWeight.normal,

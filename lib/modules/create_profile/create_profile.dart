@@ -7,6 +7,8 @@ import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
+import 'package:starfish/widgets/select_country_dropdown_widget.dart';
+import 'package:starfish/widgets/select_languages_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 
 class CreateProfileScreen extends StatefulWidget {
@@ -26,30 +28,58 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Stack(
+          fit: StackFit.loose,
           children: <Widget>[
             Container(
-              height: 100.0.h,
-              width: 100.0.w,
+              height: 90.0.h,
               color: AppColors.background,
-              child: Container(
-                height: 100.0.h,
-                width: 100.0.w,
-                padding: EdgeInsets.fromLTRB(0.0.w, 14.0.h, 0.0.w, 4.0.h),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      AppLogo(hight: 19.4.h, width: 43.0.w),
-                      SizedBox(height: 4.0.h),
-                      _nameTextFieldContainer(),
-                      _selectCountryContainer(),
-                      _selectLanguagesContainer(),
-                    ],
-                  ),
+              child: SingleChildScrollView(
+                reverse: true,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 14.5.h),
+                    AppLogo(hight: 19.4.h, width: 100.0.w),
+                    SizedBox(height: 5.17.h),
+                    TitleLabel(
+                      title: Strings.enterName,
+                      align: TextAlign.left,
+                    ),
+                    SizedBox(height: 1.2.h),
+                    _getNameField(),
+                    SizedBox(height: 1.2.h),
+                    ItalicitleLabel(title: Strings.enterNameDetail),
+                    SizedBox(height: 3.69.h),
+                    TitleLabel(
+                      title: Strings.selectCountry,
+                      align: TextAlign.center,
+                    ),
+                    SizedBox(height: 1.2.h),
+                    CountryDropDown(
+                      onCountrySelect: (selectedCountry) {},
+                    ),
+                    SizedBox(height: 1.2.h),
+                    ItalicitleLabel(title: Strings.selectCountryDetail),
+                    SizedBox(height: 3.69.h),
+                    TitleLabel(
+                      title: Strings.selectLanugages,
+                      align: TextAlign.center,
+                    ),
+                    SizedBox(height: 1.2.h),
+                    LanguageDropDown(
+                      onLanguageSelect: (langage) {},
+                    ),
+                    SizedBox(height: 1.2.h),
+                    ItalicitleLabel(title: Strings.selectCountryDetail),
+                    // _selectLanguagesContainer(),
+                  ],
                 ),
               ),
             ),
@@ -60,147 +90,49 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     );
   }
 
-  Container _nameTextFieldContainer() {
-    return Container(
-      width: 100.0.w,
-      height: 18.25.h,
-      margin: EdgeInsets.only(left: 4.0.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TitleLabel(title: Strings.enterName),
-          SizedBox(height: 1.0.h),
-          _getNameField(),
-          SizedBox(height: 1.0.h),
-          ItalicitleLabel(title: Strings.enterNameDetail),
-        ],
-      ),
-    );
-  }
-
-  TextFormField _getNameField() {
-    return TextFormField(
-      controller: _nameController,
-      focusNode: _nameFocus,
-      onFieldSubmitted: (term) {
-        _nameFocus.unfocus();
-      },
-      keyboardType: TextInputType.text,
-      style: TextStyle(
-        fontFamily: 'OpenSans',
-        fontWeight: FontWeight.normal,
-        fontSize: 16.0.sp,
-        color: AppColors.txtFieldTextColor,
-      ),
-      decoration: InputDecoration(
-        hintText: Strings.nameHint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
-      ),
-    );
-  }
-
-  Container _selectCountryContainer() {
-    return Container(
-      width: 100.0.w,
-      height: 18.25.h,
-      margin: EdgeInsets.only(left: 4.0.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          TitleLabel(title: Strings.selectCountry),
-          SizedBox(height: 1.0.h),
-          _getSelectCountryOption(),
-          SizedBox(height: 1.0.h),
-          ItalicitleLabel(title: Strings.selectCountryDetail),
-        ],
-      ),
-    );
-  }
-
-  Widget _getSelectCountryOption() {
+  Container _getNameField() {
     return Container(
       height: 6.4.h,
-      width: 92.0.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: AppColors.txtFieldBackground,
-      ),
-      child: TextButton(
-        style: ButtonStyle(
-          alignment: Alignment.centerLeft,
+      margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
+      child: TextFormField(
+        controller: _nameController,
+        focusNode: _nameFocus,
+        onFieldSubmitted: (term) {
+          _nameFocus.unfocus();
+        },
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontFamily: 'OpenSans',
+          fontWeight: FontWeight.normal,
+          fontSize: 16.0.sp,
+          color: AppColors.txtFieldTextColor,
         ),
-        onPressed: () {},
-        child: Text(
-          Strings.selectCountry,
-          style: TextStyle(
-            fontFamily: 'OpenSans',
-            fontWeight: FontWeight.normal,
-            fontSize: 16.0.sp,
-            color: AppColors.txtFieldTextColor,
+        decoration: InputDecoration(
+          hintText: Strings.nameHint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
           ),
-        ),
-      ),
-    );
-  }
-
-  Container _selectLanguagesContainer() {
-    return Container(
-      width: 100.0.w,
-      height: 18.25.h,
-      margin: EdgeInsets.only(left: 4.0.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          TitleLabel(title: Strings.selectLanugages),
-          SizedBox(height: 1.0.h),
-          _getSelectLanguagesOption(),
-          SizedBox(height: 1.0.h),
-          ItalicitleLabel(title: Strings.selectLanugagesDetail),
-        ],
-      ),
-    );
-  }
-
-  Widget _getSelectLanguagesOption() {
-    return Container(
-      height: 6.4.h,
-      width: 92.0.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: AppColors.txtFieldBackground,
-      ),
-      child: TextButton(
-        style: ButtonStyle(
-          alignment: Alignment.centerLeft,
-        ),
-        onPressed: () {},
-        child: Text(
-          Strings.selectLanugages,
-          style: TextStyle(
-            fontFamily: 'OpenSans',
-            fontWeight: FontWeight.normal,
-            fontSize: 16.0.sp,
-            color: AppColors.txtFieldTextColor,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: Colors.white,
+            ),
           ),
+          filled: true,
+          fillColor: AppColors.txtFieldBackground,
         ),
       ),
     );
   }
 
-  Positioned _footer() {
-    return Positioned(bottom: 0, child: _finishButton());
+  Align _footer() {
+    return Align(
+      alignment: FractionalOffset.bottomCenter,
+      child: Padding(
+          padding: EdgeInsets.only(bottom: 0.0),
+          child: _finishButton() //Your widget here,
+          ),
+    );
   }
 
   Container _finishButton() {
