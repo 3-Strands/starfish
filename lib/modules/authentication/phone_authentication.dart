@@ -3,8 +3,6 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:starfish/widgets/expanded_section_widget.dart';
-import 'package:starfish/widgets/scrollbar_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/select_country_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
@@ -70,106 +68,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       ),
     );
   }
-
-  // Column _selectCountyContainer() {
-  //   return Column(
-  //     children: <Widget>[
-  //       Container(
-  //         height: 6.4.h,
-  //         width: 92.0.w,
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(10.0),
-  //           color: AppColors.txtFieldBackground,
-  //         ),
-  //         child: TextButton(
-  //           style: ButtonStyle(
-  //             alignment: Alignment.centerLeft,
-  //           ),
-  //           onPressed: () {
-  //             print(newDataList);
-  //             setState(() {
-  //               isStrechedDropDown = !isStrechedDropDown;
-  //             });
-  //           },
-  //           child: Text(
-  //             Strings.selectCountry,
-  //             style: TextStyle(
-  //               fontFamily: 'OpenSans',
-  //               fontWeight: FontWeight.normal,
-  //               fontSize: 16.0.sp,
-  //               color: AppColors.txtFieldTextColor,
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(height: 2),
-  //       Visibility(
-  //         visible: isStrechedDropDown,
-  //         child: Padding(
-  //           padding: const EdgeInsets.only(left: 10, right: 10.0),
-  //           child: Container(
-  //             decoration: BoxDecoration(
-  //                 border: Border.all(color: Color(0xffbbbbbb)),
-  //                 borderRadius: BorderRadius.all(Radius.circular(10))),
-  //             child: Column(
-  //               children: [
-  //                 Visibility(
-  //                   visible: isStrechedDropDown,
-  //                   child: Padding(
-  //                     padding: const EdgeInsets.all(8.0),
-  //                     child: TextField(
-  //                       controller: _textController,
-  //                       decoration: InputDecoration(
-  //                         contentPadding: EdgeInsets.symmetric(
-  //                             vertical: 10, horizontal: 10),
-  //                         //here your padding
-  //                         border: OutlineInputBorder(
-  //                           borderRadius: BorderRadius.all(Radius.circular(22)),
-  //                           borderSide:
-  //                               BorderSide(color: Colors.black, width: 2),
-  //                         ),
-  //                         hintText: "search",
-  //                       ),
-  //                       onChanged: onItemChanged,
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 ExpandedSection(
-  //                   expand: isStrechedDropDown,
-  //                   height: 10,
-  //                   child:
-  //                       // Container(
-  //                       //   child: Text('This is contianer'),
-  //                       // ),
-  //                       MyScrollbar(
-  //                     builder: (context, scrollController) =>
-  //                         new ListView.builder(
-  //                             padding: EdgeInsets.all(0),
-  //                             controller: scrollController,
-  //                             shrinkWrap: true,
-  //                             itemCount: newDataList.length,
-  //                             itemBuilder: (context, index) {
-  //                               return Padding(
-  //                                 padding: EdgeInsets.only(right: 18.0),
-  //                                 child: CheckboxListTile(
-  //                                   value: newDataList[index].isCheck,
-  //                                   title: Text(newDataList[index].name),
-  //                                   onChanged: (bool? value) {
-  //                                     itemChange(value!, index);
-  //                                   },
-  //                                 ),
-  //                               );
-  //                             }),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
 
   Container _phoneNumberContainer() {
     return Container(

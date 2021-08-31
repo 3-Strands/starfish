@@ -132,7 +132,7 @@ class _CountryDropDownState extends State<CountryDropDown> {
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2),
                           ),
-                          hintText: "earch Country",
+                          hintText: "Search Country",
                         ),
                         onChanged: onTextChanged,
                       ),

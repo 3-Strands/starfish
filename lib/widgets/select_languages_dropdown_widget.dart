@@ -126,7 +126,7 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
                           borderRadius: BorderRadius.all(Radius.circular(22)),
                           borderSide: BorderSide(color: Colors.black, width: 2),
                         ),
-                        hintText: "search",
+                        hintText: "Search Language",
                       ),
                       onChanged: onTextChanged,
                     ),
