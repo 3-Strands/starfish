@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-const double _kScrollbarThickness = 6.0;
+const double _kScrollbarThickness = 8.0;
 
 class MyScrollbar extends StatefulWidget {
   final ScrollableWidgetBuilder? builder;

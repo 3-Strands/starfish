@@ -111,56 +111,61 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
         Visibility(
           visible: isStrechedDropDown,
           child: Container(
-            decoration: BoxDecoration(
+            child: Container(
+              margin: EdgeInsets.fromLTRB(4.0.w, 5.0, 4.0.w, 15.0),
+              decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffbbbbbb)),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Column(
-              children: [
-                Visibility(
-                  visible: isStrechedDropDown,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        //here your padding
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                          borderSide: BorderSide(color: Colors.black, width: 2),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Column(
+                children: [
+                  Visibility(
+                    visible: isStrechedDropDown,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          //here your padding
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(22)),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2),
+                          ),
+                          hintText: "Search Language",
                         ),
-                        hintText: "Search Language",
+                        onChanged: onTextChanged,
                       ),
-                      onChanged: onTextChanged,
                     ),
                   ),
-                ),
-                ExpandedSection(
-                  expand: isStrechedDropDown,
-                  height: 10,
-                  child: MyScrollbar(
-                    builder: (context, scrollController) =>
-                        new ListView.builder(
-                            padding: EdgeInsets.all(0),
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            itemCount: languageDataList.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 18.0),
-                                child: CheckboxListTile(
-                                  value: languageDataList[index].isCheck,
-                                  title: Text(languageDataList[index].name),
-                                  onChanged: (bool? value) {
-                                    onLanguageSelect(value!, index);
-                                  },
-                                ),
-                              );
-                            }),
+                  ExpandedSection(
+                    expand: isStrechedDropDown,
+                    height: 10,
+                    child: MyScrollbar(
+                      builder: (context, scrollController) =>
+                          new ListView.builder(
+                              padding: EdgeInsets.all(0),
+                              controller: scrollController,
+                              shrinkWrap: true,
+                              itemCount: languageDataList.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 18.0),
+                                  child: CheckboxListTile(
+                                    value: languageDataList[index].isCheck,
+                                    title: Text(languageDataList[index].name),
+                                    onChanged: (bool? value) {
+                                      onLanguageSelect(value!, index);
+                                    },
+                                  ),
+                                );
+                              }),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         )

@@ -69,8 +69,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                     SizedBox(height: 3.7.h),
                     _phoneNumberContainer(),
                     Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom)),
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                    ),
                   ],
                 ),
               ),

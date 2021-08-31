@@ -48,6 +48,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     SizedBox(height: 14.5.h),
                     AppLogo(hight: 19.4.h, width: 100.0.w),
                     SizedBox(height: 5.17.h),
+                    //--> Name text field section
                     TitleLabel(
                       title: Strings.enterName,
                       align: TextAlign.left,
@@ -56,10 +57,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     _getNameField(),
                     SizedBox(height: 1.2.h),
                     ItalicitleLabel(title: Strings.enterNameDetail),
+                    //--------------------------
                     SizedBox(height: 3.69.h),
+                    //--> Select country section
                     TitleLabel(
                       title: Strings.selectCountry,
-                      align: TextAlign.center,
+                      align: TextAlign.left,
                     ),
                     SizedBox(height: 1.2.h),
                     CountryDropDown(
@@ -67,10 +70,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                     SizedBox(height: 1.2.h),
                     ItalicitleLabel(title: Strings.selectCountryDetail),
+                    //--------------------------
                     SizedBox(height: 3.69.h),
+                    //--> Select language section
                     TitleLabel(
                       title: Strings.selectLanugages,
-                      align: TextAlign.center,
+                      align: TextAlign.left,
                     ),
                     SizedBox(height: 1.2.h),
                     LanguageDropDown(
@@ -78,7 +83,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                     SizedBox(height: 1.2.h),
                     ItalicitleLabel(title: Strings.selectCountryDetail),
-                    // _selectLanguagesContainer(),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                    ),
                   ],
                 ),
               ),

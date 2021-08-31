@@ -126,7 +126,7 @@ class _CountryDropDownState extends State<CountryDropDown> {
           visible: isStrechedDropDown,
           child: Container(
             child: Container(
-              margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 15.0),
+              margin: EdgeInsets.fromLTRB(4.0.w, 5.0, 4.0.w, 15.0),
               decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffbbbbbb)),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
