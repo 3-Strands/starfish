@@ -15,6 +15,12 @@ service Starfish {
     // Get the current user.
     rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
 
+    // List all countries
+    rpc ListAllCountries (google.protobuf.Empty) returns (stream Country) {}
+
+    // List languages in the current user's countries
+    rpc ListLanguages (google.protobuf.Empty) returns (stream Language) {}
+
 }
 
 // Action and Results tab each have the same two sub-tabs "Mine" and "My Groups"
@@ -82,5 +88,21 @@ message ActionUser {
     string teacher_response = 5;
 
     google.type.Date date_due = 6;
+
+}
+
+message Country {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
+message Language {
+
+    string id = 1;
+
+    string name = 2;
 
 }
