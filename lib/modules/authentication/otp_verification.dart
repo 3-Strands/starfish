@@ -52,8 +52,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     SizedBox(height: 5.0.h),
                     _resendOTPContainer(),
                     Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom))
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                    )
                   ],
                 ),
               ),
