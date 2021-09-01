@@ -33,19 +33,19 @@ class AppStyles {
         ),
         enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppColors.TEXT_BORDER_COLOR,
+              color: AppColors.background,
               width: 1,
             ),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppColors.TEXT_BORDER_COLOR,
+              color: AppColors.background,
               width: 1,
             ),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         errorBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppColors.RED_COLOR,
+              color: AppColors.background,
               width: 1,
             ),
             borderRadius: BorderRadius.all(Radius.circular(4))),
@@ -56,27 +56,6 @@ class AppStyles {
             ),
             borderRadius: BorderRadius.all(Radius.circular(4))),
       ),
-
-      // deprecated with FlatButton
-      buttonTheme: ButtonThemeData(
-        height: 60.0,
-        minWidth: 334.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-        ),
-        textTheme: ButtonTextTheme.normal,
-        buttonColor: AppColors.PRIMARY_COLOR,
-      ),
-
-      elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-        primary: AppColors.PRIMARY_COLOR,
-        //onPrimary: Colors.grey[300],
-        minimumSize: Size(334.0, 60.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-        ),
-      )),
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(

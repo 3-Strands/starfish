@@ -110,12 +110,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           _nameFocus.unfocus();
         },
         keyboardType: TextInputType.text,
-        style: TextStyle(
-          fontFamily: 'OpenSans',
-          fontWeight: FontWeight.normal,
-          fontSize: 16.0.sp,
-          color: AppColors.txtFieldTextColor,
-        ),
+        style: textFormFieldText,
         decoration: InputDecoration(
           hintText: Strings.nameHint,
           border: OutlineInputBorder(

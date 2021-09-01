@@ -125,12 +125,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         _fieldFocusChange(context, _countryCodeFocus, _phoneNumberFocus);
       },
       keyboardType: TextInputType.phone,
-      style: TextStyle(
-        fontFamily: 'OpenSans',
-        fontWeight: FontWeight.normal,
-        fontSize: 16.0.sp,
-        color: AppColors.txtFieldTextColor,
-      ),
+      style: textFormFieldText,
       decoration: InputDecoration(
         hintText: Strings.countryCodeHint,
         border: OutlineInputBorder(
@@ -159,12 +154,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         _phoneNumberFocus.unfocus();
       },
       keyboardType: TextInputType.phone,
-      style: TextStyle(
-        fontFamily: 'OpenSans',
-        fontWeight: FontWeight.normal,
-        fontSize: 16.0.sp,
-        color: AppColors.txtFieldTextColor,
-      ),
+      style: textFormFieldText,
       decoration: InputDecoration(
         hintText: Strings.phoneNumberHint,
         border: OutlineInputBorder(

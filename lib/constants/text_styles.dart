@@ -38,3 +38,10 @@ var dashboardNavigationTitle = TextStyle(
   fontSize: 16.0.sp,
   color: AppColors.selectedButtonBG,
 );
+
+var textFormFieldText = TextStyle(
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.normal,
+  fontSize: 16.0.sp,
+  color: AppColors.txtFieldTextColor,
+);
