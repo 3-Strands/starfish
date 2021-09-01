@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
@@ -30,7 +31,7 @@ class _DashboardView extends StatefulWidget {
 
 class _DashboardState extends State<_DashboardView> {
   int _selectedIndex = 2;
-  String title = 'Actions';
+  String title = Strings.actionsTabItemText;
   List<Widget> _widgetOptions = [];
 
   @override
@@ -99,17 +100,17 @@ class _DashboardState extends State<_DashboardView> {
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.metericalsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.metericalsIcon),
-                  label: 'Materials',
+                  label: Strings.materialsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.groupsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.groupsIcon),
-                  label: 'Groups',
+                  label: Strings.groupsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.actionsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.actionsIcon),
-                  label: 'Actions',
+                  label: Strings.actionsTabItemText,
                 ),
               ],
               currentIndex: _selectedIndex,
@@ -133,13 +134,13 @@ class _DashboardState extends State<_DashboardView> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          title = "Material";
+          title = Strings.materialsTabItemText;
           break;
         case 1:
-          title = "Groups";
+          title = Strings.groupsTabItemText;
           break;
         case 2:
-          title = "Actions";
+          title = Strings.actionsTabItemText;
           break;
         default:
         // title = "Results";

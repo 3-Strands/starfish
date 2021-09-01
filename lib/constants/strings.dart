@@ -24,4 +24,8 @@ class Strings {
   static const String enterName = 'Enter Your Name';
   static const String enterNameDetail =
       'This name will be shown in groups. You can change this later.';
+
+  static const String materialsTabItemText = 'Materials';
+  static const String groupsTabItemText = 'Groups';
+  static const String actionsTabItemText = 'Actions';
 }
