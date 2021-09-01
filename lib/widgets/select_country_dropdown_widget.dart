@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'app_logo_widget.dart';
+import 'dropdown_image_widget.dart';
 import 'expanded_section_widget.dart';
 import 'scrollbar_widget.dart';
 import 'package:sizer/sizer.dart';
@@ -101,25 +103,31 @@ class _CountryDropDownState extends State<CountryDropDown> {
             borderRadius: BorderRadius.circular(10.0),
             color: AppColors.txtFieldBackground,
           ),
-          child: TextButton(
-            style: ButtonStyle(
-              alignment: Alignment.centerLeft,
-            ),
-            onPressed: () {
-              setState(() {
-                isStrechedDropDown = !isStrechedDropDown;
-              });
-            },
-            child: Text(
-              selectedCountry,
-              style: TextStyle(
-                fontFamily: 'OpenSans',
-                fontWeight: FontWeight.normal,
-                fontSize: 16.0.sp,
-                color: AppColors.txtFieldTextColor,
+          child: ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(AppColors.txtFieldBackground),
+                  elevation: MaterialStateProperty.all<double>(0)),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    selectedCountry,
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16.0.sp,
+                      color: AppColors.txtFieldTextColor,
+                    ),
+                  ),
+                  Spacer(),
+                  DropDownImage(hight: 1.4.h, width: 6.1.w),
+                ],
               ),
-            ),
-          ),
+              onPressed: () {
+                setState(() {
+                  isStrechedDropDown = !isStrechedDropDown;
+                });
+              }),
         ),
         SizedBox(height: 2),
         Visibility(

@@ -25,7 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               height: 100.h,
               width: 100.h,
-              color: AppColors.materialSceenBG,
+              color: AppColors.background,
               child: SingleChildScrollView(
                 child: Container(
                   padding: EdgeInsets.fromLTRB(4.0.w, 14.5.h, 4.0.w, 4.0.h),

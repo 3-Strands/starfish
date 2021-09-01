@@ -173,7 +173,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     style: textButtonTextStyle,
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.dashboard);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        Routes.dashboard, (Route<dynamic> route) => false);
                   },
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,

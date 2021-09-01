@@ -3,6 +3,7 @@ import 'dart:core';
 class AssetsPath {
   static const String logoSplash = 'assets/images/logo_splash.svg';
   static const String logoStarfish = 'assets/images/logo.svg';
+  static const String dropdownIcon = 'assets/images/dropdown.svg';
   static const String settings = 'assets/images/settings.svg';
   static const String metericalsIcon = 'assets/images/materials.svg';
   static const String metericalsActiveIcon =

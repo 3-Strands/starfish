@@ -8,6 +8,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import '../material_view/materials_view.dart';
 import 'package:sizer/sizer.dart';
@@ -73,7 +74,11 @@ class _DashboardState extends State<_DashboardView> {
                       onPressed: () {
                         setState(
                           () {
-                            Navigator.of(context).pushNamed(Routes.settings);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SettingsScreen()),
+                            );
                           },
                         );
                       },
@@ -91,17 +96,20 @@ class _DashboardState extends State<_DashboardView> {
             body: _widgetOptions[_selectedIndex],
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              items: const <BottomNavigationBarItem>[
+              items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.call_to_action),
+                  activeIcon: SvgPicture.asset(AssetsPath.metericalsActiveIcon),
+                  icon: SvgPicture.asset(AssetsPath.metericalsIcon),
                   label: 'Materials',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.book),
+                  activeIcon: SvgPicture.asset(AssetsPath.groupsActiveIcon),
+                  icon: SvgPicture.asset(AssetsPath.groupsIcon),
                   label: 'Groups',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
+                  activeIcon: SvgPicture.asset(AssetsPath.actionsActiveIcon),
+                  icon: SvgPicture.asset(AssetsPath.actionsIcon),
                   label: 'Actions',
                 ),
               ],

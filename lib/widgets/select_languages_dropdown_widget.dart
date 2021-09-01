@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'dropdown_image_widget.dart';
 import 'expanded_section_widget.dart';
 import 'scrollbar_widget.dart';
 import 'package:sizer/sizer.dart';
@@ -80,33 +81,38 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
     return Column(
       children: <Widget>[
         Container(
-          height: 6.4.h,
-          width: 92.0.w,
-          margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: AppColors.txtFieldBackground,
-          ),
-          child: TextButton(
-            style: ButtonStyle(
-              alignment: Alignment.centerLeft,
+            height: 6.4.h,
+            width: 92.0.w,
+            margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: AppColors.txtFieldBackground,
             ),
-            onPressed: () {
-              setState(() {
-                isStrechedDropDown = !isStrechedDropDown;
-              });
-            },
-            child: Text(
-              Strings.selectLanugages,
-              style: TextStyle(
-                fontFamily: 'OpenSans',
-                fontWeight: FontWeight.normal,
-                fontSize: 16.0.sp,
-                color: AppColors.txtFieldTextColor,
-              ),
-            ),
-          ),
-        ),
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.txtFieldBackground),
+                    elevation: MaterialStateProperty.all<double>(0)),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      Strings.selectLanugages,
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16.0.sp,
+                        color: AppColors.txtFieldTextColor,
+                      ),
+                    ),
+                    Spacer(),
+                    DropDownImage(hight: 1.4.h, width: 6.1.w),
+                  ],
+                ),
+                onPressed: () {
+                  setState(() {
+                    isStrechedDropDown = !isStrechedDropDown;
+                  });
+                })),
         SizedBox(height: 2),
         Visibility(
           visible: isStrechedDropDown,
