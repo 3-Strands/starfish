@@ -31,3 +31,10 @@ var textButtonTextStyle = TextStyle(
   fontSize: 16.0.sp,
   color: AppColors.background,
 );
+
+var dashboardNavigationTitle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.bold,
+  fontSize: 16.0.sp,
+  color: AppColors.selectedButtonBG,
+);

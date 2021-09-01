@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
@@ -172,12 +173,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     style: textButtonTextStyle,
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Dashboard(),
-                      ),
-                    );
+                    Navigator.of(context).pushNamed(Routes.dashboard);
                   },
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,

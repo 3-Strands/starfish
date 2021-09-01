@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:sizer/sizer.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/grpc_client.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -26,6 +28,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
+
+  void getCurrentUser() async {
+    await CurrentUserRepository().getUser().then((User user) {
+      print("get current user");
+      // print(user);
+      print(user.name);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -209,15 +219,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 style: textButtonTextStyle,
               ),
               onPressed: () {
-                GrpcClient grpcClient = GrpcClient();
-                grpcClient.doRemoteCall().then((User value) =>
-                    {print(value.name), print(value.countryIds)});
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => OTPVerificationScreen(),
-                //   ),
-                // );
+                // getCurrentUser();
+                Navigator.of(context).pushNamed(Routes.otpVerification);
               },
               style: ElevatedButton.styleFrom(
                 primary: AppColors.selectedButtonBG,

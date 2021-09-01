@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:starfish/config/routes/routes.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
+import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import '../material_view/materials_view.dart';
 import 'package:sizer/sizer.dart';
 
@@ -46,41 +51,36 @@ class _DashboardState extends State<_DashboardView> {
       child: Stack(
         children: <Widget>[
           Container(
-              height: 100.0,
-              width: 100.0,
-              color: AppColors.BACKGROUND_COLOR.withOpacity(0.3)),
+            height: 100.0,
+            width: 100.0,
+          ),
           Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
               title: Container(
-                  height: 100.0.h,
-                  width: 100.0.w,
-                  child: Center(
-                    child: Text(
+                height: 100.0.h,
+                width: 100.0.w,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    AppLogo(hight: 4.4.h, width: 9.6.w),
+                    Text(
                       title,
-                      style: TextStyle(color: Colors.black),
+                      style: dashboardNavigationTitle,
                     ),
-                  )
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: <Widget>[
-                  //    AppLogo(hight: 4.4.h, width: 9.6.w),
-                  //     GlobalWidgets.navigationLogo(context),
-                  //     Text(
-                  //       title,
-                  //       style: TextStyle(color: Colors.black),
-                  //     ),
-                  //     IconButton(
-                  //       icon: Icon(Icons.settings, color: Colors.black),
-                  //       onPressed: () {
-                  //         setState(
-                  //           () {},
-                  //         );
-                  //       },
-                  //     ),
-                  //   ],
-                  // ),
-                  ),
+                    IconButton(
+                      icon: SvgPicture.asset(AssetsPath.settings),
+                      onPressed: () {
+                        setState(
+                          () {
+                            Navigator.of(context).pushNamed(Routes.settings);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
               backgroundColor: (_selectedIndex == 0)
                   ? AppColors.materialSceenBG
                   : (_selectedIndex == 1)

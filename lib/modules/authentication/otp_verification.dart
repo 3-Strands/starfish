@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/modules/create_profile/create_profile.dart';
@@ -188,12 +189,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     style: textButtonTextStyle,
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateProfileScreen(),
-                      ),
-                    );
+                    Navigator.of(context).pushNamed(Routes.showProfile);
                   },
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,

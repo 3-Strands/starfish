@@ -34,7 +34,7 @@ class _ActionsScreenState extends State<ActionsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       TitleLabel(
-                        title: 'Actions',
+                        title: '',
                         align: TextAlign.center,
                       ),
                     ],

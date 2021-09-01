@@ -3,16 +3,16 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:sizer/sizer.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 
-class GroupsScreen extends StatefulWidget {
-  GroupsScreen({Key? key, this.title = ''}) : super(key: key);
+class SettingsScreen extends StatefulWidget {
+  SettingsScreen({Key? key, this.title = ''}) : super(key: key);
 
   final String title;
 
   @override
-  _GroupsScreenState createState() => _GroupsScreenState();
+  _SettingsScreenState createState() => _SettingsScreenState();
 }
 
-class _GroupsScreenState extends State<GroupsScreen> {
+class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +25,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
             Container(
               height: 100.h,
               width: 100.h,
-              color: AppColors.groupScreenBG,
+              color: AppColors.materialSceenBG,
               child: SingleChildScrollView(
                 child: Container(
                   padding: EdgeInsets.fromLTRB(4.0.w, 14.5.h, 4.0.w, 4.0.h),
@@ -34,7 +34,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       TitleLabel(
-                        title: '',
+                        title: 'settings',
                         align: TextAlign.center,
                       ),
                     ],
