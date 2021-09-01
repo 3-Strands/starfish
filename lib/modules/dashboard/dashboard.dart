@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:starfish/config/routes/routes.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
@@ -114,7 +113,11 @@ class _DashboardState extends State<_DashboardView> {
                 ),
               ],
               currentIndex: _selectedIndex,
-              selectedItemColor: AppColors.selectedButtonBG,
+              selectedItemColor: (_selectedIndex == 0)
+                  ? AppColors.materialTabBarTextColor
+                  : (_selectedIndex == 1)
+                      ? AppColors.groupTabBarTextColor
+                      : AppColors.actionTabBarTextColor,
               backgroundColor: AppColors.txtFieldBackground,
               unselectedItemColor: AppColors.unselectedButtonBG,
               onTap: _onItemTapped,

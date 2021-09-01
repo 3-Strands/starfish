@@ -17,6 +17,10 @@ class AppColors {
   static Color groupScreenBG = HexColor('#F7E8CC');
   static Color actionScreenBG = HexColor('#E2CDE4');
 
+  static Color materialTabBarTextColor = HexColor('#3475F0');
+  static Color groupTabBarTextColor = HexColor('#D78A00');
+  static Color actionTabBarTextColor = HexColor('#800080');
+
   static const Color PRIMARY_COLOR = Color(0xffFF754A);
   static const Color PRIMARY_COLOR_LIGHT = Color(0xFFFF754A);
   static const Color PRIMARY_COLOR_DARK = Color(0xFFFB451E);
