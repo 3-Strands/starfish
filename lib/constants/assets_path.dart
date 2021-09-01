@@ -12,5 +12,4 @@ class AssetsPath {
   static const String groupsActiveIcon = 'assets/images/groups_active.svg';
   static const String actionsIcon = 'assets/images/actions.svg';
   static const String actionsActiveIcon = 'assets/images/actions_active.svg';
-  static const String actionsIconPNG = 'assets/images/actions_active.png';
 }
