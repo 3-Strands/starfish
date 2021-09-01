@@ -70,7 +70,7 @@ class _DashboardState extends State<_DashboardView> {
                       style: dashboardNavigationTitle,
                     ),
                     IconButton(
-                      icon: SvgPicture.asset(AssetsPath.settings),
+                      icon: SvgPicture.asset(AssetsPath.settingsActive),
                       onPressed: () {
                         setState(
                           () {

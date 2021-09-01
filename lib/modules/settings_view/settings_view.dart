@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:sizer/sizer.dart';
+import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/constants/strings.dart';
+import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -16,6 +21,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Container(
+          height: 100.0.h,
+          width: 100.0.w,
+          color: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              AppLogo(hight: 4.4.h, width: 9.6.w),
+              Text(
+                Strings.settings,
+                style: dashboardNavigationTitle,
+              ),
+              IconButton(
+                icon: SvgPicture.asset(AssetsPath.settingsActive),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());

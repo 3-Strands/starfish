@@ -28,4 +28,6 @@ class Strings {
   static const String materialsTabItemText = 'Materials';
   static const String groupsTabItemText = 'Groups';
   static const String actionsTabItemText = 'Actions';
+
+  static const String settings = 'Settings';
 }

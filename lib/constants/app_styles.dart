@@ -5,12 +5,11 @@ class AppStyles {
   static ThemeData defaultTheme() {
     final ThemeData base = ThemeData.dark();
     return base.copyWith(
-      //primarySwatch: Colors.orange,
-      backgroundColor: AppColors.BACKGROUND_COLOR,
-      primaryColor: AppColors.PRIMARY_COLOR,
-      primaryColorLight: AppColors.PRIMARY_COLOR,
-      primaryColorDark: AppColors.PRIMARY_COLOR,
-      accentColor: AppColors.ACCENT_COLOR,
+      backgroundColor: AppColors.background,
+      primaryColor: AppColors.background,
+      // primaryColorLight: AppColors.ACCENT_COLOR,
+      // primaryColorDark: AppColors.ACCENT_COLOR,
+      // accentColor: AppColors.ACCENT_COLOR,
 
       inputDecorationTheme: InputDecorationTheme(
         contentPadding: EdgeInsets.all(20),
