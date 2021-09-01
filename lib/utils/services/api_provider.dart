@@ -4,7 +4,13 @@ import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'grpc_client.dart';
 
 class ApiProvider {
+  StarfishClient? client;
+
+  ApiProvider() {
+    client = GrpcClient().client!;
+  }
+
   Future<User> getCurrentUser() async {
-    return GrpcClient().client!.getCurrentUser(Empty());
+    return client!.getCurrentUser(Empty());
   }
 }
