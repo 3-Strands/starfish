@@ -8,12 +8,17 @@ option java_package = "org.sil.starfish";
 
 import "google/type/date.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
 
 // The Starfish API, for communicating with Starfish app.
 service Starfish {
 
     // Get the current user.
     rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
+
+    // Update the current user.
+    // Group or action connections cannot be updated through this procedure.
+    rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
 
     // List all countries
     rpc ListAllCountries (google.protobuf.Empty) returns (stream Country) {}
@@ -24,21 +29,35 @@ service Starfish {
 }
 
 // Action and Results tab each have the same two sub-tabs "Mine" and "My Groups"
-enum SubTab {
-    MINE = 0;
-    MY_GROUPS = 1;
+enum ActionTab {
+    ACTIONS_UNSPECIFIED = 0;
+    ACTIONS_MINE = 1;
+    ACTIONS_MY_GROUPS = 2;
+}
+
+enum ResultsTab {
+    RESULTS_UNSPECIFIED = 0;
+    RESULTS_MINE = 1;
+    RESULTS_MY_GROUPS = 2;
 }
 
 message User {
 
+    // The ID is a version 4 UUID. Once assigned it cannot be changed.
+    // The client may specify the UUID when requesting object creation,
+    // otherwise server will generate it.
     string id = 1;
 
+    // Full name of the user (required)
     string name = 2;
 
+    // The user must be able to receive text messages at this number (required)
     string phone = 3;
 
     repeated string country_ids = 4;
 
+    // The languages connected to a user should be in the countries connected,
+    // however the server will not enforce this
     repeated string language_ids = 5;
 
     // If true, then this user has given approval for the groups they administer to be connected to projects in everylanguage.app
@@ -48,9 +67,9 @@ message User {
 
     repeated ActionUser actions = 8;
 
-    SubTab selected_actions_tab = 9;
+    ActionTab selected_actions_tab = 9;
 
-    SubTab selected_results_tab = 10;
+    ResultsTab selected_results_tab = 10;
 
 }
 
@@ -58,9 +77,10 @@ message User {
 message GroupUser {
 
     enum Role {
-        LEARNER = 0;
-        TEACHER = 1;
-        ADMIN = 2;
+        UNSPECIFIED_ROLE = 0;
+        LEARNER = 1;
+        TEACHER = 2;
+        ADMIN = 3;
     }
 
     string group_id = 2;
@@ -75,8 +95,9 @@ message GroupUser {
 message ActionUser {
 
     enum Status {
-        INCOMPLETE = 0;
-        COMPLETE = 1;
+        UNSPECIFIED_STATUS = 0;
+        INCOMPLETE = 1;
+        COMPLETE = 2;
     }
 
     string action_id = 2;
@@ -104,5 +125,17 @@ message Language {
     string id = 1;
 
     string name = 2;
+
+}
+
+
+message UpdateCurrentUserRequest {
+
+    // The user resource which replaces the resource on the server.
+    User user = 1;
+
+    // The update mask applies to the resource. For the `FieldMask` definition,
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
 
 }
