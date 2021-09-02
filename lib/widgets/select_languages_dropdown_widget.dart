@@ -4,7 +4,8 @@ import 'package:starfish/constants/strings.dart';
 import 'dropdown_image_widget.dart';
 import 'expanded_section_widget.dart';
 import 'scrollbar_widget.dart';
-import 'package:sizer/sizer.dart';
+
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LanguageListTileModel {
   int id;
@@ -81,9 +82,8 @@ class _LanguageDropDownState extends State<LanguageDropDown> {
     return Column(
       children: <Widget>[
         Container(
-            height: 6.4.h,
-            width: 92.0.w,
-            margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
+            height: 52.h,
+            margin: EdgeInsets.fromLTRB(15.0.w, 0.0, 15.0.w, 0.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
               color: AppColors.txtFieldBackground,

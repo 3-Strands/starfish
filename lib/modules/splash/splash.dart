@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -40,8 +40,8 @@ class SplashPageState extends State<SplashScreen> {
 
   Container _logo() {
     return Container(
-      height: 45.8.h,
-      width: 80.8.w,
+      width: 303.w,
+      height: 372.h,
       child: SvgPicture.asset(AssetsPath.logoSplash),
     );
   }

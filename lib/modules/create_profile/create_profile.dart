@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:sizer/sizer.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -11,6 +10,7 @@ import 'package:starfish/widgets/italic_title_label_widget.dart';
 import 'package:starfish/widgets/select_country_dropdown_widget.dart';
 import 'package:starfish/widgets/select_languages_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
@@ -34,75 +34,84 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Stack(
-          fit: StackFit.loose,
-          children: <Widget>[
-            Container(
-              height: 90.0.h,
-              color: AppColors.background,
-              child: SingleChildScrollView(
-                reverse: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 14.5.h),
-                    AppLogo(hight: 19.4.h, width: 100.0.w),
-                    SizedBox(height: 5.17.h),
-                    //--> Name text field section
-                    TitleLabel(
-                      title: Strings.enterName,
-                      align: TextAlign.left,
-                    ),
-                    SizedBox(height: 1.2.h),
-                    _getNameField(),
-                    SizedBox(height: 1.2.h),
-                    ItalicitleLabel(title: Strings.enterNameDetail),
-                    //--------------------------
-                    SizedBox(height: 3.69.h),
-                    //--> Select country section
-                    TitleLabel(
-                      title: Strings.selectCountry,
-                      align: TextAlign.left,
-                    ),
-                    SizedBox(height: 1.2.h),
-                    CountryDropDown(
-                      onCountrySelect: (selectedCountry) {},
-                    ),
-                    SizedBox(height: 1.2.h),
-                    ItalicitleLabel(title: Strings.selectCountryDetail),
-                    //--------------------------
-                    SizedBox(height: 3.69.h),
-                    //--> Select language section
-                    TitleLabel(
-                      title: Strings.selectLanugages,
-                      align: TextAlign.left,
-                    ),
-                    SizedBox(height: 1.2.h),
-                    LanguageDropDown(
-                      onLanguageSelect: (langage) {},
-                    ),
-                    SizedBox(height: 1.2.h),
-                    ItalicitleLabel(title: Strings.selectCountryDetail),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                    ),
-                  ],
+        child: Container(
+          // height: 90.h,
+          color: AppColors.background,
+          child: SingleChildScrollView(
+            reverse: true,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 118.h),
+                AppLogo(hight: 156.h, width: 163.w),
+                SizedBox(height: 42.h),
+                //--> Name text field section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.enterName,
+                    align: TextAlign.left,
+                  ),
                 ),
-              ),
+                SizedBox(height: 10.h),
+                _getNameField(),
+                SizedBox(height: 10.h),
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: ItalicitleLabel(title: Strings.enterNameDetail),
+                ),
+                //--------------------------
+                SizedBox(height: 30.h),
+                //--> Select country section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.selectCountry,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                CountryDropDown(
+                  onCountrySelect: (selectedCountry) {},
+                ),
+                SizedBox(height: 10.h),
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: ItalicitleLabel(title: Strings.selectCountryDetail),
+                ),
+                //--------------------------
+                SizedBox(height: 30.h),
+                //--> Select language section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.selectLanugages,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                LanguageDropDown(
+                  onLanguageSelect: (langage) {},
+                ),
+                SizedBox(height: 10.h),
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: ItalicitleLabel(title: Strings.selectCountryDetail),
+                ),
+              ],
             ),
-            _footer(),
-          ],
+          ),
         ),
       ),
+      bottomNavigationBar: _footer(),
     );
   }
 
   Container _getNameField() {
     return Container(
-      height: 6.4.h,
-      margin: EdgeInsets.fromLTRB(4.0.w, 0.0, 4.0.w, 0.0),
+      height: 52.h,
+      margin: EdgeInsets.fromLTRB(15.w, 0.0, 15.w, 0.0),
       child: TextFormField(
         controller: _nameController,
         focusNode: _nameFocus,
@@ -129,59 +138,69 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     );
   }
 
-  Align _footer() {
-    return Align(
-      alignment: FractionalOffset.bottomCenter,
-      child: Padding(
-          padding: EdgeInsets.only(bottom: 0.0),
-          child: _finishButton() //Your widget here,
+  SizedBox _footer() {
+    return SizedBox(
+      height: 75.h,
+      child: Stack(
+        children: [
+          Positioned(
+            child: new Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    color: AppColors.txtFieldBackground,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: _finishButton(),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
+        ],
+      ),
     );
   }
 
   Container _finishButton() {
     return Container(
-      color: AppColors.txtFieldBackground,
-      width: 100.0.w,
-      height: 9.h,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Container(
-            width: 85.0.w,
-            height: 4.5.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-              color: AppColors.selectedButtonBG,
+      width: 319.w,
+      height: 37.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+        color: AppColors.selectedButtonBG,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(0.0),
+        child: SizedBox(
+          width: 319.w,
+          height: 37.h,
+          child: ElevatedButton(
+            child: Text(
+              Strings.finish,
+              textAlign: TextAlign.start,
+              style: textButtonTextStyle,
             ),
-            child: Padding(
-              padding: EdgeInsets.all(0.0),
-              child: SizedBox(
-                height: 4.5.h,
-                width: 85.0.w,
-                child: ElevatedButton(
-                  child: Text(
-                    Strings.finish,
-                    textAlign: TextAlign.start,
-                    style: textButtonTextStyle,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        Routes.dashboard, (Route<dynamic> route) => false);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: AppColors.selectedButtonBG,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(20.0),
-                    ),
-                  ),
-                ),
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  Routes.dashboard, (Route<dynamic> route) => false);
+            },
+            style: ElevatedButton.styleFrom(
+              primary: AppColors.selectedButtonBG,
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(20.0),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

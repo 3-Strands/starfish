@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -11,7 +10,8 @@ import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import '../material_view/materials_view.dart';
-import 'package:sizer/sizer.dart';
+
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -51,20 +51,15 @@ class _DashboardState extends State<_DashboardView> {
       decoration: BoxDecoration(color: const Color(0xff000000)),
       child: Stack(
         children: <Widget>[
-          Container(
-            height: 100.0,
-            width: 100.0,
-          ),
           Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
               title: Container(
-                height: 100.0.h,
-                width: 100.0.w,
+                height: 64.h,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    AppLogo(hight: 4.4.h, width: 9.6.w),
+                    AppLogo(hight: 36.h, width: 37.w),
                     Text(
                       title,
                       style: dashboardNavigationTitle,

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 var titleTextStyle = TextStyle(
   fontFamily: 'OpenSans',

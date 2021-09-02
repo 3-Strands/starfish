@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:sizer/sizer.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/grpc_client.dart';
@@ -11,6 +10,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/select_country_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'otp_verification.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -54,21 +54,22 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(height: 17.7.h),
-                      AppLogo(hight: 19.4.h, width: 43.0.w),
-                      SizedBox(height: 6.1.h),
+                      SizedBox(height: 118.h),
+                      AppLogo(hight: 156.h, width: 163.w),
+                      SizedBox(height: 50.h),
                       TitleLabel(
                         title: Strings.phoneAuthenticationTitle,
                         align: TextAlign.center,
                       ),
                       // SizedBox(height: 3.7.h),
                       // _selectCountyContainer(),
-                      SizedBox(height: 3.7.h),
+                      SizedBox(height: 30.h),
                       CountryDropDown(
                         onCountrySelect: (selectedCountry) {
                           if (selectedCountry.isCheck == true) {
                             setState(() {
-                              _countryCodeController.text = selectedCountry.code;
+                              _countryCodeController.text =
+                                  selectedCountry.code;
                             });
                           } else {
                             setState(() {
@@ -77,7 +78,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                           }
                         },
                       ),
-                      SizedBox(height: 3.7.h),
+                      SizedBox(height: 30.h),
                       _phoneNumberContainer(),
                       // Padding(
                       //   padding: EdgeInsets.only(
@@ -87,30 +88,29 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   ),
                 ),
               ),
-              // _footer()
-            ]
+            ],
           ),
         ),
       ),
-      bottomNavigationBar: _footer()
+      bottomNavigationBar: _footer(),
     );
   }
 
   Container _phoneNumberContainer() {
     return Container(
-      height: 6.4.h,
-      margin: EdgeInsets.only(left: 4.0.w),
+      height: 52.h,
+      margin: EdgeInsets.only(left: 15.w),
       child: Row(
         children: [
           Container(
-            height: 6.4.h,
-            width: 23.2.w,
+            height: 52.h,
+            width: 87.w,
             child: _countryCodeField(),
           ),
-          SizedBox(width: 4.0.w),
+          SizedBox(width: 15.w),
           Container(
-            height: 6.4.h,
-            width: 64.8.w,
+            height: 52.h,
+            width: 243.w,
             child: _phoneNumberField(),
           )
         ],
@@ -174,42 +174,39 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   }
 
   SizedBox _footer() {
-   return SizedBox(
-        height:15.h,
-        child: Stack(
-          children: [
-            Positioned(
-              child: new Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: 100.w,
-                      height: 12.h,
-                      color: AppColors.txtFieldBackground,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: _nextButton(),
-                        ),
+    return SizedBox(
+      height: 75.h,
+      child: Stack(
+        children: [
+          Positioned(
+            child: new Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    color: AppColors.txtFieldBackground,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: _nextButton(),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 
   Container _nextButton() {
     return Container(
-      margin: EdgeInsets.all(2.25.h),
-      width: 85.0.w,
-      height: 4.5.h,
+      width: 319.w,
+      height: 37.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(20),
@@ -219,8 +216,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       child: Padding(
         padding: EdgeInsets.all(0.0),
         child: SizedBox(
-          height: 4.5.h,
-          width: 85.0.w,
+          width: 319.w,
+          height: 37.h,
           child: ElevatedButton(
             child: Text(
               Strings.next,

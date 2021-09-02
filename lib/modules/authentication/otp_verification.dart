@@ -4,11 +4,10 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/modules/create_profile/create_profile.dart';
-import 'package:sizer/sizer.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   OTPVerificationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -28,37 +27,29 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: Container(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  // height: 100.h,
-                  // width: 100.h,
-                  color: AppColors.background,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: 17.7.h),
-                        AppLogo(hight: 19.4.h, width: 43.0.w),
-                        SizedBox(height: 8.8.h),
-                        TitleLabel(
-                          title: Strings.enterOneTimePassword,
-                          align: TextAlign.center,
-                        ),
-                        SizedBox(height: 3.7.h),
-                        _pinCodeContiner(),
-                        SizedBox(height: 5.0.h),
-                        _resendOTPContainer(),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom),
-                        )
-                      ],
+            child: Container(
+              // height: 100.h,
+              // width: 100.h,
+              color: AppColors.background,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 118.h),
+                    AppLogo(hight: 156.h, width: 163.w),
+                    SizedBox(height: 50.h),
+                    TitleLabel(
+                      title: Strings.enterOneTimePassword,
+                      align: TextAlign.center,
                     ),
-                  ),
+                    SizedBox(height: 30.h),
+                    _pinCodeContiner(),
+                    SizedBox(height: 50.h),
+                    _resendOTPContainer(),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -67,25 +58,21 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   SizedBox _footer() {
     return SizedBox(
-      height: 15.h,
+      height: 75.h,
       child: Stack(
         children: [
           Positioned(
-            child: new Align(
+            child: Align(
               alignment: FractionalOffset.bottomCenter,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    width: 100.w,
-                    height: 12.h,
                     color: AppColors.txtFieldBackground,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Align(
-                        alignment: FractionalOffset.bottomCenter,
-                        child: _footerOptionButtons(),
-                      ),
+                    padding: EdgeInsets.all(15.0),
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: _footerOptionButtons(),
                     ),
                   )
                 ],
@@ -99,8 +86,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Container _pinCodeContiner() {
     return Container(
-      height: 8.8.h,
-      padding: EdgeInsets.all(16.0),
+      height: 48.h,
+      padding: EdgeInsets.only(left: 15.0.w, right: 15.w), //all(19.0),
       child: PinCodeTextField(
         appContext: context,
         pastedTextStyle: TextStyle(
@@ -112,8 +99,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         pinTheme: PinTheme(
           shape: PinCodeFieldShape.box,
           borderRadius: BorderRadius.circular(5),
-          fieldHeight: 48,
-          fieldWidth: 48,
+          fieldHeight: 48.h,
+          fieldWidth: 48.w,
         ),
         blinkWhenObscuring: true,
         animationType: AnimationType.fade,
@@ -135,7 +122,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   Container _resendOTPContainer() {
     return Container(
-      width: 90.0.w,
+      height: 46.h,
+      // padding: EdgeInsets.all(19.0),
       color: Colors.transparent,
       child: TextButton(
         onPressed: () {},
@@ -147,19 +135,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
-
-
   Container _footerOptionButtons() {
     return Container(
-      color: AppColors.txtFieldBackground,
-      width: 100.0.w,
-      height: 9.h,
+      width: 319.w,
+      height: 37.h,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Container(
-            width: 38.6.w,
-            height: 40.0,
+            width: 145.w,
+            height: 37.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
@@ -168,31 +153,27 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             ),
             child: Padding(
               padding: EdgeInsets.all(0.0),
-              child: SizedBox(
-                width: 38.6.w,
-                height: 40.0,
-                child: ElevatedButton(
-                  child: Text(
-                    Strings.back,
-                    textAlign: TextAlign.start,
-                    style: textButtonTextStyle,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: AppColors.unselectedButtonBG,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(20.0),
-                    ),
+              child: ElevatedButton(
+                child: Text(
+                  Strings.back,
+                  textAlign: TextAlign.start,
+                  style: textButtonTextStyle,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: AppColors.unselectedButtonBG,
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(20.0),
                   ),
                 ),
               ),
             ),
           ),
           Container(
-            width: 38.6.w,
-            height: 40.0,
+            width: 145.w,
+            height: 37.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(
                 Radius.circular(20),
@@ -201,23 +182,19 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             ),
             child: Padding(
               padding: EdgeInsets.all(0.0),
-              child: SizedBox(
-                width: 38.6.w,
-                height: 40.0,
-                child: ElevatedButton(
-                  child: Text(
-                    Strings.next,
-                    textAlign: TextAlign.start,
-                    style: textButtonTextStyle,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.showProfile);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: AppColors.selectedButtonBG,
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(20.0),
-                    ),
+              child: ElevatedButton(
+                child: Text(
+                  Strings.next,
+                  textAlign: TextAlign.start,
+                  style: textButtonTextStyle,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.showProfile);
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: AppColors.selectedButtonBG,
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(20.0),
                   ),
                 ),
               ),
