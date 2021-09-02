@@ -40,58 +40,59 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Stack(
-          fit: StackFit.loose,
-          children: [
-            Container(
-              child: SingleChildScrollView(
-                reverse: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 17.7.h),
-                    AppLogo(hight: 19.4.h, width: 43.0.w),
-                    SizedBox(height: 6.1.h),
-                    TitleLabel(
-                      title: Strings.phoneAuthenticationTitle,
-                      align: TextAlign.center,
-                    ),
-                    // SizedBox(height: 3.7.h),
-                    // _selectCountyContainer(),
-                    SizedBox(height: 3.7.h),
-                    CountryDropDown(
-                      onCountrySelect: (selectedCountry) {
-                        if (selectedCountry.isCheck == true) {
-                          setState(() {
-                            _countryCodeController.text = selectedCountry.code;
-                          });
-                        } else {
-                          setState(() {
-                            _countryCodeController.text = '+1';
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(height: 3.7.h),
-                    _phoneNumberContainer(),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                    ),
-                  ],
+        child: Container(
+          child: Stack(
+            children: [
+              Container(
+                child: SingleChildScrollView(
+                  reverse: true,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: 17.7.h),
+                      AppLogo(hight: 19.4.h, width: 43.0.w),
+                      SizedBox(height: 6.1.h),
+                      TitleLabel(
+                        title: Strings.phoneAuthenticationTitle,
+                        align: TextAlign.center,
+                      ),
+                      // SizedBox(height: 3.7.h),
+                      // _selectCountyContainer(),
+                      SizedBox(height: 3.7.h),
+                      CountryDropDown(
+                        onCountrySelect: (selectedCountry) {
+                          if (selectedCountry.isCheck == true) {
+                            setState(() {
+                              _countryCodeController.text = selectedCountry.code;
+                            });
+                          } else {
+                            setState(() {
+                              _countryCodeController.text = '+1';
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: 3.7.h),
+                      _phoneNumberContainer(),
+                      // Padding(
+                      //   padding: EdgeInsets.only(
+                      //       bottom: MediaQuery.of(context).viewInsets.bottom),
+                      // ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            _footer()
-          ],
+              // _footer()
+            ]
+          ),
         ),
       ),
+      bottomNavigationBar: _footer()
     );
   }
 
@@ -172,51 +173,68 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  Align _footer() {
-    return Align(
-      alignment: FractionalOffset.bottomCenter,
-      child: Padding(
-          padding: EdgeInsets.only(bottom: 0.0),
-          child: _nextButton() //Your widget here,
-          ),
-    );
+  SizedBox _footer() {
+   return SizedBox(
+        height:15.h,
+        child: Stack(
+          children: [
+            Positioned(
+              child: new Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 100.w,
+                      height: 12.h,
+                      color: AppColors.txtFieldBackground,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: _nextButton(),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
   }
 
   Container _nextButton() {
     return Container(
-      color: AppColors.txtFieldBackground,
-      width: 100.0.w,
-      height: 9.h,
-      child: Container(
-        margin: EdgeInsets.all(2.25.h),
-        width: 85.0.w,
-        height: 4.5.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(20),
-          ),
-          color: AppColors.selectedButtonBG,
+      margin: EdgeInsets.all(2.25.h),
+      width: 85.0.w,
+      height: 4.5.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(0.0),
-          child: SizedBox(
-            height: 4.5.h,
-            width: 85.0.w,
-            child: ElevatedButton(
-              child: Text(
-                Strings.next,
-                textAlign: TextAlign.start,
-                style: textButtonTextStyle,
-              ),
-              onPressed: () {
-                // getCurrentUser();
-                Navigator.of(context).pushNamed(Routes.otpVerification);
-              },
-              style: ElevatedButton.styleFrom(
-                primary: AppColors.selectedButtonBG,
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(20.0),
-                ),
+        color: AppColors.selectedButtonBG,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(0.0),
+        child: SizedBox(
+          height: 4.5.h,
+          width: 85.0.w,
+          child: ElevatedButton(
+            child: Text(
+              Strings.next,
+              textAlign: TextAlign.start,
+              style: textButtonTextStyle,
+            ),
+            onPressed: () {
+              // getCurrentUser();
+              Navigator.of(context).pushNamed(Routes.otpVerification);
+            },
+            style: ElevatedButton.styleFrom(
+              primary: AppColors.selectedButtonBG,
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(20.0),
               ),
             ),
           ),

@@ -23,46 +23,76 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: Stack(
-          fit: StackFit.loose,
-          children: <Widget>[
-            Container(
-              // height: 100.h,
-              // width: 100.h,
-              color: AppColors.background,
-              child: SingleChildScrollView(
-                reverse: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 17.7.h),
-                    AppLogo(hight: 19.4.h, width: 43.0.w),
-                    SizedBox(height: 8.8.h),
-                    TitleLabel(
-                      title: Strings.enterOneTimePassword,
-                      align: TextAlign.center,
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: Container(
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  // height: 100.h,
+                  // width: 100.h,
+                  color: AppColors.background,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: 17.7.h),
+                        AppLogo(hight: 19.4.h, width: 43.0.w),
+                        SizedBox(height: 8.8.h),
+                        TitleLabel(
+                          title: Strings.enterOneTimePassword,
+                          align: TextAlign.center,
+                        ),
+                        SizedBox(height: 3.7.h),
+                        _pinCodeContiner(),
+                        SizedBox(height: 5.0.h),
+                        _resendOTPContainer(),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                        )
+                      ],
                     ),
-                    SizedBox(height: 3.7.h),
-                    _pinCodeContiner(),
-                    SizedBox(height: 5.0.h),
-                    _resendOTPContainer(),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                    )
-                  ],
+                  ),
                 ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: _footer());
+  }
+
+  SizedBox _footer() {
+    return SizedBox(
+      height: 15.h,
+      child: Stack(
+        children: [
+          Positioned(
+            child: new Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    width: 100.w,
+                    height: 12.h,
+                    color: AppColors.txtFieldBackground,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: _footerOptionButtons(),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-            _footer(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -117,15 +147,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
-  Align _footer() {
-    return Align(
-      alignment: FractionalOffset.bottomCenter,
-      child: Padding(
-          padding: EdgeInsets.only(bottom: 0.0),
-          child: _footerOptionButtons() //Your widget here,
-          ),
-    );
-  }
+
 
   Container _footerOptionButtons() {
     return Container(
