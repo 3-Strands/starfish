@@ -26,6 +26,15 @@ service Starfish {
     // List languages in the current user's countries
     rpc ListLanguages (google.protobuf.Empty) returns (stream Language) {}
 
+    // List materials that the current user is permitted to see
+    rpc ListMaterials (google.protobuf.Empty) returns (stream Material) {}
+
+    // List all material types
+    rpc ListMaterialTypes (google.protobuf.Empty) returns (stream MaterialType) {}
+
+    // List all material topics
+    rpc ListMaterialTopics (google.protobuf.Empty) returns (stream MaterialTopic) {}
+
 }
 
 // Action and Results tab each have the same two sub-tabs "Mine" and "My Groups"
@@ -118,6 +127,8 @@ message Country {
 
     string name = 2;
 
+    string dialling_code = 3;
+
 }
 
 message Language {
@@ -128,6 +139,100 @@ message Language {
 
 }
 
+// Pre-defined material types
+message MaterialType {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
+// user-created tags for Materials
+message MaterialTopic {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
+message Material {
+
+    enum Status {
+        UNSPECIFIED_STATUS = 0;
+        ACTIVE = 1;
+        INACTIVE = 2;
+    }
+
+    enum Visibility {
+        UNSPECIFIED_VISIBILITY = 0;
+        CREATOR_VIEW = 1;
+        GROUP_VIEW = 2;
+        ALL_VIEW = 3;
+    }
+
+    enum Editability {
+        UNSPECIFIED_EDITABILITY = 0;
+        CREATOR_EDIT = 1;
+        GROUP_EDIT = 2;
+    }
+
+    string id = 1;
+
+    string creator_id = 2;
+
+    Status status = 3;
+
+    Visibility visibility = 4;
+
+    Editability editability = 5;
+
+    string title = 6;
+
+    string description = 7;
+
+    string target_audience = 8;
+
+    string url = 9;
+
+    // A list of filenames of files uploaded to this material
+    repeated string files = 10;
+
+    repeated string language_ids = 11;
+
+    // The IDs of MaterialTypes connected to this material
+    repeated string type_ids = 12;
+
+    // Do not specify IDs here, but instead use the topic string
+    // If the string does not already exist as a topic it will be created.
+    repeated string topics = 13;
+
+    repeated MaterialFeedback feedbacks = 14;
+
+}
+
+message MaterialFeedback {
+
+    enum Type {
+        UNSPECIFIED_TYPE = 0;
+        INAPPROPRIATE = 1;
+    }
+
+    string id = 1;
+
+    Type type = 2;
+
+    // The ID of the user who created this feedback.
+    string reporter_id = 3;
+
+    // The report from the user.
+    string report = 4;
+
+    // The response from the administrator.
+    string response = 5;
+
+}
 
 message UpdateCurrentUserRequest {
 
