@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grpc/grpc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -34,6 +35,34 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       print("get current user");
       // print(user);
       print(user.name);
+    });
+  }
+
+  void listAllCountries() async {
+    await CurrentUserRepository()
+        .listAllCountries()
+        .then((ResponseStream<Country> countries) {
+      countries.listen((value) {
+        print(value.name);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+      });
+    });
+  }
+
+  void listAllLanguages() async {
+    await CurrentUserRepository()
+        .listAllLanguages()
+        .then((ResponseStream<Language> languages) {
+      languages.listen((value) {
+        print(value.name);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+      });
     });
   }
 
@@ -80,10 +109,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       ),
                       SizedBox(height: 30.h),
                       _phoneNumberContainer(),
-                      // Padding(
-                      //   padding: EdgeInsets.only(
-                      //       bottom: MediaQuery.of(context).viewInsets.bottom),
-                      // ),
                     ],
                   ),
                 ),
@@ -226,7 +251,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
             ),
             onPressed: () {
               // getCurrentUser();
-              Navigator.of(context).pushNamed(Routes.otpVerification);
+              // listAllCountries();
+              // listAllLanguages();
+
+              // Navigator.of(context).pushNamed(Routes.otpVerification);
             },
             style: ElevatedButton.styleFrom(
               primary: AppColors.selectedButtonBG,
