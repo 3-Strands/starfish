@@ -1,9 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
+import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/modules/dashboard/dashboard.dart';
+import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
@@ -25,6 +28,54 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _nameController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
+  List<Country> _countriesList = [];
+  String _country = 'Select Country';
+  List<String> _selectedLanguages = [];
+  List<Language> _languagesList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listAllCountries();
+    listAllLanguages();
+  }
+
+  void listAllCountries() async {
+    await CurrentUserRepository()
+        .listAllCountries()
+        .then((ResponseStream<Country> countries) {
+      countries.listen((value) {
+        // print(value.name);
+        // Country countryObject = value;
+        setState(() {
+          _countriesList.add(value);
+        });
+        // print(countriesList[0].name);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+      });
+    });
+  }
+
+  void listAllLanguages() async {
+    await CurrentUserRepository()
+        .listAllLanguages()
+        .then((ResponseStream<Language> languages) {
+      languages.listen((value) {
+        print(value.name);
+        setState(() {
+          _languagesList.add(value);
+        });
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +123,40 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                CountryDropDown(
-                  onCountrySelect: (selectedCountry) {},
+                Container(
+                  height: 70.h,
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Center(
+                    child: SmartSelect<String>.single(
+                      title: 'Country',
+                      placeholder: 'Select Country',
+                      value: _country,
+                      //selectedValue: _car,
+                      onChange: (selected) =>
+                          setState(() => _country = selected.title),
+                      choiceItems: S2Choice.listFrom<String, Country>(
+                        source: _countriesList,
+                        value: (index, item) => item.id,
+                        title: (index, item) => item.name,
+                        //  group: (index, item) => item['brand'],
+                      ),
+                      choiceGrouped: false,
+                      modalFilter: true,
+                      modalFilterAuto: true,
+                      modalType: S2ModalType.bottomSheet,
+                      tileBuilder: (context, state) {
+                        return S2Tile.fromState(
+                          state,
+                          isTwoLine: true,
+                        );
+                      },
+                    ),
+                  ),
                 ),
+
                 SizedBox(height: 10.h),
                 Align(
                   alignment: FractionalOffset.topLeft,
@@ -91,8 +173,42 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                LanguageDropDown(
-                  onLanguageSelect: (langage) {},
+                Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Container(
+                    height: 70.h,
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Center(
+                      child: SmartSelect<String>.multiple(
+                        title: 'Languages',
+                        placeholder: 'Select Languages',
+                        value: _selectedLanguages,
+                        onChange: (selected) {
+                          setState(() => _selectedLanguages = selected.value);
+                        },
+                        choiceItems: S2Choice.listFrom<String, Language>(
+                            source: _languagesList,
+                            value: (index, item) => item.id,
+                            title: (index, item) => item.name,
+                            group: (index, item) {
+                              return 'Selected';
+                            }),
+                        choiceGrouped: true,
+                        modalType: S2ModalType.bottomSheet,
+                        modalFilter: true,
+                        modalFilterAuto: true,
+                        tileBuilder: (context, state) {
+                          return S2Tile.fromState(
+                            state,
+                            isTwoLine: true,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 10.h),
                 Align(

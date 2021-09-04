@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
+import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/services/grpc_client.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/widgets/select_country_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
-import 'otp_verification.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -30,6 +29,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
 
+// simple usage
+  List<Country> _countriesList = [];
+
+  String _country = 'Select Country';
+
   void getCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
       print("get current user");
@@ -43,7 +47,13 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         .listAllCountries()
         .then((ResponseStream<Country> countries) {
       countries.listen((value) {
-        print(value.name);
+        // print(value.name);
+        // Country countryObject = value;
+
+        setState(() {
+          _countriesList.add(value);
+        });
+        print(_countriesList[0].name);
       }, onError: ((err) {
         print(err);
       }), onDone: () {
@@ -64,6 +74,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         print('done');
       });
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+    listAllCountries();
   }
 
   @override
@@ -93,20 +111,43 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       // SizedBox(height: 3.7.h),
                       // _selectCountyContainer(),
                       SizedBox(height: 30.h),
-                      CountryDropDown(
-                        onCountrySelect: (selectedCountry) {
-                          if (selectedCountry.isCheck == true) {
-                            setState(() {
-                              _countryCodeController.text =
-                                  selectedCountry.code;
-                            });
-                          } else {
-                            setState(() {
-                              _countryCodeController.text = '+1';
-                            });
-                          }
-                        },
+
+                      // available configuration for single choice
+                      Container(
+                        height: 70.h,
+                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        decoration: BoxDecoration(
+                            color: AppColors.txtFieldBackground,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
+                        child: Center(
+                          child: SmartSelect<String>.single(
+                            title: 'Country',
+                            placeholder: 'Select Country',
+                            value: _country,
+                            //selectedValue: _car,
+                            onChange: (selected) =>
+                                setState(() => _country = selected.title),
+                            choiceItems: S2Choice.listFrom<String, Country>(
+                              source: _countriesList,
+                              value: (index, item) => item.id,
+                              title: (index, item) => item.name,
+                              //  group: (index, item) => item['brand'],
+                            ),
+                            choiceGrouped: false,
+                            modalType: S2ModalType.bottomSheet,
+                            modalFilter: true,
+                            modalFilterAuto: true,
+                            tileBuilder: (context, state) {
+                              return S2Tile.fromState(
+                                state,
+                                isTwoLine: true,
+                              );
+                            },
+                          ),
+                        ),
                       ),
+
                       SizedBox(height: 30.h),
                       _phoneNumberContainer(),
                     ],
@@ -254,7 +295,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               // listAllCountries();
               // listAllLanguages();
 
-              // Navigator.of(context).pushNamed(Routes.otpVerification);
+              Navigator.of(context).pushNamed(Routes.otpVerification);
             },
             style: ElevatedButton.styleFrom(
               primary: AppColors.selectedButtonBG,
