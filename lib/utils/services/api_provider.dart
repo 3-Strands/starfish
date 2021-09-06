@@ -27,19 +27,12 @@ class ApiProvider {
     var request = UpdateCurrentUserRequest.create();
     request.user = user;
 
-    // request.user.id = 'db5ddb85-e2c5-4239-897d-5080a0ce513e';
-    // request.user.name = 'caleb';
-    // request.user.phone = '4952564404';
-    // // request.user.countryIds = ['1231'];
-    // // request.user.languageIds = ['1231'];
-    // request.user.linkGroups = true;
-
-    // request.user.selectedActionsTab = 'ACTIONS_UNSPECIFIED' as ActionTab;
-    // request.user.selectedResultsTab = 'RESULTS_UNSPECIFIED' as ResultsTab;
+    ActionTab actionTab = ActionTab.ACTIONS_UNSPECIFIED;
+    ResultsTab resultsTab = ResultsTab.RESULTS_UNSPECIFIED;
 
     FieldMask mask = FieldMask(paths: ['name']);
-
     request.updateMask = mask;
+
     return client!.updateCurrentUser(request);
   }
 
