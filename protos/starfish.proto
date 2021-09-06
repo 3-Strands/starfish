@@ -38,6 +38,9 @@ service Starfish {
     // List all material topics
     rpc ListMaterialTopics (ListMaterialTopicsRequest) returns (stream MaterialTopic) {}
 
+    // Create feedbacks for materials
+    rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
+
 }
 
 // Action and Results tab each have the same two sub-tabs "Mine" and "My Groups"
@@ -244,6 +247,9 @@ message MaterialFeedback {
     // The response from the administrator.
     string response = 5;
 
+    // The ID of the Material resource to which this feedback relates.
+    string material_id = 6;
+
 }
 
 message UpdateCurrentUserRequest {
@@ -322,6 +328,33 @@ message CreateUpdateMaterialsResponse {
     Material material = 1;
 
     // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateMaterialFeedbacksRequest {
+
+    // Specify the material ID, the type and the report. Other fields cannot be specified
+    // The reporter will be the user authenticated with the request.
+    // The reported must have view permission for the material
+    MaterialFeedback feedback = 1;
+
+}
+
+message CreateMaterialFeedbacksResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The MaterialFeedback after the create request.
+    MaterialFeedback feedback = 1;
+
+    // The status of the create request.
     Status status = 2;
 
     // Error message or any relevant message in response to the request.
