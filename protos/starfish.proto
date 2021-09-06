@@ -21,19 +21,19 @@ service Starfish {
     rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
 
     // List all countries
-    rpc ListAllCountries (google.protobuf.Empty) returns (stream Country) {}
+    rpc ListAllCountries (ListAllCountriesRequest) returns (stream Country) {}
 
     // List languages in the current user's countries
-    rpc ListLanguages (google.protobuf.Empty) returns (stream Language) {}
+    rpc ListLanguages (ListLanguagesRequest) returns (stream Language) {}
 
     // List materials that the current user is permitted to see
-    rpc ListMaterials (google.protobuf.Empty) returns (stream Material) {}
+    rpc ListMaterials (ListMaterialsRequest) returns (stream Material) {}
 
     // List all material types
-    rpc ListMaterialTypes (google.protobuf.Empty) returns (stream MaterialType) {}
+    rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
 
     // List all material topics
-    rpc ListMaterialTopics (google.protobuf.Empty) returns (stream MaterialTopic) {}
+    rpc ListMaterialTopics (ListMaterialTopicsRequest) returns (stream MaterialTopic) {}
 
 }
 
@@ -210,6 +210,10 @@ message Material {
 
     repeated MaterialFeedback feedbacks = 14;
 
+    google.type.Date date_created = 15;
+
+    google.type.Date date_updated = 16;
+
 }
 
 message MaterialFeedback {
@@ -242,5 +246,40 @@ message UpdateCurrentUserRequest {
     // The update mask applies to the resource. For the `FieldMask` definition,
     // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
     google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message ListAllCountriesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListLanguagesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialTypesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialTopicsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
 
 }
