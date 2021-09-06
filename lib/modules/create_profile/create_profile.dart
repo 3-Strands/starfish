@@ -5,13 +5,12 @@ import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
-import 'package:starfish/widgets/select_country_dropdown_widget.dart';
-import 'package:starfish/widgets/select_languages_dropdown_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -33,16 +32,27 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   List<String> _selectedLanguages = [];
   List<Language> _languagesList = [];
 
+  bool _isLoading = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    getCurrentUser();
     listAllCountries();
     listAllLanguages();
   }
 
+  void getCurrentUser() async {
+    await CurrentUserRepository().getUser().then((User user) {
+      print("get current user");
+      setState(() {
+        _nameController.text = user.name;
+      });
+    });
+  }
+
   void listAllCountries() async {
-    await CurrentUserRepository()
+    await AppDataRepository()
         .listAllCountries()
         .then((ResponseStream<Country> countries) {
       countries.listen((value) {
@@ -61,7 +71,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 
   void listAllLanguages() async {
-    await CurrentUserRepository()
+    setState(() {
+      _isLoading = true;
+    });
+
+    await AppDataRepository()
         .listAllLanguages()
         .then((ResponseStream<Language> languages) {
       languages.listen((value) {
@@ -71,8 +85,14 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         });
       }, onError: ((err) {
         print(err);
+        setState(() {
+          _isLoading = false;
+        });
       }), onDone: () {
         print('done');
+        setState(() {
+          _isLoading = false;
+        });
       });
     });
   }
@@ -85,11 +105,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Container(
-          // height: 90.h,
-          color: AppColors.background,
-          child: SingleChildScrollView(
-            reverse: true,
+        child: Stack(children: [
+          SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -213,12 +230,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 SizedBox(height: 10.h),
                 Align(
                   alignment: FractionalOffset.topLeft,
-                  child: ItalicitleLabel(title: Strings.selectCountryDetail),
+                  child: ItalicitleLabel(title: Strings.selectLanugagesDetail),
                 ),
               ],
             ),
           ),
-        ),
+          if (_isLoading == true)
+            Center(
+              child: CircularProgressIndicator(),
+            )
+        ]),
       ),
       bottomNavigationBar: _footer(),
     );

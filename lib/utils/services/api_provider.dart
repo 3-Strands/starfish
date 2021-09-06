@@ -4,13 +4,20 @@ import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'grpc_client.dart';
-import 'dart:convert';
 
 class ApiProvider {
   StarfishClient? client;
 
   ApiProvider() {
     client = GrpcClient().client!;
+  }
+
+  Future<ResponseStream<Country>> listAllCountries() async {
+    return client!.listAllCountries(Empty());
+  }
+
+  Future<ResponseStream<Language>> listAllLanguages() async {
+    return client!.listLanguages(Empty());
   }
 
   Future<User> getCurrentUser() async {
@@ -34,13 +41,5 @@ class ApiProvider {
     request.updateMask = mask;
 
     return client!.updateCurrentUser(request);
-  }
-
-  Future<ResponseStream<Country>> listAllCountries() async {
-    return client!.listAllCountries(Empty());
-  }
-
-  Future<ResponseStream<Language>> listAllLanguages() async {
-    return client!.listLanguages(Empty());
   }
 }

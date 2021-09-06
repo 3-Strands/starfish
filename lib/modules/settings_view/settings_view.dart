@@ -4,8 +4,9 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:starfish/widgets/italic_title_label_widget.dart';
 import 'package:starfish/widgets/select_country_dropdown_widget.dart';
 import 'package:starfish/widgets/select_languages_dropdown_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
@@ -34,18 +35,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isNameEditable = false;
   bool isMobileEditable = false;
 
-  String userName = 'Eric Shubhashis';
-  String countyCode = '+91';
-  String mobileNumber = '879-123-4567';
+  String _userName = '';
+  String _countyCode = '';
+  String _mobileNumber = '';
   List<String> groups = List<String>.generate(4, (i) => "Group: $i");
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _nameController.text = userName;
-      _phoneNumberController.text = mobileNumber;
-      _countryCodeController.text = countyCode;
+    getCurrentUser();
+  }
+
+  void getCurrentUser() async {
+    await CurrentUserRepository().getUser().then((User user) {
+      print("get current user");
+      setState(() {
+        _userName = user.name;
+        _nameController.text = user.name;
+        _mobileNumber = user.phone;
+        _phoneNumberController.text = user.phone;
+      });
+    });
+  }
+
+  void updateCurrentUser() async {
+    await CurrentUserRepository().updateUser().then((User user) {
+      print("updated current user");
+      // print(user);
+      // print(user.name);
     });
   }
 
@@ -78,65 +95,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Container(
-          child: SingleChildScrollView(
-            reverse: true,
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 52.h),
-                _getNameSection(),
-                SizedBox(height: 20.h),
-                _getPhoneNumberSection(),
-                SizedBox(height: 20.h),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 52.h),
+              _getNameSection(),
+              SizedBox(height: 20.h),
+              _getPhoneNumberSection(),
+              SizedBox(height: 20.h),
 
-                //--> Select country section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.myCountry,
-                    align: TextAlign.left,
-                  ),
+              //--> Select country section
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: TitleLabel(
+                  title: Strings.myCountry,
+                  align: TextAlign.left,
                 ),
-                SizedBox(height: 10.h),
-                CountryDropDown(
-                  onCountrySelect: (selectedCountry) {},
-                ),
-                //--------------------------
+              ),
+              SizedBox(height: 10.h),
+              CountryDropDown(
+                onCountrySelect: (selectedCountry) {},
+              ),
+              //--------------------------
 
-                SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
 
-                //--> Select language section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.myLanugages,
-                    align: TextAlign.left,
-                  ),
+              //--> Select language section
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: TitleLabel(
+                  title: Strings.myLanugages,
+                  align: TextAlign.left,
                 ),
-                SizedBox(height: 10.h),
-                LanguageDropDown(
-                  onLanguageSelect: (langage) {},
-                ),
-                //--------------------------
+              ),
+              SizedBox(height: 10.h),
+              LanguageDropDown(
+                onLanguageSelect: (langage) {},
+              ),
+              //--------------------------
 
-                SizedBox(height: 39.h),
+              SizedBox(height: 39.h),
 
-                //--> Last successfull sync section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.lastSuccessfullSync,
-                    align: TextAlign.left,
-                  ),
+              //--> Last successfull sync section
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: TitleLabel(
+                  title: Strings.lastSuccessfullSync,
+                  align: TextAlign.left,
                 ),
-                SizedBox(height: 5.h),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-                ),
-                SizedBox(height: 20.h),
+              ),
+              SizedBox(height: 5.h),
+              SepratorLine(
+                hight: 1.h,
+                edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
+              ),
+              SizedBox(height: 20.h),
 
-                RichText(
+              Container(
+                margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                child: RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
@@ -147,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontSize: 24.0),
                       ),
                       TextSpan(
-                        text: "13 Aug",
+                        text: "13-AUG",
                         style: TextStyle(
                             color: AppColors.appTitle,
                             fontWeight: FontWeight.normal,
@@ -156,90 +173,82 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                   ),
                 ),
+              ),
 
-                // Container(
-                //   height: 24.h,
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.start,
-                //     children: [
-                //       TitleLabel(
-                //         title: Strings.lastSuccessfullSync + ':',
-                //         align: TextAlign.left,
-                //       ),
-                //       TitleLabel(
-                //         title: '13 Aug',
-                //         align: TextAlign.left,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                //--------------------------
+              //--------------------------
 
-                SizedBox(height: 50.h),
+              SizedBox(height: 50.h),
 
-                //--> For group admin section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.forGroupAdmin,
-                    align: TextAlign.left,
-                  ),
+              //--> For group admin section
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: TitleLabel(
+                  title: Strings.forGroupAdmin,
+                  align: TextAlign.left,
                 ),
-                SizedBox(height: 5.h),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-                ),
-                SizedBox(height: 20.h),
-                Container(
-                  height: 44.h,
-                  width: 345.w,
-                  // color: Colors.red,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 320.w,
-                        height: 44.h,
-                        child: TitleLabel(
-                          title: Strings.linkMyGroups,
-                          align: TextAlign.left,
+              ),
+              SizedBox(height: 5.h),
+              SepratorLine(
+                hight: 1.h,
+                edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
+              ),
+              SizedBox(height: 20.h),
+              Container(
+                height: 44.h,
+                width: 345.w,
+                // color: Colors.red,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 320.w,
+                      height: 44.h,
+                      child: TitleLabel(
+                        title: Strings.linkMyGroups,
+                        align: TextAlign.left,
+                      ),
+                    ),
+                    Container(
+                      width: 23.w,
+                      child: Center(
+                        child: IconButton(
+                          icon: const Icon(Icons.check_box),
+                          color: AppColors.selectedButtonBG,
+                          onPressed: () {},
                         ),
                       ),
-                      Container(
-                        width: 23.w,
-                        child: Center(
-                          child: IconButton(
-                            icon: const Icon(Icons.check_box),
-                            color: AppColors.selectedButtonBG,
-                            onPressed: () {},
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-                //--------------------------
+              ),
+              //--------------------------
 
-                SizedBox(height: 50.h),
+              SizedBox(height: 50.h),
 
-                //--> For my groups section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.myGroups,
-                    align: TextAlign.left,
-                  ),
+              //--> For my groups section
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: TitleLabel(
+                  title: Strings.myGroups,
+                  align: TextAlign.left,
                 ),
-                SizedBox(height: 5.h),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-                ),
-                //--------------------------
+              ),
+              SizedBox(height: 5.h),
+              SepratorLine(
+                hight: 1.h,
+                edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
+              ),
+              //--------------------------
 
-                SizedBox(height: 20.h),
-              ],
-            ),
+              SizedBox(height: 20.h),
+
+              // Column(
+              //   children: <Widget>[
+              //     ...groups.map((item) {
+              //       return Text(item);
+              //     }).toList(),
+              //   ],
+              // ),
+            ],
           ),
         ),
       ),
@@ -283,7 +292,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        userName,
+                        _userName,
                         textAlign: TextAlign.end,
                         style: nameTextStyle,
                       ),
@@ -362,7 +371,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        countyCode + ' ' + mobileNumber,
+                        _countyCode + ' ' + _mobileNumber,
                         textAlign: TextAlign.end,
                         style: nameTextStyle,
                       ),

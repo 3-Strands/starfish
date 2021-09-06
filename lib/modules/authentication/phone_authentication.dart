@@ -3,8 +3,9 @@ import 'package:grpc/grpc.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -29,29 +30,19 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
 
+  bool _isLoading = false;
+
 // simple usage
   List<Country> _countriesList = [];
 
   String _country = 'Select Country';
 
-  void getCurrentUser() async {
-    await CurrentUserRepository().getUser().then((User user) {
-      print("get current user");
-      // print(user);
-      print(user.name);
-    });
-  }
-
-  void updateCurrentUser() async {
-    await CurrentUserRepository().updateUser().then((User user) {
-      print("updated current user");
-      // print(user);
-      // print(user.name);
-    });
-  }
-
   void listAllCountries() async {
-    await CurrentUserRepository()
+    setState(() {
+      _isLoading = true;
+    });
+
+    await AppDataRepository()
         .listAllCountries()
         .then((ResponseStream<Country> countries) {
       countries.listen((value) {
@@ -64,14 +55,20 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         // print(_countriesList[0].name);
       }, onError: ((err) {
         print(err);
+        setState(() {
+          _isLoading = false;
+        });
       }), onDone: () {
         print('done');
+        setState(() {
+          _isLoading = false;
+        });
       });
     });
   }
 
   void listAllLanguages() async {
-    await CurrentUserRepository()
+    await AppDataRepository()
         .listAllLanguages()
         .then((ResponseStream<Language> languages) {
       languages.listen((value) {
@@ -86,10 +83,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    updateCurrentUser();
-    getCurrentUser();
     listAllCountries();
   }
 
@@ -100,71 +94,74 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Container(
-          child: Stack(
-            children: [
-              Container(
-                child: SingleChildScrollView(
-                  reverse: true,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: 118.h),
-                      AppLogo(hight: 156.h, width: 163.w),
-                      SizedBox(height: 50.h),
-                      TitleLabel(
-                        title: Strings.phoneAuthenticationTitle,
-                        align: TextAlign.center,
-                      ),
-                      // SizedBox(height: 3.7.h),
-                      // _selectCountyContainer(),
-                      SizedBox(height: 30.h),
+        child: Stack(
+          children: [
+            Container(
+              child: SingleChildScrollView(
+                reverse: true,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 118.h),
+                    AppLogo(hight: 156.h, width: 163.w),
+                    SizedBox(height: 50.h),
+                    TitleLabel(
+                      title: Strings.phoneAuthenticationTitle,
+                      align: TextAlign.center,
+                    ),
+                    // SizedBox(height: 3.7.h),
+                    // _selectCountyContainer(),
+                    SizedBox(height: 30.h),
 
-                      // available configuration for single choice
-                      Container(
-                        height: 70.h,
-                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                        decoration: BoxDecoration(
-                            color: AppColors.txtFieldBackground,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Center(
-                          child: SmartSelect<String>.single(
-                            title: Strings.country,
-                            placeholder: Strings.selectCountry,
-                            value: _country,
-                            //selectedValue: _car,
-                            onChange: (selected) =>
-                                setState(() => _country = selected.title),
-                            choiceItems: S2Choice.listFrom<String, Country>(
-                              source: _countriesList,
-                              value: (index, item) => item.id,
-                              title: (index, item) => item.name,
-                              //  group: (index, item) => item['brand'],
-                            ),
-                            choiceGrouped: false,
-                            modalType: S2ModalType.bottomSheet,
-                            modalFilter: true,
-                            modalFilterAuto: true,
-                            tileBuilder: (context, state) {
-                              return S2Tile.fromState(
-                                state,
-                                isTwoLine: true,
-                              );
-                            },
+                    // available configuration for single choice
+                    Container(
+                      height: 70.h,
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Center(
+                        child: SmartSelect<String>.single(
+                          title: Strings.country,
+                          placeholder: Strings.selectCountry,
+                          value: _country,
+                          //selectedValue: _car,
+                          onChange: (selected) =>
+                              setState(() => _country = selected.title),
+                          choiceItems: S2Choice.listFrom<String, Country>(
+                            source: _countriesList,
+                            value: (index, item) => item.id,
+                            title: (index, item) => item.name,
+                            //  group: (index, item) => item['brand'],
                           ),
+                          choiceGrouped: false,
+                          modalType: S2ModalType.bottomSheet,
+                          modalFilter: true,
+                          modalFilterAuto: true,
+                          tileBuilder: (context, state) {
+                            return S2Tile.fromState(
+                              state,
+                              isTwoLine: true,
+                            );
+                          },
+                          // choiceStyle:
+                          //     S2ChoiceStyle(titleStyle: nameTextStyle),
                         ),
                       ),
+                    ),
 
-                      SizedBox(height: 30.h),
-                      _phoneNumberContainer(),
-                    ],
-                  ),
+                    SizedBox(height: 30.h),
+                    _phoneNumberContainer(),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            if (_isLoading == true)
+              Center(
+                child: CircularProgressIndicator(),
+              )
+          ],
         ),
       ),
       bottomNavigationBar: _footer(),
