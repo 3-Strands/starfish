@@ -29,6 +29,9 @@ service Starfish {
     // List materials that the current user is permitted to see
     rpc ListMaterials (ListMaterialsRequest) returns (stream Material) {}
 
+    // Update or create materials as a stream
+    rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
+
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
 
@@ -180,6 +183,8 @@ message Material {
 
     string id = 1;
 
+    // Output only. For material update and create request this field is ignored.
+    // Created materials will be assigned to the user validated in the create request.
     string creator_id = 2;
 
     Status status = 3;
@@ -196,7 +201,7 @@ message Material {
 
     string url = 9;
 
-    // A list of filenames of files uploaded to this material
+    // A list of filenames of files uploaded to this material.
     repeated string files = 10;
 
     repeated string language_ids = 11;
@@ -208,10 +213,13 @@ message Material {
     // If the string does not already exist as a topic it will be created.
     repeated string topics = 13;
 
+    // This is output only. For material update and create request this field is ignored.
     repeated MaterialFeedback feedbacks = 14;
 
+    // Output only
     google.type.Date date_created = 15;
 
+    // Output only
     google.type.Date date_updated = 16;
 
 }
@@ -281,5 +289,42 @@ message ListMaterialTopicsRequest {
 
     // Only return results updated at this date or later
     google.type.Date updated_since = 1;
+
+}
+
+message CreateUpdateMaterialsRequest {
+
+    // The Material resource that will be created or replace the existing one on the server.
+    // The ID of the material resource is optional for a create request.
+    // If the ID is present and a Material exist with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    Material material = 1;
+
+    // The field mask specifying which fields of the Material resource should be updated
+    // If not specified then all fields are updated
+    // If specified ans some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateMaterialsResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Material after update or create request.
+    Material material = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
 
 }
