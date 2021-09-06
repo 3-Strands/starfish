@@ -131,8 +131,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Center(
                     child: SmartSelect<String>.single(
-                      title: 'Country',
-                      placeholder: 'Select Country',
+                      title: Strings.country,
+                      placeholder: Strings.selectCountry,
                       value: _country,
                       //selectedValue: _car,
                       onChange: (selected) =>
@@ -183,8 +183,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     child: Center(
                       child: SmartSelect<String>.multiple(
-                        title: 'Languages',
-                        placeholder: 'Select Languages',
+                        title: Strings.lanugages,
+                        placeholder: Strings.selectLanugages,
                         value: _selectedLanguages,
                         onChange: (selected) {
                           setState(() => _selectedLanguages = selected.value);

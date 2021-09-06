@@ -122,8 +122,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                                 BorderRadius.all(Radius.circular(10))),
                         child: Center(
                           child: SmartSelect<String>.single(
-                            title: 'Country',
-                            placeholder: 'Select Country',
+                            title: Strings.country,
+                            placeholder: Strings.selectCountry,
                             value: _country,
                             //selectedValue: _car,
                             onChange: (selected) =>

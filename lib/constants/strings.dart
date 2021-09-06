@@ -15,11 +15,13 @@ class Strings {
   static const String enterOneTimePassword = 'Enter One Time Password';
 
   static const String myCountry = 'My Country';
+  static const String country = 'Country';
   static const String selectCountry = 'Select Country';
   static const String selectCountryDetail =
       'The list of languages shown below is based on the country you select.';
 
   static const String myLanugages = 'My Language(s)';
+  static const String lanugages = 'Language(s)';
   static const String selectLanugages = 'Select Language(s)';
   static const String selectLanugagesDetail =
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.';
