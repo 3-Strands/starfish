@@ -32,7 +32,7 @@ var resentOTPTextStyle = TextStyle(
   color: AppColors.selectedButtonBG,
 );
 
-var textButtonTextStyle = TextStyle(
+var buttonTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.normal,
   fontSize: 16.sp,

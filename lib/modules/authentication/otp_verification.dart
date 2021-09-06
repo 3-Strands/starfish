@@ -26,30 +26,23 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
-          child: Container(
-            child: Container(
-              // height: 100.h,
-              // width: 100.h,
-              color: AppColors.background,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 118.h),
-                    AppLogo(hight: 156.h, width: 163.w),
-                    SizedBox(height: 50.h),
-                    TitleLabel(
-                      title: Strings.enterOneTimePassword,
-                      align: TextAlign.center,
-                    ),
-                    SizedBox(height: 30.h),
-                    _pinCodeContiner(),
-                    SizedBox(height: 50.h),
-                    _resendOTPContainer(),
-                  ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 118.h),
+                AppLogo(hight: 156.h, width: 163.w),
+                SizedBox(height: 50.h),
+                TitleLabel(
+                  title: Strings.enterOneTimePassword,
+                  align: TextAlign.center,
                 ),
-              ),
+                SizedBox(height: 30.h),
+                _pinCodeContiner(),
+                SizedBox(height: 50.h),
+                _resendOTPContainer(),
+              ],
             ),
           ),
         ),
@@ -157,7 +150,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 child: Text(
                   Strings.back,
                   textAlign: TextAlign.start,
-                  style: textButtonTextStyle,
+                  style: buttonTextStyle,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -186,7 +179,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 child: Text(
                   Strings.next,
                   textAlign: TextAlign.start,
-                  style: textButtonTextStyle,
+                  style: buttonTextStyle,
                 ),
                 onPressed: () {
                   Navigator.of(context).pushNamed(Routes.showProfile);

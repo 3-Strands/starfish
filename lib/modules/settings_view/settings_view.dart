@@ -507,7 +507,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Text(
               Strings.back,
               textAlign: TextAlign.start,
-              style: textButtonTextStyle,
+              style: buttonTextStyle,
             ),
             onPressed: () {
               Navigator.of(context).pop();

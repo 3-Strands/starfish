@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -11,7 +12,6 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -96,65 +96,62 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         },
         child: Stack(
           children: [
-            Container(
-              child: SingleChildScrollView(
-                reverse: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 118.h),
-                    AppLogo(hight: 156.h, width: 163.w),
-                    SizedBox(height: 50.h),
-                    TitleLabel(
-                      title: Strings.phoneAuthenticationTitle,
-                      align: TextAlign.center,
-                    ),
-                    // SizedBox(height: 3.7.h),
-                    // _selectCountyContainer(),
-                    SizedBox(height: 30.h),
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 118.h),
+                  AppLogo(hight: 156.h, width: 163.w),
+                  SizedBox(height: 50.h),
+                  TitleLabel(
+                    title: Strings.phoneAuthenticationTitle,
+                    align: TextAlign.center,
+                  ),
+                  // SizedBox(height: 3.7.h),
+                  // _selectCountyContainer(),
+                  SizedBox(height: 30.h),
 
-                    // available configuration for single choice
-                    Container(
-                      height: 70.h,
-                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      decoration: BoxDecoration(
-                          color: AppColors.txtFieldBackground,
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Center(
-                        child: SmartSelect<String>.single(
-                          title: Strings.country,
-                          placeholder: Strings.selectCountry,
-                          value: _country,
-                          //selectedValue: _car,
-                          onChange: (selected) =>
-                              setState(() => _country = selected.title),
-                          choiceItems: S2Choice.listFrom<String, Country>(
-                            source: _countriesList,
-                            value: (index, item) => item.id,
-                            title: (index, item) => item.name,
-                            //  group: (index, item) => item['brand'],
-                          ),
-                          choiceGrouped: false,
-                          modalType: S2ModalType.bottomSheet,
-                          modalFilter: true,
-                          modalFilterAuto: true,
-                          tileBuilder: (context, state) {
-                            return S2Tile.fromState(
-                              state,
-                              isTwoLine: true,
-                            );
-                          },
-                          // choiceStyle:
-                          //     S2ChoiceStyle(titleStyle: nameTextStyle),
-                        ),
+                  // available configuration for single choice
+                  Container(
+                    height: 70.h,
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
                       ),
                     ),
+                    child: Center(
+                      child: SmartSelect<String>.single(
+                        title: Strings.country,
+                        placeholder: Strings.selectCountry,
+                        value: _country,
+                        onChange: (selected) =>
+                            setState(() => _country = selected.title),
+                        choiceItems: S2Choice.listFrom<String, Country>(
+                          source: _countriesList,
+                          value: (index, item) => item.id,
+                          title: (index, item) => item.name,
+                          //  group: (index, item) => item['brand'],
+                        ),
+                        choiceGrouped: false,
+                        modalType: S2ModalType.bottomSheet,
+                        modalFilter: true,
+                        modalFilterAuto: true,
+                        tileBuilder: (context, state) {
+                          return S2Tile.fromState(
+                            state,
+                            isTwoLine: true,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
 
-                    SizedBox(height: 30.h),
-                    _phoneNumberContainer(),
-                  ],
-                ),
+                  SizedBox(height: 30.h),
+                  _phoneNumberContainer(),
+                ],
               ),
             ),
             if (_isLoading == true)
@@ -294,7 +291,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
             child: Text(
               Strings.next,
               textAlign: TextAlign.start,
-              style: textButtonTextStyle,
+              style: buttonTextStyle,
             ),
             onPressed: () {
               // getCurrentUser();

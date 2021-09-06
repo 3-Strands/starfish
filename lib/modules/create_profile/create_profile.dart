@@ -196,8 +196,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     height: 70.h,
                     margin: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
-                        color: AppColors.txtFieldBackground,
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
                     child: Center(
                       child: SmartSelect<String>.multiple(
                         title: Strings.lanugages,
@@ -324,7 +327,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             child: Text(
               Strings.finish,
               textAlign: TextAlign.start,
-              style: textButtonTextStyle,
+              style: buttonTextStyle,
             ),
             onPressed: () {
               Navigator.of(context).pushNamedAndRemoveUntil(
