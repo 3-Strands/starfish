@@ -4,6 +4,7 @@ import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'grpc_client.dart';
+import 'dart:convert';
 
 class ApiProvider {
   StarfishClient? client;
@@ -17,12 +18,28 @@ class ApiProvider {
   }
 
   Future<User> updateCurrentUser() async {
-    var request = UpdateCurrentUserRequest.create();
-    request.user.id = 'db5ddb85-e2c5-4239-897d-5080a0ce513e';
-    request.user.name = 'caleb';
-    request.user.phone = '4952564404';
+    User user = User(
+        id: 'db5ddb85-e2c5-4239-897d-5080a0ce513e',
+        name: 'caleb 1',
+        phone: '4952564404',
+        linkGroups: true);
 
-    request.updateMask = 'name' as FieldMask;
+    var request = UpdateCurrentUserRequest.create();
+    request.user = user;
+
+    // request.user.id = 'db5ddb85-e2c5-4239-897d-5080a0ce513e';
+    // request.user.name = 'caleb';
+    // request.user.phone = '4952564404';
+    // // request.user.countryIds = ['1231'];
+    // // request.user.languageIds = ['1231'];
+    // request.user.linkGroups = true;
+
+    // request.user.selectedActionsTab = 'ACTIONS_UNSPECIFIED' as ActionTab;
+    // request.user.selectedResultsTab = 'RESULTS_UNSPECIFIED' as ResultsTab;
+
+    FieldMask mask = FieldMask(paths: ['name']);
+
+    request.updateMask = mask;
     return client!.updateCurrentUser(request);
   }
 

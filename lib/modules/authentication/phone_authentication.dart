@@ -42,6 +42,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     });
   }
 
+  void updateCurrentUser() async {
+    await CurrentUserRepository().updateUser().then((User user) {
+      print("updated current user");
+      // print(user);
+      // print(user.name);
+    });
+  }
+
   void listAllCountries() async {
     await CurrentUserRepository()
         .listAllCountries()
@@ -53,7 +61,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         setState(() {
           _countriesList.add(value);
         });
-        print(_countriesList[0].name);
+        // print(_countriesList[0].name);
       }, onError: ((err) {
         print(err);
       }), onDone: () {
@@ -67,7 +75,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         .listAllLanguages()
         .then((ResponseStream<Language> languages) {
       languages.listen((value) {
-        print(value.name);
+        // print(value.name);
       }, onError: ((err) {
         print(err);
       }), onDone: () {
@@ -80,6 +88,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    updateCurrentUser();
     getCurrentUser();
     listAllCountries();
   }
