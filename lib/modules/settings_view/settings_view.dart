@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
@@ -38,7 +39,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _userName = '';
   String _countyCode = '';
   String _mobileNumber = '';
-  List<String> groups = List<String>.generate(4, (i) => "Group: $i");
+  // List<String> groups = List<String>.generate(4, (i) => "Group: $i");
+
+  // List<Country> _countriesList = [];
+  // List<String> _selectedCountries = [];
+
+  // List<String> _selectedLanguages = [];
+  // List<Language> _languagesList = [];
 
   @override
   void initState() {
@@ -95,161 +102,166 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 52.h),
-              _getNameSection(),
-              SizedBox(height: 20.h),
-              _getPhoneNumberSection(),
-              SizedBox(height: 20.h),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 52.h),
+                  _getNameSection(),
+                  SizedBox(height: 20.h),
+                  _getPhoneNumberSection(),
+                  SizedBox(height: 20.h),
 
-              //--> Select country section
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: TitleLabel(
-                  title: Strings.myCountry,
-                  align: TextAlign.left,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              CountryDropDown(
-                onCountrySelect: (selectedCountry) {},
-              ),
-              //--------------------------
-
-              SizedBox(height: 20.h),
-
-              //--> Select language section
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: TitleLabel(
-                  title: Strings.myLanugages,
-                  align: TextAlign.left,
-                ),
-              ),
-              SizedBox(height: 10.h),
-              LanguageDropDown(
-                onLanguageSelect: (langage) {},
-              ),
-              //--------------------------
-
-              SizedBox(height: 39.h),
-
-              //--> Last successfull sync section
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: TitleLabel(
-                  title: Strings.lastSuccessfullSync,
-                  align: TextAlign.left,
-                ),
-              ),
-              SizedBox(height: 5.h),
-              SepratorLine(
-                hight: 1.h,
-                edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-              ),
-              SizedBox(height: 20.h),
-
-              Container(
-                margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: Strings.lastSuccessfullSync + ': ',
-                        style: TextStyle(
-                            color: AppColors.appTitle,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24.0),
-                      ),
-                      TextSpan(
-                        text: "13-AUG",
-                        style: TextStyle(
-                            color: AppColors.appTitle,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 24.0),
-                      )
-                    ],
+                  //--> Select country section
+                  Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: TitleLabel(
+                      title: Strings.myCountry,
+                      align: TextAlign.left,
+                    ),
                   ),
-                ),
-              ),
+                  SizedBox(height: 10.h),
+                  CountryDropDown(
+                    onCountrySelect: (selectedCountry) {},
+                  ),
+                  //--------------------------
 
-              //--------------------------
+                  SizedBox(height: 20.h),
 
-              SizedBox(height: 50.h),
+                  //--> Select language section
+                  Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: TitleLabel(
+                      title: Strings.myLanugages,
+                      align: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  LanguageDropDown(
+                    onLanguageSelect: (langage) {},
+                  ),
 
-              //--> For group admin section
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: TitleLabel(
-                  title: Strings.forGroupAdmin,
-                  align: TextAlign.left,
-                ),
-              ),
-              SizedBox(height: 5.h),
-              SepratorLine(
-                hight: 1.h,
-                edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-              ),
-              SizedBox(height: 20.h),
-              Container(
-                height: 44.h,
-                width: 345.w,
-                // color: Colors.red,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 320.w,
-                      height: 44.h,
-                      child: TitleLabel(
-                        title: Strings.linkMyGroups,
-                        align: TextAlign.left,
+                  //--------------------------
+
+                  SizedBox(height: 39.h),
+
+                  //--> Last successfull sync section
+                  Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: TitleLabel(
+                      title: Strings.lastSuccessfullSync,
+                      align: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  SepratorLine(
+                    hight: 1.h,
+                    edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  Container(
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '', //Strings.lastSuccessfullSync + ': ',
+                            style: TextStyle(
+                                color: AppColors.appTitle,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24.0),
+                          ),
+                          TextSpan(
+                            text: '', //"13-AUG",
+                            style: TextStyle(
+                                color: AppColors.appTitle,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 24.0),
+                          )
+                        ],
                       ),
                     ),
-                    Container(
-                      width: 23.w,
-                      child: Center(
-                        child: IconButton(
-                          icon: const Icon(Icons.check_box),
-                          color: AppColors.selectedButtonBG,
-                          onPressed: () {},
+                  ),
+
+                  //--------------------------
+
+                  SizedBox(height: 50.h),
+
+                  //--> For group admin section
+                  Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: TitleLabel(
+                      title: Strings.forGroupAdmin,
+                      align: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  SepratorLine(
+                    hight: 1.h,
+                    edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    height: 44.h,
+                    width: 345.w,
+                    // color: Colors.red,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 320.w,
+                          height: 44.h,
+                          child: TitleLabel(
+                            title: Strings.linkMyGroups,
+                            align: TextAlign.left,
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
+                        Container(
+                          width: 23.w,
+                          child: Center(
+                            child: IconButton(
+                              icon: const Icon(Icons.check_box),
+                              color: AppColors.selectedButtonBG,
+                              onPressed: () {},
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  //--------------------------
+
+                  SizedBox(height: 50.h),
+
+                  //--> For my groups section
+                  Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: TitleLabel(
+                      title: Strings.myGroups,
+                      align: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  SepratorLine(
+                    hight: 1.h,
+                    edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
+                  ),
+                  //--------------------------
+
+                  SizedBox(height: 20.h),
+
+                  // Column(
+                  //   children: <Widget>[
+                  //     ...groups.map((item) {
+                  //       return Text(item);
+                  //     }).toList(),
+                  //   ],
+                  // ),
+                ],
               ),
-              //--------------------------
-
-              SizedBox(height: 50.h),
-
-              //--> For my groups section
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: TitleLabel(
-                  title: Strings.myGroups,
-                  align: TextAlign.left,
-                ),
-              ),
-              SizedBox(height: 5.h),
-              SepratorLine(
-                hight: 1.h,
-                edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-              ),
-              //--------------------------
-
-              SizedBox(height: 20.h),
-
-              // Column(
-              //   children: <Widget>[
-              //     ...groups.map((item) {
-              //       return Text(item);
-              //     }).toList(),
-              //   ],
-              // ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _footer(),

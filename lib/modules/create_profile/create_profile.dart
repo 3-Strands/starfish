@@ -28,7 +28,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   final FocusNode _nameFocus = FocusNode();
   List<Country> _countriesList = [];
-  String _country = 'Select Country';
+  // String _country = 'Select Country';
+  List<String> _selectedCountries = [];
+
   List<String> _selectedLanguages = [];
   List<Language> _languagesList = [];
 
@@ -144,16 +146,18 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   height: 70.h,
                   margin: EdgeInsets.only(left: 15.w, right: 15.w),
                   decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                    color: AppColors.txtFieldBackground,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
                   child: Center(
-                    child: SmartSelect<String>.single(
+                    child: SmartSelect<String>.multiple(
                       title: Strings.country,
                       placeholder: Strings.selectCountry,
-                      value: _country,
-                      //selectedValue: _car,
+                      value: _selectedCountries,
                       onChange: (selected) =>
-                          setState(() => _country = selected.title),
+                          setState(() => _selectedCountries = selected.value),
                       choiceItems: S2Choice.listFrom<String, Country>(
                         source: _countriesList,
                         value: (index, item) => item.id,
