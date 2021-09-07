@@ -38,12 +38,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
-    listAllCountries();
-    listAllLanguages();
+    _getCurrentUser();
+    _listAllCountries();
+    _listAllLanguages();
   }
 
-  void getCurrentUser() async {
+  void _getCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
       print("get current user");
       setState(() {
@@ -52,7 +52,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     });
   }
 
-  void listAllCountries() async {
+  void _listAllCountries() async {
     await AppDataRepository()
         .listAllCountries()
         .then((ResponseStream<Country> countries) {
@@ -71,7 +71,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     });
   }
 
-  void listAllLanguages() async {
+  void _listAllLanguages() async {
     setState(() {
       _isLoading = true;
     });

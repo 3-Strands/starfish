@@ -48,11 +48,11 @@ class _DashboardState extends State<_DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: const Color(0xff000000)),
+      // decoration: BoxDecoration(color: const Color(0xff000000)),
       child: Stack(
         children: <Widget>[
           Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: AppColors.background,
             appBar: AppBar(
               title: Container(
                 height: 64.h,

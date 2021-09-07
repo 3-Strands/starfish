@@ -29,7 +29,7 @@ class _EditButtonState extends State<EditButton> {
         widget.onButtonClicked(isEditable);
       },
       child: Container(
-        width: 53.w,
+        width: 48.w,
         height: 44.h,
         color: Colors.white,
         child: Row(
@@ -39,12 +39,12 @@ class _EditButtonState extends State<EditButton> {
             Icon(
               Icons.edit,
               color: Colors.blue,
-              size: 18.0,
+              size: 18.sp,
             ),
             Text(
               Strings.edit,
               style: TextStyle(
-                fontSize: 20.0,
+                fontSize: 14.sp,
                 color: Colors.blue,
               ),
             )
@@ -73,7 +73,7 @@ class _EditButtonState extends State<EditButton> {
           child: Text(
             Strings.save,
             style: TextStyle(
-              fontSize: 18.0,
+              fontSize: 14.sp,
               color: Colors.white,
             ),
           ),

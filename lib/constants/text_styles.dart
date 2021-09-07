@@ -21,7 +21,7 @@ var italicDetailTextTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontStyle: FontStyle.italic,
   fontWeight: FontWeight.normal,
-  fontSize: 10.sp,
+  fontSize: 14.sp,
   color: AppColors.appTitle,
 );
 
@@ -42,7 +42,7 @@ var buttonTextStyle = TextStyle(
 var dashboardNavigationTitle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.bold,
-  fontSize: 16.sp,
+  fontSize: 18.sp,
   color: AppColors.selectedButtonBG,
 );
 

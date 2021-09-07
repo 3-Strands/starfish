@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grpc/grpc.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -41,16 +43,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _mobileNumber = '';
   // List<String> groups = List<String>.generate(4, (i) => "Group: $i");
 
-  // List<Country> _countriesList = [];
-  // List<String> _selectedCountries = [];
+  List<Country> _countriesList = [];
+  List<String> _selectedCountries = [];
 
-  // List<String> _selectedLanguages = [];
-  // List<Language> _languagesList = [];
+  List<String> _selectedLanguages = [];
+  List<Language> _languagesList = [];
 
   @override
   void initState() {
     super.initState();
     _getCurrentUser();
+    _listAllCountries();
+    _listAllLanguages();
   }
 
   void _getCurrentUser() async {
@@ -73,15 +77,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  void _listAllCountries() async {
+    await AppDataRepository()
+        .listAllCountries()
+        .then((ResponseStream<Country> countries) {
+      countries.listen((value) {
+        // print(value.name);
+        // Country countryObject = value;
+        setState(() {
+          _countriesList.add(value);
+        });
+        // print(countriesList[0].name);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+      });
+    });
+  }
+
+  void _listAllLanguages() async {
+    await AppDataRepository()
+        .listAllLanguages()
+        .then((ResponseStream<Language> languages) {
+      languages.listen((value) {
+        print(value.name);
+        setState(() {
+          _languagesList.add(value);
+        });
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.background,
         automaticallyImplyLeading: false,
         title: Container(
           height: 64.h,
-          color: Colors.transparent,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -122,8 +162,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  CountryDropDown(
-                    onCountrySelect: (selectedCountry) {},
+
+                  Container(
+                    height: 80.h,
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: Center(
+                      child: SmartSelect<String>.multiple(
+                        title: Strings.country,
+                        placeholder: Strings.selectCountry,
+                        value: _selectedCountries,
+                        onChange: (selected) =>
+                            setState(() => _selectedCountries = selected.value),
+                        choiceItems: S2Choice.listFrom<String, Country>(
+                          source: _countriesList,
+                          value: (index, item) => item.id,
+                          title: (index, item) => item.name,
+                          //  group: (index, item) => item['brand'],
+                        ),
+                        choiceGrouped: false,
+                        modalFilter: true,
+                        modalFilterAuto: true,
+                        modalType: S2ModalType.bottomSheet,
+                        tileBuilder: (context, state) {
+                          return S2Tile.fromState(
+                            state,
+                            isTwoLine: true,
+                          );
+                        },
+                      ),
+                    ),
                   ),
                   //--------------------------
 
@@ -138,10 +211,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  LanguageDropDown(
-                    onLanguageSelect: (langage) {},
-                  ),
 
+                  Container(
+                    height: 80.h,
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: Center(
+                      child: SmartSelect<String>.multiple(
+                        title: Strings.lanugages,
+                        placeholder: Strings.selectLanugages,
+                        value: _selectedLanguages,
+                        onChange: (selected) {
+                          setState(() => _selectedLanguages = selected.value);
+                        },
+                        choiceItems: S2Choice.listFrom<String, Language>(
+                            source: _languagesList,
+                            value: (index, item) => item.id,
+                            title: (index, item) => item.name,
+                            group: (index, item) {
+                              return 'Selected';
+                            }),
+                        choiceGrouped: true,
+                        modalType: S2ModalType.bottomSheet,
+                        modalFilter: true,
+                        modalFilterAuto: true,
+                        tileBuilder: (context, state) {
+                          return S2Tile.fromState(
+                            state,
+                            isTwoLine: true,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   //--------------------------
 
                   SizedBox(height: 39.h),
@@ -206,15 +313,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Container(
                     height: 44.h,
                     width: 345.w,
-                    // color: Colors.red,
                     child: Row(
                       children: [
                         Container(
-                          width: 320.w,
+                          width: 300.w,
                           height: 44.h,
-                          child: TitleLabel(
-                            title: Strings.linkMyGroups,
-                            align: TextAlign.left,
+                          child: Text(
+                            Strings.linkMyGroups,
+                            textAlign: TextAlign.left,
+                            style: titleTextStyle,
                           ),
                         ),
                         Container(
@@ -427,7 +534,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: Strings.countryCodeHint,
+        hintText: '', //Strings.countryCodeHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
