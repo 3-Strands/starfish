@@ -329,6 +329,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         style: textFormFieldText,
         decoration: InputDecoration(
           hintText: Strings.nameHint,
+          contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
@@ -427,6 +428,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: Strings.countryCodeHint,
+        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(
@@ -456,6 +458,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: Strings.phoneNumberHint,
+        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

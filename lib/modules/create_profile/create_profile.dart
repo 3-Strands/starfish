@@ -142,7 +142,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 ),
                 SizedBox(height: 10.h),
                 Container(
-                  height: 70.h,
+                  height: 80.h,
                   margin: EdgeInsets.only(left: 15.w, right: 15.w),
                   decoration: BoxDecoration(
                     color: AppColors.txtFieldBackground,
@@ -196,7 +196,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: Container(
-                    height: 70.h,
+                    height: 80.h,
                     margin: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
                       color: AppColors.txtFieldBackground,
@@ -265,6 +265,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         style: textFormFieldText,
         decoration: InputDecoration(
           hintText: Strings.nameHint,
+          contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

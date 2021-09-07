@@ -114,7 +114,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
                   // available configuration for single choice
                   Container(
-                    height: 70.h,
+                    height: 80.h,
                     margin: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
                       color: AppColors.txtFieldBackground,
@@ -198,6 +198,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: Strings.countryCodeHint,
+        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(
@@ -227,6 +228,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: Strings.phoneNumberHint,
+        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
