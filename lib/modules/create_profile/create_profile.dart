@@ -28,7 +28,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   final FocusNode _nameFocus = FocusNode();
   List<Country> _countriesList = [];
-  // String _country = 'Select Country';
   List<String> _selectedCountries = [];
 
   List<String> _selectedLanguages = [];

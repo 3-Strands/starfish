@@ -50,10 +50,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
+    _getCurrentUser();
   }
 
-  void getCurrentUser() async {
+  void _getCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
       print("get current user");
       setState(() {
