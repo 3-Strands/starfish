@@ -21,10 +21,25 @@ service Starfish {
     rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
 
     // List all countries
-    rpc ListAllCountries (google.protobuf.Empty) returns (stream Country) {}
+    rpc ListAllCountries (ListAllCountriesRequest) returns (stream Country) {}
 
     // List languages in the current user's countries
-    rpc ListLanguages (google.protobuf.Empty) returns (stream Language) {}
+    rpc ListLanguages (ListLanguagesRequest) returns (stream Language) {}
+
+    // List materials that the current user is permitted to see
+    rpc ListMaterials (ListMaterialsRequest) returns (stream Material) {}
+
+    // Update or create materials as a stream
+    rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
+
+    // List all material types
+    rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
+
+    // List all material topics
+    rpc ListMaterialTopics (ListMaterialTopicsRequest) returns (stream MaterialTopic) {}
+
+    // Create feedbacks for materials
+    rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
 
 }
 
@@ -118,6 +133,8 @@ message Country {
 
     string name = 2;
 
+    string dialling_code = 3;
+
 }
 
 message Language {
@@ -128,6 +145,112 @@ message Language {
 
 }
 
+// Pre-defined material types
+message MaterialType {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
+// user-created tags for Materials
+message MaterialTopic {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
+message Material {
+
+    enum Status {
+        UNSPECIFIED_STATUS = 0;
+        ACTIVE = 1;
+        INACTIVE = 2;
+    }
+
+    enum Visibility {
+        UNSPECIFIED_VISIBILITY = 0;
+        CREATOR_VIEW = 1;
+        GROUP_VIEW = 2;
+        ALL_VIEW = 3;
+    }
+
+    enum Editability {
+        UNSPECIFIED_EDITABILITY = 0;
+        CREATOR_EDIT = 1;
+        GROUP_EDIT = 2;
+    }
+
+    string id = 1;
+
+    // Output only. For material update and create request this field is ignored.
+    // Created materials will be assigned to the user validated in the create request.
+    string creator_id = 2;
+
+    Status status = 3;
+
+    Visibility visibility = 4;
+
+    Editability editability = 5;
+
+    string title = 6;
+
+    string description = 7;
+
+    string target_audience = 8;
+
+    string url = 9;
+
+    // A list of filenames of files uploaded to this material.
+    repeated string files = 10;
+
+    repeated string language_ids = 11;
+
+    // The IDs of MaterialTypes connected to this material
+    repeated string type_ids = 12;
+
+    // Do not specify IDs here, but instead use the topic string
+    // If the string does not already exist as a topic it will be created.
+    repeated string topics = 13;
+
+    // This is output only. For material update and create request this field is ignored.
+    repeated MaterialFeedback feedbacks = 14;
+
+    // Output only
+    google.type.Date date_created = 15;
+
+    // Output only
+    google.type.Date date_updated = 16;
+
+}
+
+message MaterialFeedback {
+
+    enum Type {
+        UNSPECIFIED_TYPE = 0;
+        INAPPROPRIATE = 1;
+    }
+
+    string id = 1;
+
+    Type type = 2;
+
+    // The ID of the user who created this feedback.
+    string reporter_id = 3;
+
+    // The report from the user.
+    string report = 4;
+
+    // The response from the administrator.
+    string response = 5;
+
+    // The ID of the Material resource to which this feedback relates.
+    string material_id = 6;
+
+}
 
 message UpdateCurrentUserRequest {
 
@@ -137,5 +260,104 @@ message UpdateCurrentUserRequest {
     // The update mask applies to the resource. For the `FieldMask` definition,
     // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
     google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message ListAllCountriesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListLanguagesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialTypesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialTopicsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message CreateUpdateMaterialsRequest {
+
+    // The Material resource that will be created or replace the existing one on the server.
+    // The ID of the material resource is optional for a create request.
+    // If the ID is present and a Material exist with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    Material material = 1;
+
+    // The field mask specifying which fields of the Material resource should be updated
+    // If not specified then all fields are updated
+    // If specified ans some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateMaterialsResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Material after update or create request.
+    Material material = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateMaterialFeedbacksRequest {
+
+    // Specify the material ID, the type and the report. Other fields cannot be specified
+    // The reporter will be the user authenticated with the request.
+    // The reported must have view permission for the material
+    MaterialFeedback feedback = 1;
+
+}
+
+message CreateMaterialFeedbacksResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The MaterialFeedback after the create request.
+    MaterialFeedback feedback = 1;
+
+    // The status of the create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
 
 }

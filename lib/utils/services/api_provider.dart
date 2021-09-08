@@ -2,6 +2,7 @@
 import 'package:grpc/grpc.dart';
 import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'grpc_client.dart';
 
@@ -13,11 +14,15 @@ class ApiProvider {
   }
 
   Future<ResponseStream<Country>> listAllCountries() async {
-    return client!.listAllCountries(Empty());
+    var request = ListAllCountriesRequest();
+    return client!.listAllCountries(request);
+    // return client!.listAllCountries(Empty());
   }
 
   Future<ResponseStream<Language>> listAllLanguages() async {
-    return client!.listLanguages(Empty());
+    var request = ListLanguagesRequest();
+    return client!.listLanguages(request);
+    // return client!.listLanguages(Empty());
   }
 
   Future<User> getCurrentUser() async {
@@ -41,5 +46,12 @@ class ApiProvider {
     request.updateMask = mask;
 
     return client!.updateCurrentUser(request);
+  }
+
+  Future<ResponseStream<Material>> getMateials() async {
+    var request = ListMaterialsRequest.create();
+    Date date = Date(year: 2020, month: 1, day: 1);
+    request.updatedSince = date;
+    return client!.listMaterials(request);
   }
 }

@@ -79,3 +79,101 @@ class ActionUser_Status extends $pb.ProtobufEnum {
   const ActionUser_Status._($core.int v, $core.String n) : super(v, n);
 }
 
+class Material_Status extends $pb.ProtobufEnum {
+  static const Material_Status UNSPECIFIED_STATUS = Material_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNSPECIFIED_STATUS');
+  static const Material_Status ACTIVE = Material_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ACTIVE');
+  static const Material_Status INACTIVE = Material_Status._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'INACTIVE');
+
+  static const $core.List<Material_Status> values = <Material_Status> [
+    UNSPECIFIED_STATUS,
+    ACTIVE,
+    INACTIVE,
+  ];
+
+  static final $core.Map<$core.int, Material_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static Material_Status? valueOf($core.int value) => _byValue[value];
+
+  const Material_Status._($core.int v, $core.String n) : super(v, n);
+}
+
+class Material_Visibility extends $pb.ProtobufEnum {
+  static const Material_Visibility UNSPECIFIED_VISIBILITY = Material_Visibility._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNSPECIFIED_VISIBILITY');
+  static const Material_Visibility CREATOR_VIEW = Material_Visibility._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'CREATOR_VIEW');
+  static const Material_Visibility GROUP_VIEW = Material_Visibility._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GROUP_VIEW');
+  static const Material_Visibility ALL_VIEW = Material_Visibility._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ALL_VIEW');
+
+  static const $core.List<Material_Visibility> values = <Material_Visibility> [
+    UNSPECIFIED_VISIBILITY,
+    CREATOR_VIEW,
+    GROUP_VIEW,
+    ALL_VIEW,
+  ];
+
+  static final $core.Map<$core.int, Material_Visibility> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static Material_Visibility? valueOf($core.int value) => _byValue[value];
+
+  const Material_Visibility._($core.int v, $core.String n) : super(v, n);
+}
+
+class Material_Editability extends $pb.ProtobufEnum {
+  static const Material_Editability UNSPECIFIED_EDITABILITY = Material_Editability._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNSPECIFIED_EDITABILITY');
+  static const Material_Editability CREATOR_EDIT = Material_Editability._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'CREATOR_EDIT');
+  static const Material_Editability GROUP_EDIT = Material_Editability._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GROUP_EDIT');
+
+  static const $core.List<Material_Editability> values = <Material_Editability> [
+    UNSPECIFIED_EDITABILITY,
+    CREATOR_EDIT,
+    GROUP_EDIT,
+  ];
+
+  static final $core.Map<$core.int, Material_Editability> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static Material_Editability? valueOf($core.int value) => _byValue[value];
+
+  const Material_Editability._($core.int v, $core.String n) : super(v, n);
+}
+
+class MaterialFeedback_Type extends $pb.ProtobufEnum {
+  static const MaterialFeedback_Type UNSPECIFIED_TYPE = MaterialFeedback_Type._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNSPECIFIED_TYPE');
+  static const MaterialFeedback_Type INAPPROPRIATE = MaterialFeedback_Type._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'INAPPROPRIATE');
+
+  static const $core.List<MaterialFeedback_Type> values = <MaterialFeedback_Type> [
+    UNSPECIFIED_TYPE,
+    INAPPROPRIATE,
+  ];
+
+  static final $core.Map<$core.int, MaterialFeedback_Type> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static MaterialFeedback_Type? valueOf($core.int value) => _byValue[value];
+
+  const MaterialFeedback_Type._($core.int v, $core.String n) : super(v, n);
+}
+
+class CreateUpdateMaterialsResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUpdateMaterialsResponse_Status SUCCESS = CreateUpdateMaterialsResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUpdateMaterialsResponse_Status FAILURE = CreateUpdateMaterialsResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateUpdateMaterialsResponse_Status> values = <CreateUpdateMaterialsResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateUpdateMaterialsResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUpdateMaterialsResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateUpdateMaterialsResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
+class CreateMaterialFeedbacksResponse_Status extends $pb.ProtobufEnum {
+  static const CreateMaterialFeedbacksResponse_Status SUCCESS = CreateMaterialFeedbacksResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateMaterialFeedbacksResponse_Status FAILURE = CreateMaterialFeedbacksResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateMaterialFeedbacksResponse_Status> values = <CreateMaterialFeedbacksResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateMaterialFeedbacksResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateMaterialFeedbacksResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateMaterialFeedbacksResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
