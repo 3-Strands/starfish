@@ -20,4 +20,9 @@ class AppColors {
   static Color materialTabBarTextColor = HexColor('#3475F0');
   static Color groupTabBarTextColor = HexColor('#D78A00');
   static Color actionTabBarTextColor = HexColor('#800080');
+
+  static Color completeTaskBGColor = HexColor('#6DE26B');
+  static Color assignedTaskBGColor = HexColor('#CBE8FA');
+  static Color overdueTaskBGColor = HexColor('#FF5E4D');
+  static Color notCompletedTaskBGColor = HexColor('#FFBE4A');
 }

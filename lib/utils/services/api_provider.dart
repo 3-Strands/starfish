@@ -16,13 +16,11 @@ class ApiProvider {
   Future<ResponseStream<Country>> listAllCountries() async {
     var request = ListAllCountriesRequest();
     return client!.listAllCountries(request);
-    // return client!.listAllCountries(Empty());
   }
 
   Future<ResponseStream<Language>> listAllLanguages() async {
     var request = ListLanguagesRequest();
     return client!.listLanguages(request);
-    // return client!.listLanguages(Empty());
   }
 
   Future<User> getCurrentUser() async {

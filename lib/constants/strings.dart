@@ -10,6 +10,7 @@ class Strings {
   static const String finish = 'Finish';
   static const String edit = 'Edit';
   static const String save = 'Save';
+  static const String open = 'Open';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';

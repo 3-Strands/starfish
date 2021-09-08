@@ -44,15 +44,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
     await AppDataRepository()
         .listAllCountries()
-        .then((ResponseStream<Country> countries) {
-      countries.listen((value) {
-        // print(value.name);
-        // Country countryObject = value;
-
+        .then((ResponseStream<Country> country) {
+      country.listen((value) {
         setState(() {
           _countriesList.add(value);
         });
-        // print(_countriesList[0].name);
       }, onError: ((err) {
         print(err);
         setState(() {
