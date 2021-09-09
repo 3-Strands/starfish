@@ -55,8 +55,11 @@ message FileMetaData {
     // that already has a file of the same name, then the first file will be overwritten.
     string filename = 2;
 
-    // This is the size of the file in bytes
+    // This is the size of the file in bytes.
     int64 size = 3;
+
+    // The MD5 checksum for the file.
+    string md5_checksum = 4;
 
 }
 
