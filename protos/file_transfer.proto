@@ -1,0 +1,100 @@
+// This structure allows multiple files to be uploaded on a single stream
+// or multiple files downloaded on a single stream request
+
+syntax = "proto3";
+
+package sil.starfish;
+
+option java_multiple_files = true;
+option java_outer_classname = "StarfishProto";
+option java_package = "org.sil.starfish";
+
+
+// The first message in the FileData stream should be meta data about the first file
+// This should then be followed by the file content in chunks
+// Then more files can be sent in the same way on the same stream.
+// Each meta data message marks the beginning of a new file.
+
+service FileTransfer {
+
+    // Multiple files can be uploaded in a single stream.
+    // For each file uploaded there will be an upload status.
+    rpc Upload(stream FileData) returns (stream UploadStatus) {}
+
+    // A stream of download request can be given.
+    // For each request one or more files may be added to the return stream.
+    // Any download request that doesn't point to a real file or files will be ignored.
+    rpc Download(stream DownloadRequest) returns (stream FileData) {}
+
+}
+
+// To transfer the contents of a file it should be broken into chunks.
+// The chunk messages can then be streamed across the network.
+message FileData {
+
+    // Each FileData element in the stream is either a meta-data element or a chunk of the file content
+    oneof data {
+
+        // Used to mark the beginning of a file in the stream
+        // and give information about the file
+        FileMetaData meta_data = 1;
+
+        // Chunks can be any size, but 1KB is recommended.
+        bytes chunk = 2;
+
+    };
+}
+
+message FileMetaData {
+
+    // The ID of the entity this file is to be attached to.
+    // If a file is being uploaded for a Material resource, then the material ID should go here.
+    string entity_id = 1;
+
+    // The name of the file including extension. If a file is uploaded to an entity
+    // that already has a file of the same name, then the first file will be overwritten.
+    string filename = 2;
+
+    // This is the size of the file in bytes
+    int64 size = 3;
+
+}
+
+message UploadStatus {
+
+    enum Status {
+        UNKNOWN = 0;
+        OK = 1;
+        FAILED = 2;
+    }
+
+    // The meta data of the uploaded file that this status concerns
+    FileMetaData file_meta_data = 1;
+
+    // The final status of the file upload.
+    Status status = 2;
+
+    // Error message, or other message concerning the file upload.
+    string message = 3;
+
+}
+
+
+message DownloadRequest {
+
+    enum EntityType {
+        ENTITY_UNSPECIFIED = 0;
+        MATERIAL = 1;
+    }
+
+    // The type of entity from which to download a file
+    EntityType entity_type = 1;
+
+    // The ID of the entity from which to download a file
+    string entity_id = 2;
+
+    // The names of the files of this entity to download (including extension).
+    // if this is left empty then all files of the entity will be added to the stream
+    repeated string filenames = 3;
+
+}
