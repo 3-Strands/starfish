@@ -132,7 +132,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                           //  group: (index, item) => item['brand'],
                         ),
                         choiceGrouped: false,
-                        modalType: S2ModalType.bottomSheet,
+                        modalType: S2ModalType.fullPage,
                         modalFilter: true,
                         modalFilterAuto: true,
                         tileBuilder: (context, state) {

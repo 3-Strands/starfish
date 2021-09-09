@@ -166,7 +166,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       choiceGrouped: false,
                       modalFilter: true,
                       modalFilterAuto: true,
-                      modalType: S2ModalType.bottomSheet,
+                      modalType: S2ModalType.fullPage,
                       tileBuilder: (context, state) {
                         return S2Tile.fromState(
                           state,
@@ -220,7 +220,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                               return 'Selected';
                             }),
                         choiceGrouped: true,
-                        modalType: S2ModalType.bottomSheet,
+                        modalType: S2ModalType.fullPage,
                         modalFilter: true,
                         modalFilterAuto: true,
                         tileBuilder: (context, state) {
