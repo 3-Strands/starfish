@@ -5,7 +5,7 @@ import 'package:starfish/utils/services/api_provider.dart';
 class AppDataRepository {
   final apiProvider = ApiProvider();
 
-  Future<ResponseStream<Country>> listAllCountries() =>
+  Future<ResponseStream<Country>> getAllCountries() =>
       apiProvider.listAllCountries();
 
   Future<ResponseStream<Language>> listAllLanguages() =>

@@ -1,6 +1,4 @@
 import 'package:grpc/grpc_or_grpcweb.dart';
-// ignore: import_of_legacy_library_into_null_safe
-// import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 class GrpcClient {
@@ -21,7 +19,4 @@ class GrpcClient {
       ),
     );
   }
-  // Future<User> doRemoteCall() async {
-  //   return client!.getCurrentUser(Empty());
-  // }
 }

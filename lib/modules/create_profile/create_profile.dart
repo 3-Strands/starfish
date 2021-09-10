@@ -54,7 +54,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   void _listAllCountries() async {
     await AppDataRepository()
-        .listAllCountries()
+        .getAllCountries()
         .then((ResponseStream<Country> countries) {
       countries.listen((value) {
         // print(value.name);

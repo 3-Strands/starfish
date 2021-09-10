@@ -10,8 +10,6 @@ import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:starfish/widgets/select_country_dropdown_widget.dart';
-import 'package:starfish/widgets/select_languages_dropdown_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
@@ -79,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _listAllCountries() async {
     await AppDataRepository()
-        .listAllCountries()
+        .getAllCountries()
         .then((ResponseStream<Country> countries) {
       countries.listen((value) {
         // print(value.name);

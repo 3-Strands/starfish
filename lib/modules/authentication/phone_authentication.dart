@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
+import 'package:hive/hive.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/main_dev.dart';
+import 'package:starfish/models/country_model.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/services/sync_service.dart';
+// import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
@@ -32,55 +38,70 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   bool _isLoading = false;
 
+  late Box<CountryModel> countryBox;
+  late List<CountryModel> _countryList;
+
 // simple usage
-  List<Country> _countriesList = [];
+  // List<Country> _countriesList = [];
 
-  String _country = 'Select Country';
-
-  void listAllCountries() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    await AppDataRepository()
-        .listAllCountries()
-        .then((ResponseStream<Country> country) {
-      country.listen((value) {
-        setState(() {
-          _countriesList.add(value);
-        });
-      }, onError: ((err) {
-        print(err);
-        setState(() {
-          _isLoading = false;
-        });
-      }), onDone: () {
-        print('done');
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    });
-  }
-
-  void listAllLanguages() async {
-    await AppDataRepository()
-        .listAllLanguages()
-        .then((ResponseStream<Language> languages) {
-      languages.listen((value) {
-        // print(value.name);
-      }, onError: ((err) {
-        print(err);
-      }), onDone: () {
-        print('done');
-      });
-    });
-  }
+  CountryModel _selectedCountry =
+      CountryModel(id: '', name: 'Select Country', diallingCode: '');
 
   @override
   void initState() {
     super.initState();
-    listAllCountries();
+    countryBox = Hive.box<CountryModel>(HiveDatabase.COUNTRY_BOX);
+
+    SyncService obj = SyncService();
+    obj.syncCountries();
+    _getAllCountries();
+
+    // listAllCountries();
+  }
+
+  // void listAllCountries() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   await AppDataRepository()
+  //       .getAllCountries()
+  //       .then((ResponseStream<Country> country) {
+  //     country.listen((value) {
+  //       var filterData = countryBox.values
+  //           .where((countryModel) => countryModel.id == value.id)
+  //           .toList();
+  //       if (filterData.length == 0) {
+  //         CountryModel con = CountryModel(
+  //             id: value.id, name: value.name, diallingCode: value.diallingCode);
+  //         countryBox.add(con);
+  //       }
+  //       setState(() {
+  //         _countriesList.add(value);
+  //       });
+  //     }, onError: ((err) {
+  //       print(err);
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //     }), onDone: () {
+  //       print('done');
+
+  //       setState(() {
+  //         _countryList = countryBox.values.toList();
+  //         _isLoading = false;
+  //       });
+
+  //       for (var count in _countryList) {
+  //         print(count.id);
+  //         print(count.name);
+  //         print(count.diallingCode);
+  //       }
+  //     });
+  //   });
+  // }
+
+  void _getAllCountries() {
+    _countryList = countryBox.values.toList();
   }
 
   @override
@@ -104,8 +125,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                     title: Strings.phoneAuthenticationTitle,
                     align: TextAlign.center,
                   ),
-                  // SizedBox(height: 3.7.h),
-                  // _selectCountyContainer(),
                   SizedBox(height: 30.h),
 
                   // available configuration for single choice
@@ -119,15 +138,19 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       ),
                     ),
                     child: Center(
-                      child: SmartSelect<String>.single(
+                      child: SmartSelect<CountryModel>.single(
                         title: Strings.country,
                         placeholder: Strings.selectCountry,
-                        value: _country,
-                        onChange: (selected) =>
-                            setState(() => _country = selected.title),
-                        choiceItems: S2Choice.listFrom<String, Country>(
-                          source: _countriesList,
-                          value: (index, item) => item.id,
+                        value: _selectedCountry,
+                        onChange: (selected) => setState(() => {
+                              _selectedCountry = selected.value,
+                              _countryCodeController.text =
+                                  _selectedCountry.diallingCode,
+                            }),
+                        choiceItems:
+                            S2Choice.listFrom<CountryModel, CountryModel>(
+                          source: _countryList,
+                          value: (index, item) => item,
                           title: (index, item) => item.name,
                           //  group: (index, item) => item['brand'],
                         ),
@@ -294,7 +317,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
             onPressed: () {
               // getCurrentUser();
               // listAllCountries();
-              // listAllLanguages();
 
               Navigator.of(context).pushNamed(Routes.otpVerification);
             },
