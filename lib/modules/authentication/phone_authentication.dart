@@ -7,9 +7,10 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/db/hive_country.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/main_dev.dart';
-import 'package:starfish/models/country_model.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -38,22 +39,27 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   bool _isLoading = false;
 
-  late Box<CountryModel> countryBox;
-  late List<CountryModel> _countryList;
+  late Box<HiveCountry> countryBox;
+  late Box<HiveCurrentUser> currentUserBox;
+  late List<HiveCountry> _countryList;
+  late HiveCurrentUser _user;
 
 // simple usage
   // List<Country> _countriesList = [];
 
-  CountryModel _selectedCountry =
-      CountryModel(id: '', name: 'Select Country', diallingCode: '');
+  HiveCountry _selectedCountry =
+      HiveCountry(id: '', name: 'Select Country', diallingCode: '');
 
   @override
   void initState() {
     super.initState();
-    countryBox = Hive.box<CountryModel>(HiveDatabase.COUNTRY_BOX);
+    countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
+    currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     SyncService obj = SyncService();
+    obj.syncCurrentUser();
     obj.syncCountries();
+    _getCurrentUser();
     _getAllCountries();
 
     // listAllCountries();
@@ -100,6 +106,12 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   //   });
   // }
 
+  void _getCurrentUser() {
+    _user = currentUserBox.values.first;
+    // print("_user: ${_user.name}");
+    // print("_user: ${_user.groups[0].userId}");
+  }
+
   void _getAllCountries() {
     _countryList = countryBox.values.toList();
   }
@@ -138,7 +150,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       ),
                     ),
                     child: Center(
-                      child: SmartSelect<CountryModel>.single(
+                      child: SmartSelect<HiveCountry>.single(
                         title: Strings.country,
                         placeholder: Strings.selectCountry,
                         value: _selectedCountry,
@@ -148,7 +160,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                                   _selectedCountry.diallingCode,
                             }),
                         choiceItems:
-                            S2Choice.listFrom<CountryModel, CountryModel>(
+                            S2Choice.listFrom<HiveCountry, HiveCountry>(
                           source: _countryList,
                           value: (index, item) => item,
                           title: (index, item) => item.name,

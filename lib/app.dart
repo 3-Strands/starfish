@@ -16,16 +16,5 @@ class Starfish extends StatelessWidget {
           home: SplashScreen(),
           routes: Routes.routes),
     );
-    // Sizer(
-    //   builder: (context, orientation, deviceType) {
-    //     return
-    // MaterialApp(
-    //         debugShowCheckedModeBanner: false,
-    //         title: '',
-    //         theme: ThemeData.light(),
-    //         home: SplashScreen(),
-    //         routes: Routes.routes);
-    //   },
-    // );
   }
 }

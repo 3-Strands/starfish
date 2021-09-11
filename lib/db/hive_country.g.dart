@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'country_model.dart';
+part of 'hive_country.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CountryModelAdapter extends TypeAdapter<CountryModel> {
+class HiveCountryAdapter extends TypeAdapter<HiveCountry> {
   @override
   final int typeId = 0;
 
   @override
-  CountryModel read(BinaryReader reader) {
+  HiveCountry read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CountryModel(
+    return HiveCountry(
       id: fields[0] as String,
       name: fields[1] as String,
       diallingCode: fields[2] as String,
@@ -24,7 +24,7 @@ class CountryModelAdapter extends TypeAdapter<CountryModel> {
   }
 
   @override
-  void write(BinaryWriter writer, CountryModel obj) {
+  void write(BinaryWriter writer, HiveCountry obj) {
     writer
       ..writeByte(3)
       ..writeByte(0)
@@ -41,7 +41,7 @@ class CountryModelAdapter extends TypeAdapter<CountryModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CountryModelAdapter &&
+      other is HiveCountryAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

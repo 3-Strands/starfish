@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'country_model.g.dart';
+part 'hive_country.g.dart';
 
 @HiveType(typeId: 0)
-class CountryModel {
+class HiveCountry {
   @HiveField(0)
   final String id;
 
@@ -13,6 +13,6 @@ class CountryModel {
   @HiveField(2)
   final String diallingCode;
 
-  CountryModel(
+  HiveCountry(
       {required this.id, required this.name, required this.diallingCode});
 }
