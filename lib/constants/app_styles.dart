@@ -3,7 +3,7 @@ import 'app_colors.dart';
 
 class AppStyles {
   static ThemeData defaultTheme() {
-    final ThemeData base = ThemeData.light();
+    final ThemeData base = ThemeData.dark();
     return base.copyWith(
       backgroundColor: AppColors.background,
       primaryColor: AppColors.selectedButtonBG,

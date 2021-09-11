@@ -96,7 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _listAllLanguages() async {
     await AppDataRepository()
-        .listAllLanguages()
+        .getAllLanguages()
         .then((ResponseStream<Language> languages) {
       languages.listen((value) {
         print(value.name);

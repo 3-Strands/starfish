@@ -5,6 +5,7 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -13,12 +14,14 @@ class SyncService {
   static syncNow() {}
 
   late Box<HiveCountry> countryBox;
+  late Box<HiveLanguage> languageBox;
   late Box<HiveCurrentUser> currentUserBox;
   late Box<HiveGroup> groupBox;
   late Box<HiveAction> actionBox;
 
   SyncService() {
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
+    languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUPS_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
@@ -86,6 +89,34 @@ class SyncService {
           HiveCountry _country = HiveCountry(
               id: value.id, name: value.name, diallingCode: value.diallingCode);
           countryBox.add(_country);
+        } else {
+          //update record
+        }
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('done');
+        // for (var count in countryBox.values.toList()) {
+        //   print(count.id);
+        //   print(count.name);
+        //   print(count.diallingCode);
+        // }
+      });
+    });
+  }
+
+  syncLanguages() async {
+    await AppDataRepository()
+        .getAllLanguages()
+        .then((ResponseStream<Language> country) {
+      country.listen((value) {
+        // print(value);
+        var filterData = countryBox.values
+            .where((countryModel) => countryModel.id == value.id)
+            .toList();
+        if (filterData.length == 0) {
+          HiveLanguage _language = HiveLanguage(id: value.id, name: value.name);
+          languageBox.add(_language);
         } else {
           //update record
         }

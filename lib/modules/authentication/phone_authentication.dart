@@ -39,10 +39,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   bool _isLoading = false;
 
-  late Box<HiveCountry> countryBox;
-  late Box<HiveCurrentUser> currentUserBox;
+  late Box<HiveCountry> _countryBox;
   late List<HiveCountry> _countryList;
-  late HiveCurrentUser _user;
 
 // simple usage
   // List<Country> _countriesList = [];
@@ -53,67 +51,18 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   void initState() {
     super.initState();
-    countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-    currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
     SyncService obj = SyncService();
     obj.syncCurrentUser();
     obj.syncCountries();
-    _getCurrentUser();
+    obj.syncLanguages();
+
     _getAllCountries();
-
-    // listAllCountries();
-  }
-
-  // void listAllCountries() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   await AppDataRepository()
-  //       .getAllCountries()
-  //       .then((ResponseStream<Country> country) {
-  //     country.listen((value) {
-  //       var filterData = countryBox.values
-  //           .where((countryModel) => countryModel.id == value.id)
-  //           .toList();
-  //       if (filterData.length == 0) {
-  //         CountryModel con = CountryModel(
-  //             id: value.id, name: value.name, diallingCode: value.diallingCode);
-  //         countryBox.add(con);
-  //       }
-  //       setState(() {
-  //         _countriesList.add(value);
-  //       });
-  //     }, onError: ((err) {
-  //       print(err);
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //     }), onDone: () {
-  //       print('done');
-
-  //       setState(() {
-  //         _countryList = countryBox.values.toList();
-  //         _isLoading = false;
-  //       });
-
-  //       for (var count in _countryList) {
-  //         print(count.id);
-  //         print(count.name);
-  //         print(count.diallingCode);
-  //       }
-  //     });
-  //   });
-  // }
-
-  void _getCurrentUser() {
-    _user = currentUserBox.values.first;
-    // print("_user: ${_user.name}");
-    // print("_user: ${_user.groups[0].userId}");
   }
 
   void _getAllCountries() {
-    _countryList = countryBox.values.toList();
+    _countryList = _countryBox.values.toList();
   }
 
   @override

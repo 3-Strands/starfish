@@ -8,6 +8,6 @@ class AppDataRepository {
   Future<ResponseStream<Country>> getAllCountries() =>
       apiProvider.listAllCountries();
 
-  Future<ResponseStream<Language>> listAllLanguages() =>
+  Future<ResponseStream<Language>> getAllLanguages() =>
       apiProvider.listAllLanguages();
 }

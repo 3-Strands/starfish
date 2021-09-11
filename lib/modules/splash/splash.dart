@@ -5,6 +5,7 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

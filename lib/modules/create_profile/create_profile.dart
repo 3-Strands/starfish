@@ -1,10 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
+import 'package:hive/hive.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/db/hive_country.dart';
+import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -27,75 +32,50 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _nameController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
-  List<Country> _countriesList = [];
-  List<String> _selectedCountries = [];
+  // List<Country> _countriesList = [];
+  List<HiveCountry> _selectedCountries = [];
 
-  List<String> _selectedLanguages = [];
-  List<Language> _languagesList = [];
+  List<HiveLanguage> _selectedLanguages = [];
+  // List<Language> _languagesList = [];
 
   bool _isLoading = false;
+
+  late Box<HiveCountry> _countryBox;
+  late Box<HiveLanguage> _languageBox;
+  late Box<HiveCurrentUser> _currentUserBox;
+
+  late List<HiveCountry> _countryList;
+  late List<HiveLanguage> _languageList;
+  late HiveCurrentUser _user;
 
   @override
   void initState() {
     super.initState();
+    _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
+    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+
+    _getAllCountries();
+    _getAllLanguages();
     _getCurrentUser();
-    _listAllCountries();
-    _listAllLanguages();
   }
 
-  void _getCurrentUser() async {
-    await CurrentUserRepository().getUser().then((User user) {
-      print("get current user");
-      setState(() {
-        _nameController.text = user.name;
-      });
-    });
-  }
+  void _getCurrentUser() {
+    _user = _currentUserBox.values.first;
+    // print("_user: ${_user.name}");
+    // print("_user: ${_user.groups[0].userId}");
 
-  void _listAllCountries() async {
-    await AppDataRepository()
-        .getAllCountries()
-        .then((ResponseStream<Country> countries) {
-      countries.listen((value) {
-        // print(value.name);
-        // Country countryObject = value;
-        setState(() {
-          _countriesList.add(value);
-        });
-        // print(countriesList[0].name);
-      }, onError: ((err) {
-        print(err);
-      }), onDone: () {
-        print('done');
-      });
-    });
-  }
-
-  void _listAllLanguages() async {
     setState(() {
-      _isLoading = true;
+      _nameController.text = _user.name;
     });
+  }
 
-    await AppDataRepository()
-        .listAllLanguages()
-        .then((ResponseStream<Language> languages) {
-      languages.listen((value) {
-        print(value.name);
-        setState(() {
-          _languagesList.add(value);
-        });
-      }, onError: ((err) {
-        print(err);
-        setState(() {
-          _isLoading = false;
-        });
-      }), onDone: () {
-        print('done');
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    });
+  void _getAllCountries() {
+    _countryList = _countryBox.values.toList();
+  }
+
+  void _getAllLanguages() {
+    _languageList = _languageBox.values.toList();
   }
 
   @override
@@ -151,15 +131,15 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                   ),
                   child: Center(
-                    child: SmartSelect<String>.multiple(
+                    child: SmartSelect<HiveCountry>.multiple(
                       title: Strings.country,
                       placeholder: Strings.selectCountry,
                       value: _selectedCountries,
                       onChange: (selected) =>
                           setState(() => _selectedCountries = selected.value),
-                      choiceItems: S2Choice.listFrom<String, Country>(
-                        source: _countriesList,
-                        value: (index, item) => item.id,
+                      choiceItems: S2Choice.listFrom<HiveCountry, HiveCountry>(
+                        source: _countryList,
+                        value: (index, item) => item,
                         title: (index, item) => item.name,
                         //  group: (index, item) => item['brand'],
                       ),
@@ -205,20 +185,21 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       ),
                     ),
                     child: Center(
-                      child: SmartSelect<String>.multiple(
+                      child: SmartSelect<HiveLanguage>.multiple(
                         title: Strings.lanugages,
                         placeholder: Strings.selectLanugages,
                         value: _selectedLanguages,
                         onChange: (selected) {
                           setState(() => _selectedLanguages = selected.value);
                         },
-                        choiceItems: S2Choice.listFrom<String, Language>(
-                            source: _languagesList,
-                            value: (index, item) => item.id,
-                            title: (index, item) => item.name,
-                            group: (index, item) {
-                              return 'Selected';
-                            }),
+                        choiceItems:
+                            S2Choice.listFrom<HiveLanguage, HiveLanguage>(
+                                source: _languageList,
+                                value: (index, item) => item,
+                                title: (index, item) => item.name,
+                                group: (index, item) {
+                                  return 'Selected';
+                                }),
                         choiceGrouped: true,
                         modalType: S2ModalType.fullPage,
                         modalFilter: true,
