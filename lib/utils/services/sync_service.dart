@@ -6,8 +6,10 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class SyncService {
@@ -18,6 +20,7 @@ class SyncService {
   late Box<HiveCurrentUser> currentUserBox;
   late Box<HiveGroup> groupBox;
   late Box<HiveAction> actionBox;
+  late Box<HiveMaterial> materialBox;
 
   SyncService() {
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
@@ -25,11 +28,14 @@ class SyncService {
     currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUPS_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
+    materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
   }
 
   void syncAll() {
     syncCurrentUser();
     syncCountries();
+    syncLanguages();
+    syncMaterial();
   }
 
   syncCurrentUser() async {
@@ -95,7 +101,7 @@ class SyncService {
       }, onError: ((err) {
         print(err);
       }), onDone: () {
-        print('done');
+        print('Country Sync Done.');
         // for (var count in countryBox.values.toList()) {
         //   print(count.id);
         //   print(count.name);
@@ -108,11 +114,10 @@ class SyncService {
   syncLanguages() async {
     await AppDataRepository()
         .getAllLanguages()
-        .then((ResponseStream<Language> country) {
-      country.listen((value) {
-        // print(value);
-        var filterData = countryBox.values
-            .where((countryModel) => countryModel.id == value.id)
+        .then((ResponseStream<Language> language) {
+      language.listen((value) {
+        var filterData = languageBox.values
+            .where((element) => element.id == value.id)
             .toList();
         if (filterData.length == 0) {
           HiveLanguage _language = HiveLanguage(id: value.id, name: value.name);
@@ -124,31 +129,37 @@ class SyncService {
         print(err);
       }), onDone: () {
         print('done');
-        // for (var count in countryBox.values.toList()) {
+        // for (var count in languageBox.values.toList()) {
         //   print(count.id);
         //   print(count.name);
-        //   print(count.diallingCode);
         // }
       });
     });
   }
 
-  // static syncMaterial() async {
-  //   final Box<HiveMaterial> materialBox = await HiveDatabase().materialBox;
+  syncMaterial() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    materialBox.values.forEach((element) {
+      element.delete();
+    });
 
-  //   await MaterialRepository()
-  //       .getMaterials()
-  //       .then((ResponseStream<starfish.Material> responseStream) {
-  //     responseStream.listen((starfish.Material value) {
-  //       HiveMaterial dbMaterialObj = HiveMaterial();
-
-  //       dbMaterialObj.creatorId = value.creatorId;
-  //       print(value.title);
-  //     }, onError: ((err) {
-  //       print(err);
-  //     }), onDone: () {
-  //       print('done');
-  //     });
-  //   });
-  // }
+    await MaterialRepository()
+        .getMaterials()
+        .then((ResponseStream<Material> material) {
+      material.listen((value) {
+        HiveMaterial _material = HiveMaterial.from(value);
+        materialBox.add(_material);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('Material Sync Done.');
+        // for (var count in materialBox.values.toList()) {
+        //   print(count.id);
+        //   print(count.title);
+        // }
+      });
+    });
+  }
 }

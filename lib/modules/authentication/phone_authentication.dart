@@ -54,9 +54,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
     SyncService obj = SyncService();
-    obj.syncCurrentUser();
-    obj.syncCountries();
-    obj.syncLanguages();
+    obj.syncAll();
 
     _getAllCountries();
   }

@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:grpc/grpc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/repository/materials_repository.dart';
-import 'package:starfish/widgets/settings_edit_button_widget.dart';
-import 'package:starfish/widgets/title_label_widget.dart';
+import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/src/generated/starfish.pb.dart' as starfish;
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -23,18 +18,20 @@ class MaterialsScreen extends StatefulWidget {
 }
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
-  List<starfish.Material> _materialsList = [];
+  List<HiveMaterial> _materialsList = [];
 
   bool _isSearching = false;
   List<HiveLanguage> _selectedLanguages = [];
 
   late List<HiveLanguage> _languageList;
   late Box<HiveLanguage> _languageBox;
+  late Box<HiveMaterial> _materialBox;
 
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
 
     _getMaterials();
     _getAllLanguages();
@@ -45,7 +42,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   void _getMaterials() async {
-    await MaterialRepository()
+    _materialsList = _materialBox.values.toList();
+    /*await MaterialRepository()
         .getMaterials()
         .then((ResponseStream<starfish.Material> material) {
       material.listen((value) {
@@ -58,7 +56,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       }), onDone: () {
         print('done');
       });
-    });
+    });*/
   }
 
   List<MaterialList> _buildList() {
@@ -114,7 +112,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(
                 height: 10.h,
               ),
-
             ],
           ),
         ),
@@ -177,7 +174,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 Strings.selectLanugages,
                 style: TextStyle(color: AppColors.appTitle, fontSize: 16.sp),
               ),
-              
             );
           },
         ),
@@ -229,7 +225,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 }
 
 class MaterialList extends StatelessWidget {
-  final starfish.Material material;
+  final HiveMaterial material;
   final _MaterialsScreenState obj;
 
   MaterialList(this.material, this.obj);
@@ -245,14 +241,14 @@ class MaterialList extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         child: Container(
-          margin: EdgeInsets.only(left: 15.0.w,right: 15.0.w),
+          margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
           height: 99,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Container(
                 height: 22.h,
-               // margin: EdgeInsets.only(left: 25.0.w, right: 25.0.w),
+                // margin: EdgeInsets.only(left: 25.0.w, right: 25.0.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
