@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'hex_color.dart';
 
 class AppColors {
-  static Color primary = HexColor('#88AF33');
+  static Color primary =Color(0xFF434141);
+  static Color background = Color(0xFFFFFFFF);
+  static Color txtFieldBackground = Color(0xFFEFEFEF);
 
-  static Color background = HexColor('#FFFFFF');
-  static Color txtFieldBackground = HexColor('#EFEFEF');
-
-  static Color appTitle = HexColor('#4F4F4F');
+  static Color appTitle = Color(0xFF4F4F4F);
   static Color txtFieldTextColor = HexColor('#434141');
   static Color selectedButtonBG = HexColor('#3475F0');
   static Color unselectedButtonBG = HexColor('#ADADAD');

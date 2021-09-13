@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'config/routes/routes.dart';
+import 'config/themes/themes.dart';
+import 'constants/app_styles.dart';
 import 'modules/splash/splash.dart';
 
 class Starfish extends StatelessWidget {
@@ -12,7 +14,7 @@ class Starfish extends StatelessWidget {
       builder: () => MaterialApp(
           debugShowCheckedModeBanner: false,
           title: '',
-          theme: ThemeData.light(),
+          theme: AppStyles.defaultTheme(),
           home: SplashScreen(),
           routes: Routes.routes),
     );

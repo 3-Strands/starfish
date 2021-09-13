@@ -5,14 +5,17 @@ class AppThemeDataFactory {
   static ThemeData prepareThemeData() => ThemeData(
         brightness: Brightness.light,
         primaryColor: AppColors.primary,
-        accentColor: AppColors.primary,
+       // accentColor: AppColors.primary,
         backgroundColor: AppColors.background,
         buttonColor: AppColors.primary,
         scaffoldBackgroundColor: AppColors.background,
+   canvasColor: Colors.transparent,
+
+
         iconTheme: IconThemeData(
           color: AppColors.primary,
         ),
-        fontFamily: "Poppins",
+        fontFamily: "OpenSans",
         textTheme: TextTheme(
           headline6: TextStyle(
             fontSize: 72,

@@ -3,7 +3,7 @@ import 'app_colors.dart';
 
 class AppStyles {
   static ThemeData defaultTheme() {
-    final ThemeData base = ThemeData.dark();
+    final ThemeData base = ThemeData.light();
     return base.copyWith(
       backgroundColor: AppColors.background,
       primaryColor: AppColors.selectedButtonBG,
@@ -16,6 +16,7 @@ class AppStyles {
             fontWeight: FontWeight.normal,
             fontFamily: "OpenSans",
             fontStyle: FontStyle.normal,
+            color: AppColors.txtFieldTextColor,
             fontSize: 18.0),
         errorStyle: TextStyle(
           color: Colors.red,
