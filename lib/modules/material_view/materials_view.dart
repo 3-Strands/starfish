@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
-<<<<<<< HEAD
-import 'package:starfish/repository/materials_repository.dart';
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-import 'package:starfish/smart_select/src/tile/tile.dart';
-import 'package:starfish/smart_select/src/widget.dart';
-import 'package:starfish/widgets/settings_edit_button_widget.dart';
-import 'package:starfish/widgets/title_label_widget.dart';
-=======
 import 'package:starfish/db/hive_material.dart';
->>>>>>> e75acf26b012af3624668d2328f15b29412279e1
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/tile/tile.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/widget.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);

@@ -10,18 +10,19 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/repository/app_data_repository.dart';
-import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-import 'package:starfish/smart_select/src/tile/tile.dart';
-import 'package:starfish/smart_select/src/widget.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/tile/tile.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/widget.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
