@@ -128,11 +128,11 @@ class SyncService {
       }, onError: ((err) {
         print(err);
       }), onDone: () {
-        print('done');
-        // for (var count in languageBox.values.toList()) {
-        //   print(count.id);
-        //   print(count.name);
-        // }
+        print('Language Sync Done.');
+        for (var count in languageBox.values.toList()) {
+          print(count.id);
+          print(count.name);
+        }
       });
     });
   }

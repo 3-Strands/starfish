@@ -12,7 +12,7 @@ import 'package:starfish/db/hive_material_feedback.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
-  static const String COUNTRY_BOX = 'country';
+  static const String COUNTRY_BOX = 'countryBox';
   static const String LANGUAGE_BOX = 'languageBox';
   static const String CURRENT_USER_BOX = 'currentUserBox';
   static const String GROUPS_BOX = 'groupsBox';
@@ -23,7 +23,7 @@ class HiveDatabase {
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
   // late Box<HiveMaterial> materialBox;
-  late Box<HiveCountry> countryBox;
+  // late Box<HiveCountry> countryBox;
 
   // HiveDatabase._internal() {
   //   initHive();
@@ -49,7 +49,7 @@ class HiveDatabase {
   void openBoxes() async {
     print("open boxes");
     // materialBox = await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
-    //countryBox = await Hive.openBox<CountryModel>(COUNTRY_BOX);
+    // countryBox = await Hive.openBox<CountryModel>(COUNTRY_BOX);
 
     await Hive.openBox<HiveCountry>(COUNTRY_BOX);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX);

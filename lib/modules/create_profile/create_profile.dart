@@ -39,8 +39,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final FocusNode _nameFocus = FocusNode();
 
   late List<HiveCountry> _selectedCountries = [];
-
-  late List<HiveLanguage> _selectedLanguages;
+  late List<HiveLanguage> _selectedLanguages = [];
 
   bool _isLoading = false;
 
@@ -48,8 +47,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   late Box<HiveLanguage> _languageBox;
   late Box<HiveCurrentUser> _currentUserBox;
 
-  late List<HiveCountry> _countryList;
-  late List<HiveLanguage> _languageList;
+  late List<HiveCountry> _countryList = [];
+  late List<HiveLanguage> _languageList = [];
   late HiveCurrentUser _user;
 
   @override
@@ -82,8 +81,24 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 
   void _getAllLanguages() {
+    print("_getAllLanguages");
     _languageList = _languageBox.values.toList();
-    print(_languageList);
+    // print("_user.languageIds ==>>");
+    // print(_user.languageIds);
+    // print("===========");
+
+    print("_languageList length ==>>");
+    print(_languageList.length);
+    // for (var language in _languageList) {
+    //   print(language.id);
+    //   print(language.name);
+    // }
+    // print("===========");
+
+    // for (var languageId in _user.languageIds) {
+    //   _languageList.where((item) => item.id == languageId).forEach((item) =>
+    //       {print('_languageList ${item.name}'), _selectedLanguages.add(item)});
+    // }
   }
 
   @override
@@ -151,7 +166,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                           value: (index, item) => item,
                           title: (index, item) => item.name,
                           group: (index, item) {
-                            return 'Selected';
+                            return '';
                           }),
                       choiceGrouped: false,
                       modalFilter: true,
@@ -198,7 +213,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       child: SmartSelect<HiveLanguage>.multiple(
                         title: Strings.lanugages,
                         placeholder: Strings.selectLanugages,
-                        // value: _selectedLanguages,
+                        selectedValue: _selectedLanguages,
                         onChange: (selected) {
                           setState(() => _selectedLanguages = selected.value);
                         },
@@ -208,7 +223,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                                 value: (index, item) => item,
                                 title: (index, item) => item.name,
                                 group: (index, item) {
-                                  return 'Selected';
+                                  return '';
                                 }),
                         choiceGrouped: true,
                         modalType: S2ModalType.fullPage,

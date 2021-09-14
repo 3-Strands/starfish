@@ -279,9 +279,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () {
-              // getCurrentUser();
-              // listAllCountries();
-
               Navigator.of(context).pushNamed(Routes.otpVerification);
             },
             style: ElevatedButton.styleFrom(
