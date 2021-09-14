@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:grpc/grpc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
+<<<<<<< HEAD
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 import 'package:starfish/smart_select/src/model/modal_config.dart';
@@ -14,8 +13,10 @@ import 'package:starfish/smart_select/src/tile/tile.dart';
 import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
+=======
+import 'package:starfish/db/hive_material.dart';
+>>>>>>> e75acf26b012af3624668d2328f15b29412279e1
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/src/generated/starfish.pb.dart' as starfish;
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -27,18 +28,20 @@ class MaterialsScreen extends StatefulWidget {
 }
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
-  List<starfish.Material> _materialsList = [];
+  List<HiveMaterial> _materialsList = [];
 
   bool _isSearching = false;
   List<HiveLanguage> _selectedLanguages = [];
 
   late List<HiveLanguage> _languageList;
   late Box<HiveLanguage> _languageBox;
+  late Box<HiveMaterial> _materialBox;
 
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
 
     _getMaterials();
     _getAllLanguages();
@@ -49,7 +52,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   void _getMaterials() async {
-    await MaterialRepository()
+    _materialsList = _materialBox.values.toList();
+    /*await MaterialRepository()
         .getMaterials()
         .then((ResponseStream<starfish.Material> material) {
       material.listen((value) {
@@ -62,7 +66,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       }), onDone: () {
         print('done');
       });
-    });
+    });*/
   }
 
   List<MaterialList> _buildList() {
@@ -231,7 +235,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 }
 
 class MaterialList extends StatelessWidget {
-  final starfish.Material material;
+  final HiveMaterial material;
   final _MaterialsScreenState obj;
 
   MaterialList(this.material, this.obj);

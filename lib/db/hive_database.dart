@@ -4,8 +4,11 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_material_feedback.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
@@ -36,6 +39,9 @@ class HiveDatabase {
     Hive.registerAdapter(HiveCurrentUserAdapter());
     Hive.registerAdapter(HiveGroupAdapter());
     Hive.registerAdapter(HiveActionAdapter());
+    Hive.registerAdapter(HiveMaterialAdapter());
+    Hive.registerAdapter(HiveMaterialFeedbackAdapter());
+    Hive.registerAdapter(HiveDateAdapter());
 
     openBoxes();
   }
@@ -50,5 +56,6 @@ class HiveDatabase {
     await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX);
     await Hive.openBox<HiveGroup>(GROUPS_BOX);
     await Hive.openBox<HiveAction>(ACTIONS_BOX);
+    await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
   }
 }
