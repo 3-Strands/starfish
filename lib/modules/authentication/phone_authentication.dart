@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:smart_select/smart_select.dart';
+// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
@@ -12,6 +12,10 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/main_dev.dart';
 import 'package:starfish/repository/app_data_repository.dart';
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+import 'package:starfish/smart_select/src/tile/tile.dart';
+import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 // import 'package:starfish/utils/services/sync_service.dart';
@@ -102,7 +106,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       child: SmartSelect<HiveCountry>.single(
                         title: Strings.country,
                         placeholder: Strings.selectCountry,
-                        value: _selectedCountry,
+                        selectedValue: _selectedCountry,
+                        // value: _selectedCountry,
                         onChange: (selected) => setState(() => {
                               _selectedCountry = selected.value,
                               _countryCodeController.text =

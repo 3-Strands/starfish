@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc.dart';
-import 'package:smart_select/smart_select.dart';
+// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+import 'package:starfish/smart_select/src/tile/tile.dart';
+import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
@@ -174,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: SmartSelect<String>.multiple(
                         title: Strings.country,
                         placeholder: Strings.selectCountry,
-                        value: _selectedCountries,
+                        // value: _selectedCountries,
                         onChange: (selected) =>
                             setState(() => _selectedCountries = selected.value),
                         choiceItems: S2Choice.listFrom<String, Country>(
@@ -223,7 +227,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: SmartSelect<String>.multiple(
                         title: Strings.lanugages,
                         placeholder: Strings.selectLanugages,
-                        value: _selectedLanguages,
+                        // value: _selectedLanguages,
                         onChange: (selected) {
                           setState(() => _selectedLanguages = selected.value);
                         },

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:smart_select/smart_select.dart';
+// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+import 'package:starfish/smart_select/src/tile/tile.dart';
+import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -114,7 +118,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(
                 height: 10.h,
               ),
-
             ],
           ),
         ),
@@ -156,7 +159,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         child: SmartSelect<HiveLanguage>.multiple(
           title: Strings.selectLanugages,
           placeholder: Strings.searchLanguagesPlaceholder,
-          value: _selectedLanguages,
+          // value: _selectedLanguages,
           onChange: (selected) =>
               setState(() => _selectedLanguages = selected.value),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
@@ -177,7 +180,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 Strings.selectLanugages,
                 style: TextStyle(color: AppColors.appTitle, fontSize: 16.sp),
               ),
-              
             );
           },
         ),
@@ -199,7 +201,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         child: SmartSelect<HiveLanguage>.multiple(
           title: "Select topics",
           placeholder: Strings.searchLanguagesPlaceholder,
-          value: _selectedLanguages,
+          // value: _selectedLanguages,
           onChange: (selected) =>
               setState(() => _selectedLanguages = selected.value),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
@@ -245,14 +247,14 @@ class MaterialList extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         child: Container(
-          margin: EdgeInsets.only(left: 15.0.w,right: 15.0.w),
+          margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
           height: 99,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Container(
                 height: 22.h,
-               // margin: EdgeInsets.only(left: 25.0.w, right: 25.0.w),
+                // margin: EdgeInsets.only(left: 25.0.w, right: 25.0.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

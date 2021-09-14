@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
-import 'package:smart_select/smart_select.dart';
+// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -12,6 +12,10 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+import 'package:starfish/smart_select/src/tile/tile.dart';
+import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -32,11 +36,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _nameController = TextEditingController();
 
   final FocusNode _nameFocus = FocusNode();
-  // List<Country> _countriesList = [];
-  List<HiveCountry> _selectedCountries = [];
 
-  List<HiveLanguage> _selectedLanguages = [];
-  // List<Language> _languagesList = [];
+  late List<HiveCountry> _selectedCountries = [];
+
+  late List<HiveLanguage> _selectedLanguages;
 
   bool _isLoading = false;
 
@@ -55,16 +58,13 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
+    _getCurrentUser();
     _getAllCountries();
     _getAllLanguages();
-    _getCurrentUser();
   }
 
   void _getCurrentUser() {
     _user = _currentUserBox.values.first;
-    // print("_user: ${_user.name}");
-    // print("_user: ${_user.groups[0].userId}");
-
     setState(() {
       _nameController.text = _user.name;
     });
@@ -72,10 +72,17 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
+
+    for (var countryId in _user.countryIds) {
+      _countryList
+          .where((item) => item.id == countryId)
+          .forEach((item) => {_selectedCountries.add(item)});
+    }
   }
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
+    print(_languageList);
   }
 
   @override
@@ -112,6 +119,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 ),
                 //--------------------------
                 SizedBox(height: 30.h),
+
                 //--> Select country section
                 Align(
                   alignment: FractionalOffset.topLeft,
@@ -134,15 +142,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     child: SmartSelect<HiveCountry>.multiple(
                       title: Strings.country,
                       placeholder: Strings.selectCountry,
-                      value: _selectedCountries,
+                      selectedValue: _selectedCountries,
                       onChange: (selected) =>
                           setState(() => _selectedCountries = selected.value),
                       choiceItems: S2Choice.listFrom<HiveCountry, HiveCountry>(
-                        source: _countryList,
-                        value: (index, item) => item,
-                        title: (index, item) => item.name,
-                        //  group: (index, item) => item['brand'],
-                      ),
+                          source: _countryList,
+                          value: (index, item) => item,
+                          title: (index, item) => item.name,
+                          group: (index, item) {
+                            return 'Selected';
+                          }),
                       choiceGrouped: false,
                       modalFilter: true,
                       modalFilterAuto: true,
@@ -188,7 +197,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       child: SmartSelect<HiveLanguage>.multiple(
                         title: Strings.lanugages,
                         placeholder: Strings.selectLanugages,
-                        value: _selectedLanguages,
+                        // value: _selectedLanguages,
                         onChange: (selected) {
                           setState(() => _selectedLanguages = selected.value);
                         },
