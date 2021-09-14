@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/model/choice_item.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/model/modal_config.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/tile/tile.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:starfish/smart_select/src/widget.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -153,7 +160,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         child: SmartSelect<HiveLanguage>.multiple(
           title: Strings.selectLanugages,
           placeholder: Strings.searchLanguagesPlaceholder,
-          value: _selectedLanguages,
+          // value: _selectedLanguages,
           onChange: (selected) =>
               setState(() => _selectedLanguages = selected.value),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
@@ -195,7 +202,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         child: SmartSelect<HiveLanguage>.multiple(
           title: "Select topics",
           placeholder: Strings.searchLanguagesPlaceholder,
-          value: _selectedLanguages,
+          // value: _selectedLanguages,
           onChange: (selected) =>
               setState(() => _selectedLanguages = selected.value),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(

@@ -15,4 +15,14 @@ class HiveCountry {
 
   HiveCountry(
       {required this.id, required this.name, required this.diallingCode});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveCountry &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 }
