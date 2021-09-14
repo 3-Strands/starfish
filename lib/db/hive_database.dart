@@ -7,17 +7,18 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
-  static const String COUNTRY_BOX = 'country';
+  static const String LAST_SYNC_BOX = 'lastSyncBox';
+  static const String COUNTRY_BOX = 'countryBox';
   static const String LANGUAGE_BOX = 'languageBox';
   static const String CURRENT_USER_BOX = 'currentUserBox';
   static const String GROUPS_BOX = 'groupsBox';
   static const String ACTIONS_BOX = 'actionBox';
-
   static const String MATERIAL_BOX = 'materialBox';
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
@@ -34,6 +35,7 @@ class HiveDatabase {
       Directory directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
     }
+    Hive.registerAdapter(HiveLastSyncDateTimeAdapter());
     Hive.registerAdapter(HiveCountryAdapter());
     Hive.registerAdapter(HiveLanguageAdapter());
     Hive.registerAdapter(HiveCurrentUserAdapter());
@@ -51,6 +53,7 @@ class HiveDatabase {
     // materialBox = await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
     //countryBox = await Hive.openBox<CountryModel>(COUNTRY_BOX);
 
+    await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX);
     await Hive.openBox<HiveCountry>(COUNTRY_BOX);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX);
     await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX);

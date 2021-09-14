@@ -1,11 +1,13 @@
 import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -15,6 +17,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 class SyncService {
   static syncNow() {}
 
+  late Box<HiveLastSyncDateTime> lastSyncBox;
   late Box<HiveCountry> countryBox;
   late Box<HiveLanguage> languageBox;
   late Box<HiveCurrentUser> currentUserBox;
@@ -23,6 +26,7 @@ class SyncService {
   late Box<HiveMaterial> materialBox;
 
   SyncService() {
+    lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
@@ -36,6 +40,17 @@ class SyncService {
     syncCountries();
     syncLanguages();
     syncMaterial();
+
+    DateTime now = DateTime.now();
+    print(DateFormat('HH:mm:ss').format(now));
+    HiveLastSyncDateTime _lastSyncDateTime = new HiveLastSyncDateTime(
+        year: now.year,
+        month: now.month,
+        day: now.day,
+        hour: now.hour,
+        minute: now.minute,
+        second: now.second);
+    lastSyncBox.add(_lastSyncDateTime);
   }
 
   syncCurrentUser() async {
