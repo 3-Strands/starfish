@@ -10,6 +10,9 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/repository/app_data_repository.dart';
+import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
@@ -54,13 +57,14 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   @override
   void initState() {
     super.initState();
+
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getCurrentUser();
     _getAllCountries();
-    _getAllLanguages();
+    // _getAllLanguages();
   }
 
   void _getCurrentUser() {
@@ -78,27 +82,82 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           .where((item) => item.id == countryId)
           .forEach((item) => {_selectedCountries.add(item)});
     }
+
+    _getAllLanguages();
+  }
+
+/*
+  fetchLanguages() async {
+    await AppDataRepository()
+        .getAllLanguages()
+        .then((ResponseStream<Language> language) {
+      language.listen((value) {
+        var filterData = _languageBox.values
+            .where((element) => element.id == value.id)
+            .toList();
+        if (filterData.length == 0) {
+          HiveLanguage _language = HiveLanguage(id: value.id, name: value.name);
+          _languageBox.add(_language);
+        } else {
+          //update records
+        }
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('Language Sync Done.');
+        _getAllLanguages();
+      });
+    });
+  }
+*/
+
+  _updateUserProfile() async {
+    Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
+    Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
+
+    // List<String> _selectedCountryIds = [
+    //   "11b41f61-f2fc-4fb9-8293-e61b80a11589",
+    //   "cee015bb-209a-48e5-abb3-69ad9669f367"
+    // ];
+    // List<String> _selectedLanguageIds = [
+    //   "64731b1f-ae64-4f1b-b1e4-e03d48b29642",
+    //   "0821ea6b-3dbf-423b-9e88-4b722c4099a4"
+    // ];
+
+    // print("user data ==>>");
+    // print(_user.id);
+    // print(_nameController.text);
+    // print(_selectedCountryIds);
+    // print(_selectedLanguageIds);
+
+    await CurrentUserRepository()
+        .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
+            _selectedLanguageIds, false)
+        .then((value) => {
+              _user.name = value.name,
+              _user.countryIds = value.countryIds,
+              _user.languageIds = value.languageIds,
+              _currentUserBox.putAt(0, _user),
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  Routes.dashboard, (Route<dynamic> route) => false)
+            });
   }
 
   void _getAllLanguages() {
     print("_getAllLanguages");
     _languageList = _languageBox.values.toList();
+    // print("===========");
+    // print("_languageList length ==>>");
+    // print(_languageList.length);
+
     // print("_user.languageIds ==>>");
     // print(_user.languageIds);
-    // print("===========");
 
-    print("_languageList length ==>>");
-    print(_languageList.length);
-    // for (var language in _languageList) {
-    //   print(language.id);
-    //   print(language.name);
-    // }
-    // print("===========");
-
-    // for (var languageId in _user.languageIds) {
-    //   _languageList.where((item) => item.id == languageId).forEach((item) =>
-    //       {print('_languageList ${item.name}'), _selectedLanguages.add(item)});
-    // }
+    for (var languageId in _user.languageIds) {
+      _languageList
+          .where((item) => item.id == languageId)
+          .forEach((item) => {_selectedLanguages.add(item)});
+    }
   }
 
   @override
@@ -340,8 +399,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  Routes.dashboard, (Route<dynamic> route) => false);
+              _updateUserProfile();
             },
             style: ElevatedButton.styleFrom(
               primary: AppColors.selectedButtonBG,

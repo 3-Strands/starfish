@@ -72,11 +72,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updateCurrentUser() async {
-    await CurrentUserRepository().updateUser().then((User user) {
-      print("updated current user");
-      // print(user);
-      // print(user.name);
-    });
+    // await CurrentUserRepository().updateUser().then((User user) {
+    //   print("updated current user");
+    //   // print(user);
+    //   // print(user.name);
+    // });
   }
 
   void _listAllCountries() async {

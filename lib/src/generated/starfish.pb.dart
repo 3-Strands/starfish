@@ -28,6 +28,8 @@ class User extends $pb.GeneratedMessage {
     ..pc<ActionUser>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'actions', $pb.PbFieldType.PM, subBuilder: ActionUser.create)
     ..e<ActionTab>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'selectedActionsTab', $pb.PbFieldType.OE, defaultOrMaker: ActionTab.ACTIONS_UNSPECIFIED, valueOf: ActionTab.valueOf, enumValues: ActionTab.values)
     ..e<ResultsTab>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'selectedResultsTab', $pb.PbFieldType.OE, defaultOrMaker: ResultsTab.RESULTS_UNSPECIFIED, valueOf: ResultsTab.valueOf, enumValues: ResultsTab.values)
+    ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'phoneCountryId')
+    ..aOS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'diallingCode')
     ..hasRequiredFields = false
   ;
 
@@ -43,6 +45,8 @@ class User extends $pb.GeneratedMessage {
     $core.Iterable<ActionUser>? actions,
     ActionTab? selectedActionsTab,
     ResultsTab? selectedResultsTab,
+    $core.String? phoneCountryId,
+    $core.String? diallingCode,
   }) {
     final _result = create();
     if (id != null) {
@@ -74,6 +78,12 @@ class User extends $pb.GeneratedMessage {
     }
     if (selectedResultsTab != null) {
       _result.selectedResultsTab = selectedResultsTab;
+    }
+    if (phoneCountryId != null) {
+      _result.phoneCountryId = phoneCountryId;
+    }
+    if (diallingCode != null) {
+      _result.diallingCode = diallingCode;
     }
     return _result;
   }
@@ -163,6 +173,24 @@ class User extends $pb.GeneratedMessage {
   $core.bool hasSelectedResultsTab() => $_has(9);
   @$pb.TagNumber(10)
   void clearSelectedResultsTab() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.String get phoneCountryId => $_getSZ(10);
+  @$pb.TagNumber(11)
+  set phoneCountryId($core.String v) { $_setString(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasPhoneCountryId() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearPhoneCountryId() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.String get diallingCode => $_getSZ(11);
+  @$pb.TagNumber(12)
+  set diallingCode($core.String v) { $_setString(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasDiallingCode() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearDiallingCode() => clearField(12);
 }
 
 class GroupUser extends $pb.GeneratedMessage {

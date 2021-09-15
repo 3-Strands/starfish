@@ -27,20 +27,53 @@ class ApiProvider {
     return client!.getCurrentUser(Empty());
   }
 
-  Future<User> updateCurrentUser() async {
+  Future<User> updateCurrentUser(
+      String id,
+      String name,
+      String phone,
+      Iterable<String> countryIds,
+      Iterable<String> languageIds,
+      bool linkGroups) async {
+    ActionTab actionTab = ActionTab.ACTIONS_UNSPECIFIED;
+    ResultsTab resultsTab = ResultsTab.RESULTS_UNSPECIFIED;
+
+    Iterable<String> iterableCountryIds = const [
+      "11b41f61-f2fc-4fb9-8293-e61b80a11589",
+      "cee015bb-209a-48e5-abb3-69ad9669f367"
+    ];
+
+    Iterable<String> iterableLanguageIds = const [
+      "64731b1f-ae64-4f1b-b1e4-e03d48b29642"
+    ];
+
     User user = User(
-        id: 'db5ddb85-e2c5-4239-897d-5080a0ce513e',
-        name: 'caleb 1',
-        phone: '4952564404',
-        linkGroups: true);
+        id: id,
+        name: name,
+        phone: "4952564407",
+        countryIds: iterableCountryIds,
+        languageIds: iterableLanguageIds,
+        linkGroups: true,
+        selectedActionsTab: actionTab,
+        selectedResultsTab: resultsTab,
+        phoneCountryId: '',
+        diallingCode: '');
 
     var request = UpdateCurrentUserRequest.create();
     request.user = user;
 
-    ActionTab actionTab = ActionTab.ACTIONS_UNSPECIFIED;
-    ResultsTab resultsTab = ResultsTab.RESULTS_UNSPECIFIED;
+    var paths = [
+      'name',
+      'phone',
+      'countryIds',
+      'languageIds',
+      'linkGroups',
+      'selectedActionsTab',
+      'selectedResultsTab',
+      'phoneCountryId',
+      'diallingCode'
+    ];
+    FieldMask mask = FieldMask(paths: paths);
 
-    FieldMask mask = FieldMask(paths: ['name']);
     request.updateMask = mask;
 
     return client!.updateCurrentUser(request);

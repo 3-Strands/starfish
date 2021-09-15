@@ -86,6 +86,12 @@ message User {
 
     ResultsTab selected_results_tab = 10;
 
+    // The country of this user for the purposes of dialling their phone number.
+    string phone_country_id = 11;
+
+    // Output only. Dependent on the value of phone_country_id.
+    string dialling_code = 12;
+
 }
 
 // Connection between a User and a Group

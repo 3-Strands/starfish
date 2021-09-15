@@ -144,10 +144,10 @@ class SyncService {
         print(err);
       }), onDone: () {
         print('Language Sync Done.');
-        for (var count in languageBox.values.toList()) {
-          print(count.id);
-          print(count.name);
-        }
+        // for (var count in languageBox.values.toList()) {
+        //   print(count.id);
+        //   print(count.name);
+        // }
       });
     });
   }

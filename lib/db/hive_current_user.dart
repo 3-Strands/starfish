@@ -10,7 +10,7 @@ class HiveCurrentUser {
   final String id;
 
   @HiveField(1)
-  final String name;
+  String name;
 
   @HiveField(2)
   final String phone;
@@ -19,10 +19,10 @@ class HiveCurrentUser {
   final bool linkGroup;
 
   @HiveField(4)
-  final List<String> countryIds;
+  List<String> countryIds;
 
   @HiveField(5)
-  final List<String> languageIds;
+  List<String> languageIds;
 
   @HiveField(6)
   final List<HiveGroup> groups;

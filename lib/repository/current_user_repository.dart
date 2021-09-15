@@ -6,5 +6,13 @@ class CurrentUserRepository {
 
   Future<User> getUser() => apiProvider.getCurrentUser();
 
-  Future<User> updateUser() => apiProvider.updateCurrentUser();
+  Future<User> updateUser(
+          String id,
+          String name,
+          String phone,
+          Iterable<String> countryIds,
+          Iterable<String> languageIds,
+          bool linkGroups) =>
+      apiProvider.updateCurrentUser(
+          id, name, phone, countryIds, languageIds, linkGroups);
 }
