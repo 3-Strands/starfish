@@ -113,6 +113,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 */
 
   _updateUserProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
     Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
 
@@ -129,6 +133,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             _selectedLanguageIds, false, fieldMaskPaths)
         .then((value) => {
               print(value),
+              setState(() => _isLoading = false),
               _user.name = value.name,
               _user.countryIds = value.countryIds,
               _user.languageIds = value.languageIds,
