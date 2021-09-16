@@ -11,6 +11,8 @@ class Strings {
   static const String edit = 'Edit';
   static const String save = 'Save';
   static const String open = 'Open';
+  static const String cancel = 'Cancel';
+  static const String sendFeedback = 'Send Feedback';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';

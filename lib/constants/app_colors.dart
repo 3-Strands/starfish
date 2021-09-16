@@ -24,4 +24,8 @@ class AppColors {
   static Color assignedTaskBGColor = Color(0xFFCBE8FA);
   static Color overdueTaskBGColor = Color(0xFFFF5E4D);
   static Color notCompletedTaskBGColor = Color(0xFFFFBE4A);
+
+  static Color popDialogBGColor = Color(0xFFE8E8E8);
+
+  static Color sepratorLineColor = Color(0xFFADADAD);
 }
