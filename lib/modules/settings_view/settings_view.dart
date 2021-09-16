@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 // import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -111,23 +110,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updateName() async {
-    print("update name");
-    // var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
-    // var fieldMaskPaths = ['name'];
-
-    // await CurrentUserRepository()
-    //     .updateUser(_user.id, _nameController.text, null, null, null, null,
-    //         fieldMaskPaths)
-    //     .then(
-    //       (value) => {
-    //         print(value),
-    //         setState(() =>
-    //             {_nameController.text = value.name, _userName = value.name}),
-    //         _user.name = value.name,
-    //         _currentUserBox.putAt(0, _user),
-    //       },
-    //     );
-
     setState(() => {_userName = _nameController.text});
     _user.name = _nameController.text;
     _user.isUpdated = true;
@@ -155,7 +137,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     });
 
-    // var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
     var fieldMaskPaths = ['countryIds'];
     Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
 
@@ -182,7 +163,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     });
 
-    // var fieldMaskPaths = ['name', 'languageIds', 'languageIds'];
     var fieldMaskPaths = ['languageIds'];
     Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
 
