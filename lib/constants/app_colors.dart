@@ -24,4 +24,6 @@ class AppColors {
   static Color assignedTaskBGColor = Color(0xFFCBE8FA);
   static Color overdueTaskBGColor = Color(0xFFFF5E4D);
   static Color notCompletedTaskBGColor = Color(0xFFFFBE4A);
+
+  static Color hintTextColor = Color(0xFF797979);
 }

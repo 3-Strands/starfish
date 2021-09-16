@@ -10,6 +10,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
@@ -26,6 +27,7 @@ class SyncService {
   late Box<HiveAction> actionBox;
   late Box<HiveMaterial> materialBox;
   late Box<HiveMaterialTopic> materialTopicBox;
+  late Box<HiveMaterialType> materialTypeBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -37,6 +39,8 @@ class SyncService {
     materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
+    materialTypeBox =
+        Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
   }
 
   void syncAll() {
@@ -44,6 +48,7 @@ class SyncService {
     syncCountries();
     syncLanguages();
     syncMaterialTopics();
+    syncMaterialTypes();
     syncMaterial();
 
     DateTime now = DateTime.now();
@@ -184,6 +189,13 @@ class SyncService {
   }
 
   syncMaterialTopics() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    materialTopicBox.values.forEach((element) {
+      element.delete();
+    });
+
     await MaterialRepository()
         .getMaterialTopics()
         .then((ResponseStream<MaterialTopic> topics) {
@@ -194,6 +206,28 @@ class SyncService {
         print(err);
       }), onDone: () {
         print('MaterialTopic Sync Done.');
+      });
+    });
+  }
+
+  syncMaterialTypes() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    materialTypeBox.values.forEach((element) {
+      element.delete();
+    });
+
+    await MaterialRepository()
+        .getMaterialTypes()
+        .then((ResponseStream<MaterialType> topics) {
+      topics.listen((value) {
+        HiveMaterialType _materialType = HiveMaterialType.from(value);
+        materialTypeBox.add(_materialType);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('MaterialType Sync Done.');
       });
     });
   }

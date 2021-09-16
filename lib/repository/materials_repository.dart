@@ -9,4 +9,7 @@ class MaterialRepository {
 
   Future<ResponseStream<MaterialTopic>> getMaterialTopics() =>
       apiProvider.getMateialTopics();
+
+  Future<ResponseStream<MaterialType>> getMaterialTypes() =>
+      apiProvider.getMateialTypes();
 }

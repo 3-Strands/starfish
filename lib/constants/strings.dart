@@ -11,6 +11,8 @@ class Strings {
   static const String edit = 'Edit';
   static const String save = 'Save';
   static const String open = 'Open';
+  static const String cancel = 'Cancel';
+  static const String add = 'Add';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';
@@ -51,6 +53,24 @@ class Strings {
       'Link my groups to a project in everylanguage.app';
 
   static const String topics = 'Topic(s)';
+  static const String selectTopics = 'Select topic(s)';
   static const String reportInappropriateMaterial =
       'If this material is inappropriate, click here to report it.';
+
+  static const String type = 'Type';
+  static const String selectType = 'Select a type';
+
+  static const String editedBy = 'Can be edited by';
+  static const String seenBy = 'Can be seen by';
+
+  // Screen Titles
+  static const String addNewMaterial = 'Add New Material';
+
+  // Hints
+  static const String hintMaterialName = 'Name of the Material';
+
+  // Labels
+  static const String descripton = 'Description';
+  static const String addWebLink = 'Add web link';
+  static const String uploadAMaterial = 'Upload a material';
 }

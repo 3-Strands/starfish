@@ -92,4 +92,11 @@ class ApiProvider {
     request.updatedSince = date;
     return client!.listMaterialTopics(request);
   }
+
+  Future<ResponseStream<MaterialType>> getMateialTypes() async {
+    var request = ListMaterialTypesRequest.create();
+    Date date = Date(year: 2020, month: 1, day: 1);
+    request.updatedSince = date;
+    return client!.listMaterialTypes(request);
+  }
 }

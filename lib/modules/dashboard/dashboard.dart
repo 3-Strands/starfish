@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -13,23 +14,12 @@ import '../material_view/materials_view.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Dashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: AppStyles.defaultTheme(),
-      home: _DashboardView(),
-      // onGenerateRoute: App().getAppRoutes().getRoutes,
-    );
-  }
-}
-
-class _DashboardView extends StatefulWidget {
+class Dashboard extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<_DashboardView> {
+class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 2;
   String title = Strings.actionsTabItemText;
   List<Widget> _widgetOptions = [];

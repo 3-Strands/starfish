@@ -11,6 +11,7 @@ import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/hive_material_type.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
@@ -24,6 +25,7 @@ class HiveDatabase {
   static const String DATE = 'dateBox'; //7
   static const String LAST_SYNC_BOX = 'lastSyncBox'; //8
   static const String MATERIAL_TOPIC_BOX = 'materialTopicBox'; //9
+  static const String MATERIAL_TYPE_BOX = 'materialTypeBox'; //10
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -47,6 +49,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveActionAdapter());
     Hive.registerAdapter(HiveMaterialAdapter());
     Hive.registerAdapter(HiveMaterialTopicAdapter());
+    Hive.registerAdapter(HiveMaterialTypeAdapter());
     Hive.registerAdapter(HiveMaterialFeedbackAdapter());
     Hive.registerAdapter(HiveDateAdapter());
 
@@ -66,5 +69,6 @@ class HiveDatabase {
     await Hive.openBox<HiveAction>(ACTIONS_BOX);
     await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
     await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX);
+    await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX);
   }
 }

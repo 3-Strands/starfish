@@ -52,3 +52,17 @@ var textFormFieldText = TextStyle(
   fontSize: 16.sp,
   color: AppColors.txtFieldTextColor,
 );
+
+var formTitleTextStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontSize: 26.sp,
+  fontWeight: FontWeight.bold,
+  color: Colors.black,
+);
+
+var formTitleHintStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontSize: 26.sp,
+  fontWeight: FontWeight.bold,
+  color: AppColors.hintTextColor,
+);
