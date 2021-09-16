@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc.dart';
+import 'package:hive/hive.dart';
 // import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_country.dart';
+import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/smart_select/src/model/choice_item.dart';
@@ -45,74 +50,114 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _mobileNumber = '';
   // List<String> groups = List<String>.generate(4, (i) => "Group: $i");
 
-  List<Country> _countriesList = [];
-  List<String> _selectedCountries = [];
+  late Box<HiveCountry> _countryBox;
+  late Box<HiveLanguage> _languageBox;
+  late Box<HiveCurrentUser> _currentUserBox;
 
-  List<String> _selectedLanguages = [];
-  List<Language> _languagesList = [];
+  late HiveCurrentUser _user;
+
+  late List<HiveCountry> _selectedCountries = [];
+  late List<HiveLanguage> _selectedLanguages = [];
+
+  late List<HiveCountry> _countryList = [];
+  late List<HiveLanguage> _languageList = [];
 
   @override
   void initState() {
     super.initState();
+    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
+    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+
     _getCurrentUser();
-    _listAllCountries();
-    _listAllLanguages();
+    _getAllCountries();
   }
 
-  void _getCurrentUser() async {
-    await CurrentUserRepository().getUser().then((User user) {
-      print("get current user");
-      setState(() {
-        _userName = user.name;
-        _nameController.text = user.name;
-        _mobileNumber = user.phone;
-        _phoneNumberController.text = user.phone;
-      });
+  void _getCurrentUser() {
+    _user = _currentUserBox.values.first;
+    setState(() {
+      _nameController.text = _user.name;
+      _phoneNumberController.text = _user.phone;
+      // _countryCodeController.text = _user.diallingCode;
+
+      _userName = _user.name;
+      // _countyCode = _user.diallingCode;
+      _mobileNumber = _user.phone;
     });
   }
 
-  void updateCurrentUser() async {
-    // await CurrentUserRepository().updateUser().then((User user) {
-    //   print("updated current user");
-    //   // print(user);
-    //   // print(user.name);
-    // });
+  void _getAllCountries() async {
+    _countryList = _countryBox.values.toList();
+
+    for (var countryId in _user.countryIds) {
+      _countryList
+          .where((item) => item.id == countryId)
+          .forEach((item) => {_selectedCountries.add(item)});
+    }
+
+    _getAllLanguages();
   }
 
-  void _listAllCountries() async {
-    await AppDataRepository()
-        .getAllCountries()
-        .then((ResponseStream<Country> countries) {
-      countries.listen((value) {
-        // print(value.name);
-        // Country countryObject = value;
-        setState(() {
-          _countriesList.add(value);
-        });
-        // print(countriesList[0].name);
-      }, onError: ((err) {
-        print(err);
-      }), onDone: () {
-        print('done');
-      });
-    });
+  void _getAllLanguages() async {
+    _languageList = _languageBox.values.toList();
+    for (var languageId in _user.languageIds) {
+      _languageList
+          .where((item) => item.id == languageId)
+          .forEach((item) => {_selectedLanguages.add(item)});
+    }
   }
 
-  void _listAllLanguages() async {
-    await AppDataRepository()
-        .getAllLanguages()
-        .then((ResponseStream<Language> languages) {
-      languages.listen((value) {
-        print(value.name);
-        setState(() {
-          _languagesList.add(value);
-        });
-      }, onError: ((err) {
-        print(err);
-      }), onDone: () {
-        print('done');
-      });
-    });
+  void updateName() async {
+    print("update name");
+    // var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
+    var fieldMaskPaths = ['name'];
+
+    await CurrentUserRepository()
+        .updateUser(_user.id, _nameController.text, null, null, null, null,
+            fieldMaskPaths)
+        .then(
+          (value) => {
+            print(value),
+            setState(() =>
+                {_nameController.text = value.name, _userName = value.name}),
+            _user.name = value.name,
+            _currentUserBox.putAt(0, _user),
+          },
+        );
+  }
+
+  void updatePhoneNumber() async {
+    var fieldMaskPaths = ['phone'];
+
+    await CurrentUserRepository()
+        .updateUser(_user.id, null, _phoneNumberController.text, null, null,
+            null, fieldMaskPaths)
+        .then(
+          (value) => {
+            print(value),
+            setState(() => {
+                  _phoneNumberController.text = value.phone,
+                  _mobileNumber = value.phone
+                }),
+            _user.phone = value.phone,
+            _currentUserBox.putAt(0, _user),
+          },
+        );
+  }
+
+  void updatelinkGroupStatus() async {
+    var fieldMaskPaths = ['linkGroups'];
+
+    await CurrentUserRepository()
+        .updateUser(
+            _user.id, null, null, null, null, _user.linkGroup, fieldMaskPaths)
+        .then(
+          (value) => {
+            print(value),
+            _user.linkGroup = _user.linkGroup,
+            _currentUserBox.putAt(0, _user),
+          },
+        );
   }
 
   @override
@@ -175,22 +220,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     child: Center(
-                      child: SmartSelect<String>.multiple(
+                      child: SmartSelect<HiveCountry>.multiple(
                         title: Strings.country,
                         placeholder: Strings.selectCountry,
-                        // value: _selectedCountries,
+                        selectedValue: _selectedCountries,
                         onChange: (selected) =>
                             setState(() => _selectedCountries = selected.value),
-                        choiceItems: S2Choice.listFrom<String, Country>(
-                          source: _countriesList,
-                          value: (index, item) => item.id,
-                          title: (index, item) => item.name,
-                          //  group: (index, item) => item['brand'],
-                        ),
+                        choiceItems:
+                            S2Choice.listFrom<HiveCountry, HiveCountry>(
+                                source: _countryList,
+                                value: (index, item) => item,
+                                title: (index, item) => item.name,
+                                group: (index, item) {
+                                  return '';
+                                }),
                         choiceGrouped: false,
                         modalFilter: true,
                         modalFilterAuto: true,
-                        modalType: S2ModalType.bottomSheet,
+                        modalType: S2ModalType.fullPage,
                         tileBuilder: (context, state) {
                           return S2Tile.fromState(
                             state,
@@ -224,22 +271,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     child: Center(
-                      child: SmartSelect<String>.multiple(
+                      child: SmartSelect<HiveLanguage>.multiple(
                         title: Strings.lanugages,
                         placeholder: Strings.selectLanugages,
-                        // value: _selectedLanguages,
+                        selectedValue: _selectedLanguages,
                         onChange: (selected) {
                           setState(() => _selectedLanguages = selected.value);
                         },
-                        choiceItems: S2Choice.listFrom<String, Language>(
-                            source: _languagesList,
-                            value: (index, item) => item.id,
-                            title: (index, item) => item.name,
-                            group: (index, item) {
-                              return 'Selected';
-                            }),
+                        choiceItems:
+                            S2Choice.listFrom<HiveLanguage, HiveLanguage>(
+                                source: _languageList,
+                                value: (index, item) => item,
+                                title: (index, item) => item.name,
+                                group: (index, item) {
+                                  return '';
+                                }),
                         choiceGrouped: true,
-                        modalType: S2ModalType.bottomSheet,
+                        modalType: S2ModalType.fullPage,
                         modalFilter: true,
                         modalFilterAuto: true,
                         tileBuilder: (context, state) {
@@ -330,9 +378,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           width: 23.w,
                           child: Center(
                             child: IconButton(
-                              icon: const Icon(Icons.check_box),
+                              icon: (_user.linkGroup == true)
+                                  ? Icon(Icons.check_box)
+                                  : Icon(Icons.check_box_outline_blank),
                               color: AppColors.selectedButtonBG,
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() => {
+                                      _user.linkGroup = !_user.linkGroup,
+                                      updatelinkGroupStatus()
+                                    });
+                              },
                             ),
                           ),
                         )
@@ -396,6 +451,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 EditButton(
                   onButtonClicked: (value) {
                     print('name selected value $value');
+                    if (isNameEditable == true) {
+                      updateName();
+                    }
                     setState(() {
                       isNameEditable = value;
                     });
@@ -474,6 +532,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 EditButton(
                   onButtonClicked: (value) {
                     print('mobile selected value $value');
+                    if (isMobileEditable == true) {
+                      updatePhoneNumber();
+                    }
                     setState(
                       () {
                         isMobileEditable = value;

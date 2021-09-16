@@ -8,11 +8,12 @@ class CurrentUserRepository {
 
   Future<User> updateUser(
           String id,
-          String name,
-          String phone,
-          Iterable<String> countryIds,
-          Iterable<String> languageIds,
-          bool linkGroups) =>
+          String? name,
+          String? phone,
+          Iterable<String>? countryIds,
+          Iterable<String>? languageIds,
+          bool? linkGroups,
+          List<String> fieldMaskPaths) =>
       apiProvider.updateCurrentUser(
-          id, name, phone, countryIds, languageIds, linkGroups);
+          id, name, phone, countryIds, languageIds, linkGroups, fieldMaskPaths);
 }

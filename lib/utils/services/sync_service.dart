@@ -61,44 +61,39 @@ class SyncService {
   syncCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
       print("get current user");
+      List<HiveGroup> groups = (user.groups
+          .map((e) => HiveGroup(
+              groupId: e.groupId, userId: e.userId, role: e.role.toString()))
+          .toList());
+      List<HiveAction> actions = (user.actions
+          .map((e) => HiveAction(
+              actionId: e.actionId,
+              userId: e.userId,
+              status: e.status.toString(),
+              teacherResponse: e.teacherResponse))
+          .toList());
+
+      HiveCurrentUser _user = HiveCurrentUser(
+          id: user.id,
+          name: user.name,
+          phone: user.phone,
+          linkGroup: user.linkGroups,
+          countryIds: user.countryIds,
+          languageIds: user.languageIds,
+          groups: groups,
+          actions: actions,
+          selectedActionsTab: user.selectedActionsTab.toString(),
+          selectedResultsTab: user.selectedResultsTab.toString());
+
       var filterData = currentUserBox.values
           .where((currentUser) => currentUser.id == user.id)
           .toList();
       if (filterData.length == 0) {
-        List<HiveGroup> groups = (user.groups
-            .map((e) => HiveGroup(
-                groupId: e.groupId, userId: e.userId, role: e.role.toString()))
-            .toList());
-        List<HiveAction> actions = (user.actions
-            .map((e) => HiveAction(
-                actionId: e.actionId,
-                userId: e.userId,
-                status: e.status.toString(),
-                teacherResponse: e.teacherResponse))
-            .toList());
-
-        HiveCurrentUser _user = HiveCurrentUser(
-            id: user.id,
-            name: user.name,
-            phone: user.phone,
-            linkGroup: user.linkGroups,
-            countryIds: user.countryIds,
-            languageIds: user.languageIds,
-            groups: groups,
-            actions: actions,
-            selectedActionsTab: user.selectedActionsTab.toString(),
-            selectedResultsTab: user.selectedResultsTab.toString());
-
         currentUserBox.add(_user);
       } else {
         //update record
+        currentUserBox.putAt(0, _user);
       }
-      // setState(() {
-      //   _userName = user.name;
-      //   _nameController.text = user.name;
-      //   _mobileNumber = user.phone;
-      //   _phoneNumberController.text = user.phone;
-      // });
     });
   }
 
