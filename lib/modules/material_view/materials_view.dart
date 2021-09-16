@@ -6,6 +6,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/db/hive_material_topic.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -14,6 +15,8 @@ import 'package:starfish/smart_select/src/model/modal_config.dart';
 import 'package:starfish/smart_select/src/tile/tile.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
+import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/task_status.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -33,12 +36,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterial> _materialBox;
+  late Box<HiveMaterialTopic> _materialTopicBox;
 
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
+    _materialTopicBox =
+        Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
 
     _getMaterials();
     _getAllLanguages();
@@ -66,15 +72,41 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     });*/
   }
 
-  List<MaterialList> _buildList() {
+  void _onMaterialSelection(HiveMaterial material) {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
+        ),
+        isScrollControlled: true,
+        isDismissible: true,
+        enableDrag: true,
+        builder: (BuildContext context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.80,
+            child: SingleChildScrollView(
+              child: _buildSlidingUpPanel(material),
+            ),
+          );
+        });
+  }
+
+  List<MaterialListItem> _buildList() {
     return _materialsList
-        .map((material) => new MaterialList(material, this))
+        .map((material) => new MaterialListItem(
+              material: material,
+              onMaterialTap: _onMaterialSelection,
+            ))
         .toList();
   }
 
-  List<MaterialList> _buildSearchList() {
+  List<MaterialListItem> _buildSearchList() {
     return _materialsList
-        .map((material) => new MaterialList(material, this))
+        .map((material) => new MaterialListItem(
+              material: material,
+              onMaterialTap: _onMaterialSelection,
+            ))
         .toList();
   }
 
@@ -229,13 +261,191 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       ),
     );
   }
+
+  Widget _buildLanguageList(HiveMaterial material) {
+    _languageBox.values.where((element) => false);
+
+    List<Widget> languages = [];
+    material.languageIds.forEach((String languageId) {
+      HiveLanguage _language =
+          _languageList.firstWhere((element) => languageId == element.id);
+      languages.add(Text(_language.name));
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: languages,
+    );
+  }
+
+  Widget _buildTopicsList(HiveMaterial material) {
+    List<Widget> topics = [];
+
+    material.topics.forEach((String topic) {
+      /*HiveMaterialTopic _materialTopic = _materialTopicBox.values
+          .firstWhere((element) => topicId == element.id);*/
+      topics.add(Text(topic));
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: topics,
+    );
+  }
+
+  Widget _buildSlidingUpPanel(HiveMaterial material) {
+    return Container(
+      margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: 22.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Title: ${material.title}',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: AppColors.txtFieldTextColor,
+                    fontFamily: 'OpenSans',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                CustomIconButton(
+                  icon: Icon(
+                    Icons.open_in_new,
+                    color: Colors.blue,
+                    size: 18.sp,
+                  ),
+                  text: Strings.open,
+                  onButtonTap: () {},
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+          TaskStatus(
+            height: 30.h,
+            color: AppColors.completeTaskBGColor,
+            label: 'complete',
+            textStyle: TextStyle(
+              fontSize: 14.sp,
+              fontFamily: 'OpenSans',
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(
+            height: 10.h,
+          ),
+          TaskStatus(
+            height: 30.h,
+            color: AppColors.overdueTaskBGColor,
+            label: 'overdueTaskBGColor',
+          ),
+          SizedBox(
+            height: 30.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                Strings.lanugages,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Color(0xFF3475F0),
+                  fontFamily: 'OpenSans',
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Spacer(),
+              CustomIconButton(
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.blue,
+                  size: 18.sp,
+                ),
+                text: Strings.edit,
+                onButtonTap: () {},
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 30.h,
+          ),
+          _buildLanguageList(material),
+          SizedBox(
+            height: 47.h,
+          ),
+          Text(
+            Strings.topics,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: Color(0xFF3475F0),
+              fontFamily: 'OpenSans',
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: 30.h,
+          ),
+          _buildTopicsList(material),
+          SizedBox(
+            height: 63.h,
+          ),
+          Text(
+            Strings.reportInappropriateMaterial,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: Color(0xFFF65A4A),
+              fontFamily: 'OpenSans',
+              fontSize: 16.sp,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          SizedBox(
+            height: 40.h,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 37.5.h,
+            color: Color(0xFFEFEFEF),
+            child: ElevatedButton(
+              onPressed: () {
+                //_closeSlidingUpPanelIfOpen();
+                Navigator.pop(context);
+              },
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40.r),
+                  ),
+                ),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+              ),
+              child: Text('Close'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class MaterialList extends StatelessWidget {
+class MaterialListItem extends StatelessWidget {
   final HiveMaterial material;
-  final _MaterialsScreenState obj;
+  final Function(HiveMaterial material) onMaterialTap;
 
-  MaterialList(this.material, this.obj);
+  MaterialListItem({required this.material, required this.onMaterialTap});
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +457,10 @@ class MaterialList extends StatelessWidget {
       ),
       color: AppColors.txtFieldBackground,
       child: InkWell(
+        onTap: () {
+          print('Material Item Selected');
+          onMaterialTap(material);
+        },
         child: Container(
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
           height: 99,
@@ -265,61 +479,33 @@ class MaterialList extends StatelessWidget {
                       style: TextStyle(color: AppColors.txtFieldTextColor),
                     ),
                     Spacer(),
-                    openButton()
+                    CustomIconButton(
+                      icon: Icon(
+                        Icons.open_in_new,
+                        color: Colors.blue,
+                        size: 18.sp,
+                      ),
+                      text: Strings.open,
+                      onButtonTap: () {},
+                    ),
                   ],
                 ),
               ),
-              taskStatus(AppColors.completeTaskBGColor, 'complete'),
-              taskStatus(AppColors.overdueTaskBGColor, 'overdueTaskBGColor'),
+              TaskStatus(
+                height: 17.h,
+                color: AppColors.completeTaskBGColor,
+                label: 'complete',
+              ),
+              TaskStatus(
+                height: 17.h,
+                color: AppColors.overdueTaskBGColor,
+                label: 'overdueTaskBGColor',
+              ),
             ],
           ),
         ),
-        onTap: () => {},
       ),
       elevation: 5,
-    );
-  }
-
-  InkWell openButton() {
-    return InkWell(
-      onTap: () {
-        print('open button tap');
-      },
-      child: Container(
-        width: 55.w,
-        height: 44.h,
-        color: Colors.transparent,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.open_in_new,
-              color: Colors.blue,
-              size: 18.sp,
-            ),
-            Text(
-              Strings.open,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.blue,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Container taskStatus(Color color, String label) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: color,
-      ),
-      margin: EdgeInsets.only(left: 5.0.w, right: 15.0.w),
-      height: 17.h,
-      child: Center(child: Text(label)),
     );
   }
 }

@@ -6,4 +6,7 @@ class MaterialRepository {
   final apiProvider = ApiProvider();
 
   Future<ResponseStream<Material>> getMaterials() => apiProvider.getMateials();
+
+  Future<ResponseStream<MaterialTopic>> getMaterialTopics() =>
+      apiProvider.getMateialTopics();
 }

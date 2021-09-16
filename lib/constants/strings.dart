@@ -49,4 +49,8 @@ class Strings {
 
   static const String linkMyGroups =
       'Link my groups to a project in everylanguage.app';
+
+  static const String topics = 'Topic(s)';
+  static const String reportInappropriateMaterial =
+      'If this material is inappropriate, click here to report it.';
 }

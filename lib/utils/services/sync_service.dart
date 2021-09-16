@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
@@ -24,6 +25,7 @@ class SyncService {
   late Box<HiveGroup> groupBox;
   late Box<HiveAction> actionBox;
   late Box<HiveMaterial> materialBox;
+  late Box<HiveMaterialTopic> materialTopicBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -33,12 +35,15 @@ class SyncService {
     groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUPS_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
     materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
+    materialTopicBox =
+        Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
   }
 
   void syncAll() {
     syncCurrentUser();
     syncCountries();
     syncLanguages();
+    syncMaterialTopics();
     syncMaterial();
 
     DateTime now = DateTime.now();
@@ -174,6 +179,21 @@ class SyncService {
         //   print(count.id);
         //   print(count.title);
         // }
+      });
+    });
+  }
+
+  syncMaterialTopics() async {
+    await MaterialRepository()
+        .getMaterialTopics()
+        .then((ResponseStream<MaterialTopic> topics) {
+      topics.listen((value) {
+        HiveMaterialTopic _materialTopic = HiveMaterialTopic.from(value);
+        materialTopicBox.add(_materialTopic);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('MaterialTopic Sync Done.');
       });
     });
   }

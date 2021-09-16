@@ -10,16 +10,20 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
+import 'package:starfish/db/hive_material_topic.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
-  static const String LAST_SYNC_BOX = 'lastSyncBox';
-  static const String COUNTRY_BOX = 'countryBox';
-  static const String LANGUAGE_BOX = 'languageBox';
-  static const String CURRENT_USER_BOX = 'currentUserBox';
-  static const String GROUPS_BOX = 'groupsBox';
-  static const String ACTIONS_BOX = 'actionBox';
-  static const String MATERIAL_BOX = 'materialBox';
+  static const String COUNTRY_BOX = 'countryBox'; //0
+  static const String LANGUAGE_BOX = 'languageBox'; //1
+  static const String CURRENT_USER_BOX = 'currentUserBox'; //2
+  static const String GROUPS_BOX = 'groupsBox'; //3
+  static const String ACTIONS_BOX = 'actionBox'; //4
+  static const String MATERIAL_BOX = 'materialBox'; //5
+  static const String MATERIAL_FEEDBACK_BOX = 'materialTopicBox'; //6
+  static const String DATE = 'dateBox'; //7
+  static const String LAST_SYNC_BOX = 'lastSyncBox'; //8
+  static const String MATERIAL_TOPIC_BOX = 'materialTopicBox'; //9
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -42,6 +46,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveGroupAdapter());
     Hive.registerAdapter(HiveActionAdapter());
     Hive.registerAdapter(HiveMaterialAdapter());
+    Hive.registerAdapter(HiveMaterialTopicAdapter());
     Hive.registerAdapter(HiveMaterialFeedbackAdapter());
     Hive.registerAdapter(HiveDateAdapter());
 
@@ -60,5 +65,6 @@ class HiveDatabase {
     await Hive.openBox<HiveGroup>(GROUPS_BOX);
     await Hive.openBox<HiveAction>(ACTIONS_BOX);
     await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
+    await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX);
   }
 }
