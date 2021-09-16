@@ -14,6 +14,6 @@ class SepratorLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: hight, margin: edgeInsets, color: AppColors.unselectedButtonBG);
+        height: hight, margin: edgeInsets, color: AppColors.sepratorLineColor);
   }
 }

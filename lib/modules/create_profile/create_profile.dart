@@ -41,18 +41,19 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   final FocusNode _nameFocus = FocusNode();
 
-  late List<HiveCountry> _selectedCountries = [];
-  late List<HiveLanguage> _selectedLanguages = [];
-
   bool _isLoading = false;
 
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveCurrentUser> _currentUserBox;
 
+  late HiveCurrentUser _user;
+
+  late List<HiveCountry> _selectedCountries = [];
+  late List<HiveLanguage> _selectedLanguages = [];
+
   late List<HiveCountry> _countryList = [];
   late List<HiveLanguage> _languageList = [];
-  late HiveCurrentUser _user;
 
   @override
   void initState() {
@@ -112,17 +113,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 */
 
   _updateUserProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
     Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
-
-    // List<String> _selectedCountryIds = [
-    //   "11b41f61-f2fc-4fb9-8293-e61b80a11589",
-    //   "cee015bb-209a-48e5-abb3-69ad9669f367"
-    // ];
-    // List<String> _selectedLanguageIds = [
-    //   "64731b1f-ae64-4f1b-b1e4-e03d48b29642",
-    //   "0821ea6b-3dbf-423b-9e88-4b722c4099a4"
-    // ];
 
     // print("user data ==>>");
     // print(_user.id);
@@ -130,10 +126,14 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     // print(_selectedCountryIds);
     // print(_selectedLanguageIds);
 
+    var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
+
     await CurrentUserRepository()
         .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
-            _selectedLanguageIds, false)
+            _selectedLanguageIds, false, fieldMaskPaths)
         .then((value) => {
+              print(value),
+              setState(() => _isLoading = false),
               _user.name = value.name,
               _user.countryIds = value.countryIds,
               _user.languageIds = value.languageIds,
@@ -146,13 +146,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   void _getAllLanguages() {
     print("_getAllLanguages");
     _languageList = _languageBox.values.toList();
-    // print("===========");
-    // print("_languageList length ==>>");
-    // print(_languageList.length);
-
-    // print("_user.languageIds ==>>");
-    // print(_user.languageIds);
-
     for (var languageId in _user.languageIds) {
       _languageList
           .where((item) => item.id == languageId)
@@ -367,7 +360,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         child: _finishButton(),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

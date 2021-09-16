@@ -23,6 +23,7 @@ class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 2;
   String title = Strings.actionsTabItemText;
   List<Widget> _widgetOptions = [];
+  late PageController _pageController;
 
   @override
   void initState() {
@@ -31,8 +32,15 @@ class _DashboardState extends State<Dashboard> {
     var actionsWidget = ActionsScreen();
 
     _widgetOptions = <Widget>[materialsWidget, groupsWidget, actionsWidget];
+    _pageController = PageController(initialPage: _selectedIndex);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -78,7 +86,12 @@ class _DashboardState extends State<Dashboard> {
                       : AppColors.actionScreenBG,
               elevation: 0.0,
             ),
-            body: _widgetOptions[_selectedIndex],
+            // body: _widgetOptions[_selectedIndex],
+            body: PageView(
+              children: _widgetOptions,
+              onPageChanged: onPageChanged,
+              controller: _pageController,
+            ),
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               items: <BottomNavigationBarItem>[
@@ -106,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
                       : AppColors.actionTabBarTextColor,
               backgroundColor: AppColors.txtFieldBackground,
               unselectedItemColor: AppColors.unselectedButtonBG,
-              onTap: _onItemTapped,
+              onTap: onTabTapped,
             ),
           ),
         ],
@@ -114,7 +127,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void _onItemTapped(int index) {
+  void _changeNaviagtionTitle(int index) {
     setState(() {
       _selectedIndex = index;
       switch (index) {
@@ -131,5 +144,18 @@ class _DashboardState extends State<Dashboard> {
         // title = "Results";
       }
     });
+  }
+
+  void onPageChanged(int index) {
+    setState(() {
+      this._selectedIndex = index;
+    });
+    _changeNaviagtionTitle(index);
+  }
+
+  void onTabTapped(int index) {
+    this._pageController.animateToPage(index,
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _changeNaviagtionTitle(index);
   }
 }

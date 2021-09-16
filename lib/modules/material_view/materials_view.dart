@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/modules/material_view/add_new_material_screen.dart';
+import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -76,22 +77,23 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   void _onMaterialSelection(HiveMaterial material) {
     showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
-        ),
-        isScrollControlled: true,
-        isDismissible: true,
-        enableDrag: true,
-        builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.80,
-            child: SingleChildScrollView(
-              child: _buildSlidingUpPanel(material),
-            ),
-          );
-        });
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.80,
+          child: SingleChildScrollView(
+            child: _buildSlidingUpPanel(material),
+          ),
+        );
+      },
+    );
   }
 
   List<MaterialListItem> _buildList() {
@@ -405,14 +407,25 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           SizedBox(
             height: 63.h,
           ),
-          Text(
-            Strings.reportInappropriateMaterial,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Color(0xFFF65A4A),
-              fontFamily: 'OpenSans',
-              fontSize: 16.sp,
-              fontStyle: FontStyle.italic,
+          TextButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ReportMaterialDialogBox(
+                    material: material,
+                  );
+                },
+              );
+            },
+            child: Text(
+              Strings.reportInappropriateMaterial,
+              style: TextStyle(
+                color: Color(0xFFF65A4A),
+                fontFamily: 'OpenSans',
+                fontSize: 16.sp,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ),
           SizedBox(
