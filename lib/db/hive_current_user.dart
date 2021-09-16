@@ -36,15 +36,20 @@ class HiveCurrentUser {
   @HiveField(9)
   final String selectedResultsTab;
 
-  HiveCurrentUser(
-      {required this.id,
-      required this.name,
-      required this.phone,
-      required this.linkGroup,
-      required this.countryIds,
-      required this.languageIds,
-      required this.groups,
-      required this.actions,
-      required this.selectedActionsTab,
-      required this.selectedResultsTab});
+  @HiveField(10)
+  bool isUpdated;
+
+  HiveCurrentUser({
+    required this.id,
+    required this.name,
+    required this.phone,
+    required this.linkGroup,
+    required this.countryIds,
+    required this.languageIds,
+    required this.groups,
+    required this.actions,
+    required this.selectedActionsTab,
+    required this.selectedResultsTab,
+    this.isUpdated = false,
+  });
 }

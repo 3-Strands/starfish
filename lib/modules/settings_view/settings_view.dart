@@ -18,6 +18,9 @@ import 'package:starfish/smart_select/src/model/modal_config.dart';
 import 'package:starfish/smart_select/src/tile/tile.dart';
 import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
@@ -110,51 +113,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void updateName() async {
     print("update name");
     // var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
-    var fieldMaskPaths = ['name'];
+    // var fieldMaskPaths = ['name'];
+
+    // await CurrentUserRepository()
+    //     .updateUser(_user.id, _nameController.text, null, null, null, null,
+    //         fieldMaskPaths)
+    //     .then(
+    //       (value) => {
+    //         print(value),
+    //         setState(() =>
+    //             {_nameController.text = value.name, _userName = value.name}),
+    //         _user.name = value.name,
+    //         _currentUserBox.putAt(0, _user),
+    //       },
+    //     );
+
+    setState(() => {_userName = _nameController.text});
+    _user.name = _nameController.text;
+    _user.isUpdated = true;
+    _currentUserBox.putAt(0, _user);
+  }
+
+  void updatePhoneNumber() async {
+    setState(() => {_mobileNumber = _phoneNumberController.text});
+    _user.phone = _phoneNumberController.text;
+    _user.isUpdated = true;
+    _currentUserBox.putAt(0, _user);
+  }
+
+  void updatelinkGroupStatus() async {
+    _user.linkGroup = _user.linkGroup;
+    _user.isUpdated = true;
+    _currentUserBox.putAt(0, _user);
+  }
+
+  void updateCountries() async {
+    GeneralFunctions().isNetworkAvailable().then((onValue) async {
+      if (!onValue) {
+        return Snackbar.showErrorMessage(context,
+            'You can change the countries and languages only when your internet is working');
+      }
+    });
+
+    // var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
+    var fieldMaskPaths = ['countryIds'];
+    Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
 
     await CurrentUserRepository()
-        .updateUser(_user.id, _nameController.text, null, null, null, null,
+        .updateUser(_user.id, null, null, _selectedCountryIds, null, null,
             fieldMaskPaths)
         .then(
           (value) => {
             print(value),
-            setState(() =>
-                {_nameController.text = value.name, _userName = value.name}),
-            _user.name = value.name,
+            _user.countryIds = value.countryIds,
             _currentUserBox.putAt(0, _user),
           },
-        );
+        )
+        .whenComplete(() {
+      // SyncService().syncLanguages();
+    });
   }
 
-  void updatePhoneNumber() async {
-    var fieldMaskPaths = ['phone'];
+  void updateLanguages() async {
+    GeneralFunctions().isNetworkAvailable().then((onValue) async {
+      if (!onValue) {
+        return Snackbar.showErrorMessage(context,
+            'You can change the countries and languages only when your internet is working');
+      }
+    });
+
+    // var fieldMaskPaths = ['name', 'languageIds', 'languageIds'];
+    var fieldMaskPaths = ['languageIds'];
+    Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
 
     await CurrentUserRepository()
-        .updateUser(_user.id, null, _phoneNumberController.text, null, null,
-            null, fieldMaskPaths)
+        .updateUser(_user.id, null, null, null, _selectedLanguageIds, null,
+            fieldMaskPaths)
         .then(
           (value) => {
             print(value),
-            setState(() => {
-                  _phoneNumberController.text = value.phone,
-                  _mobileNumber = value.phone
-                }),
-            _user.phone = value.phone,
-            _currentUserBox.putAt(0, _user),
-          },
-        );
-  }
-
-  void updatelinkGroupStatus() async {
-    var fieldMaskPaths = ['linkGroups'];
-
-    await CurrentUserRepository()
-        .updateUser(
-            _user.id, null, null, null, null, _user.linkGroup, fieldMaskPaths)
-        .then(
-          (value) => {
-            print(value),
-            _user.linkGroup = _user.linkGroup,
+            _user.languageIds = value.languageIds,
             _currentUserBox.putAt(0, _user),
           },
         );
@@ -224,8 +262,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Strings.country,
                         placeholder: Strings.selectCountry,
                         selectedValue: _selectedCountries,
-                        onChange: (selected) =>
-                            setState(() => _selectedCountries = selected.value),
+                        onChange: (selected) => setState(() => {
+                              _selectedCountries = selected.value,
+                              updateCountries()
+                            }),
                         choiceItems:
                             S2Choice.listFrom<HiveCountry, HiveCountry>(
                                 source: _countryList,
