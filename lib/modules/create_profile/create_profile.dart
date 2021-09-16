@@ -134,6 +134,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
             _selectedLanguageIds, false)
         .then((value) => {
+              print(value),
               _user.name = value.name,
               _user.countryIds = value.countryIds,
               _user.languageIds = value.languageIds,
@@ -367,7 +368,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         child: _finishButton(),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
