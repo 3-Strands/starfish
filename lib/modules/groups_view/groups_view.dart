@@ -76,7 +76,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Title: ${group.groupId}',
+                  '${group.groupId}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,
@@ -85,62 +85,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Spacer(),
-                CustomIconButton(
-                  icon: Icon(
-                    Icons.open_in_new,
-                    color: Colors.blue,
-                    size: 18.sp,
-                  ),
-                  text: Strings.open,
-                  onButtonTap: () {},
-                ),
               ],
             ),
           ),
           SizedBox(
-            height: 20.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                Strings.lanugages,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Color(0xFF3475F0),
-                  fontFamily: 'OpenSans',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacer(),
-              CustomIconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 18.sp,
-                ),
-                text: Strings.edit,
-                onButtonTap: () {},
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          Text(
-            Strings.topics,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Color(0xFF3475F0),
-              fontFamily: 'OpenSans',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 30.h,
+            height: 200.h,
           ),
           Container(
             width: MediaQuery.of(context).size.width,
@@ -296,7 +245,7 @@ class GroupListItem extends StatelessWidget {
         },
         child: Container(
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-          height: 99,
+          height: 183,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
@@ -314,11 +263,11 @@ class GroupListItem extends StatelessWidget {
                     Spacer(),
                     CustomIconButton(
                       icon: Icon(
-                        Icons.open_in_new,
+                        Icons.edit,
                         color: Colors.blue,
                         size: 18.sp,
                       ),
-                      text: Strings.open,
+                      text: Strings.edit,
                       onButtonTap: () {},
                     ),
                   ],
