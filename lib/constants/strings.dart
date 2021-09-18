@@ -14,6 +14,8 @@ class Strings {
   static const String cancel = 'Cancel';
   static const String add = 'Add';
   static const String sendFeedback = 'Send Feedback';
+  static const String copyThisInfo = 'Copy this info';
+  static const String copyAllCodes = 'Copy all codes';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';

@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +10,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -50,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _userName = '';
   String _countyCode = '';
   String _mobileNumber = '';
-  // List<String> groups = List<String>.generate(4, (i) => "Group: $i");
+  List<String> groups = List<String>.generate(4, (i) => "Group: $i");
 
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
@@ -340,24 +342,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   Container(
                     margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '', //Strings.lastSuccessfullSync + ': ',
-                            style: TextStyle(
-                                color: AppColors.appTitle,
+                    child: Align(
+                      alignment: FractionalOffset.topLeft,
+                      child: Text.rich(
+                        TextSpan(
+                          text: Strings.lastSuccessfullSync + ': ',
+                          style: TextStyle(
+                              color: AppColors.appTitle,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 22.sp),
+                          children: [
+                            TextSpan(
+                              text: '',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'Roboto',
+                                fontSize: ScreenUtil().setSp(22),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 24.0),
-                          ),
-                          TextSpan(
-                            text: '', //"13-AUG",
-                            style: TextStyle(
-                                color: AppColors.appTitle,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 24.0),
-                          )
-                        ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -366,7 +371,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   SizedBox(height: 50.h),
 
-                  //--> For group admin section
+                  //--> Group admin section
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
@@ -418,7 +423,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   SizedBox(height: 50.h),
 
-                  //--> For my groups section
+                  //--> My groups section
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
@@ -431,17 +436,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     hight: 1.h,
                     edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
                   ),
-                  //--------------------------
 
                   SizedBox(height: 20.h),
 
-                  // Column(
-                  //   children: <Widget>[
-                  //     ...groups.map((item) {
-                  //       return Text(item);
-                  //     }).toList(),
-                  //   ],
-                  // ),
+                  _myGroupsList(),
+                  //--------------------------
+
+                  //--> Copy All Codes
+                  DottedBorder(
+                    borderType: BorderType.RRect,
+                    radius: Radius.circular(30.r),
+                    color: Color(0xFF3475F0),
+                    child: Container(
+                      width: 345.w,
+                      height: 50.h,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Text(
+                          Strings.copyAllCodes,
+                          style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 14.sp,
+                            color: Color(0xFF3475F0),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  ),
+                  //--------------------------
+
+                  SizedBox(height: 10.h),
                 ],
               ),
             ),
@@ -660,6 +688,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         filled: true,
         fillColor: AppColors.txtFieldBackground,
+      ),
+    );
+  }
+
+  Column _myGroupsList() {
+    return Column(
+      children: <Widget>[
+        ..._user.groups.map((item) {
+          return _groupItem(item);
+        }).toList(),
+      ],
+    );
+  }
+
+  Container _groupItem(HiveGroup group) {
+    return Container(
+      height: 90.h,
+      // color: Colors.green,
+      margin: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 25.h,
+            child: Align(
+              alignment: FractionalOffset.topLeft,
+              child: Text(group.groupId, style: titleTextStyle),
+            ),
+          ),
+          SizedBox(height: 5.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'ID: 123456\nCode: abcd',
+                style: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16.sp,
+                  color: AppColors.appTitle,
+                ),
+              ),
+              Container(
+                height: 36.h,
+                width: 145.w,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.selectedButtonBG,
+                  ),
+                  child: Text(
+                    Strings.copyThisInfo,
+                    style: buttonTextStyle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
