@@ -19,6 +19,7 @@ import 'package:starfish/smart_select/src/tile/tile.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
 
 class MaterialsScreen extends StatefulWidget {
@@ -130,7 +131,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(height: 10.h),
               _buildTopicsContainer(),
               SizedBox(height: 10.h),
-              _buildSearchContainer(),
+              SearchBar(
+                onValueChanged: (value) {
+                  print('searched value $value');
+                },
+                onDone: (value) {
+                  print('searched value $value');
+                },
+              ),
               SizedBox(height: 10.h),
               Container(
                 height: 80.h,
@@ -164,22 +172,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           Navigator.of(context).pushNamed(Routes.addNewMaterial);
         },
         child: Icon(Icons.add),
-      ),
-    );
-  }
-
-  Container _buildSearchContainer() {
-    return Container(
-      height: 52.h,
-      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      decoration: BoxDecoration(
-        color: AppColors.txtFieldBackground,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
-      ),
-      child: Center(
-        child: Text('Search'),
       ),
     );
   }

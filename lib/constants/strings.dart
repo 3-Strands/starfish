@@ -76,6 +76,7 @@ class Strings {
 
   // Hints
   static const String hintMaterialName = 'Name of the Material';
+  static const String searchBarHint = 'Search';
 
   // Labels
   static const String descripton = 'Description';
