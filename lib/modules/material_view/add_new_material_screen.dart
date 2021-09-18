@@ -65,12 +65,23 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
       backgroundColor: AppColors.materialSceenBG,
       appBar: AppBar(
         backgroundColor: AppColors.materialSceenBG,
-        leadingWidth: 37.w,
-        leading: AppLogo(hight: 36.h, width: 37.w),
-        centerTitle: true,
-        title: Text(
-          Strings.addNewMaterial,
-          style: dashboardNavigationTitle,
+        automaticallyImplyLeading: false,
+        title: Container(
+          height: 64.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              AppLogo(hight: 36.h, width: 37.w),
+              Text(
+                Strings.addNewMaterial,
+                style: dashboardNavigationTitle,
+              ),
+              IconButton(
+                icon: SvgPicture.asset(AssetsPath.settingsActive),
+                onPressed: () {},
+              ),
+            ],
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -117,7 +128,22 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
               ),
               SizedBox(height: 11.h),
               TextFormField(
+                maxLines: 4,
                 controller: _descriptionController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: AppColors.txtFieldBackground,
+                ),
               ),
               SizedBox(height: 21.h),
               Text(
@@ -128,6 +154,20 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
               SizedBox(height: 11.h),
               TextFormField(
                 controller: _webLinkController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: AppColors.txtFieldBackground,
+                ),
               ),
               SizedBox(height: 21.h),
               Text(
@@ -136,7 +176,22 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                 style: titleTextStyle,
               ),
               SizedBox(height: 11.h),
-              TextFormField(),
+              TextFormField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: AppColors.txtFieldBackground,
+                ),
+              ),
               SizedBox(height: 10.h),
 
               // Add Materials

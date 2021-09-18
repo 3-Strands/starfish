@@ -87,7 +87,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       enableDrag: true,
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.80,
+          height: MediaQuery.of(context).size.height * 0.70,
           child: SingleChildScrollView(
             child: _buildSlidingUpPanel(material),
           ),
@@ -429,7 +429,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             ),
           ),
           SizedBox(
-            height: 40.h,
+            height: 20.h,
           ),
           Container(
             width: MediaQuery.of(context).size.width,
