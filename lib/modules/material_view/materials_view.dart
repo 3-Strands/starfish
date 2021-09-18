@@ -272,7 +272,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     _languageBox.values.where((element) => false);
 
     List<Widget> languages = [];
-    material.languageIds.forEach((String languageId) {
+    material.languageIds?.forEach((String languageId) {
       HiveLanguage _language =
           _languageList.firstWhere((element) => languageId == element.id);
       languages.add(Text(_language.name));
@@ -287,7 +287,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Widget _buildTopicsList(HiveMaterial material) {
     List<Widget> topics = [];
 
-    material.topics.forEach((String topic) {
+    material.topics?.forEach((String topic) {
       /*HiveMaterialTopic _materialTopic = _materialTopicBox.values
           .firstWhere((element) => topicId == element.id);*/
       topics.add(Text(topic));
