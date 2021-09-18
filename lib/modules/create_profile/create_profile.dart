@@ -117,14 +117,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       _isLoading = true;
     });
 
-    Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
-    Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
+    Iterable<String> _selectedCountryIds =
+        _selectedCountries.map((e) => e.id).toList();
+    Iterable<String> _selectedLanguageIds =
+        _selectedLanguages.map((e) => e.id).toList();
 
-    // print("user data ==>>");
+    print("user data ==>>");
     // print(_user.id);
     // print(_nameController.text);
-    // print(_selectedCountryIds);
-    // print(_selectedLanguageIds);
+    print(_selectedCountryIds);
+    print(_selectedLanguageIds);
 
     var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
 
@@ -132,7 +134,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
             _selectedLanguageIds, false, fieldMaskPaths)
         .then((value) => {
+              print('=================== START ==================='),
               print(value),
+              print('=================== END ==================='),
               setState(() => _isLoading = false),
               _user.name = value.name,
               _user.countryIds = value.countryIds,

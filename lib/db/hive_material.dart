@@ -8,37 +8,37 @@ part 'hive_material.g.dart';
 @HiveType(typeId: 5)
 class HiveMaterial extends HiveObject {
   @HiveField(0)
-  late String id;
+  String? id;
   @HiveField(1)
-  late String creatorId;
+  String? creatorId;
   @HiveField(2)
-  late String status;
+  String? status;
   @HiveField(3)
-  late String visibility;
+  String? visibility;
   @HiveField(4)
-  late String editability;
+  String? editability;
   @HiveField(5)
-  late String title;
+  String? title;
   @HiveField(6)
-  late String description;
+  String? description;
   @HiveField(7)
-  late String targetAudience;
+  String? targetAudience;
   @HiveField(8)
-  late String url;
+  String? url;
   @HiveField(9)
-  List<String> files = [];
+  List<String>? files;
   @HiveField(10)
-  List<String> languageIds = [];
+  List<String>? languageIds;
   @HiveField(11)
-  List<String> typeIds = [];
+  List<String>? typeIds;
   @HiveField(12)
-  List<String> topics = [];
+  List<String>? topics;
   @HiveField(13)
-  List<HiveMaterialFeedback> feedbacks = [];
+  List<HiveMaterialFeedback>? feedbacks;
   @HiveField(14)
-  late HiveDate dateCreated;
+  HiveDate? dateCreated;
   @HiveField(15)
-  late HiveDate dateUpdated;
+  HiveDate? dateUpdated;
   @HiveField(16)
   bool isNew = false;
   @HiveField(17)
@@ -46,7 +46,21 @@ class HiveMaterial extends HiveObject {
   @HiveField(18)
   bool isDirty = false;
 
-  HiveMaterial();
+  HiveMaterial({
+    this.id,
+    this.creatorId,
+    this.title,
+    this.description,
+    this.url,
+    this.languageIds,
+    this.typeIds,
+    this.topics,
+    this.visibility,
+    this.editability,
+    this.isNew = false,
+    this.isUpdated = false,
+    this.isDirty = false,
+  });
 
   HiveMaterial.from(Material material) {
     this.id = material.id;
@@ -62,9 +76,9 @@ class HiveMaterial extends HiveObject {
     this.languageIds = material.languageIds;
     this.typeIds = material.typeIds;
     this.topics = material.topics;
-    this.feedbacks.addAll(material.feedbacks.map((MaterialFeedback feedback) {
-          return HiveMaterialFeedback.from(feedback);
-        }).toList());
+    this.feedbacks = material.feedbacks.map((MaterialFeedback feedback) {
+      return HiveMaterialFeedback.from(feedback);
+    }).toList();
     this.dateCreated = HiveDate.from(material.dateCreated);
     this.dateUpdated = HiveDate.from(material.dateUpdated);
   }

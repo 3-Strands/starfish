@@ -8,11 +8,17 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/repository/materials_repository.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/modal_config.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/tile/tile.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -28,12 +34,17 @@ class AddNewMaterialScreen extends StatefulWidget {
 }
 
 class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _webLinkController = TextEditingController();
+
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
   List<HiveMaterialTopic> _selectedTopics = [];
   String? _editableBy;
 
   late Box<HiveLanguage> _languageBox;
+  late Box<HiveMaterial> _materialBox;
   late Box<HiveMaterialType> _materialTypeBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
 
@@ -41,6 +52,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     _materialTypeBox =
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     _materialTopicBox =
@@ -68,6 +80,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: _titleController,
                 keyboardType: TextInputType.text,
                 style: formTitleTextStyle,
                 decoration: InputDecoration(
@@ -103,7 +116,9 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                 style: titleTextStyle,
               ),
               SizedBox(height: 11.h),
-              TextFormField(),
+              TextFormField(
+                controller: _descriptionController,
+              ),
               SizedBox(height: 21.h),
               Text(
                 Strings.addWebLink,
@@ -111,7 +126,9 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                 style: titleTextStyle,
               ),
               SizedBox(height: 11.h),
-              TextFormField(),
+              TextFormField(
+                controller: _webLinkController,
+              ),
               SizedBox(height: 21.h),
               Text(
                 Strings.uploadAMaterial,
@@ -421,7 +438,35 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
             SizedBox(width: 25.w),
             Expanded(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  HiveMaterial _material = HiveMaterial(
+                    title: _titleController.text,
+                    url: _webLinkController.text,
+                    description: _descriptionController.text,
+                    languageIds: _selectedLanguages
+                        .map((HiveLanguage language) => language.id)
+                        .toList(),
+                    typeIds: _selectedTypes
+                        .map((HiveMaterialType type) => type.id)
+                        .toList(),
+                    topics: _selectedTopics
+                        .map((HiveMaterialTopic topic) => topic.id)
+                        .toList(),
+
+                    //visibility: Material_Visibility.CREATOR_VIEW,
+                    //editability: Material_Editability.CREATOR_EDIT,
+                    isNew: true,
+                  );
+
+                  _materialBox
+                      .add(_material)
+                      .then((value) => print('$value record(s) saved.'))
+                      .onError((error, stackTrace) =>
+                          print('Error: ${error.toString()}.'))
+                      .whenComplete(() {
+                    print('Material Creation Done.');
+                  });
+                },
                 child: Text(Strings.add),
                 style: ElevatedButton.styleFrom(
                   primary: AppColors.selectedButtonBG,

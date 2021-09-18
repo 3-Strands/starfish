@@ -50,7 +50,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 15.h,
           ),
           Text(
-            widget.material.title,
+            widget.material.title ?? '',
             style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(

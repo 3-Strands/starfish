@@ -12,4 +12,35 @@ class MaterialRepository {
 
   Future<ResponseStream<MaterialType>> getMaterialTypes() =>
       apiProvider.getMateialTypes();
+
+  Future<ResponseStream<CreateUpdateMaterialsResponse>> createUpdateMaterial(
+    String? id,
+    String? creatorId,
+    Material_Status? status,
+    String? title,
+    String? description,
+    String? url,
+    Material_Visibility? visibility,
+    Material_Editability? editability,
+    Iterable<String>? files,
+    Iterable<String>? languageIds,
+    Iterable<String>? typeIds,
+    Iterable<String>? topics,
+    List<String> fieldMaskPaths,
+  ) =>
+      apiProvider.createUpdateMaterial(
+        id,
+        creatorId,
+        status,
+        title,
+        description,
+        url,
+        visibility,
+        editability,
+        files,
+        languageIds,
+        typeIds,
+        topics,
+        fieldMaskPaths,
+      );
 }

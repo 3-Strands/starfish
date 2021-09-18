@@ -42,9 +42,9 @@ class ApiProvider {
         id: id,
         name: name ?? '',
         phone: phone ?? '',
-        countryIds: countryIds ?? [],
-        languageIds: languageIds ?? [],
-        linkGroups: linkGroups ?? false,
+        countryIds: List.from(countryIds!),
+        languageIds: List.from(languageIds!),
+        //linkGroups: linkGroups ?? false,
         selectedActionsTab: actionTab,
         selectedResultsTab: resultsTab,
         phoneCountryId: '',
@@ -80,5 +80,42 @@ class ApiProvider {
     Date date = Date(year: 2020, month: 1, day: 1);
     request.updatedSince = date;
     return client!.listMaterialTypes(request);
+  }
+
+  Future<ResponseStream<CreateUpdateMaterialsResponse>> createUpdateMaterial(
+    String? id,
+    String? creatorId,
+    Material_Status? status,
+    String? title,
+    String? description,
+    String? url,
+    Material_Visibility? visibility,
+    Material_Editability? editability,
+    Iterable<String>? files,
+    Iterable<String>? languageIds,
+    Iterable<String>? typeIds,
+    Iterable<String>? topics,
+    List<String> fieldMaskPaths,
+  ) async {
+    Material _material = Material(
+      title: title,
+      description: description,
+      creatorId: url,
+      visibility: visibility,
+      editability: editability,
+      languageIds: languageIds ?? [],
+      typeIds: typeIds ?? [],
+      topics: topics ?? [],
+    );
+
+    var request = CreateUpdateMaterialsRequest.create();
+    request.material = _material;
+
+    FieldMask mask = FieldMask(paths: fieldMaskPaths);
+    request.updateMask = mask;
+
+    Stream<CreateUpdateMaterialsRequest> streamRequest = Stream.value(request);
+
+    return client!.createUpdateMaterials(streamRequest);
   }
 }
