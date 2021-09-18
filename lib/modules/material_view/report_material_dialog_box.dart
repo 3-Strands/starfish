@@ -57,7 +57,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 20.h,
           ),
           Text(
-            'Explain why this material is inappropriate',
+            Strings.reportDialogDetailText,
             style: TextStyle(fontSize: 13.sp),
             textAlign: TextAlign.center,
           ),

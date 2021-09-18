@@ -76,4 +76,7 @@ class Strings {
   static const String descripton = 'Description';
   static const String addWebLink = 'Add web link';
   static const String uploadAMaterial = 'Upload a material';
+
+  static const String reportDialogDetailText =
+      'Explain why this material is inappropriate';
 }
