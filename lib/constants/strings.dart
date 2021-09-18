@@ -13,6 +13,9 @@ class Strings {
   static const String open = 'Open';
   static const String cancel = 'Cancel';
   static const String add = 'Add';
+  static const String update = 'Update';
+  static const String ok = 'OK';
+  static const String close = 'Close';
   static const String sendFeedback = 'Send Feedback';
   static const String copyThisInfo = 'Copy this info';
   static const String copyAllCodes = 'Copy all codes';
@@ -68,6 +71,8 @@ class Strings {
 
   // Screen Titles
   static const String addNewMaterial = 'Add New Material';
+  static const String editMaterial = 'Edit Material';
+  static const String dialogInfo = 'Info';
 
   // Hints
   static const String hintMaterialName = 'Name of the Material';
@@ -79,4 +84,10 @@ class Strings {
 
   static const String reportDialogDetailText =
       'Explain why this material is inappropriate';
+
+  // Info/Alert messages
+  static const String addMaterialSuccess = 'Material saved successfully.';
+  static const String addMaterialFailed = 'Failed to save Material.';
+  static const String updateMaterialSuccess = 'Material updated successfully.';
+  static const String updateMaterialFailed = 'Failed to update Material.';
 }

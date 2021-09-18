@@ -11,7 +11,6 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
-import 'package:starfish/repository/materials_repository.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -21,22 +20,30 @@ import 'package:starfish/smart_select/src/tile/tile.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddNewMaterialScreen extends StatefulWidget {
-  AddNewMaterialScreen({
+class AddEditNewMaterialScreen extends StatefulWidget {
+  final HiveMaterial? material;
+
+  AddEditNewMaterialScreen({
     Key? key,
+    this.material,
   }) : super(key: key);
 
   @override
-  _AddNewMaterialScreenState createState() => _AddNewMaterialScreenState();
+  _AddEditNewMaterialScreenState createState() =>
+      _AddEditNewMaterialScreenState();
 }
 
-class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
+class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _webLinkController = TextEditingController();
+
+  bool _isEditMode = false;
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
@@ -57,6 +64,29 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     _materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
+
+    if (widget.material != null) {
+      _isEditMode = true;
+
+      _titleController.text = widget.material!.title!;
+      _descriptionController.text = widget.material!.description!;
+      _webLinkController.text = widget.material!.url!;
+
+      _selectedLanguages = _languageBox.values
+          .where((HiveLanguage language) =>
+              widget.material!.languageIds!.contains(language.id))
+          .toList();
+
+      _selectedTypes = _materialTypeBox.values
+          .where((HiveMaterialType type) =>
+              widget.material!.typeIds!.contains(type.id))
+          .toList();
+
+      _selectedTopics = _materialTopicBox.values
+          .where((HiveMaterialTopic topic) =>
+              widget.material!.topics!.contains(topic.id))
+          .toList();
+    }
   }
 
   @override
@@ -73,7 +103,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
             children: <Widget>[
               AppLogo(hight: 36.h, width: 37.w),
               Text(
-                Strings.addNewMaterial,
+                _isEditMode ? Strings.editMaterial : Strings.addNewMaterial,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -121,6 +151,8 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                 ),
               ),
               SizedBox(height: 21.h),
+
+              // Description
               Text(
                 Strings.descripton,
                 textAlign: TextAlign.left,
@@ -130,6 +162,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
               TextFormField(
                 maxLines: 4,
                 controller: _descriptionController,
+                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                   border: OutlineInputBorder(
@@ -138,7 +171,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide(
-                      color: Colors.white,
+                      color: Colors.transparent,
                     ),
                   ),
                   filled: true,
@@ -146,6 +179,8 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                 ),
               ),
               SizedBox(height: 21.h),
+
+              // Web Link
               Text(
                 Strings.addWebLink,
                 textAlign: TextAlign.left,
@@ -154,6 +189,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
               SizedBox(height: 11.h),
               TextFormField(
                 controller: _webLinkController,
+                keyboardType: TextInputType.url,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                   border: OutlineInputBorder(
@@ -162,7 +198,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide(
-                      color: Colors.white,
+                      color: Colors.transparent,
                     ),
                   ),
                   filled: true,
@@ -170,6 +206,8 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                 ),
               ),
               SizedBox(height: 21.h),
+
+              // Upload Material
               Text(
                 Strings.uploadAMaterial,
                 textAlign: TextAlign.left,
@@ -185,7 +223,7 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide(
-                      color: Colors.white,
+                      color: Colors.transparent,
                     ),
                   ),
                   filled: true,
@@ -516,13 +554,28 @@ class _AddNewMaterialScreenState extends State<AddNewMaterialScreen> {
                   _materialBox
                       .add(_material)
                       .then((value) => print('$value record(s) saved.'))
-                      .onError((error, stackTrace) =>
-                          print('Error: ${error.toString()}.'))
-                      .whenComplete(() {
-                    print('Material Creation Done.');
+                      .onError((error, stackTrace) {
+                    print('Error: ${error.toString()}.');
+                    Snackbar.showErrorMessage(
+                        context,
+                        _isEditMode
+                            ? Strings.updateMaterialFailed
+                            : Strings.addMaterialFailed);
+                  }).whenComplete(() {
+                    Alerts.showMessageBox(
+                        context: context,
+                        title: Strings.dialogInfo,
+                        message: _isEditMode
+                            ? Strings.updateMaterialSuccess
+                            : Strings.addMaterialSuccess,
+                        callback: () {
+                          Navigator.of(context).pop();
+                        });
                   });
                 },
-                child: Text(Strings.add),
+                child: Text(
+                  _isEditMode ? Strings.update : Strings.add,
+                ),
                 style: ElevatedButton.styleFrom(
                   primary: AppColors.selectedButtonBG,
                 ),
