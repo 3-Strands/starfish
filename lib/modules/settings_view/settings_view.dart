@@ -134,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void updateCountries() async {
     GeneralFunctions().isNetworkAvailable().then((onValue) async {
       if (!onValue) {
-        return Snackbar.showErrorMessage(context,
+        return StarfishSnackbar.showErrorMessage(context,
             'You can change the countries and languages only when your internet is working');
       }
     });
@@ -160,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void updateLanguages() async {
     GeneralFunctions().isNetworkAvailable().then((onValue) async {
       if (!onValue) {
-        return Snackbar.showErrorMessage(context,
+        return StarfishSnackbar.showErrorMessage(context,
             'You can change the countries and languages only when your internet is working');
       }
     });

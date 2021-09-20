@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/repository/app_data_repository.dart';
@@ -26,6 +27,7 @@ class SyncService {
   late Box<HiveGroup> groupBox;
   late Box<HiveAction> actionBox;
   late Box<HiveMaterial> materialBox;
+  late Box<HiveMaterialFeedback> materialFeedbackBox;
   late Box<HiveMaterialTopic> materialTopicBox;
   late Box<HiveMaterialType> materialTypeBox;
 
@@ -37,6 +39,8 @@ class SyncService {
     groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUPS_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
     materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
+    materialFeedbackBox =
+        Hive.box<HiveMaterialFeedback>(HiveDatabase.MATERIAL_FEEDBACK_BOX);
     materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
     materialTypeBox =

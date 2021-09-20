@@ -32,6 +32,20 @@ var resentOTPTextStyle = TextStyle(
   color: AppColors.selectedButtonBG,
 );
 
+var cancelButtonTextStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.normal,
+  fontSize: 16.sp,
+  color: AppColors.unselectedButtonBG,
+);
+
+var sentFeedbackTextStyle = TextStyle(
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.normal,
+  fontSize: 16.sp,
+  color: AppColors.selectedButtonBG,
+);
+
 var buttonTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.normal,

@@ -20,7 +20,7 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50.h,
+      height: 60.h,
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       decoration: BoxDecoration(
         border: Border.all(
@@ -34,10 +34,11 @@ class _SearchBarState extends State<SearchBar> {
         children: [
           Container(
             height: 50.h,
-            width: MediaQuery.of(context).size.width - 80,
-            margin: EdgeInsets.only(left: 5.w, right: 5.w),
+            width: MediaQuery.of(context).size.width - 80.w,
+            margin: EdgeInsets.only(right: 5.w),
             child: TextFormField(
               decoration: new InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(10.w, 60.0, 0.0, 10.0),
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,

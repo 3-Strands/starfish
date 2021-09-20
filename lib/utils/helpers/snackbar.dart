@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Snackbar {
+class StarfishSnackbar {
   static void showSuccessMessage(BuildContext context, String value) {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

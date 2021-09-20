@@ -91,4 +91,7 @@ class Strings {
   static const String addMaterialFailed = 'Failed to save Material.';
   static const String updateMaterialSuccess = 'Material updated successfully.';
   static const String updateMaterialFailed = 'Failed to update Material.';
+  static const String emptyMaterialFeedback = 'Please enter detail.';
+  static const String addMaterialFeedbackSuccess =
+      'Material feedback saved successfully.';
 }
