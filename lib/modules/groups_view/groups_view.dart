@@ -145,77 +145,79 @@ class _GroupsScreenState extends State<GroupsScreen> {
           width: 375.w,
           height: 812.h,
           color: AppColors.groupScreenBG,
-          child: Column(
-            children: [
-              SearchBar(
-                onValueChanged: (value) {
-                  print('searched value $value');
-                },
-                onDone: (value) {
-                  print('searched value $value');
-                },
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Container(
-                height: 50.h,
-                width: MediaQuery.of(context).size.width - 40,
-                padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                decoration: BoxDecoration(
-                  color: AppColors.txtFieldBackground,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SearchBar(
+                  onValueChanged: (value) {
+                    print('searched value $value');
+                  },
+                  onDone: (value) {
+                    print('searched value $value');
+                  },
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 16.sp,
-                      fontFamily: 'OpenSans',
+                SizedBox(
+                  height: 10.h,
+                ),
+                Container(
+                  height: 50.h,
+                  width: MediaQuery.of(context).size.width - 40,
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.txtFieldBackground,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
                     ),
-                    hint: Text(
-                      'Groups: All of my Groups',
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
                       style: TextStyle(
                         color: Color(0xFF434141),
                         fontSize: 16.sp,
                         fontFamily: 'OpenSans',
                       ),
-                    ),
-                    onChanged: (String? value) {},
-                    items: <String>[
-                      'Groups: Group I teach or co-lead',
-                      'Groups: Groups I\'m a learner in',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 14.sp,
-                            fontFamily: 'OpenSans',
-                          ),
+                      hint: Text(
+                        'Groups: All of my Groups',
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 16.sp,
+                          fontFamily: 'OpenSans',
                         ),
-                      );
-                    }).toList(),
+                      ),
+                      onChanged: (String? value) {},
+                      items: <String>[
+                        'Groups: Group I teach or co-lead',
+                        'Groups: Groups I\'m a learner in',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 14.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
-              ListView(
-                primary: false,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                children: _isSearching ? _buildSearchList() : _buildList(),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-            ],
+                SizedBox(
+                  height: 20.h,
+                ),
+                ListView(
+                  primary: false,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                  children: _isSearching ? _buildSearchList() : _buildList(),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+              ],
+            ),
           ),
         ),
       ),
