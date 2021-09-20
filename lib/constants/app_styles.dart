@@ -8,7 +8,7 @@ class AppStyles {
     return base.copyWith(
       appBarTheme: AppBarTheme().copyWith(
         elevation: 0,
-        color: AppColors.background,
+        //color: AppColors.background,
       ),
       backgroundColor: AppColors.background,
       primaryColor: AppColors.selectedButtonBG,
