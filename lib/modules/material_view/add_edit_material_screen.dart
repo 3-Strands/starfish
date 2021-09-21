@@ -7,6 +7,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
@@ -27,6 +28,7 @@ import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/widgets/history_item.dart';
 
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
@@ -509,6 +511,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                 ),
               ),
+
+              SizedBox(height: 21.h),
+
+              if (widget.material != null)
+                _editHistoryContainer(widget.material),
+
+              SizedBox(height: 11.h),
             ],
           ),
         ),
@@ -621,5 +630,35 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         ),
       ),
     );
+  }
+
+  Widget _editHistoryContainer(HiveMaterial? material) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _historyItems(material!)!,
+      ),
+    );
+  }
+
+  List<Widget>? _historyItems(HiveMaterial material) {
+    final List<Widget> _widgetList = [];
+    final header = Text(
+      'History',
+      style: TextStyle(
+        fontFamily: 'OpenSans',
+        fontWeight: FontWeight.bold,
+        fontSize: 18.sp,
+        color: Color(0xFF3475F0),
+      ),
+    );
+    _widgetList.add(header);
+
+    for (HiveEdit edit in material.editHistory!) {
+      _widgetList.add(HistoryItem(edit: edit));
+    }
+
+    return _widgetList;
   }
 }

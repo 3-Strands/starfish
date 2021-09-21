@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
@@ -47,6 +48,8 @@ class HiveMaterial extends HiveObject {
   bool isUpdated = false;
   @HiveField(18)
   bool isDirty = false;
+  @HiveField(19)
+  List<HiveEdit>? editHistory;
 
   HiveMaterial({
     this.id,
@@ -60,6 +63,7 @@ class HiveMaterial extends HiveObject {
     this.topics,
     this.visibility,
     this.editability,
+    this.editHistory,
     this.isNew = false,
     this.isUpdated = false,
     this.isDirty = false,
@@ -86,6 +90,8 @@ class HiveMaterial extends HiveObject {
     this.feedbacks = material.feedbacks.map((MaterialFeedback feedback) {
       return HiveMaterialFeedback.from(feedback);
     }).toList();
+    this.editHistory =
+        material.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
     this.dateCreated = HiveDate.from(material.dateCreated);
     this.dateUpdated = HiveDate.from(material.dateUpdated);
   }
@@ -106,6 +112,7 @@ class HiveMaterial extends HiveObject {
       typeIds: this.typeIds,
       topics: this.topics,
       //feedbacks: this.feedbacks,
+      editHistory: this.editHistory?.map((HiveEdit e) => e.toEdit()).toList(),
       dateCreated: this.dateCreated?.toDate(),
       dateUpdated: this.dateUpdated?.toDate(),
     );
