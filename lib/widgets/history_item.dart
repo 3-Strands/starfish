@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:starfish/db/hive_edit.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 
@@ -24,7 +25,9 @@ class HistoryItem extends StatelessWidget {
           children: [
             Text.rich(
               TextSpan(
-                text: 'Material edited by:',
+                text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
+                    ? 'Material added by: '
+                    : 'Material edited by: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,
@@ -32,7 +35,7 @@ class HistoryItem extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: edit?.username,
+                    text: edit?.username ?? 'Unknown',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
                       fontSize: 18.sp,
@@ -48,7 +51,9 @@ class HistoryItem extends StatelessWidget {
             ),
             Text.rich(
               TextSpan(
-                text: 'Material edited on:',
+                text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
+                    ? 'Material added on: '
+                    : 'Material edited on: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,
@@ -56,7 +61,9 @@ class HistoryItem extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: '${DateTimeUtils.formatHiveDate(edit!.date!)}',
+                    text: edit!.time != null
+                        ? '${DateTimeUtils.formatDate(edit!.time!.toDateTime(), 'dd-MMM-yyyy')}'
+                        : 'NA',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
                       fontSize: 18.sp,

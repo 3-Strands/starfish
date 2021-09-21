@@ -36,16 +36,18 @@ class _SearchBarState extends State<SearchBar> {
             height: 52.h,
             width: MediaQuery.of(context).size.width - 80.w,
             margin: EdgeInsets.only(right: 5.w),
-            child: TextFormField(
-              decoration: new InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(10.w, 0.0, 0.0, 0.0),
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  hintText: Strings.searchBarHint),
-              onChanged: (value) => {widget.onValueChanged(value)},
-              onFieldSubmitted: (value) => {widget.onDone(value)},
+            child: Center(
+              child: TextFormField(
+                decoration: new InputDecoration(
+                    contentPadding: EdgeInsets.only(left: 10.w),
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    hintText: Strings.searchBarHint),
+                onChanged: (value) => {widget.onValueChanged(value)},
+                onFieldSubmitted: (value) => {widget.onDone(value)},
+              ),
             ),
           ),
           Spacer(),
