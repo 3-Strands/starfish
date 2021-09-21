@@ -18,6 +18,7 @@ import 'package:starfish/smart_select/src/model/modal_config.dart';
 import 'package:starfish/smart_select/src/tile/tile.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
@@ -321,7 +322,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     size: 18.sp,
                   ),
                   text: Strings.open,
-                  onButtonTap: () {},
+                  onButtonTap: () {
+                    GeneralFunctions.openUrl(material.url!);
+                  },
                 ),
               ],
             ),
@@ -507,7 +510,9 @@ class MaterialListItem extends StatelessWidget {
                         size: 18.sp,
                       ),
                       text: Strings.open,
-                      onButtonTap: () {},
+                      onButtonTap: () {
+                        GeneralFunctions.openUrl(material.url!);
+                      },
                     ),
                   ],
                 ),

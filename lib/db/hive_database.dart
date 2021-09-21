@@ -21,7 +21,7 @@ class HiveDatabase {
   static const String GROUPS_BOX = 'groupsBox'; //3
   static const String ACTIONS_BOX = 'actionBox'; //4
   static const String MATERIAL_BOX = 'materialBox'; //5
-  static const String MATERIAL_FEEDBACK_BOX = 'materialTopicBox'; //6
+  static const String MATERIAL_FEEDBACK_BOX = 'materialFeedbackBox'; //6
   static const String DATE = 'dateBox'; //7
   static const String LAST_SYNC_BOX = 'lastSyncBox'; //8
   static const String MATERIAL_TOPIC_BOX = 'materialTopicBox'; //9
@@ -58,9 +58,6 @@ class HiveDatabase {
 
   void openBoxes() async {
     print("open boxes");
-    // materialBox = await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
-    // countryBox = await Hive.openBox<CountryModel>(COUNTRY_BOX);
-
     await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX);
     await Hive.openBox<HiveCountry>(COUNTRY_BOX);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX);
@@ -68,6 +65,7 @@ class HiveDatabase {
     await Hive.openBox<HiveGroup>(GROUPS_BOX);
     await Hive.openBox<HiveAction>(ACTIONS_BOX);
     await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
+    await Hive.openBox<HiveMaterialFeedback>(MATERIAL_FEEDBACK_BOX);
     await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX);
     await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX);
   }

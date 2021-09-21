@@ -566,7 +566,7 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                       .then((value) => print('$value record(s) saved.'))
                       .onError((error, stackTrace) {
                     print('Error: ${error.toString()}.');
-                    Snackbar.showErrorMessage(
+                    StarfishSnackbar.showErrorMessage(
                         context,
                         _isEditMode
                             ? Strings.updateMaterialFailed

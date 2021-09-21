@@ -1,11 +1,17 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/db/hive_material_feedback.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 
 class ReportMaterialDialogBox extends StatefulWidget {
@@ -22,6 +28,26 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
   final _reportTextController = TextEditingController();
 
   final FocusNode _reportTextFocus = FocusNode();
+
+  late Box<HiveMaterialFeedback> _materialFeedbackBox;
+  late Box<HiveCurrentUser> _currentUserBox;
+
+  late HiveCurrentUser _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+
+    _materialFeedbackBox =
+        Hive.box<HiveMaterialFeedback>(HiveDatabase.MATERIAL_FEEDBACK_BOX);
+
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() {
+    _user = _currentUserBox.values.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,16 +103,18 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
               keyboardType: TextInputType.text,
               style: textFormFieldText,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                contentPadding: EdgeInsets.fromLTRB(10.w, 10.0, 0.0, 10.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide(
-                    color: Colors.white,
+                    color: Colors.transparent,
                   ),
                 ),
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
                 filled: true,
                 fillColor: AppColors.txtFieldBackground,
               ),
@@ -108,7 +136,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                     },
                     child: Text(
                       Strings.cancel,
-                      style: resentOTPTextStyle,
+                      style: cancelButtonTextStyle,
                     ),
                   ),
                 ),
@@ -119,10 +147,45 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_reportTextController.text == '') {
+                        Alerts.showMessageBox(
+                            context: context,
+                            title: '',
+                            message: Strings.emptyMaterialFeedback,
+                            callback: () {
+                              Navigator.of(context).pop();
+                            });
+                      } else {
+                        HiveMaterialFeedback _materialFeedback =
+                            HiveMaterialFeedback();
+
+                        _materialFeedback.isNew = true;
+                        _materialFeedback.type = '1';
+                        _materialFeedback.reporterId = _user.id;
+                        _materialFeedback.report = _reportTextController.text;
+                        _materialFeedback.materialId = widget.material.id!;
+
+                        _materialFeedbackBox
+                            .add(_materialFeedback)
+                            .then((value) => print('$value record(s) saved.'))
+                            .onError((error, stackTrace) =>
+                                print('$error record(s) saved.'))
+                            .whenComplete(() => {
+                                  Alerts.showMessageBox(
+                                      context: context,
+                                      title: Strings.dialogInfo,
+                                      message:
+                                          Strings.addMaterialFeedbackSuccess,
+                                      callback: () {
+                                        Navigator.of(context).pop();
+                                      })
+                                });
+                      }
+                    },
                     child: Text(
                       Strings.sendFeedback,
-                      style: resentOTPTextStyle,
+                      style: sentFeedbackTextStyle,
                     ),
                   ),
                 ),

@@ -6,17 +6,17 @@ part 'hive_material_feedback.g.dart';
 @HiveType(typeId: 6)
 class HiveMaterialFeedback extends HiveObject {
   @HiveField(0)
-  late String id;
+  String id = '';
   @HiveField(1)
-  late String type;
+  String type = '';
   @HiveField(2)
-  late String reporterId;
+  String reporterId = '';
   @HiveField(3)
-  late String report;
+  String report = '';
   @HiveField(4)
-  late String response;
+  String response = '';
   @HiveField(5)
-  late String materialId;
+  String materialId = '';
 
   @HiveField(14)
   bool isNew = false;
