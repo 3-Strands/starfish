@@ -56,6 +56,17 @@ enum ResultsTab {
     RESULTS_MY_GROUPS = 2;
 }
 
+// A single edit to a single record recorded in history
+message Edit {
+
+    // The username of the user who made the edit
+    string username = 1;
+
+    // The date of the edit
+    google.type.Date date = 2;
+
+}
+
 message User {
 
     // The ID is a version 4 UUID. Once assigned it cannot be changed.
@@ -230,6 +241,9 @@ message Material {
 
     // Output only
     google.type.Date date_updated = 16;
+
+    // Output only. A history of edits made to this material object
+    repeated Edit edit_history = 17;
 
 }
 
