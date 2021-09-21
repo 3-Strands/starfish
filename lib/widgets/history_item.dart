@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import 'package:starfish/db/hive_edit.dart';
+
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/widgets/seprator_line_widget.dart';
+
+class HistoryItem extends StatelessWidget {
+  final HiveEdit? edit;
+
+  HistoryItem({
+    Key? key,
+    required this.edit,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(color: Colors.transparent),
+        margin: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text.rich(
+              TextSpan(
+                text: 'Material edited by:',
+                style: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 18.sp,
+                  color: Color(0xFF434141),
+                ),
+                children: [
+                  TextSpan(
+                    text: edit?.username,
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Text.rich(
+              TextSpan(
+                text: 'Material edited on:',
+                style: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 18.sp,
+                  color: Color(0xFF434141),
+                ),
+                children: [
+                  TextSpan(
+                    text: '${DateTimeUtils.formatHiveDate(edit!.date!)}',
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            SepratorLine(
+              hight: 1.h,
+              edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+            ),
+          ],
+        ));
+  }
+}
