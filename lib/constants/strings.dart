@@ -4,6 +4,8 @@ class Strings {
   static const String phoneAuthenticationTitle =
       'Select Country and enter Phone Number to get One Time Password';
   static const String searchLanguagesPlaceholder = 'Search languages';
+  static const String searchTopicsPlaceholder = 'Search topics';
+
   static const String exit = 'Exit';
   static const String next = 'Next';
   static const String back = 'Back';
@@ -32,6 +34,7 @@ class Strings {
   static const String myLanugages = 'My Language(s)';
   static const String lanugages = 'Language(s)';
   static const String selectLanugages = 'Select Language(s)';
+
   static const String selectLanugagesDetail =
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.';
 
