@@ -16,6 +16,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
@@ -90,6 +91,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _getAllLanguages();
   }
 
+  void _getAllLanguages() {
+    print("_getAllLanguages");
+    _languageList = _languageBox.values.toList();
+    for (var languageId in _user.languageIds) {
+      _languageList
+          .where((item) => item.id == languageId)
+          .forEach((item) => {_selectedLanguages.add(item)});
+    }
+  }
+
 /*
   fetchLanguages() async {
     await AppDataRepository()
@@ -115,6 +126,29 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 */
 
+  _updateUserCountries() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    Iterable<String> _selectedCountryIds =
+        _selectedCountries.map((e) => e.id).toList();
+    Iterable<String> _selectedLanguageIds =
+        _selectedLanguages.map((e) => e.id).toList();
+
+    var fieldMaskPaths = ['country_ids'];
+
+    await CurrentUserRepository()
+        .updateUser(_user.id, '', '', _selectedCountryIds, _selectedLanguageIds,
+            false, fieldMaskPaths)
+        .then((value) => {
+              SyncService().syncLanguages(),
+              setState(() => _isLoading = false),
+              _user.countryIds = value.countryIds,
+              _currentUserBox.putAt(0, _user),
+            });
+  }
+
   _updateUserProfile() async {
     setState(() {
       _isLoading = true;
@@ -125,13 +159,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     Iterable<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
 
-    print("user data ==>>");
-    // print(_user.id);
-    // print(_nameController.text);
-    print(_selectedCountryIds);
-    print(_selectedLanguageIds);
-
-    var fieldMaskPaths = ['name', 'country_ids', 'language_ids'];
+    var fieldMaskPaths = ['name', 'language_ids'];
 
     await CurrentUserRepository()
         .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
@@ -139,25 +167,13 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         .then((value) => {
               print('=================== START ==================='),
               print(value),
-              print('=================== END ==================='),
               setState(() => _isLoading = false),
               _user.name = value.name,
-              _user.countryIds = value.countryIds,
               _user.languageIds = value.languageIds,
               _currentUserBox.putAt(0, _user),
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
             });
-  }
-
-  void _getAllLanguages() {
-    print("_getAllLanguages");
-    _languageList = _languageBox.values.toList();
-    for (var languageId in _user.languageIds) {
-      _languageList
-          .where((item) => item.id == languageId)
-          .forEach((item) => {_selectedLanguages.add(item)});
-    }
   }
 
   @override
@@ -218,8 +234,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       title: Strings.country,
                       placeholder: Strings.selectCountry,
                       selectedValue: _selectedCountries,
-                      onChange: (selected) =>
-                          setState(() => _selectedCountries = selected.value),
+                      onChange: (selected) => setState(() => {
+                            _selectedCountries = selected.value,
+                            _updateUserCountries()
+                          }),
                       choiceItems: S2Choice.listFrom<HiveCountry, HiveCountry>(
                           source: _countryList,
                           value: (index, item) => item,
@@ -257,15 +275,17 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                // MultiSelectDialogField(
-                //   items: _languageList
-                //       .map((e) => MultiSelectItem(e, e.name))
-                //       .toList(),
-                //   listType: MultiSelectListType.LIST,
-                //   onConfirm: (values) {
-                //     _selectedLanguages = values as List<HiveLanguage>;
-                //   },
-                // ),
+                /*
+                MultiSelectDialogField(
+                  items: _languageList
+                      .map((e) => MultiSelectItem(e, e.name))
+                      .toList(),
+                  listType: MultiSelectListType.LIST,
+                  onConfirm: (values) {
+                    _selectedLanguages = values as List<HiveLanguage>;
+                  },
+                ),
+                */
                 Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: Container(
