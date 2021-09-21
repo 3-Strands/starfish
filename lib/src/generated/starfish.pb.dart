@@ -16,6 +16,69 @@ import 'starfish.pbenum.dart';
 
 export 'starfish.pbenum.dart';
 
+class Edit extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Edit', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
+    ..aOM<$2.Date>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'date', subBuilder: $2.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  Edit._() : super();
+  factory Edit({
+    $core.String? username,
+    $2.Date? date,
+  }) {
+    final _result = create();
+    if (username != null) {
+      _result.username = username;
+    }
+    if (date != null) {
+      _result.date = date;
+    }
+    return _result;
+  }
+  factory Edit.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Edit.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Edit clone() => Edit()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Edit copyWith(void Function(Edit) updates) => super.copyWith((message) => updates(message as Edit)) as Edit; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Edit create() => Edit._();
+  Edit createEmptyInstance() => create();
+  static $pb.PbList<Edit> createRepeated() => $pb.PbList<Edit>();
+  @$core.pragma('dart2js:noInline')
+  static Edit getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Edit>(create);
+  static Edit? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get username => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set username($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUsername() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUsername() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $2.Date get date => $_getN(1);
+  @$pb.TagNumber(2)
+  set date($2.Date v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasDate() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearDate() => clearField(2);
+  @$pb.TagNumber(2)
+  $2.Date ensureDate() => $_ensure(1);
+}
+
 class User extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'User', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
@@ -649,6 +712,7 @@ class Material extends $pb.GeneratedMessage {
     ..pc<MaterialFeedback>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'feedbacks', $pb.PbFieldType.PM, subBuilder: MaterialFeedback.create)
     ..aOM<$2.Date>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateCreated', subBuilder: $2.Date.create)
     ..aOM<$2.Date>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateUpdated', subBuilder: $2.Date.create)
+    ..pc<Edit>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'editHistory', $pb.PbFieldType.PM, subBuilder: Edit.create)
     ..hasRequiredFields = false
   ;
 
@@ -670,6 +734,7 @@ class Material extends $pb.GeneratedMessage {
     $core.Iterable<MaterialFeedback>? feedbacks,
     $2.Date? dateCreated,
     $2.Date? dateUpdated,
+    $core.Iterable<Edit>? editHistory,
   }) {
     final _result = create();
     if (id != null) {
@@ -719,6 +784,9 @@ class Material extends $pb.GeneratedMessage {
     }
     if (dateUpdated != null) {
       _result.dateUpdated = dateUpdated;
+    }
+    if (editHistory != null) {
+      _result.editHistory.addAll(editHistory);
     }
     return _result;
   }
@@ -860,6 +928,9 @@ class Material extends $pb.GeneratedMessage {
   void clearDateUpdated() => clearField(16);
   @$pb.TagNumber(16)
   $2.Date ensureDateUpdated() => $_ensure(15);
+
+  @$pb.TagNumber(17)
+  $core.List<Edit> get editHistory => $_getList(16);
 }
 
 class MaterialFeedback extends $pb.GeneratedMessage {

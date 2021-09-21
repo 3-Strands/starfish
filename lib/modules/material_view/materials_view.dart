@@ -8,7 +8,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
-import 'package:starfish/modules/material_view/add_edit_new_material_screen.dart';
+import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
@@ -18,6 +18,7 @@ import 'package:starfish/smart_select/src/model/modal_config.dart';
 import 'package:starfish/smart_select/src/tile/tile.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
@@ -385,7 +386,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     size: 18.sp,
                   ),
                   text: Strings.open,
-                  onButtonTap: () {},
+                  onButtonTap: () {
+                    GeneralFunctions.openUrl(material.url!);
+                  },
                 ),
               ],
             ),
@@ -439,7 +442,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddEditNewMaterialScreen(
+                      builder: (context) => AddEditMaterialScreen(
                         material: material,
                       ),
                     ),
@@ -571,7 +574,9 @@ class MaterialListItem extends StatelessWidget {
                         size: 18.sp,
                       ),
                       text: Strings.open,
-                      onButtonTap: () {},
+                      onButtonTap: () {
+                        GeneralFunctions.openUrl(material.url!);
+                      },
                     ),
                   ],
                 ),

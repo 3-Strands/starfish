@@ -2,6 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 // import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -128,7 +131,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     print(_selectedCountryIds);
     print(_selectedLanguageIds);
 
-    var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
+    var fieldMaskPaths = ['name', 'country_ids', 'language_ids'];
 
     await CurrentUserRepository()
         .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
@@ -254,6 +257,15 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 10.h),
+                // MultiSelectDialogField(
+                //   items: _languageList
+                //       .map((e) => MultiSelectItem(e, e.name))
+                //       .toList(),
+                //   listType: MultiSelectListType.LIST,
+                //   onConfirm: (values) {
+                //     _selectedLanguages = values as List<HiveLanguage>;
+                //   },
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: Container(
@@ -295,6 +307,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                   ),
                 ),
+
                 SizedBox(height: 10.h),
                 Align(
                   alignment: FractionalOffset.topLeft,

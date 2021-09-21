@@ -237,8 +237,8 @@ class SyncService {
       'editability',
       'url',
       'files',
-      'languageIds',
-      'typeIds',
+      'language_ids',
+      'type_ids',
       'topics',
     ];
     print('============= START: Sync Local Materials to Remote =============');
@@ -246,42 +246,14 @@ class SyncService {
         'Total Records: ${materialBox.values.where((element) => element.isNew == true).length}');
     print('============= END: Sync Local Materials to Remote ===============');
 
-    materialBox.values.where((element) => element.isNew == true).map((e) {
-      if (e.isNew) {
-        _createMaterial(fieldMaskPaths: _fieldMaskPaths);
-      }
+    materialBox.values
+        .where(
+            (element) => (element.isNew == true || element.isUpdated == true))
+        .map((HiveMaterial _hiveMaterial) {
+      MaterialRepository().createUpdateMaterial(
+        material: _hiveMaterial.toMaterial(),
+        fieldMaskPaths: _fieldMaskPaths,
+      );
     });
-  }
-
-  _createMaterial({
-    String? id,
-    String? creatorId,
-    Material_Status? status,
-    String? title,
-    String? description,
-    String? url,
-    Material_Visibility? visibility,
-    Material_Editability? editability,
-    Iterable<String>? files,
-    Iterable<String>? languageIds,
-    Iterable<String>? typeIds,
-    Iterable<String>? topics,
-    required List<String> fieldMaskPaths,
-  }) {
-    MaterialRepository().createUpdateMaterial(
-      id,
-      creatorId,
-      status,
-      title,
-      description,
-      url,
-      visibility,
-      editability,
-      files,
-      languageIds,
-      typeIds,
-      topics,
-      fieldMaskPaths,
-    );
   }
 }

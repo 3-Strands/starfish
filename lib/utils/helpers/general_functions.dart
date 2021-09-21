@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GeneralFunctions {
   static void configLoading() {
@@ -25,5 +26,15 @@ class GeneralFunctions {
       return false;
     }
     return false;
+  }
+
+  static openUrl(String url) async {
+    var urlLaunchable =
+        await canLaunch(url); //canLaunch is from url_launcher package
+    if (urlLaunchable) {
+      await launch(url); //launch is from url_launcher package to launch URL
+    } else {
+      print("URL can't be launched.");
+    }
   }
 }
