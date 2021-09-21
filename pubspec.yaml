@@ -47,6 +47,7 @@ dependencies:
   cron: ^0.3.2
   dotted_border: ^2.0.0+1
   url_launcher: ^6.0.10
+  multi_select_flutter: ^4.0.0
 
 dev_dependencies:
   flutter_test:
