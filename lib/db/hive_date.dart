@@ -19,4 +19,12 @@ class HiveDate {
     this.month = date.month;
     this.day = date.day;
   }
+
+  Date toDate() {
+    return Date(year: this.year, month: this.month, day: this.day);
+  }
+
+  String toString() {
+    return '{ year: ${this.year}, month: ${this.month}, day: ${this.day} }';
+  }
 }

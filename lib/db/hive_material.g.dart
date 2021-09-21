@@ -19,19 +19,19 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
     return HiveMaterial(
       id: fields[0] as String?,
       creatorId: fields[1] as String?,
+      status: fields[2] as String?,
       title: fields[5] as String?,
       description: fields[6] as String?,
       url: fields[8] as String?,
       languageIds: (fields[10] as List?)?.cast<String>(),
       typeIds: (fields[11] as List?)?.cast<String>(),
       topics: (fields[12] as List?)?.cast<String>(),
-      visibility: fields[3] as String?,
-      editability: fields[4] as String?,
+      visibility: fields[3] as int?,
+      editability: fields[4] as int?,
       isNew: fields[16] as bool,
       isUpdated: fields[17] as bool,
       isDirty: fields[18] as bool,
     )
-      ..status = fields[2] as String?
       ..targetAudience = fields[7] as String?
       ..files = (fields[9] as List?)?.cast<String>()
       ..feedbacks = (fields[13] as List?)?.cast<HiveMaterialFeedback>()
