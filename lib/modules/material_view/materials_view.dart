@@ -37,11 +37,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   bool _isSearching = false;
   List<HiveLanguage> _selectedLanguages = [];
+  List<HiveMaterialTopic> _selectedTopics = [];
 
   late List<HiveLanguage> _languageList;
+  late List<HiveMaterialTopic> _topicsList;
+
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterial> _materialBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
+  late String _choiceText = 'No filter applied';
+  late String _query = "";
 
   @override
   void initState() {
@@ -51,16 +56,22 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     _materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
 
-    _getMaterials();
     _getAllLanguages();
+    _getAllTopics();
+    _getMaterials();
   }
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
   }
 
+  void _getAllTopics() {
+    _topicsList = _materialTopicBox.values.toList();
+  }
+
   void _getMaterials() async {
     _materialsList = _materialBox.values.toList();
+    print(_materialsList[0].title);
     /*await MaterialRepository()
         .getMaterials()
         .then((ResponseStream<starfish.Material> material) {
@@ -108,7 +119,17 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   List<MaterialListItem> _buildSearchList() {
-    return _materialsList
+    List<HiveMaterial> _listToShow;
+
+    if (_query.isNotEmpty)
+      _listToShow = _materialsList
+          .where((item) =>
+              item.title!.contains(_query) && item.title!.startsWith(_query))
+          .toList();
+    else
+      _listToShow = _materialsList;
+
+    return _listToShow
         .map((material) => new MaterialListItem(
               material: material,
               onMaterialTap: _onMaterialSelection,
@@ -135,6 +156,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SearchBar(
                 onValueChanged: (value) {
                   print('searched value $value');
+                  setState(() {
+                    _query = value;
+                  });
                 },
                 onDone: (value) {
                   print('searched value $value');
@@ -142,25 +166,65 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               ),
               SizedBox(height: 10.h),
               Container(
-                height: 80.h,
-                margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                height: 52.h,
+                width: 345.w,
+                padding: EdgeInsets.only(left: 15.w, right: 15.w),
                 decoration: BoxDecoration(
                   color: AppColors.txtFieldBackground,
                   borderRadius: BorderRadius.all(
                     Radius.circular(10),
                   ),
                 ),
-                child: Center(child: Text('')),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    style: TextStyle(
+                      color: Color(0xFF434141),
+                      fontSize: 16.sp,
+                      fontFamily: 'OpenSans',
+                    ),
+                    hint: Text(
+                      'Action: ' + _choiceText,
+                      style: TextStyle(
+                        color: Color(0xFF434141),
+                        fontSize: 16.sp,
+                        fontFamily: 'OpenSans',
+                      ),
+                    ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _choiceText = value!;
+                      });
+                    },
+                    items: <String>[
+                      'Assigned to me and completed',
+                      'Assigned to me but incomplete',
+                      'Assigned to a group I lead',
+                      'No filter applied',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 14.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
               SizedBox(
-                height: 30.h,
+                height: 20.h,
               ),
               ListView(
-                primary: false,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                children: _isSearching ? _buildSearchList() : _buildList(),
-              ),
+                  primary: false,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                  children:
+                      _query.length != 0 ? _buildSearchList() : _buildList()),
               SizedBox(
                 height: 10.h,
               ),
@@ -230,14 +294,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         ),
       ),
       child: Center(
-        child: SmartSelect<HiveLanguage>.multiple(
+        child: SmartSelect<HiveMaterialTopic>.multiple(
           title: "Select topics",
-          placeholder: Strings.searchLanguagesPlaceholder,
+          placeholder: Strings.searchTopicsPlaceholder,
           // value: _selectedLanguages,
           onChange: (selected) =>
-              setState(() => _selectedLanguages = selected.value),
-          choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
-            source: _languageList,
+              setState(() => _selectedTopics = selected.value),
+          choiceItems: S2Choice.listFrom<HiveMaterialTopic, HiveMaterialTopic>(
+            source: _topicsList,
             value: (index, item) => item,
             title: (index, item) => item.name,
             //  group: (index, item) => item['brand'],
@@ -251,7 +315,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               state,
               isTwoLine: true,
               title: Text(
-                Strings.selectLanugages,
+                Strings.selectTopics,
                 style: TextStyle(color: AppColors.appTitle, fontSize: 16.sp),
               ),
             );
@@ -489,7 +553,7 @@ class MaterialListItem extends StatelessWidget {
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
           height: 99,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Container(
                 height: 22.h,

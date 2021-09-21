@@ -257,10 +257,13 @@ class GroupListItem extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      '${group.groupId}',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: AppColors.txtFieldTextColor),
+                    Container(
+                      width: 200.w,
+                      child: Text(
+                        '${group.groupId}',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: AppColors.txtFieldTextColor),
+                      ),
                     ),
                     Spacer(),
                     CustomIconButton(
