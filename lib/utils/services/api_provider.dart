@@ -83,33 +83,11 @@ class ApiProvider {
   }
 
   Future<ResponseStream<CreateUpdateMaterialsResponse>> createUpdateMaterial(
-    String? id,
-    String? creatorId,
-    Material_Status? status,
-    String? title,
-    String? description,
-    String? url,
-    Material_Visibility? visibility,
-    Material_Editability? editability,
-    Iterable<String>? files,
-    Iterable<String>? languageIds,
-    Iterable<String>? typeIds,
-    Iterable<String>? topics,
+    Material material,
     List<String> fieldMaskPaths,
   ) async {
-    Material _material = Material(
-      title: title,
-      description: description,
-      creatorId: url,
-      visibility: visibility,
-      editability: editability,
-      languageIds: languageIds ?? [],
-      typeIds: typeIds ?? [],
-      topics: topics ?? [],
-    );
-
     var request = CreateUpdateMaterialsRequest.create();
-    request.material = _material;
+    request.material = material;
 
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
     request.updateMask = mask;

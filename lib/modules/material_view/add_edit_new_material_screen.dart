@@ -11,6 +11,9 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/enums/material_editability.dart';
+import 'package:starfish/enums/material_visibility.dart';
+import 'package:starfish/repository/materials_repository.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -48,7 +51,8 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
   List<HiveMaterialTopic> _selectedTopics = [];
-  String? _editableBy;
+  MaterialVisibility? _visibleTo;
+  MaterialEditability? _editableBy;
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterial> _materialBox;
@@ -417,7 +421,7 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
+                  child: DropdownButton<MaterialVisibility>(
                     style: TextStyle(
                       color: Color(0xFF434141),
                       fontSize: 16.sp,
@@ -431,17 +435,15 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                         fontFamily: 'OpenSans',
                       ),
                     ),
-                    onChanged: (String? value) {
-                      _editableBy = value;
+                    onChanged: (MaterialVisibility? value) {
+                      _visibleTo = value;
                     },
-                    items: <String>[
-                      'Group I teach or administer',
-                      'Anyone at all',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
+                    items: MaterialVisibility.values()
+                        .map((MaterialVisibility visibility) {
+                      return DropdownMenuItem<MaterialVisibility>(
+                        value: visibility,
                         child: Text(
-                          value,
+                          visibility.displayName ?? visibility.value.name,
                           style: TextStyle(
                             color: Color(0xFF434141),
                             fontSize: 14.sp,
@@ -473,7 +475,7 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
+                  child: DropdownButton<MaterialEditability>(
                     style: TextStyle(
                       color: Color(0xFF434141),
                       fontSize: 16.sp,
@@ -487,17 +489,16 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                         fontFamily: 'OpenSans',
                       ),
                     ),
-                    onChanged: (String? value) {
+                    onChanged: (MaterialEditability? value) {
                       _editableBy = value;
                     },
-                    items: <String>[
-                      'Only me',
-                      'Other Teacher of my Groups',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
+                    items: MaterialEditability.values()
+                        .map<DropdownMenuItem<MaterialEditability>>(
+                            (MaterialEditability editability) {
+                      return DropdownMenuItem<MaterialEditability>(
+                        value: editability,
                         child: Text(
-                          value,
+                          editability.displayName ?? editability.value.name,
                           style: TextStyle(
                             color: Color(0xFF434141),
                             fontSize: 14.sp,
@@ -532,7 +533,7 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  HiveMaterial _material = HiveMaterial(
+                  HiveMaterial _hiveMaterial = HiveMaterial(
                     title: _titleController.text,
                     url: _webLinkController.text,
                     description: _descriptionController.text,
@@ -545,14 +546,23 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                     topics: _selectedTopics
                         .map((HiveMaterialTopic topic) => topic.id)
                         .toList(),
-
-                    //visibility: Material_Visibility.CREATOR_VIEW,
-                    //editability: Material_Editability.CREATOR_EDIT,
-                    isNew: true,
+                    visibility:
+                        _visibleTo != null ? _visibleTo!.value.value : 0,
+                    editability:
+                        _editableBy != null ? _editableBy!.value.value : 0,
                   );
 
+                  if (_isEditMode) {
+                    _hiveMaterial.id = widget.material?.id;
+                    _hiveMaterial.creatorId = widget.material?.creatorId;
+
+                    _hiveMaterial.isUpdated = true;
+                  } else {
+                    _hiveMaterial.isNew = true;
+                  }
+
                   _materialBox
-                      .add(_material)
+                      .add(_hiveMaterial)
                       .then((value) => print('$value record(s) saved.'))
                       .onError((error, stackTrace) {
                     print('Error: ${error.toString()}.');
@@ -572,6 +582,33 @@ class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
                           Navigator.of(context).pop();
                         });
                   });
+                  /*print('POST: ${_hiveMaterial.toString()}');
+                  MaterialRepository()
+                      .createUpdateMaterial(
+                          material: _hiveMaterial.toMaterial(),
+                          fieldMaskPaths: [
+                            'title',
+                            'description',
+                            //'visibility',
+                            //'editability',
+                            //'url',
+                            //'files',
+                            'language_ids',
+                            'type_ids',
+                            //'topics',
+                          ])
+                      .then((response) => print('Response: $response.'))
+                      .whenComplete(() {
+                        Alerts.showMessageBox(
+                            context: context,
+                            title: Strings.dialogInfo,
+                            message: _isEditMode
+                                ? Strings.updateMaterialSuccess
+                                : Strings.addMaterialSuccess,
+                            callback: () {
+                              Navigator.of(context).pop();
+                            });
+                      });*/
                 },
                 child: Text(
                   _isEditMode ? Strings.update : Strings.add,

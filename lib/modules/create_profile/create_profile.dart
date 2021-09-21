@@ -131,7 +131,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     print(_selectedCountryIds);
     print(_selectedLanguageIds);
 
-    var fieldMaskPaths = ['name', 'countryIds', 'languageIds'];
+    var fieldMaskPaths = ['name', 'country_ids', 'language_ids'];
 
     await CurrentUserRepository()
         .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,

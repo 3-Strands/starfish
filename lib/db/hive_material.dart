@@ -1,6 +1,8 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
+import 'package:starfish/enums/material_editability.dart';
+import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_material.g.dart';
@@ -14,9 +16,9 @@ class HiveMaterial extends HiveObject {
   @HiveField(2)
   String? status;
   @HiveField(3)
-  String? visibility;
+  int? visibility;
   @HiveField(4)
-  String? editability;
+  int? editability;
   @HiveField(5)
   String? title;
   @HiveField(6)
@@ -49,6 +51,7 @@ class HiveMaterial extends HiveObject {
   HiveMaterial({
     this.id,
     this.creatorId,
+    this.status,
     this.title,
     this.description,
     this.url,
@@ -66,8 +69,12 @@ class HiveMaterial extends HiveObject {
     this.id = material.id;
     this.creatorId = material.creatorId;
     this.status = material.status.toString(); // Material_Status
-    this.visibility = material.visibility.toString(); // Material_Visibility
-    this.editability = material.editability.toString(); // Material_Editability
+    this.visibility =
+        MaterialVisibility.fromString(material.visibility.toString())
+            .value; // Material_Visibility
+    this.editability =
+        MaterialEditability.fromString(material.editability.toString())
+            .value; // Material_Editability
     this.title = material.title;
     this.description = material.description;
     this.targetAudience = material.targetAudience;
@@ -81,5 +88,31 @@ class HiveMaterial extends HiveObject {
     }).toList();
     this.dateCreated = HiveDate.from(material.dateCreated);
     this.dateUpdated = HiveDate.from(material.dateUpdated);
+  }
+
+  Material toMaterial() {
+    return Material(
+      id: this.id,
+      creatorId: this.creatorId,
+      //status: this.status,
+      visibility: Material_Visibility.valueOf(this.visibility!),
+      editability: Material_Editability.valueOf(this.editability!),
+      title: this.title,
+      description: this.description,
+      targetAudience: this.targetAudience,
+      url: this.url,
+      files: this.files,
+      languageIds: this.languageIds,
+      typeIds: this.typeIds,
+      topics: this.topics,
+      //feedbacks: this.feedbacks,
+      dateCreated: this.dateCreated?.toDate(),
+      dateUpdated: this.dateUpdated?.toDate(),
+    );
+  }
+
+  @override
+  String toString() {
+    return '{id: ${this.id}, creatorId: ${this.creatorId}, status: ${this.status}, visibility: ${this.visibility}, editability: ${this.editability}, title: ${this.title}, description: ${this.description}, targetAudience: ${this.targetAudience},}';
   }
 }
