@@ -3,7 +3,7 @@ import 'package:starfish/modules/authentication/otp_verification.dart';
 import 'package:starfish/modules/authentication/phone_authentication.dart';
 import 'package:starfish/modules/create_profile/create_profile.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
-import 'package:starfish/modules/material_view/add_edit_new_material_screen.dart';
+import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 
 class Routes {
@@ -22,6 +22,6 @@ class Routes {
     showProfile: (BuildContext context) => CreateProfileScreen(),
     dashboard: (BuildContext context) => Dashboard(),
     settings: (BuildContext context) => SettingsScreen(),
-    addNewMaterial: (BuildContext context) => AddEditNewMaterialScreen(),
+    addNewMaterial: (BuildContext context) => AddEditMaterialScreen(),
   };
 }

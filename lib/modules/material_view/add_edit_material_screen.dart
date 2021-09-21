@@ -28,20 +28,19 @@ import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddEditNewMaterialScreen extends StatefulWidget {
+class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
 
-  AddEditNewMaterialScreen({
+  AddEditMaterialScreen({
     Key? key,
     this.material,
   }) : super(key: key);
 
   @override
-  _AddEditNewMaterialScreenState createState() =>
-      _AddEditNewMaterialScreenState();
+  _AddEditMaterialScreenState createState() => _AddEditMaterialScreenState();
 }
 
-class _AddEditNewMaterialScreenState extends State<AddEditNewMaterialScreen> {
+class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _webLinkController = TextEditingController();

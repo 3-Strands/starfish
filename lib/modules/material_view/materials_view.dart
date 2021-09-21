@@ -8,7 +8,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
-import 'package:starfish/modules/material_view/add_edit_new_material_screen.dart';
+import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
@@ -378,7 +378,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddEditNewMaterialScreen(
+                      builder: (context) => AddEditMaterialScreen(
                         material: material,
                       ),
                     ),
