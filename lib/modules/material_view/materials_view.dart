@@ -216,6 +216,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
+                    isExpanded: true,
                     style: TextStyle(
                       color: Color(0xFF434141),
                       fontSize: 16.sp,
@@ -223,11 +224,13 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     ),
                     hint: Text(
                       'Action: ' + _choiceText,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Color(0xFF434141),
                         fontSize: 16.sp,
                         fontFamily: 'OpenSans',
                       ),
+                      textAlign: TextAlign.left,
                     ),
                     onChanged: (String? value) {
                       setState(() {
