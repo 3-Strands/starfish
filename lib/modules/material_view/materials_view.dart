@@ -110,7 +110,46 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   List<MaterialListItem> _buildList() {
-    return _materialsList
+    List<HiveMaterial> _listToShow = [];
+
+    if (_selectedLanguages.length > 0) {
+      print('_selectedLanguages.length > 0');
+      print(_selectedLanguages.length);
+      print(_selectedLanguages[0].id);
+      print(_materialsList[0].languageIds);
+
+      List<HiveMaterial> filteredMaterials =
+          _materialBox.values.where((HiveMaterial material) {
+        // ignore: unnecessary_statements
+        print('material: ${material.languageIds?.toString()}');
+        int count = material.languageIds!
+            .where((String element) => _selectedLanguages.contains(element))
+            .length;
+        print('MATCH: $count');
+        return count > 0;
+      }).toList();
+
+      _listToShow = filteredMaterials;
+// _selectedLanguages.forEach((element) {
+//   var filteredMaterials = _materialBox.values
+//           .where((material) => (material.languageIds!.contains(
+//                 element.id
+//               )))
+//           .toList();
+//   if (filteredMaterials.length > 0) {
+//     return;
+//   }
+
+// });
+
+      print('FILERED: ${filteredMaterials.length}');
+    } else {
+      print('_selectedLanguages.length < 0');
+
+      // _listToShow = _materialsList;
+    }
+
+    return _listToShow
         .map((material) => new MaterialListItem(
               material: material,
               onMaterialTap: _onMaterialSelection,
@@ -223,8 +262,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   primary: false,
                   shrinkWrap: true,
                   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                  children:
-                      _query.length != 0 ? _buildSearchList() : _buildList()),
+                  children: _buildList()),
               SizedBox(
                 height: 10.h,
               ),
@@ -256,8 +294,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           title: Strings.selectLanugages,
           placeholder: Strings.searchLanguagesPlaceholder,
           // value: _selectedLanguages,
-          onChange: (selected) =>
-              setState(() => _selectedLanguages = selected.value),
+          onChange: (selected) => setState(() {
+            _selectedLanguages = selected.value;
+            _buildList();
+          }),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
             source: _languageList,
             value: (index, item) => item,
