@@ -50,11 +50,21 @@ class StarfishClient extends $grpc.Client {
           '/sil.starfish.Starfish/ListMaterialTypes',
           ($1.ListMaterialTypesRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $1.MaterialType.fromBuffer(value));
+  static final _$listGroups =
+      $grpc.ClientMethod<$1.ListGroupsRequest, $1.Group>(
+          '/sil.starfish.Starfish/ListGroups',
+          ($1.ListGroupsRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $1.Group.fromBuffer(value));
   static final _$listMaterialTopics =
       $grpc.ClientMethod<$1.ListMaterialTopicsRequest, $1.MaterialTopic>(
           '/sil.starfish.Starfish/ListMaterialTopics',
           ($1.ListMaterialTopicsRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $1.MaterialTopic.fromBuffer(value));
+  static final _$listEvaluationCategories = $grpc.ClientMethod<
+          $1.ListEvaluationCategoriesRequest, $1.EvaluationCategory>(
+      '/sil.starfish.Starfish/ListEvaluationCategories',
+      ($1.ListEvaluationCategoriesRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $1.EvaluationCategory.fromBuffer(value));
   static final _$createMaterialFeedbacks = $grpc.ClientMethod<
           $1.CreateMaterialFeedbacksRequest,
           $1.CreateMaterialFeedbacksResponse>(
@@ -118,11 +128,26 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
+  $grpc.ResponseStream<$1.Group> listGroups($1.ListGroupsRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listGroups, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
   $grpc.ResponseStream<$1.MaterialTopic> listMaterialTopics(
       $1.ListMaterialTopicsRequest request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(
         _$listMaterialTopics, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
+  $grpc.ResponseStream<$1.EvaluationCategory> listEvaluationCategories(
+      $1.ListEvaluationCategoriesRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listEvaluationCategories, $async.Stream.fromIterable([request]),
         options: options);
   }
 
@@ -196,6 +221,13 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $1.ListMaterialTypesRequest.fromBuffer(value),
             ($1.MaterialType value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.ListGroupsRequest, $1.Group>(
+        'ListGroups',
+        listGroups_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $1.ListGroupsRequest.fromBuffer(value),
+        ($1.Group value) => value.writeToBuffer()));
     $addMethod(
         $grpc.ServiceMethod<$1.ListMaterialTopicsRequest, $1.MaterialTopic>(
             'ListMaterialTopics',
@@ -205,6 +237,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $1.ListMaterialTopicsRequest.fromBuffer(value),
             ($1.MaterialTopic value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.ListEvaluationCategoriesRequest,
+            $1.EvaluationCategory>(
+        'ListEvaluationCategories',
+        listEvaluationCategories_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) =>
+            $1.ListEvaluationCategoriesRequest.fromBuffer(value),
+        ($1.EvaluationCategory value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$1.CreateMaterialFeedbacksRequest,
             $1.CreateMaterialFeedbacksResponse>(
         'CreateMaterialFeedbacks',
@@ -246,9 +287,20 @@ abstract class StarfishServiceBase extends $grpc.Service {
     yield* listMaterialTypes(call, await request);
   }
 
+  $async.Stream<$1.Group> listGroups_Pre($grpc.ServiceCall call,
+      $async.Future<$1.ListGroupsRequest> request) async* {
+    yield* listGroups(call, await request);
+  }
+
   $async.Stream<$1.MaterialTopic> listMaterialTopics_Pre($grpc.ServiceCall call,
       $async.Future<$1.ListMaterialTopicsRequest> request) async* {
     yield* listMaterialTopics(call, await request);
+  }
+
+  $async.Stream<$1.EvaluationCategory> listEvaluationCategories_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$1.ListEvaluationCategoriesRequest> request) async* {
+    yield* listEvaluationCategories(call, await request);
   }
 
   $async.Future<$1.User> getCurrentUser(
@@ -266,8 +318,12 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $async.Stream<$1.CreateUpdateMaterialsRequest> request);
   $async.Stream<$1.MaterialType> listMaterialTypes(
       $grpc.ServiceCall call, $1.ListMaterialTypesRequest request);
+  $async.Stream<$1.Group> listGroups(
+      $grpc.ServiceCall call, $1.ListGroupsRequest request);
   $async.Stream<$1.MaterialTopic> listMaterialTopics(
       $grpc.ServiceCall call, $1.ListMaterialTopicsRequest request);
+  $async.Stream<$1.EvaluationCategory> listEvaluationCategories(
+      $grpc.ServiceCall call, $1.ListEvaluationCategoriesRequest request);
   $async.Stream<$1.CreateMaterialFeedbacksResponse> createMaterialFeedbacks(
       $grpc.ServiceCall call,
       $async.Stream<$1.CreateMaterialFeedbacksRequest> request);

@@ -43,6 +43,25 @@ class ResultsTab extends $pb.ProtobufEnum {
   const ResultsTab._($core.int v, $core.String n) : super(v, n);
 }
 
+class Edit_Event extends $pb.ProtobufEnum {
+  static const Edit_Event EVENT_UNSPECIFIED = Edit_Event._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'EVENT_UNSPECIFIED');
+  static const Edit_Event CREATE = Edit_Event._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'CREATE');
+  static const Edit_Event UPDATE = Edit_Event._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UPDATE');
+  static const Edit_Event DELETE = Edit_Event._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'DELETE');
+
+  static const $core.List<Edit_Event> values = <Edit_Event> [
+    EVENT_UNSPECIFIED,
+    CREATE,
+    UPDATE,
+    DELETE,
+  ];
+
+  static final $core.Map<$core.int, Edit_Event> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static Edit_Event? valueOf($core.int value) => _byValue[value];
+
+  const Edit_Event._($core.int v, $core.String n) : super(v, n);
+}
+
 class GroupUser_Role extends $pb.ProtobufEnum {
   static const GroupUser_Role UNSPECIFIED_ROLE = GroupUser_Role._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNSPECIFIED_ROLE');
   static const GroupUser_Role LEARNER = GroupUser_Role._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'LEARNER');
