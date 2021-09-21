@@ -9,8 +9,9 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'google/type/date.pb.dart' as $2;
-import 'google/protobuf/field_mask.pb.dart' as $3;
+import 'google/protobuf/timestamp.pb.dart' as $2;
+import 'google/type/date.pb.dart' as $3;
+import 'google/protobuf/field_mask.pb.dart' as $4;
 
 import 'starfish.pbenum.dart';
 
@@ -19,21 +20,26 @@ export 'starfish.pbenum.dart';
 class Edit extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Edit', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
-    ..aOM<$2.Date>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'date', subBuilder: $2.Date.create)
+    ..aOM<$2.Timestamp>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'time', subBuilder: $2.Timestamp.create)
+    ..e<Edit_Event>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'event', $pb.PbFieldType.OE, defaultOrMaker: Edit_Event.EVENT_UNSPECIFIED, valueOf: Edit_Event.valueOf, enumValues: Edit_Event.values)
     ..hasRequiredFields = false
   ;
 
   Edit._() : super();
   factory Edit({
     $core.String? username,
-    $2.Date? date,
+    $2.Timestamp? time,
+    Edit_Event? event,
   }) {
     final _result = create();
     if (username != null) {
       _result.username = username;
     }
-    if (date != null) {
-      _result.date = date;
+    if (time != null) {
+      _result.time = time;
+    }
+    if (event != null) {
+      _result.event = event;
     }
     return _result;
   }
@@ -67,16 +73,25 @@ class Edit extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearUsername() => clearField(1);
 
-  @$pb.TagNumber(2)
-  $2.Date get date => $_getN(1);
-  @$pb.TagNumber(2)
-  set date($2.Date v) { setField(2, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasDate() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearDate() => clearField(2);
-  @$pb.TagNumber(2)
-  $2.Date ensureDate() => $_ensure(1);
+  @$pb.TagNumber(3)
+  $2.Timestamp get time => $_getN(1);
+  @$pb.TagNumber(3)
+  set time($2.Timestamp v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasTime() => $_has(1);
+  @$pb.TagNumber(3)
+  void clearTime() => clearField(3);
+  @$pb.TagNumber(3)
+  $2.Timestamp ensureTime() => $_ensure(1);
+
+  @$pb.TagNumber(4)
+  Edit_Event get event => $_getN(2);
+  @$pb.TagNumber(4)
+  set event(Edit_Event v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasEvent() => $_has(2);
+  @$pb.TagNumber(4)
+  void clearEvent() => clearField(4);
 }
 
 class User extends $pb.GeneratedMessage {
@@ -337,7 +352,7 @@ class ActionUser extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
     ..e<ActionUser_Status>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: ActionUser_Status.UNSPECIFIED_STATUS, valueOf: ActionUser_Status.valueOf, enumValues: ActionUser_Status.values)
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'teacherResponse')
-    ..aOM<$2.Date>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateDue', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateDue', subBuilder: $3.Date.create)
     ..hasRequiredFields = false
   ;
 
@@ -347,7 +362,7 @@ class ActionUser extends $pb.GeneratedMessage {
     $core.String? userId,
     ActionUser_Status? status,
     $core.String? teacherResponse,
-    $2.Date? dateDue,
+    $3.Date? dateDue,
   }) {
     final _result = create();
     if (actionId != null) {
@@ -425,15 +440,15 @@ class ActionUser extends $pb.GeneratedMessage {
   void clearTeacherResponse() => clearField(5);
 
   @$pb.TagNumber(6)
-  $2.Date get dateDue => $_getN(4);
+  $3.Date get dateDue => $_getN(4);
   @$pb.TagNumber(6)
-  set dateDue($2.Date v) { setField(6, v); }
+  set dateDue($3.Date v) { setField(6, v); }
   @$pb.TagNumber(6)
   $core.bool hasDateDue() => $_has(4);
   @$pb.TagNumber(6)
   void clearDateDue() => clearField(6);
   @$pb.TagNumber(6)
-  $2.Date ensureDateDue() => $_ensure(4);
+  $3.Date ensureDateDue() => $_ensure(4);
 }
 
 class Country extends $pb.GeneratedMessage {
@@ -694,6 +709,67 @@ class MaterialTopic extends $pb.GeneratedMessage {
   void clearName() => clearField(2);
 }
 
+class EvaluationCategory extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'EvaluationCategory', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..hasRequiredFields = false
+  ;
+
+  EvaluationCategory._() : super();
+  factory EvaluationCategory({
+    $core.String? id,
+    $core.String? name,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    if (name != null) {
+      _result.name = name;
+    }
+    return _result;
+  }
+  factory EvaluationCategory.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory EvaluationCategory.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  EvaluationCategory clone() => EvaluationCategory()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  EvaluationCategory copyWith(void Function(EvaluationCategory) updates) => super.copyWith((message) => updates(message as EvaluationCategory)) as EvaluationCategory; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static EvaluationCategory create() => EvaluationCategory._();
+  EvaluationCategory createEmptyInstance() => create();
+  static $pb.PbList<EvaluationCategory> createRepeated() => $pb.PbList<EvaluationCategory>();
+  @$core.pragma('dart2js:noInline')
+  static EvaluationCategory getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EvaluationCategory>(create);
+  static EvaluationCategory? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
+}
+
 class Material extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Material', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
@@ -710,8 +786,8 @@ class Material extends $pb.GeneratedMessage {
     ..pPS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'typeIds')
     ..pPS(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'topics')
     ..pc<MaterialFeedback>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'feedbacks', $pb.PbFieldType.PM, subBuilder: MaterialFeedback.create)
-    ..aOM<$2.Date>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateCreated', subBuilder: $2.Date.create)
-    ..aOM<$2.Date>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateUpdated', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateCreated', subBuilder: $3.Date.create)
+    ..aOM<$3.Date>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateUpdated', subBuilder: $3.Date.create)
     ..pc<Edit>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'editHistory', $pb.PbFieldType.PM, subBuilder: Edit.create)
     ..hasRequiredFields = false
   ;
@@ -732,8 +808,8 @@ class Material extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? typeIds,
     $core.Iterable<$core.String>? topics,
     $core.Iterable<MaterialFeedback>? feedbacks,
-    $2.Date? dateCreated,
-    $2.Date? dateUpdated,
+    $3.Date? dateCreated,
+    $3.Date? dateUpdated,
     $core.Iterable<Edit>? editHistory,
   }) {
     final _result = create();
@@ -908,26 +984,26 @@ class Material extends $pb.GeneratedMessage {
   $core.List<MaterialFeedback> get feedbacks => $_getList(13);
 
   @$pb.TagNumber(15)
-  $2.Date get dateCreated => $_getN(14);
+  $3.Date get dateCreated => $_getN(14);
   @$pb.TagNumber(15)
-  set dateCreated($2.Date v) { setField(15, v); }
+  set dateCreated($3.Date v) { setField(15, v); }
   @$pb.TagNumber(15)
   $core.bool hasDateCreated() => $_has(14);
   @$pb.TagNumber(15)
   void clearDateCreated() => clearField(15);
   @$pb.TagNumber(15)
-  $2.Date ensureDateCreated() => $_ensure(14);
+  $3.Date ensureDateCreated() => $_ensure(14);
 
   @$pb.TagNumber(16)
-  $2.Date get dateUpdated => $_getN(15);
+  $3.Date get dateUpdated => $_getN(15);
   @$pb.TagNumber(16)
-  set dateUpdated($2.Date v) { setField(16, v); }
+  set dateUpdated($3.Date v) { setField(16, v); }
   @$pb.TagNumber(16)
   $core.bool hasDateUpdated() => $_has(15);
   @$pb.TagNumber(16)
   void clearDateUpdated() => clearField(16);
   @$pb.TagNumber(16)
-  $2.Date ensureDateUpdated() => $_ensure(15);
+  $3.Date ensureDateUpdated() => $_ensure(15);
 
   @$pb.TagNumber(17)
   $core.List<Edit> get editHistory => $_getList(16);
@@ -1050,17 +1126,195 @@ class MaterialFeedback extends $pb.GeneratedMessage {
   void clearMaterialId() => clearField(6);
 }
 
+class Group extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Group', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..pPS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'languageIds')
+    ..pc<GroupUser>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'users', $pb.PbFieldType.PM, subBuilder: GroupUser.create)
+    ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'evaluationCategoryIds')
+    ..pc<GroupAction>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'actions', $pb.PbFieldType.PM, subBuilder: GroupAction.create)
+    ..pc<Edit>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'editHistory', $pb.PbFieldType.PM, subBuilder: Edit.create)
+    ..hasRequiredFields = false
+  ;
+
+  Group._() : super();
+  factory Group({
+    $core.String? id,
+    $core.String? name,
+    $core.Iterable<$core.String>? languageIds,
+    $core.Iterable<GroupUser>? users,
+    $core.Iterable<$core.String>? evaluationCategoryIds,
+    $core.Iterable<GroupAction>? actions,
+    $core.Iterable<Edit>? editHistory,
+  }) {
+    final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
+    if (name != null) {
+      _result.name = name;
+    }
+    if (languageIds != null) {
+      _result.languageIds.addAll(languageIds);
+    }
+    if (users != null) {
+      _result.users.addAll(users);
+    }
+    if (evaluationCategoryIds != null) {
+      _result.evaluationCategoryIds.addAll(evaluationCategoryIds);
+    }
+    if (actions != null) {
+      _result.actions.addAll(actions);
+    }
+    if (editHistory != null) {
+      _result.editHistory.addAll(editHistory);
+    }
+    return _result;
+  }
+  factory Group.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Group.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Group clone() => Group()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Group copyWith(void Function(Group) updates) => super.copyWith((message) => updates(message as Group)) as Group; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Group create() => Group._();
+  Group createEmptyInstance() => create();
+  static $pb.PbList<Group> createRepeated() => $pb.PbList<Group>();
+  @$core.pragma('dart2js:noInline')
+  static Group getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Group>(create);
+  static Group? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.String> get languageIds => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $core.List<GroupUser> get users => $_getList(3);
+
+  @$pb.TagNumber(5)
+  $core.List<$core.String> get evaluationCategoryIds => $_getList(4);
+
+  @$pb.TagNumber(6)
+  $core.List<GroupAction> get actions => $_getList(5);
+
+  @$pb.TagNumber(7)
+  $core.List<Edit> get editHistory => $_getList(6);
+}
+
+class GroupAction extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GroupAction', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'actionId')
+    ..aOM<$3.Date>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dueDate', subBuilder: $3.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  GroupAction._() : super();
+  factory GroupAction({
+    $core.String? groupId,
+    $core.String? actionId,
+    $3.Date? dueDate,
+  }) {
+    final _result = create();
+    if (groupId != null) {
+      _result.groupId = groupId;
+    }
+    if (actionId != null) {
+      _result.actionId = actionId;
+    }
+    if (dueDate != null) {
+      _result.dueDate = dueDate;
+    }
+    return _result;
+  }
+  factory GroupAction.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GroupAction.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GroupAction clone() => GroupAction()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GroupAction copyWith(void Function(GroupAction) updates) => super.copyWith((message) => updates(message as GroupAction)) as GroupAction; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GroupAction create() => GroupAction._();
+  GroupAction createEmptyInstance() => create();
+  static $pb.PbList<GroupAction> createRepeated() => $pb.PbList<GroupAction>();
+  @$core.pragma('dart2js:noInline')
+  static GroupAction getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GroupAction>(create);
+  static GroupAction? _defaultInstance;
+
+  @$pb.TagNumber(2)
+  $core.String get groupId => $_getSZ(0);
+  @$pb.TagNumber(2)
+  set groupId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasGroupId() => $_has(0);
+  @$pb.TagNumber(2)
+  void clearGroupId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get actionId => $_getSZ(1);
+  @$pb.TagNumber(3)
+  set actionId($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasActionId() => $_has(1);
+  @$pb.TagNumber(3)
+  void clearActionId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $3.Date get dueDate => $_getN(2);
+  @$pb.TagNumber(4)
+  set dueDate($3.Date v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasDueDate() => $_has(2);
+  @$pb.TagNumber(4)
+  void clearDueDate() => clearField(4);
+  @$pb.TagNumber(4)
+  $3.Date ensureDueDate() => $_ensure(2);
+}
+
 class UpdateCurrentUserRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateCurrentUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<User>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   UpdateCurrentUserRequest._() : super();
   factory UpdateCurrentUserRequest({
     User? user,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (user != null) {
@@ -1104,26 +1358,26 @@ class UpdateCurrentUserRequest extends $pb.GeneratedMessage {
   User ensureUser() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class ListAllCountriesRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListAllCountriesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
     ..hasRequiredFields = false
   ;
 
   ListAllCountriesRequest._() : super();
   factory ListAllCountriesRequest({
-    $2.Date? updatedSince,
+    $3.Date? updatedSince,
   }) {
     final _result = create();
     if (updatedSince != null) {
@@ -1153,26 +1407,26 @@ class ListAllCountriesRequest extends $pb.GeneratedMessage {
   static ListAllCountriesRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.Date get updatedSince => $_getN(0);
+  $3.Date get updatedSince => $_getN(0);
   @$pb.TagNumber(1)
-  set updatedSince($2.Date v) { setField(1, v); }
+  set updatedSince($3.Date v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasUpdatedSince() => $_has(0);
   @$pb.TagNumber(1)
   void clearUpdatedSince() => clearField(1);
   @$pb.TagNumber(1)
-  $2.Date ensureUpdatedSince() => $_ensure(0);
+  $3.Date ensureUpdatedSince() => $_ensure(0);
 }
 
 class ListLanguagesRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListLanguagesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
     ..hasRequiredFields = false
   ;
 
   ListLanguagesRequest._() : super();
   factory ListLanguagesRequest({
-    $2.Date? updatedSince,
+    $3.Date? updatedSince,
   }) {
     final _result = create();
     if (updatedSince != null) {
@@ -1202,26 +1456,26 @@ class ListLanguagesRequest extends $pb.GeneratedMessage {
   static ListLanguagesRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.Date get updatedSince => $_getN(0);
+  $3.Date get updatedSince => $_getN(0);
   @$pb.TagNumber(1)
-  set updatedSince($2.Date v) { setField(1, v); }
+  set updatedSince($3.Date v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasUpdatedSince() => $_has(0);
   @$pb.TagNumber(1)
   void clearUpdatedSince() => clearField(1);
   @$pb.TagNumber(1)
-  $2.Date ensureUpdatedSince() => $_ensure(0);
+  $3.Date ensureUpdatedSince() => $_ensure(0);
 }
 
 class ListMaterialsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListMaterialsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
     ..hasRequiredFields = false
   ;
 
   ListMaterialsRequest._() : super();
   factory ListMaterialsRequest({
-    $2.Date? updatedSince,
+    $3.Date? updatedSince,
   }) {
     final _result = create();
     if (updatedSince != null) {
@@ -1251,26 +1505,26 @@ class ListMaterialsRequest extends $pb.GeneratedMessage {
   static ListMaterialsRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.Date get updatedSince => $_getN(0);
+  $3.Date get updatedSince => $_getN(0);
   @$pb.TagNumber(1)
-  set updatedSince($2.Date v) { setField(1, v); }
+  set updatedSince($3.Date v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasUpdatedSince() => $_has(0);
   @$pb.TagNumber(1)
   void clearUpdatedSince() => clearField(1);
   @$pb.TagNumber(1)
-  $2.Date ensureUpdatedSince() => $_ensure(0);
+  $3.Date ensureUpdatedSince() => $_ensure(0);
 }
 
 class ListMaterialTypesRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListMaterialTypesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
     ..hasRequiredFields = false
   ;
 
   ListMaterialTypesRequest._() : super();
   factory ListMaterialTypesRequest({
-    $2.Date? updatedSince,
+    $3.Date? updatedSince,
   }) {
     final _result = create();
     if (updatedSince != null) {
@@ -1300,26 +1554,26 @@ class ListMaterialTypesRequest extends $pb.GeneratedMessage {
   static ListMaterialTypesRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.Date get updatedSince => $_getN(0);
+  $3.Date get updatedSince => $_getN(0);
   @$pb.TagNumber(1)
-  set updatedSince($2.Date v) { setField(1, v); }
+  set updatedSince($3.Date v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasUpdatedSince() => $_has(0);
   @$pb.TagNumber(1)
   void clearUpdatedSince() => clearField(1);
   @$pb.TagNumber(1)
-  $2.Date ensureUpdatedSince() => $_ensure(0);
+  $3.Date ensureUpdatedSince() => $_ensure(0);
 }
 
 class ListMaterialTopicsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListMaterialTopicsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
     ..hasRequiredFields = false
   ;
 
   ListMaterialTopicsRequest._() : super();
   factory ListMaterialTopicsRequest({
-    $2.Date? updatedSince,
+    $3.Date? updatedSince,
   }) {
     final _result = create();
     if (updatedSince != null) {
@@ -1349,28 +1603,126 @@ class ListMaterialTopicsRequest extends $pb.GeneratedMessage {
   static ListMaterialTopicsRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.Date get updatedSince => $_getN(0);
+  $3.Date get updatedSince => $_getN(0);
   @$pb.TagNumber(1)
-  set updatedSince($2.Date v) { setField(1, v); }
+  set updatedSince($3.Date v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasUpdatedSince() => $_has(0);
   @$pb.TagNumber(1)
   void clearUpdatedSince() => clearField(1);
   @$pb.TagNumber(1)
-  $2.Date ensureUpdatedSince() => $_ensure(0);
+  $3.Date ensureUpdatedSince() => $_ensure(0);
+}
+
+class ListGroupsRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListGroupsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  ListGroupsRequest._() : super();
+  factory ListGroupsRequest({
+    $3.Date? updatedSince,
+  }) {
+    final _result = create();
+    if (updatedSince != null) {
+      _result.updatedSince = updatedSince;
+    }
+    return _result;
+  }
+  factory ListGroupsRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListGroupsRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListGroupsRequest clone() => ListGroupsRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListGroupsRequest copyWith(void Function(ListGroupsRequest) updates) => super.copyWith((message) => updates(message as ListGroupsRequest)) as ListGroupsRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ListGroupsRequest create() => ListGroupsRequest._();
+  ListGroupsRequest createEmptyInstance() => create();
+  static $pb.PbList<ListGroupsRequest> createRepeated() => $pb.PbList<ListGroupsRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ListGroupsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListGroupsRequest>(create);
+  static ListGroupsRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $3.Date get updatedSince => $_getN(0);
+  @$pb.TagNumber(1)
+  set updatedSince($3.Date v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUpdatedSince() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUpdatedSince() => clearField(1);
+  @$pb.TagNumber(1)
+  $3.Date ensureUpdatedSince() => $_ensure(0);
+}
+
+class ListEvaluationCategoriesRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListEvaluationCategoriesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<$3.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $3.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  ListEvaluationCategoriesRequest._() : super();
+  factory ListEvaluationCategoriesRequest({
+    $3.Date? updatedSince,
+  }) {
+    final _result = create();
+    if (updatedSince != null) {
+      _result.updatedSince = updatedSince;
+    }
+    return _result;
+  }
+  factory ListEvaluationCategoriesRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListEvaluationCategoriesRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListEvaluationCategoriesRequest clone() => ListEvaluationCategoriesRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListEvaluationCategoriesRequest copyWith(void Function(ListEvaluationCategoriesRequest) updates) => super.copyWith((message) => updates(message as ListEvaluationCategoriesRequest)) as ListEvaluationCategoriesRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ListEvaluationCategoriesRequest create() => ListEvaluationCategoriesRequest._();
+  ListEvaluationCategoriesRequest createEmptyInstance() => create();
+  static $pb.PbList<ListEvaluationCategoriesRequest> createRepeated() => $pb.PbList<ListEvaluationCategoriesRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ListEvaluationCategoriesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListEvaluationCategoriesRequest>(create);
+  static ListEvaluationCategoriesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $3.Date get updatedSince => $_getN(0);
+  @$pb.TagNumber(1)
+  set updatedSince($3.Date v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUpdatedSince() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUpdatedSince() => clearField(1);
+  @$pb.TagNumber(1)
+  $3.Date ensureUpdatedSince() => $_ensure(0);
 }
 
 class CreateUpdateMaterialsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateMaterialsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<Material>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'material', subBuilder: Material.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateMaterialsRequest._() : super();
   factory CreateUpdateMaterialsRequest({
     Material? material,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (material != null) {
@@ -1414,15 +1766,15 @@ class CreateUpdateMaterialsRequest extends $pb.GeneratedMessage {
   Material ensureMaterial() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateMaterialsResponse extends $pb.GeneratedMessage {

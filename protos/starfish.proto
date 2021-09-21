@@ -9,6 +9,7 @@ option java_package = "org.sil.starfish";
 import "google/type/date.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
 
 // The Starfish API, for communicating with Starfish app.
 service Starfish {
@@ -35,8 +36,14 @@ service Starfish {
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
 
+    // List the groups this user is a member of
+    rpc ListGroups (ListGroupsRequest) returns (stream Group) {}
+
     // List all material topics
     rpc ListMaterialTopics (ListMaterialTopicsRequest) returns (stream MaterialTopic) {}
+
+    // List all material topics
+    rpc ListEvaluationCategories (ListEvaluationCategoriesRequest) returns (stream EvaluationCategory) {}
 
     // Create feedbacks for materials
     rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
@@ -59,11 +66,21 @@ enum ResultsTab {
 // A single edit to a single record recorded in history
 message Edit {
 
+    enum Event {
+        EVENT_UNSPECIFIED = 0;
+        CREATE = 1;
+        UPDATE = 2;
+        DELETE = 3;
+    }
+
     // The username of the user who made the edit
     string username = 1;
 
-    // The date of the edit
-    google.type.Date date = 2;
+    // The time of the edit
+    google.protobuf.Timestamp time = 3;
+
+    // The type of edit
+    Event event = 4;
 
 }
 
@@ -180,6 +197,15 @@ message MaterialTopic {
 
 }
 
+// Pre-defined categories for teachers to evaluate learners against
+message EvaluationCategory {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
 message Material {
 
     enum Status {
@@ -272,6 +298,41 @@ message MaterialFeedback {
 
 }
 
+// A literacy group
+message Group {
+
+    string id  = 1;
+
+    string name = 2;
+
+    // The IDs of languages connected to this group
+    repeated string language_ids = 3;
+
+    // The Users in this group
+    // At least needs to have admin role
+    repeated GroupUser users = 4;
+
+    // The IDs of the evaluation categories connected to this group
+    // maximum is 3
+    repeated string evaluation_category_ids = 5;
+
+    repeated GroupAction actions = 6;
+
+    // Output only. A history of edits made to this group object
+    repeated Edit edit_history = 7;
+}
+
+// Connecting an action to a group
+message GroupAction {
+
+    string group_id = 2;
+
+    string action_id = 3;
+
+    google.type.Date due_date = 4;
+
+}
+
 message UpdateCurrentUserRequest {
 
     // The user resource which replaces the resource on the server.
@@ -312,6 +373,20 @@ message ListMaterialTypesRequest {
 }
 
 message ListMaterialTopicsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListGroupsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListEvaluationCategoriesRequest {
 
     // Only return results updated at this date or later
     google.type.Date updated_since = 1;

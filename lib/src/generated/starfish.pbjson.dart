@@ -37,12 +37,25 @@ const Edit$json = const {
   '1': 'Edit',
   '2': const [
     const {'1': 'username', '3': 1, '4': 1, '5': 9, '10': 'username'},
-    const {'1': 'date', '3': 2, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'date'},
+    const {'1': 'time', '3': 3, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'time'},
+    const {'1': 'event', '3': 4, '4': 1, '5': 14, '6': '.sil.starfish.Edit.Event', '10': 'event'},
+  ],
+  '4': const [Edit_Event$json],
+};
+
+@$core.Deprecated('Use editDescriptor instead')
+const Edit_Event$json = const {
+  '1': 'Event',
+  '2': const [
+    const {'1': 'EVENT_UNSPECIFIED', '2': 0},
+    const {'1': 'CREATE', '2': 1},
+    const {'1': 'UPDATE', '2': 2},
+    const {'1': 'DELETE', '2': 3},
   ],
 };
 
 /// Descriptor for `Edit`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List editDescriptor = $convert.base64Decode('CgRFZGl0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIlCgRkYXRlGAIgASgLMhEuZ29vZ2xlLnR5cGUuRGF0ZVIEZGF0ZQ==');
+final $typed_data.Uint8List editDescriptor = $convert.base64Decode('CgRFZGl0EhoKCHVzZXJuYW1lGAEgASgJUgh1c2VybmFtZRIuCgR0aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcFIEdGltZRIuCgVldmVudBgEIAEoDjIYLnNpbC5zdGFyZmlzaC5FZGl0LkV2ZW50UgVldmVudCJCCgVFdmVudBIVChFFVkVOVF9VTlNQRUNJRklFRBAAEgoKBkNSRUFURRABEgoKBlVQREFURRACEgoKBkRFTEVURRAD');
 @$core.Deprecated('Use userDescriptor instead')
 const User$json = const {
   '1': 'User',
@@ -158,6 +171,17 @@ const MaterialTopic$json = const {
 
 /// Descriptor for `MaterialTopic`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List materialTopicDescriptor = $convert.base64Decode('Cg1NYXRlcmlhbFRvcGljEg4KAmlkGAEgASgJUgJpZBISCgRuYW1lGAIgASgJUgRuYW1l');
+@$core.Deprecated('Use evaluationCategoryDescriptor instead')
+const EvaluationCategory$json = const {
+  '1': 'EvaluationCategory',
+  '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+  ],
+};
+
+/// Descriptor for `EvaluationCategory`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List evaluationCategoryDescriptor = $convert.base64Decode('ChJFdmFsdWF0aW9uQ2F0ZWdvcnkSDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWU=');
 @$core.Deprecated('Use materialDescriptor instead')
 const Material$json = const {
   '1': 'Material',
@@ -241,6 +265,34 @@ const MaterialFeedback_Type$json = const {
 
 /// Descriptor for `MaterialFeedback`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List materialFeedbackDescriptor = $convert.base64Decode('ChBNYXRlcmlhbEZlZWRiYWNrEg4KAmlkGAEgASgJUgJpZBI3CgR0eXBlGAIgASgOMiMuc2lsLnN0YXJmaXNoLk1hdGVyaWFsRmVlZGJhY2suVHlwZVIEdHlwZRIfCgtyZXBvcnRlcl9pZBgDIAEoCVIKcmVwb3J0ZXJJZBIWCgZyZXBvcnQYBCABKAlSBnJlcG9ydBIaCghyZXNwb25zZRgFIAEoCVIIcmVzcG9uc2USHwoLbWF0ZXJpYWxfaWQYBiABKAlSCm1hdGVyaWFsSWQiLwoEVHlwZRIUChBVTlNQRUNJRklFRF9UWVBFEAASEQoNSU5BUFBST1BSSUFURRAB');
+@$core.Deprecated('Use groupDescriptor instead')
+const Group$json = const {
+  '1': 'Group',
+  '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    const {'1': 'language_ids', '3': 3, '4': 3, '5': 9, '10': 'languageIds'},
+    const {'1': 'users', '3': 4, '4': 3, '5': 11, '6': '.sil.starfish.GroupUser', '10': 'users'},
+    const {'1': 'evaluation_category_ids', '3': 5, '4': 3, '5': 9, '10': 'evaluationCategoryIds'},
+    const {'1': 'actions', '3': 6, '4': 3, '5': 11, '6': '.sil.starfish.GroupAction', '10': 'actions'},
+    const {'1': 'edit_history', '3': 7, '4': 3, '5': 11, '6': '.sil.starfish.Edit', '10': 'editHistory'},
+  ],
+};
+
+/// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxIzCgdhY3Rpb25zGAYgAygLMhkuc2lsLnN0YXJmaXNoLkdyb3VwQWN0aW9uUgdhY3Rpb25zEjUKDGVkaXRfaGlzdG9yeRgHIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeQ==');
+@$core.Deprecated('Use groupActionDescriptor instead')
+const GroupAction$json = const {
+  '1': 'GroupAction',
+  '2': const [
+    const {'1': 'group_id', '3': 2, '4': 1, '5': 9, '10': 'groupId'},
+    const {'1': 'action_id', '3': 3, '4': 1, '5': 9, '10': 'actionId'},
+    const {'1': 'due_date', '3': 4, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'dueDate'},
+  ],
+};
+
+/// Descriptor for `GroupAction`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List groupActionDescriptor = $convert.base64Decode('CgtHcm91cEFjdGlvbhIZCghncm91cF9pZBgCIAEoCVIHZ3JvdXBJZBIbCglhY3Rpb25faWQYAyABKAlSCGFjdGlvbklkEiwKCGR1ZV9kYXRlGAQgASgLMhEuZ29vZ2xlLnR5cGUuRGF0ZVIHZHVlRGF0ZQ==');
 @$core.Deprecated('Use updateCurrentUserRequestDescriptor instead')
 const UpdateCurrentUserRequest$json = const {
   '1': 'UpdateCurrentUserRequest',
@@ -302,6 +354,26 @@ const ListMaterialTopicsRequest$json = const {
 
 /// Descriptor for `ListMaterialTopicsRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listMaterialTopicsRequestDescriptor = $convert.base64Decode('ChlMaXN0TWF0ZXJpYWxUb3BpY3NSZXF1ZXN0EjYKDXVwZGF0ZWRfc2luY2UYASABKAsyES5nb29nbGUudHlwZS5EYXRlUgx1cGRhdGVkU2luY2U=');
+@$core.Deprecated('Use listGroupsRequestDescriptor instead')
+const ListGroupsRequest$json = const {
+  '1': 'ListGroupsRequest',
+  '2': const [
+    const {'1': 'updated_since', '3': 1, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'updatedSince'},
+  ],
+};
+
+/// Descriptor for `ListGroupsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listGroupsRequestDescriptor = $convert.base64Decode('ChFMaXN0R3JvdXBzUmVxdWVzdBI2Cg11cGRhdGVkX3NpbmNlGAEgASgLMhEuZ29vZ2xlLnR5cGUuRGF0ZVIMdXBkYXRlZFNpbmNl');
+@$core.Deprecated('Use listEvaluationCategoriesRequestDescriptor instead')
+const ListEvaluationCategoriesRequest$json = const {
+  '1': 'ListEvaluationCategoriesRequest',
+  '2': const [
+    const {'1': 'updated_since', '3': 1, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'updatedSince'},
+  ],
+};
+
+/// Descriptor for `ListEvaluationCategoriesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listEvaluationCategoriesRequestDescriptor = $convert.base64Decode('Ch9MaXN0RXZhbHVhdGlvbkNhdGVnb3JpZXNSZXF1ZXN0EjYKDXVwZGF0ZWRfc2luY2UYASABKAsyES5nb29nbGUudHlwZS5EYXRlUgx1cGRhdGVkU2luY2U=');
 @$core.Deprecated('Use createUpdateMaterialsRequestDescriptor instead')
 const CreateUpdateMaterialsRequest$json = const {
   '1': 'CreateUpdateMaterialsRequest',
