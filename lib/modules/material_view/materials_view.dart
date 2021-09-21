@@ -369,13 +369,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _buildLanguageList(HiveMaterial material) {
-    _languageBox.values.where((element) => false);
-
     List<Widget> languages = [];
     material.languageIds?.forEach((String languageId) {
-      HiveLanguage _language =
-          _languageList.firstWhere((element) => languageId == element.id);
-      languages.add(Text(_language.name));
+      try {
+        HiveLanguage _language =
+            _languageList.firstWhere((element) => languageId == element.id);
+        languages.add(Text(_language.name));
+      } on StateError catch (e) {
+        print('EXCEPTION: ${e.message}');
+      }
     });
 
     return Column(
