@@ -25,6 +25,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
   List<HiveGroup> _groupsList = [];
 
   late Box<HiveCurrentUser> _userBox;
+  late String _choiceText = 'All of my groups';
 
   @override
   void initState() {
@@ -160,47 +161,63 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   height: 10.h,
                 ),
                 Container(
-                  height: 50.h,
-                  width: MediaQuery.of(context).size.width - 40,
-                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  height: 60.h,
+                  // width: 345.w,
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+
                   decoration: BoxDecoration(
                     color: AppColors.txtFieldBackground,
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 16.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                      hint: Text(
-                        'Groups: All of my Groups',
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontSize: 16.sp,
-                          fontFamily: 'OpenSans',
-                        ),
-                      ),
-                      onChanged: (String? value) {},
-                      items: <String>[
-                        'Groups: Group I teach or co-lead',
-                        'Groups: Groups I\'m a learner in',
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
+                  child: Center(
+                    child: DropdownButtonHideUnderline(
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                         // icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 35,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 16.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                          hint: Text(
+                            'Groups: ' + _choiceText,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Color(0xFF434141),
-                              fontSize: 14.sp,
+                              fontSize: 16.sp,
                               fontFamily: 'OpenSans',
                             ),
+                            textAlign: TextAlign.left,
                           ),
-                        );
-                      }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _choiceText = value!;
+                            });
+                          },
+                          items: <String>[
+                            'Groups: Group I teach or co-lead',
+                            'Groups: Groups I\'m a learner in',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 14.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ),

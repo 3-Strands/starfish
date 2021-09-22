@@ -249,6 +249,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       alignedDropdown: true,
                       child: DropdownButton<String>(
                         isExpanded: true,
+                        iconSize: 35,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
