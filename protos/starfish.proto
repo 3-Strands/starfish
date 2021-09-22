@@ -17,6 +17,8 @@ service Starfish {
     // Create feedbacks for materials
     rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
 
+    rpc CreateUpdateGroups (stream CreateUpdateGroupsRequest) returns (stream CreateUpdateGroupsResponse) {}
+
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
@@ -125,6 +127,43 @@ message CreateMaterialFeedbacksResponse {
 
 }
 
+message CreateUpdateGroupsRequest {
+
+    // The Group resource that will be created or replace the existing one on the server.
+    // The ID of the material resource is optional for a create request.
+    // If the ID is present and a Material exist with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    Group group = 1;
+
+    // The field mask specifying which fields of the Material resource should be updated
+    // If not specified then all fields are updated
+    // If specified ans some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateGroupsResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Group after update or create request.
+    Group group = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateMaterialsRequest {
 
     // The Material resource that will be created or replace the existing one on the server.
@@ -223,14 +262,15 @@ message Group {
     // The IDs of languages connected to this group
     repeated string language_ids = 3;
 
-    // The Users in this group
-    // At least needs to have admin role
+    // The Users in this group. Output only
+    // At least one needs to have admin role
     repeated GroupUser users = 4;
 
     // The IDs of the evaluation categories connected to this group
     // maximum is 3
     repeated string evaluation_category_ids = 5;
 
+    // Output only
     repeated GroupAction actions = 6;
 
     // Output only. A history of edits made to this group object
