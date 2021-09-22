@@ -54,5 +54,12 @@ class HiveGroup extends HiveObject {
     this.actions = group.actions
         .map((GroupAction action) => HiveGroupAction.from(action))
         .toList();
+    this.editHistory =
+        group.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
+  }
+
+  String toString() {
+    return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds.toString()}, 
+    users: ${this.users.toString()}, actions: ${this.actions.toString()}, editHistory: ${this.editHistory.toString()}}''';
   }
 }

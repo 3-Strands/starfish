@@ -52,7 +52,7 @@ class SyncService {
   }
 
   void syncAll() {
-    //syncLocalMaterialsToRemote();
+    syncLocalMaterialsToRemote();
 
     syncCurrentUser();
     syncCountries();
@@ -276,7 +276,7 @@ class SyncService {
         HiveGroup _group = HiveGroup.from(value);
         groupBox.add(_group);
       }, onError: ((err) {
-        print(err);
+        print('Group Sync Error: ${err.toString()}');
       }), onDone: () {
         print('Group Sync Done.');
         // for (var count in groupBox.values.toList()) {

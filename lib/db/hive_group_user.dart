@@ -19,8 +19,12 @@ class HiveGroupUser {
   }
 
   HiveGroupUser({
-    required this.groupId,
-    required this.userId,
-    required this.role,
+    this.groupId,
+    this.userId,
+    this.role,
   });
+
+  String toString() {
+    return '{groupId: ${this.groupId}, userId: ${this.userId}, role: ${this.role}}';
+  }
 }
