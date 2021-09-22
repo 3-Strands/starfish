@@ -112,7 +112,7 @@ class HiveMaterial extends HiveObject {
       typeIds: this.typeIds,
       topics: this.topics,
       //feedbacks: this.feedbacks,
-      editHistory: this.editHistory?.map((HiveEdit e) => e.toEdit()).toList(),
+      //editHistory: this.editHistory?.map((HiveEdit e) => e.toEdit()).toList(),
       dateCreated: this.dateCreated?.toDate(),
       dateUpdated: this.dateUpdated?.toDate(),
     );

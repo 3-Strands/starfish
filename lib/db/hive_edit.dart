@@ -1,13 +1,14 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
+part 'hive_edit.g.dart';
+
 @HiveType(typeId: 11)
-class HiveEdit {
+class HiveEdit extends HiveObject {
   @HiveField(0)
   String? username;
   @HiveField(1)
-  Timestamp? time;
+  DateTime? time;
   @HiveField(2)
   int? event;
 
@@ -15,15 +16,8 @@ class HiveEdit {
 
   HiveEdit.from(Edit edit) {
     this.username = edit.username;
-    this.time = edit.time;
+    this.time = edit.time.toDateTime();
     this.event = edit.event.value;
-  }
-
-  Edit toEdit() {
-    return Edit(
-        username: this.username,
-        time: this.time,
-        event: Edit_Event.valueOf(this.event!));
   }
 
   String toString() {

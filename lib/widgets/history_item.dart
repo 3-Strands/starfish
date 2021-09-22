@@ -62,7 +62,7 @@ class HistoryItem extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: edit!.time != null
-                        ? '${DateTimeUtils.formatDate(edit!.time!.toDateTime(), 'dd-MMM-yyyy')}'
+                        ? '${DateTimeUtils.formatDate(edit!.time!, 'dd-MMM-yyyy')}'
                         : 'NA',
                     style: TextStyle(
                       fontFamily: 'OpenSans',

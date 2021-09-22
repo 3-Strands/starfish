@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
-import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GroupsScreen extends StatefulWidget {
@@ -22,28 +20,26 @@ class GroupsScreen extends StatefulWidget {
 class _GroupsScreenState extends State<GroupsScreen> {
   bool _isSearching = false;
 
-  List<HiveGroupUser> _groupsList = [];
+  List<HiveGroup> _groupsList = [];
 
-  late Box<HiveCurrentUser> _userBox;
+  late Box<HiveGroup> _groupBox;
   late String _choiceText = 'All of my groups';
 
   @override
   void initState() {
     super.initState();
 
-    _userBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
 
     _getGroups();
   }
 
   void _getGroups() async {
-    /*
-    Temprory get the groups of the current users
-    */
-    _groupsList = _userBox.values.toList()[0].groups;
+    _groupsList = _groupBox.values.toList();
+    print('_groupsList: ${_groupsList.length}');
   }
 
-  void _onGroupSelection(HiveGroupUser material) {
+  void _onGroupSelection(HiveGroup group) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -57,14 +53,14 @@ class _GroupsScreenState extends State<GroupsScreen> {
         return Container(
           height: MediaQuery.of(context).size.height * 0.70,
           child: SingleChildScrollView(
-            child: _buildSlidingUpPanel(material),
+            child: _buildSlidingUpPanel(group),
           ),
         );
       },
     );
   }
 
-  Widget _buildSlidingUpPanel(HiveGroupUser group) {
+  Widget _buildSlidingUpPanel(HiveGroup group) {
     return Container(
       margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
       child: Column(
@@ -77,7 +73,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  '${group.groupId}',
+                  '${group.name}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,
@@ -243,8 +239,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
 }
 
 class GroupListItem extends StatelessWidget {
-  final HiveGroupUser group;
-  final Function(HiveGroupUser group) onGroupTap;
+  final HiveGroup group;
+  final Function(HiveGroup group) onGroupTap;
 
   GroupListItem({required this.group, required this.onGroupTap});
 
@@ -277,7 +273,7 @@ class GroupListItem extends StatelessWidget {
                     Container(
                       width: 200.w,
                       child: Text(
-                        '${group.groupId}',
+                        '${group.name}',
                         textAlign: TextAlign.left,
                         style: TextStyle(color: AppColors.txtFieldTextColor),
                       ),

@@ -173,7 +173,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               _currentUserBox.putAt(0, _user),
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
-            });
+            })
+        .whenComplete(() => Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.dashboard, (Route<dynamic> route) => false));
   }
 
   @override
