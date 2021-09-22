@@ -233,7 +233,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               ),
               SizedBox(height: 10.h),
               Container(
-                height: 52.h,
+                height: 60.h,
                 // width: 345.w,
                 margin: EdgeInsets.only(left: 15.w, right: 15.w),
 
@@ -256,6 +256,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         ),
                         hint: Text(
                           'Action: ' + _choiceText,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Color(0xFF434141),
