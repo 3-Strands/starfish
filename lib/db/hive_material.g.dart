@@ -28,6 +28,7 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
       topics: (fields[12] as List?)?.cast<String>(),
       visibility: fields[3] as int?,
       editability: fields[4] as int?,
+      editHistory: (fields[19] as List?)?.cast<HiveEdit>(),
       isNew: fields[16] as bool,
       isUpdated: fields[17] as bool,
       isDirty: fields[18] as bool,
@@ -42,7 +43,7 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
   @override
   void write(BinaryWriter writer, HiveMaterial obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -80,7 +81,9 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
       ..writeByte(17)
       ..write(obj.isUpdated)
       ..writeByte(18)
-      ..write(obj.isDirty);
+      ..write(obj.isDirty)
+      ..writeByte(19)
+      ..write(obj.editHistory);
   }
 
   @override

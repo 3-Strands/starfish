@@ -4,7 +4,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
@@ -22,7 +22,7 @@ class GroupsScreen extends StatefulWidget {
 class _GroupsScreenState extends State<GroupsScreen> {
   bool _isSearching = false;
 
-  List<HiveGroup> _groupsList = [];
+  List<HiveGroupUser> _groupsList = [];
 
   late Box<HiveCurrentUser> _userBox;
   late String _choiceText = 'All of my groups';
@@ -43,7 +43,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     _groupsList = _userBox.values.toList()[0].groups;
   }
 
-  void _onGroupSelection(HiveGroup material) {
+  void _onGroupSelection(HiveGroupUser material) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -64,7 +64,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  Widget _buildSlidingUpPanel(HiveGroup group) {
+  Widget _buildSlidingUpPanel(HiveGroupUser group) {
     return Container(
       margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
       child: Column(
@@ -177,7 +177,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         alignedDropdown: true,
                         child: DropdownButton<String>(
                           isExpanded: true,
-                         // icon: Icon(Icons.arrow_drop_down),
+                          // icon: Icon(Icons.arrow_drop_down),
                           iconSize: 35,
                           style: TextStyle(
                             color: Color(0xFF434141),
@@ -243,8 +243,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
 }
 
 class GroupListItem extends StatelessWidget {
-  final HiveGroup group;
-  final Function(HiveGroup group) onGroupTap;
+  final HiveGroupUser group;
+  final Function(HiveGroupUser group) onGroupTap;
 
   GroupListItem({required this.group, required this.onGroupTap});
 

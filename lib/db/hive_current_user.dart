@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 
 part 'hive_current_user.g.dart';
 
@@ -25,7 +25,7 @@ class HiveCurrentUser {
   List<String> languageIds;
 
   @HiveField(6)
-  final List<HiveGroup> groups;
+  final List<HiveGroupUser> groups;
 
   @HiveField(7)
   final List<HiveAction> actions;

@@ -5,7 +5,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
@@ -24,7 +24,7 @@ class SyncService {
   late Box<HiveCountry> countryBox;
   late Box<HiveLanguage> languageBox;
   late Box<HiveCurrentUser> currentUserBox;
-  late Box<HiveGroup> groupBox;
+  late Box<HiveGroupUser> groupBox;
   late Box<HiveAction> actionBox;
   late Box<HiveMaterial> materialBox;
   late Box<HiveMaterialFeedback> materialFeedbackBox;
@@ -36,7 +36,7 @@ class SyncService {
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-    groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUPS_BOX);
+    groupBox = Hive.box<HiveGroupUser>(HiveDatabase.GROUPS_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
     materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     materialFeedbackBox =
@@ -72,8 +72,8 @@ class SyncService {
   syncCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
       print("get current user");
-      List<HiveGroup> groups = (user.groups
-          .map((e) => HiveGroup(
+      List<HiveGroupUser> groups = (user.groups
+          .map((e) => HiveGroupUser(
               groupId: e.groupId, userId: e.userId, role: e.role.toString()))
           .toList());
       List<HiveAction> actions = (user.actions

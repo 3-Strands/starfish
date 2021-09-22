@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'hive_group.dart';
+part of 'hive_group_user.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
+class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
   @override
   final int typeId = 3;
 
   @override
-  HiveGroup read(BinaryReader reader) {
+  HiveGroupUser read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HiveGroup(
+    return HiveGroupUser(
       groupId: fields[0] as String,
       userId: fields[1] as String,
       role: fields[2] as String,
@@ -24,7 +24,7 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
   }
 
   @override
-  void write(BinaryWriter writer, HiveGroup obj) {
+  void write(BinaryWriter writer, HiveGroupUser obj) {
     writer
       ..writeByte(3)
       ..writeByte(0)
@@ -41,7 +41,7 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HiveGroupAdapter &&
+      other is HiveGroupUserAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

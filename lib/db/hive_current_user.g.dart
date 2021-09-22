@@ -23,7 +23,7 @@ class HiveCurrentUserAdapter extends TypeAdapter<HiveCurrentUser> {
       linkGroup: fields[3] as bool,
       countryIds: (fields[4] as List).cast<String>(),
       languageIds: (fields[5] as List).cast<String>(),
-      groups: (fields[6] as List).cast<HiveGroup>(),
+      groups: (fields[6] as List).cast<HiveGroupUser>(),
       actions: (fields[7] as List).cast<HiveAction>(),
       selectedActionsTab: fields[8] as String,
       selectedResultsTab: fields[9] as String,

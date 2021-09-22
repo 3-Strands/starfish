@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
+@HiveType(typeId: 11)
 class HiveEdit {
   @HiveField(0)
   String? username;

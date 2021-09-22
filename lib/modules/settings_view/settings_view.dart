@@ -10,7 +10,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -702,7 +702,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Container _groupItem(HiveGroup group) {
+  Container _groupItem(HiveGroupUser group) {
     return Container(
       height: 90.h,
       // color: Colors.green,
