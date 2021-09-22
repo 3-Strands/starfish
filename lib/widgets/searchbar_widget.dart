@@ -20,49 +20,37 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52.h,
-      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.transparent,
-          width: 1.0,
+        height: 52.h,
+        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.transparent,
+            width: 1.0,
+          ),
+          color: AppColors.txtFieldBackground,
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        color: AppColors.txtFieldBackground,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Row(
-        children: [
-          Container(
+        child: Padding(
+          padding: EdgeInsets.only(left: 15.0,right:2.w),
+          child: Container(
             height: 52.h,
-            width: MediaQuery.of(context).size.width - 80.w,
-            margin: EdgeInsets.only(right: 5.w),
-            child: Center(
-              child: TextFormField(
-                decoration: new InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 10.w),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    hintText: Strings.searchBarHint),
-                onChanged: (value) => {widget.onValueChanged(value)},
-                onFieldSubmitted: (value) => {widget.onDone(value)},
+            child: TextFormField(
+              maxLines: 1,
+              style: TextStyle(fontSize: 16.sp,color:Color(0xFF434141)),
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(
+                suffixIcon: Icon(Icons.search, color: Colors.blue),
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                hintText: Strings.searchBarHint,
               ),
+              onChanged: (value) => {widget.onValueChanged(value)},
+              onFieldSubmitted: (value) => {widget.onDone(value)},
             ),
           ),
-          Spacer(),
-          Container(
-            height: 25.w,
-            width: 25.w,
-            margin: EdgeInsets.only(right: 10.w),
-            child: Icon(
-              Icons.search,
-              color: Colors.blue,
-              size: 22.sp,
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }

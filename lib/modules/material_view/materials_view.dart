@@ -190,7 +190,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     if (_query.isNotEmpty)
       _listToShow = _materialsList
           .where((item) =>
-              item.title!.contains(_query) && item.title!.startsWith(_query))
+              item.title!.toLowerCase().contains(_query.toLowerCase()) &&
+              item.title!.toLowerCase().startsWith(_query.toLowerCase()))
           .toList();
     else
       _listToShow = _materialsList;
@@ -233,8 +234,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(height: 10.h),
               Container(
                 height: 52.h,
-                width: 345.w,
-                padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                // width: 345.w,
+                margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+
                 decoration: BoxDecoration(
                   color: AppColors.txtFieldBackground,
                   borderRadius: BorderRadius.all(
