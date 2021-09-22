@@ -32,8 +32,8 @@ class _SearchBarState extends State<SearchBar> {
         ),
         child: Padding(
           padding: EdgeInsets.only(left: 15.0,right:2.w),
-          child: Container(
-            height: 52.h,
+          child: Align(
+            alignment: Alignment.center,
             child: TextFormField(
               maxLines: 1,
               style: TextStyle(fontSize: 16.sp,color:Color(0xFF434141)),

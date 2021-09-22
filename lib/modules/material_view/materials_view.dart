@@ -236,7 +236,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 height: 52.h,
                 // width: 345.w,
                 margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                padding: EdgeInsets.symmetric(horizontal: 15.0),
 
                 decoration: BoxDecoration(
                   color: AppColors.txtFieldBackground,
@@ -244,47 +243,52 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     Radius.circular(10),
                   ),
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 16.sp,
-                      fontFamily: 'OpenSans',
-                    ),
-                    hint: Text(
-                      'Action: ' + _choiceText,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 16.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        _choiceText = value!;
-                      });
-                    },
-                    items: <String>[
-                      'Assigned to me and completed',
-                      'Assigned to me but incomplete',
-                      'Assigned to a group I lead',
-                      'No filter applied',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
+                child: Center(
+                  child: DropdownButtonHideUnderline(
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 16.sp,
+                          fontFamily: 'OpenSans',
+                        ),
+                        hint: Text(
+                          'Action: ' + _choiceText,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Color(0xFF434141),
-                            fontSize: 14.sp,
+                            fontSize: 16.sp,
                             fontFamily: 'OpenSans',
                           ),
+                          textAlign: TextAlign.left,
                         ),
-                      );
-                    }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _choiceText = value!;
+                          });
+                        },
+                        items: <String>[
+                          'Assigned to me and completed',
+                          'Assigned to me but incomplete',
+                          'Assigned to a group I lead',
+                          'No filter applied',
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 14.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
                 ),
               ),
