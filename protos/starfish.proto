@@ -20,6 +20,10 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
+    // Remove users from groups.
+    // The role on GroupUser message is ignored in this procedure
+    rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUsersResponse) {}
+
     // Get the current user.
     rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
 
@@ -155,6 +159,27 @@ message CreateUpdateMaterialsResponse {
 
     // Error message or any relevant message in response to the request.
     string message = 3;
+
+}
+
+message DeleteGroupUsersResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The ID of the user that was requested to be removed from a group
+    string user_id = 1;
+
+    // The ID of the group from which the user was requested to be removed
+    string group_id = 2;
+
+    // The status of the removal
+    Status status = 3;
+
+    // Error message or any other message related to the removal
+    string message = 4;
 
 }
 
