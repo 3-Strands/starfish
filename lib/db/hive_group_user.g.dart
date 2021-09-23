@@ -19,7 +19,7 @@ class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
     return HiveGroupUser(
       groupId: fields[0] as String?,
       userId: fields[1] as String?,
-      role: fields[2] as String?,
+      role: fields[2] as int?,
     );
   }
 

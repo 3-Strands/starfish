@@ -80,7 +80,7 @@ class SyncService {
       print("get current user");
       List<HiveGroupUser> groups = (user.groups
           .map((e) => HiveGroupUser(
-              groupId: e.groupId, userId: e.userId, role: e.role.toString()))
+              groupId: e.groupId, userId: e.userId, role: e.role.value))
           .toList());
       List<HiveAction> actions = (user.actions
           .map((e) => HiveAction(
