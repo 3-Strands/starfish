@@ -6,6 +6,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -32,6 +33,7 @@ class HiveDatabase {
   // HiveEdit 11
   static const String GROUP_BOX = 'groupBox'; //12
   // HiveGroupAction // 13
+  static const String EVALUATION_CATEGORIES_BOX = 'evaluationCategoryBox'; //14
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -61,6 +63,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveEditAdapter());
     Hive.registerAdapter(HiveGroupAdapter());
     Hive.registerAdapter(HiveGroupActionAdapter());
+    Hive.registerAdapter(HiveEvaluationCategoryAdapter());
 
     openBoxes();
   }
@@ -78,5 +81,6 @@ class HiveDatabase {
     await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX);
     await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX);
     await Hive.openBox<HiveGroup>(GROUP_BOX);
+    await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX);
   }
 }

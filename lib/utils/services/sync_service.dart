@@ -5,6 +5,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -33,6 +34,7 @@ class SyncService {
   late Box<HiveMaterialTopic> materialTopicBox;
   late Box<HiveMaterialType> materialTypeBox;
   late Box<HiveGroup> groupBox;
+  late Box<HiveEvaluationCategory> evaluationCategoryBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -49,6 +51,8 @@ class SyncService {
     materialTypeBox =
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
+        HiveDatabase.EVALUATION_CATEGORIES_BOX);
   }
 
   void syncAll() {
@@ -61,6 +65,7 @@ class SyncService {
     syncMaterialTypes();
     syncMaterial();
 
+    syncEvaluationCategories();
     syncGroup();
 
     DateTime now = DateTime.now();
@@ -283,6 +288,28 @@ class SyncService {
         //   print(count.id);
         //   print(count.title);
         // }
+      });
+    });
+  }
+
+  syncEvaluationCategories() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    evaluationCategoryBox.values.forEach((element) {
+      element.delete();
+    });
+
+    await GroupRepository()
+        .getEvaluationCategories()
+        .then((ResponseStream<EvaluationCategory> topics) {
+      topics.listen((value) {
+        HiveEvaluationCategory _category = HiveEvaluationCategory.from(value);
+        evaluationCategoryBox.add(_category);
+      }, onError: ((err) {
+        print('EvaluationCategory Sync Error: ${err.toString()}');
+      }), onDone: () {
+        print('EvaluationCategory Sync Done.');
       });
     });
   }

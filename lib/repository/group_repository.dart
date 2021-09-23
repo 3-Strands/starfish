@@ -6,4 +6,7 @@ class GroupRepository {
   final apiProvider = ApiProvider();
 
   Future<ResponseStream<Group>> getGroups() => apiProvider.getGroups();
+
+  Future<ResponseStream<EvaluationCategory>> getEvaluationCategories() =>
+      apiProvider.getEvaluationCategories();
 }

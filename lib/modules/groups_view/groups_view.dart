@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -233,6 +234,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(Routes.createNewGroup);
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
