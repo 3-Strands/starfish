@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/material_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -10,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
+import 'package:starfish/repository/materials_repository.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -58,7 +62,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
     _getAllLanguages();
     _getAllTopics();
-    // _getMaterials();
+    _getMaterials();
+  }
+
+  fetchMaterialData(AppBloc bloc) async {
+    bloc.materialBloc.fetchMaterialsFromDB();
   }
 
   void _getAllLanguages() {
@@ -69,9 +77,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     _topicsList = _materialTopicBox.values.toList();
   }
 
-  // void _getMaterials() async {
-  //   _materialsList = _materialBox.values.toList();
-  // }
+  void _getMaterials() async {
+    _materialsList = _materialBox.values.toList();
+  }
 
   void _onMaterialSelection(HiveMaterial material) {
     showModalBottomSheet(
@@ -173,8 +181,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     return _listToShow;
   }
 
-  List<MaterialListItem> _buildList() {
-    _materialsList = doFilterMaterials(); //[];
+  List<MaterialListItem> _buildList(List<HiveMaterial> _materialsList) {
+    // _materialsList = doFilterMaterials(); //[];
 
     return _materialsList
         .map((material) => new MaterialListItem(
@@ -184,7 +192,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         .toList();
   }
 
-  List<MaterialListItem> _buildSearchList() {
+  List<MaterialListItem> _buildSearchList(List<HiveMaterial> _materialsList) {
     List<HiveMaterial> _listToShow;
 
     if (_query.isNotEmpty)
@@ -206,6 +214,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
+    fetchMaterialData(bloc);
+
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
       body: GestureDetector(
@@ -297,12 +308,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(
                 height: 20.h,
               ),
+              /*
               ListView(
                 primary: false,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
                 children: (_query != '') ? _buildSearchList() : _buildList(),
               ),
+              */
+              materialsList(bloc),
               SizedBox(
                 height: 10.h,
               ),
@@ -317,6 +331,27 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  Widget materialsList(AppBloc bloc) {
+    return StreamBuilder<List<HiveMaterial>>(
+        stream: bloc.materialBloc.materials,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView(
+              primary: false,
+              shrinkWrap: true,
+              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              children: (_query != '')
+                  ? _buildSearchList(snapshot.data!)
+                  : _buildList(snapshot.data!),
+            );
+            // return Container(
+            //     color: Colors.green, child: Text('${snapshot.data}'));
+          } else {
+            return Container(child: Text("You haven't added any materials"));
+          }
+        });
   }
 
   Container _buildLanguagesContainer() {
@@ -336,7 +371,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           // value: _selectedLanguages,
           onChange: (selected) => setState(() {
             _selectedLanguages = selected.value;
-            _buildList();
+            // _buildList();
           }),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
             source: _languageList,
@@ -521,6 +556,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 ),
                 text: Strings.edit,
                 onButtonTap: () {
+                  print('material ==>>');
+                  print(material);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
