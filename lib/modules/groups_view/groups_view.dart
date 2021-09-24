@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:group_list_view/group_list_view.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/main_prod.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,10 +24,15 @@ class _GroupsScreenState extends State<GroupsScreen> {
   bool _isSearching = false;
 
   List<HiveGroup> _groupsList = [];
+  String groupTitle = "";
 
   late Box<HiveGroup> _groupBox;
   late String _choiceText = 'All of my groups';
+  late Map<String, List<HiveGroup>> _groups;
+  // = {
+  //   groupTitle : _groupsList,
 
+  // };
   @override
   void initState() {
     super.initState();
@@ -38,6 +45,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
   void _getGroups() async {
     _groupsList = _groupBox.values.toList();
     print('_groupsList: ${_groupsList.length}');
+    _groups = {
+      '': _groupsList,
+    };
   }
 
   void _onGroupSelection(HiveGroup group) {
@@ -221,6 +231,63 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 SizedBox(
                   height: 20.h,
                 ),
+                /*
+                GroupListView(
+                  sectionsCount: _groups.keys.toList().length,
+                  countOfItemInSection: (int section) {
+                    return _groups.values.toList()[section].length;
+                  },
+                  itemBuilder: (BuildContext context, IndexPath index) {
+                    return Container(
+                      height: 10.h,
+                      width: 80.w,
+                      child: Card(
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2.7.w)),
+                        child: Center(
+                          child: ListTile(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _groups.values
+                                      .toList()[index.section][index.index]
+                                      .name!,
+                                  textScaleFactor: 1,
+                                  style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 3.9.w),
+                                ),
+                              ],
+                            ),
+                           
+                            selected: true,
+                            onTap: () {
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  groupHeaderBuilder: (BuildContext context, int section) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 8),
+                      child: Text(
+                        _groups.keys.toList()[section],
+                        style: TextStyle(
+                          fontSize: 5.w,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                  sectionSeparatorBuilder: (context, section) =>
+                      SizedBox(height: 10),
+                ),*/
                 ListView(
                   primary: false,
                   shrinkWrap: true,
@@ -265,17 +332,17 @@ class GroupListItem extends StatelessWidget {
           print('Group Item Selected');
           onGroupTap(group);
         },
-        child: Container(
-          margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-          height: 183,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                height: 22.h,
-                // margin: EdgeInsets.only(left: 25.0.w, right: 25.0.w),
+                height: 20.sp,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
                       width: 200.w,
@@ -298,6 +365,58 @@ class GroupListItem extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(height: 10.sp),
+              Text(
+                'Admin:',
+                textAlign: TextAlign.left,
+              ),
+              SizedBox(height: 20.sp),
+              Container(
+                height: 36.h,
+                width: 326.w,
+                // margin: EdgeInsets.symmetric(horizontal: 10.sp),
+                decoration: BoxDecoration(
+                    color: Color(0xFFDDDDDD),
+                    borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                child: Center(
+                  child: Text(
+                    'View Teachers and Learners',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.sp),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    height: 51.sp,
+                    width: 99.sp,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFFBE4A),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(8.5.sp))),
+                  ),
+                  Spacer(),
+                  Container(
+                    height: 51.sp,
+                    width: 99.sp,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFF5E4D),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(8.5.sp))),
+                  ),
+                  Spacer(),
+                  Container(
+                    height: 51.sp,
+                    width: 99.sp,
+                    decoration: BoxDecoration(
+                        color: Color(0xFF6DE26B),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(8.5.sp))),
+                  )
+                ],
+              )
             ],
           ),
         ),
