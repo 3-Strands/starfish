@@ -24,6 +24,7 @@ class Strings {
   static const String inviteFromContactsList =
       'Invite people from your contacts list';
   static const String create = 'Create';
+  static const String invite = 'Invite';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';
@@ -108,6 +109,7 @@ sending an invitation to use Starfish''';
 
   static const String reportDialogDetailText =
       'Explain why this material is inappropriate';
+  static const String selectPropleToInvite = 'Select people to invite';
 
   // Info/Alert messages
   static const String addMaterialSuccess = 'Material saved successfully.';

@@ -1,7 +1,9 @@
+import 'package:contacts_service/contacts_service.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
@@ -16,6 +18,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
+import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/repository/materials_repository.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
@@ -30,7 +33,9 @@ import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/widgets/contact_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
+import 'package:starfish/widgets/searchbar_widget.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
   final HiveGroup? group;
@@ -52,10 +57,160 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveEvaluationCategory> _selectedEvaluationCategories = [];
+  List<InviteContact> _selectedContacts = [];
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
+
+  Future<void> _checkPermissions() async {
+    PermissionStatus permissionStatus = await _getContactPermission();
+    if (permissionStatus == PermissionStatus.granted) {
+      print('Show Contact List');
+      _showContactList();
+    } else {
+      _handleInvalidPermissions(permissionStatus);
+    }
+  }
+
+  Future<PermissionStatus> _getContactPermission() async {
+    PermissionStatus permission = await Permission.contacts.status;
+    if (permission != PermissionStatus.granted &&
+        permission != PermissionStatus.permanentlyDenied) {
+      PermissionStatus permissionStatus = await Permission.contacts.request();
+      return permissionStatus;
+    } else {
+      return permission;
+    }
+  }
+
+  void _handleInvalidPermissions(PermissionStatus permissionStatus) {
+    if (permissionStatus == PermissionStatus.denied) {
+      final snackBar = SnackBar(content: Text('Access to contact data denied'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
+      final snackBar =
+          SnackBar(content: Text('Contact data not available on device'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Widget _buildSlidingUpPanel() {
+    return Container(
+      //margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+      child: FutureBuilder(
+        builder: (BuildContext context, AsyncSnapshot<List<Contact>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                InviteContact _inviteContact = InviteContact(
+                  contact: snapshot.data!.elementAt(index),
+                );
+                return ContactListItem(
+                  contact: _inviteContact, //snapshot.data!.elementAt(index),
+                  onTap: (InviteContact contact) {
+                    setState(() {
+                      if (!contact.isSelected &&
+                          _selectedContacts.contains(contact)) {
+                        _selectedContacts.remove(contact);
+                      } else {
+                        _selectedContacts.add(contact);
+                      }
+                    });
+                  },
+                );
+              },
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+        future: ContactsService.getContacts(),
+      ),
+    );
+  }
+
+  _showContactList() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return Container(
+          margin: EdgeInsets.only(top: 40.h),
+          height: MediaQuery.of(context).size.height * 0.70,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        Strings.selectPropleToInvite,
+                        textAlign: TextAlign.left,
+                        style: titleTextStyle,
+                      ),
+                      SizedBox(height: 11.h),
+                      SearchBar(onValueChanged: (String value) {
+                        print('onValueChanged: $value');
+                      }, onDone: (String value) {
+                        print('onDone: $value');
+                      }),
+                      SizedBox(height: 11.h),
+                      Expanded(
+                        child: _buildSlidingUpPanel(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                height: 75.h,
+                padding:
+                    EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+                color: AppColors.txtFieldBackground,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(Strings.cancel),
+                      ),
+                    ),
+                    SizedBox(width: 25.w),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          //TODO: Invite here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: AppColors.selectedButtonBG,
+                        ),
+                        child: Text(Strings.invite),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -296,7 +451,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     width: double.infinity,
                     height: 50.h,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        print('Show Contact List');
+                        _checkPermissions();
+                      },
                       child: Text(
                         Strings.inviteFromContactsList,
                         style: TextStyle(
