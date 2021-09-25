@@ -2,6 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
@@ -69,6 +70,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     _materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
+
+    print('widget.material ==>>');
+    print(widget.material);
 
     if (widget.material != null) {
       _isEditMode = true;
@@ -575,13 +579,17 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         _editableBy != null ? _editableBy!.value.value : 0,
                   );
 
+                  final bloc = Provider.of(context);
+
                   if (_isEditMode) {
                     _hiveMaterial.id = widget.material?.id;
                     _hiveMaterial.creatorId = widget.material?.creatorId;
 
                     _hiveMaterial.isUpdated = true;
+                    bloc.materialBloc.editMaterial(_hiveMaterial);
                   } else {
                     _hiveMaterial.isNew = true;
+                    bloc.materialBloc.addMaterial(_hiveMaterial);
                   }
 
                   _materialBox
