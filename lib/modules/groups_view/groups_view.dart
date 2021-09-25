@@ -28,7 +28,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
     'Groups: Groups I\'m a learner in',
   ];
   List<HiveGroup> _groupsList = [];
+  List<HiveGroup> _groupSearchList = [];
 
+  late String _query = "";
   late Box<HiveGroup> _groupBox;
   late String _choiceText = 'All of my groups';
   late Map<String, List<HiveGroup>> _groups;
@@ -49,11 +51,27 @@ class _GroupsScreenState extends State<GroupsScreen> {
     print('_groupsList: ${_groupsList.length}');
 
     _filterGroups(groupTitleIndex);
+    if (_query.isNotEmpty)
+      _groupSearchList = _groupsList
+          .where((item) =>
+              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
+              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
+          .toList();
+    else
+      _groupsList = _groupsList;
   }
 
   void _filterGroups(int index) {
-    _teacherList = _groupsList; // _teacherList filter will perform here
-    _lernerList = _groupsList; // _lernerList filter will perform here
+    if (_query.isNotEmpty)
+      _groupSearchList = _groupsList
+          .where((item) =>
+              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
+              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
+          .toList();
+    else
+      _groupsList =  _groupsList;
+    _teacherList = _query.isNotEmpty ? _groupSearchList :_groupsList; // _teacherList filter will perform here
+    _lernerList = _query.isNotEmpty ? _groupSearchList:_groupsList; // _lernerList filter will perform here
     if (index == 0) {
       _groups = {
         'Groups: Group I teach or co-lead': _teacherList,
@@ -144,23 +162,23 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  List<GroupListItem> _buildList() {
-    return _groupsList
-        .map((group) => new GroupListItem(
-              group: group,
-              onGroupTap: _onGroupSelection,
-            ))
-        .toList();
-  }
+  // List<GroupListItem> _buildList() {
+  //   return _groupsList
+  //       .map((group) => new GroupListItem(
+  //             group: group,
+  //             onGroupTap: _onGroupSelection,
+  //           ))
+  //       .toList();
+  // }
 
-  List<GroupListItem> _buildSearchList() {
-    return _groupsList
-        .map((group) => new GroupListItem(
-              group: group,
-              onGroupTap: _onGroupSelection,
-            ))
-        .toList();
-  }
+  // List<GroupListItem> _buildSearchList() {
+  //   return _groupsList
+  //       .map((group) => new GroupListItem(
+  //             group: group,
+  //             onGroupTap: _onGroupSelection,
+  //           ))
+  //       .toList();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +198,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 SearchBar(
                   onValueChanged: (value) {
                     print('searched value $value');
+                    setState(() {
+                      _query = value;
+                      _filterGroups(groupTitleIndex);
+                    });
                   },
                   onDone: (value) {
                     print('searched value $value');
