@@ -37,9 +37,6 @@ class MaterialsScreen extends StatefulWidget {
 }
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
-  List<HiveMaterial> _materialsList = [];
-
-  bool _isSearching = false;
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialTopic> _selectedTopics = [];
 
@@ -47,7 +44,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveMaterialTopic> _topicsList;
 
   late Box<HiveLanguage> _languageBox;
-  late Box<HiveMaterial> _materialBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
   late String _choiceText = 'No filter applied';
   late String _query = "";
@@ -56,17 +52,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     _materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
 
     _getAllLanguages();
     _getAllTopics();
-    _getMaterials();
   }
 
-  fetchMaterialData(AppBloc bloc) async {
-    bloc.materialBloc.fetchMaterialsFromDB();
+  _fetchMaterialData(AppBloc bloc) async {
+    bloc.materialBloc.fetchMaterialsFromDB(_selectedLanguages, _selectedTopics);
   }
 
   void _getAllLanguages() {
@@ -75,10 +69,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   void _getAllTopics() {
     _topicsList = _materialTopicBox.values.toList();
-  }
-
-  void _getMaterials() async {
-    _materialsList = _materialBox.values.toList();
   }
 
   void _onMaterialSelection(HiveMaterial material) {
@@ -102,88 +92,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  List<HiveMaterial> doFilterMaterials() {
-    List<HiveMaterial> _overAllFilterMaterials = [];
-    List<HiveMaterial> _filterMaterialsByLanguage = [];
-
-    // ignore: unnecessary_null_comparison
-    if (_selectedLanguages != null && _selectedLanguages.length > 0) {
-      print('_selectedLanguages.length > 0');
-
-      _filterMaterialsByLanguage = materialFilterByLanguages();
-
-      // ignore: unnecessary_null_comparison
-      if (_selectedTopics != null && _selectedTopics.length > 0) {
-        if (_filterMaterialsByLanguage.length > 0) {
-          _overAllFilterMaterials =
-              materialFilterByTopics(_filterMaterialsByLanguage);
-        } else {
-          _overAllFilterMaterials =
-              materialFilterByTopics(_materialBox.values.toList());
-        }
-      } else {
-        _overAllFilterMaterials = _filterMaterialsByLanguage;
-      }
-    } else {
-      // ignore: unnecessary_null_comparison
-      if (_selectedTopics != null && _selectedTopics.length > 0) {
-        _overAllFilterMaterials =
-            materialFilterByTopics(_materialBox.values.toList());
-      }
-    }
-
-    return _overAllFilterMaterials;
-  }
-
-  List<HiveMaterial> materialFilterByLanguages() {
-    List<HiveMaterial> _filterMaterialsByLanguage = [];
-
-    _selectedLanguages.forEach((element) {
-      var filteredMaterials = _materialBox.values
-          .where((material) => (material.languageIds!.contains(element.id)))
-          .toList();
-
-      if (_filterMaterialsByLanguage.length == 0) {
-        _filterMaterialsByLanguage = filteredMaterials;
-      } else {
-        filteredMaterials.forEach((filterMaterial) {
-          if (!_filterMaterialsByLanguage.contains(filterMaterial.id)) {
-            _filterMaterialsByLanguage.add(filterMaterial);
-          }
-        });
-      }
-    });
-
-    return _filterMaterialsByLanguage;
-  }
-
-  List<HiveMaterial> materialFilterByTopics(List<HiveMaterial> materials) {
-    List<HiveMaterial> _listToShow = [];
-
-    _selectedTopics.forEach((element) {
-      var filteredMaterials = materials
-          .where((material) => (material.topics!.contains(element.name)))
-          .toList();
-
-      if (_listToShow.length == 0) {
-        _listToShow = filteredMaterials;
-      } else {
-        filteredMaterials.forEach((filterMaterial) {
-          if (!_listToShow.contains(filterMaterial.id)) {
-            // If item is already not added then add that item in the material list
-            _listToShow.add(filterMaterial);
-          }
-        });
-      }
-      print(filteredMaterials.length);
-    });
-
-    return _listToShow;
-  }
-
   List<MaterialListItem> _buildList(List<HiveMaterial> _materialsList) {
-    // _materialsList = doFilterMaterials(); //[];
-
     return _materialsList
         .map((material) => new MaterialListItem(
               material: material,
@@ -215,7 +124,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    fetchMaterialData(bloc);
 
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
@@ -227,9 +135,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           child: Column(
             children: [
               SizedBox(height: 14.h),
-              _buildLanguagesContainer(),
+              _buildLanguagesContainer(bloc),
               SizedBox(height: 10.h),
-              _buildTopicsContainer(),
+              _buildTopicsContainer(bloc),
               SizedBox(height: 10.h),
               SearchBar(
                 onValueChanged: (value) {
@@ -354,7 +262,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         });
   }
 
-  Container _buildLanguagesContainer() {
+  Container _buildLanguagesContainer(AppBloc bloc) {
     return Container(
       height: 80.h,
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -371,7 +279,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           // value: _selectedLanguages,
           onChange: (selected) => setState(() {
             _selectedLanguages = selected.value;
-            // _buildList();
+            _fetchMaterialData(bloc);
           }),
           choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
             source: _languageList,
@@ -398,7 +306,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  Container _buildTopicsContainer() {
+  Container _buildTopicsContainer(AppBloc bloc) {
     return Container(
       height: 80.h,
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -413,8 +321,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           title: "Select topics",
           placeholder: Strings.searchTopicsPlaceholder,
           // value: _selectedLanguages,
-          onChange: (selected) =>
-              setState(() => _selectedTopics = selected.value),
+          onChange: (selected) => setState(() {
+            _selectedTopics = selected.value;
+            _fetchMaterialData(bloc);
+          }),
           choiceItems: S2Choice.listFrom<HiveMaterialTopic, HiveMaterialTopic>(
             source: _topicsList,
             value: (index, item) => item,
