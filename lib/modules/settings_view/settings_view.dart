@@ -713,7 +713,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             height: 25.h,
             child: Align(
               alignment: FractionalOffset.topLeft,
-              child: Text(group.groupId, style: titleTextStyle),
+              child: Text(group.groupId!, style: titleTextStyle),
             ),
           ),
           SizedBox(height: 5.h),

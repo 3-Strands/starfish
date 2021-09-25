@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.starfish">
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 <uses-permission android:name="android.permission.INTERNET" /> <!-- This Line -->
  <!-- Nest within the manifest element, not the application element-->
     <queries>

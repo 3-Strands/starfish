@@ -165,7 +165,6 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                         _materialFeedback.reporterId = _user.id;
                         _materialFeedback.report = _reportTextController.text;
                         _materialFeedback.materialId = widget.material.id!;
-
                         _materialFeedbackBox
                             .add(_materialFeedback)
                             .then((value) => print('$value record(s) saved.'))

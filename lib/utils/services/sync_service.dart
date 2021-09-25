@@ -5,6 +5,8 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
@@ -14,6 +16,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -24,19 +27,21 @@ class SyncService {
   late Box<HiveCountry> countryBox;
   late Box<HiveLanguage> languageBox;
   late Box<HiveCurrentUser> currentUserBox;
-  late Box<HiveGroupUser> groupBox;
+  //late Box<HiveGroupUser> groupUserBox;
   late Box<HiveAction> actionBox;
   late Box<HiveMaterial> materialBox;
   late Box<HiveMaterialFeedback> materialFeedbackBox;
   late Box<HiveMaterialTopic> materialTopicBox;
   late Box<HiveMaterialType> materialTypeBox;
+  late Box<HiveGroup> groupBox;
+  late Box<HiveEvaluationCategory> evaluationCategoryBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-    groupBox = Hive.box<HiveGroupUser>(HiveDatabase.GROUPS_BOX);
+    //groupBox = Hive.box<HiveGroupUser>(HiveDatabase.GROUPS_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
     materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     materialFeedbackBox =
@@ -45,6 +50,9 @@ class SyncService {
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
     materialTypeBox =
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
+    groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
+        HiveDatabase.EVALUATION_CATEGORIES_BOX);
   }
 
   void syncAll() {
@@ -56,6 +64,9 @@ class SyncService {
     syncMaterialTopics();
     syncMaterialTypes();
     syncMaterial();
+
+    syncEvaluationCategories();
+    syncGroup();
 
     DateTime now = DateTime.now();
     print(DateFormat('HH:mm:ss').format(now));
@@ -74,7 +85,7 @@ class SyncService {
       print("get current user");
       List<HiveGroupUser> groups = (user.groups
           .map((e) => HiveGroupUser(
-              groupId: e.groupId, userId: e.userId, role: e.role.toString()))
+              groupId: e.groupId, userId: e.userId, role: e.role.value))
           .toList());
       List<HiveAction> actions = (user.actions
           .map((e) => HiveAction(
@@ -254,6 +265,52 @@ class SyncService {
         material: _hiveMaterial.toMaterial(),
         fieldMaskPaths: _fieldMaskPaths,
       );
+    });
+  }
+
+  syncGroup() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    groupBox.values.forEach((element) {
+      element.delete();
+    });
+
+    await GroupRepository().getGroups().then((ResponseStream<Group> group) {
+      group.listen((value) {
+        HiveGroup _group = HiveGroup.from(value);
+        groupBox.add(_group);
+      }, onError: ((err) {
+        print('Group Sync Error: ${err.toString()}');
+      }), onDone: () {
+        print('Group Sync Done.');
+        // for (var count in groupBox.values.toList()) {
+        //   print(count.id);
+        //   print(count.title);
+        // }
+      });
+    });
+  }
+
+  syncEvaluationCategories() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    evaluationCategoryBox.values.forEach((element) {
+      element.delete();
+    });
+
+    await GroupRepository()
+        .getEvaluationCategories()
+        .then((ResponseStream<EvaluationCategory> topics) {
+      topics.listen((value) {
+        HiveEvaluationCategory _category = HiveEvaluationCategory.from(value);
+        evaluationCategoryBox.add(_category);
+      }, onError: ((err) {
+        print('EvaluationCategory Sync Error: ${err.toString()}');
+      }), onDone: () {
+        print('EvaluationCategory Sync Done.');
+      });
     });
   }
 }

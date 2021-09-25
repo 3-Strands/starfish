@@ -1,38 +1,36 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'hive_group_user.dart';
+part of 'hive_evaluation_category.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
+class HiveEvaluationCategoryAdapter
+    extends TypeAdapter<HiveEvaluationCategory> {
   @override
-  final int typeId = 3;
+  final int typeId = 14;
 
   @override
-  HiveGroupUser read(BinaryReader reader) {
+  HiveEvaluationCategory read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HiveGroupUser(
-      groupId: fields[0] as String?,
-      userId: fields[1] as String?,
-      role: fields[2] as int?,
+    return HiveEvaluationCategory(
+      id: fields[0] as String?,
+      name: fields[1] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, HiveGroupUser obj) {
+  void write(BinaryWriter writer, HiveEvaluationCategory obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.groupId)
-      ..writeByte(1)
-      ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.role);
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.name);
   }
 
   @override
@@ -41,7 +39,7 @@ class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HiveGroupUserAdapter &&
+      other is HiveEvaluationCategoryAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

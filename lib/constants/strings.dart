@@ -21,6 +21,10 @@ class Strings {
   static const String sendFeedback = 'Send Feedback';
   static const String copyThisInfo = 'Copy this info';
   static const String copyAllCodes = 'Copy all codes';
+  static const String inviteFromContactsList =
+      'Invite people from your contacts list';
+  static const String create = 'Create';
+  static const String invite = 'Invite';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';
@@ -34,6 +38,7 @@ class Strings {
   static const String myLanugages = 'My Language(s)';
   static const String lanugages = 'Language(s)';
   static const String selectLanugages = 'Select Language(s)';
+  static const String lanugagesUsed = 'Language(s) used';
 
   static const String selectLanugagesDetail =
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.';
@@ -71,23 +76,40 @@ class Strings {
 
   static const String editedBy = 'Can be edited by';
   static const String seenBy = 'Can be seen by';
+  static const String selectCategories = 'Select Categories';
 
   // Screen Titles
   static const String addNewMaterial = 'Add New Material';
   static const String editMaterial = 'Edit Material';
   static const String dialogInfo = 'Info';
+  static const String createGroup = 'Create Group';
+  static const String editGroup = 'Edit Group';
 
   // Hints
   static const String hintMaterialName = 'Name of the Material';
   static const String searchBarHint = 'Search';
+  static const String hintGroupName = 'Name of the Group';
+  static const String hintEvaluateProgress =
+      '''Choose up to 3 of the categories listed. You will then use
+these categories to evaluate progress by each Group 
+learner, month to month.''';
+  static const String hintPersonName = 'Enter the person\'s name here';
 
   // Labels
   static const String descripton = 'Description';
   static const String addWebLink = 'Add web link';
   static const String uploadAMaterial = 'Upload a material';
+  static const String evaluateProgress = 'Evaluate Progress';
+  static const String invitePeopleFromContactsList =
+      '''Option 1. Invite people from your contacts
+list to join your group in Starfish''';
+  static const String addWithoutInvite =
+      '''Option 2. Add a person's name, without 
+sending an invitation to use Starfish''';
 
   static const String reportDialogDetailText =
       'Explain why this material is inappropriate';
+  static const String selectPropleToInvite = 'Select people to invite';
 
   // Info/Alert messages
   static const String addMaterialSuccess = 'Material saved successfully.';
@@ -97,4 +119,9 @@ class Strings {
   static const String emptyMaterialFeedback = 'Please enter detail.';
   static const String addMaterialFeedbackSuccess =
       'Material feedback saved successfully.';
+
+  static const String createGroupSuccess = 'Group created successfully.';
+  static const String createGroupFailed = 'Failed to create group.';
+  static const String updateGroupSuccess = 'Group updated successfully.';
+  static const String updateGroupFailed = 'Failed to update group.';
 }
