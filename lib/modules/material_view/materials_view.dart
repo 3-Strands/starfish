@@ -254,10 +254,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   ? _buildSearchList(snapshot.data!)
                   : _buildList(snapshot.data!),
             );
-            // return Container(
-            //     color: Colors.green, child: Text('${snapshot.data}'));
           } else {
-            return Container(child: Text("You haven't added any materials"));
+            return Container();
           }
         });
   }
