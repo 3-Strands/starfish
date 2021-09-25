@@ -1,12 +1,12 @@
 import 'package:grpc/grpc.dart';
-import 'package:starfish/db/DBProviders/material_db_provider.dart';
+import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/api_provider.dart';
 
 class MaterialRepository {
-  final materialProvider = MaterialDBProvider();
+  final materialProvider = MaterialProvider();
   final apiProvider = ApiProvider();
 
   Future<ResponseStream<Material>> getMaterials() => apiProvider.getMateials();

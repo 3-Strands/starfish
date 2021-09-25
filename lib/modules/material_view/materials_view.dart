@@ -170,7 +170,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       } else {
         filteredMaterials.forEach((filterMaterial) {
           if (!_listToShow.contains(filterMaterial.id)) {
-            // IF item is already not added then add that item in the material list
+            // If item is already not added then add that item in the material list
             _listToShow.add(filterMaterial);
           }
         });

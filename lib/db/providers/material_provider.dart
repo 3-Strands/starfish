@@ -3,11 +3,11 @@ import '../hive_database.dart';
 import '../hive_material.dart';
 import '../hive_material_topic.dart';
 
-class MaterialDBProvider {
+class MaterialProvider {
   late Box<HiveMaterial> _materialBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
 
-  MaterialDBProvider() {
+  MaterialProvider() {
     _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
 
     _materialTopicBox =
