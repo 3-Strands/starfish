@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'config/routes/routes.dart';
 import 'config/themes/themes.dart';
 import 'constants/app_styles.dart';
@@ -11,12 +12,14 @@ class Starfish extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder: () => MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: '',
-          theme: AppStyles.defaultTheme(),
-          home: SplashScreen(),
-          routes: Routes.routes),
+      builder: () => Provider(
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: '',
+            theme: AppStyles.defaultTheme(),
+            home: SplashScreen(),
+            routes: Routes.routes),
+      ),
     );
   }
 }

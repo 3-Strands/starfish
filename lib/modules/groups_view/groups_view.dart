@@ -22,17 +22,21 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   bool _isSearching = false;
-
+  var _groupTitleList = <String>[
+    'Groups: All of my groups',
+    'Groups: Group I teach or co-lead',
+    'Groups: Groups I\'m a learner in',
+  ];
   List<HiveGroup> _groupsList = [];
-  String groupTitle = "";
+  List<HiveGroup> _groupSearchList = [];
 
+  late String _query = "";
   late Box<HiveGroup> _groupBox;
   late String _choiceText = 'All of my groups';
   late Map<String, List<HiveGroup>> _groups;
-  // = {
-  //   groupTitle : _groupsList,
-
-  // };
+  late int groupTitleIndex = 0;
+  List<HiveGroup> _teacherList = [];
+  List<HiveGroup> _lernerList = [];
   @override
   void initState() {
     super.initState();
@@ -45,9 +49,43 @@ class _GroupsScreenState extends State<GroupsScreen> {
   void _getGroups() async {
     _groupsList = _groupBox.values.toList();
     print('_groupsList: ${_groupsList.length}');
-    _groups = {
-      '': _groupsList,
-    };
+
+    _filterGroups(groupTitleIndex);
+    if (_query.isNotEmpty)
+      _groupSearchList = _groupsList
+          .where((item) =>
+              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
+              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
+          .toList();
+    else
+      _groupsList = _groupsList;
+  }
+
+  void _filterGroups(int index) {
+    if (_query.isNotEmpty)
+      _groupSearchList = _groupsList
+          .where((item) =>
+              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
+              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
+          .toList();
+    else
+      _groupsList =  _groupsList;
+    _teacherList = _query.isNotEmpty ? _groupSearchList :_groupsList; // _teacherList filter will perform here
+    _lernerList = _query.isNotEmpty ? _groupSearchList:_groupsList; // _lernerList filter will perform here
+    if (index == 0) {
+      _groups = {
+        'Groups: Group I teach or co-lead': _teacherList,
+        'Groups: Groups I\'m a learner in': _lernerList,
+      };
+    } else if (index == 1) {
+      _groups = {
+        'Groups: Group I teach or co-lead': _teacherList,
+      };
+    } else if (index == 2) {
+      _groups = {
+        'Groups: Groups I\'m a learner in': _lernerList,
+      };
+    }
   }
 
   void _onGroupSelection(HiveGroup group) {
@@ -124,23 +162,23 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  List<GroupListItem> _buildList() {
-    return _groupsList
-        .map((group) => new GroupListItem(
-              group: group,
-              onGroupTap: _onGroupSelection,
-            ))
-        .toList();
-  }
+  // List<GroupListItem> _buildList() {
+  //   return _groupsList
+  //       .map((group) => new GroupListItem(
+  //             group: group,
+  //             onGroupTap: _onGroupSelection,
+  //           ))
+  //       .toList();
+  // }
 
-  List<GroupListItem> _buildSearchList() {
-    return _groupsList
-        .map((group) => new GroupListItem(
-              group: group,
-              onGroupTap: _onGroupSelection,
-            ))
-        .toList();
-  }
+  // List<GroupListItem> _buildSearchList() {
+  //   return _groupsList
+  //       .map((group) => new GroupListItem(
+  //             group: group,
+  //             onGroupTap: _onGroupSelection,
+  //           ))
+  //       .toList();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -151,14 +189,19 @@ class _GroupsScreenState extends State<GroupsScreen> {
         },
         child: Container(
           width: 375.w,
-          height: 812.h,
+          // height: 812.h,
           color: AppColors.groupScreenBG,
           child: SingleChildScrollView(
+            physics: ScrollPhysics(),
             child: Column(
-              children: [
+              children: <Widget>[
                 SearchBar(
                   onValueChanged: (value) {
                     print('searched value $value');
+                    setState(() {
+                      _query = value;
+                      _filterGroups(groupTitleIndex);
+                    });
                   },
                   onDone: (value) {
                     print('searched value $value');
@@ -169,9 +212,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 ),
                 Container(
                   height: 60.h,
-                  // width: 345.w,
+                  width: 345.w,
                   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-
                   decoration: BoxDecoration(
                     color: AppColors.txtFieldBackground,
                     borderRadius: BorderRadius.all(
@@ -205,12 +247,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
                           onChanged: (String? value) {
                             setState(() {
                               _choiceText = value!;
+                              groupTitleIndex = _groupTitleList.indexOf(value);
+                              _filterGroups(groupTitleIndex);
                             });
                           },
-                          items: <String>[
-                            'Groups: Group I teach or co-lead',
-                            'Groups: Groups I\'m a learner in',
-                          ].map<DropdownMenuItem<String>>((String value) {
+                          items: _groupTitleList
+                              .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
@@ -231,75 +273,52 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 SizedBox(
                   height: 20.h,
                 ),
-                /*
                 GroupListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
                   sectionsCount: _groups.keys.toList().length,
                   countOfItemInSection: (int section) {
                     return _groups.values.toList()[section].length;
                   },
                   itemBuilder: (BuildContext context, IndexPath index) {
-                    return Container(
-                      height: 10.h,
-                      width: 80.w,
-                      child: Card(
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2.7.w)),
-                        child: Center(
-                          child: ListTile(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  _groups.values
-                                      .toList()[index.section][index.index]
-                                      .name!,
-                                  textScaleFactor: 1,
-                                  style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 3.9.w),
-                                ),
-                              ],
-                            ),
-                           
-                            selected: true,
-                            onTap: () {
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
+                    return GroupListItem(
+                      group: _groups.values.toList()[index.section]
+                          [index.index], //_groupsList[index.index],
+                      onGroupTap: _onGroupSelection,
                     );
                   },
                   groupHeaderBuilder: (BuildContext context, int section) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.sp, vertical: 8.sp),
                       child: Text(
                         _groups.keys.toList()[section],
                         style: TextStyle(
-                          fontSize: 5.w,
-                          fontWeight: FontWeight.w600,
-                        ),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF434141)),
                       ),
                     );
                   },
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   sectionSeparatorBuilder: (context, section) =>
                       SizedBox(height: 10),
-                ),*/
-                ListView(
-                  primary: false,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                  children: _isSearching ? _buildSearchList() : _buildList(),
-                ),
-                SizedBox(
-                  height: 10.h,
                 ),
               ],
             ),
           ),
+          //     // ListView(
+          //     //   primary: false,
+          //     //   shrinkWrap: true,
+          //     //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+          //     //   children: _isSearching ? _buildSearchList() : _buildList(),
+          //     // ),
+          //     // SizedBox(
+          //     //   height: 10.h,
+          //     // ),
+          //   ],
+          // ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
