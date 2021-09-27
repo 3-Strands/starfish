@@ -51,7 +51,7 @@ dependencies:
   group_list_view: ^1.1.1
   contacts_service: ^0.6.3
   permission_handler: ^8.1.6
-
+  flutter_sms: ^2.3.1
 
 dev_dependencies:
   flutter_test:

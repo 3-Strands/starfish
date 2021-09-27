@@ -124,4 +124,7 @@ sending an invitation to use Starfish''';
   static const String createGroupFailed = 'Failed to create group.';
   static const String updateGroupSuccess = 'Group updated successfully.';
   static const String updateGroupFailed = 'Failed to update group.';
+
+  static const String inviteSMS =
+      '''Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>''';
 }
