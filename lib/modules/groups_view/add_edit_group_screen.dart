@@ -1,6 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,13 +14,7 @@ import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_material.dart';
-import 'package:starfish/db/hive_material_topic.dart';
-import 'package:starfish/db/hive_material_type.dart';
-import 'package:starfish/enums/material_editability.dart';
-import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/models/invite_contact.dart';
-import 'package:starfish/repository/materials_repository.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -28,7 +23,6 @@ import 'package:starfish/smart_select/src/model/modal_config.dart';
 import 'package:starfish/smart_select/src/tile/tile.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/widget.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -50,6 +44,9 @@ class AddEditGroupScreen extends StatefulWidget {
 }
 
 class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
+  final ValueNotifier<List<InviteContact>?> _contactsNotifier =
+      ValueNotifier(null);
+
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -58,12 +55,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveEvaluationCategory> _selectedEvaluationCategories = [];
   List<InviteContact> _selectedContacts = [];
+  //List<InviteContact> _contactList = [];
+  List<InviteContact> _filteredContactList = [];
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
 
-  Future<void> _checkPermissions() async {
+  Future<void> _checkPermissionsAndShowContact() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
       print('Show Contact List');
@@ -78,6 +77,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.permanentlyDenied) {
       PermissionStatus permissionStatus = await Permission.contacts.request();
+      if (permissionStatus.isGranted) {
+        _loadContacts();
+      }
       return permissionStatus;
     } else {
       return permission;
@@ -95,42 +97,65 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
   }
 
+  void _sendInviteSMS(String message, List<InviteContact> recipents) async {
+    List<String> _recipentsList = [];
+    recipents.forEach((element) {
+      if (element.contact.phones != null) {
+        _recipentsList.add(element.contact.phones!.first.value!);
+      }
+    });
+    if (_recipentsList.length == 0) {
+      return;
+    }
+    String _result = await sendSMS(message: message, recipients: _recipentsList)
+        .catchError((onError) {
+      print('Send SMS Error');
+    });
+    print('Send SMS Result: $_result');
+  }
+
   Widget _buildSlidingUpPanel() {
     return Container(
       //margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-      child: FutureBuilder(
-        builder: (BuildContext context, AsyncSnapshot<List<Contact>> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (BuildContext context, int index) {
-                InviteContact _inviteContact = InviteContact(
-                  contact: snapshot.data!.elementAt(index),
-                );
-                return ContactListItem(
-                  contact: _inviteContact, //snapshot.data!.elementAt(index),
-                  onTap: (InviteContact contact) {
-                    setState(() {
-                      if (!contact.isSelected &&
-                          _selectedContacts.contains(contact)) {
-                        _selectedContacts.remove(contact);
-                      } else {
-                        _selectedContacts.add(contact);
-                      }
-                    });
-                  },
-                );
-              },
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+
+      child: ValueListenableBuilder<List<InviteContact>?>(
+        valueListenable: _contactsNotifier,
+        builder: (BuildContext context, List<InviteContact>? snapshot,
+            Widget? child) {
+          return ListView.builder(
+            itemCount: _filteredContactList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ContactListItem(
+                contact: _filteredContactList.elementAt(index),
+                onTap: (InviteContact contact) {
+                  setState(() {
+                    if (!contact.isSelected &&
+                        _selectedContacts.contains(contact)) {
+                      _selectedContacts.remove(contact);
+                    } else {
+                      _selectedContacts.add(contact);
+                    }
+                  });
+                },
+              );
+            },
+          );
         },
-        future: ContactsService.getContacts(),
       ),
     );
+  }
+
+  Future<List<InviteContact>> _loadContacts() async {
+    ContactsService.getContacts().then((List<Contact> contactList) {
+      List<InviteContact> _contactList = [];
+      contactList.forEach((Contact contact) {
+        _contactList.add(InviteContact(contact: contact));
+        _filteredContactList.add(InviteContact(contact: contact));
+      });
+      _contactsNotifier.value = _contactList;
+    });
+
+    return _filteredContactList;
   }
 
   _showContactList() {
@@ -144,70 +169,87 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return Container(
-          margin: EdgeInsets.only(top: 40.h),
-          height: MediaQuery.of(context).size.height * 0.70,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            margin: EdgeInsets.only(top: 40.h),
+            height: MediaQuery.of(context).size.height * 0.70,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          Strings.selectPropleToInvite,
+                          textAlign: TextAlign.left,
+                          style: titleTextStyle,
+                        ),
+                        SizedBox(height: 11.h),
+                        SearchBar(
+                            onValueChanged: (String value) {
+                              if (value.isEmpty) {
+                                return;
+                              }
+                              setState(() {
+                                _filteredContactList = _contactsNotifier.value!
+                                    .where((InviteContact inviteContact) {
+                                  return inviteContact.contact.displayName !=
+                                          null
+                                      ? inviteContact.contact.displayName!
+                                          .toLowerCase()
+                                          .contains(value.toLowerCase())
+                                      : false;
+                                }).toList();
+                              });
+                            },
+                            onDone: (String value) {}),
+                        SizedBox(height: 11.h),
+                        Expanded(
+                          child: _buildSlidingUpPanel(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 75.h,
+                  padding:
+                      EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+                  color: AppColors.txtFieldBackground,
+                  child: Row(
                     children: [
-                      Text(
-                        Strings.selectPropleToInvite,
-                        textAlign: TextAlign.left,
-                        style: titleTextStyle,
-                      ),
-                      SizedBox(height: 11.h),
-                      SearchBar(onValueChanged: (String value) {
-                        print('onValueChanged: $value');
-                      }, onDone: (String value) {
-                        print('onDone: $value');
-                      }),
-                      SizedBox(height: 11.h),
                       Expanded(
-                        child: _buildSlidingUpPanel(),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(Strings.cancel),
+                        ),
+                      ),
+                      SizedBox(width: 25.w),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _sendInviteSMS(
+                                Strings.inviteSMS, _selectedContacts);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: AppColors.selectedButtonBG,
+                          ),
+                          child: Text(Strings.invite),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Container(
-                height: 75.h,
-                padding:
-                    EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
-                color: AppColors.txtFieldBackground,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(Strings.cancel),
-                      ),
-                    ),
-                    SizedBox(width: 25.w),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          //TODO: Invite here
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: AppColors.selectedButtonBG,
-                        ),
-                        child: Text(Strings.invite),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+              ],
+            ),
+          );
+        });
       },
     );
   }
@@ -219,6 +261,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
+
+    Permission.contacts.status.then((PermissionStatus permissionStatus) {
+      if (permissionStatus == PermissionStatus.granted) {
+        _loadContacts();
+      }
+    });
 
     if (widget.group != null) {
       _isEditMode = true;
@@ -453,7 +501,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         print('Show Contact List');
-                        _checkPermissions();
+                        _checkPermissionsAndShowContact();
                       },
                       child: Text(
                         Strings.inviteFromContactsList,
