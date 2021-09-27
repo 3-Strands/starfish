@@ -42,7 +42,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
     super.initState();
 
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
-
     _getGroups();
   }
 

@@ -262,6 +262,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               _listToShow = snapshot.data!;
             return ListView.builder(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 itemCount: _listToShow.length,
                 itemBuilder: (BuildContext ctxt, int index) {
                   return MaterialListItem(
@@ -269,14 +270,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     onMaterialTap: _onMaterialSelection,
                   );
                 });
-            // (
-            //   primary: false,
-            //   shrinkWrap: true,
-            //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-            //   children: (_query != '')
-            //       ? _buildSearchList(snapshot.data!)
-            //       : _buildList(snapshot.data!),
-            // );
           } else {
             return Container();
           }
