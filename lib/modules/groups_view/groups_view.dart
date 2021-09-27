@@ -69,9 +69,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
               item.name!.toLowerCase().startsWith(_query.toLowerCase()))
           .toList();
     else
-      _groupsList =  _groupsList;
-    _teacherList = _query.isNotEmpty ? _groupSearchList :_groupsList; // _teacherList filter will perform here
-    _lernerList = _query.isNotEmpty ? _groupSearchList:_groupsList; // _lernerList filter will perform here
+      _groupsList = _groupsList;
+    _teacherList = _query.isNotEmpty
+        ? _groupSearchList
+        : _groupsList; // _teacherList filter will perform here
+    _lernerList = _query.isNotEmpty
+        ? _groupSearchList
+        : _groupsList; // _lernerList filter will perform here
     if (index == 0) {
       _groups = {
         'Groups: Group I teach or co-lead': _teacherList,
