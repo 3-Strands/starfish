@@ -14,15 +14,33 @@ import "google/protobuf/timestamp.proto";
 // The Starfish API, for communicating with Starfish app.
 service Starfish {
 
+    // Create feedbacks for materials
+    rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
+
+    // Create or update groups
+    rpc CreateUpdateGroups (stream CreateUpdateGroupsRequest) returns (stream CreateUpdateGroupsResponse) {}
+
+    // Add users to groups or change the role of users in groups
+    rpc CreateUpdateGroupUsers (stream CreateUpdateGroupUsersRequest) returns (stream CreateUpdateGroupUsersResponse) {}
+
+    // Update or create materials as a stream
+    rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
+
+    // Remove users from groups.
+    // The role on GroupUser message is ignored in this procedure
+    rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUsersResponse) {}
+
     // Get the current user.
     rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
 
-    // Update the current user.
-    // Group or action connections cannot be updated through this procedure.
-    rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
-
     // List all countries
     rpc ListAllCountries (ListAllCountriesRequest) returns (stream Country) {}
+
+    // List all material topics
+    rpc ListEvaluationCategories (ListEvaluationCategoriesRequest) returns (stream EvaluationCategory) {}
+
+    // List the groups this user is a member of
+    rpc ListGroups (ListGroupsRequest) returns (stream Group) {}
 
     // List languages in the current user's countries
     rpc ListLanguages (ListLanguagesRequest) returns (stream Language) {}
@@ -30,23 +48,15 @@ service Starfish {
     // List materials that the current user is permitted to see
     rpc ListMaterials (ListMaterialsRequest) returns (stream Material) {}
 
-    // Update or create materials as a stream
-    rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
+    // List all material topics
+    rpc ListMaterialTopics (ListMaterialTopicsRequest) returns (stream MaterialTopic) {}
 
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
 
-    // List the groups this user is a member of
-    rpc ListGroups (ListGroupsRequest) returns (stream Group) {}
-
-    // List all material topics
-    rpc ListMaterialTopics (ListMaterialTopicsRequest) returns (stream MaterialTopic) {}
-
-    // List all material topics
-    rpc ListEvaluationCategories (ListEvaluationCategoriesRequest) returns (stream EvaluationCategory) {}
-
-    // Create feedbacks for materials
-    rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
+    // Update the current user.
+    // Group or action connections cannot be updated through this procedure.
+    rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
 
 }
 
@@ -61,83 +71,6 @@ enum ResultsTab {
     RESULTS_UNSPECIFIED = 0;
     RESULTS_MINE = 1;
     RESULTS_MY_GROUPS = 2;
-}
-
-// A single edit to a single record recorded in history
-message Edit {
-
-    enum Event {
-        EVENT_UNSPECIFIED = 0;
-        CREATE = 1;
-        UPDATE = 2;
-        DELETE = 3;
-    }
-
-    // The username of the user who made the edit
-    string username = 1;
-
-    // The time of the edit
-    google.protobuf.Timestamp time = 3;
-
-    // The type of edit
-    Event event = 4;
-
-}
-
-message User {
-
-    // The ID is a version 4 UUID. Once assigned it cannot be changed.
-    // The client may specify the UUID when requesting object creation,
-    // otherwise server will generate it.
-    string id = 1;
-
-    // Full name of the user (required)
-    string name = 2;
-
-    // The user must be able to receive text messages at this number (required)
-    string phone = 3;
-
-    repeated string country_ids = 4;
-
-    // The languages connected to a user should be in the countries connected,
-    // however the server will not enforce this
-    repeated string language_ids = 5;
-
-    // If true, then this user has given approval for the groups they administer to be connected to projects in everylanguage.app
-    bool link_groups = 6;
-
-    repeated GroupUser groups = 7;
-
-    repeated ActionUser actions = 8;
-
-    ActionTab selected_actions_tab = 9;
-
-    ResultsTab selected_results_tab = 10;
-
-    // The country of this user for the purposes of dialling their phone number.
-    string phone_country_id = 11;
-
-    // Output only. Dependent on the value of phone_country_id.
-    string dialling_code = 12;
-
-}
-
-// Connection between a User and a Group
-message GroupUser {
-
-    enum Role {
-        UNSPECIFIED_ROLE = 0;
-        LEARNER = 1;
-        TEACHER = 2;
-        ADMIN = 3;
-    }
-
-    string group_id = 2;
-
-    string user_id = 3;
-
-    Role role = 4;
-
 }
 
 // Connection between a User and an Action
@@ -171,29 +104,177 @@ message Country {
 
 }
 
-message Language {
+message CreateMaterialFeedbacksRequest {
 
-    string id = 1;
-
-    string name = 2;
-
-}
-
-// Pre-defined material types
-message MaterialType {
-
-    string id = 1;
-
-    string name = 2;
+    // Specify the material ID, the type and the report. Other fields cannot be specified
+    // The reporter will be the user authenticated with the request.
+    // The reported must have view permission for the material
+    MaterialFeedback feedback = 1;
 
 }
 
-// user-created tags for Materials
-message MaterialTopic {
+message CreateMaterialFeedbacksResponse {
 
-    string id = 1;
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
 
-    string name = 2;
+    // The MaterialFeedback after the create request.
+    MaterialFeedback feedback = 1;
+
+    // The status of the create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateUpdateGroupsRequest {
+
+    // The Group resource that will be created or replace the existing one on the server.
+    // The ID of the material resource is optional for a create request.
+    // If the ID is present and a Group exists with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    Group group = 1;
+
+    // The field mask specifying which fields of the Group resource should be updated
+    // If not specified then all fields are updated
+    // If specified and some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateGroupsResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Group after update or create request.
+    Group group = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateUpdateGroupUsersRequest {
+
+    // The GroupUser resource that will be created or replace the existing one on the server.
+    // If the group and user are already connected then this will be an update request for the role
+    // otherwise it will be a create request
+    GroupUser group_user = 1;
+
+    // The field mask specifying which fields of the GroupUser resource should be updated
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateGroupUsersResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The GroupUser resource after update or create request.
+    GroupUser group_user = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateUpdateMaterialsRequest {
+
+    // The Material resource that will be created or replace the existing one on the server.
+    // The ID of the material resource is optional for a create request.
+    // If the ID is present and a Material exists with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    Material material = 1;
+
+    // The field mask specifying which fields of the Material resource should be updated
+    // If not specified then all fields are updated
+    // If specified and some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateMaterialsResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Material after update or create request.
+    Material material = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message DeleteGroupUsersResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The ID of the user that was requested to be removed from a group
+    string user_id = 1;
+
+    // The ID of the group from which the user was requested to be removed
+    string group_id = 2;
+
+    // The status of the removal
+    Status status = 3;
+
+    // Error message or any other message related to the removal
+    string message = 4;
+
+}
+
+// A single edit to a single record recorded in history
+message Edit {
+
+    enum Event {
+        EVENT_UNSPECIFIED = 0;
+        CREATE = 1;
+        UPDATE = 2;
+        DELETE = 3;
+    }
+
+    // The username of the user who made the edit
+    string username = 1;
+
+    // The time of the edit
+    google.protobuf.Timestamp time = 3;
+
+    // The type of edit
+    Event event = 4;
 
 }
 
@@ -203,6 +284,117 @@ message EvaluationCategory {
     string id = 1;
 
     string name = 2;
+
+}
+
+// A literacy group
+message Group {
+
+    string id  = 1;
+
+    string name = 2;
+
+    // The IDs of languages connected to this group
+    repeated string language_ids = 3;
+
+    // The Users in this group. Output only
+    // At least one needs to have admin role
+    repeated GroupUser users = 4;
+
+    // The IDs of the evaluation categories connected to this group
+    // maximum is 3
+    repeated string evaluation_category_ids = 5;
+
+    // Output only
+    repeated GroupAction actions = 6;
+
+    // Output only. A history of edits made to this group object
+    repeated Edit edit_history = 7;
+}
+
+// Connecting an action to a group
+message GroupAction {
+
+    string group_id = 2;
+
+    string action_id = 3;
+
+    google.type.Date due_date = 4;
+
+}
+
+// Connection between a User and a Group
+message GroupUser {
+
+    enum Role {
+        UNSPECIFIED_ROLE = 0;
+        LEARNER = 1;
+        TEACHER = 2;
+        ADMIN = 3;
+    }
+
+    string group_id = 2;
+
+    string user_id = 3;
+
+    Role role = 4;
+
+}
+
+message Language {
+
+    string id = 1;
+
+    string name = 2;
+
+}
+
+message ListAllCountriesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListEvaluationCategoriesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListGroupsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListLanguagesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialTopicsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListMaterialTypesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
 
 }
 
@@ -298,38 +490,21 @@ message MaterialFeedback {
 
 }
 
-// A literacy group
-message Group {
+// user-created tags for Materials
+message MaterialTopic {
 
-    string id  = 1;
+    string id = 1;
 
     string name = 2;
 
-    // The IDs of languages connected to this group
-    repeated string language_ids = 3;
-
-    // The Users in this group
-    // At least needs to have admin role
-    repeated GroupUser users = 4;
-
-    // The IDs of the evaluation categories connected to this group
-    // maximum is 3
-    repeated string evaluation_category_ids = 5;
-
-    repeated GroupAction actions = 6;
-
-    // Output only. A history of edits made to this group object
-    repeated Edit edit_history = 7;
 }
 
-// Connecting an action to a group
-message GroupAction {
+// Pre-defined material types
+message MaterialType {
 
-    string group_id = 2;
+    string id = 1;
 
-    string action_id = 3;
-
-    google.type.Date due_date = 4;
+    string name = 2;
 
 }
 
@@ -344,115 +519,40 @@ message UpdateCurrentUserRequest {
 
 }
 
-message ListAllCountriesRequest {
+message User {
 
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
+    // The ID is a version 4 UUID. Once assigned it cannot be changed.
+    // The client may specify the UUID when requesting object creation,
+    // otherwise server will generate it.
+    string id = 1;
 
-}
+    // Full name of the user (required)
+    string name = 2;
 
-message ListLanguagesRequest {
+    // The user must be able to receive text messages at this number (required)
+    string phone = 3;
 
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
+    repeated string country_ids = 4;
 
-}
+    // The languages connected to a user should be in the countries connected,
+    // however the server will not enforce this
+    repeated string language_ids = 5;
 
-message ListMaterialsRequest {
+    // If true, then this user has given approval for the groups they administer to be connected to projects in everylanguage.app
+    bool link_groups = 6;
 
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
+    repeated GroupUser groups = 7;
 
-}
+    repeated ActionUser actions = 8;
 
-message ListMaterialTypesRequest {
+    ActionTab selected_actions_tab = 9;
 
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
+    ResultsTab selected_results_tab = 10;
 
-}
+    // The country of this user for the purposes of dialling their phone number.
+    string phone_country_id = 11;
 
-message ListMaterialTopicsRequest {
-
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
-
-}
-
-message ListGroupsRequest {
-
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
-
-}
-
-message ListEvaluationCategoriesRequest {
-
-    // Only return results updated at this date or later
-    google.type.Date updated_since = 1;
-
-}
-
-message CreateUpdateMaterialsRequest {
-
-    // The Material resource that will be created or replace the existing one on the server.
-    // The ID of the material resource is optional for a create request.
-    // If the ID is present and a Material exist with that ID then the request will be taken as an update
-    // Otherwise it will be a create request.
-    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
-    // new resource, otherwise an ID will be generated
-    Material material = 1;
-
-    // The field mask specifying which fields of the Material resource should be updated
-    // If not specified then all fields are updated
-    // If specified ans some fields excluded, then these fields will be ignored (in the case of update)
-    // or set to the default value (in the case of create)
-    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
-    google.protobuf.FieldMask update_mask = 2;
-
-}
-
-message CreateUpdateMaterialsResponse {
-
-    enum Status {
-        SUCCESS = 0;
-        FAILURE = 1;
-    }
-
-    // The Material after update or create request.
-    Material material = 1;
-
-    // The status of the update or create request.
-    Status status = 2;
-
-    // Error message or any relevant message in response to the request.
-    string message = 3;
-
-}
-
-message CreateMaterialFeedbacksRequest {
-
-    // Specify the material ID, the type and the report. Other fields cannot be specified
-    // The reporter will be the user authenticated with the request.
-    // The reported must have view permission for the material
-    MaterialFeedback feedback = 1;
-
-}
-
-message CreateMaterialFeedbacksResponse {
-
-    enum Status {
-        SUCCESS = 0;
-        FAILURE = 1;
-    }
-
-    // The MaterialFeedback after the create request.
-    MaterialFeedback feedback = 1;
-
-    // The status of the create request.
-    Status status = 2;
-
-    // Error message or any relevant message in response to the request.
-    string message = 3;
+    // Output only. Dependent on the value of phone_country_id.
+    string dialling_code = 12;
 
 }
