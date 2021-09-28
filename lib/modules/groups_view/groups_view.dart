@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/group_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -27,26 +30,27 @@ class _GroupsScreenState extends State<GroupsScreen> {
     'Groups: Group I teach or co-lead',
     'Groups: Groups I\'m a learner in',
   ];
-  List<HiveGroup> _groupsList = [];
-  List<HiveGroup> _groupSearchList = [];
+  //List<HiveGroup> _groupsList = [];
+  //List<HiveGroup> _groupSearchList = [];
 
+  late AppBloc bloc;
   late String _query = "";
-  late Box<HiveGroup> _groupBox;
+  //late Box<HiveGroup> _groupBox;
   late String _choiceText = 'All of my groups';
   late Map<String, List<HiveGroup>> _groups;
   late int groupTitleIndex = 0;
-  List<HiveGroup> _teacherList = [];
-  List<HiveGroup> _lernerList = [];
+  //List<HiveGroup> _teacherList = [];
+  //List<HiveGroup> _lernerList = [];
   @override
   void initState() {
     super.initState();
 
-    _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
 
-    _getGroups();
+    //_getGroups();
   }
 
-  void _getGroups() async {
+  /*void _getGroups() async {
     _groupsList = _groupBox.values.toList();
     print('_groupsList: ${_groupsList.length}');
 
@@ -69,9 +73,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
               item.name!.toLowerCase().startsWith(_query.toLowerCase()))
           .toList();
     else
-      _groupsList =  _groupsList;
-    _teacherList = _query.isNotEmpty ? _groupSearchList :_groupsList; // _teacherList filter will perform here
-    _lernerList = _query.isNotEmpty ? _groupSearchList:_groupsList; // _lernerList filter will perform here
+      _groupsList = _groupsList;
+    _teacherList = _query.isNotEmpty
+        ? _groupSearchList
+        : _groupsList; // _teacherList filter will perform here
+    _lernerList = _query.isNotEmpty
+        ? _groupSearchList
+        : _groupsList; // _lernerList filter will perform here
     if (index == 0) {
       _groups = {
         'Groups: Group I teach or co-lead': _teacherList,
@@ -86,7 +94,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
         'Groups: Groups I\'m a learner in': _lernerList,
       };
     }
-  }
+  }*/
 
   void _onGroupSelection(HiveGroup group) {
     showModalBottomSheet(
@@ -182,6 +190,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
+    bloc.groupBloc.fetchGroupsFromDB();
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -200,7 +210,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     print('searched value $value');
                     setState(() {
                       _query = value;
-                      _filterGroups(groupTitleIndex);
+                      //_filterGroups(groupTitleIndex);
                     });
                   },
                   onDone: (value) {
@@ -248,7 +258,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             setState(() {
                               _choiceText = value!;
                               groupTitleIndex = _groupTitleList.indexOf(value);
-                              _filterGroups(groupTitleIndex);
+                              //_filterGroups(groupTitleIndex);
                             });
                           },
                           items: _groupTitleList
@@ -273,38 +283,60 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 SizedBox(
                   height: 20.h,
                 ),
-                GroupListView(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                  sectionsCount: _groups.keys.toList().length,
-                  countOfItemInSection: (int section) {
-                    return _groups.values.toList()[section].length;
-                  },
-                  itemBuilder: (BuildContext context, IndexPath index) {
-                    return GroupListItem(
-                      group: _groups.values.toList()[index.section]
-                          [index.index], //_groupsList[index.index],
-                      onGroupTap: _onGroupSelection,
-                    );
-                  },
-                  groupHeaderBuilder: (BuildContext context, int section) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.sp, vertical: 8.sp),
-                      child: Text(
-                        _groups.keys.toList()[section],
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF434141)),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height: 10),
-                  sectionSeparatorBuilder: (context, section) =>
-                      SizedBox(height: 10),
-                ),
+                StreamBuilder(
+                    stream: bloc.groupBloc.groups,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<HiveGroup>> snapshot) {
+                      if (snapshot.hasData) {
+                        /*return GroupListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                          sectionsCount: _groups.keys.toList().length,
+                          countOfItemInSection: (int section) {
+                            return snapshot.values.toList()[section].length;
+                          },
+                          itemBuilder: (BuildContext context, IndexPath index) {
+                            return GroupListItem(
+                              group: _groups.values.toList()[index.section]
+                                  [index.index], //_groupsList[index.index],
+                              onGroupTap: _onGroupSelection,
+                            );
+                          },
+                          groupHeaderBuilder:
+                              (BuildContext context, int section) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.sp, vertical: 8.sp),
+                              child: Text(
+                                _groups.keys.toList()[section],
+                                style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF434141)),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 10),
+                          sectionSeparatorBuilder: (context, section) =>
+                              SizedBox(height: 10),
+                        );*/
+                        return ListView(
+                          primary: false,
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                          children: snapshot.data!
+                              .map((group) => GroupListItem(
+                                  group: group, onGroupTap: _onGroupSelection))
+                              .toList(),
+                        );
+                      } else {
+                        return Container(
+                          color: AppColors.groupScreenBG,
+                        );
+                      }
+                    }),
               ],
             ),
           ),
@@ -386,7 +418,7 @@ class GroupListItem extends StatelessWidget {
               ),
               SizedBox(height: 10.sp),
               Text(
-                'Admin:',
+                'Admin: ${group.admin != null ? group.admin!.userId : 'NA'}',
                 textAlign: TextAlign.left,
               ),
               SizedBox(height: 20.sp),

@@ -5,6 +5,8 @@ import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
@@ -59,8 +61,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<InviteContact> _filteredContactList = [];
 
   late Box<HiveLanguage> _languageBox;
-  late Box<HiveGroup> _groupBox;
+  //late Box<HiveGroup> _groupBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
+
+  late AppBloc bloc;
 
   Future<void> _checkPermissionsAndShowContact() async {
     PermissionStatus permissionStatus = await _getContactPermission();
@@ -258,7 +262,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
 
@@ -289,6 +293,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
     return Scaffold(
       backgroundColor: AppColors.groupScreenBG,
       appBar: AppBar(
@@ -602,8 +607,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     _hiveGroup.isNew = true;
                   }
 
-                  _groupBox
-                      .add(_hiveGroup)
+                  bloc.groupBloc
+                      .addEditMaterial(_hiveGroup)
                       .then((value) => print('$value record(s) saved.'))
                       .onError((error, stackTrace) {
                     print('Error: ${error.toString()}.');
