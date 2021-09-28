@@ -31,7 +31,7 @@ class _SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Padding(
-          padding: EdgeInsets.only(right: 2.w),
+          padding: EdgeInsets.only(left: 4.w,right: 2.w),
           child: Align(
             alignment: Alignment.center,
             child: TextFormField(
@@ -44,9 +44,7 @@ class _SearchBarState extends State<SearchBar> {
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
-                // contentPadding: EdgeInsets.only(
-                //   bottom: 52.h / 2,  // HERE THE IMPORTANT PART
-                // ),
+                contentPadding: EdgeInsets.zero,
                 isCollapsed: true,
 
                 hintText: Strings.searchBarHint,
