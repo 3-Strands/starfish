@@ -234,7 +234,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.addNewMaterial);
+          Navigator.of(context).pushNamed(Routes.addNewMaterial).then(
+              (value) => FocusScope.of(context).requestFocus(new FocusNode()));
         },
         child: Icon(Icons.add),
       ),
@@ -253,7 +254,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   .where((item) =>
                       item.title!
                           .toLowerCase()
-                          .contains(_query.toLowerCase()) &&
+                          .contains(_query.toLowerCase()) ||
                       item.title!
                           .toLowerCase()
                           .startsWith(_query.toLowerCase()))
@@ -262,6 +263,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               _listToShow = snapshot.data!;
             return ListView.builder(
                 shrinkWrap: true,
+                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: _listToShow.length,
                 itemBuilder: (BuildContext ctxt, int index) {

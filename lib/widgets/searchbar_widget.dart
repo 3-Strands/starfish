@@ -33,7 +33,7 @@ class _SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Padding(
-          padding: EdgeInsets.only(left:Platform.isAndroid || Platform.isIOS  ? 14.w :4.w ,right: 2.w),
+          padding: EdgeInsets.only(left: 14.w, right: 2.w),
           child: Align(
             alignment: Alignment.center,
             child: TextFormField(
