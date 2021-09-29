@@ -28,13 +28,14 @@ class HiveCurrentUserAdapter extends TypeAdapter<HiveCurrentUser> {
       selectedActionsTab: fields[8] as String,
       selectedResultsTab: fields[9] as String,
       isUpdated: fields[10] as bool,
+      diallingCode: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveCurrentUser obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class HiveCurrentUserAdapter extends TypeAdapter<HiveCurrentUser> {
       ..writeByte(9)
       ..write(obj.selectedResultsTab)
       ..writeByte(10)
-      ..write(obj.isUpdated);
+      ..write(obj.isUpdated)
+      ..writeByte(11)
+      ..write(obj.diallingCode);
   }
 
   @override
