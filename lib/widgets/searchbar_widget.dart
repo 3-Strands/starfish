@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -31,12 +33,12 @@ class _SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Padding(
-          padding: EdgeInsets.only(left: 15.0,right:2.w),
+          padding: EdgeInsets.only(left: 14.w, right: 2.w),
           child: Align(
             alignment: Alignment.center,
             child: TextFormField(
               maxLines: 1,
-              style: TextStyle(fontSize: 16.sp,color:Color(0xFF434141)),
+              style: TextStyle(fontSize: 16.sp, color: Color(0xFF434141)),
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 suffixIcon: Icon(Icons.search, color: Colors.blue),
@@ -45,6 +47,7 @@ class _SearchBarState extends State<SearchBar> {
                 enabledBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
+                isCollapsed: true,
                 hintText: Strings.searchBarHint,
               ),
               onChanged: (value) => {widget.onValueChanged(value)},

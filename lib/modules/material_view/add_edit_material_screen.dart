@@ -15,7 +15,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
-import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -117,7 +117,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               ),
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settingsActive),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SettingsScreen()));
+                },
               ),
             ],
           ),

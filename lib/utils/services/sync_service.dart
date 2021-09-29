@@ -21,6 +21,8 @@ import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class SyncService {
+  final DEBUG = false;
+
   static syncNow() {}
 
   late Box<HiveLastSyncDateTime> lastSyncBox;
@@ -174,9 +176,11 @@ class SyncService {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
-    materialBox.values.forEach((element) {
-      element.delete();
-    });
+    if (DEBUG) {
+      materialBox.values.forEach((element) {
+        element.delete();
+      });
+    }
 
     await MaterialRepository()
         .getMaterials()
@@ -200,9 +204,11 @@ class SyncService {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
-    materialTopicBox.values.forEach((element) {
-      element.delete();
-    });
+    if (DEBUG) {
+      materialTopicBox.values.forEach((element) {
+        element.delete();
+      });
+    }
 
     await MaterialRepository()
         .getMaterialTopics()
@@ -222,9 +228,11 @@ class SyncService {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
-    materialTypeBox.values.forEach((element) {
-      element.delete();
-    });
+    if (DEBUG) {
+      materialTypeBox.values.forEach((element) {
+        element.delete();
+      });
+    }
 
     await MaterialRepository()
         .getMaterialTypes()
@@ -272,9 +280,11 @@ class SyncService {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
-    groupBox.values.forEach((element) {
-      element.delete();
-    });
+    if (DEBUG) {
+      groupBox.values.forEach((element) {
+        element.delete();
+      });
+    }
 
     await GroupRepository().getGroups().then((ResponseStream<Group> group) {
       group.listen((value) {
@@ -296,9 +306,11 @@ class SyncService {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
-    evaluationCategoryBox.values.forEach((element) {
-      element.delete();
-    });
+    if (DEBUG) {
+      evaluationCategoryBox.values.forEach((element) {
+        element.delete();
+      });
+    }
 
     await GroupRepository()
         .getEvaluationCategories()

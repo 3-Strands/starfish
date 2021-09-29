@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:collection/collection.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_edit.dart';
@@ -56,6 +57,11 @@ class HiveGroup extends HiveObject {
         .toList();
     this.editHistory =
         group.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
+  }
+
+  HiveGroupUser? get admin {
+    return this.users?.firstWhereOrNull((groupUser) =>
+        GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
   }
 
   String toString() {

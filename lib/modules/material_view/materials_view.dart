@@ -93,34 +93,34 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  List<MaterialListItem> _buildList(List<HiveMaterial> _materialsList) {
-    return _materialsList
-        .map((material) => new MaterialListItem(
-              material: material,
-              onMaterialTap: _onMaterialSelection,
-            ))
-        .toList();
-  }
+  // List<MaterialListItem> _buildList(List<HiveMaterial> _materialsList) {
+  //   return _materialsList
+  //       .map((material) => new MaterialListItem(
+  //             material: material,
+  //             onMaterialTap: _onMaterialSelection,
+  //           ))
+  //       .toList();
+  // }
 
-  List<MaterialListItem> _buildSearchList(List<HiveMaterial> _materialsList) {
-    List<HiveMaterial> _listToShow;
+  // List<MaterialListItem> _buildSearchList(List<HiveMaterial> _materialsList) {
+  //   List<HiveMaterial> _listToShow;
 
-    if (_query.isNotEmpty)
-      _listToShow = _materialsList
-          .where((item) =>
-              item.title!.toLowerCase().contains(_query.toLowerCase()) &&
-              item.title!.toLowerCase().startsWith(_query.toLowerCase()))
-          .toList();
-    else
-      _listToShow = _materialsList;
+  //   if (_query.isNotEmpty)
+  //     _listToShow = _materialsList
+  //         .where((item) =>
+  //             item.title!.toLowerCase().contains(_query.toLowerCase()) &&
+  //             item.title!.toLowerCase().startsWith(_query.toLowerCase()))
+  //         .toList();
+  //   else
+  //     _listToShow = _materialsList;
 
-    return _listToShow
-        .map((material) => new MaterialListItem(
-              material: material,
-              onMaterialTap: _onMaterialSelection,
-            ))
-        .toList();
-  }
+  //   return _listToShow
+  //       .map((material) => new MaterialListItem(
+  //             material: material,
+  //             onMaterialTap: _onMaterialSelection,
+  //           ))
+  //       .toList();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +235,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.addNewMaterial);
+          Navigator.of(context).pushNamed(Routes.addNewMaterial).then(
+              (value) => FocusScope.of(context).requestFocus(new FocusNode()));
         },
         child: Icon(Icons.add),
       ),
@@ -247,14 +248,31 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         stream: bloc.materialBloc.materials,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return ListView(
-              primary: false,
-              shrinkWrap: true,
-              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-              children: (_query != '')
-                  ? _buildSearchList(snapshot.data!)
-                  : _buildList(snapshot.data!),
-            );
+            List<HiveMaterial> _listToShow;
+
+            if (_query.isNotEmpty)
+              _listToShow = snapshot.data!
+                  .where((item) =>
+                      item.title!
+                          .toLowerCase()
+                          .contains(_query.toLowerCase()) ||
+                      item.title!
+                          .toLowerCase()
+                          .startsWith(_query.toLowerCase()))
+                  .toList();
+            else
+              _listToShow = snapshot.data!;
+            return ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _listToShow.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return MaterialListItem(
+                    material: _listToShow[index],
+                    onMaterialTap: _onMaterialSelection,
+                  );
+                });
           } else {
             return Container();
           }
