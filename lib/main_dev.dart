@@ -11,7 +11,7 @@ import 'db/hive_database.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  HiveDatabase().init();
+  await HiveDatabase().init();
 
   final cron = Cron();
 

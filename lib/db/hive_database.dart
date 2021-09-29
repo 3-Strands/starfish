@@ -44,7 +44,7 @@ class HiveDatabase {
   //   initHive();
   // }
 
-  void init() async {
+  init() async {
     if (!kIsWeb) {
       Directory directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
@@ -65,10 +65,10 @@ class HiveDatabase {
     Hive.registerAdapter(HiveGroupActionAdapter());
     Hive.registerAdapter(HiveEvaluationCategoryAdapter());
 
-    openBoxes();
+    await openBoxes();
   }
 
-  void openBoxes() async {
+  openBoxes() async {
     print("open boxes");
     await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX);
     await Hive.openBox<HiveCountry>(COUNTRY_BOX);

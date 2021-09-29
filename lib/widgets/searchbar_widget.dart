@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/constants/text_styles.dart';
 
 class SearchBar extends StatefulWidget {
   final Function(String searchedText) onDone;
@@ -38,7 +39,7 @@ class _SearchBarState extends State<SearchBar> {
             alignment: Alignment.center,
             child: TextFormField(
               maxLines: 1,
-              style: TextStyle(fontSize: 16.sp, color: Color(0xFF434141)),
+              style: textFormFieldText,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 suffixIcon: Icon(Icons.search, color: Colors.blue),
@@ -49,6 +50,7 @@ class _SearchBarState extends State<SearchBar> {
                 contentPadding: EdgeInsets.zero,
                 isCollapsed: true,
                 hintText: Strings.searchBarHint,
+                hintStyle: textFormFieldText,
               ),
               onChanged: (value) => {widget.onValueChanged(value)},
               onFieldSubmitted: (value) => {widget.onDone(value)},
