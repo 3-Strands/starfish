@@ -147,6 +147,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void onPageChanged(int index) {
+    FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {
       this._selectedIndex = index;
     });
