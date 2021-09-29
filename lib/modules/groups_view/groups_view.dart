@@ -29,11 +29,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
   //List<HiveGroup> _groupSearchList = [];
 
   late AppBloc bloc;
-  late String _query = "";
   //late Box<HiveGroup> _groupBox;
   late String _choiceText = 'All of my groups';
   late Map<String, List<HiveGroup>> _groups;
-  late int groupTitleIndex = 0;
+  int groupTitleIndex = 0;
+  String _query = '';
   //List<HiveGroup> _teacherList = [];
   //List<HiveGroup> _lernerList = [];
   @override
@@ -186,7 +186,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    bloc.groupBloc.fetchGroupsFromDB();
+    bloc.groupBloc.fetchGroupsFromDB(_query, groupTitleIndex);
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -254,6 +254,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               _choiceText = value!;
                               groupTitleIndex = _groupTitleList.indexOf(value);
                               //_filterGroups(groupTitleIndex);
+                              setState(() {
+                                groupTitleIndex =
+                                    _groupTitleList.indexOf(value);
+                              });
                             });
                           },
                           items: _groupTitleList

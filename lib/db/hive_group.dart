@@ -60,7 +60,7 @@ class HiveGroup extends HiveObject {
   }
 
   HiveGroupUser? get admin {
-    this.users?.firstWhereOrNull((groupUser) =>
+    return this.users?.firstWhereOrNull((groupUser) =>
         GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
   }
 
