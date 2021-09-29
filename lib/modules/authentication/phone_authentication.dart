@@ -12,6 +12,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/main_dev.dart';
 import 'package:starfish/repository/app_data_repository.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 import 'package:starfish/smart_select/src/model/modal_config.dart';
 import 'package:starfish/smart_select/src/tile/tile.dart';
@@ -90,47 +91,61 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   ),
                   SizedBox(height: 30.h),
 
-                  // available configuration for single choice
-                  Container(
-                    height: 80.h,
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: Center(
-                      child: SmartSelect<HiveCountry>.single(
-                        title: Strings.country,
-                        placeholder: Strings.selectCountry,
-                        selectedValue: _selectedCountry,
-                        // value: _selectedCountry,
-                        onChange: (selected) => setState(() => {
-                              _selectedCountry = selected.value,
-                              _countryCodeController.text =
-                                  _selectedCountry.diallingCode,
-                            }),
-                        choiceItems:
-                            S2Choice.listFrom<HiveCountry, HiveCountry>(
-                          source: _countryList,
-                          value: (index, item) => item,
-                          title: (index, item) => item.name,
-                          //  group: (index, item) => item['brand'],
-                        ),
-                        choiceGrouped: false,
-                        modalType: S2ModalType.fullPage,
-                        modalFilter: true,
-                        modalFilterAuto: true,
-                        tileBuilder: (context, state) {
-                          return S2Tile.fromState(
-                            state,
-                            isTwoLine: true,
-                          );
-                        },
-                      ),
-                    ),
+                  SelectDropDown(
+                    navTitle: Strings.selectCountry,
+                    placeholder: Strings.selectCountry,
+                    selectedValues: _selectedCountry,
+                    choice: SelectType.single,
+                    dataSource: DataSourceType.country,
+                    onDoneClicked: <T>(country) {
+                      setState(() {
+                        _selectedCountry = country as HiveCountry;
+                        _countryCodeController.text =
+                            _selectedCountry.diallingCode;
+                      });
+                    },
                   ),
+                  // available configuration for single choice
+                  // Container(
+                  //   height: 80.h,
+                  //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  //   decoration: BoxDecoration(
+                  //     color: AppColors.txtFieldBackground,
+                  //     borderRadius: BorderRadius.all(
+                  //       Radius.circular(10),
+                  //     ),
+                  //   ),
+                  //   child: Center(
+                  //     child: SmartSelect<HiveCountry>.single(
+                  //       title: Strings.country,
+                  //       placeholder: Strings.selectCountry,
+                  //       selectedValue: _selectedCountry,
+                  //       // value: _selectedCountry,
+                  //       onChange: (selected) => setState(() => {
+                  //             _selectedCountry = selected.value,
+                  //             _countryCodeController.text =
+                  //                 _selectedCountry.diallingCode,
+                  //           }),
+                  //       choiceItems:
+                  //           S2Choice.listFrom<HiveCountry, HiveCountry>(
+                  //         source: _countryList,
+                  //         value: (index, item) => item,
+                  //         title: (index, item) => item.name,
+                  //         //  group: (index, item) => item['brand'],
+                  //       ),
+                  //       choiceGrouped: false,
+                  //       modalType: S2ModalType.fullPage,
+                  //       modalFilter: true,
+                  //       modalFilterAuto: true,
+                  //       tileBuilder: (context, state) {
+                  //         return S2Tile.fromState(
+                  //           state,
+                  //           isTwoLine: true,
+                  //         );
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
 
                   SizedBox(height: 30.h),
                   _phoneNumberContainer(),
