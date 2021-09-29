@@ -5,8 +5,10 @@ import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/select_items/item.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 
@@ -43,7 +45,9 @@ class _MultiSelectState extends State<MultiSelect> {
 
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
-  late Box<HiveMaterialTopic> _matericalTopicBox;
+  late Box<HiveMaterialTopic> _materialTopicBox;
+  late Box<HiveMaterialType> _materialTypeBox;
+  late Box<HiveEvaluationCategory> _evaluationCategoryBox;
 
   List<Item> _items = [];
 
@@ -55,74 +59,119 @@ class _MultiSelectState extends State<MultiSelect> {
     super.initState();
     appBarTitle = Text(widget.navTitle);
 
-    if (widget.dataSource == DataSourceType.country) {
-      HiveCountry _selectedCountry = widget.selectedValues as HiveCountry;
+    switch (widget.dataSource) {
+      case DataSourceType.country:
+        _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
+        List<HiveCountry> _countries = _countryBox.values.toList();
 
-      _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-      List<HiveCountry> _countries = _countryBox.values.toList();
+        HiveCountry _selectedCountry = widget.selectedValues as HiveCountry;
+        _countries.forEach((element) {
+          if (element.id == _selectedCountry.id) {
+            var country = Item(data: element, isSelected: true);
+            _items.add(country);
+          } else {
+            var country = Item(data: element, isSelected: false);
+            _items.add(country);
+          }
+        });
 
-      _countries.forEach((element) {
-        if (element.id == _selectedCountry.id) {
-          var country = Item(data: element, isSelected: true);
-          _items.add(country);
-        } else {
+        break;
+      case DataSourceType.countries:
+        _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
+        List<HiveCountry> _countries = _countryBox.values.toList();
+
+        List<HiveCountry> _selectedCountries =
+            widget.selectedValues as List<HiveCountry>;
+        _countries.forEach((element) {
           var country = Item(data: element, isSelected: false);
           _items.add(country);
-        }
-      });
-    } else if (widget.dataSource == DataSourceType.countries) {
-      List<HiveCountry> _selectedCountries =
-          widget.selectedValues as List<HiveCountry>;
+        });
 
-      _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-      List<HiveCountry> _countries = _countryBox.values.toList();
+        _selectedCountries.forEach((element) {
+          final index = _items.indexWhere(
+              (item) => (item.data as HiveCountry).id == element.id);
+          _items[index].isSelected = true;
+        });
 
-      _countries.forEach((element) {
-        var country = Item(data: element, isSelected: false);
-        _items.add(country);
-      });
+        break;
+      case DataSourceType.languages:
+        _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+        List<HiveLanguage> _languages = _languageBox.values.toList();
 
-      _selectedCountries.forEach((element) {
-        final index = _items
-            .indexWhere((item) => (item.data as HiveCountry).id == element.id);
-        _items[index].isSelected = true;
-      });
-    } else if (widget.dataSource == DataSourceType.languages) {
-      List<HiveLanguage> _selectedLanguages =
-          widget.selectedValues as List<HiveLanguage>;
+        _languages.forEach((element) {
+          var language = Item(data: element, isSelected: false);
+          _items.add(language);
+        });
 
-      _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-      List<HiveLanguage> _languages = _languageBox.values.toList();
+        List<HiveLanguage> _selectedLanguages =
+            widget.selectedValues as List<HiveLanguage>;
+        _selectedLanguages.forEach((element) {
+          final index = _items.indexWhere(
+              (item) => (item.data as HiveLanguage).id == element.id);
+          _items[index].isSelected = true;
+        });
 
-      _languages.forEach((element) {
-        var language = Item(data: element, isSelected: false);
-        _items.add(language);
-      });
+        break;
+      case DataSourceType.topics:
+        _materialTopicBox =
+            Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
+        List<HiveMaterialTopic> _topics = _materialTopicBox.values.toList();
 
-      _selectedLanguages.forEach((element) {
-        final index = _items
-            .indexWhere((item) => (item.data as HiveLanguage).id == element.id);
-        _items[index].isSelected = true;
-      });
-    } else if (widget.dataSource == DataSourceType.topics) {
-      List<HiveMaterialTopic> _selectedTopics =
-          widget.selectedValues as List<HiveMaterialTopic>;
+        _topics.forEach((element) {
+          var topic = Item(data: element, isSelected: false);
+          _items.add(topic);
+        });
 
-      _matericalTopicBox =
-          Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
-      List<HiveMaterialTopic> _topics = _matericalTopicBox.values.toList();
+        List<HiveMaterialTopic> _selectedTopics =
+            widget.selectedValues as List<HiveMaterialTopic>;
+        _selectedTopics.forEach((element) {
+          final index = _items.indexWhere(
+              (item) => (item.data as HiveMaterialTopic).id == element.id);
+          _items[index].isSelected = true;
+        });
 
-      _topics.forEach((element) {
-        var topic = Item(data: element, isSelected: false);
-        _items.add(topic);
-      });
+        break;
+      case DataSourceType.types:
+        _materialTypeBox =
+            Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
+        List<HiveMaterialType> _types = _materialTypeBox.values.toList();
 
-      _selectedTopics.forEach((element) {
-        final index = _items.indexWhere(
-            (item) => (item.data as HiveMaterialTopic).id == element.id);
-        _items[index].isSelected = true;
-      });
-    } else {}
+        _types.forEach((element) {
+          var type = Item(data: element, isSelected: false);
+          _items.add(type);
+        });
+
+        List<HiveMaterialType> _selectedTypes =
+            widget.selectedValues as List<HiveMaterialType>;
+        _selectedTypes.forEach((element) {
+          final index = _items.indexWhere(
+              (item) => (item.data as HiveMaterialType).id == element.id);
+          _items[index].isSelected = true;
+        });
+
+        break;
+      case DataSourceType.evaluationCategory:
+        _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
+            HiveDatabase.EVALUATION_CATEGORIES_BOX);
+        List<HiveEvaluationCategory> _types =
+            _evaluationCategoryBox.values.toList();
+
+        _types.forEach((element) {
+          var type = Item(data: element, isSelected: false);
+          _items.add(type);
+        });
+
+        List<HiveEvaluationCategory> _selectedCateogries =
+            widget.selectedValues as List<HiveEvaluationCategory>;
+        _selectedCateogries.forEach((element) {
+          final index = _items.indexWhere(
+              (item) => (item.data as HiveEvaluationCategory).id == element.id);
+          _items[index].isSelected = true;
+        });
+
+        break;
+      default:
+    }
   }
 
   _MultiSelectState() {
@@ -207,7 +256,7 @@ class _MultiSelectState extends State<MultiSelect> {
         title: appBarTitle,
         automaticallyImplyLeading: true,
         leading: BackButton(
-          onPressed: () => Navigator.pop(context, {sendSelectedValues()}),
+          onPressed: () => Navigator.pop(context, {_sendSelectedValues()}),
         ),
         actions: [
           navigationSearchBar(),
@@ -257,13 +306,13 @@ class _MultiSelectState extends State<MultiSelect> {
 
   itemTapped(Item selectedItem) {
     if (widget.choice == SelectType.single) {
-      singleSelectItemTapped(selectedItem);
+      _singleSelectItemTapped(selectedItem);
     } else {
-      multiSelectItemTapped(selectedItem);
+      _multiSelectItemTapped(selectedItem);
     }
   }
 
-  singleSelectItemTapped(Item selectedItem) {
+  void _singleSelectItemTapped(Item selectedItem) {
     final index =
         _items.indexWhere((element) => element.data.id == selectedItem.data.id);
     setState(() {
@@ -274,7 +323,7 @@ class _MultiSelectState extends State<MultiSelect> {
     Navigator.pop(context);
   }
 
-  multiSelectItemTapped(Item selectedItem) {
+  void _multiSelectItemTapped(Item selectedItem) {
     final index =
         _items.indexWhere((element) => element.data.id == selectedItem.data.id);
     setState(() {
@@ -282,32 +331,60 @@ class _MultiSelectState extends State<MultiSelect> {
     });
   }
 
-  void sendSelectedValues() {
-    if (widget.dataSource == DataSourceType.countries) {
-      List<HiveCountry> selectedItems = [];
-      _items.forEach((item) {
-        if (item.isSelected == true) {
-          selectedItems.add(item.data);
-        }
-      });
-      widget.onDoneClicked(selectedItems);
-    } else if (widget.dataSource == DataSourceType.languages) {
-      List<HiveLanguage> selectedItems = [];
-      _items.forEach((item) {
-        if (item.isSelected == true) {
-          selectedItems.add(item.data);
-        }
-      });
-      widget.onDoneClicked(selectedItems);
-    } else if (widget.dataSource == DataSourceType.topics) {
-      List<HiveMaterialTopic> selectedItems = [];
-      _items.forEach((item) {
-        if (item.isSelected == true) {
-          selectedItems.add(item.data);
-        }
-      });
-      widget.onDoneClicked(selectedItems);
-    } else {}
+  void _sendSelectedValues() {
+    switch (widget.dataSource) {
+      case DataSourceType.countries:
+        List<HiveCountry> selectedItems = [];
+        _items.forEach((item) {
+          if (item.isSelected == true) {
+            selectedItems.add(item.data);
+          }
+        });
+        widget.onDoneClicked(selectedItems);
+
+        break;
+      case DataSourceType.languages:
+        List<HiveLanguage> selectedItems = [];
+        _items.forEach((item) {
+          if (item.isSelected == true) {
+            selectedItems.add(item.data);
+          }
+        });
+        widget.onDoneClicked(selectedItems);
+
+        break;
+      case DataSourceType.topics:
+        List<HiveMaterialTopic> selectedItems = [];
+        _items.forEach((item) {
+          if (item.isSelected == true) {
+            selectedItems.add(item.data);
+          }
+        });
+        widget.onDoneClicked(selectedItems);
+
+        break;
+      case DataSourceType.types:
+        List<HiveMaterialType> selectedItems = [];
+        _items.forEach((item) {
+          if (item.isSelected == true) {
+            selectedItems.add(item.data);
+          }
+        });
+        widget.onDoneClicked(selectedItems);
+
+        break;
+      case DataSourceType.evaluationCategory:
+        List<HiveEvaluationCategory> selectedItems = [];
+        _items.forEach((item) {
+          if (item.isSelected == true) {
+            selectedItems.add(item.data);
+          }
+        });
+        widget.onDoneClicked(selectedItems);
+
+        break;
+      default:
+    }
   }
 }
 

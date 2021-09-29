@@ -21,7 +21,7 @@ import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class SyncService {
-  final DEBUG = false;
+  final DEBUG = true;
 
   static syncNow() {}
 

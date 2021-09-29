@@ -17,7 +17,7 @@ class TitleLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: Colors.transparent),
-      margin: EdgeInsets.fromLTRB(15.0.w, 0.0, 15.0.w, 0.0),
+      margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
       child: Text(
         title,
         textAlign: align,

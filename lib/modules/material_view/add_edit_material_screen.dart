@@ -16,14 +16,7 @@ import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/tile/tile.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/widget.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -70,9 +63,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     _materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
-
-    print('widget.material ==>>');
-    print(widget.material);
 
     if (widget.material != null) {
       _isEditMode = true;
@@ -288,41 +278,18 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
-                  //margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: SmartSelect<HiveLanguage>.multiple(
-                      title: Strings.lanugages,
-                      placeholder: Strings.selectLanugages,
-                      selectedValue: _selectedLanguages,
-                      onChange: (selected) {
-                        setState(() => _selectedLanguages = selected.value);
-                      },
-                      choiceItems:
-                          S2Choice.listFrom<HiveLanguage, HiveLanguage>(
-                              source: _languageBox.values.toList(),
-                              value: (index, item) => item,
-                              title: (index, item) => item.name,
-                              group: (index, item) {
-                                return '';
-                              }),
-                      choiceGrouped: true,
-                      modalType: S2ModalType.fullPage,
-                      modalFilter: true,
-                      modalFilterAuto: true,
-                      tileBuilder: (context, state) {
-                        return S2Tile.fromState(
-                          state,
-                          isTwoLine: true,
-                        );
-                      },
-                    ),
+                  child: SelectDropDown(
+                    navTitle: Strings.selectLanugages,
+                    placeholder: Strings.selectLanugages,
+                    selectedValues: _selectedLanguages,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.languages,
+                    onDoneClicked: <T>(languages) {
+                      setState(() {
+                        _selectedLanguages = languages as List<HiveLanguage>;
+                        // print("Selected languages ==>> $_selectedLanguages");
+                      });
+                    },
                   ),
                 ),
                 SizedBox(height: 21.h),
@@ -335,41 +302,18 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
-                  //margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: SmartSelect<HiveMaterialType>.multiple(
-                      title: Strings.selectType,
-                      placeholder: Strings.selectType,
-                      selectedValue: _selectedTypes,
-                      onChange: (selected) {
-                        setState(() => _selectedTypes = selected.value);
-                      },
-                      choiceItems:
-                          S2Choice.listFrom<HiveMaterialType, HiveMaterialType>(
-                              source: _materialTypeBox.values.toList(),
-                              value: (index, item) => item,
-                              title: (index, item) => item.name,
-                              group: (index, item) {
-                                return '';
-                              }),
-                      choiceGrouped: true,
-                      modalType: S2ModalType.fullPage,
-                      modalFilter: true,
-                      modalFilterAuto: true,
-                      tileBuilder: (context, state) {
-                        return S2Tile.fromState(
-                          state,
-                          isTwoLine: true,
-                        );
-                      },
-                    ),
+                  child: SelectDropDown(
+                    navTitle: Strings.selectType,
+                    placeholder: Strings.selectType,
+                    selectedValues: _selectedTypes,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.types,
+                    onDoneClicked: <T>(types) {
+                      setState(() {
+                        _selectedTypes = types as List<HiveMaterialType>;
+                        // print("Selected types ==>> $types");
+                      });
+                    },
                   ),
                 ),
                 SizedBox(height: 21.h),
@@ -382,41 +326,18 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
-                  //margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: SmartSelect<HiveMaterialTopic>.multiple(
-                      title: Strings.topics,
-                      placeholder: Strings.selectTopics,
-                      selectedValue: _selectedTopics,
-                      onChange: (selected) {
-                        setState(() => _selectedTopics = selected.value);
-                      },
-                      choiceItems: S2Choice.listFrom<HiveMaterialTopic,
-                              HiveMaterialTopic>(
-                          source: _materialTopicBox.values.toList(),
-                          value: (index, item) => item,
-                          title: (index, item) => item.name,
-                          group: (index, item) {
-                            return '';
-                          }),
-                      choiceGrouped: true,
-                      modalType: S2ModalType.fullPage,
-                      modalFilter: true,
-                      modalFilterAuto: true,
-                      tileBuilder: (context, state) {
-                        return S2Tile.fromState(
-                          state,
-                          isTwoLine: true,
-                        );
-                      },
-                    ),
+                  child: SelectDropDown(
+                    navTitle: Strings.selectTopics,
+                    placeholder: Strings.selectTopics,
+                    selectedValues: _selectedTopics,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.topics,
+                    onDoneClicked: <T>(topics) {
+                      setState(() {
+                        _selectedTopics = topics as List<HiveMaterialTopic>;
+                        // print("Selected topics ==>> $_selectedTopics");
+                      });
+                    },
                   ),
                 ),
                 SizedBox(height: 21.h),
@@ -429,7 +350,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
+                  height: 52.h,
                   width: double.infinity,
                   padding: EdgeInsets.only(left: 15.w, right: 15.w),
                   decoration: BoxDecoration(
@@ -486,7 +407,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
+                  height: 52.h,
                   width: double.infinity,
                   padding: EdgeInsets.only(left: 15.w, right: 15.w),
                   decoration: BoxDecoration(

@@ -23,14 +23,6 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/tile/tile.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/widget.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
@@ -187,181 +179,110 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Stack(children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 118.h),
-                AppLogo(hight: 156.h, width: 163.w),
-                SizedBox(height: 42.h),
-                //--> Name text field section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.enterName,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                _getNameField(),
-                SizedBox(height: 10.h),
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: ItalicitleLabel(title: Strings.enterNameDetail),
-                ),
-                //--------------------------
-                SizedBox(height: 30.h),
+        child: Container(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: 118.h),
+                      AppLogo(hight: 156.h, width: 163.w),
+                      SizedBox(height: 42.h),
+                      //--> Name text field section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: Strings.enterName,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      _getNameField(),
+                      SizedBox(height: 10.h),
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: ItalicitleLabel(title: Strings.enterNameDetail),
+                      ),
+                      //--------------------------
+                      SizedBox(height: 30.h),
 
-                //--> Select country section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.selectCountry,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                SelectDropDown(
-                  navTitle: Strings.selectCountry,
-                  placeholder: Strings.selectCountry,
-                  selectedValues: _selectedCountries,
-                  choice: SelectType.multiple,
-                  dataSource: DataSourceType.countries,
-                  onDoneClicked: <T>(countries) {
-                    // print("Selected Countries ==>> $countries");
-                    setState(() {
-                      _selectedCountries = countries as List<HiveCountry>;
-                      _updateUserCountries();
-                    });
-                  },
-                ),
-                /*
-                Container(
-                  height: 80.h,
-                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: SmartSelect<HiveCountry>.multiple(
-                      title: Strings.country,
-                      placeholder: Strings.selectCountry,
-                      selectedValue: _selectedCountries,
-                      onChange: (selected) => setState(() => {
-                            _selectedCountries = selected.value,
-                            _updateUserCountries()
-                          }),
-                      choiceItems: S2Choice.listFrom<HiveCountry, HiveCountry>(
-                          source: _countryList,
-                          value: (index, item) => item,
-                          title: (index, item) => item.name,
-                          group: (index, item) {
-                            return '';
-                          }),
-                      choiceGrouped: false,
-                      modalFilter: true,
-                      modalFilterAuto: true,
-                      modalType: S2ModalType.fullPage,
-                      tileBuilder: (context, state) {
-                        return S2Tile.fromState(
-                          state,
-                          isTwoLine: true,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-*/
-                SizedBox(height: 10.h),
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: ItalicitleLabel(title: Strings.selectCountryDetail),
-                ),
-                //--------------------------
-                SizedBox(height: 30.h),
-                //--> Select language section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.selectLanugages,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                SelectDropDown(
-                  navTitle: Strings.selectLanugages,
-                  placeholder: Strings.selectLanugages,
-                  selectedValues: _selectedLanguages,
-                  choice: SelectType.multiple,
-                  dataSource: DataSourceType.languages,
-                  onDoneClicked: <T>(languages) {
-                    // print("Selected languages ==>> $_selectedLanguages");
-                    setState(() {
-                      _selectedLanguages = languages as List<HiveLanguage>;
-                    });
-                  },
-                ),
-                /*
-                Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Container(
-                    height: 80.h,
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                      //--> Select country section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: Strings.selectCountry,
+                          align: TextAlign.left,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: SmartSelect<HiveLanguage>.multiple(
-                        title: Strings.lanugages,
+                      SizedBox(height: 10.h),
+                      SelectDropDown(
+                        navTitle: Strings.selectCountry,
+                        placeholder: Strings.selectCountry,
+                        selectedValues: _selectedCountries,
+                        choice: SelectType.multiple,
+                        dataSource: DataSourceType.countries,
+                        onDoneClicked: <T>(countries) {
+                          // print("Selected Countries ==>> $countries");
+                          setState(() {
+                            _selectedCountries = countries as List<HiveCountry>;
+                            _updateUserCountries();
+                          });
+                        },
+                      ),
+                      SizedBox(height: 10.h),
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child:
+                            ItalicitleLabel(title: Strings.selectCountryDetail),
+                      ),
+                      //--------------------------
+                      SizedBox(height: 30.h),
+                      //--> Select language section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: Strings.selectLanugages,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      SelectDropDown(
+                        navTitle: Strings.selectLanugages,
                         placeholder: Strings.selectLanugages,
-                        selectedValue: _selectedLanguages,
-                        onChange: (selected) {
-                          setState(() => _selectedLanguages = selected.value);
-                        },
-                        choiceItems:
-                            S2Choice.listFrom<HiveLanguage, HiveLanguage>(
-                                source: _languageList,
-                                value: (index, item) => item,
-                                title: (index, item) => item.name,
-                                group: (index, item) {
-                                  return '';
-                                }),
-                        choiceGrouped: true,
-                        modalType: S2ModalType.fullPage,
-                        modalFilter: true,
-                        modalFilterAuto: true,
-                        tileBuilder: (context, state) {
-                          return S2Tile.fromState(
-                            state,
-                            isTwoLine: true,
-                          );
+                        selectedValues: _selectedLanguages,
+                        choice: SelectType.multiple,
+                        dataSource: DataSourceType.languages,
+                        onDoneClicked: <T>(languages) {
+                          // print("Selected languages ==>> $_selectedLanguages");
+                          setState(() {
+                            _selectedLanguages =
+                                languages as List<HiveLanguage>;
+                          });
                         },
                       ),
-                    ),
+                      SizedBox(height: 10.h),
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: ItalicitleLabel(
+                            title: Strings.selectLanugagesDetail),
+                      ),
+                    ],
                   ),
                 ),
-*/
-                SizedBox(height: 10.h),
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: ItalicitleLabel(title: Strings.selectLanugagesDetail),
-                ),
-              ],
-            ),
+              ),
+              (_isLoading == true)
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Container()
+            ],
           ),
-          if (_isLoading == true)
-            Center(
-              child: CircularProgressIndicator(),
-            )
-        ]),
+        ),
       ),
       bottomNavigationBar: _footer(),
     );
@@ -370,7 +291,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   Container _getNameField() {
     return Container(
       height: 52.h,
-      margin: EdgeInsets.fromLTRB(15.w, 0.0, 15.w, 0.0),
       child: TextFormField(
         controller: _nameController,
         focusNode: _nameFocus,

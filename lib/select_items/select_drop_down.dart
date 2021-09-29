@@ -3,12 +3,22 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/select_items/generic_multi_select_widget.dart';
 
 enum SelectType { single, multiple }
-enum DataSourceType { country, countries, language, languages, topics }
+enum DataSourceType {
+  country,
+  countries,
+  language,
+  languages,
+  topics,
+  types,
+  evaluationCategory
+}
 
 class SelectDropDown extends StatefulWidget {
   final String navTitle;
@@ -77,6 +87,23 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
 
+      case DataSourceType.types:
+        List<HiveMaterialType> types = value as List<HiveMaterialType>;
+        types.forEach((element) {
+          _value += '${element.name}, ';
+        });
+
+        break;
+
+      case DataSourceType.evaluationCategory:
+        List<HiveEvaluationCategory> cateogries =
+            value as List<HiveEvaluationCategory>;
+        cateogries.forEach((element) {
+          _value += '${element.name}, ';
+        });
+
+        break;
+
       default:
     }
 
@@ -95,7 +122,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
   Widget build(BuildContext context) {
     return Container(
       height: 52.h,
-      margin: EdgeInsets.only(left: 15.w, right: 15.w),
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.transparent,

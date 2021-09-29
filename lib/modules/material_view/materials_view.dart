@@ -15,14 +15,6 @@ import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/tile/tile.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/widget.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -92,35 +84,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       },
     );
   }
-
-  // List<MaterialListItem> _buildList(List<HiveMaterial> _materialsList) {
-  //   return _materialsList
-  //       .map((material) => new MaterialListItem(
-  //             material: material,
-  //             onMaterialTap: _onMaterialSelection,
-  //           ))
-  //       .toList();
-  // }
-
-  // List<MaterialListItem> _buildSearchList(List<HiveMaterial> _materialsList) {
-  //   List<HiveMaterial> _listToShow;
-
-  //   if (_query.isNotEmpty)
-  //     _listToShow = _materialsList
-  //         .where((item) =>
-  //             item.title!.toLowerCase().contains(_query.toLowerCase()) &&
-  //             item.title!.toLowerCase().startsWith(_query.toLowerCase()))
-  //         .toList();
-  //   else
-  //     _listToShow = _materialsList;
-
-  //   return _listToShow
-  //       .map((material) => new MaterialListItem(
-  //             material: material,
-  //             onMaterialTap: _onMaterialSelection,
-  //           ))
-  //       .toList();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -281,6 +244,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   Container _buildLanguagesContainer(AppBloc bloc) {
     return Container(
+      margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
         navTitle: Strings.selectLanugages,
         placeholder: Strings.selectLanugages,
@@ -289,60 +253,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         dataSource: DataSourceType.languages,
         onDoneClicked: <T>(languages) {
           setState(() {
-            _selectedLanguages = languages as List<
-                HiveLanguage>; // print("Selected languages ==>> $_selectedLanguages");
+            _selectedLanguages = languages as List<HiveLanguage>;
+            // print("Selected languages ==>> $_selectedLanguages");
             _fetchMaterialData(bloc);
           });
         },
       ),
     );
-    /*
-    return Container(
-      height: 80.h,
-      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      decoration: BoxDecoration(
-        color: AppColors.txtFieldBackground,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
-      ),
-      child: Center(
-        child: SmartSelect<HiveLanguage>.multiple(
-          title: Strings.selectLanugages,
-          placeholder: Strings.searchLanguagesPlaceholder,
-          // value: _selectedLanguages,
-          onChange: (selected) => setState(() {
-            _selectedLanguages = selected.value;
-            _fetchMaterialData(bloc);
-          }),
-          choiceItems: S2Choice.listFrom<HiveLanguage, HiveLanguage>(
-            source: _languageList,
-            value: (index, item) => item,
-            title: (index, item) => item.name,
-            //  group: (index, item) => item['brand'],
-          ),
-          choiceGrouped: false,
-          modalFilter: true,
-          modalFilterAuto: true,
-          modalType: S2ModalType.fullPage,
-          tileBuilder: (context, state) {
-            return S2Tile.fromState(
-              state,
-              isTwoLine: true,
-              title: Text(
-                Strings.selectLanugages,
-                style: TextStyle(color: AppColors.appTitle, fontSize: 16.sp),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-    */
   }
 
   Container _buildTopicsContainer(AppBloc bloc) {
     return Container(
+      margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
         navTitle: Strings.selectTopics,
         placeholder: Strings.selectTopics,
@@ -358,48 +280,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         },
       ),
     );
-    /* return Container(
-      height: 80.h,
-      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      decoration: BoxDecoration(
-        color: AppColors.txtFieldBackground,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
-      ),
-      child: Center(
-        child: SmartSelect<HiveMaterialTopic>.multiple(
-          title: "Select topics",
-          placeholder: Strings.searchTopicsPlaceholder,
-          // value: _selectedLanguages,
-          onChange: (selected) => setState(() {
-            _selectedTopics = selected.value;
-            _fetchMaterialData(bloc);
-          }),
-          choiceItems: S2Choice.listFrom<HiveMaterialTopic, HiveMaterialTopic>(
-            source: _topicsList,
-            value: (index, item) => item,
-            title: (index, item) => item.name,
-            //  group: (index, item) => item['brand'],
-          ),
-          choiceGrouped: false,
-          modalFilter: true,
-          modalFilterAuto: true,
-          modalType: S2ModalType.fullPage,
-          tileBuilder: (context, state) {
-            return S2Tile.fromState(
-              state,
-              isTwoLine: true,
-              title: Text(
-                Strings.selectTopics,
-                style: TextStyle(color: AppColors.appTitle, fontSize: 16.sp),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-    */
   }
 
   Widget _buildLanguageList(HiveMaterial material) {

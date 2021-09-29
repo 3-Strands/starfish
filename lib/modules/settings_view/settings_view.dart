@@ -14,10 +14,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-import 'package:starfish/smart_select/src/tile/tile.dart';
-import 'package:starfish/smart_select/src/widget.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -209,271 +206,220 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 52.h),
-                  _getNameSection(),
-                  SizedBox(height: 20.h),
-                  _getPhoneNumberSection(),
-                  SizedBox(height: 20.h),
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 52.h),
+                _getNameSection(),
+                SizedBox(height: 20.h),
+                _getPhoneNumberSection(),
+                SizedBox(height: 20.h),
 
-                  //--> Select country section
-                  Align(
+                //--> Select country section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.myCountry,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                SelectDropDown(
+                  navTitle: Strings.selectCountry,
+                  placeholder: Strings.selectCountry,
+                  selectedValues: _selectedCountries,
+                  choice: SelectType.multiple,
+                  dataSource: DataSourceType.countries,
+                  onDoneClicked: <T>(countries) {
+                    // print("Selected Countries ==>> $countries");
+                    setState(() {
+                      _selectedCountries = countries as List<HiveCountry>;
+                      updateCountries();
+                    });
+                  },
+                ),
+                //--------------------------
+
+                SizedBox(height: 20.h),
+
+                //--> Select language section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.myLanugages,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
+                Container(
+                  child: SelectDropDown(
+                    navTitle: Strings.selectLanugages,
+                    placeholder: Strings.selectLanugages,
+                    selectedValues: _selectedLanguages,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.languages,
+                    onDoneClicked: <T>(languages) {
+                      setState(() {
+                        _selectedLanguages = languages as List<HiveLanguage>;
+                        // print("Selected languages ==>> $_selectedLanguages");
+                      });
+                    },
+                  ),
+                ),
+                //--------------------------
+
+                SizedBox(height: 39.h),
+
+                //--> Last successfull sync section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.lastSuccessfullSync,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+                SizedBox(height: 20.h),
+
+                Container(
+                  child: Align(
                     alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: Strings.myCountry,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-
-                  Container(
-                    height: 80.h,
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: Center(
-                      child: SmartSelect<HiveCountry>.multiple(
-                        title: Strings.country,
-                        placeholder: Strings.selectCountry,
-                        selectedValue: _selectedCountries,
-                        onChange: (selected) => setState(() => {
-                              _selectedCountries = selected.value,
-                              updateCountries()
-                            }),
-                        choiceItems:
-                            S2Choice.listFrom<HiveCountry, HiveCountry>(
-                                source: _countryList,
-                                value: (index, item) => item,
-                                title: (index, item) => item.name,
-                                group: (index, item) {
-                                  return '';
-                                }),
-                        choiceGrouped: false,
-                        modalFilter: true,
-                        modalFilterAuto: true,
-                        modalType: S2ModalType.fullPage,
-                        tileBuilder: (context, state) {
-                          return S2Tile.fromState(
-                            state,
-                            isTwoLine: true,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  //--------------------------
-
-                  SizedBox(height: 20.h),
-
-                  //--> Select language section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: Strings.myLanugages,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-
-                  Container(
-                    height: 80.h,
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: Center(
-                      child: SmartSelect<HiveLanguage>.multiple(
-                        title: Strings.lanugages,
-                        placeholder: Strings.selectLanugages,
-                        selectedValue: _selectedLanguages,
-                        onChange: (selected) {
-                          setState(() => _selectedLanguages = selected.value);
-                        },
-                        choiceItems:
-                            S2Choice.listFrom<HiveLanguage, HiveLanguage>(
-                                source: _languageList,
-                                value: (index, item) => item,
-                                title: (index, item) => item.name,
-                                group: (index, item) {
-                                  return '';
-                                }),
-                        choiceGrouped: true,
-                        modalType: S2ModalType.fullPage,
-                        modalFilter: true,
-                        modalFilterAuto: true,
-                        tileBuilder: (context, state) {
-                          return S2Tile.fromState(
-                            state,
-                            isTwoLine: true,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  //--------------------------
-
-                  SizedBox(height: 39.h),
-
-                  //--> Last successfull sync section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: Strings.lastSuccessfullSync,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 5.h),
-                  SepratorLine(
-                    hight: 1.h,
-                    edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-                  ),
-                  SizedBox(height: 20.h),
-
-                  Container(
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    child: Align(
-                      alignment: FractionalOffset.topLeft,
-                      child: Text.rich(
-                        TextSpan(
-                          text: Strings.lastSuccessfullSync + ': ',
-                          style: TextStyle(
-                              color: AppColors.appTitle,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 22.sp),
-                          children: [
-                            TextSpan(
-                              text: '',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: 'Roboto',
-                                fontSize: ScreenUtil().setSp(22),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  //--------------------------
-
-                  SizedBox(height: 50.h),
-
-                  //--> Group admin section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: Strings.forGroupAdmin,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 5.h),
-                  SepratorLine(
-                    hight: 1.h,
-                    edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-                  ),
-                  SizedBox(height: 20.h),
-                  Container(
-                    height: 44.h,
-                    width: 345.w,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 300.w,
-                          height: 44.h,
-                          child: Text(
-                            Strings.linkMyGroups,
-                            textAlign: TextAlign.left,
-                            style: titleTextStyle,
-                          ),
-                        ),
-                        Container(
-                          width: 23.w,
-                          child: Center(
-                            child: IconButton(
-                              icon: (_user.linkGroup == true)
-                                  ? Icon(Icons.check_box)
-                                  : Icon(Icons.check_box_outline_blank),
-                              color: AppColors.selectedButtonBG,
-                              onPressed: () {
-                                setState(() => {
-                                      _user.linkGroup = !_user.linkGroup,
-                                      updatelinkGroupStatus()
-                                    });
-                              },
+                    child: Text.rich(
+                      TextSpan(
+                        text: Strings.lastSuccessfullSync + ': ',
+                        style: TextStyle(
+                            color: AppColors.appTitle,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 22.sp),
+                        children: [
+                          TextSpan(
+                            text: '',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Roboto',
+                              fontSize: ScreenUtil().setSp(22),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  //--------------------------
+                ),
 
-                  SizedBox(height: 50.h),
+                //--------------------------
 
-                  //--> My groups section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: Strings.myGroups,
-                      align: TextAlign.left,
-                    ),
+                SizedBox(height: 50.h),
+
+                //--> Group admin section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.forGroupAdmin,
+                    align: TextAlign.left,
                   ),
-                  SizedBox(height: 5.h),
-                  SepratorLine(
-                    hight: 1.h,
-                    edgeInsets: EdgeInsets.only(left: 15.w, right: 15.w),
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  _myGroupsList(),
-                  //--------------------------
-
-                  //--> Copy All Codes
-                  DottedBorder(
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(30.r),
-                    color: Color(0xFF3475F0),
-                    child: Container(
-                      width: 345.w,
-                      height: 50.h,
-                      child: ElevatedButton(
-                        onPressed: () {},
+                ),
+                SizedBox(height: 5.h),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+                SizedBox(height: 20.h),
+                Container(
+                  height: 44.h,
+                  width: 345.w,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 300.w,
+                        height: 44.h,
                         child: Text(
-                          Strings.copyAllCodes,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 14.sp,
-                            color: Color(0xFF3475F0),
+                          Strings.linkMyGroups,
+                          textAlign: TextAlign.left,
+                          style: titleTextStyle,
+                        ),
+                      ),
+                      Container(
+                        width: 23.w,
+                        child: Center(
+                          child: IconButton(
+                            icon: (_user.linkGroup == true)
+                                ? Icon(Icons.check_box)
+                                : Icon(Icons.check_box_outline_blank),
+                            color: AppColors.selectedButtonBG,
+                            onPressed: () {
+                              setState(() => {
+                                    _user.linkGroup = !_user.linkGroup,
+                                    updatelinkGroupStatus()
+                                  });
+                            },
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent,
+                      )
+                    ],
+                  ),
+                ),
+                //--------------------------
+
+                SizedBox(height: 50.h),
+
+                //--> My groups section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.myGroups,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+
+                SizedBox(height: 20.h),
+
+                _myGroupsList(),
+                //--------------------------
+
+                //--> Copy All Codes
+                DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(30.r),
+                  color: Color(0xFF3475F0),
+                  child: Container(
+                    width: 345.w,
+                    height: 50.h,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        Strings.copyAllCodes,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 14.sp,
+                          color: Color(0xFF3475F0),
                         ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent,
                       ),
                     ),
                   ),
-                  //--------------------------
+                ),
+                //--------------------------
 
-                  SizedBox(height: 10.h),
-                ],
-              ),
+                SizedBox(height: 10.h),
+              ],
             ),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: _footer(),
@@ -483,7 +429,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Container _getNameSection() {
     return Container(
       height: (isNameEditable) ? 84.h : 63.h,
-      margin: EdgeInsets.fromLTRB(15.w, 0.0, 15.w, 0.0),
       child: Column(
         children: [
           Container(
@@ -564,7 +509,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Container _getPhoneNumberSection() {
     return Container(
       height: (isMobileEditable) ? 84.h : 63.h,
-      margin: EdgeInsets.fromLTRB(15.w, 0.0, 15.w, 0.0),
       child: Column(
         children: [
           Container(
@@ -706,7 +650,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       height: 90.h,
       // color: Colors.green,
-      margin: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0),
+      margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
       child: Column(
         children: <Widget>[
           Container(

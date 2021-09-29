@@ -17,14 +17,7 @@ import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/models/invite_contact.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/choice_item.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/model/modal_config.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/tile/tile.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:starfish/smart_select/src/widget.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -396,41 +389,18 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
-                  //margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: SmartSelect<HiveLanguage>.multiple(
-                      title: Strings.lanugages,
-                      placeholder: Strings.selectLanugages,
-                      selectedValue: _selectedLanguages,
-                      onChange: (selected) {
-                        setState(() => _selectedLanguages = selected.value);
-                      },
-                      choiceItems:
-                          S2Choice.listFrom<HiveLanguage, HiveLanguage>(
-                              source: _languageBox.values.toList(),
-                              value: (index, item) => item,
-                              title: (index, item) => item.name,
-                              group: (index, item) {
-                                return '';
-                              }),
-                      choiceGrouped: true,
-                      modalType: S2ModalType.fullPage,
-                      modalFilter: true,
-                      modalFilterAuto: true,
-                      tileBuilder: (context, state) {
-                        return S2Tile.fromState(
-                          state,
-                          isTwoLine: true,
-                        );
-                      },
-                    ),
+                  child: SelectDropDown(
+                    navTitle: Strings.selectLanugages,
+                    placeholder: Strings.selectLanugages,
+                    selectedValues: _selectedLanguages,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.languages,
+                    onDoneClicked: <T>(languages) {
+                      setState(() {
+                        _selectedLanguages = languages as List<HiveLanguage>;
+                        // print("Selected languages ==>> $_selectedLanguages");
+                      });
+                    },
                   ),
                 ),
                 SizedBox(height: 21.h),
@@ -443,42 +413,19 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  height: 80.h,
-                  //margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: SmartSelect<HiveEvaluationCategory>.multiple(
-                      title: Strings.selectCategories,
-                      placeholder: Strings.selectCategories,
-                      selectedValue: _selectedEvaluationCategories,
-                      onChange: (selected) {
-                        setState(() =>
-                            _selectedEvaluationCategories = selected.value);
-                      },
-                      choiceItems: S2Choice.listFrom<HiveEvaluationCategory,
-                              HiveEvaluationCategory>(
-                          source: _evaluationCategoryBox.values.toList(),
-                          value: (index, item) => item,
-                          title: (index, item) => item.name,
-                          group: (index, item) {
-                            return '';
-                          }),
-                      choiceGrouped: true,
-                      modalType: S2ModalType.fullPage,
-                      modalFilter: true,
-                      modalFilterAuto: true,
-                      tileBuilder: (context, state) {
-                        return S2Tile.fromState(
-                          state,
-                          isTwoLine: true,
-                        );
-                      },
-                    ),
+                  child: SelectDropDown(
+                    navTitle: Strings.selectCategories,
+                    placeholder: Strings.selectCategories,
+                    selectedValues: _selectedEvaluationCategories,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.evaluationCategory,
+                    onDoneClicked: <T>(categories) {
+                      setState(() {
+                        _selectedEvaluationCategories =
+                            categories as List<HiveEvaluationCategory>;
+                        // print("Selected types ==>> $types");
+                      });
+                    },
                   ),
                 ),
                 SizedBox(height: 10.h),
