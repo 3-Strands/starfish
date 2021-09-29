@@ -118,7 +118,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updatePhoneNumber() async {
-    setState(() => {_mobileNumber = _phoneNumberController.text});
+    setState(() => {
+      _mobileNumber = _phoneNumberController.text,
+      _countyCode = _countryCodeController.text
+    });
     _user.phone = _phoneNumberController.text;
     _user.diallingCode = _countryCodeController.text;
     _user.isUpdated = true;
