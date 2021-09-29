@@ -14,6 +14,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:starfish/smart_select/src/model/choice_item.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -280,6 +281,23 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   Container _buildLanguagesContainer(AppBloc bloc) {
     return Container(
+      child: SelectDropDown(
+        navTitle: Strings.selectLanugages,
+        placeholder: Strings.selectLanugages,
+        selectedValues: _selectedLanguages,
+        choice: SelectType.multiple,
+        dataSource: DataSourceType.languages,
+        onDoneClicked: <T>(languages) {
+          setState(() {
+            _selectedLanguages = languages as List<
+                HiveLanguage>; // print("Selected languages ==>> $_selectedLanguages");
+            _fetchMaterialData(bloc);
+          });
+        },
+      ),
+    );
+    /*
+    return Container(
       height: 80.h,
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       decoration: BoxDecoration(
@@ -320,10 +338,27 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         ),
       ),
     );
+    */
   }
 
   Container _buildTopicsContainer(AppBloc bloc) {
     return Container(
+      child: SelectDropDown(
+        navTitle: Strings.selectTopics,
+        placeholder: Strings.selectTopics,
+        selectedValues: _selectedTopics,
+        choice: SelectType.multiple,
+        dataSource: DataSourceType.topics,
+        onDoneClicked: <T>(topics) {
+          setState(() {
+            _selectedTopics = topics as List<HiveMaterialTopic>;
+            // print("Selected topics ==>> $_selectedTopics");
+            _fetchMaterialData(bloc);
+          });
+        },
+      ),
+    );
+    /* return Container(
       height: 80.h,
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       decoration: BoxDecoration(
@@ -364,6 +399,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         ),
       ),
     );
+    */
   }
 
   Widget _buildLanguageList(HiveMaterial material) {

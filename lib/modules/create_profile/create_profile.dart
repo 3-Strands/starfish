@@ -15,6 +15,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -222,6 +223,21 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 10.h),
+                SelectDropDown(
+                  navTitle: Strings.selectCountry,
+                  placeholder: Strings.selectCountry,
+                  selectedValues: _selectedCountries,
+                  choice: SelectType.multiple,
+                  dataSource: DataSourceType.countries,
+                  onDoneClicked: <T>(countries) {
+                    // print("Selected Countries ==>> $countries");
+                    setState(() {
+                      _selectedCountries = countries as List<HiveCountry>;
+                      _updateUserCountries();
+                    });
+                  },
+                ),
+                /*
                 Container(
                   height: 80.h,
                   margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -260,7 +276,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                   ),
                 ),
-
+*/
                 SizedBox(height: 10.h),
                 Align(
                   alignment: FractionalOffset.topLeft,
@@ -277,17 +293,20 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                /*
-                MultiSelectDialogField(
-                  items: _languageList
-                      .map((e) => MultiSelectItem(e, e.name))
-                      .toList(),
-                  listType: MultiSelectListType.LIST,
-                  onConfirm: (values) {
-                    _selectedLanguages = values as List<HiveLanguage>;
+                SelectDropDown(
+                  navTitle: Strings.selectLanugages,
+                  placeholder: Strings.selectLanugages,
+                  selectedValues: _selectedLanguages,
+                  choice: SelectType.multiple,
+                  dataSource: DataSourceType.languages,
+                  onDoneClicked: <T>(languages) {
+                    // print("Selected languages ==>> $_selectedLanguages");
+                    setState(() {
+                      _selectedLanguages = languages as List<HiveLanguage>;
+                    });
                   },
                 ),
-                */
+                /*
                 Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: Container(
@@ -329,7 +348,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                   ),
                 ),
-
+*/
                 SizedBox(height: 10.h),
                 Align(
                   alignment: FractionalOffset.topLeft,
