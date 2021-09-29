@@ -106,6 +106,7 @@ class SyncService {
           languageIds: user.languageIds,
           groups: groups,
           actions: actions,
+          diallingCode: user.diallingCode,
           selectedActionsTab: user.selectedActionsTab.toString(),
           selectedResultsTab: user.selectedResultsTab.toString());
 

@@ -82,10 +82,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _nameController.text = _user.name;
       _phoneNumberController.text = _user.phone;
-      // _countryCodeController.text = _user.diallingCode;
-
+      _countryCodeController.text = _user.diallingCode;
       _userName = _user.name;
-      // _countyCode = _user.diallingCode;
+      _countyCode = _user.diallingCode;
       _mobileNumber = _user.phone;
     });
   }
@@ -121,6 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void updatePhoneNumber() async {
     setState(() => {_mobileNumber = _phoneNumberController.text});
     _user.phone = _phoneNumberController.text;
+    _user.diallingCode = _countryCodeController.text;
     _user.isUpdated = true;
     _currentUserBox.putAt(0, _user);
   }

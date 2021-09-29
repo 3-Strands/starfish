@@ -39,6 +39,9 @@ class HiveCurrentUser {
   @HiveField(10)
   bool isUpdated;
 
+  @HiveField(11)
+  String diallingCode;
+
   HiveCurrentUser({
     required this.id,
     required this.name,
@@ -51,5 +54,6 @@ class HiveCurrentUser {
     required this.selectedActionsTab,
     required this.selectedResultsTab,
     this.isUpdated = false,
+    required this.diallingCode,
   });
 }
