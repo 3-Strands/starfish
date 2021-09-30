@@ -5,9 +5,12 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/widgets/seprator_line_widget.dart';
 
 class GroupsScreen extends StatefulWidget {
   GroupsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -92,6 +95,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
   }*/
 
   void _onGroupSelection(HiveGroup group) {
+    print('group.users ==>>');
+    print(group);
+    print(group.users);
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -112,6 +118,91 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
+  Widget _buildUsersList(List<HiveGroupUser> users) {
+    List<Widget> _users = [];
+    users.forEach((user) {
+      _users.add(
+        Container(
+          height: 80.h,
+          width: MediaQuery.of(context).size.width - 10.0,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 27.h,
+                    width: MediaQuery.of(context).size.width - 160.0,
+                    child: Text(
+                      user.userId!,
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: AppColors.appTitle,
+                        fontFamily: 'OpenSans',
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    width: 90.w,
+                    margin: EdgeInsets.only(right: 0.w),
+                    child: Text(
+                      GroupUser_Role.valueOf(user.role!).toString(),
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: AppColors.appTitle,
+                        fontFamily: 'OpenSans',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: Text(
+                  '+91 1234568709',
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: AppColors.appTitle,
+                    fontFamily: 'OpenSans',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              SepratorLine(
+                hight: 1.h,
+                edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+              ),
+              SizedBox(
+                height: 10.h,
+              )
+            ],
+          ),
+        ),
+      );
+    });
+
+    return Container(
+      height: 200.h,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _users,
+      ),
+    );
+  }
+
   Widget _buildSlidingUpPanel(HiveGroup group) {
     return Container(
       margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
@@ -121,22 +212,24 @@ class _GroupsScreenState extends State<GroupsScreen> {
         children: <Widget>[
           Container(
             height: 22.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  '${group.name}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+            child: Align(
+              alignment: FractionalOffset.topLeft,
+              child: Text(
+                '${group.name}',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: AppColors.selectedButtonBG,
+                  fontFamily: 'OpenSans',
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
+              ),
             ),
           ),
+          SizedBox(
+            height: 40.h,
+          ),
+          _buildUsersList(group.users!),
           SizedBox(
             height: 200.h,
           ),
@@ -146,6 +239,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
             color: Color(0xFFEFEFEF),
             child: ElevatedButton(
               onPressed: () {
+                //_closeSlidingUpPanelIfOpen();
                 Navigator.pop(context);
               },
               style: ButtonStyle(
@@ -157,8 +251,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
               ),
-              child: Text('Close'),
+              child: Text(Strings.close),
             ),
+          ),
+          SizedBox(
+            height: 10.h,
           ),
         ],
       ),
