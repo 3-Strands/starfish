@@ -127,4 +127,9 @@ sending an invitation to use Starfish''';
 
   static const String inviteSMS =
       '''Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>''';
+
+  static const String groupFilterPrefix = 'Groups';
+  static const String groupFilterAll = 'All of my groups';
+  static const String groupFilterLearner = 'I\'am a learner in';
+  static const String groupFilterAdminCoLead = 'Groups I teach or co-lead';
 }

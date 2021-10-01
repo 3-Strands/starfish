@@ -258,17 +258,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             fontSize: 16.sp,
                             fontFamily: 'OpenSans',
                           ),
-                          /*hint: Text(
-                            'Groups: ' + _choiceText,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 16.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            textAlign: TextAlign.left,
-                          ),*/
                           value: bloc.groupBloc.groupRoleFilter,
                           onChanged: (UserGroupRoleFilter? value) {
                             setState(() {
@@ -284,7 +273,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             return DropdownMenuItem<UserGroupRoleFilter>(
                               value: value,
                               child: Text(
-                                value.about,
+                                value.filterLabel,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
                                   fontSize: 14.sp,
@@ -304,7 +293,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 StreamBuilder(
                     stream: bloc.groupBloc.groups,
                     builder: (BuildContext context,
-                        AsyncSnapshot<Map<GroupUser_Role, List<HiveGroup>>>
+                        AsyncSnapshot<Map<UserGroupRoleFilter, List<HiveGroup>>>
                             snapshot) {
                       if (snapshot.hasData) {
                         return GroupListView(
@@ -332,7 +321,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10.sp, vertical: 8.sp),
                               child: Text(
-                                '${snapshot.data!.keys.toList()[section]}', //${snapshot.data!.keys.toList().elementAt(section)}',
+                                '${snapshot.data!.keys.toList()[section].about}', //${snapshot.data!.keys.toList().elementAt(section)}',
                                 style: TextStyle(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,

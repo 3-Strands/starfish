@@ -11,30 +11,28 @@ import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class GroupBloc extends Object {
-  UserGroupRoleFilter groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
-
   final GroupRepository repository = GroupRepository();
-  late BehaviorSubject<Map<GroupUser_Role, List<HiveGroup>>> _groups;
+  late BehaviorSubject<Map<UserGroupRoleFilter, List<HiveGroup>>> _groups;
 
-  UserGroupRoleFilter _groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
   String _query = '';
+  UserGroupRoleFilter groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
 
   GroupBloc() {
     //initializes the subject with element already
-    _groups = new BehaviorSubject<Map<GroupUser_Role, List<HiveGroup>>>();
+    _groups = new BehaviorSubject<Map<UserGroupRoleFilter, List<HiveGroup>>>();
   }
 
   // Add data to Stream
-  Stream<Map<GroupUser_Role, List<HiveGroup>>> get groups => _groups.stream;
+  Stream<Map<UserGroupRoleFilter, List<HiveGroup>>> get groups =>
+      _groups.stream;
 
   setQuery(String query) {
     _query = query;
   }
 
-  fetchAllGroupsByRole(
-      ) async {
+  fetchAllGroupsByRole() async {
     final Map<GroupUser_Role, List<String>> _roleGroupIdsMap = Map();
-    final Map<GroupUser_Role, List<HiveGroup>> _roleGroupMap = Map();
+    final Map<UserGroupRoleFilter, List<HiveGroup>> _roleGroupMap = Map();
 
     _roleGroupIdsMap[GroupUser_Role.ADMIN] =
         await _fetchGroupIdsWithRole(GroupUser_Role.ADMIN) ?? [];
@@ -47,30 +45,43 @@ class GroupBloc extends Object {
 
     if (groupRoleFilter == UserGroupRoleFilter.FILTER_LEARNER) {
       _roleGroupIdsMap[GroupUser_Role.LEARNER]?.forEach((element) async {
-        _roleGroupMap[GroupUser_Role.LEARNER] = await _getGroupsWithIds(
-            _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? []);
+        _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] =
+            await _getGroupsWithIds(
+                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? []);
       });
     } else if (groupRoleFilter == UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD) {
       List<String> _groupIds = [];
       _groupIds.addAll(_roleGroupIdsMap[GroupUser_Role.ADMIN]!);
       _groupIds.addAll(_roleGroupIdsMap[GroupUser_Role.TEACHER]!);
 
-      _roleGroupMap[GroupUser_Role.ADMIN] = [];
+      _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD] = [];
 
       _roleGroupIdsMap[GroupUser_Role.ADMIN]!.forEach((element) async {
-        _roleGroupMap[GroupUser_Role.ADMIN]?.addAll(await _getGroupsWithIds(
-            _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? []));
+        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
+            await _getGroupsWithIds(
+                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? []));
       });
 
       _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
-        _roleGroupMap[GroupUser_Role.ADMIN]?.addAll(await _getGroupsWithIds(
-            _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? []));
+        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
+            await _getGroupsWithIds(
+                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? []));
       });
     } else {
       //if (groupRoleFilter == UserGroupRoleFilter.FILTER_ALL) {
-      _roleGroupIdsMap
-          .forEach((GroupUser_Role key, List<String> groupIds) async {
-        _roleGroupMap[key] = await _getGroupsWithIds(groupIds);
+      _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD] = [];
+      _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] = [];
+
+      _roleGroupIdsMap[GroupUser_Role.ADMIN]!.forEach((element) async {
+        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
+            await _getGroupsWithIds(
+                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? []));
+      });
+
+      _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
+        _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.addAll(
+            await _getGroupsWithIds(
+                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? []));
       });
     }
     _groups.sink.add(_roleGroupMap);

@@ -1,3 +1,4 @@
+import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 enum UserGroupRoleFilter {
@@ -9,11 +10,14 @@ enum UserGroupRoleFilter {
 extension UserGroupRoleFilterExt on UserGroupRoleFilter {
   static const groupRoleFilter = {
     UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD:
-        'Groups: Groups I teach or co-lead',
-    UserGroupRoleFilter.FILTER_LEARNER: 'Groups: I\'am a learner in',
-    UserGroupRoleFilter.FILTER_ALL: 'Groups: All of my groups',
+        '${Strings.groupFilterAdminCoLead}',
+    UserGroupRoleFilter.FILTER_LEARNER: Strings.groupFilterLearner,
+    UserGroupRoleFilter.FILTER_ALL: Strings.groupFilterAll,
   };
 
   //about property returns the custom message
   String get about => groupRoleFilter[this]!;
+
+  String get filterLabel =>
+      '${Strings.groupFilterPrefix}: ${groupRoleFilter[this]!}';
 }
