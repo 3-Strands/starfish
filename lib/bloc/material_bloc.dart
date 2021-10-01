@@ -1,33 +1,42 @@
-import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/repository/materials_repository.dart';
 
 class MaterialBloc extends Object {
+  List<HiveLanguage> selectedLanguages = [];
+  List<HiveMaterialTopic> selectedTopics = [];
+  String query = '';
+
   late BehaviorSubject<List<HiveMaterial>> _materials;
 
   // BehaviorSubject<List<HiveMaterialTopic>> _materialTopics =
   //     BehaviorSubject<List<HiveMaterialTopic>>();
 
   MaterialBloc() {
-    _materials = new BehaviorSubject<
-        List<HiveMaterial>>(); //initializes the subject with element already
+    // _selectedLanguages = new BehaviorSubject<List<HiveLanguage>>();
+    _materials = new BehaviorSubject<List<HiveMaterial>>();
   }
 
   // Add data to Stream
   Stream<List<HiveMaterial>> get materials => _materials.stream;
+
+  // Add data to Stream
+  // Stream<List<HiveLanguage>> get selectedLanguages => _selectedLanguages.stream;
+
+  // List<HiveLanguage> languages = [];
 
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
   // Stream<List<HiveMaterialTopic>> get materialTopics => _materialTopics.stream;
 
-  fetchMaterialsFromDB(List<HiveLanguage> _selectedLanguages,
-      List<HiveMaterialTopic> _selectedTopics) async {
+  setQuery(String qury) {
+    query = qury;
+  }
+
+  fetchMaterialsFromDB() async {
     MaterialRepository materialRepository = MaterialRepository();
 
     materialRepository
@@ -35,11 +44,13 @@ class MaterialBloc extends Object {
         .then(
           (value) => {_allMaterials = value},
         )
-        .whenComplete(() => {
-              _filteredMaterialsList =
-                  _doFilterMaterials(_selectedLanguages, _selectedTopics),
-              _materials.sink.add(_filteredMaterialsList)
-            });
+        .whenComplete(
+          () => {
+            _filteredMaterialsList =
+                _doFilterMaterials(selectedLanguages, selectedTopics),
+            _materials.sink.add(_filteredMaterialsList)
+          },
+        );
   }
 
   List<HiveMaterial> _doFilterMaterials(List<HiveLanguage>? _selectedLanguages,
@@ -135,30 +146,13 @@ class MaterialBloc extends Object {
     print('edit Material');
     final index = _filteredMaterialsList
         .indexWhere((element) => element.id == material!.id);
+
     _filteredMaterialsList.removeAt(index);
     _filteredMaterialsList.insert(index, material!);
     _materials.sink.add(_filteredMaterialsList);
   }
 
-  // void fetchMaterialTopicsFromDB() {
-  //   MaterialRepository materialRepository = MaterialRepository();
-  //   materialRepository
-  //       .fetchMaterialTopicsFromDB()
-  //       .then((value) => {_materialTopics.sink.add(value)})
-  //       .whenComplete(() => {
-  //             print('_materialTopics.length'),
-  //             print(_materialTopics.length),
-  //             // _materialTopics.forEach((element) {
-  //             //   print('element ==>>');
-  //             //   print(element.name);
-  //             // }),
-  //           });
-  //   // print("topices ==>>");
-  //   // print(topices);
-  // }
-
   void dispose() {
     _materials.close();
-    // _materialTopics.close();
   }
 }

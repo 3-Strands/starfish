@@ -30,8 +30,8 @@ class MaterialsScreen extends StatefulWidget {
 }
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
-  List<HiveLanguage> _selectedLanguages = [];
-  List<HiveMaterialTopic> _selectedTopics = [];
+  // List<HiveLanguage> _selectedLanguages = [];
+  // List<HiveMaterialTopic> _selectedTopics = [];
 
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicsList;
@@ -39,7 +39,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
   late String _choiceText = 'No filter applied';
-  late String _query = "";
+  // late String _query = "";
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   _fetchMaterialData(AppBloc bloc) async {
-    bloc.materialBloc.fetchMaterialsFromDB(_selectedLanguages, _selectedTopics);
+    bloc.materialBloc.fetchMaterialsFromDB();
   }
 
   void _getAllLanguages() {
@@ -69,7 +69,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
+          topLeft: Radius.circular(34.r),
+          topRight: Radius.circular(34.r),
+        ),
       ),
       isScrollControlled: true,
       isDismissible: true,
@@ -105,13 +107,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(height: 10.h),
               SearchBar(
                 onValueChanged: (value) {
-                  print('searched value $value');
                   setState(() {
-                    _query = value;
+                    bloc.materialBloc.setQuery(value);
                   });
                 },
                 onDone: (value) {
-                  print('searched value $value');
+                  setState(() {
+                    bloc.materialBloc.setQuery(value);
+                  });
                 },
               ),
               SizedBox(height: 10.h),
@@ -199,7 +202,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed(Routes.addNewMaterial).then(
-              (value) => FocusScope.of(context).requestFocus(new FocusNode()));
+                (value) => FocusScope.of(context).requestFocus(
+                  new FocusNode(),
+                ),
+              );
         },
         child: Icon(Icons.add),
       ),
@@ -208,53 +214,54 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   Widget materialsList(AppBloc bloc) {
     return StreamBuilder<List<HiveMaterial>>(
-        stream: bloc.materialBloc.materials,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<HiveMaterial> _listToShow;
+      stream: bloc.materialBloc.materials,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<HiveMaterial> _listToShow;
 
-            if (_query.isNotEmpty)
-              _listToShow = snapshot.data!
-                  .where((item) =>
-                      item.title!
-                          .toLowerCase()
-                          .contains(_query.toLowerCase()) ||
-                      item.title!
-                          .toLowerCase()
-                          .startsWith(_query.toLowerCase()))
-                  .toList();
-            else
-              _listToShow = snapshot.data!;
-            return ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _listToShow.length,
-                itemBuilder: (BuildContext ctxt, int index) {
-                  return MaterialListItem(
-                    material: _listToShow[index],
-                    onMaterialTap: _onMaterialSelection,
-                  );
-                });
+          if (bloc.materialBloc.query.isNotEmpty) {
+            String _query = bloc.materialBloc.query;
+            _listToShow = snapshot.data!
+                .where((item) =>
+                    item.title!.toLowerCase().contains(_query.toLowerCase()) ||
+                    item.title!.toLowerCase().startsWith(_query.toLowerCase()))
+                .toList();
           } else {
-            return Container();
+            _listToShow = snapshot.data!;
           }
-        });
+          return ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: _listToShow.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                return MaterialListItem(
+                  material: _listToShow[index],
+                  onMaterialTap: _onMaterialSelection,
+                );
+              });
+        } else {
+          return Container();
+        }
+      },
+    );
   }
 
-  Container _buildLanguagesContainer(AppBloc bloc) {
+  Widget _buildLanguagesContainer(AppBloc bloc) {
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
         navTitle: Strings.selectLanugages,
         placeholder: Strings.selectLanugages,
-        selectedValues: _selectedLanguages,
+        selectedValues:
+            bloc.materialBloc.selectedLanguages, //_selectedLanguages,
         choice: SelectType.multiple,
         dataSource: DataSourceType.languages,
         onDoneClicked: <T>(languages) {
           setState(() {
-            _selectedLanguages = languages as List<HiveLanguage>;
-            // print("Selected languages ==>> $_selectedLanguages");
+            List<HiveLanguage> _selectedLanguages =
+                languages as List<HiveLanguage>;
+            bloc.materialBloc.selectedLanguages = _selectedLanguages;
             _fetchMaterialData(bloc);
           });
         },
@@ -268,13 +275,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: SelectDropDown(
         navTitle: Strings.selectTopics,
         placeholder: Strings.selectTopics,
-        selectedValues: _selectedTopics,
+        selectedValues: bloc.materialBloc.selectedTopics, //_selectedTopics,
         choice: SelectType.multiple,
         dataSource: DataSourceType.topics,
         onDoneClicked: <T>(topics) {
           setState(() {
-            _selectedTopics = topics as List<HiveMaterialTopic>;
-            // print("Selected topics ==>> $_selectedTopics");
+            List<HiveMaterialTopic> _selectedTopics =
+                topics as List<HiveMaterialTopic>;
+            bloc.materialBloc.selectedTopics = _selectedTopics;
             _fetchMaterialData(bloc);
           });
         },
@@ -398,8 +406,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 ),
                 text: Strings.edit,
                 onButtonTap: () {
-                  print('material ==>>');
-                  print(material);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -507,7 +513,6 @@ class MaterialListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          print('Material Item Selected');
           onMaterialTap(material);
         },
         child: Container(
