@@ -146,7 +146,8 @@ class _SelectDropDownState extends State<SelectDropDown> {
                 },
               ),
             ),
-          );
+          ).then(
+              (value) => FocusScope.of(context).requestFocus(new FocusNode()));
         },
         child: Container(
           margin: EdgeInsets.only(left: 15.w),
