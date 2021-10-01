@@ -16,6 +16,7 @@ class GroupBloc extends Object {
   final GroupRepository repository = GroupRepository();
   late BehaviorSubject<Map<GroupUser_Role, List<HiveGroup>>> _groups;
 
+  UserGroupRoleFilter _groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
   String _query = '';
 
   GroupBloc() {
@@ -26,32 +27,12 @@ class GroupBloc extends Object {
   // Add data to Stream
   Stream<Map<GroupUser_Role, List<HiveGroup>>> get groups => _groups.stream;
 
-  List<HiveGroup> _allGroups = [];
-
-  /*fetchGroupsFromDB(String query, int groupTitleIndex) async {
-    switch (groupTitleIndex) {
-      case 1:
-        _fetchGroupWhereRole(
-            query, [GroupUser_Role.ADMIN, GroupUser_Role.TEACHER]);
-        break;
-      case 2:
-        _fetchGroupWhereRole(query, [GroupUser_Role.LEARNER]);
-        break;
-      case 0:
-      default:
-        _fetchGroupWhereRole(query, [
-          GroupUser_Role.ADMIN,
-          GroupUser_Role.TEACHER,
-          GroupUser_Role.LEARNER,
-          GroupUser_Role.UNSPECIFIED_ROLE,
-        ]);
-    }
-  }*/
-
-  fetchGroupsFromDB(String query, String filter) {}
+  setQuery(String query) {
+    _query = query;
+  }
 
   fetchAllGroupsByRole(
-      String query, UserGroupRoleFilter groupRoleFilter) async {
+      ) async {
     final Map<GroupUser_Role, List<String>> _roleGroupIdsMap = Map();
     final Map<GroupUser_Role, List<HiveGroup>> _roleGroupMap = Map();
 
@@ -104,61 +85,21 @@ class GroupBloc extends Object {
             GroupUser_Role.valueOf(groupUser.role!) == groupUserRole)
         .map((e) => e.groupId!)
         .toList();
-
-    /*currentUserRepository.getUserFromDB().then((HiveCurrentUser currentUser) {
-      List<String> ids = currentUser.groups
-          .where((HiveGroupUser groupUser) =>
-              GroupUser_Role.valueOf(groupUser.role!) == groupUserRole)
-          .map((e) => e.groupId!)
-          .toList();
-      print('IDS[$groupUserRole]: $ids');
-      return ids;
-    }).onError((error, stackTrace) {
-      return [];
-    });*/
   }
 
   Future<List<HiveGroup>> _getGroupsWithIds(List<String> groupIds) async {
     List<HiveGroup> _groups = await repository.fetchGroupsFromDB();
 
     return _groups
-        .where((HiveGroup group) => groupIds.contains(group.id))
+        .where((HiveGroup group) =>
+            groupIds.contains(group.id) &&
+            group.name!.toLowerCase().contains(_query.toLowerCase()))
         .toList();
   }
 
-/*
-  _fetchGroupWhereRole(String query, List<GroupUser_Role> havingRoles) async {
-    CurrentUserRepository currentUserRepository = CurrentUserRepository();
-    HiveCurrentUser currentUser = await currentUserRepository.getUserFromDB();
-
-    List<String> matchinListIds = currentUser.groups
-        .where((HiveGroupUser groupUser) =>
-            havingRoles.contains(GroupUser_Role.valueOf(groupUser.role!)))
-        .map((e) => e.groupId!)
-        .toList();
-
-    if (matchinListIds.isEmpty) {
-      _allGroups = [];
-      _groups.sink.add(_allGroups);
-    } else {
-      repository.fetchGroupsFromDB().then((List<HiveGroup> groups) {
-        List<HiveGroup> _g = [];
-
-        groups.forEach((element) {
-          if (matchinListIds.contains(element.id) &&
-              element.name!.toLowerCase().contains(query.toLowerCase())) {
-            _g.add(element);
-          }
-        });
-        _allGroups = _g;
-        _groups.sink.add(_allGroups);
-      });
-    }
-  }
-*/
-  Future<int> addEditMaterial(HiveGroup group) async {
+  Future<int> addEditGroup(HiveGroup group) async {
     return repository.addEditGroup(group).then((value) {
-      _allGroups.add(group);
+      //_allGroups.add(group);
       //_groups.sink.add(_allGroups);
       return value;
     });

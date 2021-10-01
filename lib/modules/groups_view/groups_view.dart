@@ -25,77 +25,15 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   bool _isSearching = false;
-  /*var _groupTitleList = <String>[
-    'Groups: All of my groups',
-    'Groups: Group I teach or co-lead',
-    'Groups: Groups I\'m a learner in',
-  ];*/
-  //List<HiveGroup> _groupsList = [];
-  //List<HiveGroup> _groupSearchList = [];
 
   late AppBloc bloc;
-  //late Box<HiveGroup> _groupBox;
-  late String _choiceText = 'All of my groups';
-  //late Map<String, List<HiveGroup>> _groups;
-  int groupTitleIndex = 0;
-  UserGroupRoleFilter _groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
-  String _query = '';
-  //List<HiveGroup> _teacherList = [];
-  //List<HiveGroup> _lernerList = [];
+  //int groupTitleIndex = 0;
+  //UserGroupRoleFilter _groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
+  //String _query = '';
   @override
   void initState() {
     super.initState();
-
-    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
-
-    //_getGroups();
   }
-
-  /*void _getGroups() async {
-    _groupsList = _groupBox.values.toList();
-    print('_groupsList: ${_groupsList.length}');
-
-    _filterGroups(groupTitleIndex);
-    if (_query.isNotEmpty)
-      _groupSearchList = _groupsList
-          .where((item) =>
-              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
-              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
-          .toList();
-    else
-      _groupsList = _groupsList;
-  }
-
-  void _filterGroups(int index) {
-    if (_query.isNotEmpty)
-      _groupSearchList = _groupsList
-          .where((item) =>
-              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
-              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
-          .toList();
-    else
-      _groupsList = _groupsList;
-    _teacherList = _query.isNotEmpty
-        ? _groupSearchList
-        : _groupsList; // _teacherList filter will perform here
-    _lernerList = _query.isNotEmpty
-        ? _groupSearchList
-        : _groupsList; // _lernerList filter will perform here
-    if (index == 0) {
-      _groups = {
-        'Groups: Group I teach or co-lead': _teacherList,
-        'Groups: Groups I\'m a learner in': _lernerList,
-      };
-    } else if (index == 1) {
-      _groups = {
-        'Groups: Group I teach or co-lead': _teacherList,
-      };
-    } else if (index == 2) {
-      _groups = {
-        'Groups: Groups I\'m a learner in': _lernerList,
-      };
-    }
-  }*/
 
   void _onGroupSelection(HiveGroup group) {
     print('group.users ==>>');
@@ -265,29 +203,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  // List<GroupListItem> _buildList() {
-  //   return _groupsList
-  //       .map((group) => new GroupListItem(
-  //             group: group,
-  //             onGroupTap: _onGroupSelection,
-  //           ))
-  //       .toList();
-  // }
-
-  // List<GroupListItem> _buildSearchList() {
-  //   return _groupsList
-  //       .map((group) => new GroupListItem(
-  //             group: group,
-  //             onGroupTap: _onGroupSelection,
-  //           ))
-  //       .toList();
-  // }
-
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    //bloc.groupBloc.fetchGroupsFromDB(_query, groupTitleIndex);
-    bloc.groupBloc.fetchAllGroupsByRole(_query, _groupRoleFilter);
+    bloc.groupBloc.fetchAllGroupsByRole();
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -303,14 +222,14 @@ class _GroupsScreenState extends State<GroupsScreen> {
               children: <Widget>[
                 SearchBar(
                   onValueChanged: (value) {
-                    print('searched value $value');
                     setState(() {
-                      _query = value;
-                      //_filterGroups(groupTitleIndex);
+                      bloc.groupBloc.setQuery(value);
                     });
                   },
                   onDone: (value) {
-                    print('searched value $value');
+                    setState(() {
+                      bloc.groupBloc.setQuery(value);
+                    });
                   },
                 ),
                 SizedBox(
@@ -339,7 +258,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             fontSize: 16.sp,
                             fontFamily: 'OpenSans',
                           ),
-                          hint: Text(
+                          /*hint: Text(
                             'Groups: ' + _choiceText,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -349,13 +268,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               fontFamily: 'OpenSans',
                             ),
                             textAlign: TextAlign.left,
-                          ),
-                          value: _groupRoleFilter,
+                          ),*/
+                          value: bloc.groupBloc.groupRoleFilter,
                           onChanged: (UserGroupRoleFilter? value) {
                             setState(() {
                               /*groupTitleIndex =
                                     _groupTitleList.indexOf(value);*/
-                              _groupRoleFilter = value!;
+                              bloc.groupBloc.groupRoleFilter = value!;
                             });
                           },
 
