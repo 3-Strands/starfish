@@ -555,7 +555,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   }
 
                   bloc.groupBloc
-                      .addEditMaterial(_hiveGroup)
+                      .addEditGroup(_hiveGroup)
                       .then((value) => print('$value record(s) saved.'))
                       .onError((error, stackTrace) {
                     print('Error: ${error.toString()}.');

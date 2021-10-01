@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -23,76 +25,15 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   bool _isSearching = false;
-  var _groupTitleList = <String>[
-    'Groups: All of my groups',
-    'Groups: Group I teach or co-lead',
-    'Groups: Groups I\'m a learner in',
-  ];
-  //List<HiveGroup> _groupsList = [];
-  //List<HiveGroup> _groupSearchList = [];
 
   late AppBloc bloc;
-  //late Box<HiveGroup> _groupBox;
-  late String _choiceText = 'All of my groups';
-  late Map<String, List<HiveGroup>> _groups;
-  int groupTitleIndex = 0;
-  String _query = '';
-  //List<HiveGroup> _teacherList = [];
-  //List<HiveGroup> _lernerList = [];
+  //int groupTitleIndex = 0;
+  //UserGroupRoleFilter _groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
+  //String _query = '';
   @override
   void initState() {
     super.initState();
-
-    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
-
-    //_getGroups();
   }
-
-  /*void _getGroups() async {
-    _groupsList = _groupBox.values.toList();
-    print('_groupsList: ${_groupsList.length}');
-
-    _filterGroups(groupTitleIndex);
-    if (_query.isNotEmpty)
-      _groupSearchList = _groupsList
-          .where((item) =>
-              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
-              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
-          .toList();
-    else
-      _groupsList = _groupsList;
-  }
-
-  void _filterGroups(int index) {
-    if (_query.isNotEmpty)
-      _groupSearchList = _groupsList
-          .where((item) =>
-              item.name!.toLowerCase().contains(_query.toLowerCase()) &&
-              item.name!.toLowerCase().startsWith(_query.toLowerCase()))
-          .toList();
-    else
-      _groupsList = _groupsList;
-    _teacherList = _query.isNotEmpty
-        ? _groupSearchList
-        : _groupsList; // _teacherList filter will perform here
-    _lernerList = _query.isNotEmpty
-        ? _groupSearchList
-        : _groupsList; // _lernerList filter will perform here
-    if (index == 0) {
-      _groups = {
-        'Groups: Group I teach or co-lead': _teacherList,
-        'Groups: Groups I\'m a learner in': _lernerList,
-      };
-    } else if (index == 1) {
-      _groups = {
-        'Groups: Group I teach or co-lead': _teacherList,
-      };
-    } else if (index == 2) {
-      _groups = {
-        'Groups: Groups I\'m a learner in': _lernerList,
-      };
-    }
-  }*/
 
   void _onGroupSelection(HiveGroup group) {
     print('group.users ==>>');
@@ -262,28 +203,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  // List<GroupListItem> _buildList() {
-  //   return _groupsList
-  //       .map((group) => new GroupListItem(
-  //             group: group,
-  //             onGroupTap: _onGroupSelection,
-  //           ))
-  //       .toList();
-  // }
-
-  // List<GroupListItem> _buildSearchList() {
-  //   return _groupsList
-  //       .map((group) => new GroupListItem(
-  //             group: group,
-  //             onGroupTap: _onGroupSelection,
-  //           ))
-  //       .toList();
-  // }
-
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    bloc.groupBloc.fetchGroupsFromDB(_query, groupTitleIndex);
+    bloc.groupBloc.fetchAllGroupsByRole();
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -299,14 +222,14 @@ class _GroupsScreenState extends State<GroupsScreen> {
               children: <Widget>[
                 SearchBar(
                   onValueChanged: (value) {
-                    print('searched value $value');
                     setState(() {
-                      _query = value;
-                      //_filterGroups(groupTitleIndex);
+                      bloc.groupBloc.setQuery(value);
                     });
                   },
                   onDone: (value) {
-                    print('searched value $value');
+                    setState(() {
+                      bloc.groupBloc.setQuery(value);
+                    });
                   },
                 ),
                 SizedBox(
@@ -326,7 +249,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     child: DropdownButtonHideUnderline(
                       child: ButtonTheme(
                         alignedDropdown: true,
-                        child: DropdownButton<String>(
+                        child: DropdownButton<UserGroupRoleFilter>(
                           isExpanded: true,
                           // icon: Icon(Icons.arrow_drop_down),
                           iconSize: 35,
@@ -335,34 +258,22 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             fontSize: 16.sp,
                             fontFamily: 'OpenSans',
                           ),
-                          hint: Text(
-                            'Groups: ' + _choiceText,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 16.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          onChanged: (String? value) {
+                          value: bloc.groupBloc.groupRoleFilter,
+                          onChanged: (UserGroupRoleFilter? value) {
                             setState(() {
-                              _choiceText = value!;
-                              groupTitleIndex = _groupTitleList.indexOf(value);
-                              //_filterGroups(groupTitleIndex);
-                              setState(() {
-                                groupTitleIndex =
-                                    _groupTitleList.indexOf(value);
-                              });
+                              /*groupTitleIndex =
+                                    _groupTitleList.indexOf(value);*/
+                              bloc.groupBloc.groupRoleFilter = value!;
                             });
                           },
-                          items: _groupTitleList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
+
+                          items: UserGroupRoleFilter.values
+                              .map<DropdownMenuItem<UserGroupRoleFilter>>(
+                                  (UserGroupRoleFilter value) {
+                            return DropdownMenuItem<UserGroupRoleFilter>(
                               value: value,
                               child: Text(
-                                value,
+                                value.filterLabel,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
                                   fontSize: 14.sp,
@@ -382,20 +293,25 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 StreamBuilder(
                     stream: bloc.groupBloc.groups,
                     builder: (BuildContext context,
-                        AsyncSnapshot<List<HiveGroup>> snapshot) {
+                        AsyncSnapshot<Map<UserGroupRoleFilter, List<HiveGroup>>>
+                            snapshot) {
                       if (snapshot.hasData) {
-                        /*return GroupListView(
+                        return GroupListView(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                          sectionsCount: _groups.keys.toList().length,
+                          sectionsCount: snapshot.data!.keys.toList().length,
                           countOfItemInSection: (int section) {
-                            return snapshot.values.toList()[section].length;
+                            return snapshot.data!.values
+                                .toList()[section]
+                                .length;
                           },
-                          itemBuilder: (BuildContext context, IndexPath index) {
+                          itemBuilder:
+                              (BuildContext context, IndexPath indexPath) {
                             return GroupListItem(
-                              group: _groups.values.toList()[index.section]
-                                  [index.index], //_groupsList[index.index],
+                              group: snapshot.data!.values
+                                      .toList()[indexPath.section]
+                                  [indexPath.index], //_groupsList[index.index],
                               onGroupTap: _onGroupSelection,
                             );
                           },
@@ -405,7 +321,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10.sp, vertical: 8.sp),
                               child: Text(
-                                _groups.keys.toList()[section],
+                                '${snapshot.data!.keys.toList()[section].about}', //${snapshot.data!.keys.toList().elementAt(section)}',
                                 style: TextStyle(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,
@@ -417,15 +333,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               SizedBox(height: 10),
                           sectionSeparatorBuilder: (context, section) =>
                               SizedBox(height: 10),
-                        );*/
-                        return ListView(
-                          primary: false,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                          children: snapshot.data!
-                              .map((group) => GroupListItem(
-                                  group: group, onGroupTap: _onGroupSelection))
-                              .toList(),
                         );
                       } else {
                         return Container(
@@ -436,17 +343,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
               ],
             ),
           ),
-          //     // ListView(
-          //     //   primary: false,
-          //     //   shrinkWrap: true,
-          //     //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-          //     //   children: _isSearching ? _buildSearchList() : _buildList(),
-          //     // ),
-          //     // SizedBox(
-          //     //   height: 10.h,
-          //     // ),
-          //   ],
-          // ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

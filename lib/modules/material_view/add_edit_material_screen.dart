@@ -167,24 +167,27 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   style: titleTextStyle,
                 ),
                 SizedBox(height: 11.h),
-                TextFormField(
-                  maxLines: 4,
-                  controller: _descriptionController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
+                Container(
+                  //padding: EdgeInsets.all(10.sp),
+                  child: TextFormField(
+                    maxLines: 4,
+                    controller: _descriptionController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      // contentPadding:
+                      //     EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
-                    filled: true,
-                    fillColor: AppColors.txtFieldBackground,
                   ),
                 ),
                 SizedBox(height: 21.h),
