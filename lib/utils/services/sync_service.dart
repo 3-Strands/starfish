@@ -1,7 +1,9 @@
 import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -19,9 +21,10 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/services/field_mask.dart';
 
 class SyncService {
-  final DEBUG = true;
+  final DEBUG = false;
 
   static syncNow() {}
 
@@ -57,8 +60,9 @@ class SyncService {
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
   }
 
-  void syncAll() {
-    syncLocalMaterialsToRemote();
+  void syncAll() async {
+    await syncLocalCurrentUser(kCurrentUserFieldMask);
+    await syncLocalMaterialsToRemote();
 
     syncCurrentUser();
     syncCountries();
@@ -89,26 +93,23 @@ class SyncService {
           .map((e) => HiveGroupUser(
               groupId: e.groupId, userId: e.userId, role: e.role.value))
           .toList());
-      List<HiveAction> actions = (user.actions
-          .map((e) => HiveAction(
-              actionId: e.actionId,
-              userId: e.userId,
-              status: e.status.toString(),
-              teacherResponse: e.teacherResponse))
-          .toList());
+      List<HiveActionUser> actions =
+          (user.actions.map((e) => HiveActionUser.from(e)).toList());
 
       HiveCurrentUser _user = HiveCurrentUser(
-          id: user.id,
-          name: user.name,
-          phone: user.phone,
-          linkGroup: user.linkGroups,
-          countryIds: user.countryIds,
-          languageIds: user.languageIds,
-          groups: groups,
-          actions: actions,
-          diallingCode: user.diallingCode,
-          selectedActionsTab: user.selectedActionsTab.toString(),
-          selectedResultsTab: user.selectedResultsTab.toString());
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        linkGroups: user.linkGroups,
+        countryIds: user.countryIds,
+        languageIds: user.languageIds,
+        groups: groups,
+        actions: actions,
+        diallingCode: user.diallingCode,
+        phoneCountryId: user.phoneCountryId,
+        selectedActionsTab: user.selectedActionsTab.value,
+        selectedResultsTab: user.selectedResultsTab.value,
+      );
 
       var filterData = currentUserBox.values
           .where((currentUser) => currentUser.id == user.id)
@@ -250,17 +251,6 @@ class SyncService {
   }
 
   syncLocalMaterialsToRemote() async {
-    final List<String> _fieldMaskPaths = [
-      'title',
-      'description',
-      'visibility',
-      'editability',
-      'url',
-      'files',
-      'language_ids',
-      'type_ids',
-      'topics',
-    ];
     print('============= START: Sync Local Materials to Remote =============');
     print(
         'Total Records: ${materialBox.values.where((element) => element.isNew == true).length}');
@@ -272,7 +262,7 @@ class SyncService {
         .map((HiveMaterial _hiveMaterial) {
       MaterialRepository().createUpdateMaterial(
         material: _hiveMaterial.toMaterial(),
-        fieldMaskPaths: _fieldMaskPaths,
+        fieldMaskPaths: kMaterialFieldMask,
       );
     });
   }
@@ -325,5 +315,16 @@ class SyncService {
         print('EvaluationCategory Sync Done.');
       });
     });
+  }
+
+  // Upward Sync Task
+  syncLocalCurrentUser(List<String> _fieldMaskPaths) async {
+    HiveCurrentUser? _currentUser = currentUserBox.values
+        .firstWhereOrNull((element) => element.isUpdated == true);
+
+    if (_currentUser != null) {
+      await CurrentUserRepository()
+          .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths);
+    }
   }
 }

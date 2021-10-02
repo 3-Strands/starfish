@@ -1,5 +1,6 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:grpc/grpc.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
@@ -28,17 +29,11 @@ class ApiProvider {
   }
 
   Future<User> updateCurrentUser(
-      String id,
-      String? name,
-      String? phone,
-      Iterable<String>? countryIds,
-      Iterable<String>? languageIds,
-      bool? linkGroups,
-      List<String> fieldMaskPaths) async {
+      User user, List<String> fieldMaskPaths) async {
     ActionTab actionTab = ActionTab.ACTIONS_UNSPECIFIED;
     ResultsTab resultsTab = ResultsTab.RESULTS_UNSPECIFIED;
 
-    User user = User(
+    /*User user = User(
         id: id,
         name: name ?? '',
         phone: phone ?? '',
@@ -48,7 +43,7 @@ class ApiProvider {
         selectedActionsTab: actionTab,
         selectedResultsTab: resultsTab,
         phoneCountryId: '',
-        diallingCode: '');
+        diallingCode: '');*/
 
     var request = UpdateCurrentUserRequest.create();
     request.user = user;

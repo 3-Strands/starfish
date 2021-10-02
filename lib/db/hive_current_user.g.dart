@@ -20,22 +20,23 @@ class HiveCurrentUserAdapter extends TypeAdapter<HiveCurrentUser> {
       id: fields[0] as String,
       name: fields[1] as String,
       phone: fields[2] as String,
-      linkGroup: fields[3] as bool,
+      linkGroups: fields[3] as bool,
       countryIds: (fields[4] as List).cast<String>(),
       languageIds: (fields[5] as List).cast<String>(),
       groups: (fields[6] as List).cast<HiveGroupUser>(),
-      actions: (fields[7] as List).cast<HiveAction>(),
-      selectedActionsTab: fields[8] as String,
-      selectedResultsTab: fields[9] as String,
-      isUpdated: fields[10] as bool,
-      diallingCode: fields[11] as String,
+      actions: (fields[7] as List).cast<HiveActionUser>(),
+      selectedActionsTab: fields[8] as int,
+      selectedResultsTab: fields[9] as int,
+      phoneCountryId: fields[11] as String,
+      diallingCode: fields[10] as String,
+      isUpdated: fields[12] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveCurrentUser obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -43,7 +44,7 @@ class HiveCurrentUserAdapter extends TypeAdapter<HiveCurrentUser> {
       ..writeByte(2)
       ..write(obj.phone)
       ..writeByte(3)
-      ..write(obj.linkGroup)
+      ..write(obj.linkGroups)
       ..writeByte(4)
       ..write(obj.countryIds)
       ..writeByte(5)
@@ -57,9 +58,11 @@ class HiveCurrentUserAdapter extends TypeAdapter<HiveCurrentUser> {
       ..writeByte(9)
       ..write(obj.selectedResultsTab)
       ..writeByte(10)
-      ..write(obj.isUpdated)
+      ..write(obj.diallingCode)
       ..writeByte(11)
-      ..write(obj.diallingCode);
+      ..write(obj.phoneCountryId)
+      ..writeByte(12)
+      ..write(obj.isUpdated);
   }
 
   @override

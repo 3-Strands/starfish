@@ -1,11 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
-import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -13,10 +8,8 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -94,46 +87,23 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     }
   }
 
-/*
-  fetchLanguages() async {
-    await AppDataRepository()
-        .getAllLanguages()
-        .then((ResponseStream<Language> language) {
-      language.listen((value) {
-        var filterData = _languageBox.values
-            .where((element) => element.id == value.id)
-            .toList();
-        if (filterData.length == 0) {
-          HiveLanguage _language = HiveLanguage(id: value.id, name: value.name);
-          _languageBox.add(_language);
-        } else {
-          //update records
-        }
-      }, onError: ((err) {
-        print(err);
-      }), onDone: () {
-        print('Language Sync Done.');
-        _getAllLanguages();
-      });
-    });
-  }
-*/
-
   _updateUserCountries() async {
     setState(() {
       _isLoading = true;
     });
 
-    Iterable<String> _selectedCountryIds =
+    List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
-    Iterable<String> _selectedLanguageIds =
+    List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
 
     var fieldMaskPaths = ['country_ids'];
 
+    _user.countryIds = _selectedCountryIds;
+    _user.languageIds = _selectedLanguageIds;
+
     await CurrentUserRepository()
-        .updateUser(_user.id, '', '', _selectedCountryIds, _selectedLanguageIds,
-            false, fieldMaskPaths)
+        .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then((value) => {
               SyncService().syncLanguages(),
               setState(() => _isLoading = false),
@@ -147,16 +117,19 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       _isLoading = true;
     });
 
-    Iterable<String> _selectedCountryIds =
+    List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
-    Iterable<String> _selectedLanguageIds =
+    List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
 
-    var fieldMaskPaths = ['name', 'language_ids'];
+    var fieldMaskPaths = ['name', 'country_ids', 'language_ids'];
 
+    _user.countryIds = _selectedCountryIds;
+    _user.languageIds = _selectedLanguageIds;
+
+    print('FINISH: $_user');
     await CurrentUserRepository()
-        .updateUser(_user.id, _nameController.text, '', _selectedCountryIds,
-            _selectedLanguageIds, false, fieldMaskPaths)
+        .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then((value) => {
               print('=================== START ==================='),
               print(value),

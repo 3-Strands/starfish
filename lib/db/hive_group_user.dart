@@ -12,17 +12,25 @@ class HiveGroupUser {
   @HiveField(2)
   int? role;
 
+  HiveGroupUser({
+    this.groupId,
+    this.userId,
+    this.role,
+  });
+
   HiveGroupUser.from(GroupUser group) {
     this.groupId = group.groupId;
     this.userId = group.userId;
     this.role = group.role.value;
   }
 
-  HiveGroupUser({
-    this.groupId,
-    this.userId,
-    this.role,
-  });
+  GroupUser toGroupUser() {
+    return GroupUser(
+      userId: this.userId,
+      groupId: this.groupId,
+      role: GroupUser_Role.valueOf(this.role!),
+    );
+  }
 
   String toString() {
     return '{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)}}';

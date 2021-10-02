@@ -9,16 +9,8 @@ class CurrentUserRepository {
 
   Future<User> getUser() => apiProvider.getCurrentUser();
 
-  Future<User> updateUser(
-          String id,
-          String? name,
-          String? phone,
-          Iterable<String>? countryIds,
-          Iterable<String>? languageIds,
-          bool? linkGroups,
-          List<String> fieldMaskPaths) =>
-      apiProvider.updateCurrentUser(
-          id, name, phone, countryIds, languageIds, linkGroups, fieldMaskPaths);
+  Future<User> updateCurrentUser(User user, List<String> fieldMaskPaths) =>
+      apiProvider.updateCurrentUser(user, fieldMaskPaths);
 
   Future<HiveCurrentUser> getUserFromDB() => dbProvider.getUser();
 }

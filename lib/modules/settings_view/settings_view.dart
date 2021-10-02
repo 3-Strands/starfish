@@ -12,13 +12,10 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
-import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
@@ -111,14 +108,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => {_userName = _nameController.text});
     _user.name = _nameController.text;
     _user.isUpdated = true;
+
+    print('Update Name: $_user');
     _currentUserBox.putAt(0, _user);
   }
 
   void updatePhoneNumber() async {
     setState(() => {
-      _mobileNumber = _phoneNumberController.text,
-      _countyCode = _countryCodeController.text
-    });
+          _mobileNumber = _phoneNumberController.text,
+          _countyCode = _countryCodeController.text
+        });
     _user.phone = _phoneNumberController.text;
     _user.diallingCode = _countryCodeController.text;
     _user.isUpdated = true;
@@ -126,7 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updatelinkGroupStatus() async {
-    _user.linkGroup = _user.linkGroup;
+    _user.linkGroups = _user.linkGroups;
     _user.isUpdated = true;
     _currentUserBox.putAt(0, _user);
   }
@@ -140,11 +139,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     var fieldMaskPaths = ['countryIds'];
-    Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
+    List<String> _selectedCountryIds =
+        _selectedCountries.map((e) => e.id).toList();
+
+    HiveCurrentUser _currentUser = _currentUserBox.values.first;
+    _user.countryIds = _selectedCountryIds;
 
     await CurrentUserRepository()
-        .updateUser(_user.id, null, null, _selectedCountryIds, null, null,
-            fieldMaskPaths)
+        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
             print(value),
@@ -166,11 +168,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     var fieldMaskPaths = ['languageIds'];
-    Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
+    List<String> _selectedLanguageIds =
+        _selectedLanguages.map((e) => e.id).toList();
+
+    HiveCurrentUser _currentUser = _currentUserBox.values.first;
+    _user.languageIds = _selectedLanguageIds;
 
     await CurrentUserRepository()
-        .updateUser(_user.id, null, null, null, _selectedLanguageIds, null,
-            fieldMaskPaths)
+        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
             print(value),
@@ -353,13 +358,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         width: 23.w,
                         child: Center(
                           child: IconButton(
-                            icon: (_user.linkGroup == true)
+                            icon: (_user.linkGroups == true)
                                 ? Icon(Icons.check_box)
                                 : Icon(Icons.check_box_outline_blank),
                             color: AppColors.selectedButtonBG,
                             onPressed: () {
                               setState(() => {
-                                    _user.linkGroup = !_user.linkGroup,
+                                    _user.linkGroups = !_user.linkGroups,
                                     updatelinkGroupStatus()
                                   });
                             },

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
@@ -34,6 +35,7 @@ class HiveDatabase {
   static const String GROUP_BOX = 'groupBox'; //12
   // HiveGroupAction // 13
   static const String EVALUATION_CATEGORIES_BOX = 'evaluationCategoryBox'; //14
+  // HiveActionUser 15
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -54,6 +56,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveLanguageAdapter());
     Hive.registerAdapter(HiveCurrentUserAdapter());
     Hive.registerAdapter(HiveGroupUserAdapter());
+    Hive.registerAdapter(HiveActionUserAdapter());
     Hive.registerAdapter(HiveActionAdapter());
     Hive.registerAdapter(HiveMaterialAdapter());
     Hive.registerAdapter(HiveMaterialTopicAdapter());
