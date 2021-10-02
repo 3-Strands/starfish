@@ -35,33 +35,27 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final _countryCodeController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
-  final _nameController = TextEditingController();
-
-  final FocusNode _countryCodeFocus = FocusNode();
-  final FocusNode _phoneNumberFocus = FocusNode();
-  final FocusNode _nameFocus = FocusNode();
-
-  bool isNameEditable = false;
-  bool isMobileEditable = false;
-
-  String _userName = '';
-  String _countyCode = '';
-  String _mobileNumber = '';
   List<String> groups = List<String>.generate(4, (i) => "Group: $i");
+  bool isMobileEditable = false;
+  bool isNameEditable = false;
 
   late Box<HiveCountry> _countryBox;
-  late Box<HiveLanguage> _languageBox;
+  final _countryCodeController = TextEditingController();
+  final FocusNode _countryCodeFocus = FocusNode();
+  late List<HiveCountry> _countryList = [];
+  String _countyCode = '';
   late Box<HiveCurrentUser> _currentUserBox;
-
-  late HiveCurrentUser _user;
-
+  late Box<HiveLanguage> _languageBox;
+  late List<HiveLanguage> _languageList = [];
+  String _mobileNumber = '';
+  final _nameController = TextEditingController();
+  final FocusNode _nameFocus = FocusNode();
+  final _phoneNumberController = TextEditingController();
+  final FocusNode _phoneNumberFocus = FocusNode();
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
-
-  late List<HiveCountry> _countryList = [];
-  late List<HiveLanguage> _languageList = [];
+  late HiveCurrentUser _user;
+  String _userName = '';
 
   @override
   void initState() {
@@ -116,9 +110,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void updatePhoneNumber() async {
     setState(() => {
-      _mobileNumber = _phoneNumberController.text,
-      _countyCode = _countryCodeController.text
-    });
+          _mobileNumber = _phoneNumberController.text,
+          _countyCode = _countryCodeController.text
+        });
     _user.phone = _phoneNumberController.text;
     _user.diallingCode = _countryCodeController.text;
     _user.isUpdated = true;
@@ -132,13 +126,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updateCountries() async {
-    GeneralFunctions().isNetworkAvailable().then((onValue) async {
-      if (!onValue) {
-        return StarfishSnackbar.showErrorMessage(context,
-            'You can change the countries and languages only when your internet is working');
-      }
-    });
-
     var fieldMaskPaths = ['countryIds'];
     Iterable<String> _selectedCountryIds = _selectedCountries.map((e) => e.id);
 
@@ -158,12 +145,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updateLanguages() async {
-    GeneralFunctions().isNetworkAvailable().then((onValue) async {
-      if (!onValue) {
-        return StarfishSnackbar.showErrorMessage(context,
-            'You can change the countries and languages only when your internet is working');
-      }
-    });
+    // GeneralFunctions().isNetworkAvailable().then((onValue) async {
+    //   if (!onValue) {
+    //     return StarfishSnackbar.showErrorMessage(context,
+    //         'You can change the countries and languages only when your internet is working');
+    //   }
+    // });
 
     var fieldMaskPaths = ['languageIds'];
     Iterable<String> _selectedLanguageIds = _selectedLanguages.map((e) => e.id);
@@ -178,255 +165,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _currentUserBox.putAt(0, _user),
           },
         );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        automaticallyImplyLeading: false,
-        title: Container(
-          height: 64.h,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              AppLogo(hight: 36.h, width: 37.w),
-              Text(
-                Strings.settings,
-                style: dashboardNavigationTitle,
-              ),
-              IconButton(
-                icon: SvgPicture.asset(AssetsPath.settingsActive),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 52.h),
-                _getNameSection(),
-                SizedBox(height: 20.h),
-                _getPhoneNumberSection(),
-                SizedBox(height: 20.h),
-
-                //--> Select country section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.myCountry,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                SelectDropDown(
-                  navTitle: Strings.selectCountry,
-                  placeholder: Strings.selectCountry,
-                  selectedValues: _selectedCountries,
-                  choice: SelectType.multiple,
-                  dataSource: DataSourceType.countries,
-                  onDoneClicked: <T>(countries) {
-                    // print("Selected Countries ==>> $countries");
-                    setState(() {
-                      _selectedCountries = countries as List<HiveCountry>;
-                      updateCountries();
-                    });
-                  },
-                ),
-                //--------------------------
-
-                SizedBox(height: 20.h),
-
-                //--> Select language section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.myLanugages,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
-                Container(
-                  child: SelectDropDown(
-                    navTitle: Strings.selectLanugages,
-                    placeholder: Strings.selectLanugages,
-                    selectedValues: _selectedLanguages,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.languages,
-                    onDoneClicked: <T>(languages) {
-                      setState(() {
-                        _selectedLanguages = languages as List<HiveLanguage>;
-                        // print("Selected languages ==>> $_selectedLanguages");
-                      });
-                    },
-                  ),
-                ),
-                //--------------------------
-
-                SizedBox(height: 39.h),
-
-                //--> Last successfull sync section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.lastSuccessfullSync,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                ),
-                SizedBox(height: 20.h),
-
-                Container(
-                  child: Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: Text.rich(
-                      TextSpan(
-                        text: Strings.lastSuccessfullSync + ': ',
-                        style: TextStyle(
-                            color: AppColors.appTitle,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 22.sp),
-                        children: [
-                          TextSpan(
-                            text: '',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Roboto',
-                              fontSize: ScreenUtil().setSp(22),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                //--------------------------
-
-                SizedBox(height: 50.h),
-
-                //--> Group admin section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.forGroupAdmin,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                ),
-                SizedBox(height: 20.h),
-                Container(
-                  height: 44.h,
-                  width: 345.w,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 300.w,
-                        height: 44.h,
-                        child: Text(
-                          Strings.linkMyGroups,
-                          textAlign: TextAlign.left,
-                          style: titleTextStyle,
-                        ),
-                      ),
-                      Container(
-                        width: 23.w,
-                        child: Center(
-                          child: IconButton(
-                            icon: (_user.linkGroup == true)
-                                ? Icon(Icons.check_box)
-                                : Icon(Icons.check_box_outline_blank),
-                            color: AppColors.selectedButtonBG,
-                            onPressed: () {
-                              setState(() => {
-                                    _user.linkGroup = !_user.linkGroup,
-                                    updatelinkGroupStatus()
-                                  });
-                            },
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                //--------------------------
-
-                SizedBox(height: 50.h),
-
-                //--> My groups section
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: TitleLabel(
-                    title: Strings.myGroups,
-                    align: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                ),
-
-                SizedBox(height: 20.h),
-
-                _myGroupsList(),
-                //--------------------------
-
-                //--> Copy All Codes
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(30.r),
-                  color: Color(0xFF3475F0),
-                  child: Container(
-                    width: 345.w,
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        Strings.copyAllCodes,
-                        style: TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 14.sp,
-                          color: Color(0xFF3475F0),
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
-                    ),
-                  ),
-                ),
-                //--------------------------
-
-                SizedBox(height: 10.h),
-              ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: _footer(),
-    );
   }
 
   Container _getNameSection() {
@@ -463,15 +201,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ? _getEditableNameField()
               : Container(
                   height: 36.h,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _userName,
-                        textAlign: TextAlign.end,
-                        style: nameTextStyle,
-                      ),
-                    ],
+                  child: Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Text(
+                      _userName,
+                      overflow: TextOverflow.ellipsis,
+                      style: nameTextStyle,
+                    ),
                   ),
                 ),
         ],
@@ -545,15 +281,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ? _phoneNumberContainer()
               : Container(
                   height: 36.h,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _countyCode + ' ' + _mobileNumber,
-                        textAlign: TextAlign.end,
-                        style: nameTextStyle,
-                      ),
-                    ],
+                  child: Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Text(
+                      _countyCode + ' ' + _mobileNumber,
+                      overflow: TextOverflow.ellipsis,
+                      style: nameTextStyle,
+                    ),
                   ),
                 ),
         ],
@@ -766,5 +500,265 @@ class _SettingsScreenState extends State<SettingsScreen> {
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        automaticallyImplyLeading: false,
+        title: Container(
+          height: 64.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              AppLogo(hight: 36.h, width: 37.w),
+              Text(
+                Strings.settings,
+                style: dashboardNavigationTitle,
+              ),
+              IconButton(
+                icon: SvgPicture.asset(AssetsPath.settingsActive),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            // color: Colors.red,
+            padding: EdgeInsets.only(left: 15.w, right: 15.w),
+            // alignment: Alignment.topRight,
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 52.h),
+                _getNameSection(),
+                SizedBox(height: 20.h),
+                _getPhoneNumberSection(),
+                SizedBox(height: 20.h),
+
+                //--> Select country section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.myCountry,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                SelectDropDown(
+                  navTitle: Strings.selectCountry,
+                  placeholder: Strings.selectCountry,
+                  selectedValues: _selectedCountries,
+                  choice: SelectType.multiple,
+                  dataSource: DataSourceType.countries,
+                  onDoneClicked: <T>(countries) {
+                    // print("Selected Countries ==>> $countries");
+                    GeneralFunctions()
+                        .isNetworkAvailable()
+                        .then((onValue) async {
+                      if (!onValue) {
+                        return StarfishSnackbar.showErrorMessage(context,
+                            'You can change the countries and languages only when your internet is working');
+                      }
+
+                      setState(() {
+                        _selectedCountries = countries as List<HiveCountry>;
+                        updateCountries();
+                      });
+                    });
+                  },
+                ),
+                //--------------------------
+
+                SizedBox(height: 20.h),
+
+                //--> Select language section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.myLanugages,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
+                Container(
+                  child: SelectDropDown(
+                    navTitle: Strings.selectLanugages,
+                    placeholder: Strings.selectLanugages,
+                    selectedValues: _selectedLanguages,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.languages,
+                    onDoneClicked: <T>(languages) {
+                      setState(() {
+                        _selectedLanguages = languages as List<HiveLanguage>;
+                        // print("Selected languages ==>> $_selectedLanguages");
+                      });
+                    },
+                  ),
+                ),
+                //--------------------------
+
+                SizedBox(height: 39.h),
+
+                //--> Last successfull sync section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.lastSuccessfullSync,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+                SizedBox(height: 20.h),
+
+                Container(
+                  child: Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Text.rich(
+                      TextSpan(
+                        text: Strings.lastSuccessfullSync + ': ',
+                        style: TextStyle(
+                            color: AppColors.appTitle,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 22.sp),
+                        children: [
+                          TextSpan(
+                            text: '',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Roboto',
+                              fontSize: ScreenUtil().setSp(22),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                //--------------------------
+
+                SizedBox(height: 50.h),
+
+                //--> Group admin section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.forGroupAdmin,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+                SizedBox(height: 20.h),
+                Container(
+                  height: 44.h,
+                  width: 345.w,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 300.w,
+                        height: 44.h,
+                        child: Text(
+                          Strings.linkMyGroups,
+                          textAlign: TextAlign.left,
+                          style: titleTextStyle,
+                        ),
+                      ),
+                      Container(
+                        width: 23.w,
+                        child: Center(
+                          child: IconButton(
+                            icon: (_user.linkGroup == true)
+                                ? Icon(Icons.check_box)
+                                : Icon(Icons.check_box_outline_blank),
+                            color: AppColors.selectedButtonBG,
+                            onPressed: () {
+                              setState(() => {
+                                    _user.linkGroup = !_user.linkGroup,
+                                    updatelinkGroupStatus()
+                                  });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                //--------------------------
+
+                SizedBox(height: 50.h),
+
+                //--> My groups section
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: TitleLabel(
+                    title: Strings.myGroups,
+                    align: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+
+                SizedBox(height: 20.h),
+
+                _myGroupsList(),
+                //--------------------------
+
+                //--> Copy All Codes
+                DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(30.r),
+                  color: Color(0xFF3475F0),
+                  child: Container(
+                    width: 345.w,
+                    height: 50.h,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        Strings.copyAllCodes,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 14.sp,
+                          color: Color(0xFF3475F0),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                      ),
+                    ),
+                  ),
+                ),
+                //--------------------------
+
+                SizedBox(height: 10.h),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: _footer(),
+    );
   }
 }
