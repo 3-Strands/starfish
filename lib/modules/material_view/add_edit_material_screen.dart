@@ -461,7 +461,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                 SizedBox(height: 21.h),
 
-                if (widget.material != null)
+                if (widget.material?.editHistory != null)
                   _editHistoryContainer(widget.material),
 
                 SizedBox(height: 11.h),
@@ -511,8 +511,11 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   final bloc = Provider.of(context);
 
                   if (_isEditMode) {
+                    print('update material');
+
                     _hiveMaterial.id = widget.material?.id;
                     _hiveMaterial.creatorId = widget.material?.creatorId;
+                    _hiveMaterial.status = widget.material?.status;
 
                     _hiveMaterial.isUpdated = true;
                     bloc.materialBloc.editMaterial(_hiveMaterial);
@@ -525,7 +528,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       .add(_hiveMaterial)
                       .then((value) => print('$value record(s) saved.'))
                       .onError((error, stackTrace) {
-                    print('Error: ${error.toString()}.');
                     StarfishSnackbar.showErrorMessage(
                         context,
                         _isEditMode
@@ -607,7 +609,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     );
     _widgetList.add(header);
 
-    for (HiveEdit edit in material.editHistory!) {
+    for (HiveEdit edit in material.editHistory ?? []) {
       _widgetList.add(HistoryItem(edit: edit));
     }
 

@@ -86,7 +86,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
         });
 
         break;
-
       case DataSourceType.types:
         List<HiveMaterialType> types = value as List<HiveMaterialType>;
         types.forEach((element) {
@@ -94,7 +93,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
         });
 
         break;
-
       case DataSourceType.evaluationCategory:
         List<HiveEvaluationCategory> cateogries =
             value as List<HiveEvaluationCategory>;
@@ -103,7 +101,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
         });
 
         break;
-
       default:
     }
 

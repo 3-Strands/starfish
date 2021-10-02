@@ -9,8 +9,7 @@ enum UserGroupRoleFilter {
 
 extension UserGroupRoleFilterExt on UserGroupRoleFilter {
   static const groupRoleFilter = {
-    UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD:
-        '${Strings.groupFilterAdminCoLead}',
+    UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD: Strings.groupFilterAdminCoLead,
     UserGroupRoleFilter.FILTER_LEARNER: Strings.groupFilterLearner,
     UserGroupRoleFilter.FILTER_ALL: Strings.groupFilterAll,
   };
