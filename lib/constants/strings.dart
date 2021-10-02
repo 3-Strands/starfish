@@ -119,6 +119,8 @@ sending an invitation to use Starfish''';
   static const String emptyMaterialFeedback = 'Please enter detail.';
   static const String addMaterialFeedbackSuccess =
       'Material feedback saved successfully.';
+  static const String internetRequiredToChangeCountriesOrLanguage =
+      'You can change the countries and languages only when your internet is working';
 
   static const String createGroupSuccess = 'Group created successfully.';
   static const String createGroupFailed = 'Failed to create group.';

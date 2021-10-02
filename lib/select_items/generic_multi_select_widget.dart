@@ -410,7 +410,7 @@ class ItemList extends StatelessWidget {
                       children: <Widget>[
                         Container(
                           height: 60.h,
-                          width: MediaQuery.of(context).size.width - 100.0,
+                          width: MediaQuery.of(context).size.width - 90.0.w,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
