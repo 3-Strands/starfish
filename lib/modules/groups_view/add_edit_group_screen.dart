@@ -16,6 +16,7 @@ import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -24,7 +25,10 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
+import 'package:starfish/widgets/invited_contact_list_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
+import 'package:starfish/widgets/uninvited_person_list_item.dart';
+import 'package:uuid/uuid.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
   final HiveGroup? group;
@@ -44,18 +48,21 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _personNameController = TextEditingController();
 
   bool _isEditMode = false;
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveEvaluationCategory> _selectedEvaluationCategories = [];
   List<InviteContact> _selectedContacts = [];
+  List<String> _unInvitedPersonNames = [];
   //List<InviteContact> _contactList = [];
   List<InviteContact> _filteredContactList = [];
 
   late Box<HiveLanguage> _languageBox;
   //late Box<HiveGroup> _groupBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
+  late Box<HiveUser> _userBox;
 
   late AppBloc bloc;
 
@@ -92,6 +99,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           SnackBar(content: Text('Contact data not available on device'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+  }
+
+  _createUserAndSendInvite(List<InviteContact> _contacts) {
+    List<HiveUser> _users = [];
+    _contacts.forEach((element) {
+      _users.add(HiveUser(
+          id: Uuid().toString(),
+          name: element.contact.displayName,
+          phone: element.contact.phones!.first.value!));
+    });
+    _userBox.addAll(_users).then((value) {
+      // TODO: add these users to the group being created.
+      _sendInviteSMS(Strings.inviteSMS, _contacts);
+    });
   }
 
   void _sendInviteSMS(String message, List<InviteContact> recipents) async {
@@ -146,8 +167,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     ContactsService.getContacts().then((List<Contact> contactList) {
       List<InviteContact> _contactList = [];
       contactList.forEach((Contact contact) {
-        _contactList.add(InviteContact(contact: contact));
-        _filteredContactList.add(InviteContact(contact: contact));
+        // Add only contacts having atleast one phone numbers added
+        if (contact.phones != null) {
+          _contactList.add(InviteContact(contact: contact));
+          _filteredContactList.add(InviteContact(contact: contact));
+        }
       });
       _contactsNotifier.value = _contactList;
     });
@@ -231,8 +255,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            _sendInviteSMS(
-                                Strings.inviteSMS, _selectedContacts);
+                            //_createUserAndSendInvite(_selectedContacts);
+                            Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
                             primary: AppColors.selectedButtonBG,
@@ -258,6 +282,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
+    _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
 
     Permission.contacts.status.then((PermissionStatus permissionStatus) {
       if (permissionStatus == PermissionStatus.granted) {
@@ -472,6 +497,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 ),
                 SizedBox(height: 21.h),
 
+                // Selected Contacts
+                Visibility(
+                  child: Column(
+                    children: _invitedContactsContainer(_selectedContacts),
+                  ),
+                  visible: _selectedContacts.toList().length > 0,
+                ),
+
                 // Option 2.
                 Text(
                   Strings.addWithoutInvite,
@@ -479,35 +512,78 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   style: titleTextStyle,
                 ),
                 SizedBox(height: 11.h),
-                TextFormField(
-                  keyboardType: TextInputType.text,
-                  style: textFormFieldText,
-                  decoration: InputDecoration(
-                    hintText: Strings.hintPersonName,
-                    hintStyle: textFormFieldText,
-                    contentPadding: EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEFEFEF),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  padding: EdgeInsets.only(left: 15.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _personNameController,
+                          keyboardType: TextInputType.text,
+                          style: textFormFieldText,
+                          decoration: InputDecoration(
+                            hintText: Strings.hintPersonName,
+                            hintStyle: textFormFieldText,
+                            contentPadding:
+                                EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0.r),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0.r),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0.r),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: AppColors.txtFieldBackground,
+                          ),
+                        ),
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
+                      IconButton(
+                        onPressed: () {
+                          if (_personNameController.text.isNotEmpty) {
+                            setState(() {
+                              _unInvitedPersonNames
+                                  .add(_personNameController.text);
+
+                              _personNameController.text = '';
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.arrow_right_rounded,
+                          color: AppColors.selectedButtonBG,
+                        ),
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.txtFieldBackground,
+                    ],
                   ),
                 ),
+                // Selection persion without invite
+                Visibility(
+                  child: Column(
+                    children:
+                        _unInvitedContactsContainer(_unInvitedPersonNames),
+                  ),
+                  visible: _unInvitedPersonNames.toList().length > 0,
+                ),
+
                 if (widget.group != null) _editHistoryContainer(widget.group),
 
                 SizedBox(height: 11.h),
@@ -551,6 +627,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                     _hiveGroup.isUpdated = true;
                   } else {
+                    _hiveGroup.id = Uuid().toString(); // Assign UUID
+
                     _hiveGroup.isNew = true;
                   }
 
@@ -603,7 +681,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<Widget>? _historyItems(HiveGroup group) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      'History',
+      Strings.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
@@ -615,6 +693,51 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     for (HiveEdit edit in group.editHistory!) {
       _widgetList.add(HistoryItem(edit: edit));
+    }
+
+    return _widgetList;
+  }
+
+  List<Widget> _invitedContactsContainer(List<InviteContact> invitedContacts) {
+    final List<Widget> _widgetList = [];
+
+    for (InviteContact inviteContact in invitedContacts) {
+      _widgetList.add(InvitedContactListItem(contact: inviteContact));
+    }
+    // Additional vertical spacing
+    if (_widgetList.length > 0) {
+      _widgetList.add(SizedBox(
+        height: 21.h,
+      ));
+    }
+
+    return _widgetList;
+  }
+
+  List<Widget> _unInvitedContactsContainer(List<String> unInvitedPersons) {
+    final List<Widget> _widgetList = [];
+
+    for (String person in unInvitedPersons) {
+      _widgetList.add(
+        UnInvitedPersonListItem(
+          personName: person,
+          onRemove: (String person) {
+            if (_unInvitedPersonNames.contains(person)) {
+              setState(() {
+                _unInvitedPersonNames.remove(person);
+              });
+            }
+          },
+        ),
+      );
+    }
+    // Additional vertical spacing
+    if (_widgetList.length > 0) {
+      _widgetList.add(SizedBox(
+        height: 21.h,
+      ));
+    } else {
+      _widgetList.add(Container());
     }
 
     return _widgetList;

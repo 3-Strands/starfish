@@ -106,6 +106,7 @@ list to join your group in Starfish''';
   static const String addWithoutInvite =
       '''Option 2. Add a person's name, without 
 sending an invitation to use Starfish''';
+  static const String history = 'History';
 
   static const String reportDialogDetailText =
       'Explain why this material is inappropriate';

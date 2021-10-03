@@ -17,6 +17,7 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
@@ -36,6 +37,7 @@ class HiveDatabase {
   // HiveGroupAction // 13
   static const String EVALUATION_CATEGORIES_BOX = 'evaluationCategoryBox'; //14
   // HiveActionUser 15
+  static const String USER_BOX = 'userBox'; // 16
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -54,7 +56,8 @@ class HiveDatabase {
     Hive.registerAdapter(HiveLastSyncDateTimeAdapter());
     Hive.registerAdapter(HiveCountryAdapter());
     Hive.registerAdapter(HiveLanguageAdapter());
-    Hive.registerAdapter(HiveCurrentUserAdapter());
+    Hive.registerAdapter(HiveCurrentUserAdapter()); //TODO: to be replaced
+    Hive.registerAdapter(HiveUserAdapter());
     Hive.registerAdapter(HiveGroupUserAdapter());
     Hive.registerAdapter(HiveActionUserAdapter());
     Hive.registerAdapter(HiveActionAdapter());
@@ -85,5 +88,6 @@ class HiveDatabase {
     await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX);
     await Hive.openBox<HiveGroup>(GROUP_BOX);
     await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX);
+    await Hive.openBox<HiveUser>(USER_BOX);
   }
 }
