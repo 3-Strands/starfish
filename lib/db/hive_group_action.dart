@@ -24,4 +24,9 @@ class HiveGroupAction extends HiveObject {
     this.actionId = action.actionId;
     this.dueDate = HiveDate.from(action.dueDate);
   }
+
+  @override
+  String toString() {
+    return '{ groupId: ${this.groupId}, actionId: ${this.actionId}, dueDate: ${this.dueDate} }';
+  }
 }

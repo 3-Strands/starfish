@@ -11,16 +11,21 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
@@ -105,7 +110,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     List<HiveUser> _users = [];
     _contacts.forEach((element) {
       _users.add(HiveUser(
-          id: Uuid().toString(),
+          id: UuidGenerator.uuid(),
           name: element.contact.displayName,
           phone: element.contact.phones!.first.value!));
     });
@@ -273,6 +278,81 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         });
       },
     );
+  }
+
+  _createUpdateGroup() async {
+    String? _groupId;
+    if (_isEditMode) {
+      _groupId = widget.group?.id;
+    } else {
+      _groupId = UuidGenerator.uuid(); // Assign UUID
+    }
+    List<HiveUser> _newUsers = [];
+    _selectedContacts.forEach((element) {
+      _newUsers.add(element.createHiveUser());
+    });
+    _unInvitedPersonNames.forEach((element) {
+      _newUsers.add(HiveUser(id: UuidGenerator.uuid(), name: element));
+    });
+
+    List<HiveGroupUser> _newGroupUsers = [];
+    // Add self as Admin
+    HiveCurrentUser _currentUser =
+        await CurrentUserRepository().getUserFromDB();
+    _newGroupUsers.add(HiveGroupUser(
+        groupId: _groupId,
+        userId: _currentUser.id,
+        role: GroupUser_Role.ADMIN.value));
+    _newUsers.forEach((HiveUser user) {
+      _userBox.add(user).then((value) => _newGroupUsers.add(HiveGroupUser(
+          groupId: _groupId,
+          userId: user.id,
+          role: GroupUser_Role.LEARNER.value)));
+    });
+
+    HiveGroup _hiveGroup = HiveGroup(
+      id: _groupId,
+      name: _titleController.text,
+      //description: _descriptionController.text,
+      languageIds: _selectedLanguages
+          .map((HiveLanguage language) => language.id)
+          .toList(),
+      evaluationCategoryIds: _selectedEvaluationCategories
+          .map((HiveEvaluationCategory category) => category.id!)
+          .toList(),
+    );
+
+    if (_isEditMode) {
+      if (_hiveGroup.users != null) {
+        _hiveGroup.users?.addAll(_newGroupUsers);
+      } else {
+        _hiveGroup.users = _newGroupUsers;
+      }
+
+      _hiveGroup.isUpdated = true;
+    } else {
+      _hiveGroup.users = _newGroupUsers;
+      _hiveGroup.isNew = true;
+    }
+
+    bloc.groupBloc
+        .addEditGroup(_hiveGroup)
+        .then((value) => print('$value record(s) saved.'))
+        .onError((error, stackTrace) {
+      print('Error: ${error.toString()}.');
+      StarfishSnackbar.showErrorMessage(context,
+          _isEditMode ? Strings.updateGroupFailed : Strings.createGroupSuccess);
+    }).whenComplete(() {
+      Alerts.showMessageBox(
+          context: context,
+          title: Strings.dialogInfo,
+          message: _isEditMode
+              ? Strings.updateGroupSuccess
+              : Strings.createGroupSuccess,
+          callback: () {
+            Navigator.of(context).pop();
+          });
+    });
   }
 
   @override
@@ -611,48 +691,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  HiveGroup _hiveGroup = HiveGroup(
-                    name: _titleController.text,
-                    //description: _descriptionController.text,
-                    languageIds: _selectedLanguages
-                        .map((HiveLanguage language) => language.id)
-                        .toList(),
-                    evaluationCategoryIds: _selectedEvaluationCategories
-                        .map((HiveEvaluationCategory category) => category.id!)
-                        .toList(),
-                  );
-
-                  if (_isEditMode) {
-                    _hiveGroup.id = widget.group?.id;
-
-                    _hiveGroup.isUpdated = true;
-                  } else {
-                    _hiveGroup.id = Uuid().toString(); // Assign UUID
-
-                    _hiveGroup.isNew = true;
-                  }
-
-                  bloc.groupBloc
-                      .addEditGroup(_hiveGroup)
-                      .then((value) => print('$value record(s) saved.'))
-                      .onError((error, stackTrace) {
-                    print('Error: ${error.toString()}.');
-                    StarfishSnackbar.showErrorMessage(
-                        context,
-                        _isEditMode
-                            ? Strings.updateGroupFailed
-                            : Strings.createGroupSuccess);
-                  }).whenComplete(() {
-                    Alerts.showMessageBox(
-                        context: context,
-                        title: Strings.dialogInfo,
-                        message: _isEditMode
-                            ? Strings.updateGroupSuccess
-                            : Strings.createGroupSuccess,
-                        callback: () {
-                          Navigator.of(context).pop();
-                        });
-                  });
+                  _createUpdateGroup();
                 },
                 child: Text(
                   _isEditMode ? Strings.update : Strings.create,

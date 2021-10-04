@@ -17,26 +17,28 @@ class HiveUserAdapter extends TypeAdapter<HiveUser> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return HiveUser(
-      id: fields[0] as String,
-      name: fields[1] as String,
-      phone: fields[2] as String,
+      id: fields[0] as String?,
+      name: fields[1] as String?,
+      phone: fields[2] as String?,
       linkGroups: fields[3] as bool,
-      countryIds: (fields[4] as List).cast<String>(),
-      languageIds: (fields[5] as List).cast<String>(),
-      groups: (fields[6] as List).cast<HiveGroupUser>(),
-      actions: (fields[7] as List).cast<HiveActionUser>(),
-      selectedActionsTab: fields[8] as int,
-      selectedResultsTab: fields[9] as int,
-      phoneCountryId: fields[11] as String,
-      diallingCode: fields[10] as String,
-      isUpdated: fields[12] as bool,
+      countryIds: (fields[4] as List?)?.cast<String>(),
+      languageIds: (fields[5] as List?)?.cast<String>(),
+      groups: (fields[6] as List?)?.cast<HiveGroupUser>(),
+      actions: (fields[7] as List?)?.cast<HiveActionUser>(),
+      selectedActionsTab: fields[8] as int?,
+      selectedResultsTab: fields[9] as int?,
+      phoneCountryId: fields[11] as String?,
+      diallingCode: fields[10] as String?,
+      isNew: fields[12] as bool,
+      isUpdated: fields[13] as bool,
+      isDeleted: fields[14] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveUser obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +64,11 @@ class HiveUserAdapter extends TypeAdapter<HiveUser> {
       ..writeByte(11)
       ..write(obj.phoneCountryId)
       ..writeByte(12)
-      ..write(obj.isUpdated);
+      ..write(obj.isNew)
+      ..writeByte(13)
+      ..write(obj.isUpdated)
+      ..writeByte(14)
+      ..write(obj.isDeleted);
   }
 
   @override
