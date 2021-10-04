@@ -10,6 +10,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -110,6 +111,18 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               _user.countryIds = value.countryIds,
               _currentUserBox.putAt(0, _user),
             });
+  }
+
+  _validateInfo() {
+    if (_nameController.text == "") {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
+    } else if (_selectedCountries.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectCountry);
+    } else if (_selectedLanguages.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
+    } else {
+      _updateUserProfile();
+    }
   }
 
   _updateUserProfile() async {
@@ -343,7 +356,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () {
-              _updateUserProfile();
+              _validateInfo();
             },
             style: ElevatedButton.styleFrom(
               primary: AppColors.selectedButtonBG,

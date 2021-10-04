@@ -113,6 +113,17 @@ sending an invitation to use Starfish''';
   static const String selectPropleToInvite = 'Select people to invite';
 
   // Info/Alert messages
+  static const String emptyFullName = 'Please enter name.';
+  static const String emptySelectCountry = 'Please select country.';
+  static const String emptySelectLanguage = 'Please select languages.';
+  static const String emptyDialingCode = 'Please enter dialing code.';
+  static const String emptyMobileNumbers = 'Please enter mobile number.';
+
+  static const String emptyTitle = 'Please enter title.';
+  static const String emptyDescription = 'Please enter description.';
+  static const String emptySelectType = 'Please select type.';
+  static const String emptySelectTopic = 'Please select topic.';
+
   static const String addMaterialSuccess = 'Material saved successfully.';
   static const String addMaterialFailed = 'Failed to save Material.';
   static const String updateMaterialSuccess = 'Material updated successfully.';
@@ -135,4 +146,10 @@ sending an invitation to use Starfish''';
   static const String groupFilterAll = 'All of my groups';
   static const String groupFilterLearner = 'I\'am a learner in';
   static const String groupFilterAdminCoLead = 'Groups I teach or co-lead';
+
+  static const String visibilityGroupView = 'Groups I teach or administer';
+  static const String visibilityAllView = 'Anyone at all';
+
+  static const String editabilityCreatorEdit = 'Only me';
+  static const String editabilityGroupEdit = 'Other Teacher of my Groups';
 }

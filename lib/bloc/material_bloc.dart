@@ -145,8 +145,9 @@ class MaterialBloc extends Object {
 
   void addMaterial(HiveMaterial? material) {
     print('add Material');
-    _filteredMaterialsList.add(material!);
-    _materials.sink.add(_filteredMaterialsList);
+    fetchMaterialsFromDB();
+    // _filteredMaterialsList.add(material!);
+    // _materials.sink.add(_filteredMaterialsList);
   }
 
   void editMaterial(HiveMaterial? material) {
