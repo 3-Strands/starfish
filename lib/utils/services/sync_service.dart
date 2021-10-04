@@ -66,7 +66,8 @@ class SyncService {
   void syncAll() async {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
-    await syncLocalUsersToRemote();
+    //await syncLocalUsersToRemote();
+    //await syncLocalGroupsToRemote();
 
     syncCurrentUser();
     syncCountries();
@@ -346,5 +347,19 @@ class SyncService {
         fieldMaskPaths: kMaterialFieldMask,
       );
     });*/
+  }
+
+  syncLocalGroupsToRemote() async {
+    print('============= START: Sync Local Groups to Remote =============');
+    print(
+        'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
+    print('============= END: Sync Local Groups to Remote ===============');
+
+    groupBox.values
+        .where((HiveGroup group) => (group.isNew == true))
+        .map((HiveGroup _hiveGroup) {
+      GroupRepository().createUpdateGroup(
+          group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
+    });
   }
 }

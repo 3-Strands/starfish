@@ -18,3 +18,10 @@ final List<String> kCurrentUserFieldMask = [
   'link_groups',
   'dialling_code',
 ];
+
+final List<String> kGroupFieldMask = [
+  'name',
+  'language_ids',
+  'users',
+  'evaluation_category_ids',
+];

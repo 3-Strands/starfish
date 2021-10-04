@@ -28,8 +28,7 @@ class ApiProvider {
     return client!.getCurrentUser(Empty());
   }
 
-  Future<User> updateCurrentUser(
-      User user, List<String> fieldMaskPaths) async {
+  Future<User> updateCurrentUser(User user, List<String> fieldMaskPaths) async {
     ActionTab actionTab = ActionTab.ACTIONS_UNSPECIFIED;
     ResultsTab resultsTab = ResultsTab.RESULTS_UNSPECIFIED;
 
@@ -104,5 +103,20 @@ class ApiProvider {
     Date date = Date(year: 2020, month: 1, day: 1);
     //request.updatedSince = date;
     return client!.listEvaluationCategories(request);
+  }
+
+  Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup(
+    Group group,
+    List<String> fieldMaskPaths,
+  ) async {
+    var request = CreateUpdateGroupsRequest.create();
+    request.group = group;
+
+    FieldMask mask = FieldMask(paths: fieldMaskPaths);
+    request.updateMask = mask;
+
+    Stream<CreateUpdateGroupsRequest> streamRequest = Stream.value(request);
+
+    return client!.createUpdateGroups(streamRequest);
   }
 }
