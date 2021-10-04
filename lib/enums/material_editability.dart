@@ -1,3 +1,4 @@
+import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class MaterialEditability {
@@ -16,32 +17,20 @@ class MaterialEditability {
     return _values
         .map((Material_Editability element) {
           return MaterialEditability(
-              value: element, displayName: getDisplayName(element));
+              value: element, displayName: element.about);
         })
         .where((element) => !_hideValues.contains(element.value))
         .toList();
   }
+}
 
-  static Material_Editability fromString(String value) {
-    switch (value) {
-      case 'CREATOR_EDIT':
-        return Material_Editability.CREATOR_EDIT;
-      case 'GROUP_EDIT':
-        return Material_Editability.GROUP_EDIT;
-      case 'UNSPECIFIED_EDITABILITY':
-      default:
-        return Material_Editability.UNSPECIFIED_EDITABILITY;
-    }
-  }
+extension Material_EditabilityExt on Material_Editability {
+  static const editabilities = {
+    Material_Editability.UNSPECIFIED_EDITABILITY: 'UNSPECIFIED_EDITABILITY',
+    Material_Editability.CREATOR_EDIT: Strings.editabilityCreatorEdit,
+    Material_Editability.GROUP_EDIT: Strings.editabilityGroupEdit,
+  };
 
-  static String? getDisplayName(Material_Editability material_editability) {
-    switch (material_editability) {
-      case Material_Editability.CREATOR_EDIT:
-        return 'Only me';
-      case Material_Editability.GROUP_EDIT:
-        return 'Other Teacher of my Groups';
-      default:
-        return null;
-    }
-  }
+  //about property returns the custom message
+  String get about => editabilities[this]!;
 }
