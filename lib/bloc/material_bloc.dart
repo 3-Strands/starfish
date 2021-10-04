@@ -101,7 +101,11 @@ class MaterialBloc extends Object {
         _filterMaterialsByLanguage = filteredMaterials;
       } else {
         filteredMaterials.forEach((filterMaterial) {
-          if (!_filterMaterialsByLanguage!.contains(filterMaterial.id)) {
+          List<HiveMaterial> result = _filterMaterialsByLanguage!
+              .where((output) => output.id == filterMaterial.id)
+              .toList();
+
+          if (result.length == 0) {
             _filterMaterialsByLanguage!.add(filterMaterial);
           }
         });
@@ -124,7 +128,10 @@ class MaterialBloc extends Object {
         _listToShow = filteredMaterials;
       } else {
         filteredMaterials.forEach((filterMaterial) {
-          if (!_listToShow.contains(filterMaterial.id)) {
+          List<HiveMaterial> result = _listToShow
+              .where((output) => output.id == filterMaterial.id)
+              .toList();
+          if (result.length == 0) {
             // If item is already not added then add that item in the material list
             _listToShow.add(filterMaterial);
           }
