@@ -96,8 +96,13 @@ class MaterialBloc extends Object {
       var filteredMaterials = _allMaterials
           .where((material) => (material.languageIds!.contains(element.id)))
           .toList();
+          print('selected language ids: ${element.id}');
+           _allMaterials.forEach((element) {
+          print('material language ids: ${element.id}');
+           });
 
-      if (_filterMaterialsByLanguage!.length == 0) {
+
+      if (_filterMaterialsByLanguage!.length == 0 && filteredMaterials.length != 0) {
         _filterMaterialsByLanguage = filteredMaterials;
       } else {
         filteredMaterials.forEach((filterMaterial) {
