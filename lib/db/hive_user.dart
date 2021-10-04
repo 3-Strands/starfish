@@ -76,6 +76,6 @@ class HiveUser {
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 
-        countryIds: ${this.countryIds.toString()}, languageIds: ${this.languageIds.toString()}}''';
+        countryIds: ${this.countryIds?.toString()}, languageIds: ${this.languageIds?.toString()}}''';
   }
 }

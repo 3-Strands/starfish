@@ -65,7 +65,7 @@ class HiveGroup extends HiveObject {
   }
 
   String toString() {
-    return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds.toString()}, 
-    users: ${this.users.toString()}, actions: ${this.actions.toString()}, editHistory: ${this.editHistory.toString()}}''';
+    return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds?.toString()}, 
+    users: ${this.users?.toString()}, actions: ${this.actions?.toString()}, editHistory: ${this.editHistory?.toString()}}''';
   }
 }
