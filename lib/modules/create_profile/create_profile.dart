@@ -116,10 +116,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   _validateInfo() {
     if (_nameController.text == "") {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
-    } else if (_selectedCountries.length > 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyselectCountry);
-    } else if (_selectedLanguages.length > 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyselectLanguage);
+    } else if (_selectedCountries.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectCountry);
+    } else if (_selectedLanguages.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
     } else {
       _updateUserProfile();
     }

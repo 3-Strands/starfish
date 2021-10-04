@@ -20,6 +20,7 @@ import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
@@ -290,7 +291,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     onDoneClicked: <T>(languages) {
                       setState(() {
                         _selectedLanguages = languages as List<HiveLanguage>;
-                        // print("Selected languages ==>> $_selectedLanguages");
+                        print("Selected languages ==>> $_selectedLanguages");
                       });
                     },
                   ),
@@ -510,11 +511,11 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyTitle);
     } else if (_descriptionController.text == '') {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
-    } else if (_selectedLanguages.length > 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyselectLanguage);
-    } else if (_selectedTypes.length > 0) {
+    } else if (_selectedLanguages.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
+    } else if (_selectedTypes.length == 0) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptySelectType);
-    } else if (_selectedTopics.length > 0) {
+    } else if (_selectedTopics.length == 0) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptySelectTopic);
     } else {
       _addUpdateUserProfile();
@@ -548,6 +549,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _hiveMaterial.isUpdated = true;
       bloc.materialBloc.editMaterial(_hiveMaterial);
     } else {
+      _hiveMaterial.id = UuidGenerator.uuid();
       _hiveMaterial.isNew = true;
       bloc.materialBloc.addMaterial(_hiveMaterial);
     }
