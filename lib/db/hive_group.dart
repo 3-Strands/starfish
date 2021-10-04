@@ -59,6 +59,18 @@ class HiveGroup extends HiveObject {
         group.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
   }
 
+  Group toGroup() {
+    return Group(
+      id: this.id,
+      name: this.name,
+      languageIds: this.languageIds,
+      users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
+      evaluationCategoryIds: this.evaluationCategoryIds,
+      actions:
+          this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
+    );
+  }
+
   HiveGroupUser? get admin {
     return this.users?.firstWhereOrNull((groupUser) =>
         GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);

@@ -16,6 +16,7 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
@@ -40,6 +41,7 @@ class SyncService {
   late Box<HiveMaterialType> materialTypeBox;
   late Box<HiveGroup> groupBox;
   late Box<HiveEvaluationCategory> evaluationCategoryBox;
+  late Box<HiveUser> userBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -58,11 +60,14 @@ class SyncService {
     groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
     evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
+    userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
 
   void syncAll() async {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
+    //await syncLocalUsersToRemote();
+    //await syncLocalGroupsToRemote();
 
     syncCurrentUser();
     syncCountries();
@@ -326,5 +331,35 @@ class SyncService {
       await CurrentUserRepository()
           .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths);
     }
+  }
+
+  syncLocalUsersToRemote() async {
+    print('============= START: Sync Local User to Remote =============');
+    print(
+        'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
+    print('============= END: Sync Local User to Remote ===============');
+
+    /*userBox.values
+        .where((HiveUser user) => (user.isNew == true))
+        .map((HiveUser _hiveUser) {
+      MaterialRepository().createUpdateMaterial(
+        material: _hiveUser.toMaterial(),
+        fieldMaskPaths: kMaterialFieldMask,
+      );
+    });*/
+  }
+
+  syncLocalGroupsToRemote() async {
+    print('============= START: Sync Local Groups to Remote =============');
+    print(
+        'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
+    print('============= END: Sync Local Groups to Remote ===============');
+
+    groupBox.values
+        .where((HiveGroup group) => (group.isNew == true))
+        .map((HiveGroup _hiveGroup) {
+      GroupRepository().createUpdateGroup(
+          group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
+    });
   }
 }

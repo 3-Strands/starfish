@@ -6,7 +6,6 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
-import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -80,9 +79,15 @@ class GroupBloc extends Object {
       });
 
       _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.addAll(
+        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
             await _getGroupsWithIds(
                 _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? []));
+      });
+
+      _roleGroupIdsMap[GroupUser_Role.LEARNER]!.forEach((element) async {
+        _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.addAll(
+            await _getGroupsWithIds(
+                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? []));
       });
     }
     _groups.sink.add(_roleGroupMap);
