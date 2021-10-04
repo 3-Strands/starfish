@@ -489,88 +489,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  HiveMaterial _hiveMaterial = HiveMaterial(
-                    title: _titleController.text,
-                    url: _webLinkController.text,
-                    description: _descriptionController.text,
-                    languageIds: _selectedLanguages
-                        .map((HiveLanguage language) => language.id)
-                        .toList(),
-                    typeIds: _selectedTypes
-                        .map((HiveMaterialType type) => type.id)
-                        .toList(),
-                    topics: _selectedTopics
-                        .map((HiveMaterialTopic topic) => topic.id)
-                        .toList(),
-                    visibility:
-                        _visibleTo != null ? _visibleTo!.value.value : 0,
-                    editability:
-                        _editableBy != null ? _editableBy!.value.value : 0,
-                  );
-
-                  final bloc = Provider.of(context);
-
-                  if (_isEditMode) {
-                    print('update material');
-
-                    _hiveMaterial.id = widget.material?.id;
-                    _hiveMaterial.creatorId = widget.material?.creatorId;
-                    _hiveMaterial.status = widget.material?.status;
-
-                    _hiveMaterial.isUpdated = true;
-                    bloc.materialBloc.editMaterial(_hiveMaterial);
-                  } else {
-                    _hiveMaterial.isNew = true;
-                    bloc.materialBloc.addMaterial(_hiveMaterial);
-                  }
-
-                  _materialBox
-                      .add(_hiveMaterial)
-                      .then((value) => print('$value record(s) saved.'))
-                      .onError((error, stackTrace) {
-                    StarfishSnackbar.showErrorMessage(
-                        context,
-                        _isEditMode
-                            ? Strings.updateMaterialFailed
-                            : Strings.addMaterialFailed);
-                  }).whenComplete(() {
-                    Alerts.showMessageBox(
-                        context: context,
-                        title: Strings.dialogInfo,
-                        message: _isEditMode
-                            ? Strings.updateMaterialSuccess
-                            : Strings.addMaterialSuccess,
-                        callback: () {
-                          Navigator.of(context).pop();
-                        });
-                  });
-                  /*print('POST: ${_hiveMaterial.toString()}');
-                  MaterialRepository()
-                      .createUpdateMaterial(
-                          material: _hiveMaterial.toMaterial(),
-                          fieldMaskPaths: [
-                            'title',
-                            'description',
-                            //'visibility',
-                            //'editability',
-                            //'url',
-                            //'files',
-                            'language_ids',
-                            'type_ids',
-                            //'topics',
-                          ])
-                      .then((response) => print('Response: $response.'))
-                      .whenComplete(() {
-                        Alerts.showMessageBox(
-                            context: context,
-                            title: Strings.dialogInfo,
-                            message: _isEditMode
-                                ? Strings.updateMaterialSuccess
-                                : Strings.addMaterialSuccess,
-                            callback: () {
-                              Navigator.of(context).pop();
-                            });
-                      });*/
+                  _validateInfo();
                 },
                 child: Text(
                   _isEditMode ? Strings.update : Strings.add,
@@ -584,6 +503,75 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         ),
       ),
     );
+  }
+
+  _validateInfo() {
+    if (_titleController.text == '') {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyTitle);
+    } else if (_descriptionController.text == '') {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
+    } else if (_selectedLanguages.length > 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyselectLanguage);
+    } else if (_selectedTypes.length > 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectType);
+    } else if (_selectedTopics.length > 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectTopic);
+    } else {
+      _addUpdateUserProfile();
+    }
+  }
+
+  _addUpdateUserProfile() {
+    HiveMaterial _hiveMaterial = HiveMaterial(
+      title: _titleController.text,
+      url: _webLinkController.text,
+      description: _descriptionController.text,
+      languageIds: _selectedLanguages
+          .map((HiveLanguage language) => language.id)
+          .toList(),
+      typeIds: _selectedTypes.map((HiveMaterialType type) => type.id).toList(),
+      topics:
+          _selectedTopics.map((HiveMaterialTopic topic) => topic.id).toList(),
+      visibility: _visibleTo != null ? _visibleTo!.value.value : 0,
+      editability: _editableBy != null ? _editableBy!.value.value : 0,
+    );
+
+    final bloc = Provider.of(context);
+
+    if (_isEditMode) {
+      print('update material');
+
+      _hiveMaterial.id = widget.material?.id;
+      _hiveMaterial.creatorId = widget.material?.creatorId;
+      _hiveMaterial.status = widget.material?.status;
+
+      _hiveMaterial.isUpdated = true;
+      bloc.materialBloc.editMaterial(_hiveMaterial);
+    } else {
+      _hiveMaterial.isNew = true;
+      bloc.materialBloc.addMaterial(_hiveMaterial);
+    }
+
+    _materialBox
+        .add(_hiveMaterial)
+        .then((value) => print('$value record(s) saved.'))
+        .onError((error, stackTrace) {
+      StarfishSnackbar.showErrorMessage(
+          context,
+          _isEditMode
+              ? Strings.updateMaterialFailed
+              : Strings.addMaterialFailed);
+    }).whenComplete(() {
+      Alerts.showMessageBox(
+          context: context,
+          title: Strings.dialogInfo,
+          message: _isEditMode
+              ? Strings.updateMaterialSuccess
+              : Strings.addMaterialSuccess,
+          callback: () {
+            Navigator.of(context).pop();
+          });
+    });
   }
 
   Widget _editHistoryContainer(HiveMaterial? material) {

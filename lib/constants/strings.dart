@@ -113,6 +113,17 @@ sending an invitation to use Starfish''';
   static const String selectPropleToInvite = 'Select people to invite';
 
   // Info/Alert messages
+  static const String emptyFullName = 'Please enter name.';
+  static const String emptyselectCountry = 'Please select country.';
+  static const String emptyselectLanguage = 'Please select languages.';
+  static const String emptyDialingCode = 'Please enter dialing code.';
+  static const String emptyMobileNumbers = 'Please enter mobile number.';
+
+  static const String emptyTitle = 'Please enter title.';
+  static const String emptyDescription = 'Please enter description.';
+  static const String emptySelectType = 'Please select type.';
+  static const String emptySelectTopic = 'Please select topic.';
+
   static const String addMaterialSuccess = 'Material saved successfully.';
   static const String addMaterialFailed = 'Failed to save Material.';
   static const String updateMaterialSuccess = 'Material updated successfully.';

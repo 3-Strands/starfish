@@ -99,6 +99,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updateName() async {
+    if (_nameController.text == "") {
+      setState(() => {_nameController.text = _userName});
+      return StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
+    }
+
     setState(() => {_userName = _nameController.text});
     _user.name = _nameController.text;
     _user.isUpdated = true;
@@ -108,6 +113,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updatePhoneNumber() async {
+    if (_countryCodeController.text == "") {
+      setState(() => {_countryCodeController.text = _countyCode});
+      return StarfishSnackbar.showErrorMessage(
+          context, Strings.emptyDialingCode);
+    }
+
+    if (_phoneNumberController.text == "") {
+      setState(() => {_phoneNumberController.text = _mobileNumber});
+      return StarfishSnackbar.showErrorMessage(
+          context, Strings.emptyMobileNumbers);
+    }
+
     setState(() => {
           _mobileNumber = _phoneNumberController.text,
           _countyCode = _countryCodeController.text
@@ -538,12 +555,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
         child: SingleChildScrollView(
           child: Container(
-            // color: Colors.red,
             padding: EdgeInsets.only(left: 15.w, right: 15.w),
-            // alignment: Alignment.topRight,
             child: Column(
               children: <Widget>[
-                SizedBox(height: 52.h),
+                SizedBox(height: 20.h),
                 _getNameSection(),
                 SizedBox(height: 20.h),
                 _getPhoneNumberSection(),
@@ -759,7 +774,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 //--------------------------
 
-                SizedBox(height: 10.h),
+                SizedBox(height: 100.h),
               ],
             ),
           ),
