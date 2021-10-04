@@ -24,7 +24,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 
 class SyncService {
-  final DEBUG = false;
+  final DEBUG = true;
 
   static syncNow() {}
 
