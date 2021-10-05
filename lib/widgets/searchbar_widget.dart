@@ -7,10 +7,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
 
 class SearchBar extends StatefulWidget {
+  final String initialValue;
   final Function(String searchedText) onDone;
   final Function(String searchedText) onValueChanged;
 
-  SearchBar({Key? key, required this.onValueChanged, required this.onDone})
+  SearchBar(
+      {Key? key,
+      required this.initialValue,
+      required this.onValueChanged,
+      required this.onDone})
       : super(key: key);
 
   @override
@@ -18,6 +23,14 @@ class SearchBar extends StatefulWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.text = widget.initialValue;
+  }
+
   onDone() {}
 
   @override
@@ -40,6 +53,7 @@ class _SearchBarState extends State<SearchBar> {
             child: TextFormField(
               maxLines: 1,
               style: textFormFieldText,
+              controller: searchController,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 suffixIcon: Icon(Icons.search, color: Colors.blue),

@@ -30,16 +30,12 @@ class MaterialsScreen extends StatefulWidget {
 }
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
-  // List<HiveLanguage> _selectedLanguages = [];
-  // List<HiveMaterialTopic> _selectedTopics = [];
-
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicsList;
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
   late String _choiceText = 'No filter applied';
-  // late String _query = "";
 
   @override
   void initState() {
@@ -106,6 +102,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               _buildTopicsContainer(bloc),
               SizedBox(height: 10.h),
               SearchBar(
+                initialValue: bloc.materialBloc.query,
                 onValueChanged: (value) {
                   setState(() {
                     bloc.materialBloc.setQuery(value);
@@ -253,8 +250,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: SelectDropDown(
         navTitle: Strings.selectLanugages,
         placeholder: Strings.selectLanugages,
-        selectedValues:
-            bloc.materialBloc.selectedLanguages, //_selectedLanguages,
+        selectedValues: bloc.materialBloc.selectedLanguages,
         choice: SelectType.multiple,
         dataSource: DataSourceType.languages,
         onDoneClicked: <T>(languages) {
@@ -275,7 +271,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: SelectDropDown(
         navTitle: Strings.selectTopics,
         placeholder: Strings.selectTopics,
-        selectedValues: bloc.materialBloc.selectedTopics, //_selectedTopics,
+        selectedValues: bloc.materialBloc.selectedTopics,
         choice: SelectType.multiple,
         dataSource: DataSourceType.topics,
         onDoneClicked: <T>(topics) {

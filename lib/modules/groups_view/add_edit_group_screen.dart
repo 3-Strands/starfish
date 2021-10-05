@@ -216,6 +216,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         ),
                         SizedBox(height: 11.h),
                         SearchBar(
+                            initialValue: '',
                             onValueChanged: (String value) {
                               if (value.isEmpty) {
                                 return;
