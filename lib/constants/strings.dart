@@ -115,10 +115,13 @@ sending an invitation to use Starfish''';
 
   // Info/Alert messages
   static const String emptyFullName = 'Please enter name.';
+  static const String invalidFullName = 'Please enter valid name.';
   static const String emptySelectCountry = 'Please select country.';
   static const String emptySelectLanguage = 'Please select languages.';
   static const String emptyDialingCode = 'Please enter dialing code.';
   static const String emptyMobileNumbers = 'Please enter mobile number.';
+  static const String invalidMobileNumbers =
+      'Please enter valid mobile number.';
 
   static const String emptyTitle = 'Please enter title.';
   static const String emptyDescription = 'Please enter description.';
