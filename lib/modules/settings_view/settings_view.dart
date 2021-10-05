@@ -99,6 +99,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _updateName() async {
+    String validationMsg =
+        GeneralFunctions.validateFullName(_nameController.text);
+    if (validationMsg != '') {
+      setState(() => {_nameController.text = _user.name});
+      return StarfishSnackbar.showErrorMessage(context, validationMsg);
+    }
+
+    // true
     if (_nameController.text == "") {
       setState(() => {_nameController.text = _userName});
       return StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);

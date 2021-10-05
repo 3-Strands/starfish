@@ -49,4 +49,16 @@ class GeneralFunctions {
     }
     return '';
   }
+
+  static String validateFullName(String value) {
+    String pattern = r"^[\p{L} ,.'-]*$";
+    RegExp regExp =
+        new RegExp(pattern, caseSensitive: false, unicode: true, dotAll: true);
+    if (value.length == 0) {
+      return Strings.emptyFullName;
+    } else if (!regExp.hasMatch(value)) {
+      return Strings.invalidFullName;
+    }
+    return '';
+  }
 }
