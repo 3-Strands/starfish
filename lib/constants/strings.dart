@@ -25,6 +25,7 @@ class Strings {
       'Invite people from your contacts list';
   static const String create = 'Create';
   static const String invite = 'Invite';
+  static const String leaveThisGroup = 'Leave this group';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';
@@ -146,6 +147,14 @@ sending an invitation to use Starfish''';
 
   static const String groupFilterPrefix = 'Groups';
   static const String groupFilterAll = 'All of my groups';
-  static const String groupFilterLearner = 'I\'am a learner in';
+  static const String groupFilterLearner = 'Groups I\'am a learner in';
   static const String groupFilterAdminCoLead = 'Groups I teach or co-lead';
+
+  static const String visibilityGroupView = 'Groups I teach or administer';
+  static const String visibilityAllView = 'Anyone at all';
+
+  static const String editabilityCreatorEdit = 'Only me';
+  static const String editabilityGroupEdit = 'Other Teacher of my Groups';
+
+  static const String adminNamePrifix = 'Admin';
 }

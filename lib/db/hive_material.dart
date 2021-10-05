@@ -2,8 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
-import 'package:starfish/enums/material_editability.dart';
-import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_material.g.dart';
@@ -73,12 +71,8 @@ class HiveMaterial extends HiveObject {
     this.id = material.id;
     this.creatorId = material.creatorId;
     this.status = material.status.toString(); // Material_Status
-    this.visibility =
-        MaterialVisibility.fromString(material.visibility.toString())
-            .value; // Material_Visibility
-    this.editability =
-        MaterialEditability.fromString(material.editability.toString())
-            .value; // Material_Editability
+    this.visibility = material.visibility.value; // Material_Visibility
+    this.editability = material.editability.value; // Material_Editability
     this.title = material.title;
     this.description = material.description;
     this.targetAudience = material.targetAudience;
