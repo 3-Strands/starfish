@@ -47,7 +47,8 @@ class GroupBloc extends Object {
       _roleGroupIdsMap[GroupUser_Role.LEARNER]?.forEach((element) async {
         _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] =
             await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? []);
+                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? [],
+                GroupUser_Role.LEARNER);
       });
     } else if (groupRoleFilter == UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD) {
       List<String> _groupIds = [];
@@ -59,13 +60,15 @@ class GroupBloc extends Object {
       _roleGroupIdsMap[GroupUser_Role.ADMIN]!.forEach((element) async {
         _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
             await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? []));
+                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? [],
+                GroupUser_Role.ADMIN));
       });
 
       _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
         _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
             await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? []));
+                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? [],
+                GroupUser_Role.TEACHER));
       });
     } else {
       //if (groupRoleFilter == UserGroupRoleFilter.FILTER_ALL) {
@@ -75,19 +78,22 @@ class GroupBloc extends Object {
       _roleGroupIdsMap[GroupUser_Role.ADMIN]!.forEach((element) async {
         _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
             await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? []));
+                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? [],
+                GroupUser_Role.ADMIN));
       });
 
       _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
         _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
             await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? []));
+                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? [],
+                GroupUser_Role.TEACHER));
       });
 
       _roleGroupIdsMap[GroupUser_Role.LEARNER]!.forEach((element) async {
         _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.addAll(
             await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? []));
+                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? [],
+                GroupUser_Role.LEARNER));
       });
     }
     _groups.sink.add(_roleGroupMap);
@@ -104,14 +110,20 @@ class GroupBloc extends Object {
         .toList();
   }
 
-  Future<List<HiveGroup>> _getGroupsWithIds(List<String> groupIds) async {
+  Future<List<HiveGroup>> _getGroupsWithIds(
+      List<String> groupIds, GroupUser_Role userRole) async {
     List<HiveGroup> _groups = await repository.fetchGroupsFromDB();
 
-    return _groups
-        .where((HiveGroup group) =>
-            groupIds.contains(group.id) &&
-            group.name!.toLowerCase().contains(_query.toLowerCase()))
-        .toList();
+    return _groups.where((HiveGroup group) {
+      if (groupIds.contains(group.id) &&
+          group.name!.toLowerCase().contains(_query.toLowerCase())) {
+        group.currentUserRole = userRole;
+
+        return true;
+      } else {
+        return false;
+      }
+    }).toList();
   }
 
   Future<int> addEditGroup(HiveGroup group) async {

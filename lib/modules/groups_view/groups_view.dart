@@ -396,21 +396,36 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                     Spacer(),
-                    CustomIconButton(
-                      icon: Icon(
-                        Icons.edit,
-                        color: Colors.blue,
-                        size: 18.sp,
+                    if (group.currentUserRole! == GroupUser_Role.ADMIN)
+                      CustomIconButton(
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.blue,
+                          size: 18.sp,
+                        ),
+                        text: Strings.edit,
+                        onButtonTap: () {},
                       ),
-                      text: Strings.edit,
-                      onButtonTap: () {},
-                    ),
+                    if (group.currentUserRole! == GroupUser_Role.LEARNER)
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text(
+                          Strings.leaveThisGroup,
+                          style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: AppColors.selectedButtonBG,
+                        ),
+                      ),
                   ],
                 ),
               ),
               SizedBox(height: 10.sp),
               Text(
-                'Admin: ${group.admin != null ? group.admin!.userId : 'NA'}',
+                '${Strings.adminNamePrifix}: ${group.adminName}',
                 textAlign: TextAlign.left,
               ),
               SizedBox(height: 20.sp),

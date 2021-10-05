@@ -71,13 +71,32 @@ class HiveGroup extends HiveObject {
     );
   }
 
+  GroupUser_Role? currentUserRole;
+
   HiveGroupUser? get admin {
     return this.users?.firstWhereOrNull((groupUser) =>
         GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
   }
 
+  set userRole(GroupUser_Role? role) {
+    this.currentUserRole = role;
+  }
+
+  GroupUser_Role? get userRole {
+    return currentUserRole;
+  }
+
+  String get adminName {
+    if (this.currentUserRole == GroupUser_Role.ADMIN) {
+      return 'Me';
+    } else {
+      return this.admin != null ? this.admin!.userId! : 'NA';
+    }
+  }
+
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds?.toString()}, 
-    users: ${this.users?.toString()}, actions: ${this.actions?.toString()}, editHistory: ${this.editHistory?.toString()}}''';
+    users: ${this.users?.toString()}, actions: ${this.actions?.toString()}, 
+    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
   }
 }
