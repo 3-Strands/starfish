@@ -10,6 +10,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -114,8 +115,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 
   _validateInfo() {
-    if (_nameController.text == "") {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
+    String validationMsg =
+        GeneralFunctions.validateFullName(_nameController.text);
+    if (validationMsg != '') {
+      return StarfishSnackbar.showErrorMessage(context, validationMsg);
     } else if (_selectedCountries.length == 0) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptySelectCountry);
     } else if (_selectedLanguages.length == 0) {
