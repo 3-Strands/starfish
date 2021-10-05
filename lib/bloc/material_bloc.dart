@@ -11,26 +11,15 @@ class MaterialBloc extends Object {
 
   late BehaviorSubject<List<HiveMaterial>> _materials;
 
-  // BehaviorSubject<List<HiveMaterialTopic>> _materialTopics =
-  //     BehaviorSubject<List<HiveMaterialTopic>>();
-
   MaterialBloc() {
-    // _selectedLanguages = new BehaviorSubject<List<HiveLanguage>>();
     _materials = new BehaviorSubject<List<HiveMaterial>>();
   }
 
   // Add data to Stream
   Stream<List<HiveMaterial>> get materials => _materials.stream;
 
-  // Add data to Stream
-  // Stream<List<HiveLanguage>> get selectedLanguages => _selectedLanguages.stream;
-
-  // List<HiveLanguage> languages = [];
-
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
-
-  // Stream<List<HiveMaterialTopic>> get materialTopics => _materialTopics.stream;
 
   setQuery(String qury) {
     query = qury;
