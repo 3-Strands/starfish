@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -94,6 +93,7 @@ class _MeState extends State<Me> {
           ),
           SizedBox(height: 10.h),
           SearchBar(
+            initialValue: '',
             onValueChanged: (value) {
               print('searched value $value');
               setState(() {});

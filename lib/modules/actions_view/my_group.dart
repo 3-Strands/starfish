@@ -87,6 +87,7 @@ class _MyGroupState extends State<MyGroup> {
           ),
           SizedBox(height: 10.h),
           SearchBar(
+            initialValue: '',
             onValueChanged: (value) {
               print('searched value $value');
               setState(() {});

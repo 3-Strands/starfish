@@ -14,7 +14,7 @@ class GroupBloc extends Object {
   final GroupRepository repository = GroupRepository();
   late BehaviorSubject<Map<UserGroupRoleFilter, List<HiveGroup>>> _groups;
 
-  String _query = '';
+  String query = '';
   UserGroupRoleFilter groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
 
   GroupBloc() {
@@ -27,7 +27,7 @@ class GroupBloc extends Object {
       _groups.stream;
 
   setQuery(String query) {
-    _query = query;
+    query = query;
   }
 
   fetchAllGroupsByRole() async {
@@ -116,7 +116,7 @@ class GroupBloc extends Object {
 
     return _groups.where((HiveGroup group) {
       if (groupIds.contains(group.id) &&
-          group.name!.toLowerCase().contains(_query.toLowerCase())) {
+          group.name!.toLowerCase().contains(query.toLowerCase())) {
         group.currentUserRole = userRole;
 
         return true;

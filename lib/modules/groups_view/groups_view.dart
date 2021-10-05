@@ -222,6 +222,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
             child: Column(
               children: <Widget>[
                 SearchBar(
+                  initialValue: bloc.groupBloc.query,
                   onValueChanged: (value) {
                     setState(() {
                       bloc.groupBloc.setQuery(value);
