@@ -112,6 +112,7 @@ sending an invitation to use Starfish''';
   static const String reportDialogDetailText =
       'Explain why this material is inappropriate';
   static const String selectPropleToInvite = 'Select people to invite';
+  static const String viewTeachersAndLearners = 'View Teachers and Learners';
 
   // Info/Alert messages
   static const String emptyFullName = 'Please enter name.';
@@ -148,7 +149,7 @@ sending an invitation to use Starfish''';
 
   static const String groupFilterPrefix = 'Groups';
   static const String groupFilterAll = 'All of my groups';
-  static const String groupFilterLearner = 'Groups I\'am a learner in';
+  static const String groupFilterLearner = 'Groups I\'m a learner in';
   static const String groupFilterAdminCoLead = 'Groups I teach or co-lead';
 
   static const String visibilityGroupView = 'Groups I teach or administer';

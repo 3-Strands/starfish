@@ -8,6 +8,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -370,113 +371,130 @@ class GroupListItem extends StatelessWidget {
         ),
       ),
       color: AppColors.txtFieldBackground,
-      child: InkWell(
-        onTap: () {
-          print('Group Item Selected');
-          onGroupTap(group);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                height: 20.sp,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      width: 200.w,
-                      child: Text(
-                        '${group.name}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: AppColors.txtFieldTextColor),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 20.sp,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: 200.w,
+                    child: Text(
+                      '${group.name}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.txtFieldTextColor,
                       ),
                     ),
-                    Spacer(),
-                    if (group.currentUserRole! == GroupUser_Role.ADMIN)
-                      CustomIconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.blue,
-                          size: 18.sp,
-                        ),
-                        text: Strings.edit,
-                        onButtonTap: () {},
-                      ),
-                    if (group.currentUserRole! == GroupUser_Role.LEARNER)
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text(
-                          Strings.leaveThisGroup,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: AppColors.selectedButtonBG,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10.sp),
-              Text(
-                '${Strings.adminNamePrifix}: ${group.adminName}',
-                textAlign: TextAlign.left,
-              ),
-              SizedBox(height: 20.sp),
-              Container(
-                height: 36.h,
-                width: 326.w,
-                // margin: EdgeInsets.symmetric(horizontal: 10.sp),
-                decoration: BoxDecoration(
-                    color: Color(0xFFDDDDDD),
-                    borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
-                child: Center(
-                  child: Text(
-                    'View Teachers and Learners',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.sp),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    height: 51.sp,
-                    width: 99.sp,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFFFBE4A),
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(8.5.sp))),
                   ),
                   Spacer(),
-                  Container(
-                    height: 51.sp,
-                    width: 99.sp,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFFF5E4D),
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(8.5.sp))),
-                  ),
-                  Spacer(),
-                  Container(
-                    height: 51.sp,
-                    width: 99.sp,
-                    decoration: BoxDecoration(
-                        color: Color(0xFF6DE26B),
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(8.5.sp))),
-                  )
+                  if (group.currentUserRole! == GroupUser_Role.ADMIN)
+                    CustomIconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.blue,
+                        size: 18.sp,
+                      ),
+                      text: Strings.edit,
+                      onButtonTap: () {},
+                    ),
+                  if (group.currentUserRole! == GroupUser_Role.LEARNER)
+                    ElevatedButton(
+                      onPressed: () {
+                        //TODO: Leave this group
+                      },
+                      child: Text(
+                        Strings.leaveThisGroup,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: AppColors.selectedButtonBG,
+                      ),
+                    ),
                 ],
-              )
-            ],
-          ),
+              ),
+            ),
+            SizedBox(height: 10.sp),
+            Text(
+              '${Strings.adminNamePrifix}: ${group.adminName}',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.hintTextColor,
+              ),
+            ),
+            SizedBox(height: 20.sp),
+            if (group.currentUserRole == GroupUser_Role.ADMIN ||
+                group.currentUserRole == GroupUser_Role.TEACHER)
+              InkWell(
+                onTap: () {
+                  onGroupTap(group);
+                },
+                child: Container(
+                  height: 36.h,
+                  width: 326.w,
+                  // margin: EdgeInsets.symmetric(horizontal: 10.sp),
+                  decoration: BoxDecoration(
+                      color: Color(0xFFDDDDDD),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                    child: Text(
+                      Strings.viewTeachersAndLearners,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'Rubic',
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            SizedBox(height: 10.sp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  height: 51.sp,
+                  width: 99.sp,
+                  decoration: BoxDecoration(
+                      color: Color(0xFFFFBE4A),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                ),
+                Spacer(),
+                Container(
+                  height: 51.sp,
+                  width: 99.sp,
+                  decoration: BoxDecoration(
+                      color: Color(0xFFFF5E4D),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                ),
+                Spacer(),
+                Container(
+                  height: 51.sp,
+                  width: 99.sp,
+                  decoration: BoxDecoration(
+                      color: Color(0xFF6DE26B),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                )
+              ],
+            )
+          ],
         ),
       ),
       elevation: 5,
