@@ -46,106 +46,55 @@ class MaterialBloc extends Object {
         )
         .whenComplete(
           () => {
-            _filteredMaterialsList =
-                _doFilterMaterials(selectedLanguages, selectedTopics),
+            _filteredMaterialsList = _filterMaterials(),
             _materials.sink.add(_filteredMaterialsList)
           },
         );
   }
 
-  List<HiveMaterial> _doFilterMaterials(List<HiveLanguage>? _selectedLanguages,
-      List<HiveMaterialTopic>? _selectedTopics) {
-    List<HiveMaterial> _overAllFilterMaterials = [];
-    List<HiveMaterial> _filterMaterialsByLanguage = [];
-
-    // ignore: unnecessary_null_comparison
-    if (_selectedLanguages != null && _selectedLanguages.length > 0) {
-      print('_selectedLanguages.length > 0');
-
-      _filterMaterialsByLanguage =
-          _materialFilterByLanguages(_selectedLanguages);
-
-      // ignore: unnecessary_null_comparison
-      if (_selectedTopics != null && _selectedTopics.length > 0) {
-        if (_filterMaterialsByLanguage.length > 0) {
-          _overAllFilterMaterials = _materialFilterByTopics(
-              _filterMaterialsByLanguage, _selectedTopics);
-        } else {
-          _overAllFilterMaterials =
-              _materialFilterByTopics(_allMaterials, _selectedTopics);
-        }
-      } else {
-        _overAllFilterMaterials = _filterMaterialsByLanguage;
-      }
-    } else {
-      // ignore: unnecessary_null_comparison
-      if (_selectedTopics != null && _selectedTopics.length > 0) {
-        _overAllFilterMaterials =
-            _materialFilterByTopics(_allMaterials, _selectedTopics);
-      }
+  bool _ifMaterialSupportsLanguage(
+      HiveMaterial _material, List<HiveLanguage> _selectedLanguages) {
+    if (_selectedLanguages.length == 0) {
+      return true;
+    }
+    if (_material.languageIds == null || _material.languageIds!.length == 0) {
+      return false;
     }
 
-    return _overAllFilterMaterials;
+    Set<String> _selectdLanguageSet =
+        _selectedLanguages.map((e) => e.id).toList().toSet();
+
+    Set<String> _materialLanguageSet = _material.languageIds!.toSet();
+
+    return _materialLanguageSet.intersection(_selectdLanguageSet).length > 0;
   }
 
-  List<HiveMaterial> _materialFilterByLanguages(
-      List<HiveLanguage>? _selectedLanguages) {
-    List<HiveMaterial>? _filterMaterialsByLanguage = [];
+  bool _ifMaterialSupportsTopic(
+      HiveMaterial _material, List<HiveMaterialTopic> _selectedTopics) {
+    if (_selectedTopics.length == 0) {
+      return true;
+    }
+    if (_material.topics == null || _material.topics!.length == 0) {
+      return false;
+    }
 
-    _selectedLanguages!.forEach((element) {
-      var filteredMaterials = _allMaterials
-          .where((material) => (material.languageIds!.contains(element.id)))
-          .toList();
-      print('selected language ids: ${element.id}');
-      _allMaterials.forEach((element) {
-        print('material language ids: ${element.id}');
-      });
+    Set<String> _selectdTopicsSet =
+        _selectedTopics.map((e) => e.name).toList().toSet();
 
-      if (_filterMaterialsByLanguage!.length == 0 &&
-          filteredMaterials.length != 0) {
-        _filterMaterialsByLanguage = filteredMaterials;
-      } else {
-        filteredMaterials.forEach((filterMaterial) {
-          List<HiveMaterial> result = _filterMaterialsByLanguage!
-              .where((output) => output.id == filterMaterial.id)
-              .toList();
+    Set<String> _materialTopicsSet = _material.topics!.toSet();
 
-          if (result.length == 0) {
-            _filterMaterialsByLanguage!.add(filterMaterial);
-          }
-        });
-      }
-    });
-
-    return _filterMaterialsByLanguage!;
+    return _materialTopicsSet.intersection(_selectdTopicsSet).length > 0;
   }
 
-  List<HiveMaterial> _materialFilterByTopics(
-      List<HiveMaterial> materials, List<HiveMaterialTopic>? _selectedTopics) {
-    List<HiveMaterial> _listToShow = [];
-
-    _selectedTopics!.forEach((element) {
-      var filteredMaterials = materials
-          .where((material) => (material.topics!.contains(element.name)))
-          .toList();
-
-      if (_listToShow.length == 0) {
-        _listToShow = filteredMaterials;
-      } else {
-        filteredMaterials.forEach((filterMaterial) {
-          List<HiveMaterial> result = _listToShow
-              .where((output) => output.id == filterMaterial.id)
-              .toList();
-          if (result.length == 0) {
-            // If item is already not added then add that item in the material list
-            _listToShow.add(filterMaterial);
-          }
-        });
+  List<HiveMaterial> _filterMaterials() {
+    List<HiveMaterial> _results = [];
+    _allMaterials.forEach((element) {
+      if (_ifMaterialSupportsLanguage(element, selectedLanguages) &&
+          _ifMaterialSupportsTopic(element, selectedTopics)) {
+        _results.add(element);
       }
-      print(filteredMaterials.length);
     });
-
-    return _listToShow;
+    return _results;
   }
 
   void addMaterial(HiveMaterial? material) {
