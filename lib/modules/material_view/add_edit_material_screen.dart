@@ -17,7 +17,6 @@ import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
@@ -532,7 +531,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           .toList(),
       typeIds: _selectedTypes.map((HiveMaterialType type) => type.id).toList(),
       topics:
-          _selectedTopics.map((HiveMaterialTopic topic) => topic.id).toList(),
+          _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList(),
       visibility: _visibleTo != null ? _visibleTo!.value.value : 0,
       editability: _editableBy != null ? _editableBy!.value.value : 0,
     );
