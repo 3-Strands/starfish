@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:starfish/constants/strings.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GeneralFunctions {
@@ -36,5 +37,16 @@ class GeneralFunctions {
     } else {
       print("URL can't be launched.");
     }
+  }
+
+  static String validateMobile(String value) {
+    String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return Strings.emptyMobileNumbers;
+    } else if (!regExp.hasMatch(value)) {
+      return Strings.invalidMobileNumbers;
+    }
+    return '';
   }
 }

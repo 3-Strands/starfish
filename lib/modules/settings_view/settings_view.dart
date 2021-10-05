@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void updateName() async {
+  void _updateName() async {
     if (_nameController.text == "") {
       setState(() => {_nameController.text = _userName});
       return StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
@@ -112,17 +112,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox.putAt(0, _user);
   }
 
-  void updatePhoneNumber() async {
-    if (_countryCodeController.text == "") {
-      setState(() => {_countryCodeController.text = _countyCode});
-      return StarfishSnackbar.showErrorMessage(
-          context, Strings.emptyDialingCode);
-    }
-
-    if (_phoneNumberController.text == "") {
+  void _updatePhoneNumber() async {
+    String validationMsg =
+        GeneralFunctions.validateMobile(_phoneNumberController.text);
+    if (validationMsg != '') {
       setState(() => {_phoneNumberController.text = _mobileNumber});
-      return StarfishSnackbar.showErrorMessage(
-          context, Strings.emptyMobileNumbers);
+      return StarfishSnackbar.showErrorMessage(context, validationMsg);
     }
 
     setState(() => {
@@ -208,7 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onButtonClicked: (value) {
                     print('name selected value $value');
                     if (isNameEditable == true) {
-                      updateName();
+                      _updateName();
                     }
                     setState(() {
                       isNameEditable = value;
@@ -286,7 +281,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onButtonClicked: (value) {
                     print('mobile selected value $value');
                     if (isMobileEditable == true) {
-                      updatePhoneNumber();
+                      _updatePhoneNumber();
                     }
                     setState(
                       () {
