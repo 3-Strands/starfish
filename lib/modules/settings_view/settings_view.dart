@@ -120,13 +120,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox.putAt(0, _user);
   }
 
-  void _updatePhoneNumber() async {
+  void _validatePhoneNumber() {
+    /* validate entered dialling code in the country list if it exist or not */
+    String dialingCode = _countryCodeController.text;
+    bool isDialingCodeExist = _countryList
+        .where((item) => item.diallingCode == dialingCode)
+        .isNotEmpty;
+
+    if (!isDialingCodeExist) {
+      setState(() => {_countryCodeController.text = _countyCode});
+      return StarfishSnackbar.showErrorMessage(
+          context, Strings.dialingCodeNotExist);
+    }
+    /* ----------------------------------------------------------------- */
+
     String validationMsg =
         GeneralFunctions.validateMobile(_phoneNumberController.text);
     if (validationMsg != '') {
       setState(() => {_phoneNumberController.text = _mobileNumber});
       return StarfishSnackbar.showErrorMessage(context, validationMsg);
     }
+  }
+
+  void _updatePhoneNumber() async {
+    _validatePhoneNumber();
 
     setState(() => {
           _mobileNumber = _phoneNumberController.text,
