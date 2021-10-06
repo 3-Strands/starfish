@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
@@ -31,105 +30,46 @@ class GroupBloc extends Object {
   }
 
   fetchAllGroupsByRole() async {
-    final Map<GroupUser_Role, List<String>> _roleGroupIdsMap = Map();
     final Map<UserGroupRoleFilter, List<HiveGroup>> _roleGroupMap = Map();
+    _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD] = [];
+    _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] = [];
 
-    _roleGroupIdsMap[GroupUser_Role.ADMIN] =
-        await _fetchGroupIdsWithRole(GroupUser_Role.ADMIN) ?? [];
-    _roleGroupIdsMap[GroupUser_Role.TEACHER] =
-        await _fetchGroupIdsWithRole(GroupUser_Role.TEACHER) ?? [];
-    _roleGroupIdsMap[GroupUser_Role.LEARNER] =
-        await _fetchGroupIdsWithRole(GroupUser_Role.LEARNER) ?? [];
-    _roleGroupIdsMap[GroupUser_Role.UNSPECIFIED_ROLE] =
-        await _fetchGroupIdsWithRole(GroupUser_Role.UNSPECIFIED_ROLE) ?? [];
-
-    if (groupRoleFilter == UserGroupRoleFilter.FILTER_LEARNER) {
-      _roleGroupIdsMap[GroupUser_Role.LEARNER]?.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] =
-            await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? [],
-                GroupUser_Role.LEARNER);
-      });
-    } else if (groupRoleFilter == UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD) {
-      List<String> _groupIds = [];
-      _groupIds.addAll(_roleGroupIdsMap[GroupUser_Role.ADMIN]!);
-      _groupIds.addAll(_roleGroupIdsMap[GroupUser_Role.TEACHER]!);
-
-      _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD] = [];
-
-      _roleGroupIdsMap[GroupUser_Role.ADMIN]!.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
-            await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? [],
-                GroupUser_Role.ADMIN));
-      });
-
-      _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
-            await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? [],
-                GroupUser_Role.TEACHER));
-      });
-    } else {
-      //if (groupRoleFilter == UserGroupRoleFilter.FILTER_ALL) {
-      _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD] = [];
-      _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] = [];
-
-      _roleGroupIdsMap[GroupUser_Role.ADMIN]!.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
-            await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.ADMIN] ?? [],
-                GroupUser_Role.ADMIN));
-      });
-
-      _roleGroupIdsMap[GroupUser_Role.TEACHER]!.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.addAll(
-            await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.TEACHER] ?? [],
-                GroupUser_Role.TEACHER));
-      });
-
-      _roleGroupIdsMap[GroupUser_Role.LEARNER]!.forEach((element) async {
-        _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.addAll(
-            await _getGroupsWithIds(
-                _roleGroupIdsMap[GroupUser_Role.LEARNER] ?? [],
-                GroupUser_Role.LEARNER));
-      });
-    }
-    _groups.sink.add(_roleGroupMap);
-  }
-
-  Future<List<String>?> _fetchGroupIdsWithRole(
-      GroupUser_Role groupUserRole) async {
-    CurrentUserRepository currentUserRepository = CurrentUserRepository();
+    final CurrentUserRepository currentUserRepository = CurrentUserRepository();
     HiveCurrentUser currentUser = await currentUserRepository.getUserFromDB();
-    return currentUser.groups
-        .where((HiveGroupUser groupUser) =>
-            GroupUser_Role.valueOf(groupUser.role!) == groupUserRole)
-        .map((e) => e.groupId!)
-        .toList();
-  }
 
-  Future<List<HiveGroup>> _getGroupsWithIds(
-      List<String> groupIds, GroupUser_Role userRole) async {
-    List<HiveGroup> _groups = await repository.fetchGroupsFromDB();
+    List<HiveGroup> groups = await repository.fetchGroupsFromDB();
+    groups.forEach((element) {
+      // set Role of current User in the group
+      element.userRole = element.getMyRole(currentUser.id);
 
-    return _groups.where((HiveGroup group) {
-      if (groupIds.contains(group.id) &&
-          group.name!.toLowerCase().contains(query.toLowerCase())) {
-        group.currentUserRole = userRole;
-
-        return true;
-      } else {
-        return false;
+      switch (element.getMyRole(currentUser.id)) {
+        case GroupUser_Role.ADMIN:
+          _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.add(element);
+          break;
+        case GroupUser_Role.TEACHER:
+          _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.add(element);
+          break;
+        case GroupUser_Role.LEARNER:
+          _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.add(element);
+          break;
+        /*case GroupUser_Role.UNSPECIFIED_ROLE:
+        default:
+          _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.add(element);*/
       }
-    }).toList();
+    });
+
+    if (groupRoleFilter == UserGroupRoleFilter.FILTER_ALL) {
+      _groups.sink.add(_roleGroupMap);
+    } else {
+      _groups.sink.add({groupRoleFilter: _roleGroupMap[groupRoleFilter] ?? []});
+    }
   }
 
   Future<int> addEditGroup(HiveGroup group) async {
     return repository.addEditGroup(group).then((value) {
       //_allGroups.add(group);
       //_groups.sink.add(_allGroups);
+      fetchAllGroupsByRole();
       return value;
     });
   }
