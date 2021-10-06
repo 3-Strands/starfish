@@ -245,6 +245,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
+    bloc.materialBloc.selectedLanguages = _languageList;
+    _fetchMaterialData(bloc);
+
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
@@ -308,8 +311,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     List<Widget> topics = [];
 
     material.topics?.forEach((String topic) {
-      /*HiveMaterialTopic _materialTopic = _materialTopicBox.values
-          .firstWhere((element) => topicId == element.id);*/
       topics.add(Text(topic));
     });
 

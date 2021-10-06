@@ -126,7 +126,7 @@ class _MultiSelectState extends State<MultiSelect> {
             widget.selectedValues as List<HiveMaterialTopic>;
         _selectedTopics.forEach((element) {
           final index = _items.indexWhere(
-              (item) => (item.data as HiveMaterialTopic).id == element.id);
+              (item) => (item.data as HiveMaterialTopic).name == element.name);
           _items[index].isSelected = true;
         });
 

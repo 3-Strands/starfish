@@ -122,6 +122,9 @@ sending an invitation to use Starfish''';
   static const String emptySelectCountry = 'Please select country.';
   static const String emptySelectLanguage = 'Please select languages.';
   static const String emptyDialingCode = 'Please enter dialing code.';
+  static const String dialingCodeNotExist =
+      'Entered dialing code doesn\'t exist.';
+
   static const String emptyMobileNumbers = 'Please enter mobile number.';
   static const String invalidMobileNumbers =
       'Please enter valid mobile number.';
