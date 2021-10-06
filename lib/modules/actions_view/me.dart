@@ -153,7 +153,7 @@ class _MeState extends State<Me> {
                       ),
                     ),
                     SizedBox(
-                      height: 10.h,
+                      height: 15.h,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
