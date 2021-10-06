@@ -562,7 +562,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: dashboardNavigationTitle,
               ),
               IconButton(
-                icon: SvgPicture.asset(AssetsPath.settingsActive),
+                icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {},
               ),
             ],
