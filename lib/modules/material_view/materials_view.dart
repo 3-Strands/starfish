@@ -338,7 +338,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,
                     fontFamily: 'OpenSans',
-                    fontSize: 26.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
