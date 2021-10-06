@@ -88,3 +88,6 @@ flutter:
         - asset: assets/fonts/OpenSans-ExtraBoldItalic.ttf
         - asset: assets/fonts/OpenSans-Light.ttf
         - asset: assets/fonts/OpenSans-Regular.ttf
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-Regular.ttf

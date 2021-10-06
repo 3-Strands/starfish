@@ -118,22 +118,39 @@ class _MeState extends State<Me> {
                     left: 5.w, right: 5.w, top: 15.h, bottom: 15.h),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Text("#1"),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Text("Sample Action Name with long text"),
-                        SizedBox(
-                          width: 35.w,
-                        ),
-                        Icon(Icons.more_vert)
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.sp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "#1",
+                            style: TextStyle(
+                                color: Color(0xFF797979),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding:EdgeInsets.only(left:8.0,right: 8.sp),
+                              child: Text(
+                                "Sample Action Name with long texthsdjdlkwjdlkwjdlwjld;",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.more_vert,
+                            color: Color(0xFF3475F0),
+                          )
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 10.h,
@@ -145,7 +162,14 @@ class _MeState extends State<Me> {
                         SizedBox(
                           width: 10.w,
                         ),
-                        Text("Due : Aug 15"),
+                        Text(
+                          "Due : Aug 15",
+                          style: TextStyle(
+                            color: Color(0xFF797979),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     )
                   ],
@@ -192,7 +216,7 @@ class ActionStatusWidget extends StatelessWidget {
               Text(title,
                   textAlign: TextAlign.center,
                   style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp,fontFamily: 'Rubik')),
               Spacer()
             ],
           ),
