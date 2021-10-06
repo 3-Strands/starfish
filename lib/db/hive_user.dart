@@ -73,6 +73,10 @@ class HiveUser {
     );
   }
 
+  bool get isInvited {
+    return this.phone != null || this.phone!.isNotEmpty;
+  }
+
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 

@@ -8,6 +8,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -405,7 +406,16 @@ class GroupListItem extends StatelessWidget {
                           size: 18.sp,
                         ),
                         text: Strings.edit,
-                        onButtonTap: () {},
+                        onButtonTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddEditGroupScreen(
+                                group: group,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     if (group.currentUserRole! == GroupUser_Role.LEARNER)
                       ElevatedButton(
