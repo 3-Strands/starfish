@@ -81,6 +81,8 @@ class Strings {
 
   // Screen Titles
   static const String addNewMaterial = 'Add New Material';
+  static const String addMaterials = 'Add Materials';
+
   static const String editMaterial = 'Edit Material';
   static const String dialogInfo = 'Info';
   static const String createGroup = 'Create Group';

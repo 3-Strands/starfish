@@ -337,7 +337,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,
                     fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
+                    fontSize: 26.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -526,7 +526,10 @@ class MaterialListItem extends StatelessWidget {
                     Text(
                       'Title: ${material.title}',
                       textAlign: TextAlign.left,
-                      style: TextStyle(color: AppColors.txtFieldTextColor),
+                      style: TextStyle(color: AppColors.txtFieldTextColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp
+                      ),
                     ),
                     Spacer(),
                     CustomIconButton(

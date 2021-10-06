@@ -257,7 +257,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     child: ElevatedButton(
                       onPressed: () {},
                       child: Text(
-                        Strings.addNewMaterial,
+                        Strings.addMaterials,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
                           fontSize: 14.sp,
