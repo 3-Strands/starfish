@@ -71,6 +71,43 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   late AppBloc bloc;
 
+  @override
+  void initState() {
+    super.initState();
+    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
+        HiveDatabase.EVALUATION_CATEGORIES_BOX);
+    _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
+
+    Permission.contacts.status.then((PermissionStatus permissionStatus) {
+      if (permissionStatus == PermissionStatus.granted) {
+        _loadContacts();
+      }
+    });
+
+    print('widget.group');
+    print(widget.group);
+
+    if (widget.group != null) {
+      _isEditMode = true;
+
+      _titleController.text = widget.group!.name!;
+      //_descriptionController.text = widget.group!.description!;
+
+      _selectedLanguages = _languageBox.values
+          .where((HiveLanguage language) =>
+              widget.group!.languageIds!.contains(language.id))
+          .toList();
+
+      _selectedEvaluationCategories = _evaluationCategoryBox.values
+          .where((HiveEvaluationCategory category) => widget.group != null
+              ? widget.group!.evaluationCategoryIds!.contains(category.id)
+              : false)
+          .toList();
+    }
+  }
+
   Future<void> _checkPermissionsAndShowContact() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
@@ -354,40 +391,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             Navigator.of(context).pop();
           });
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
-    _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
-        HiveDatabase.EVALUATION_CATEGORIES_BOX);
-    _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
-
-    Permission.contacts.status.then((PermissionStatus permissionStatus) {
-      if (permissionStatus == PermissionStatus.granted) {
-        _loadContacts();
-      }
-    });
-
-    if (widget.group != null) {
-      _isEditMode = true;
-
-      _titleController.text = widget.group!.name!;
-      //_descriptionController.text = widget.group!.description!;
-
-      _selectedLanguages = _languageBox.values
-          .where((HiveLanguage language) =>
-              widget.group!.languageIds!.contains(language.id))
-          .toList();
-
-      _selectedEvaluationCategories = _evaluationCategoryBox.values
-          .where((HiveEvaluationCategory category) => widget.group != null
-              ? widget.group!.evaluationCategoryIds!.contains(category.id)
-              : false)
-          .toList();
-    }
   }
 
   @override
