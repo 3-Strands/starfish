@@ -73,11 +73,6 @@ class HiveGroup extends HiveObject {
 
   GroupUser_Role? currentUserRole;
 
-  HiveGroupUser? get admin {
-    return this.users?.firstWhereOrNull((groupUser) =>
-        GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
-  }
-
   set userRole(GroupUser_Role? role) {
     this.currentUserRole = role;
   }
@@ -86,6 +81,35 @@ class HiveGroup extends HiveObject {
     return currentUserRole;
   }
 
+  HiveGroupUser? get admin {
+    return this.users?.firstWhereOrNull((groupUser) =>
+        GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
+  }
+
+  List<HiveGroupUser>? get teachers {
+    return this
+        .users
+        ?.where((groupUser) =>
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
+        .toList();
+  }
+
+  List<HiveGroupUser>? get learners {
+    return this
+        .users
+        ?.where((groupUser) =>
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.LEARNER)
+        .toList();
+  }
+
+  String toString() {
+    return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds?.toString()}, 
+    users: ${this.users?.toString()}, actions: ${this.actions?.toString()}, 
+    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
+  }
+}
+
+extension HiveGroupExt on HiveGroup {
   String get adminName {
     if (this.currentUserRole == GroupUser_Role.ADMIN) {
       return 'Me';
@@ -94,9 +118,11 @@ class HiveGroup extends HiveObject {
     }
   }
 
-  String toString() {
-    return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds?.toString()}, 
-    users: ${this.users?.toString()}, actions: ${this.actions?.toString()}, 
-    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
+  GroupUser_Role getMyRole(String userId) {
+    if (this.users == null) {
+      return GroupUser_Role.UNSPECIFIED_ROLE;
+    }
+    return GroupUser_Role.valueOf(
+        this.users!.firstWhere((element) => element.userId == userId).role!)!;
   }
 }

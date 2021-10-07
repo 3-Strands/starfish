@@ -106,7 +106,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 style: dashboardNavigationTitle,
               ),
               IconButton(
-                icon: SvgPicture.asset(AssetsPath.settingsActive),
+                icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -257,7 +257,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     child: ElevatedButton(
                       onPressed: () {},
                       child: Text(
-                        Strings.addNewMaterial,
+                        Strings.addMaterials,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
                           fontSize: 14.sp,

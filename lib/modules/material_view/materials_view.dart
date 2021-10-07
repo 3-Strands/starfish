@@ -527,7 +527,10 @@ class MaterialListItem extends StatelessWidget {
                     Text(
                       'Title: ${material.title}',
                       textAlign: TextAlign.left,
-                      style: TextStyle(color: AppColors.txtFieldTextColor),
+                      style: TextStyle(color: AppColors.txtFieldTextColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp
+                      ),
                     ),
                     Spacer(),
                     CustomIconButton(
