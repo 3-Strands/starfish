@@ -1775,6 +1775,55 @@ class ListUsersRequest extends $pb.GeneratedMessage {
   $0.Date ensureUpdatedSince() => $_ensure(0);
 }
 
+class ListUsersRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListUsersRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  ListUsersRequest._() : super();
+  factory ListUsersRequest({
+    $2.Date? updatedSince,
+  }) {
+    final _result = create();
+    if (updatedSince != null) {
+      _result.updatedSince = updatedSince;
+    }
+    return _result;
+  }
+  factory ListUsersRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListUsersRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListUsersRequest clone() => ListUsersRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListUsersRequest copyWith(void Function(ListUsersRequest) updates) => super.copyWith((message) => updates(message as ListUsersRequest)) as ListUsersRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ListUsersRequest create() => ListUsersRequest._();
+  ListUsersRequest createEmptyInstance() => create();
+  static $pb.PbList<ListUsersRequest> createRepeated() => $pb.PbList<ListUsersRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ListUsersRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListUsersRequest>(create);
+  static ListUsersRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $2.Date get updatedSince => $_getN(0);
+  @$pb.TagNumber(1)
+  set updatedSince($2.Date v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUpdatedSince() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUpdatedSince() => clearField(1);
+  @$pb.TagNumber(1)
+  $2.Date ensureUpdatedSince() => $_ensure(0);
+}
+
 class Material extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Material', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')

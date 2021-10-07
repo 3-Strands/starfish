@@ -5,6 +5,10 @@ class Strings {
       'Select Country and enter Phone Number to get One Time Password';
   static const String searchLanguagesPlaceholder = 'Search languages';
   static const String searchTopicsPlaceholder = 'Search topics';
+  static const String emailHint = 'Enter email of project admin';
+  static const String confirmEmailHint = 'Re-enter email of project admin';
+  static const String projectAdminEmailSectionTitle =
+      'Enter the email ID of the Project Admin in everylanguage.app';
 
   static const String exit = 'Exit';
   static const String next = 'Next';

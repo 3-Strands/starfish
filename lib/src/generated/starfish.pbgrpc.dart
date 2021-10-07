@@ -40,6 +40,12 @@ class StarfishClient extends $grpc.Client {
       ($0.CreateUpdateMaterialsRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.CreateUpdateMaterialsResponse.fromBuffer(value));
+  static final _$createUsers =
+      $grpc.ClientMethod<$0.User, $0.CreateUsersResponse>(
+          '/sil.starfish.Starfish/CreateUsers',
+          ($0.User value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.CreateUsersResponse.fromBuffer(value));
   static final _$deleteGroupUsers =
       $grpc.ClientMethod<$0.GroupUser, $0.DeleteGroupUsersResponse>(
           '/sil.starfish.Starfish/DeleteGroupUsers',
@@ -85,6 +91,10 @@ class StarfishClient extends $grpc.Client {
           '/sil.starfish.Starfish/ListMaterialTypes',
           ($0.ListMaterialTypesRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $0.MaterialType.fromBuffer(value));
+  static final _$listUsers = $grpc.ClientMethod<$0.ListUsersRequest, $0.User>(
+      '/sil.starfish.Starfish/ListUsers',
+      ($0.ListUsersRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.User.fromBuffer(value));
   static final _$updateCurrentUser =
       $grpc.ClientMethod<$0.UpdateCurrentUserRequest, $0.User>(
           '/sil.starfish.Starfish/UpdateCurrentUser',
@@ -124,6 +134,12 @@ class StarfishClient extends $grpc.Client {
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$createUpdateMaterials, request,
         options: options);
+  }
+
+  $grpc.ResponseStream<$0.CreateUsersResponse> createUsers(
+      $async.Stream<$0.User> request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUsers, request, options: options);
   }
 
   $grpc.ResponseStream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
@@ -192,6 +208,13 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
+  $grpc.ResponseStream<$0.User> listUsers($0.ListUsersRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listUsers, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
   $grpc.ResponseFuture<$0.User> updateCurrentUser(
       $0.UpdateCurrentUserRequest request,
       {$grpc.CallOptions? options}) {
@@ -239,6 +262,13 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.CreateUpdateMaterialsRequest.fromBuffer(value),
         ($0.CreateUpdateMaterialsResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.User, $0.CreateUsersResponse>(
+        'CreateUsers',
+        createUsers,
+        true,
+        true,
+        ($core.List<$core.int> value) => $0.User.fromBuffer(value),
+        ($0.CreateUsersResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.GroupUser, $0.DeleteGroupUsersResponse>(
         'DeleteGroupUsers',
         deleteGroupUsers,
@@ -311,6 +341,13 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.ListMaterialTypesRequest.fromBuffer(value),
             ($0.MaterialType value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.ListUsersRequest, $0.User>(
+        'ListUsers',
+        listUsers_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $0.ListUsersRequest.fromBuffer(value),
+        ($0.User value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UpdateCurrentUserRequest, $0.User>(
         'UpdateCurrentUser',
         updateCurrentUser_Pre,
@@ -362,6 +399,11 @@ abstract class StarfishServiceBase extends $grpc.Service {
     yield* listMaterialTypes(call, await request);
   }
 
+  $async.Stream<$0.User> listUsers_Pre($grpc.ServiceCall call,
+      $async.Future<$0.ListUsersRequest> request) async* {
+    yield* listUsers(call, await request);
+  }
+
   $async.Future<$0.User> updateCurrentUser_Pre($grpc.ServiceCall call,
       $async.Future<$0.UpdateCurrentUserRequest> request) async {
     return updateCurrentUser(call, await request);
@@ -379,6 +421,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
   $async.Stream<$0.CreateUpdateMaterialsResponse> createUpdateMaterials(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateMaterialsRequest> request);
+  $async.Stream<$0.CreateUsersResponse> createUsers(
+      $grpc.ServiceCall call, $async.Stream<$0.User> request);
   $async.Stream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
       $grpc.ServiceCall call, $async.Stream<$0.GroupUser> request);
   $async.Future<$0.User> getCurrentUser(
@@ -397,6 +441,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.ListMaterialTopicsRequest request);
   $async.Stream<$0.MaterialType> listMaterialTypes(
       $grpc.ServiceCall call, $0.ListMaterialTypesRequest request);
+  $async.Stream<$0.User> listUsers(
+      $grpc.ServiceCall call, $0.ListUsersRequest request);
   $async.Future<$0.User> updateCurrentUser(
       $grpc.ServiceCall call, $0.UpdateCurrentUserRequest request);
 }
