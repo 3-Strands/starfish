@@ -331,6 +331,9 @@ message Group {
 
     // Output only. A history of edits made to this group object
     repeated Edit edit_history = 7;
+
+    // A description of the group.
+    string description = 8;
 }
 
 // Connecting an action to a group
