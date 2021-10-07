@@ -427,7 +427,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _groupItem(HiveGroupUser group) {
     return Container(
-      height: 90.h,
+      height: 240.h,
       // color: Colors.green,
       margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
       child: Column(
@@ -439,36 +439,91 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Text(group.groupId!, style: titleTextStyle),
             ),
           ),
-          SizedBox(height: 5.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'ID: 123456\nCode: abcd',
-                style: TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16.sp,
-                  color: AppColors.appTitle,
-                ),
-              ),
-              Container(
-                height: 36.h,
-                width: 145.w,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    primary: AppColors.selectedButtonBG,
-                  ),
-                  child: Text(
-                    Strings.copyThisInfo,
-                    style: buttonTextStyle,
-                  ),
-                ),
-              ),
-            ],
+          SizedBox(
+            height: 20.h,
           ),
+          Container(
+            height: 45.h,
+            child: Align(
+              alignment: FractionalOffset.topLeft,
+              child: Text(Strings.projectAdminEmailSectionTitle,
+                  style: titleTextStyle),
+            ),
+          ),
+          SizedBox(height: 10.h),
+          Container(
+            height: 52.h,
+            child: _emailField(),
+          ),
+          SizedBox(height: 10.h),
+          Container(
+            height: 52.h,
+            child: _confirmEmailField(),
+          ),
+          SizedBox(height: 15.h),
+          SepratorLine(
+              hight: .5.h, edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
         ],
+      ),
+    );
+  }
+
+  TextFormField _emailField() {
+    final _emailController = TextEditingController();
+    final FocusNode _emailFocus = FocusNode();
+
+    return TextFormField(
+      controller: _emailController,
+      focusNode: _emailFocus,
+      onFieldSubmitted: (term) {
+        _emailFocus.unfocus();
+      },
+      keyboardType: TextInputType.emailAddress,
+      style: textFormFieldText,
+      decoration: InputDecoration(
+        hintText: Strings.emailHint,
+        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            color: Colors.white,
+          ),
+        ),
+        filled: true,
+        fillColor: AppColors.txtFieldBackground,
+      ),
+    );
+  }
+
+  TextFormField _confirmEmailField() {
+    final _confirmEmailController = TextEditingController();
+    final FocusNode _confirmEmailFocus = FocusNode();
+
+    return TextFormField(
+      controller: _confirmEmailController,
+      focusNode: _confirmEmailFocus,
+      onFieldSubmitted: (term) {
+        _confirmEmailFocus.unfocus();
+      },
+      keyboardType: TextInputType.emailAddress,
+      style: textFormFieldText,
+      decoration: InputDecoration(
+        hintText: Strings.confirmEmailHint,
+        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(
+            color: Colors.white,
+          ),
+        ),
+        filled: true,
+        fillColor: AppColors.txtFieldBackground,
       ),
     );
   }
@@ -767,34 +822,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _myGroupsList(),
                 //--------------------------
 
-                //--> Copy All Codes
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(30.r),
-                  color: Color(0xFF3475F0),
-                  child: Container(
-                    width: 345.w,
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        Strings.copyAllCodes,
-                        style: TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 14.sp,
-                          color: Color(0xFF3475F0),
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
-                    ),
-                  ),
-                ),
-                //--------------------------
-
-                SizedBox(height: 100.h),
+                SizedBox(height: 10.h),
               ],
             ),
           ),
