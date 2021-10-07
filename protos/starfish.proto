@@ -26,6 +26,9 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
+    // Create starfish users
+    rpc CreateUsers (stream User) returns (stream CreateUsersResponse) {}
+
     // Remove users from groups.
     // The role on GroupUser message is ignored in this procedure
     rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUsersResponse) {}
@@ -229,6 +232,24 @@ message CreateUpdateMaterialsResponse {
     Material material = 1;
 
     // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateUsersResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The User after created.
+    User user = 1;
+
+    // The status of the create request.
     Status status = 2;
 
     // Error message or any relevant message in response to the request.
