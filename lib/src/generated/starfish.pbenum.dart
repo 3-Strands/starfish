@@ -120,6 +120,21 @@ class CreateUpdateMaterialsResponse_Status extends $pb.ProtobufEnum {
   const CreateUpdateMaterialsResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
+class CreateUsersResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUsersResponse_Status SUCCESS = CreateUsersResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUsersResponse_Status FAILURE = CreateUsersResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateUsersResponse_Status> values = <CreateUsersResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateUsersResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUsersResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateUsersResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class DeleteGroupUsersResponse_Status extends $pb.ProtobufEnum {
   static const DeleteGroupUsersResponse_Status SUCCESS = DeleteGroupUsersResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
   static const DeleteGroupUsersResponse_Status FAILURE = DeleteGroupUsersResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');

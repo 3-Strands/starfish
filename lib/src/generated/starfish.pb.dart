@@ -749,6 +749,83 @@ class CreateUpdateMaterialsResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(3);
 }
 
+class CreateUsersResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUsersResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<User>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
+    ..e<CreateUsersResponse_Status>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: CreateUsersResponse_Status.SUCCESS, valueOf: CreateUsersResponse_Status.valueOf, enumValues: CreateUsersResponse_Status.values)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..hasRequiredFields = false
+  ;
+
+  CreateUsersResponse._() : super();
+  factory CreateUsersResponse({
+    User? user,
+    CreateUsersResponse_Status? status,
+    $core.String? message,
+  }) {
+    final _result = create();
+    if (user != null) {
+      _result.user = user;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    return _result;
+  }
+  factory CreateUsersResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CreateUsersResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CreateUsersResponse clone() => CreateUsersResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CreateUsersResponse copyWith(void Function(CreateUsersResponse) updates) => super.copyWith((message) => updates(message as CreateUsersResponse)) as CreateUsersResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CreateUsersResponse create() => CreateUsersResponse._();
+  CreateUsersResponse createEmptyInstance() => create();
+  static $pb.PbList<CreateUsersResponse> createRepeated() => $pb.PbList<CreateUsersResponse>();
+  @$core.pragma('dart2js:noInline')
+  static CreateUsersResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateUsersResponse>(create);
+  static CreateUsersResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  User get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(User v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  User ensureUser() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  CreateUsersResponse_Status get status => $_getN(1);
+  @$pb.TagNumber(2)
+  set status(CreateUsersResponse_Status v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasStatus() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearStatus() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get message => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set message($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMessage() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMessage() => clearField(3);
+}
+
 class DeleteGroupUsersResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteGroupUsersResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
@@ -985,6 +1062,7 @@ class Group extends $pb.GeneratedMessage {
     ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'evaluationCategoryIds')
     ..pc<GroupAction>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'actions', $pb.PbFieldType.PM, subBuilder: GroupAction.create)
     ..pc<Edit>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'editHistory', $pb.PbFieldType.PM, subBuilder: Edit.create)
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
     ..hasRequiredFields = false
   ;
 
@@ -997,6 +1075,7 @@ class Group extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? evaluationCategoryIds,
     $core.Iterable<GroupAction>? actions,
     $core.Iterable<Edit>? editHistory,
+    $core.String? description,
   }) {
     final _result = create();
     if (id != null) {
@@ -1019,6 +1098,9 @@ class Group extends $pb.GeneratedMessage {
     }
     if (editHistory != null) {
       _result.editHistory.addAll(editHistory);
+    }
+    if (description != null) {
+      _result.description = description;
     }
     return _result;
   }
@@ -1075,6 +1157,15 @@ class Group extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.List<Edit> get editHistory => $_getList(6);
+
+  @$pb.TagNumber(8)
+  $core.String get description => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set description($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasDescription() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearDescription() => clearField(8);
 }
 
 class GroupAction extends $pb.GeneratedMessage {
@@ -1620,6 +1711,55 @@ class ListMaterialTypesRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static ListMaterialTypesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListMaterialTypesRequest>(create);
   static ListMaterialTypesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $2.Date get updatedSince => $_getN(0);
+  @$pb.TagNumber(1)
+  set updatedSince($2.Date v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUpdatedSince() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUpdatedSince() => clearField(1);
+  @$pb.TagNumber(1)
+  $2.Date ensureUpdatedSince() => $_ensure(0);
+}
+
+class ListUsersRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListUsersRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  ListUsersRequest._() : super();
+  factory ListUsersRequest({
+    $2.Date? updatedSince,
+  }) {
+    final _result = create();
+    if (updatedSince != null) {
+      _result.updatedSince = updatedSince;
+    }
+    return _result;
+  }
+  factory ListUsersRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListUsersRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListUsersRequest clone() => ListUsersRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListUsersRequest copyWith(void Function(ListUsersRequest) updates) => super.copyWith((message) => updates(message as ListUsersRequest)) as ListUsersRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ListUsersRequest create() => ListUsersRequest._();
+  ListUsersRequest createEmptyInstance() => create();
+  static $pb.PbList<ListUsersRequest> createRepeated() => $pb.PbList<ListUsersRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ListUsersRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListUsersRequest>(create);
+  static ListUsersRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $2.Date get updatedSince => $_getN(0);

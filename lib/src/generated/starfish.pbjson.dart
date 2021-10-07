@@ -200,6 +200,28 @@ const CreateUpdateMaterialsResponse_Status$json = const {
 
 /// Descriptor for `CreateUpdateMaterialsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createUpdateMaterialsResponseDescriptor = $convert.base64Decode('Ch1DcmVhdGVVcGRhdGVNYXRlcmlhbHNSZXNwb25zZRIyCghtYXRlcmlhbBgBIAEoCzIWLnNpbC5zdGFyZmlzaC5NYXRlcmlhbFIIbWF0ZXJpYWwSSgoGc3RhdHVzGAIgASgOMjIuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU1hdGVyaWFsc1Jlc3BvbnNlLlN0YXR1c1IGc3RhdHVzEhgKB21lc3NhZ2UYAyABKAlSB21lc3NhZ2UiIgoGU3RhdHVzEgsKB1NVQ0NFU1MQABILCgdGQUlMVVJFEAE=');
+@$core.Deprecated('Use createUsersResponseDescriptor instead')
+const CreateUsersResponse$json = const {
+  '1': 'CreateUsersResponse',
+  '2': const [
+    const {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.User', '10': 'user'},
+    const {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.sil.starfish.CreateUsersResponse.Status', '10': 'status'},
+    const {'1': 'message', '3': 3, '4': 1, '5': 9, '10': 'message'},
+  ],
+  '4': const [CreateUsersResponse_Status$json],
+};
+
+@$core.Deprecated('Use createUsersResponseDescriptor instead')
+const CreateUsersResponse_Status$json = const {
+  '1': 'Status',
+  '2': const [
+    const {'1': 'SUCCESS', '2': 0},
+    const {'1': 'FAILURE', '2': 1},
+  ],
+};
+
+/// Descriptor for `CreateUsersResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createUsersResponseDescriptor = $convert.base64Decode('ChNDcmVhdGVVc2Vyc1Jlc3BvbnNlEiYKBHVzZXIYASABKAsyEi5zaWwuc3RhcmZpc2guVXNlclIEdXNlchJACgZzdGF0dXMYAiABKA4yKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXNlcnNSZXNwb25zZS5TdGF0dXNSBnN0YXR1cxIYCgdtZXNzYWdlGAMgASgJUgdtZXNzYWdlIiIKBlN0YXR1cxILCgdTVUNDRVNTEAASCwoHRkFJTFVSRRAB');
 @$core.Deprecated('Use deleteGroupUsersResponseDescriptor instead')
 const DeleteGroupUsersResponse$json = const {
   '1': 'DeleteGroupUsersResponse',
@@ -269,11 +291,12 @@ const Group$json = const {
     const {'1': 'evaluation_category_ids', '3': 5, '4': 3, '5': 9, '10': 'evaluationCategoryIds'},
     const {'1': 'actions', '3': 6, '4': 3, '5': 11, '6': '.sil.starfish.GroupAction', '10': 'actions'},
     const {'1': 'edit_history', '3': 7, '4': 3, '5': 11, '6': '.sil.starfish.Edit', '10': 'editHistory'},
+    const {'1': 'description', '3': 8, '4': 1, '5': 9, '10': 'description'},
   ],
 };
 
 /// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxIzCgdhY3Rpb25zGAYgAygLMhkuc2lsLnN0YXJmaXNoLkdyb3VwQWN0aW9uUgdhY3Rpb25zEjUKDGVkaXRfaGlzdG9yeRgHIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeQ==');
+final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxIzCgdhY3Rpb25zGAYgAygLMhkuc2lsLnN0YXJmaXNoLkdyb3VwQWN0aW9uUgdhY3Rpb25zEjUKDGVkaXRfaGlzdG9yeRgHIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeRIgCgtkZXNjcmlwdGlvbhgIIAEoCVILZGVzY3JpcHRpb24=');
 @$core.Deprecated('Use groupActionDescriptor instead')
 const GroupAction$json = const {
   '1': 'GroupAction',
@@ -391,6 +414,16 @@ const ListMaterialTypesRequest$json = const {
 
 /// Descriptor for `ListMaterialTypesRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listMaterialTypesRequestDescriptor = $convert.base64Decode('ChhMaXN0TWF0ZXJpYWxUeXBlc1JlcXVlc3QSNgoNdXBkYXRlZF9zaW5jZRgBIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSDHVwZGF0ZWRTaW5jZQ==');
+@$core.Deprecated('Use listUsersRequestDescriptor instead')
+const ListUsersRequest$json = const {
+  '1': 'ListUsersRequest',
+  '2': const [
+    const {'1': 'updated_since', '3': 1, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'updatedSince'},
+  ],
+};
+
+/// Descriptor for `ListUsersRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listUsersRequestDescriptor = $convert.base64Decode('ChBMaXN0VXNlcnNSZXF1ZXN0EjYKDXVwZGF0ZWRfc2luY2UYASABKAsyES5nb29nbGUudHlwZS5EYXRlUgx1cGRhdGVkU2luY2U=');
 @$core.Deprecated('Use materialDescriptor instead')
 const Material$json = const {
   '1': 'Material',
