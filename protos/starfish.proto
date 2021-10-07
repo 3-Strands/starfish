@@ -57,6 +57,9 @@ service Starfish {
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
 
+    // List users that the current user has access to
+    rpc ListUsers (ListUsersRequest) returns (stream User) {}
+
     // Update the current user.
     // Group or action connections cannot be updated through this procedure.
     rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
@@ -416,6 +419,13 @@ message ListMaterialTopicsRequest {
 }
 
 message ListMaterialTypesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListUsersRequest {
 
     // Only return results updated at this date or later
     google.type.Date updated_since = 1;
