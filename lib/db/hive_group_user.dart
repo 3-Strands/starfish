@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_group_user.g.dart';
@@ -11,6 +12,10 @@ class HiveGroupUser {
   String? userId;
   @HiveField(2)
   int? role;
+  @HiveField(3)
+  bool isUpdated = false;
+  @HiveField(4)
+  bool isDirty = false;
 
   HiveGroupUser({
     this.groupId,
@@ -34,5 +39,19 @@ class HiveGroupUser {
 
   String toString() {
     return '{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)}}';
+  }
+}
+
+extension HiveGroupUserExt on HiveGroupUser {
+  String get name {
+    return UserRepository().dbProvider.getName(this.userId!);
+  }
+
+  String get phone {
+    return UserRepository().dbProvider.getPhone(this.userId!);
+  }
+
+  String get diallingCode {
+    return UserRepository().dbProvider.getDiallingCode(this.userId!);
   }
 }

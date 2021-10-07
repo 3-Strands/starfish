@@ -21,6 +21,7 @@ import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 
@@ -70,6 +71,7 @@ class SyncService {
     //await syncLocalGroupsToRemote();
 
     syncCurrentUser();
+    syncUsers();
     syncCountries();
     syncLanguages();
     syncMaterialTopics();
@@ -125,6 +127,28 @@ class SyncService {
         //update record
         currentUserBox.putAt(0, _user);
       }
+    });
+  }
+
+  syncUsers() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      userBox.values.forEach((element) {
+        element.delete();
+      });
+    }
+
+    await UserRepository().getUsers().then((ResponseStream<User> user) {
+      user.listen((value) {
+        HiveUser _user = HiveUser.from(value);
+        userBox.add(_user);
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('Users Sync Done.');
+      });
     });
   }
 

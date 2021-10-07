@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
@@ -72,6 +73,10 @@ class GroupBloc extends Object {
       fetchAllGroupsByRole();
       return value;
     });
+  }
+
+  deleteGroupUser(HiveGroupUser groupUser) async {
+    return repository.deleteGroupUserFromDB(groupUser);
   }
 
   void dispose() {

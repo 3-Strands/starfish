@@ -75,7 +75,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     height: 27.h,
                     width: MediaQuery.of(context).size.width - 160.0,
                     child: Text(
-                      user.userId!,
+                      user.name,
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -110,7 +110,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               Align(
                 alignment: FractionalOffset.topLeft,
                 child: Text(
-                  '+91 1234568709',
+                  '+${user.diallingCode} ${user.phone}',
                   maxLines: 1,
                   style: TextStyle(
                     color: AppColors.appTitle,
@@ -315,6 +315,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                       .toList()[indexPath.section]
                                   [indexPath.index], //_groupsList[index.index],
                               onGroupTap: _onGroupSelection,
+                              onLeaveGroupTap: (HiveGroup group) {
+                                //TODO: Mark this group to delete
+                                //bloc.groupBloc.deleteGroup(group);
+                              },
                             );
                           },
                           groupHeaderBuilder:
@@ -360,8 +364,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
 class GroupListItem extends StatelessWidget {
   final HiveGroup group;
   final Function(HiveGroup group) onGroupTap;
+  final Function(HiveGroup group) onLeaveGroupTap;
 
-  GroupListItem({required this.group, required this.onGroupTap});
+  GroupListItem(
+      {required this.group,
+      required this.onGroupTap,
+      required this.onLeaveGroupTap});
 
   @override
   Widget build(BuildContext context) {
