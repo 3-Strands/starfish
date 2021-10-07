@@ -26,6 +26,9 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
+    // Create starfish users
+    rpc CreateUsers (stream User) returns (stream CreateUsersResponse) {}
+
     // Remove users from groups.
     // The role on GroupUser message is ignored in this procedure
     rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUsersResponse) {}
@@ -53,6 +56,9 @@ service Starfish {
 
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
+
+    // List users that the current user has access to
+    rpc ListUsers (ListUsersRequest) returns (stream User) {}
 
     // Update the current user.
     // Group or action connections cannot be updated through this procedure.
@@ -236,6 +242,24 @@ message CreateUpdateMaterialsResponse {
 
 }
 
+message CreateUsersResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The User after created.
+    User user = 1;
+
+    // The status of the create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message DeleteGroupUsersResponse {
 
     enum Status {
@@ -310,6 +334,9 @@ message Group {
 
     // Output only. A history of edits made to this group object
     repeated Edit edit_history = 7;
+
+    // A description of the group.
+    string description = 8;
 }
 
 // Connecting an action to a group
@@ -392,6 +419,13 @@ message ListMaterialTopicsRequest {
 }
 
 message ListMaterialTypesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListUsersRequest {
 
     // Only return results updated at this date or later
     google.type.Date updated_since = 1;
