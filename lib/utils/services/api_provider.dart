@@ -1,6 +1,5 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:grpc/grpc.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
@@ -118,5 +117,15 @@ class ApiProvider {
     Stream<CreateUpdateGroupsRequest> streamRequest = Stream.value(request);
 
     return client!.createUpdateGroups(streamRequest);
+  }
+
+  Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
+      Stream<GroupUser> request) async {
+    return client!.deleteGroupUsers(request);
+  }
+
+  Future<ResponseStream<User>> getUsers() async {
+    var request = ListUsersRequest();
+    return client!.listUsers(request);
   }
 }

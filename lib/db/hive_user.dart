@@ -6,7 +6,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 part 'hive_user.g.dart';
 
 @HiveType(typeId: 16)
-class HiveUser {
+class HiveUser extends HiveObject {
   @HiveField(0)
   String? id;
   @HiveField(1)
@@ -32,11 +32,11 @@ class HiveUser {
   @HiveField(11)
   String? phoneCountryId;
   @HiveField(12)
-  bool isNew;
+  bool isNew = false;
   @HiveField(13)
-  bool isUpdated;
+  bool isUpdated = false;
   @HiveField(14)
-  bool isDeleted;
+  bool isDeleted = false;
 
   HiveUser({
     required this.id,
@@ -55,6 +55,24 @@ class HiveUser {
     this.isUpdated = false,
     this.isDeleted = false,
   });
+
+  HiveUser.from(User user) {
+    this.id = user.id;
+    this.name = user.name;
+    this.phone = user.phone;
+    this.linkGroups = user.linkGroups;
+    this.countryIds = user.countryIds;
+    this.groups =
+        user.groups.map((GroupUser e) => HiveGroupUser.from(e)).toList();
+    this.actions = user.actions.map((e) => HiveActionUser.from(e)).toList();
+    this.selectedActionsTab = user.selectedActionsTab.value;
+    this.selectedResultsTab = user.selectedResultsTab.value;
+    this.phoneCountryId = user.phoneCountryId;
+    this.diallingCode = user.diallingCode;
+    this.isNew = false;
+    this.isUpdated = false;
+    this.isDeleted = false;
+  }
 
   User toUser() {
     return User(
