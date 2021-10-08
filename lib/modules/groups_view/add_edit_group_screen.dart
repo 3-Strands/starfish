@@ -93,7 +93,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _isEditMode = true;
 
       _titleController.text = widget.group!.name!;
-      //_descriptionController.text = widget.group!.description!;
+      _descriptionController.text = widget.group!.description!;
 
       _selectedLanguages = _languageBox.values
           .where((HiveLanguage language) =>
@@ -351,7 +351,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     HiveGroup _hiveGroup = HiveGroup(
       id: _groupId,
       name: _titleController.text,
-      //description: _descriptionController.text,
+      description: _descriptionController.text,
       languageIds: _selectedLanguages
           .map((HiveLanguage language) => language.id)
           .toList(),

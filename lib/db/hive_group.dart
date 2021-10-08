@@ -16,25 +16,28 @@ class HiveGroup extends HiveObject {
   @HiveField(1)
   String? name;
   @HiveField(2)
-  List<String>? languageIds;
+  String? description;
   @HiveField(3)
-  List<HiveGroupUser>? users;
+  List<String>? languageIds;
   @HiveField(4)
-  List<String>? evaluationCategoryIds;
+  List<HiveGroupUser>? users;
   @HiveField(5)
-  List<HiveGroupAction>? actions;
+  List<String>? evaluationCategoryIds;
   @HiveField(6)
-  List<HiveEdit>? editHistory;
+  List<HiveGroupAction>? actions;
   @HiveField(7)
-  bool isNew = false;
+  List<HiveEdit>? editHistory;
   @HiveField(8)
-  bool isUpdated = false;
+  bool isNew = false;
   @HiveField(9)
+  bool isUpdated = false;
+  @HiveField(10)
   bool isDirty = false;
 
   HiveGroup({
     this.id,
     this.name,
+    this.description,
     this.languageIds,
     this.users,
     this.evaluationCategoryIds,
@@ -48,6 +51,7 @@ class HiveGroup extends HiveObject {
   HiveGroup.from(Group group) {
     this.id = group.id;
     this.name = group.name;
+    this.description = group.description;
     this.languageIds = group.languageIds;
     this.users =
         group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
@@ -63,6 +67,7 @@ class HiveGroup extends HiveObject {
     return Group(
       id: this.id,
       name: this.name,
+      description: this.description,
       languageIds: this.languageIds,
       users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
       evaluationCategoryIds: this.evaluationCategoryIds,
@@ -103,9 +108,10 @@ class HiveGroup extends HiveObject {
   }
 
   String toString() {
-    return '''{id: ${this.id}, name: ${this.name}, languageIds: ${this.languageIds?.toString()}, 
-    users: ${this.users?.toString()}, actions: ${this.actions?.toString()}, 
-    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
+    return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
+    languageIds: ${this.languageIds?.toString()}, users: ${this.users?.toString()}, 
+    actions: ${this.actions?.toString()}, editHistory: ${this.editHistory?.toString()}, 
+    currentUserRole: ${this.currentUserRole} }''';
   }
 }
 

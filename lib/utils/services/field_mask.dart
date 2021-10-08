@@ -21,6 +21,7 @@ final List<String> kCurrentUserFieldMask = [
 
 final List<String> kGroupFieldMask = [
   'name',
+  'description',
   'language_ids',
   'users',
   'evaluation_category_ids',
