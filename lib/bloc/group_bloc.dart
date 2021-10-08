@@ -26,10 +26,6 @@ class GroupBloc extends Object {
   Stream<Map<UserGroupRoleFilter, List<HiveGroup>>> get groups =>
       _groups.stream;
 
-  setQuery(String query) {
-    query = query;
-  }
-
   fetchAllGroupsByRole() async {
     final Map<UserGroupRoleFilter, List<HiveGroup>> _roleGroupMap = Map();
     _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD] = [];
@@ -40,22 +36,27 @@ class GroupBloc extends Object {
 
     List<HiveGroup> groups = await repository.fetchGroupsFromDB();
     groups.forEach((element) {
-      // set Role of current User in the group
-      element.userRole = element.getMyRole(currentUser.id);
+      if (element.name!.contains(query) ||
+          element.description!.contains(query)) {
+        // set Role of current User in the group
+        element.userRole = element.getMyRole(currentUser.id);
 
-      switch (element.getMyRole(currentUser.id)) {
-        case GroupUser_Role.ADMIN:
-          _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.add(element);
-          break;
-        case GroupUser_Role.TEACHER:
-          _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]?.add(element);
-          break;
-        case GroupUser_Role.LEARNER:
-          _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.add(element);
-          break;
-        /*case GroupUser_Role.UNSPECIFIED_ROLE:
+        switch (element.getMyRole(currentUser.id)) {
+          case GroupUser_Role.ADMIN:
+            _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]
+                ?.add(element);
+            break;
+          case GroupUser_Role.TEACHER:
+            _roleGroupMap[UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD]
+                ?.add(element);
+            break;
+          case GroupUser_Role.LEARNER:
+            _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.add(element);
+            break;
+          /*case GroupUser_Role.UNSPECIFIED_ROLE:
         default:
           _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER]?.add(element);*/
+        }
       }
     });
 
