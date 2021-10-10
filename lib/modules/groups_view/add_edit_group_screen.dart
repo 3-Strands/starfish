@@ -1,5 +1,8 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dotted_border/dotted_border.dart';
+// ignore: implementation_imports
+import 'package:flutter/src/widgets/basic.dart' as widgets;
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,6 +29,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
@@ -232,7 +236,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return StatefulBuilder(
+        return widgets.StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Container(
             margin: EdgeInsets.only(top: 40.h),
@@ -375,12 +379,17 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     bloc.groupBloc
         .addEditGroup(_hiveGroup)
-        .then((value) => print('$value record(s) saved.'))
+        .then((value) => print('record(s) saved.'))
         .onError((error, stackTrace) {
       print('Error: ${error.toString()}.');
       StarfishSnackbar.showErrorMessage(context,
           _isEditMode ? Strings.updateGroupFailed : Strings.createGroupSuccess);
     }).whenComplete(() {
+      // Broadcast to sync the local changes with the server
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateGroup,
+        value: _hiveGroup,
+      );
       Alerts.showMessageBox(
           context: context,
           title: Strings.dialogInfo,

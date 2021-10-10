@@ -28,6 +28,9 @@ import 'package:starfish/utils/services/field_mask.dart';
 class SyncService {
   final DEBUG = false;
 
+  static final String kUpdateMaterial = 'updateMaterial';
+  static final String kUpdateGroup = 'updateGroup';
+
   static syncNow() {}
 
   late Box<HiveLastSyncDateTime> lastSyncBox;
@@ -347,16 +350,23 @@ class SyncService {
     print('============= START: Sync Local Materials to Remote =============');
     print(
         'Total Records: ${materialBox.values.where((element) => element.isNew == true).length}');
-    print('============= END: Sync Local Materials to Remote ===============');
 
     materialBox.values
         .where(
             (element) => (element.isNew == true || element.isUpdated == true))
         .map((HiveMaterial _hiveMaterial) {
-      MaterialRepository().createUpdateMaterial(
+      MaterialRepository()
+          .createUpdateMaterial(
         material: _hiveMaterial.toMaterial(),
         fieldMaskPaths: kMaterialFieldMask,
-      );
+      )
+          .then((value) {
+        // TODO: update flag(s) isNew and/or isUpdated to false
+        print('============= value: ${value.headers} ===============');
+      }).whenComplete(() {
+        print(
+            '============= END: Sync Local Materials to Remote ===============');
+      });
     });
   }
 
@@ -462,13 +472,18 @@ class SyncService {
     print('============= START: Sync Local Groups to Remote =============');
     print(
         'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
-    print('============= END: Sync Local Groups to Remote ===============');
 
     groupBox.values
         .where((HiveGroup group) => (group.isNew == true))
         .map((HiveGroup _hiveGroup) {
-      GroupRepository().createUpdateGroup(
-          group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
+      GroupRepository()
+          .createUpdateGroup(
+              group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask)
+          .then((value) {
+        // TODO: update flag(s) isNew and/or isUpdated to false
+      }).whenComplete(() {
+        print('============= END: Sync Local Groups to Remote ===============');
+      });
     });
   }
 }

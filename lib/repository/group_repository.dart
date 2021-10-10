@@ -16,7 +16,7 @@ class GroupRepository {
 
   Future<List<HiveGroup>> fetchGroupsFromDB() => dbProvider.getGroups();
 
-  Future<int> addEditGroup(HiveGroup group) => dbProvider.addEditGroup(group);
+  Future<void> addEditGroup(HiveGroup group) => dbProvider.addEditGroup(group);
 
   Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup({
     required Group group,

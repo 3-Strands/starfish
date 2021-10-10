@@ -67,12 +67,11 @@ class GroupBloc extends Object {
     }
   }
 
-  Future<int> addEditGroup(HiveGroup group) async {
-    return repository.addEditGroup(group).then((value) {
+  Future<void> addEditGroup(HiveGroup group) async {
+    return repository.addEditGroup(group).then((_) {
       //_allGroups.add(group);
       //_groups.sink.add(_allGroups);
       fetchAllGroupsByRole();
-      return value;
     });
   }
 
