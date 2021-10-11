@@ -34,6 +34,8 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
 
   late HiveCurrentUser _user;
 
+  bool isDetailEmpty = true;
+
   @override
   void initState() {
     super.initState();
@@ -99,6 +101,11 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
               onFieldSubmitted: (term) {
                 _reportTextFocus.unfocus();
               },
+              onChanged: (text) {
+                setState(() {
+                  isDetailEmpty = (text.isNotEmpty) ? false : true;
+                });
+              },
               maxLines: 4,
               keyboardType: TextInputType.text,
               style: textFormFieldText,
@@ -148,43 +155,43 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                 Expanded(
                   child: TextButton(
                     onPressed: () {
-                      if (_reportTextController.text == '') {
-                        Alerts.showMessageBox(
-                            context: context,
-                            title: '',
-                            message: Strings.emptyMaterialFeedback,
-                            callback: () {
-                              Navigator.of(context).pop();
-                            });
-                      } else {
-                        HiveMaterialFeedback _materialFeedback =
-                            HiveMaterialFeedback();
-
-                        _materialFeedback.isNew = true;
-                        _materialFeedback.type = '1';
-                        _materialFeedback.reporterId = _user.id;
-                        _materialFeedback.report = _reportTextController.text;
-                        _materialFeedback.materialId = widget.material.id!;
-                        _materialFeedbackBox
-                            .add(_materialFeedback)
-                            .then((value) => print('$value record(s) saved.'))
-                            .onError((error, stackTrace) =>
-                                print('$error record(s) saved.'))
-                            .whenComplete(() => {
-                                  Alerts.showMessageBox(
-                                      context: context,
-                                      title: Strings.dialogInfo,
-                                      message:
-                                          Strings.addMaterialFeedbackSuccess,
-                                      callback: () {
-                                        Navigator.of(context).pop();
-                                      })
-                                });
+                      if (isDetailEmpty) {
+                        return;
                       }
+
+                      HiveMaterialFeedback _materialFeedback =
+                          HiveMaterialFeedback();
+
+                      _materialFeedback.isNew = true;
+                      _materialFeedback.type = '1';
+                      _materialFeedback.reporterId = _user.id;
+                      _materialFeedback.report = _reportTextController.text;
+                      _materialFeedback.materialId = widget.material.id!;
+                      _materialFeedbackBox
+                          .add(_materialFeedback)
+                          .then((value) => print('$value record(s) saved.'))
+                          .onError((error, stackTrace) =>
+                              print('$error record(s) saved.'))
+                          .whenComplete(() => {
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: Strings.dialogInfo,
+                                    message: Strings.addMaterialFeedbackSuccess,
+                                    callback: () {
+                                      Navigator.of(context).pop();
+                                    })
+                              });
                     },
                     child: Text(
                       Strings.sendFeedback,
-                      style: sentFeedbackTextStyle,
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16.sp,
+                        color: (isDetailEmpty)
+                            ? AppColors.unselectedButtonBG
+                            : AppColors.selectedButtonBG,
+                      ),
                     ),
                   ),
                 ),
