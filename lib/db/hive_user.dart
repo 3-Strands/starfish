@@ -24,9 +24,9 @@ class HiveUser extends HiveObject {
   @HiveField(7)
   List<HiveActionUser>? actions;
   @HiveField(8)
-  int? selectedActionsTab;
+  int? selectedActionsTab = ActionTab.ACTIONS_UNSPECIFIED.value;
   @HiveField(9)
-  int? selectedResultsTab;
+  int? selectedResultsTab = ResultsTab.RESULTS_UNSPECIFIED.value;
   @HiveField(10)
   String? diallingCode;
   @HiveField(11)
@@ -84,8 +84,12 @@ class HiveUser extends HiveObject {
       languageIds: this.languageIds,
       groups: this.groups?.map((e) => e.toGroupUser()),
       actions: this.actions?.map((e) => e.toActionUser()),
-      selectedActionsTab: ActionTab.valueOf(this.selectedActionsTab!),
-      selectedResultsTab: ResultsTab.valueOf(this.selectedResultsTab!),
+      selectedActionsTab: this.selectedActionsTab != null
+          ? ActionTab.valueOf(this.selectedActionsTab!)
+          : ActionTab.ACTIONS_UNSPECIFIED,
+      selectedResultsTab: this.selectedResultsTab != null
+          ? ResultsTab.valueOf(this.selectedResultsTab!)
+          : ResultsTab.RESULTS_UNSPECIFIED,
       phoneCountryId: this.phoneCountryId,
       diallingCode: this.diallingCode,
     );

@@ -4,6 +4,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/api_provider.dart';
+import 'package:starfish/utils/services/field_mask.dart';
 
 class GroupRepository {
   final dbProvider = GroupProvider();
@@ -23,6 +24,12 @@ class GroupRepository {
     required List<String> fieldMaskPaths,
   }) =>
       apiProvider.createUpdateGroup(group, fieldMaskPaths);
+
+  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser({
+    required GroupUser groupUser,
+    required List<String> fieldMaskPaths,
+  }) =>
+      apiProvider.createUpdateGroupUser(groupUser, kGroupUserFieldMask);
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
           Stream<GroupUser> request) =>

@@ -74,6 +74,7 @@ class SyncService {
     await syncLocalMaterialsToRemote();
     await syncLocalUsersToRemote();
     await syncLocalGroupsToRemote();
+    await syncLocalGroupUsersToRemote();
 
     syncCurrentUser();
     syncUsers();
@@ -389,20 +390,7 @@ class SyncService {
 
     await GroupRepository().getGroups().then((ResponseStream<Group> stream) {
       stream.listen((group) {
-        HiveGroup _group = HiveGroup.from(group);
-
-        int _currentIndex = -1;
-        groupBox.values.toList().asMap().forEach((key, hiveGroup) {
-          if (hiveGroup.id == group.id) {
-            _currentIndex = key;
-          }
-        });
-
-        if (_currentIndex > -1) {
-          groupBox.put(_currentIndex, _group);
-        } else {
-          groupBox.add(_group);
-        }
+        GroupRepository().addEditGroup(HiveGroup.from(group));
       }, onError: ((err) {
         print('Group Sync Error: ${err.toString()}');
       }), onDone: () {
@@ -464,18 +452,24 @@ class SyncService {
     print(
         'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
 
-    BehaviorSubject<User> _users = BehaviorSubject<User>();
+    //BehaviorSubject<User> _users = BehaviorSubject<User>();
 
     userBox.values
         .where((HiveUser user) => (user.isNew == true))
         .forEach((HiveUser _hiveUser) {
-      _users.sink.add(_hiveUser.toUser());
+      //_users.sink.add(_hiveUser.toUser());
 
-      UserRepository().createUsers(_users.stream).then((value) {
-        // TODO: update flag(s) isNew and/or isUpdated to false
+      UserRepository().createUsers(_hiveUser.toUser()).then((value) {
+        // update flag(s) isNew and/or isUpdated to false
+        _hiveUser.isNew = false;
+        _hiveUser.isUpdated = false;
+
+        UserRepository().createUpdateUserInDB(_hiveUser);
+      }).onError((error, stackTrace) {
+        print(
+            '============= syncLocalUsersToRemote Error: $error ===============');
       }).whenComplete(() {
         print('============= END: Sync Local User to Remote ===============');
-        _users.close();
       });
     });
   }
@@ -483,15 +477,37 @@ class SyncService {
   syncLocalGroupsToRemote() async {
     print('============= START: Sync Local Groups to Remote =============');
     print(
-        'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
+        'Total Records: ${groupBox.values.where((element) => element.isNew).length}');
 
     groupBox.values
         .where((HiveGroup group) => (group.isNew == true))
         .forEach((HiveGroup _hiveGroup) {
+      print('HiveGroup: $_hiveGroup');
       GroupRepository()
           .createUpdateGroup(
               group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask)
           .then((value) {
+        //TODO: sync group members
+        /*_hiveGroup.users
+          ?..where((element) => element.isNew || element.isUpdated)
+              .forEach((HiveGroupUser groupUser) {
+            GroupRepository()
+                .createUpdateGroupUser(
+                    groupUser: groupUser.toGroupUser(),
+                    fieldMaskPaths: kGroupUserFieldMask)
+                .then((value) {
+              value.forEach((element) {
+                print('GroupUser Created[status]: ${element.status}');
+                print('GroupUser Created[message]: ${element.message}');
+                print('GroupUser Created: ${element.groupUser}');
+              });
+            }).onError((error, stackTrace) {
+              print('Group Members synce Error.');
+            }).whenComplete(() {
+              print('Group Members synce DONE');
+            });
+          });*/
+
         // update flag(s) isNew and/or isUpdated to false
         _hiveGroup.isNew = false;
         _hiveGroup.isUpdated = false;
@@ -503,6 +519,35 @@ class SyncService {
       }).whenComplete(() {
         print('============= END: Sync Local Groups to Remote ===============');
       });
+    });
+  }
+
+  syncLocalGroupUsersToRemote() async {
+    print('============= START: Sync Local GroupUsers to Remote =============');
+
+    groupBox.values.forEach((HiveGroup _hiveGroup) {
+      print('Total Records[${_hiveGroup.name}]: ${_hiveGroup.users?.length}');
+      _hiveGroup.users
+        ?..where((element) => element.isNew || element.isUpdated)
+            .forEach((HiveGroupUser groupUser) {
+          print('HiveGroupUser: $groupUser');
+          GroupRepository()
+              .createUpdateGroupUser(
+                  groupUser: groupUser.toGroupUser(),
+                  fieldMaskPaths: kGroupUserFieldMask)
+              .then((value) {
+            value.forEach((element) {
+              print('GroupUser Created[status]: ${element.status}');
+              print('GroupUser Created[message]: ${element.message}');
+              print('GroupUser Created: ${element.groupUser}');
+            });
+          }).onError((error, stackTrace) {
+            print('Group Members synce Error.');
+          }).whenComplete(() {
+            print(
+                '============= END: Sync Local GroupUsers to Remote =============');
+          });
+        });
     });
   }
 }

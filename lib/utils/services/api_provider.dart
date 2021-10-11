@@ -4,6 +4,7 @@ import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/utils/services/field_mask.dart';
 import 'grpc_client.dart';
 
 class ApiProvider {
@@ -119,6 +120,15 @@ class ApiProvider {
     return client!.createUpdateGroups(streamRequest);
   }
 
+  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
+      GroupUser groupUser, List<String> fieldMaskPaths) async {
+    var request = CreateUpdateGroupUsersRequest();
+    FieldMask mask = FieldMask(paths: fieldMaskPaths);
+    request.updateMask = mask;
+
+    return client!.createUpdateGroupUsers(Stream.value(request));
+  }
+
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
       Stream<GroupUser> request) async {
     return client!.deleteGroupUsers(request);
@@ -127,5 +137,14 @@ class ApiProvider {
   Future<ResponseStream<User>> getUsers() async {
     var request = ListUsersRequest();
     return client!.listUsers(request);
+  }
+
+  Future<ResponseStream<CreateUsersResponse>> createUsers(User user) async {
+    var request = user;
+
+    print('crateUsers: $user');
+    //Stream<User> request = Stream.value(user);
+
+    return client!.createUsers(Stream.value(request));
   }
 }

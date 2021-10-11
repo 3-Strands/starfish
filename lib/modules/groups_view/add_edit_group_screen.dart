@@ -24,6 +24,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -322,6 +323,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
   }
 
+
+  // TODO: yet to verify
   _createUpdateGroup() async {
     String? _groupId;
     if (_isEditMode) {
@@ -331,10 +334,18 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
     List<HiveUser> _newUsers = [];
     _selectedContacts.forEach((element) {
-      _newUsers.add(element.createHiveUser());
+      HiveUser _hiveUser = element.createHiveUser();
+      _hiveUser.linkGroups = true;
+      _hiveUser.isNew = true;
+
+      _newUsers.add(_hiveUser);
     });
     _unInvitedPersonNames.forEach((element) {
-      _newUsers.add(HiveUser(id: UuidGenerator.uuid(), name: element));
+      _newUsers.add(HiveUser(
+          id: UuidGenerator.uuid(),
+          name: element,
+          linkGroups: true,
+          isNew: true));
     });
 
     List<HiveGroupUser> _newGroupUsers = [];
@@ -342,14 +353,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     HiveCurrentUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
     _newGroupUsers.add(HiveGroupUser(
-        groupId: _groupId,
-        userId: _currentUser.id,
-        role: GroupUser_Role.ADMIN.value));
+      groupId: _groupId,
+      userId: _currentUser.id,
+      role: GroupUser_Role.ADMIN.value,
+      isNew: true,
+    ));
     _newUsers.forEach((HiveUser user) {
-      _userBox.add(user).then((value) => _newGroupUsers.add(HiveGroupUser(
-          groupId: _groupId,
-          userId: user.id,
-          role: GroupUser_Role.LEARNER.value)));
+      UserRepository()
+          .createUpdateUserInDB(user)
+          .then((value) => _newGroupUsers.add(HiveGroupUser(
+                groupId: _groupId,
+                userId: user.id,
+                role: GroupUser_Role.LEARNER.value,
+                isNew: true,
+              )));
     });
 
     HiveGroup _hiveGroup = HiveGroup(
@@ -386,6 +403,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           _isEditMode ? Strings.updateGroupFailed : Strings.createGroupSuccess);
     }).whenComplete(() {
       // Broadcast to sync the local changes with the server
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateUsers,
+        value: _newUsers,
+      );
       FBroadcast.instance().broadcast(
         SyncService.kUpdateGroup,
         value: _hiveGroup,
