@@ -168,4 +168,11 @@ sending an invitation to use Starfish''';
   static const String editabilityGroupEdit = 'Other Teacher of my Groups';
 
   static const String adminNamePrifix = 'Admin';
+
+  /// actions
+  static const String editActionText = "Edit Action";
+  static const String deleteActionText = "Delete Action";
+  static const String notSoGoodText = 'Not so Good';
+  static const String goodText = 'Good';
+  static const String howWasThisActionText = 'How was this action?';
 }

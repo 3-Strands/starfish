@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,6 +28,7 @@ class GeneralFunctions {
   }
 
   static openUrl(String url) async {
+    if (!url.contains('http')) url = 'https://$url';
     var urlLaunchable =
         await canLaunch(url); //canLaunch is from url_launcher package
     if (urlLaunchable) {

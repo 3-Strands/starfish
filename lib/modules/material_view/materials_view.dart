@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/material_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -13,7 +12,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
-import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -73,12 +71,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.70,
-          child: SingleChildScrollView(
-            child: _buildSlidingUpPanel(material),
-          ),
-        );
+        return StatefulBuilder(builder: (BuildContext context,
+            StateSetter setState /*You can rename this!*/) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.70,
+            child: SingleChildScrollView(
+              child: _buildSlidingUpPanel(material),
+            ),
+          );
+        });
       },
     );
   }
@@ -180,14 +181,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(
                 height: 20.h,
               ),
-              /*
-              ListView(
-                primary: false,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                children: (_query != '') ? _buildSearchList() : _buildList(),
-              ),
-              */
               materialsList(bloc),
               SizedBox(
                 height: 10.h,
@@ -221,7 +214,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             _listToShow = snapshot.data!
                 .where((item) =>
                     item.title!.toLowerCase().contains(_query.toLowerCase()) ||
-                    item.title!.toLowerCase().startsWith(_query.toLowerCase()))
+                    item.title!
+                        .toLowerCase()
+                        .startsWith(_query.toLowerCase()) ||
+                    item.description!
+                        .toLowerCase()
+                        .contains(_query.toLowerCase()) ||
+                    item.description!
+                        .toLowerCase()
+                        .startsWith(_query.toLowerCase()))
                 .toList();
           } else {
             _listToShow = snapshot.data!;
@@ -332,14 +333,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'Title: ${material.title}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  width: 240.w,
+                  child: Text(
+                    'Title: ${material.title}',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: AppColors.txtFieldTextColor,
+                      fontFamily: 'OpenSans',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Spacer(),
@@ -524,12 +529,16 @@ class MaterialListItem extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Title: ${material.title}',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: AppColors.txtFieldTextColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp
+                    Container(
+                      width: 240.w,
+                      child: Text(
+                        'Title: ${material.title}',
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: AppColors.txtFieldTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp),
                       ),
                     ),
                     Spacer(),

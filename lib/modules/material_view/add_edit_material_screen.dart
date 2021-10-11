@@ -88,7 +88,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
       _selectedTopics = _materialTopicBox.values
           .where((HiveMaterialTopic topic) =>
-              widget.material!.topics!.contains(topic.id))
+              widget.material!.topics!.contains(topic.name))
           .toList();
     }
   }
@@ -176,6 +176,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   //padding: EdgeInsets.all(10.sp),
                   child: TextFormField(
                     maxLines: 4,
+                    maxLength: 200,
                     controller: _descriptionController,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
@@ -295,7 +296,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     onDoneClicked: <T>(languages) {
                       setState(() {
                         _selectedLanguages = languages as List<HiveLanguage>;
-                        print("Selected languages ==>> $_selectedLanguages");
+                        // print("Selected languages ==>> $_selectedLanguages");
                       });
                     },
                   ),
@@ -375,7 +376,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         fontFamily: 'OpenSans',
                       ),
                       hint: Text(
-                       _choiceSeenByText,
+                        _choiceSeenByText,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
@@ -388,7 +389,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       onChanged: (MaterialVisibility? value) {
                         setState(() {
                           _visibleTo = value;
-                         _choiceSeenByText = _visibleTo!.displayName!;
+                          _choiceSeenByText = _visibleTo!.displayName!;
                         });
                       },
                       items: MaterialVisibility.values()

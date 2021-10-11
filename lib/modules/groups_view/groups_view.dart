@@ -209,6 +209,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     bloc = Provider.of(context);
     bloc.groupBloc.fetchAllGroupsByRole();
     return Scaffold(
+      backgroundColor:AppColors.groupScreenBG,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -384,16 +385,16 @@ class GroupListItem extends StatelessWidget {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
               height: 20.sp,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    width: 200.w,
+                   // width: 200.w,
                     child: Text(
                       '${group.name}',
                       textAlign: TextAlign.left,
@@ -405,7 +406,7 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Spacer(),
+                 // Spacer(),
                   if (group.currentUserRole! == GroupUser_Role.ADMIN)
                     CustomIconButton(
                       icon: Icon(
@@ -417,6 +418,7 @@ class GroupListItem extends StatelessWidget {
                       onButtonTap: () {},
                     ),
                   if (group.currentUserRole! == GroupUser_Role.LEARNER)
+                  
                     ElevatedButton(
                       onPressed: () {
                         //TODO: Leave this group
@@ -427,11 +429,15 @@ class GroupListItem extends StatelessWidget {
                           fontFamily: 'OpenSans',
                           fontSize: 12.sp,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       style: ElevatedButton.styleFrom(
                         primary: AppColors.selectedButtonBG,
+                        fixedSize: Size(125.w, 20.h)
                       ),
                     ),
+                    // Spacer(),
+                    
                 ],
               ),
             ),
