@@ -40,10 +40,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _countryCodeController = TextEditingController();
   final FocusNode _countryCodeFocus = FocusNode();
   late List<HiveCountry> _countryList = [];
-  String _countyCode = '';
   late Box<HiveCurrentUser> _currentUserBox;
   late Box<HiveLanguage> _languageBox;
   late List<HiveLanguage> _languageList = [];
+  String _countyCode = '';
   String _mobileNumber = '';
   final _nameController = TextEditingController();
   final FocusNode _nameFocus = FocusNode();
@@ -655,7 +655,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   choice: SelectType.multiple,
                   dataSource: DataSourceType.countries,
                   onDoneClicked: <T>(countries) {
-                    // print("Selected Countries ==>> $countries");
+                    List<HiveCountry> selectedCountries =
+                        countries as List<HiveCountry>;
+
+                    if (selectedCountries.length == 0) {
+                      return StarfishSnackbar.showErrorMessage(
+                          context, Strings.emptySelectCountry);
+                    }
+
                     GeneralFunctions()
                         .isNetworkAvailable()
                         .then((onValue) async {
@@ -664,12 +671,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             context,
                             Strings
                                 .internetRequiredToChangeCountriesOrLanguage);
+                      } else {
+                        setState(() {
+                          _selectedCountries = selectedCountries;
+                          updateCountries();
+                        });
                       }
-
-                      setState(() {
-                        _selectedCountries = countries as List<HiveCountry>;
-                        updateCountries();
-                      });
                     });
                   },
                 ),
@@ -695,9 +702,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     choice: SelectType.multiple,
                     dataSource: DataSourceType.languages,
                     onDoneClicked: <T>(languages) {
-                      setState(() {
-                        _selectedLanguages = languages as List<HiveLanguage>;
-                        // print("Selected languages ==>> $_selectedLanguages");
+                      List<HiveLanguage> selectedLanguages =
+                          languages as List<HiveLanguage>;
+
+                      if (selectedLanguages.length == 0) {
+                        return StarfishSnackbar.showErrorMessage(
+                            context, Strings.emptySelectLanguage);
+                      }
+
+                      GeneralFunctions()
+                          .isNetworkAvailable()
+                          .then((onValue) async {
+                        if (!onValue) {
+                          return StarfishSnackbar.showErrorMessage(
+                              context,
+                              Strings
+                                  .internetRequiredToChangeCountriesOrLanguage);
+                        } else {
+                          setState(() {
+                            _selectedLanguages = selectedLanguages;
+                            updateLanguages();
+                          });
+                        }
                       });
                     },
                   ),
