@@ -2,6 +2,7 @@ import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -30,6 +31,7 @@ class SyncService {
 
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
+  static final String kUpdateUsers = 'updateUsers';
 
   static syncNow() {}
 
@@ -70,8 +72,8 @@ class SyncService {
   void syncAll() async {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
-    //await syncLocalUsersToRemote();
-    //await syncLocalGroupsToRemote();
+    await syncLocalUsersToRemote();
+    await syncLocalGroupsToRemote();
 
     syncCurrentUser();
     syncUsers();
@@ -354,15 +356,20 @@ class SyncService {
     materialBox.values
         .where(
             (element) => (element.isNew == true || element.isUpdated == true))
-        .map((HiveMaterial _hiveMaterial) {
+        .forEach((HiveMaterial _hiveMaterial) {
       MaterialRepository()
           .createUpdateMaterial(
         material: _hiveMaterial.toMaterial(),
         fieldMaskPaths: kMaterialFieldMask,
       )
           .then((value) {
-        // TODO: update flag(s) isNew and/or isUpdated to false
-        print('============= value: ${value.headers} ===============');
+        // update flag(s) isNew and/or isUpdated to false
+        _hiveMaterial.isNew = false;
+        _hiveMaterial.isUpdated = false;
+
+        MaterialRepository().createUpdateMaterialInDB(_hiveMaterial);
+      }).onError((error, stackTrace) {
+        print('============= Error: ${error.toString()} ===============');
       }).whenComplete(() {
         print(
             '============= END: Sync Local Materials to Remote ===============');
@@ -456,16 +463,21 @@ class SyncService {
     print('============= START: Sync Local User to Remote =============');
     print(
         'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
-    print('============= END: Sync Local User to Remote ===============');
 
-    /*userBox.values
+    BehaviorSubject<User> _users = BehaviorSubject<User>();
+
+    userBox.values
         .where((HiveUser user) => (user.isNew == true))
-        .map((HiveUser _hiveUser) {
-      MaterialRepository().createUpdateMaterial(
-        material: _hiveUser.toMaterial(),
-        fieldMaskPaths: kMaterialFieldMask,
-      );
-    });*/
+        .forEach((HiveUser _hiveUser) {
+      _users.sink.add(_hiveUser.toUser());
+
+      UserRepository().createUsers(_users.stream).then((value) {
+        // TODO: update flag(s) isNew and/or isUpdated to false
+      }).whenComplete(() {
+        print('============= END: Sync Local User to Remote ===============');
+        _users.close();
+      });
+    });
   }
 
   syncLocalGroupsToRemote() async {
@@ -475,12 +487,19 @@ class SyncService {
 
     groupBox.values
         .where((HiveGroup group) => (group.isNew == true))
-        .map((HiveGroup _hiveGroup) {
+        .forEach((HiveGroup _hiveGroup) {
       GroupRepository()
           .createUpdateGroup(
               group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask)
           .then((value) {
-        // TODO: update flag(s) isNew and/or isUpdated to false
+        // update flag(s) isNew and/or isUpdated to false
+        _hiveGroup.isNew = false;
+        _hiveGroup.isUpdated = false;
+
+        GroupRepository().addEditGroup(_hiveGroup);
+      }).onError((error, stackTrace) {
+        print(
+            '============= syncLocalGroupsToRemote Error: ${error.toString()} ===============');
       }).whenComplete(() {
         print('============= END: Sync Local Groups to Remote ===============');
       });
