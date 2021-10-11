@@ -181,14 +181,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               SizedBox(
                 height: 20.h,
               ),
-              /*
-              ListView(
-                primary: false,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                children: (_query != '') ? _buildSearchList() : _buildList(),
-              ),
-              */
               materialsList(bloc),
               SizedBox(
                 height: 10.h,
@@ -341,14 +333,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'Title: ${material.title}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  width: 240.w,
+                  child: Text(
+                    'Title: ${material.title}',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: AppColors.txtFieldTextColor,
+                      fontFamily: 'OpenSans',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Spacer(),
@@ -533,13 +529,17 @@ class MaterialListItem extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Title: ${material.title}',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: AppColors.txtFieldTextColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.sp),
+                    Container(
+                      width: 240.w,
+                      child: Text(
+                        'Title: ${material.title}',
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: AppColors.txtFieldTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp),
+                      ),
                     ),
                     Spacer(),
                     CustomIconButton(
