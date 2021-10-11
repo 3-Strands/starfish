@@ -115,7 +115,7 @@ class _MeState extends State<Me> {
               color: AppColors.txtFieldBackground,
               child: Padding(
                 padding: EdgeInsets.only(
-                    left: 5.w, right: 5.w, top: 15.h, bottom: 15.h),
+                    left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
                 child: Column(
                   children: [
                     Padding(
@@ -132,7 +132,7 @@ class _MeState extends State<Me> {
                           ),
                           Expanded(
                             child: Padding(
-                              padding:EdgeInsets.only(left:8.0,right: 8.sp),
+                              padding: EdgeInsets.only(left: 8.0, right: 8.sp),
                               child: Text(
                                 "Sample Action Name with long texthsdjdlkwjdlkwjdlwjld;",
                                 maxLines: 1,
@@ -145,10 +145,50 @@ class _MeState extends State<Me> {
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.more_vert,
-                            color: Color(0xFF3475F0),
-                          )
+                          SizedBox(
+                            width: 30.sp,
+                            child: PopupMenuButton(
+                                icon: Icon(
+                                  Icons.more_vert,
+                                  color: Color(0xFF3475F0),
+                                ),
+                                color: Colors.white,
+                                elevation: 20,
+                                shape: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white, width: 2),
+                                    borderRadius: BorderRadius.circular(12.sp)),
+                                enabled: true,
+                                onSelected: (value) {
+                                  setState(() {
+                                    // _value = value;
+                                  });
+                                },
+                                itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text(
+                                          "Edit Action",
+                                          style: TextStyle(
+                                              color: Color(0xFF3475F0),
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.bold
+                                              ),
+                                        ),
+                                        value: "",
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text(
+                                          "Delete Action",
+                                          style: TextStyle(
+                                              color: Color(0xFF3475F0),
+                                              fontSize: 16.sp,
+                                               fontWeight: FontWeight.bold
+                                               ),
+                                        ),
+                                        value: "",
+                                      ),
+                                    ]),
+                          ),
                         ],
                       ),
                     ),
@@ -215,8 +255,10 @@ class ActionStatusWidget extends StatelessWidget {
               SizedBox(width: 2.sp),
               Text(title,
                   textAlign: TextAlign.center,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp,fontFamily: 'Rubik')),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                      fontFamily: 'Rubik')),
               Spacer()
             ],
           ),
