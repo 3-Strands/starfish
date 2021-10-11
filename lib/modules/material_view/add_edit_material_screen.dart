@@ -43,6 +43,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _webLinkController = TextEditingController();
+  late String _choiceSeenByText = Strings.seenBy;
+  late String _choiceEditedByText = Strings.editedBy;
 
   bool _isEditMode = false;
 
@@ -373,7 +375,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         fontFamily: 'OpenSans',
                       ),
                       hint: Text(
-                        Strings.seenBy,
+                       _choiceSeenByText,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
@@ -384,7 +386,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         _dismissFieldFocus();
                       },
                       onChanged: (MaterialVisibility? value) {
-                        _visibleTo = value;
+                        setState(() {
+                          _visibleTo = value;
+                         _choiceSeenByText = _visibleTo!.displayName!;
+                        });
                       },
                       items: MaterialVisibility.values()
                           .map((MaterialVisibility visibility) {
@@ -430,7 +435,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         fontFamily: 'OpenSans',
                       ),
                       hint: Text(
-                        Strings.editedBy,
+                        _choiceEditedByText,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
@@ -442,6 +447,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       },
                       onChanged: (MaterialEditability? value) {
                         _editableBy = value;
+                        _choiceEditedByText = _editableBy!.displayName!;
                       },
                       items: MaterialEditability.values()
                           .map<DropdownMenuItem<MaterialEditability>>(
