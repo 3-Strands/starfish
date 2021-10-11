@@ -209,6 +209,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     bloc = Provider.of(context);
     bloc.groupBloc.fetchAllGroupsByRole();
     return Scaffold(
+      backgroundColor:AppColors.groupScreenBG,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
