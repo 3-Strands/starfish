@@ -225,12 +225,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   initialValue: bloc.groupBloc.query,
                   onValueChanged: (value) {
                     setState(() {
-                      bloc.groupBloc.setQuery(value);
+                      bloc.groupBloc.query = value;
                     });
                   },
                   onDone: (value) {
                     setState(() {
-                      bloc.groupBloc.setQuery(value);
+                      bloc.groupBloc.query = value;
                     });
                   },
                 ),

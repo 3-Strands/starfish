@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_user.dart';
 
@@ -14,16 +15,20 @@ class UserProvider {
   }
 
   String getName(String userId) {
-    return _userBox.values.firstWhere((element) => element.id == userId).name!;
+    HiveUser? _user =
+        _userBox.values.firstWhereOrNull((element) => element.id == userId);
+    return _user != null ? _user.name! : userId;
   }
 
   String getPhone(String userId) {
-    return _userBox.values.firstWhere((element) => element.id == userId).phone!;
+    HiveUser? _user =
+        _userBox.values.firstWhereOrNull((element) => element.id == userId);
+    return _user != null ? _user.phone! : '';
   }
 
   String getDiallingCode(String userId) {
-    return _userBox.values
-        .firstWhere((element) => element.id == userId)
-        .diallingCode!;
+    HiveUser? _user =
+        _userBox.values.firstWhereOrNull((element) => element.id == userId);
+    return _user != null ? _user.diallingCode! : '';
   }
 }

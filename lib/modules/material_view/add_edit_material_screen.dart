@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
@@ -16,10 +17,12 @@ import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
@@ -546,16 +549,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _hiveMaterial.status = widget.material?.status;
 
       _hiveMaterial.isUpdated = true;
-      bloc.materialBloc.editMaterial(_hiveMaterial);
     } else {
       _hiveMaterial.id = UuidGenerator.uuid();
       _hiveMaterial.isNew = true;
-      bloc.materialBloc.addMaterial(_hiveMaterial);
     }
 
-    _materialBox
-        .add(_hiveMaterial)
-        .then((value) => print('$value record(s) saved.'))
+    bloc.materialBloc
+        .createUpdateMaterial(_hiveMaterial)
+        .then((value) => print('record(s) saved.'))
         .onError((error, stackTrace) {
       StarfishSnackbar.showErrorMessage(
           context,
@@ -563,6 +564,11 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               ? Strings.updateMaterialFailed
               : Strings.addMaterialFailed);
     }).whenComplete(() {
+      // Broadcast to sync the local changes with the server
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateMaterial,
+        value: _hiveMaterial,
+      );
       Alerts.showMessageBox(
           context: context,
           title: Strings.dialogInfo,

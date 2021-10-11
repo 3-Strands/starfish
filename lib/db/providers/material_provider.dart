@@ -21,4 +21,19 @@ class MaterialProvider {
   Future<List<HiveMaterialTopic>> getMateialTypes() async {
     return _materialTopicBox.values.toList();
   }
+
+  Future<void> createUpdateMaterial(HiveMaterial material) async {
+    int _currentIndex = -1;
+    _materialBox.values.toList().asMap().forEach((key, hiveMaterial) {
+      if (hiveMaterial.id == material.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _materialBox.put(_currentIndex, material);
+    } else {
+      _materialBox.add(material);
+    }
+  }
 }

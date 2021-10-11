@@ -31,4 +31,7 @@ class MaterialRepository {
 
   Future<List<HiveMaterialTopic>> fetchMaterialTopicsFromDB() =>
       materialProvider.getMateialTypes();
+
+  Future<void> createUpdateMaterialInDB(HiveMaterial material) =>
+      materialProvider.createUpdateMaterial(material);
 }

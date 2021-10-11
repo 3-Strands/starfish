@@ -26,7 +26,10 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 
 class SyncService {
-  final DEBUG = true;
+  final DEBUG = false;
+
+  static final String kUpdateMaterial = 'updateMaterial';
+  static final String kUpdateGroup = 'updateGroup';
 
   static syncNow() {}
 
@@ -140,10 +143,22 @@ class SyncService {
       });
     }
 
-    await UserRepository().getUsers().then((ResponseStream<User> user) {
-      user.listen((value) {
-        HiveUser _user = HiveUser.from(value);
-        userBox.add(_user);
+    await UserRepository().getUsers().then((ResponseStream<User> stream) {
+      stream.listen((user) {
+        HiveUser _hiveUser = HiveUser.from(user);
+
+        int _currentIndex = -1;
+        userBox.values.toList().asMap().forEach((key, hiveUser) {
+          if (hiveUser.id == user.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          userBox.put(_currentIndex, _hiveUser);
+        } else {
+          userBox.add(_hiveUser);
+        }
       }, onError: ((err) {
         print(err);
       }), onDone: () {
@@ -156,27 +171,28 @@ class SyncService {
     await AppDataRepository()
         .getAllCountries()
         .then((ResponseStream<Country> country) {
-      country.listen((value) {
-        // print(value);
-        var filterData = countryBox.values
-            .where((countryModel) => countryModel.id == value.id)
-            .toList();
-        if (filterData.length == 0) {
-          HiveCountry _country = HiveCountry(
-              id: value.id, name: value.name, diallingCode: value.diallingCode);
-          countryBox.add(_country);
+      country.listen((country) {
+        int _currentIndex = -1;
+        countryBox.values.toList().asMap().forEach((key, hiveCountry) {
+          if (hiveCountry.id == country.id) {
+            _currentIndex = key;
+          }
+        });
+
+        HiveCountry _hiveCountry = HiveCountry(
+            id: country.id,
+            name: country.name,
+            diallingCode: country.diallingCode);
+
+        if (_currentIndex > -1) {
+          countryBox.put(_currentIndex, _hiveCountry);
         } else {
-          //update record
+          countryBox.add(_hiveCountry);
         }
       }, onError: ((err) {
         print(err);
       }), onDone: () {
         print('Country Sync Done.');
-        // for (var count in countryBox.values.toList()) {
-        //   print(count.id);
-        //   print(count.name);
-        //   print(count.diallingCode);
-        // }
       });
     });
   }
@@ -184,14 +200,27 @@ class SyncService {
   syncLanguages() async {
     await AppDataRepository()
         .getAllLanguages()
-        .then((ResponseStream<Language> language) {
-      language.listen((value) {
+        .then((ResponseStream<Language> stream) {
+      stream.listen((language) {
         var filterData = languageBox.values
-            .where((element) => element.id == value.id)
+            .where((element) => element.id == language.id)
             .toList();
         if (filterData.length == 0) {
-          HiveLanguage _language = HiveLanguage(id: value.id, name: value.name);
-          languageBox.add(_language);
+          HiveLanguage _language =
+              HiveLanguage(id: language.id, name: language.name);
+
+          int _currentIndex = -1;
+          languageBox.values.toList().asMap().forEach((key, hiveLanguage) {
+            if (hiveLanguage.id == language.id) {
+              _currentIndex = key;
+            }
+          });
+
+          if (_currentIndex > -1) {
+            languageBox.put(_currentIndex, _language);
+          } else {
+            languageBox.add(_language);
+          }
         } else {
           //update record
         }
@@ -215,18 +244,26 @@ class SyncService {
 
     await MaterialRepository()
         .getMaterials()
-        .then((ResponseStream<Material> material) {
-      material.listen((value) {
-        HiveMaterial _material = HiveMaterial.from(value);
-        materialBox.add(_material);
+        .then((ResponseStream<Material> stream) {
+      stream.listen((material) {
+        HiveMaterial _hiveMaterial = HiveMaterial.from(material);
+
+        int _currentIndex = -1;
+        materialBox.values.toList().asMap().forEach((key, hiveMaterial) {
+          if (hiveMaterial.id == material.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          materialBox.put(_currentIndex, _hiveMaterial);
+        } else {
+          materialBox.add(_hiveMaterial);
+        }
       }, onError: ((err) {
         print(err);
       }), onDone: () {
         print('Material Sync Done.');
-        // for (var count in materialBox.values.toList()) {
-        //   print(count.id);
-        //   print(count.title);
-        // }
       });
     });
   }
@@ -243,10 +280,25 @@ class SyncService {
 
     await MaterialRepository()
         .getMaterialTopics()
-        .then((ResponseStream<MaterialTopic> topics) {
-      topics.listen((value) {
-        HiveMaterialTopic _materialTopic = HiveMaterialTopic.from(value);
-        materialTopicBox.add(_materialTopic);
+        .then((ResponseStream<MaterialTopic> stream) {
+      stream.listen((topic) {
+        HiveMaterialTopic _materialTopic = HiveMaterialTopic.from(topic);
+
+        int _currentIndex = -1;
+        materialTopicBox.values
+            .toList()
+            .asMap()
+            .forEach((key, hiveMaterialTopic) {
+          if (hiveMaterialTopic.id == topic.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          materialTopicBox.put(_currentIndex, _materialTopic);
+        } else {
+          materialTopicBox.add(_materialTopic);
+        }
       }, onError: ((err) {
         print(err);
       }), onDone: () {
@@ -268,9 +320,24 @@ class SyncService {
     await MaterialRepository()
         .getMaterialTypes()
         .then((ResponseStream<MaterialType> topics) {
-      topics.listen((value) {
-        HiveMaterialType _materialType = HiveMaterialType.from(value);
-        materialTypeBox.add(_materialType);
+      topics.listen((materialType) {
+        HiveMaterialType _materialType = HiveMaterialType.from(materialType);
+
+        int _currentIndex = -1;
+        materialTypeBox.values
+            .toList()
+            .asMap()
+            .forEach((key, hiveMaterialType) {
+          if (hiveMaterialType.id == materialType.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          materialTypeBox.put(_currentIndex, _materialType);
+        } else {
+          materialTypeBox.add(_materialType);
+        }
       }, onError: ((err) {
         print(err);
       }), onDone: () {
@@ -283,16 +350,23 @@ class SyncService {
     print('============= START: Sync Local Materials to Remote =============');
     print(
         'Total Records: ${materialBox.values.where((element) => element.isNew == true).length}');
-    print('============= END: Sync Local Materials to Remote ===============');
 
     materialBox.values
         .where(
             (element) => (element.isNew == true || element.isUpdated == true))
         .map((HiveMaterial _hiveMaterial) {
-      MaterialRepository().createUpdateMaterial(
+      MaterialRepository()
+          .createUpdateMaterial(
         material: _hiveMaterial.toMaterial(),
         fieldMaskPaths: kMaterialFieldMask,
-      );
+      )
+          .then((value) {
+        // TODO: update flag(s) isNew and/or isUpdated to false
+        print('============= value: ${value.headers} ===============');
+      }).whenComplete(() {
+        print(
+            '============= END: Sync Local Materials to Remote ===============');
+      });
     });
   }
 
@@ -306,18 +380,26 @@ class SyncService {
       });
     }
 
-    await GroupRepository().getGroups().then((ResponseStream<Group> group) {
-      group.listen((value) {
-        HiveGroup _group = HiveGroup.from(value);
-        groupBox.add(_group);
+    await GroupRepository().getGroups().then((ResponseStream<Group> stream) {
+      stream.listen((group) {
+        HiveGroup _group = HiveGroup.from(group);
+
+        int _currentIndex = -1;
+        groupBox.values.toList().asMap().forEach((key, hiveGroup) {
+          if (hiveGroup.id == group.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          groupBox.put(_currentIndex, _group);
+        } else {
+          groupBox.add(_group);
+        }
       }, onError: ((err) {
         print('Group Sync Error: ${err.toString()}');
       }), onDone: () {
         print('Group Sync Done.');
-        // for (var count in groupBox.values.toList()) {
-        //   print(count.id);
-        //   print(count.title);
-        // }
       });
     });
   }
@@ -334,10 +416,23 @@ class SyncService {
 
     await GroupRepository()
         .getEvaluationCategories()
-        .then((ResponseStream<EvaluationCategory> topics) {
-      topics.listen((value) {
-        HiveEvaluationCategory _category = HiveEvaluationCategory.from(value);
-        evaluationCategoryBox.add(_category);
+        .then((ResponseStream<EvaluationCategory> stream) {
+      stream.listen((evaluationCategory) {
+        HiveEvaluationCategory _category =
+            HiveEvaluationCategory.from(evaluationCategory);
+
+        int _currentIndex = -1;
+        evaluationCategoryBox.values.toList().asMap().forEach((key, value) {
+          if (value.id == evaluationCategory.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          evaluationCategoryBox.put(_currentIndex, _category);
+        } else {
+          evaluationCategoryBox.add(_category);
+        }
       }, onError: ((err) {
         print('EvaluationCategory Sync Error: ${err.toString()}');
       }), onDone: () {
@@ -377,13 +472,18 @@ class SyncService {
     print('============= START: Sync Local Groups to Remote =============');
     print(
         'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
-    print('============= END: Sync Local Groups to Remote ===============');
 
     groupBox.values
         .where((HiveGroup group) => (group.isNew == true))
         .map((HiveGroup _hiveGroup) {
-      GroupRepository().createUpdateGroup(
-          group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
+      GroupRepository()
+          .createUpdateGroup(
+              group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask)
+          .then((value) {
+        // TODO: update flag(s) isNew and/or isUpdated to false
+      }).whenComplete(() {
+        print('============= END: Sync Local Groups to Remote ===============');
+      });
     });
   }
 }

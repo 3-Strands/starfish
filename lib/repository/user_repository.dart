@@ -1,4 +1,4 @@
-import 'package:grpc/grpc_web.dart';
+import 'package:grpc/grpc.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';

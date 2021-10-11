@@ -16,9 +16,19 @@ class GroupProvider {
     return _groupBox.values.toList();
   }
 
-  Future<int> addEditGroup(HiveGroup group) async {
-    // TODO: update if already addedd
-    return _groupBox.add(group);
+  Future<void> addEditGroup(HiveGroup group) async {
+    int _currentIndex = -1;
+    _groupBox.values.toList().asMap().forEach((key, hiveGroup) {
+      if (hiveGroup.id == group.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _groupBox.put(_currentIndex, group);
+    } else {
+      _groupBox.add(group);
+    }
   }
 
   Future<int> deleteGroupUser(HiveGroupUser groupUser) async {

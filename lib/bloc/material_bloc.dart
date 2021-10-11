@@ -5,6 +5,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/repository/materials_repository.dart';
 
 class MaterialBloc extends Object {
+  MaterialRepository materialRepository = MaterialRepository();
   List<HiveLanguage> selectedLanguages = [];
   List<HiveMaterialTopic> selectedTopics = [];
   String query = '';
@@ -26,8 +27,6 @@ class MaterialBloc extends Object {
   }
 
   fetchMaterialsFromDB() async {
-    MaterialRepository materialRepository = MaterialRepository();
-
     materialRepository
         .fetchMaterialsFromDB()
         .then(
@@ -86,7 +85,7 @@ class MaterialBloc extends Object {
     return _results;
   }
 
-  void addMaterial(HiveMaterial? material) {
+  /*void addMaterial(HiveMaterial? material) {
     print('add Material');
     fetchMaterialsFromDB();
     // _filteredMaterialsList.add(material!);
@@ -101,6 +100,12 @@ class MaterialBloc extends Object {
     _filteredMaterialsList.removeAt(index);
     _filteredMaterialsList.insert(index, material!);
     _materials.sink.add(_filteredMaterialsList);
+  }*/
+
+  Future<void> createUpdateMaterial(HiveMaterial material) async {
+    return materialRepository.createUpdateMaterialInDB(material).then((_) {
+      fetchMaterialsFromDB();
+    });
   }
 
   void dispose() {
