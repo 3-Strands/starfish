@@ -12,6 +12,7 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -156,8 +157,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
             })
-        .whenComplete(() => Navigator.of(context).pushNamedAndRemoveUntil(
-            Routes.dashboard, (Route<dynamic> route) => false));
+        .whenComplete(() => {
+              StarfishSharedPreference().setLoginStatus(true),
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  Routes.dashboard, (Route<dynamic> route) => false)
+            });
   }
 
   @override
