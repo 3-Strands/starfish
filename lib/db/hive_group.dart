@@ -56,9 +56,9 @@ class HiveGroup extends HiveObject {
     this.users =
         group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
     this.evaluationCategoryIds = group.evaluationCategoryIds;
-    this.actions = group.actions
-        .map((GroupAction action) => HiveGroupAction.from(action))
-        .toList();
+    // this.actions = group.actions
+    //     .map((GroupAction action) => HiveGroupAction.from(action))
+    //     .toList();
     this.editHistory =
         group.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
   }
@@ -71,8 +71,8 @@ class HiveGroup extends HiveObject {
       languageIds: this.languageIds,
       users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
       evaluationCategoryIds: this.evaluationCategoryIds,
-      actions:
-          this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
+      // actions:
+      //     this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
     );
   }
 
