@@ -58,7 +58,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
     _getCurrentUser();
     _getAllCountries();
-    // _getAllLanguages();
+    _getAllLanguages();
   }
 
   void _getCurrentUser() {
@@ -118,7 +118,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   _validateInfo() {
     String validationMsg =
         GeneralFunctions.validateFullName(_nameController.text);
-    if (validationMsg != '') {
+    if (validationMsg.isNotEmpty) {
       return StarfishSnackbar.showErrorMessage(context, validationMsg);
     } else if (_selectedCountries.length == 0) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptySelectCountry);
@@ -154,11 +154,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               _user.name = value.name,
               _user.languageIds = value.languageIds,
               _currentUserBox.putAt(0, _user),
+              // StarfishSharedPreference().setLoginStatus(true),
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
             })
         .whenComplete(() => {
-              StarfishSharedPreference().setLoginStatus(true),
+              // StarfishSharedPreference().setLoginStatus(true),
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
             });
