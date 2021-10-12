@@ -29,21 +29,17 @@ class MaterialsScreen extends StatefulWidget {
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
-  late List<HiveMaterialTopic> _topicsList;
 
   late Box<HiveLanguage> _languageBox;
-  late Box<HiveMaterialTopic> _materialTopicBox;
-  late String _choiceText = 'No filter applied';
+
+  late String _choiceText = Strings.noFilterApplied;
 
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _materialTopicBox =
-        Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
 
     _getAllLanguages();
-    _getAllTopics();
   }
 
   _fetchMaterialData(AppBloc bloc) async {
@@ -52,10 +48,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
-  }
-
-  void _getAllTopics() {
-    _topicsList = _materialTopicBox.values.toList();
   }
 
   void _onMaterialSelection(HiveMaterial material) {
@@ -140,7 +132,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           fontFamily: 'OpenSans',
                         ),
                         hint: Text(
-                          'Action: ' + _choiceText,
+                          Strings.materialActionPrefix + _choiceText,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -155,12 +147,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             _choiceText = value!;
                           });
                         },
-                        items: <String>[
-                          'Assigned to me and completed',
-                          'Assigned to me but incomplete',
-                          'Assigned to a group I lead',
-                          'No filter applied',
-                        ].map<DropdownMenuItem<String>>((String value) {
+                        items: Strings.materialActionsList
+                            .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(
@@ -298,7 +286,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             _languageList.firstWhere((element) => languageId == element.id);
         languages.add(Text(_language.name));
       } on StateError catch (e) {
-        print('EXCEPTION: ${e.message}');
+        debugPrint('EXCEPTION: ${e.message}');
       }
     });
 
@@ -336,7 +324,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 Container(
                   width: 240.w,
                   child: Text(
-                    'Title: ${material.title}',
+                    '${Strings.materialTitlePrefix} ${material.title}',
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
                     style: TextStyle(
@@ -525,14 +513,13 @@ class MaterialListItem extends StatelessWidget {
             children: <Widget>[
               Container(
                 height: 22.h,
-                // margin: EdgeInsets.only(left: 25.0.w, right: 25.0.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       width: 240.w,
                       child: Text(
-                        'Title: ${material.title}',
+                        '${Strings.materialTitlePrefix} ${material.title}',
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(

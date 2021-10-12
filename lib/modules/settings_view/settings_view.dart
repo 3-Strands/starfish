@@ -1,8 +1,6 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
-// import 'package:smart_select/smart_select.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
@@ -33,27 +31,30 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  List<String> groups = List<String>.generate(4, (i) => "Group: $i");
-  bool isMobileEditable = false;
-  bool isNameEditable = false;
-
-  late Box<HiveCountry> _countryBox;
   final _countryCodeController = TextEditingController();
   final FocusNode _countryCodeFocus = FocusNode();
-  late List<HiveCountry> _countryList = [];
-  late Box<HiveCurrentUser> _currentUserBox;
-  late Box<HiveLanguage> _languageBox;
-  late List<HiveLanguage> _languageList = [];
-  String _countyCode = '';
-  String _mobileNumber = '';
   final _nameController = TextEditingController();
   final FocusNode _nameFocus = FocusNode();
   final _phoneNumberController = TextEditingController();
   final FocusNode _phoneNumberFocus = FocusNode();
+
+  late HiveCurrentUser _user;
+
+  late List<HiveCountry> _countryList = [];
+  late List<HiveLanguage> _languageList = [];
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
-  late HiveCurrentUser _user;
+
+  late Box<HiveCurrentUser> _currentUserBox;
+  late Box<HiveCountry> _countryBox;
+  late Box<HiveLanguage> _languageBox;
+
+  String _countyCode = '';
+  String _mobileNumber = '';
   String _userName = '';
+
+  bool isMobileEditable = false;
+  bool isNameEditable = false;
 
   @override
   void initState() {
@@ -108,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     // true
-    if (_nameController.text == "") {
+    if (_nameController.text.isEmpty) {
       setState(() => {_nameController.text = _userName});
       return StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
     }
@@ -183,13 +184,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void updateLanguages() async {
-    // GeneralFunctions().isNetworkAvailable().then((onValue) async {
-    //   if (!onValue) {
-    //     return StarfishSnackbar.showErrorMessage(context,
-    //         'You can change the countries and languages only when your internet is working');
-    //   }
-    // });
-
     var fieldMaskPaths = ['language_ids'];
     List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();

@@ -83,6 +83,8 @@ class Strings {
   static const String seenBy = 'Can be seen by';
   static const String selectCategories = 'Select Categories';
 
+  static const String noFilterApplied = 'No filter applied';
+
   // Screen Titles
   static const String addNewMaterial = 'Add New Material';
   static const String addMaterials = 'Add Materials';
@@ -171,9 +173,18 @@ sending an invitation to use Starfish''';
   static const String adminNamePrifix = 'Admin';
 
   /// actions
-  static const String editActionText = "Edit Action";
-  static const String deleteActionText = "Delete Action";
+  static const String editActionText = 'Edit Action';
+  static const String deleteActionText = 'Delete Action';
   static const String notSoGoodText = 'Not so Good';
   static const String goodText = 'Good';
   static const String howWasThisActionText = 'How was this action?';
+
+  static const String materialActionPrefix = 'Action: ';
+  static const String materialTitlePrefix = 'Title: ';
+  static const List<String> materialActionsList = <String>[
+    'Assigned to me and completed',
+    'Assigned to me but incomplete',
+    'Assigned to a group I lead',
+    'No filter applied',
+  ];
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';

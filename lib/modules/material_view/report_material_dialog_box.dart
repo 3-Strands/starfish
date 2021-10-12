@@ -11,7 +11,6 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
-import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 
 class ReportMaterialDialogBox extends StatefulWidget {
@@ -169,9 +168,10 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       _materialFeedback.materialId = widget.material.id!;
                       _materialFeedbackBox
                           .add(_materialFeedback)
-                          .then((value) => print('$value record(s) saved.'))
+                          .then(
+                              (value) => debugPrint('$value record(s) saved.'))
                           .onError((error, stackTrace) =>
-                              print('$error record(s) saved.'))
+                              debugPrint('$error record(s) saved.'))
                           .whenComplete(() => {
                                 Alerts.showMessageBox(
                                     context: context,

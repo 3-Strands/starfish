@@ -12,7 +12,6 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -81,7 +80,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 
   void _getAllLanguages() {
-    print("_getAllLanguages");
     _languageList = _languageBox.values.toList();
     for (var languageId in _user.languageIds) {
       _languageList
@@ -144,12 +142,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _user.countryIds = _selectedCountryIds;
     _user.languageIds = _selectedLanguageIds;
 
-    print('FINISH: $_user');
     await CurrentUserRepository()
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then((value) => {
-              print('=================== START ==================='),
-              print(value),
               setState(() => _isLoading = false),
               _user.name = value.name,
               _user.languageIds = value.languageIds,
@@ -221,7 +216,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         choice: SelectType.multiple,
                         dataSource: DataSourceType.countries,
                         onDoneClicked: <T>(countries) {
-                          // print("Selected Countries ==>> $countries");
                           setState(() {
                             _selectedCountries = countries as List<HiveCountry>;
                             _updateUserCountries();
@@ -252,7 +246,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         choice: SelectType.multiple,
                         dataSource: DataSourceType.languages,
                         onDoneClicked: <T>(languages) {
-                          // print("Selected languages ==>> $_selectedLanguages");
                           setState(() {
                             _selectedLanguages =
                                 languages as List<HiveLanguage>;

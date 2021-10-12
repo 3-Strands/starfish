@@ -9,7 +9,6 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
-import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -26,21 +25,14 @@ class GroupsScreen extends StatefulWidget {
 }
 
 class _GroupsScreenState extends State<GroupsScreen> {
-  bool _isSearching = false;
-
   late AppBloc bloc;
-  //int groupTitleIndex = 0;
-  //UserGroupRoleFilter _groupRoleFilter = UserGroupRoleFilter.FILTER_ALL;
-  //String _query = '';
+
   @override
   void initState() {
     super.initState();
   }
 
   void _onGroupSelection(HiveGroup group) {
-    print('group.users ==>>');
-    print(group);
-    print(group.users);
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -210,14 +202,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
     bloc = Provider.of(context);
     bloc.groupBloc.fetchAllGroupsByRole();
     return Scaffold(
-      backgroundColor:AppColors.groupScreenBG,
+      backgroundColor: AppColors.groupScreenBG,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Container(
           width: 375.w,
-          // height: 812.h,
           color: AppColors.groupScreenBG,
           child: SingleChildScrollView(
             physics: ScrollPhysics(),
@@ -255,7 +246,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         alignedDropdown: true,
                         child: DropdownButton<UserGroupRoleFilter>(
                           isExpanded: true,
-                          // icon: Icon(Icons.arrow_drop_down),
                           iconSize: 35,
                           style: TextStyle(
                             color: Color(0xFF434141),
@@ -265,12 +255,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                           value: bloc.groupBloc.groupRoleFilter,
                           onChanged: (UserGroupRoleFilter? value) {
                             setState(() {
-                              /*groupTitleIndex =
-                                    _groupTitleList.indexOf(value);*/
                               bloc.groupBloc.groupRoleFilter = value!;
                             });
                           },
-
                           items: UserGroupRoleFilter.values
                               .map<DropdownMenuItem<UserGroupRoleFilter>>(
                                   (UserGroupRoleFilter value) {
@@ -314,11 +301,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               (BuildContext context, IndexPath indexPath) {
                             return GroupListItem(
                               group: snapshot.data!.values
-                                      .toList()[indexPath.section]
-                                  [indexPath.index], //_groupsList[index.index],
+                                  .toList()[indexPath.section][indexPath.index],
                               onGroupTap: _onGroupSelection,
                               onLeaveGroupTap: (HiveGroup group) {
-                                //TODO: Mark this group to delete
                                 //bloc.groupBloc.deleteGroup(group);
                               },
                             );
@@ -329,7 +314,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10.sp, vertical: 8.sp),
                               child: Text(
-                                '${snapshot.data!.keys.toList()[section].about}', //${snapshot.data!.keys.toList().elementAt(section)}',
+                                '${snapshot.data!.keys.toList()[section].about}',
                                 style: TextStyle(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,
@@ -395,7 +380,7 @@ class GroupListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                   // width: 200.w,
+                    // width: 200.w,
                     child: Text(
                       '${group.name}',
                       textAlign: TextAlign.left,
@@ -407,7 +392,7 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                 // Spacer(),
+                  // Spacer(),
                   if (group.currentUserRole! == GroupUser_Role.ADMIN)
                     CustomIconButton(
                       icon: Icon(
@@ -418,21 +403,18 @@ class GroupListItem extends StatelessWidget {
                       text: Strings.edit,
                       onButtonTap: () {
                         Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddEditGroupScreen(
-                        group: group,
-                      ),
-                    ),
-                  );
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddEditGroupScreen(
+                              group: group,
+                            ),
+                          ),
+                        );
                       },
                     ),
                   if (group.currentUserRole! == GroupUser_Role.LEARNER)
-                  
                     ElevatedButton(
-                      onPressed: () {
-                        //TODO: Leave this group
-                      },
+                      onPressed: () {},
                       child: Text(
                         Strings.leaveThisGroup,
                         style: TextStyle(
@@ -442,12 +424,9 @@ class GroupListItem extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: AppColors.selectedButtonBG,
-                        fixedSize: Size(125.w, 20.h)
-                      ),
+                          primary: AppColors.selectedButtonBG,
+                          fixedSize: Size(125.w, 20.h)),
                     ),
-                    // Spacer(),
-                    
                 ],
               ),
             ),
@@ -472,7 +451,6 @@ class GroupListItem extends StatelessWidget {
                 child: Container(
                   height: 36.h,
                   width: 326.w,
-                  // margin: EdgeInsets.symmetric(horizontal: 10.sp),
                   decoration: BoxDecoration(
                       color: Color(0xFFDDDDDD),
                       borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),

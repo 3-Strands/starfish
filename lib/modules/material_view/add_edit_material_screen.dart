@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,7 +18,6 @@ import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -43,10 +43,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _webLinkController = TextEditingController();
-  late String _choiceSeenByText = Strings.seenBy;
-  late String _choiceEditedByText = Strings.editedBy;
-
-  bool _isEditMode = false;
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
@@ -55,15 +51,18 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   MaterialEditability? _editableBy;
 
   late Box<HiveLanguage> _languageBox;
-  late Box<HiveMaterial> _materialBox;
   late Box<HiveMaterialType> _materialTypeBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
+
+  late String _choiceSeenByText = Strings.seenBy;
+  late String _choiceEditedByText = Strings.editedBy;
+
+  bool _isEditMode = false;
 
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     _materialTypeBox =
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     _materialTopicBox =
@@ -114,9 +113,11 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SettingsScreen()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsScreen(),
+                    ),
+                  );
                 },
               ),
             ],
@@ -173,15 +174,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 ),
                 SizedBox(height: 11.h),
                 Container(
-                  //padding: EdgeInsets.all(10.sp),
                   child: TextFormField(
                     maxLines: 4,
                     maxLength: 200,
                     controller: _descriptionController,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
-                      // contentPadding:
-                      //     EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -296,7 +294,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     onDoneClicked: <T>(languages) {
                       setState(() {
                         _selectedLanguages = languages as List<HiveLanguage>;
-                        // print("Selected languages ==>> $_selectedLanguages");
                       });
                     },
                   ),
@@ -320,7 +317,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     onDoneClicked: <T>(types) {
                       setState(() {
                         _selectedTypes = types as List<HiveMaterialType>;
-                        // print("Selected types ==>> $types");
                       });
                     },
                   ),
@@ -344,7 +340,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     onDoneClicked: <T>(topics) {
                       setState(() {
                         _selectedTopics = topics as List<HiveMaterialTopic>;
-                        // print("Selected topics ==>> $_selectedTopics");
                       });
                     },
                   ),
@@ -549,7 +544,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     final bloc = Provider.of(context);
 
     if (_isEditMode) {
-      print('update material');
+      debugPrint('update material');
 
       _hiveMaterial.id = widget.material?.id;
       _hiveMaterial.creatorId = widget.material?.creatorId;
@@ -563,7 +558,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
     bloc.materialBloc
         .createUpdateMaterial(_hiveMaterial)
-        .then((value) => print('record(s) saved.'))
+        .then((value) => debugPrint('record(s) saved.'))
         .onError((error, stackTrace) {
       StarfishSnackbar.showErrorMessage(
           context,
@@ -601,7 +596,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   List<Widget>? _historyItems(HiveMaterial material) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      'History',
+      Strings.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
