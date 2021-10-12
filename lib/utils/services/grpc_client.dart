@@ -7,7 +7,7 @@ class GrpcClient {
   String? token;
 
   GrpcClient() {
-    getAccessToken();
+    _getAccessToken();
 
     final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
         host: "sandbox-api.everylanguage.app",
@@ -24,7 +24,7 @@ class GrpcClient {
     );
   }
 
-  getAccessToken() async {
+  _getAccessToken() async {
     await StarfishSharedPreference()
         .getAccessToken()
         .then((value) => token = value);
