@@ -42,7 +42,6 @@ import 'package:uuid/uuid.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
   final HiveGroup? group;
-
   AddEditGroupScreen({
     Key? key,
     this.group,
@@ -61,6 +60,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   final _personNameController = TextEditingController();
 
   bool _isEditMode = false;
+  String _query = '';
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveEvaluationCategory> _selectedEvaluationCategories = [];
@@ -187,11 +187,26 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         valueListenable: _contactsNotifier,
         builder: (BuildContext context, List<InviteContact>? snapshot,
             Widget? child) {
+          List<InviteContact> _listToShow = [];
+
+          if (_query.isNotEmpty) {
+            _listToShow = snapshot!
+                .where((data) => (data.contact.displayName ?? '')
+                    .toLowerCase()
+                    .contains(_query.toLowerCase()) ||
+                    (data.contact.displayName ?? '')
+                        .toLowerCase()
+                        .startsWith(_query.toLowerCase()))
+                .toList();
+                
+          } else {
+            _listToShow = snapshot!;
+          }
           return ListView.builder(
-            itemCount: _filteredContactList.length,
+            itemCount: _listToShow.length,
             itemBuilder: (BuildContext context, int index) {
               return ContactListItem(
-                contact: _filteredContactList.elementAt(index),
+                contact: _listToShow.elementAt(index),
                 onTap: (InviteContact contact) {
                   setState(() {
                     if (!contact.isSelected &&
@@ -217,7 +232,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         // Add only contacts having atleast one phone numbers added
         if (contact.phones != null) {
           _contactList.add(InviteContact(contact: contact));
-          _filteredContactList.add(InviteContact(contact: contact));
+         // _filteredContactList.add(InviteContact(contact: contact));
         }
       });
       _contactsNotifier.value = _contactList;
@@ -262,17 +277,18 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             onValueChanged: (String value) {
                               if (value.isEmpty) {
                                 return;
-                              }
+                              }                            
                               setState(() {
-                                _filteredContactList = _contactsNotifier.value!
-                                    .where((InviteContact inviteContact) {
-                                  return inviteContact.contact.displayName !=
-                                          null
-                                      ? inviteContact.contact.displayName!
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase())
-                                      : false;
-                                }).toList();
+                                 _query = value;
+                                // _filteredContactList = _contactsNotifier.value!
+                                //     .where((InviteContact inviteContact) {
+                                //   return inviteContact.contact.displayName !=
+                                //           null
+                                //       ? inviteContact.contact.displayName!
+                                //           .toLowerCase()
+                                //           .contains(value.toLowerCase())
+                                //       : false;
+                                // }).toList();
                               });
                             },
                             onDone: (String value) {}),
@@ -294,6 +310,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
+                            // _filteredContactList.clear();
+                            // _loadContacts();
                             Navigator.pop(context);
                           },
                           child: Text(Strings.cancel),
@@ -726,6 +744,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
+                  // _filteredContactList.clear();
+                  // _loadContacts();
                   Navigator.of(context).pop();
                 },
                 child: Text(Strings.cancel),
