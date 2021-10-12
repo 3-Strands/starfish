@@ -6,6 +6,9 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -43,6 +46,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   void initState() {
     super.initState();
+    _phoneNumberController.text = '8638302141';
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
     SyncService obj = SyncService();
@@ -281,7 +285,16 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed(Routes.otpVerification);
+              String validationMsg =
+                  GeneralFunctions.validateMobile(_phoneNumberController.text);
+              if (validationMsg.isNotEmpty) {
+                return StarfishSnackbar.showErrorMessage(
+                    context, validationMsg);
+              } else {
+                StarfishSharedPreference()
+                    .setAccessToken(_phoneNumberController.text);
+                Navigator.of(context).pushNamed(Routes.otpVerification);
+              }
             },
             style: ElevatedButton.styleFrom(
               primary: AppColors.selectedButtonBG,
