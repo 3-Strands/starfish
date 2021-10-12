@@ -32,18 +32,18 @@ class UserProvider {
   String getName(String userId) {
     HiveUser? _user =
         _userBox.values.firstWhereOrNull((element) => element.id == userId);
-    return _user != null ? _user.name! : userId;
+    return _user != null ? _user.name ?? userId : userId;
   }
 
   String getPhone(String userId) {
     HiveUser? _user =
         _userBox.values.firstWhereOrNull((element) => element.id == userId);
-    return _user != null ? _user.phone! : '';
+    return _user != null ? _user.phone ?? '' : '';
   }
 
   String getDiallingCode(String userId) {
     HiveUser? _user =
         _userBox.values.firstWhereOrNull((element) => element.id == userId);
-    return _user != null ? _user.diallingCode! : '';
+    return _user != null ? _user.diallingCode ?? '' : '';
   }
 }
