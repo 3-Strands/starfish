@@ -477,10 +477,10 @@ class SyncService {
   syncLocalGroupsToRemote() async {
     print('============= START: Sync Local Groups to Remote =============');
     print(
-        'Total Records: ${groupBox.values.where((element) => element.isNew).length}');
+        'Total Records: ${groupBox.values.where((element) => element.isNew || element.isUpdated).length}');
 
     groupBox.values
-        .where((HiveGroup group) => (group.isNew == true))
+        .where((HiveGroup group) => (group.isNew || group.isUpdated))
         .forEach((HiveGroup _hiveGroup) {
       print('HiveGroup: $_hiveGroup');
       GroupRepository()
