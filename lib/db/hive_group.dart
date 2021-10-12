@@ -128,7 +128,10 @@ extension HiveGroupExt on HiveGroup {
     if (this.users == null) {
       return GroupUser_Role.UNSPECIFIED_ROLE;
     }
-    return GroupUser_Role.valueOf(
-        this.users!.firstWhere((element) => element.userId == userId).role!)!;
+    HiveGroupUser? _groupUser =
+        this.users!.firstWhereOrNull((element) => element.userId == userId);
+    return _groupUser != null
+        ? GroupUser_Role.valueOf(_groupUser.role!)!
+        : GroupUser_Role.UNSPECIFIED_ROLE;
   }
 }
