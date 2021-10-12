@@ -26,3 +26,14 @@ final List<String> kGroupFieldMask = [
   'users',
   'evaluation_category_ids',
 ];
+
+final List<String> kGroupUserFieldMask = [
+  'group_id',
+  'user_id',
+  'role',
+];
+
+final List<String> kUserFieldMask = [
+  'name',
+  'phone',
+];

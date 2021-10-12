@@ -8,6 +8,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -385,16 +386,16 @@ class GroupListItem extends StatelessWidget {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
               height: 20.sp,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    width: 200.w,
+                   // width: 200.w,
                     child: Text(
                       '${group.name}',
                       textAlign: TextAlign.left,
@@ -406,7 +407,7 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Spacer(),
+                 // Spacer(),
                   if (group.currentUserRole! == GroupUser_Role.ADMIN)
                     CustomIconButton(
                       icon: Icon(
@@ -415,9 +416,19 @@ class GroupListItem extends StatelessWidget {
                         size: 18.sp,
                       ),
                       text: Strings.edit,
-                      onButtonTap: () {},
+                      onButtonTap: () {
+                        Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddEditGroupScreen(
+                        group: group,
+                      ),
+                    ),
+                  );
+                      },
                     ),
                   if (group.currentUserRole! == GroupUser_Role.LEARNER)
+                  
                     ElevatedButton(
                       onPressed: () {
                         //TODO: Leave this group
@@ -428,11 +439,15 @@ class GroupListItem extends StatelessWidget {
                           fontFamily: 'OpenSans',
                           fontSize: 12.sp,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       style: ElevatedButton.styleFrom(
                         primary: AppColors.selectedButtonBG,
+                        fixedSize: Size(125.w, 20.h)
                       ),
                     ),
+                    // Spacer(),
+                    
                 ],
               ),
             ),

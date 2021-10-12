@@ -134,6 +134,7 @@ sending an invitation to use Starfish''';
       'Please enter valid mobile number.';
 
   static const String emptyTitle = 'Please enter title.';
+  static const String emptyName = 'Please enter name.';
   static const String emptyDescription = 'Please enter description.';
   static const String emptySelectType = 'Please select type.';
   static const String emptySelectTopic = 'Please select topic.';

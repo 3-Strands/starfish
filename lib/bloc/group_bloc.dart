@@ -36,8 +36,8 @@ class GroupBloc extends Object {
 
     List<HiveGroup> groups = await repository.fetchGroupsFromDB();
     groups.forEach((element) {
-      if (element.name!.contains(query) ||
-          element.description!.contains(query)) {
+      if (element.name!.toLowerCase().contains(query.toLowerCase()) ||
+          element.description!.toLowerCase().contains(query.toLowerCase())) {
         // set Role of current User in the group
         element.userRole = element.getMyRole(currentUser.id);
 

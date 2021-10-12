@@ -20,15 +20,16 @@ class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
       groupId: fields[0] as String?,
       userId: fields[1] as String?,
       role: fields[2] as int?,
-    )
-      ..isUpdated = fields[3] as bool
-      ..isDirty = fields[4] as bool;
+      isNew: fields[3] as bool,
+      isUpdated: fields[4] as bool,
+      isDirty: fields[5] as bool,
+    );
   }
 
   @override
   void write(BinaryWriter writer, HiveGroupUser obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.groupId)
       ..writeByte(1)
@@ -36,8 +37,10 @@ class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
       ..writeByte(2)
       ..write(obj.role)
       ..writeByte(3)
-      ..write(obj.isUpdated)
+      ..write(obj.isNew)
       ..writeByte(4)
+      ..write(obj.isUpdated)
+      ..writeByte(5)
       ..write(obj.isDirty);
   }
 

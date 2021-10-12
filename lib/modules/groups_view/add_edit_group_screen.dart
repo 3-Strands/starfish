@@ -24,6 +24,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -96,8 +97,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     if (widget.group != null) {
       _isEditMode = true;
 
-      _titleController.text = widget.group!.name!;
-      _descriptionController.text = widget.group!.description!;
+      _titleController.text = widget.group!.name ?? '';
+      _descriptionController.text = widget.group!.description ?? '';
 
       _selectedLanguages = _languageBox.values
           .where((HiveLanguage language) =>
@@ -322,6 +323,17 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
   }
 
+  _validateAndCreateUpdateGroup() {
+    if (_titleController.text.isEmpty) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
+    } else if (_descriptionController.text.isEmpty) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
+    } else {
+      _createUpdateGroup();
+    }
+  }
+
+  // TODO: yet to verify
   _createUpdateGroup() async {
     String? _groupId;
     if (_isEditMode) {
@@ -331,10 +343,18 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
     List<HiveUser> _newUsers = [];
     _selectedContacts.forEach((element) {
-      _newUsers.add(element.createHiveUser());
+      HiveUser _hiveUser = element.createHiveUser();
+      _hiveUser.linkGroups = true;
+      _hiveUser.isNew = true;
+
+      _newUsers.add(_hiveUser);
     });
     _unInvitedPersonNames.forEach((element) {
-      _newUsers.add(HiveUser(id: UuidGenerator.uuid(), name: element));
+      _newUsers.add(HiveUser(
+          id: UuidGenerator.uuid(),
+          name: element,
+          linkGroups: true,
+          isNew: true));
     });
 
     List<HiveGroupUser> _newGroupUsers = [];
@@ -342,14 +362,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     HiveCurrentUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
     _newGroupUsers.add(HiveGroupUser(
-        groupId: _groupId,
-        userId: _currentUser.id,
-        role: GroupUser_Role.ADMIN.value));
+      groupId: _groupId,
+      userId: _currentUser.id,
+      role: GroupUser_Role.ADMIN.value,
+      isNew: true,
+    ));
     _newUsers.forEach((HiveUser user) {
-      _userBox.add(user).then((value) => _newGroupUsers.add(HiveGroupUser(
-          groupId: _groupId,
-          userId: user.id,
-          role: GroupUser_Role.LEARNER.value)));
+      UserRepository()
+          .createUpdateUserInDB(user)
+          .then((value) => _newGroupUsers.add(HiveGroupUser(
+                groupId: _groupId,
+                userId: user.id,
+                role: GroupUser_Role.LEARNER.value,
+                isNew: true,
+              )));
     });
 
     HiveGroup _hiveGroup = HiveGroup(
@@ -386,6 +412,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           _isEditMode ? Strings.updateGroupFailed : Strings.createGroupSuccess);
     }).whenComplete(() {
       // Broadcast to sync the local changes with the server
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateUsers,
+        value: _newUsers,
+      );
       FBroadcast.instance().broadcast(
         SyncService.kUpdateGroup,
         value: _hiveGroup,
@@ -677,7 +707,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   visible: _unInvitedPersonNames.toList().length > 0,
                 ),
 
-                if (widget.group != null) _editHistoryContainer(widget.group),
+                if (widget.group?.editHistory != null)
+                  _editHistoryContainer(widget.group),
 
                 SizedBox(height: 11.h),
               ],
@@ -704,7 +735,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  _createUpdateGroup();
+                  _validateAndCreateUpdateGroup();
                 },
                 child: Text(
                   _isEditMode ? Strings.update : Strings.create,
@@ -743,7 +774,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
     _widgetList.add(header);
 
-    for (HiveEdit edit in group.editHistory!) {
+    for (HiveEdit edit in group.editHistory ?? []) {
       _widgetList.add(HistoryItem(edit: edit));
     }
 
@@ -753,6 +784,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<Widget> _invitedContactsContainer(List<InviteContact> invitedContacts) {
     final List<Widget> _widgetList = [];
 
+    invitedContacts.sort((a, b) => a.contact.displayName!
+        .toLowerCase()
+        .compareTo(b.contact.displayName!.toLowerCase()));
     for (InviteContact inviteContact in invitedContacts) {
       _widgetList.add(InvitedContactListItem(contact: inviteContact));
     }
@@ -768,6 +802,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   List<Widget> _unInvitedContactsContainer(List<String> unInvitedPersons) {
     final List<Widget> _widgetList = [];
+    unInvitedPersons.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     for (String person in unInvitedPersons) {
       _widgetList.add(

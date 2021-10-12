@@ -13,14 +13,19 @@ class HiveGroupUser {
   @HiveField(2)
   int? role;
   @HiveField(3)
-  bool isUpdated = false;
+  bool isNew = false;
   @HiveField(4)
+  bool isUpdated = false;
+  @HiveField(5)
   bool isDirty = false;
 
   HiveGroupUser({
     this.groupId,
     this.userId,
     this.role,
+    this.isNew = false,
+    this.isUpdated = false,
+    this.isDirty = false,
   });
 
   HiveGroupUser.from(GroupUser group) {
