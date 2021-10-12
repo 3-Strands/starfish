@@ -17,6 +17,9 @@ service Starfish {
     // Create feedbacks for materials
     rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
 
+    // Create or update actions
+    rpc CreateUpdateActions (stream CreateUpdateActionsRequest) returns (stream CreateUpdateActionsResponse) {}
+
     // Create or update groups
     rpc CreateUpdateGroups (stream CreateUpdateGroupsRequest) returns (stream CreateUpdateGroupsResponse) {}
 
@@ -35,6 +38,9 @@ service Starfish {
 
     // Get the current user.
     rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
+
+    // List the actions related to this user
+    rpc ListActions (ListActionsRequest) returns (stream Action) {}
 
     // List all countries
     rpc ListAllCountries (ListAllCountriesRequest) returns (stream Country) {}
@@ -79,6 +85,49 @@ enum ResultsTab {
     RESULTS_MY_GROUPS = 2;
 }
 
+// An Action resource can be assigned to a group, and to multiple users
+message Action {
+
+    enum Type {
+        TEXT_INSTRUCTION = 0;
+        TEXT_RESPONSE = 1;
+        MATERIAL_INSTRUCTION = 2;
+        MATERIAL_RESPONSE = 3;
+    }
+
+    string id = 1;
+
+    // Output only. The type of action. (determined by what elements are present in the action)
+    // TEXT_INSTRUCTION: question is blank, material_id is blank
+    // TEXT_RESPONSE: question is present, material_id is blank
+    // MATERIAL_INSTRUCTION: question is blank, material_id is present
+    // MATERIAL_RESPONSE: question is present, material_id is present
+    Type type = 2;
+
+    string name = 3;
+
+    // Output only. The ID of the user who created this action
+    string creator_id = 4;
+
+    // The ID of the group this action is linked to (may be blank)
+    string group_id = 5;
+
+    // The instructions for how this action is to be completed
+    string instructions = 6;
+
+    // The ID of the material linked to this action (may be blank)
+    string material_id = 7;
+
+    // The question that the learner should answer for this action
+    string question = 8;
+
+    google.type.Date date_due = 9;
+
+    // Output only. A history of edits made to this action object
+    repeated Edit edit_history = 10;
+
+}
+
 // Connection between a User and an Action
 message ActionUser {
 
@@ -86,6 +135,12 @@ message ActionUser {
         UNSPECIFIED_STATUS = 0;
         INCOMPLETE = 1;
         COMPLETE = 2;
+    }
+
+    enum Evaluation {
+        UNSPECIFIED_EVALUATION = 0;
+        GOOD = 1;
+        BAD = 2;
     }
 
     string action_id = 2;
@@ -96,7 +151,9 @@ message ActionUser {
 
     string teacher_response = 5;
 
-    google.type.Date date_due = 6;
+    string user_response = 7;
+
+    Evaluation evaluation = 8;
 
 }
 
@@ -137,10 +194,47 @@ message CreateMaterialFeedbacksResponse {
 
 }
 
+message CreateUpdateActionsRequest {
+
+    // The Action resource that will be created or replace the existing one on the server.
+    // The ID of the action resource is optional for a create request.
+    // If the ID is present and a Group exists with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    Action action = 1;
+
+    // The field mask specifying which fields of the Action resource should be updated
+    // If not specified then all fields are updated
+    // If specified and some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateActionsResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Action after update or create request.
+    Action action = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateGroupsRequest {
 
     // The Group resource that will be created or replace the existing one on the server.
-    // The ID of the material resource is optional for a create request.
+    // The ID of the group resource is optional for a create request.
     // If the ID is present and a Group exists with that ID then the request will be taken as an update
     // Otherwise it will be a create request.
     // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
@@ -329,25 +423,11 @@ message Group {
     // maximum is 3
     repeated string evaluation_category_ids = 5;
 
-    // Output only
-    repeated GroupAction actions = 6;
-
     // Output only. A history of edits made to this group object
     repeated Edit edit_history = 7;
 
     // A description of the group.
     string description = 8;
-}
-
-// Connecting an action to a group
-message GroupAction {
-
-    string group_id = 2;
-
-    string action_id = 3;
-
-    google.type.Date due_date = 4;
-
 }
 
 // Connection between a User and a Group
@@ -373,6 +453,13 @@ message Language {
     string id = 1;
 
     string name = 2;
+
+}
+
+message ListActionsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
 
 }
 

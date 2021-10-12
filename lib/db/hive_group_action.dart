@@ -19,18 +19,18 @@ class HiveGroupAction extends HiveObject {
     this.dueDate,
   });
 
-  HiveGroupAction.from(GroupAction action) {
-    this.groupId = action.groupId;
-    this.actionId = action.actionId;
-    this.dueDate = HiveDate.from(action.dueDate);
-  }
+  // HiveGroupAction.from(GroupAction action) {
+  //   this.groupId = action.groupId;
+  //   this.actionId = action.actionId;
+  //   this.dueDate = HiveDate.from(action.dueDate);
+  // }
 
-  GroupAction toGroupAction() {
-    return GroupAction(
-        groupId: this.actionId,
-        actionId: this.actionId,
-        dueDate: this.dueDate?.toDate());
-  }
+  // GroupAction toGroupAction() {
+  //   return GroupAction(
+  //       groupId: this.actionId,
+  //       actionId: this.actionId,
+  //       dueDate: this.dueDate?.toDate());
+  // }
 
   @override
   String toString() {
