@@ -43,7 +43,8 @@ class HiveGroupUser {
   }
 
   String toString() {
-    return '{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)}}';
+    return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)}, 
+    isNew: ${this.isNew}, , isUpdated: ${this.isUpdated}, , isDirty: ${this.isDirty}}''';
   }
 }
 

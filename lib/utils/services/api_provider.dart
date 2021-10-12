@@ -123,6 +123,8 @@ class ApiProvider {
   Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
       GroupUser groupUser, List<String> fieldMaskPaths) async {
     var request = CreateUpdateGroupUsersRequest();
+    request.groupUser = groupUser;
+
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
     request.updateMask = mask;
 
@@ -141,9 +143,6 @@ class ApiProvider {
 
   Future<ResponseStream<CreateUsersResponse>> createUsers(User user) async {
     var request = user;
-
-    print('crateUsers: $user');
-    //Stream<User> request = Stream.value(user);
 
     return client!.createUsers(Stream.value(request));
   }
