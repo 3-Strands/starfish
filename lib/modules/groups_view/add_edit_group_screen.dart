@@ -97,8 +97,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     if (widget.group != null) {
       _isEditMode = true;
 
-      _titleController.text = widget.group!.name!;
-      _descriptionController.text = widget.group!.description!;
+      _titleController.text = widget.group!.name ?? '';
+      _descriptionController.text = widget.group!.description ?? '';
 
       _selectedLanguages = _languageBox.values
           .where((HiveLanguage language) =>
@@ -323,6 +323,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
   }
 
+  _validateAndCreateUpdateGroup() {
+    if (_titleController.text.isEmpty) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
+    } else if (_descriptionController.text.isEmpty) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
+    } else {
+      _createUpdateGroup();
+    }
+  }
 
   // TODO: yet to verify
   _createUpdateGroup() async {
@@ -698,7 +707,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   visible: _unInvitedPersonNames.toList().length > 0,
                 ),
 
-                if (widget.group != null) _editHistoryContainer(widget.group),
+                if (widget.group?.editHistory != null)
+                  _editHistoryContainer(widget.group),
 
                 SizedBox(height: 11.h),
               ],
@@ -725,7 +735,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  _createUpdateGroup();
+                  _validateAndCreateUpdateGroup();
                 },
                 child: Text(
                   _isEditMode ? Strings.update : Strings.create,
@@ -764,7 +774,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
     _widgetList.add(header);
 
-    for (HiveEdit edit in group.editHistory!) {
+    for (HiveEdit edit in group.editHistory ?? []) {
       _widgetList.add(HistoryItem(edit: edit));
     }
 
