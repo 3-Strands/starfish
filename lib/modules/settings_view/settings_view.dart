@@ -16,6 +16,7 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
@@ -116,7 +117,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _user.name = _nameController.text;
     _user.isUpdated = true;
 
-    print('Update Name: $_user');
     _currentUserBox.putAt(0, _user);
   }
 
@@ -173,13 +173,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
-            print(value),
             _user.countryIds = value.countryIds,
             _currentUserBox.putAt(0, _user),
           },
         )
         .whenComplete(() {
-      // SyncService().syncLanguages();
+      SyncService().syncLanguages();
     });
   }
 
@@ -202,7 +201,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
-            print(value),
             _user.languageIds = value.languageIds,
             _currentUserBox.putAt(0, _user),
           },
@@ -226,7 +224,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 EditButton(
                   onButtonClicked: (value) {
-                    print('name selected value $value');
                     if (isNameEditable == true) {
                       _updateName();
                     }
@@ -304,7 +301,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 EditButton(
                   onButtonClicked: (value) {
-                    print('mobile selected value $value');
                     if (isMobileEditable == true) {
                       _updatePhoneNumber();
                     }

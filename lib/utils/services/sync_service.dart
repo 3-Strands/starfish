@@ -25,6 +25,7 @@ import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 
 class SyncService {
   final DEBUG = false;
@@ -133,6 +134,8 @@ class SyncService {
         //update record
         currentUserBox.putAt(0, _user);
       }
+
+      StarfishSharedPreference().setAccessToken(user.phone);
     });
   }
 
@@ -201,6 +204,7 @@ class SyncService {
   }
 
   syncLanguages() async {
+    languageBox.clear();
     await AppDataRepository()
         .getAllLanguages()
         .then((ResponseStream<Language> stream) {
