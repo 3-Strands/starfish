@@ -784,6 +784,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<Widget> _invitedContactsContainer(List<InviteContact> invitedContacts) {
     final List<Widget> _widgetList = [];
 
+    invitedContacts.sort((a, b) => a.contact.displayName!
+        .toLowerCase()
+        .compareTo(b.contact.displayName!.toLowerCase()));
     for (InviteContact inviteContact in invitedContacts) {
       _widgetList.add(InvitedContactListItem(contact: inviteContact));
     }
@@ -799,6 +802,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   List<Widget> _unInvitedContactsContainer(List<String> unInvitedPersons) {
     final List<Widget> _widgetList = [];
+    unInvitedPersons.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     for (String person in unInvitedPersons) {
       _widgetList.add(
