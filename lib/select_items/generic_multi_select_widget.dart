@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -17,6 +18,7 @@ class MultiSelect extends StatefulWidget {
   final SelectType choice;
   final DataSourceType dataSource;
   final selectedValues;
+  final bool showAllOption;
 
   final Function<T>(T) onDoneClicked;
 
@@ -26,7 +28,8 @@ class MultiSelect extends StatefulWidget {
       required this.choice,
       required this.dataSource,
       required this.onDoneClicked,
-      required this.selectedValues})
+      required this.selectedValues,
+      required this.showAllOption})
       : super(key: key);
 
   @override
@@ -53,6 +56,8 @@ class _MultiSelectState extends State<MultiSelect> {
 
   bool _isSearching = false;
   String _searchText = '';
+
+  bool _isSelectAllSelected = false;
 
   @override
   void initState() {
@@ -262,11 +267,74 @@ class _MultiSelectState extends State<MultiSelect> {
           navigationSearchBar(),
         ],
       ),
-      body: Container(
-        color: Colors.white,
-        child: _isSearching ? _searchListBuilder() : _listBuilder(),
+      body: Column(
+        children: [
+          Visibility(
+            child: InkWell(
+                child: Container(
+                  height: 50.0,
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.only(left: 15.w, top: 5.h),
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            height: 60.h,
+                            width: MediaQuery.of(context).size.width - 88.0.w,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'Select all',
+                                  style: TextStyle(
+                                    fontFamily: 'OpenSans',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Container(
+                        width: 60.w,
+                        child: Icon(
+                          (this._isSelectAllSelected == true)
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: AppColors.selectedButtonBG,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                onTap: () => {
+                      setState(() {
+                        _isSelectAllSelected = !_isSelectAllSelected;
+                        _updateStatus();
+                      })
+                    }),
+            visible: widget.showAllOption,
+          ),
+          SizedBox(
+            height: 5.h,
+          ),
+          Expanded(
+            child: _isSearching ? _searchListBuilder() : _listBuilder(),
+          ),
+        ],
       ),
     );
+  }
+
+  _updateStatus() {
+    _items.forEach((element) {
+      element.isSelected = _isSelectAllSelected;
+    });
   }
 
   Widget _listBuilder() {
@@ -415,7 +483,14 @@ class ItemList extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text('${this.item.data.name}'),
+                              Text(
+                                '${this.item.data.name}',
+                                style: TextStyle(
+                                  fontFamily: 'OpenSans',
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
                             ],
                           ),
                         )
