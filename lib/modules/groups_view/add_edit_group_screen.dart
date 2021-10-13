@@ -539,7 +539,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     controller: _descriptionController,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
-                     
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -606,10 +605,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 SizedBox(height: 10.h),
                 Text(
                   Strings.hintEvaluateProgress,
+                  maxLines: 3,
                   textAlign: TextAlign.left,
                   style: italicDetailTextTextStyle,
                 ),
-                SizedBox(height: 11.h),
+                SizedBox(height: 40.h),
 
                 // Option 1.
                 Text(
@@ -617,7 +617,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
-                SizedBox(height: 11.h),
+                SizedBox(height: 20.h),
                 DottedBorder(
                   borderType: BorderType.RRect,
                   radius: Radius.circular(30.r),
@@ -661,7 +661,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
-                SizedBox(height: 11.h),
+                SizedBox(height: 20.h),
                 Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFEFEFEF),
@@ -717,10 +717,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             });
                           }
                         },
-                        icon: Icon(
-                          Icons.arrow_right_rounded,
-                          color: AppColors.selectedButtonBG,
-                        ),
+                        icon: SvgPicture.asset(AssetsPath.nextIcon),
                       ),
                     ],
                   ),
@@ -737,7 +734,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 if (widget.group?.editHistory != null)
                   _editHistoryContainer(widget.group),
 
-                SizedBox(height: 11.h),
+                SizedBox(height: 59.h),
               ],
             ),
           ),
