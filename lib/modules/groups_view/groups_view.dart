@@ -380,9 +380,11 @@ class GroupListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    // width: 200.w,
+                    width: 150.w,
                     child: Text(
                       '${group.name}',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontFamily: 'OpenSans',
