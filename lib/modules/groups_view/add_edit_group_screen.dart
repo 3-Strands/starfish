@@ -23,6 +23,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
@@ -191,14 +192,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
           if (_query.isNotEmpty) {
             _listToShow = snapshot!
-                .where((data) => (data.contact.displayName ?? '')
-                    .toLowerCase()
-                    .contains(_query.toLowerCase()) ||
+                .where((data) =>
+                    (data.contact.displayName ?? '')
+                        .toLowerCase()
+                        .contains(_query.toLowerCase()) ||
                     (data.contact.displayName ?? '')
                         .toLowerCase()
                         .startsWith(_query.toLowerCase()))
                 .toList();
-                
           } else {
             _listToShow = snapshot!;
           }
@@ -232,7 +233,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         // Add only contacts having atleast one phone numbers added
         if (contact.phones != null) {
           _contactList.add(InviteContact(contact: contact));
-         // _filteredContactList.add(InviteContact(contact: contact));
+          // _filteredContactList.add(InviteContact(contact: contact));
         }
       });
       _contactsNotifier.value = _contactList;
@@ -277,9 +278,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             onValueChanged: (String value) {
                               if (value.isEmpty) {
                                 return;
-                              }                            
+                              }
                               setState(() {
-                                 _query = value;
+                                _query = value;
                                 // _filteredContactList = _contactsNotifier.value!
                                 //     .where((InviteContact inviteContact) {
                                 //   return inviteContact.contact.displayName !=
@@ -469,8 +470,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 style: dashboardNavigationTitle,
               ),
               IconButton(
-                icon: SvgPicture.asset(AssetsPath.settingsActive),
-                onPressed: () {},
+                icon: SvgPicture.asset(AssetsPath.settings),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsScreen(),
+                    ),
+                  );
+                },
               ),
             ],
           ),

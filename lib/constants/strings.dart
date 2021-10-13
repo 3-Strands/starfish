@@ -178,7 +178,7 @@ sending an invitation to use Starfish''';
   static const String notSoGoodText = 'Not so Good';
   static const String goodText = 'Good';
   static const String howWasThisActionText = 'How was this action?';
-
+  static const String addActionText = 'Add Action';
   static const String materialActionPrefix = 'Action: ';
   static const String materialTitlePrefix = 'Title: ';
   static const List<String> materialActionsList = <String>[

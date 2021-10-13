@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
 import 'package:starfish/modules/authentication/phone_authentication.dart';
 import 'package:starfish/modules/create_profile/create_profile.dart';
@@ -17,6 +18,7 @@ class Routes {
   static const String settings = '/settings';
   static const String addNewMaterial = '/addNewMaterial';
   static const String createNewGroup = '/createNewGroup';
+  static const String addActions = '/addActions';
 
   static final routes = <String, WidgetBuilder>{
     phoneAuthentication: (BuildContext context) => PhoneAuthenticationScreen(),
@@ -25,6 +27,7 @@ class Routes {
     dashboard: (BuildContext context) => Dashboard(),
     settings: (BuildContext context) => SettingsScreen(),
     addNewMaterial: (BuildContext context) => AddEditMaterialScreen(),
+    addActions: (BuildContext context) => AddEditAction(),
     createNewGroup: (BuildContext context) => AddEditGroupScreen(),
   };
 }
