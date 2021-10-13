@@ -642,6 +642,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   navTitle: Strings.selectCountry,
                   placeholder: Strings.selectCountry,
                   selectedValues: _selectedCountries,
+                  enabled: true,
                   choice: SelectType.multiple,
                   dataSource: DataSourceType.countries,
                   onDoneClicked: <T>(countries) {
@@ -689,6 +690,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     navTitle: Strings.selectLanugages,
                     placeholder: Strings.selectLanugages,
                     selectedValues: _selectedLanguages,
+                    enabled: true,
                     choice: SelectType.multiple,
                     dataSource: DataSourceType.languages,
                     onDoneClicked: <T>(languages) {

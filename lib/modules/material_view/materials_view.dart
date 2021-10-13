@@ -264,6 +264,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         navTitle: Strings.selectTopics,
         placeholder: Strings.selectTopics,
         selectedValues: bloc.materialBloc.selectedTopics,
+        showAllOption: true,
         choice: SelectType.multiple,
         dataSource: DataSourceType.topics,
         onDoneClicked: <T>(topics) {
@@ -396,6 +397,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 ),
                 text: Strings.edit,
                 onButtonTap: () {
+                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
