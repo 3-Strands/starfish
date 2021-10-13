@@ -304,7 +304,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                   .toList()[indexPath.section][indexPath.index],
                               onGroupTap: _onGroupSelection,
                               onLeaveGroupTap: (HiveGroup group) {
-                                //bloc.groupBloc.deleteGroup(group);
+                                bloc.groupBloc.leaveGroup(group, );
                               },
                             );
                           },
@@ -414,7 +414,9 @@ class GroupListItem extends StatelessWidget {
                     ),
                   if (group.currentUserRole! == GroupUser_Role.LEARNER)
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        this.onLeaveGroupTap(group);
+                      },
                       child: Text(
                         Strings.leaveThisGroup,
                         style: TextStyle(
