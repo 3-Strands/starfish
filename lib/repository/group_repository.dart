@@ -19,13 +19,13 @@ class GroupRepository {
 
   Future<void> addEditGroup(HiveGroup group) => dbProvider.addEditGroup(group);
 
-  Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup({
+  Future<CreateUpdateGroupsResponse> createUpdateGroup({
     required Group group,
     required List<String> fieldMaskPaths,
   }) =>
       apiProvider.createUpdateGroup(group, fieldMaskPaths);
 
-  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser({
+  Future<CreateUpdateGroupUsersResponse> createUpdateGroupUser({
     required GroupUser groupUser,
     required List<String> fieldMaskPaths,
   }) =>
@@ -34,6 +34,12 @@ class GroupRepository {
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
           Stream<GroupUser> request) =>
       apiProvider.deleteGroupUsers(request);
+
+  Future<void> createUpdateGroupUserInDB({
+    required HiveGroup group,
+    required HiveGroupUser groupUser,
+  }) =>
+      dbProvider.createUpdateGroupUser(group, groupUser);
 
   Future<int> deleteGroupUserFromDB(HiveGroupUser groupUser) =>
       dbProvider.deleteGroupUser(groupUser);

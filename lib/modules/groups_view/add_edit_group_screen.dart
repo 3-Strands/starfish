@@ -91,9 +91,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       }
     });
 
-    print('widget.group');
-    print(widget.group);
-
     if (widget.group != null) {
       _isEditMode = true;
 
@@ -116,7 +113,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   Future<void> _checkPermissionsAndShowContact() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
-      print('Show Contact List');
       _showContactList();
     } else {
       _handleInvalidPermissions(permissionStatus);
@@ -191,14 +187,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
           if (_query.isNotEmpty) {
             _listToShow = snapshot!
-                .where((data) => (data.contact.displayName ?? '')
-                    .toLowerCase()
-                    .contains(_query.toLowerCase()) ||
+                .where((data) =>
+                    (data.contact.displayName ?? '')
+                        .toLowerCase()
+                        .contains(_query.toLowerCase()) ||
                     (data.contact.displayName ?? '')
                         .toLowerCase()
                         .startsWith(_query.toLowerCase()))
                 .toList();
-                
           } else {
             _listToShow = snapshot!;
           }
@@ -232,7 +228,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         // Add only contacts having atleast one phone numbers added
         if (contact.phones != null) {
           _contactList.add(InviteContact(contact: contact));
-         // _filteredContactList.add(InviteContact(contact: contact));
+          // _filteredContactList.add(InviteContact(contact: contact));
         }
       });
       _contactsNotifier.value = _contactList;
@@ -277,9 +273,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             onValueChanged: (String value) {
                               if (value.isEmpty) {
                                 return;
-                              }                            
+                              }
                               setState(() {
-                                 _query = value;
+                                _query = value;
                                 // _filteredContactList = _contactsNotifier.value!
                                 //     .where((InviteContact inviteContact) {
                                 //   return inviteContact.contact.displayName !=
@@ -377,14 +373,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     List<HiveGroupUser> _newGroupUsers = [];
     // Add self as Admin
-    HiveCurrentUser _currentUser =
+    /*HiveCurrentUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
     _newGroupUsers.add(HiveGroupUser(
       groupId: _groupId,
       userId: _currentUser.id,
       role: GroupUser_Role.ADMIN.value,
       isNew: true,
-    ));
+    ));*/
     _newUsers.forEach((HiveUser user) {
       UserRepository()
           .createUpdateUserInDB(user)

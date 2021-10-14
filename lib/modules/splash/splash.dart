@@ -26,7 +26,7 @@ class SplashPageState extends State<SplashScreen> {
   void _isAlreadyLoggedIn() async {
     final bool status = await StarfishSharedPreference().isUserLoggedIn();
     setState(() {
-      isUserLogin = status;
+      isUserLogin = false;
     });
   }
 

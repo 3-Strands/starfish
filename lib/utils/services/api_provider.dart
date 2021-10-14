@@ -105,7 +105,7 @@ class ApiProvider {
     return client!.listEvaluationCategories(request);
   }
 
-  Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup(
+  Future<CreateUpdateGroupsResponse> createUpdateGroup(
     Group group,
     List<String> fieldMaskPaths,
   ) async {
@@ -117,10 +117,10 @@ class ApiProvider {
 
     Stream<CreateUpdateGroupsRequest> streamRequest = Stream.value(request);
 
-    return client!.createUpdateGroups(streamRequest);
+    return client!.createUpdateGroups(streamRequest).first;
   }
 
-  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
+  Future<CreateUpdateGroupUsersResponse> createUpdateGroupUser(
       GroupUser groupUser, List<String> fieldMaskPaths) async {
     var request = CreateUpdateGroupUsersRequest();
     request.groupUser = groupUser;
@@ -128,7 +128,7 @@ class ApiProvider {
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
     request.updateMask = mask;
 
-    return client!.createUpdateGroupUsers(Stream.value(request));
+    return client!.createUpdateGroupUsers(Stream.value(request)).first;
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
@@ -141,9 +141,9 @@ class ApiProvider {
     return client!.listUsers(request);
   }
 
-  Future<ResponseStream<CreateUsersResponse>> createUsers(User user) async {
+  Future<CreateUsersResponse> createUsers(User user) async {
     var request = user;
 
-    return client!.createUsers(Stream.value(request));
+    return client!.createUsers(Stream.value(request)).first;
   }
 }
