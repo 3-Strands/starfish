@@ -128,6 +128,8 @@ sending an invitation to use Starfish''';
   static const String emptyDialingCode = 'Please enter dialing code.';
   static const String dialingCodeNotExist =
       'Entered dialing code doesn\'t exist.';
+  static const String emptyEvaluateProgress = 'Please select evaluation categories.';
+
 
   static const String emptyMobileNumbers = 'Please enter mobile number.';
   static const String invalidMobileNumbers =
@@ -185,4 +187,5 @@ sending an invitation to use Starfish''';
     'Assigned to a group I lead',
     'No filter applied',
   ];
+  static const String reuseActionText = 'Re-use an Action (optional)';
 }
