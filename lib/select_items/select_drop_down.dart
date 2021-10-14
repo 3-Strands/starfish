@@ -23,21 +23,25 @@ enum DataSourceType {
 class SelectDropDown extends StatefulWidget {
   final String navTitle;
   final String placeholder;
+  final bool showAllOption;
+  final bool enabled;
   final selectedValues;
   final SelectType choice;
   final DataSourceType dataSource;
 
   final Function<T>(T) onDoneClicked;
 
-  SelectDropDown(
-      {Key? key,
-      required this.navTitle,
-      required this.placeholder,
-      required this.selectedValues,
-      required this.choice,
-      required this.dataSource,
-      required this.onDoneClicked})
-      : super(key: key);
+  SelectDropDown({
+    Key? key,
+    required this.navTitle,
+    required this.placeholder,
+    this.enabled = true,
+    this.showAllOption = false,
+    required this.selectedValues,
+    required this.choice,
+    required this.dataSource,
+    required this.onDoneClicked,
+  }) : super(key: key);
 
   @override
   _SelectDropDownState createState() => _SelectDropDownState();
@@ -129,22 +133,28 @@ class _SelectDropDownState extends State<SelectDropDown> {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MultiSelect(
-                navTitle: widget.navTitle,
-                selectedValues: widget.selectedValues,
-                choice: widget.choice,
-                dataSource: widget.dataSource,
-                onDoneClicked: <T>(items) {
-                  showSelectedValue(items);
-                  widget.onDoneClicked(items);
-                },
+          if (widget.enabled) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MultiSelect(
+                  navTitle: widget.navTitle,
+                  selectedValues: widget.selectedValues,
+                  choice: widget.choice,
+                  dataSource: widget.dataSource,
+                  onDoneClicked: <T>(items) {
+                    showSelectedValue(items);
+                    widget.onDoneClicked(items);
+                  },
+                  showAllOption: widget.showAllOption,
+                ),
               ),
-            ),
-          ).then(
-              (value) => FocusScope.of(context).requestFocus(new FocusNode()));
+            ).then(
+              (value) => FocusScope.of(context).requestFocus(
+                new FocusNode(),
+              ),
+            );
+          }
         },
         child: Container(
           margin: EdgeInsets.only(left: 15.w),

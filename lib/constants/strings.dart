@@ -99,9 +99,7 @@ class Strings {
   static const String searchBarHint = 'Search';
   static const String hintGroupName = 'Name of the Group';
   static const String hintEvaluateProgress =
-      '''Choose up to 3 of the categories listed. You will then use
-these categories to evaluate progress by each Group 
-learner, month to month.''';
+      'Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.';
   static const String hintPersonName = 'Enter the person\'s name here';
 
   // Labels
@@ -178,7 +176,7 @@ sending an invitation to use Starfish''';
   static const String notSoGoodText = 'Not so Good';
   static const String goodText = 'Good';
   static const String howWasThisActionText = 'How was this action?';
-
+  static const String addActionText = 'Add Action';
   static const String materialActionPrefix = 'Action: ';
   static const String materialTitlePrefix = 'Title: ';
   static const List<String> materialActionsList = <String>[
