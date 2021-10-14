@@ -92,9 +92,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       }
     });
 
-    print('widget.group');
-    print(widget.group);
-
     if (widget.group != null) {
       _isEditMode = true;
 
@@ -117,7 +114,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   Future<void> _checkPermissionsAndShowContact() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
-      print('Show Contact List');
       _showContactList();
     } else {
       _handleInvalidPermissions(permissionStatus);
@@ -382,14 +378,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     List<HiveGroupUser> _newGroupUsers = [];
     // Add self as Admin
-    HiveCurrentUser _currentUser =
+    /*HiveCurrentUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
     _newGroupUsers.add(HiveGroupUser(
       groupId: _groupId,
       userId: _currentUser.id,
       role: GroupUser_Role.ADMIN.value,
       isNew: true,
-    ));
+    ));*/
     _newUsers.forEach((HiveUser user) {
       UserRepository()
           .createUpdateUserInDB(user)
