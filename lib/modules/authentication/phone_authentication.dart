@@ -41,7 +41,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   // List<Country> _countriesList = [];
 
   HiveCountry _selectedCountry =
-      HiveCountry(id: '', name: 'Select Country', diallingCode: '');
+      HiveCountry(id: '', name: Strings.selectCountry, diallingCode: '');
 
   @override
   void initState() {
@@ -291,8 +291,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 return StarfishSnackbar.showErrorMessage(
                     context, validationMsg);
               } else {
-                // StarfishSharedPreference()
-                //     .setAccessToken(_phoneNumberController.text);
+                StarfishSharedPreference()
+                    .setAccessToken(_phoneNumberController.text);
                 Navigator.of(context).pushNamed(Routes.otpVerification);
               }
             },
