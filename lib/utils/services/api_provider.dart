@@ -132,8 +132,8 @@ class ApiProvider {
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
-      Stream<GroupUser> request) async {
-    return client!.deleteGroupUsers(request);
+      GroupUser groupUser) async {
+    return client!.deleteGroupUsers(Stream.value(groupUser));
   }
 
   Future<ResponseStream<User>> getUsers() async {

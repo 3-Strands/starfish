@@ -87,13 +87,13 @@ class HiveGroup extends HiveObject {
   }
 
   HiveGroupUser? get admin {
-    return this.users?.firstWhereOrNull((groupUser) =>
+    return this.activeUsers?.firstWhereOrNull((groupUser) =>
         GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
   }
 
   List<HiveGroupUser>? get teachers {
     return this
-        .users
+        .activeUsers
         ?.where((groupUser) =>
             GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
         .toList();
@@ -101,9 +101,17 @@ class HiveGroup extends HiveObject {
 
   List<HiveGroupUser>? get learners {
     return this
-        .users
+        .activeUsers
         ?.where((groupUser) =>
             GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.LEARNER)
+        .toList();
+  }
+
+  /// Returns all 'HiveGroupUser' where 'isDirty' is false
+  List<HiveGroupUser>? get activeUsers {
+    return this
+        .users
+        ?.where((groupUser) => groupUser.isDirty == false)
         .toList();
   }
 

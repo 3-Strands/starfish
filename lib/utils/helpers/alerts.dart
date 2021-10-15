@@ -6,6 +6,11 @@ class Alerts {
     required BuildContext context,
     String? title,
     String? message,
+    String? negativeButtonText = Strings.ok,
+    String? positiveButtonText = Strings.yes,
+    String? neutralButtonText = Strings.no,
+    VoidCallback? negativeActionCallback,
+    VoidCallback? positiveActionCallback,
     VoidCallback? callback,
   }) {
     return showDialog(
@@ -15,15 +20,30 @@ class Alerts {
           title: Text(title ?? ''),
           content: Text(message ?? ''),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                if (callback != null) {
+            if (callback != null)
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
                   callback();
-                }
-              },
-              child: Text(Strings.ok),
-            ),
+                },
+                child: Text(neutralButtonText!),
+              ),
+            if (negativeActionCallback != null)
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  negativeActionCallback();
+                },
+                child: Text(negativeButtonText!),
+              ),
+            if (positiveActionCallback != null)
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  positiveActionCallback();
+                },
+                child: Text(positiveButtonText!),
+              ),
           ],
         );
       },

@@ -10,6 +10,7 @@ import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -305,9 +306,18 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                   .toList()[indexPath.section][indexPath.index],
                               onGroupTap: _onGroupSelection,
                               onLeaveGroupTap: (HiveGroup group) {
-                                bloc.groupBloc.leaveGroup(
-                                  group,
-                                );
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: Strings.dialogAlert,
+                                    message: Strings.alertLeaveThisGroup,
+                                    negativeButtonText: Strings.cancel,
+                                    positiveButtonText: Strings.leave,
+                                    negativeActionCallback: () {},
+                                    positiveActionCallback: () {
+                                      bloc.groupBloc.leaveGroup(
+                                        group,
+                                      );
+                                    });
                               },
                             );
                           },
@@ -417,7 +427,8 @@ class GroupListItem extends StatelessWidget {
                         );
                       },
                     ),
-                  if (group.currentUserRole! == GroupUser_Role.LEARNER)
+                  if (group.currentUserRole! == GroupUser_Role.LEARNER ||
+                      group.currentUserRole! == GroupUser_Role.TEACHER)
                     ElevatedButton(
                       onPressed: () {
                         this.onLeaveGroupTap(group);

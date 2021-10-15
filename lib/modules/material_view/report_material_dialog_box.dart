@@ -174,12 +174,13 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                               debugPrint('$error record(s) saved.'))
                           .whenComplete(() => {
                                 Alerts.showMessageBox(
-                                    context: context,
-                                    title: Strings.dialogInfo,
-                                    message: Strings.addMaterialFeedbackSuccess,
-                                    callback: () {
-                                      Navigator.of(context).pop();
-                                    })
+                                  context: context,
+                                  title: Strings.dialogInfo,
+                                  message: Strings.addMaterialFeedbackSuccess,
+                                  callback: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
                               });
                     },
                     child: Text(

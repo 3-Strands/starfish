@@ -21,6 +21,9 @@ class Strings {
   static const String add = 'Add';
   static const String update = 'Update';
   static const String ok = 'OK';
+  static const String no = 'No';
+  static const String yes = 'Yes';
+  static const String leave = 'Leave';
   static const String close = 'Close';
   static const String sendFeedback = 'Send Feedback';
   static const String copyThisInfo = 'Copy this info';
@@ -91,6 +94,7 @@ class Strings {
 
   static const String editMaterial = 'Edit Material';
   static const String dialogInfo = 'Info';
+  static const String dialogAlert = 'Alert';
   static const String createGroup = 'Create Group';
   static const String editGroup = 'Edit Group';
 
@@ -128,6 +132,8 @@ sending an invitation to use Starfish''';
   static const String emptyDialingCode = 'Please enter dialing code.';
   static const String dialingCodeNotExist =
       'Entered dialing code doesn\'t exist.';
+  static const String alertLeaveThisGroup =
+      'Are you sure you want to leave this group?';
 
   static const String emptyMobileNumbers = 'Please enter mobile number.';
   static const String invalidMobileNumbers =
@@ -185,4 +191,9 @@ sending an invitation to use Starfish''';
     'Assigned to a group I lead',
     'No filter applied',
   ];
+
+  // Menu Items
+  static const String makeAdmin = 'Make Admin';
+  static const String makeTeacher = 'Make Teacher';
+  static const String makeRemove = 'Remove';
 }

@@ -35,6 +35,7 @@ import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
+import 'package:starfish/widgets/group_member_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:starfish/widgets/invited_contact_list_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -651,6 +652,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   visible: _selectedContacts.toList().length > 0,
                 ),
 
+                if (_isEditMode && widget.group!.activeUsers != null)
+                  Column(
+                    children: _invitedGroupMembersContainer(
+                        widget.group!.activeUsers!),
+                  ),
+
                 // Option 2.
                 Text(
                   Strings.addWithoutInvite,
@@ -811,6 +818,24 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         .compareTo(b.contact.displayName!.toLowerCase()));
     for (InviteContact inviteContact in invitedContacts) {
       _widgetList.add(InvitedContactListItem(contact: inviteContact));
+    }
+    // Additional vertical spacing
+    if (_widgetList.length > 0) {
+      _widgetList.add(SizedBox(
+        height: 21.h,
+      ));
+    }
+
+    return _widgetList;
+  }
+
+  List<Widget> _invitedGroupMembersContainer(List<HiveGroupUser> groupUsers) {
+    final List<Widget> _widgetList = [];
+
+    groupUsers
+        .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    for (HiveGroupUser groupUser in groupUsers) {
+      _widgetList.add(GroupMemberListItem(groupUser: groupUser));
     }
     // Additional vertical spacing
     if (_widgetList.length > 0) {

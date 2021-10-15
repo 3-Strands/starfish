@@ -54,9 +54,9 @@ class GroupProvider {
     group.users!.asMap().forEach((key, _user) {
       if (_user.userId == groupUser.userId) {
         _groupUserIndex = key;
-        //_user = groupUser
-        _user.isNew = false;
-        _user.isUpdated = false;
+        _user = groupUser;
+        //_user.isNew = false;
+        //_user.isUpdated = false;
       }
     });
     _groupBox.values.toList().asMap().forEach((key, hiveGroup) {
@@ -74,6 +74,8 @@ class GroupProvider {
     //debugPrint('FINAL: $group');
   }
 
+  @Deprecated(
+      "Use 'createUpdateGroupUser' instead by setting 'isDirty' as true")
   Future<int> deleteGroupUser(HiveGroupUser groupUser) async {
     int _groupIndex = -1;
     int _groupUserIndex = -1;

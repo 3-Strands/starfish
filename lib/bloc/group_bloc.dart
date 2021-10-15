@@ -83,12 +83,31 @@ class GroupBloc extends Object {
         ?.firstWhereOrNull((element) => element.userId == _currentUser.id);
 
     if (_groupUser != null) {
-      deleteGroupUser(_groupUser);
+      /// Mark record as dirty
+      _groupUser.isDirty = false;
+      createUpdateGroupUser(_groupUser);
     }
   }
 
-  deleteGroupUser(HiveGroupUser groupUser) async {
-    return repository.deleteGroupUserFromDB(groupUser);
+  /*deleteGroupUser(HiveGroupUser groupUser) async {
+    List<HiveGroup> _groups = await repository.dbProvider.getGroups();
+    HiveGroup? _group =
+        _groups.firstWhereOrNull((element) => element.id == groupUser.groupId);
+    if (_group == null) {
+      return;
+    }
+    return repository.deleteGroupUserFromDB(_group, groupUser);
+  }*/
+
+  createUpdateGroupUser(HiveGroupUser groupUser) async {
+    List<HiveGroup> _groups = await repository.dbProvider.getGroups();
+    HiveGroup? _group =
+        _groups.firstWhereOrNull((element) => element.id == groupUser.groupId);
+    if (_group == null) {
+      return;
+    }
+    return repository.createUpdateGroupUserInDB(
+        group: _group, groupUser: groupUser);
   }
 
   void dispose() {

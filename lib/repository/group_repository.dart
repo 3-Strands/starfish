@@ -32,7 +32,7 @@ class GroupRepository {
       apiProvider.createUpdateGroupUser(groupUser, kGroupUserFieldMask);
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
-          Stream<GroupUser> request) =>
+          GroupUser request) =>
       apiProvider.deleteGroupUsers(request);
 
   Future<void> createUpdateGroupUserInDB({

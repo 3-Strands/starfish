@@ -512,7 +512,8 @@ class SyncService {
 
     groupBox.values.forEach((HiveGroup _hiveGroup) async {
       _groupUsers.addAll(_hiveGroup.users!
-          .where((element) => element.isNew || element.isUpdated)
+          .where((element) =>
+              element.isNew || element.isUpdated || element.isDirty)
           .toList());
     });
 
@@ -522,21 +523,23 @@ class SyncService {
     ]);
   }
 
-  Future<CreateUpdateGroupUsersResponse> addGroupUserToSyncQueue(
-      HiveGroupUser groupUser) async {
+  Future addGroupUserToSyncQueue(HiveGroupUser groupUser) async {
     print('LOCAL GroupUser: ${groupUser.name}, ${groupUser.userId}');
-    CreateUpdateGroupUsersResponse _response = await GroupRepository()
-        .createUpdateGroupUser(
-            groupUser: groupUser.toGroupUser(),
-            fieldMaskPaths: kGroupUserFieldMask);
+    if (groupUser.isDirty) {
+      return GroupRepository().deleteGroupUsers(groupUser.toGroupUser());
+    } else {
+      CreateUpdateGroupUsersResponse _response = await GroupRepository()
+          .createUpdateGroupUser(
+              groupUser: groupUser.toGroupUser(),
+              fieldMaskPaths: kGroupUserFieldMask);
 
-    print('REMOTE GroupUser[${_response.status}]: ${_response.message} ');
+      print('REMOTE GroupUser[${_response.status}]: ${_response.message} ');
+      /*groupUser.isNew = false;
+      groupUser.isUpdated = false;
 
-    /*groupUser.isNew = false;
-    groupUser.isUpdated = false;
-
-    GroupRepository()
+      GroupRepository()
         .createUpdateGroupUserInDB(group: _hiveGroup, groupUser: groupUser);*/
-    return _response;
+      return _response;
+    }
   }
 }
