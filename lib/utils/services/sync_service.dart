@@ -140,7 +140,7 @@ class SyncService {
         currentUserBox.putAt(0, _user);
       }
 
-      // StarfishSharedPreference().setAccessToken(user.phone);
+      StarfishSharedPreference().setAccessToken(user.phone);
     });
   }
 
