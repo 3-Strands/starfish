@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -32,12 +33,45 @@ class GroupProvider {
 
     if (_currentIndex > -1) {
       if (_localGroupUsers != null && _localGroupUsers!.length > 0) {
-        group.users?.addAll(_localGroupUsers!);
+        if (group.users == null) {
+          group.users = _localGroupUsers;
+        } else {
+          group.users?.addAll(_localGroupUsers!);
+        }
       }
       return _groupBox.put(_currentIndex, group);
     } else {
       _groupBox.add(group);
     }
+  }
+
+  Future<void> createUpdateGroupUser(
+      HiveGroup group, HiveGroupUser groupUser) async {
+    int _groupIndex = -1;
+    int _groupUserIndex = -1;
+
+    //debugPrint('INITIAL: $group');
+    group.users!.asMap().forEach((key, _user) {
+      if (_user.userId == groupUser.userId) {
+        _groupUserIndex = key;
+        //_user = groupUser
+        _user.isNew = false;
+        _user.isUpdated = false;
+      }
+    });
+    _groupBox.values.toList().asMap().forEach((key, hiveGroup) {
+      if (hiveGroup.id == group.id) {
+        _groupIndex = key;
+      }
+    });
+
+    if (_groupIndex > -1) {
+      return _groupBox.put(_groupIndex, group);
+    } else {
+      _groupBox.add(group);
+    }
+
+    //debugPrint('FINAL: $group');
   }
 
   Future<int> deleteGroupUser(HiveGroupUser groupUser) async {

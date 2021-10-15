@@ -99,9 +99,7 @@ class Strings {
   static const String searchBarHint = 'Search';
   static const String hintGroupName = 'Name of the Group';
   static const String hintEvaluateProgress =
-      '''Choose up to 3 of the categories listed. You will then use
-these categories to evaluate progress by each Group 
-learner, month to month.''';
+      'Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.';
   static const String hintPersonName = 'Enter the person\'s name here';
 
   // Labels
@@ -130,6 +128,8 @@ sending an invitation to use Starfish''';
   static const String emptyDialingCode = 'Please enter dialing code.';
   static const String dialingCodeNotExist =
       'Entered dialing code doesn\'t exist.';
+  static const String emptyEvaluateProgress =
+      'Please select evaluation categories.';
 
   static const String emptyMobileNumbers = 'Please enter mobile number.';
   static const String invalidMobileNumbers =
@@ -178,13 +178,23 @@ sending an invitation to use Starfish''';
   static const String notSoGoodText = 'Not so Good';
   static const String goodText = 'Good';
   static const String howWasThisActionText = 'How was this action?';
-
+  static const String addActionText = 'Add Action';
   static const String materialActionPrefix = 'Action: ';
   static const String materialTitlePrefix = 'Title: ';
+  static const String selectActionTypeText = 'Select a type';
+
   static const List<String> materialActionsList = <String>[
     'Assigned to me and completed',
     'Assigned to me but incomplete',
     'Assigned to a group I lead',
     'No filter applied',
   ];
+  static const List<String> actionsList = <String>[
+    'Follow a set of instructions',
+    'Answer a question',
+    'Use a tool (no response)',
+    'Use a tool and enter a response',
+    'Fill in some numbers'
+  ];
+  static const String reuseActionText = 'Re-use an Action (optional)';
 }

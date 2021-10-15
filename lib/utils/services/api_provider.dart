@@ -152,7 +152,7 @@ class ApiProvider {
     return client!.listEvaluationCategories(request);
   }
 
-  Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup(
+  Future<CreateUpdateGroupsResponse> createUpdateGroup(
     Group group,
     List<String> fieldMaskPaths,
   ) async {
@@ -167,10 +167,10 @@ class ApiProvider {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateGroups(streamRequest);
+    return client!.createUpdateGroups(streamRequest).first;
   }
 
-  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
+  Future<CreateUpdateGroupUsersResponse> createUpdateGroupUser(
       GroupUser groupUser, List<String> fieldMaskPaths) async {
     var request = CreateUpdateGroupUsersRequest();
     request.groupUser = groupUser;
@@ -178,10 +178,14 @@ class ApiProvider {
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
     request.updateMask = mask;
 
+<<<<<<< HEAD
     if (client == null) {
       await getGrpcClient();
     }
     return client!.createUpdateGroupUsers(Stream.value(request));
+=======
+    return client!.createUpdateGroupUsers(Stream.value(request)).first;
+>>>>>>> ac69a4a69f5c8fdad7390fbd2879877f8a2f82ec
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
@@ -201,12 +205,12 @@ class ApiProvider {
     return client!.listUsers(request);
   }
 
-  Future<ResponseStream<CreateUsersResponse>> createUsers(User user) async {
+  Future<CreateUsersResponse> createUsers(User user) async {
     var request = user;
 
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUsers(Stream.value(request));
+    return client!.createUsers(Stream.value(request)).first;
   }
 }

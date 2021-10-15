@@ -26,6 +26,7 @@ import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:synchronized/synchronized.dart';
 
 class SyncService {
   final DEBUG = false;
@@ -34,6 +35,8 @@ class SyncService {
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
 
+  // Use this object to prevent concurrent access to data
+  var lock = new Lock(reentrant: true);
   static syncNow() {}
 
   late Box<HiveLastSyncDateTime> lastSyncBox;
@@ -73,9 +76,11 @@ class SyncService {
   void syncAll() async {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
-    await syncLocalUsersToRemote();
-    await syncLocalGroupsToRemote();
-    await syncLocalGroupUsersToRemote();
+
+    // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
+    await lock.synchronized(() => syncLocalUsersToRemote());
+    await lock.synchronized(() => syncLocalGroupsToRemote());
+    await lock.synchronized(() => syncLocalGroupUsersToRemote());
 
     syncCurrentUser();
     syncUsers();
@@ -355,8 +360,6 @@ class SyncService {
 
   syncLocalMaterialsToRemote() async {
     print('============= START: Sync Local Materials to Remote =============');
-    print(
-        'Total Records: ${materialBox.values.where((element) => element.isNew == true).length}');
 
     materialBox.values
         .where(
@@ -442,6 +445,8 @@ class SyncService {
 
   // Upward Sync Task
   syncLocalCurrentUser(List<String> _fieldMaskPaths) async {
+    print(
+        '============= START: Sync Local CurrentUser to Remote =============');
     HiveCurrentUser? _currentUser = currentUserBox.values
         .firstWhereOrNull((element) => element.isUpdated == true);
 
@@ -451,107 +456,87 @@ class SyncService {
     }
   }
 
-  syncLocalUsersToRemote() async {
+  Future syncLocalUsersToRemote() async {
     print('============= START: Sync Local User to Remote =============');
-    print(
-        'Total Records: ${userBox.values.where((element) => element.isNew == true).length}');
 
-    //BehaviorSubject<User> _users = BehaviorSubject<User>();
-
-    userBox.values
-        .where((HiveUser user) => (user.isNew == true))
-        .forEach((HiveUser _hiveUser) {
-      //_users.sink.add(_hiveUser.toUser());
-
-      UserRepository().createUsers(_hiveUser.toUser()).then((value) {
-        // update flag(s) isNew and/or isUpdated to false
-        _hiveUser.isNew = false;
-        _hiveUser.isUpdated = false;
-
-        UserRepository().createUpdateUserInDB(_hiveUser);
-      }).onError((error, stackTrace) {
-        print(
-            '============= syncLocalUsersToRemote Error: $error ===============');
-      }).whenComplete(() {
-        print('============= END: Sync Local User to Remote ===============');
-      });
-    });
+    return Future.wait([
+      for (HiveUser _hiveUser
+          in userBox.values.where((HiveUser user) => (user.isNew == true)))
+        addUserToSyncQueue(_hiveUser),
+    ]);
   }
 
-  syncLocalGroupsToRemote() async {
+  Future<CreateUsersResponse> addUserToSyncQueue(HiveUser _hiveUser) async {
+    print('LOCAL User : ${_hiveUser.name}');
+    CreateUsersResponse _response =
+        await UserRepository().createUsers(_hiveUser.toUser());
+
+    print('REMOTE User [${_response.status}]: ${_response.user.name}');
+
+    _hiveUser.isNew = false;
+    _hiveUser.isUpdated = false;
+
+    await UserRepository().createUpdateUserInDB(_hiveUser);
+    return _response;
+  }
+
+  Future syncLocalGroupsToRemote() async {
     print('============= START: Sync Local Groups to Remote =============');
-    print(
-        'Total Records: ${groupBox.values.where((element) => element.isNew || element.isUpdated).length}');
-
-    groupBox.values
-        .where((HiveGroup group) => (group.isNew || group.isUpdated))
-        .forEach((HiveGroup _hiveGroup) {
-      print('HiveGroup: $_hiveGroup');
-      GroupRepository()
-          .createUpdateGroup(
-              group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask)
-          .then((value) {
-        //TODO: sync group members
-        /*_hiveGroup.users
-          ?..where((element) => element.isNew || element.isUpdated)
-              .forEach((HiveGroupUser groupUser) {
-            GroupRepository()
-                .createUpdateGroupUser(
-                    groupUser: groupUser.toGroupUser(),
-                    fieldMaskPaths: kGroupUserFieldMask)
-                .then((value) {
-              value.forEach((element) {
-                print('GroupUser Created[status]: ${element.status}');
-                print('GroupUser Created[message]: ${element.message}');
-                print('GroupUser Created: ${element.groupUser}');
-              });
-            }).onError((error, stackTrace) {
-              print('Group Members synce Error.');
-            }).whenComplete(() {
-              print('Group Members synce DONE');
-            });
-          });*/
-
-        // update flag(s) isNew and/or isUpdated to false
-        _hiveGroup.isNew = false;
-        _hiveGroup.isUpdated = false;
-
-        GroupRepository().addEditGroup(_hiveGroup);
-      }).onError((error, stackTrace) {
-        print(
-            '============= syncLocalGroupsToRemote Error: ${error.toString()} ===============');
-      }).whenComplete(() {
-        print('============= END: Sync Local Groups to Remote ===============');
-      });
-    });
+    return Future.wait([
+      for (HiveGroup group in groupBox.values
+          .where((HiveGroup group) => (group.isNew || group.isUpdated)))
+        addGroupToSyncQueue(group),
+    ]);
   }
 
-  syncLocalGroupUsersToRemote() async {
+  Future<CreateUpdateGroupsResponse> addGroupToSyncQueue(
+      HiveGroup _hiveGroup) async {
+    print('LOCAL Group : ${_hiveGroup.name}');
+    CreateUpdateGroupsResponse _response = await GroupRepository()
+        .createUpdateGroup(
+            group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
+
+    print('REMOTE Group[${_response.status}]: ${_response.group.name}');
+    // update flag(s) isNew and/or isUpdated to false
+    _hiveGroup.isNew = false;
+    _hiveGroup.isUpdated = false;
+
+    GroupRepository().addEditGroup(_hiveGroup);
+    return _response;
+  }
+
+  Future syncLocalGroupUsersToRemote() async {
     print('============= START: Sync Local GroupUsers to Remote =============');
 
-    groupBox.values.forEach((HiveGroup _hiveGroup) {
-      print('Total Records[${_hiveGroup.name}]: ${_hiveGroup.users?.length}');
-      _hiveGroup.users
-        ?..where((element) => element.isNew || element.isUpdated)
-            .forEach((HiveGroupUser groupUser) {
-          print('HiveGroupUser: $groupUser');
-          GroupRepository()
-              .createUpdateGroupUser(
-                  groupUser: groupUser.toGroupUser(),
-                  fieldMaskPaths: kGroupUserFieldMask)
-              .then((value) {
-            value.forEach((element) {
-              print('GroupUser Created[status]: ${element.status}');
-              print('GroupUser Created[message]: ${element.message}');
-              print('GroupUser Created: ${element.groupUser}');
-            });
-          }).onError((error, stackTrace) {
-            print('Group Members synce Error.');
-          }).whenComplete(() {
-            print(
-                '============= END: Sync Local GroupUsers to Remote =============');
-          });
-        });
+    final List<HiveGroupUser> _groupUsers = [];
+
+    groupBox.values.forEach((HiveGroup _hiveGroup) async {
+      _groupUsers.addAll(_hiveGroup.users!
+          .where((element) => element.isNew || element.isUpdated)
+          .toList());
     });
+
+    return Future.wait([
+      for (HiveGroupUser groupUser in _groupUsers)
+        addGroupUserToSyncQueue(groupUser),
+    ]);
+  }
+
+  Future<CreateUpdateGroupUsersResponse> addGroupUserToSyncQueue(
+      HiveGroupUser groupUser) async {
+    print('LOCAL GroupUser: ${groupUser.name}, ${groupUser.userId}');
+    CreateUpdateGroupUsersResponse _response = await GroupRepository()
+        .createUpdateGroupUser(
+            groupUser: groupUser.toGroupUser(),
+            fieldMaskPaths: kGroupUserFieldMask);
+
+    print('REMOTE GroupUser[${_response.status}]: ${_response.message} ');
+
+    /*groupUser.isNew = false;
+    groupUser.isUpdated = false;
+
+    GroupRepository()
+        .createUpdateGroupUserInDB(group: _hiveGroup, groupUser: groupUser);*/
+    return _response;
   }
 }

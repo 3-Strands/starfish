@@ -75,6 +75,18 @@ class GroupBloc extends Object {
     });
   }
 
+  leaveGroup(HiveGroup group) async {
+    HiveCurrentUser _currentUser =
+        await CurrentUserRepository().getUserFromDB();
+
+    HiveGroupUser? _groupUser = group.users
+        ?.firstWhereOrNull((element) => element.userId == _currentUser.id);
+
+    if (_groupUser != null) {
+      deleteGroupUser(_groupUser);
+    }
+  }
+
   deleteGroupUser(HiveGroupUser groupUser) async {
     return repository.deleteGroupUserFromDB(groupUser);
   }

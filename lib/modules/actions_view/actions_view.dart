@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
@@ -68,6 +69,16 @@ class _ActionsScreenState extends State<ActionsScreen>
             //   align: TextAlign.center,
             // ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(Routes.addActions).then(
+                  (value) => FocusScope.of(context).requestFocus(
+                    new FocusNode(),
+                  ),
+                );
+          },
+          child: Icon(Icons.add),
         ),
       ),
     );

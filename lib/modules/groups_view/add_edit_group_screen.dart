@@ -23,6 +23,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
@@ -91,9 +92,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       }
     });
 
-    print('widget.group');
-    print(widget.group);
-
     if (widget.group != null) {
       _isEditMode = true;
 
@@ -116,7 +114,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   Future<void> _checkPermissionsAndShowContact() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
-      print('Show Contact List');
       _showContactList();
     } else {
       _handleInvalidPermissions(permissionStatus);
@@ -322,6 +319,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             //_createUserAndSendInvite(_selectedContacts);
+                            _query = '';
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
@@ -338,7 +336,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           );
         });
       },
-    );
+    ).whenComplete(() {
+      print('Hey there, I\'m calling after hide bottomSheet');
+      _query = '';
+    });
   }
 
   _validateAndCreateUpdateGroup() {
@@ -346,6 +347,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
     } else if (_descriptionController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
+    } else if (_selectedLanguages.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
+    } else if (_selectedEvaluationCategories.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyEvaluateProgress);
     } else {
       _createUpdateGroup();
     }
@@ -377,14 +382,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     List<HiveGroupUser> _newGroupUsers = [];
     // Add self as Admin
-    HiveCurrentUser _currentUser =
+    /*HiveCurrentUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
     _newGroupUsers.add(HiveGroupUser(
       groupId: _groupId,
       userId: _currentUser.id,
       role: GroupUser_Role.ADMIN.value,
       isNew: true,
-    ));
+    ));*/
     _newUsers.forEach((HiveUser user) {
       UserRepository()
           .createUpdateUserInDB(user)
@@ -469,8 +474,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 style: dashboardNavigationTitle,
               ),
               IconButton(
-                icon: SvgPicture.asset(AssetsPath.settingsActive),
-                onPressed: () {},
+                icon: SvgPicture.asset(AssetsPath.settings),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsScreen(),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -525,24 +537,24 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   style: titleTextStyle,
                 ),
                 SizedBox(height: 11.h),
-                TextFormField(
-                  maxLines: 4,
-                  controller: _descriptionController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
+                Container(
+                  child: TextFormField(
+                    maxLines: 4,
+                    controller: _descriptionController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
-                    filled: true,
-                    fillColor: AppColors.txtFieldBackground,
                   ),
                 ),
                 SizedBox(height: 21.h),
@@ -597,10 +609,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 SizedBox(height: 10.h),
                 Text(
                   Strings.hintEvaluateProgress,
+                  maxLines: 3,
                   textAlign: TextAlign.left,
                   style: italicDetailTextTextStyle,
                 ),
-                SizedBox(height: 11.h),
+                SizedBox(height: 40.h),
 
                 // Option 1.
                 Text(
@@ -608,7 +621,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
-                SizedBox(height: 11.h),
+                SizedBox(height: 20.h),
                 DottedBorder(
                   borderType: BorderType.RRect,
                   radius: Radius.circular(30.r),
@@ -652,7 +665,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
-                SizedBox(height: 11.h),
+                SizedBox(height: 20.h),
                 Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFEFEFEF),
@@ -708,10 +721,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             });
                           }
                         },
-                        icon: Icon(
-                          Icons.arrow_right_rounded,
-                          color: AppColors.selectedButtonBG,
-                        ),
+                        icon: SvgPicture.asset(AssetsPath.nextIcon),
                       ),
                     ],
                   ),
@@ -728,7 +738,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 if (widget.group?.editHistory != null)
                   _editHistoryContainer(widget.group),
 
-                SizedBox(height: 11.h),
+                SizedBox(height: 59.h),
               ],
             ),
           ),
@@ -746,6 +756,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 onPressed: () {
                   // _filteredContactList.clear();
                   // _loadContacts();
+                  _query = '';
                   Navigator.of(context).pop();
                 },
                 child: Text(Strings.cancel),
