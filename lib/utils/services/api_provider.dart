@@ -4,27 +4,47 @@ import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
-import 'package:starfish/utils/services/field_mask.dart';
 import 'grpc_client.dart';
 
 class ApiProvider {
   StarfishClient? client;
 
-  ApiProvider() {
-    client = GrpcClient().client!;
+  // ApiProvider() {
+  //   client = GrpcClient().client!;
+  // }
+
+  Future getGrpcClient() async {
+    // print("getting client ==>>");
+    await Singleton.instance
+        .initGprcClient()
+        .then((value) => {client = Singleton.instance.client});
+    /*
+    var grpc = GrpcClient();
+    await grpc.init().then((value) => {client = grpc.client});
+    */
+    // print("received client ==>> $client");
   }
 
   Future<ResponseStream<Country>> listAllCountries() async {
     var request = ListAllCountriesRequest();
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listAllCountries(request);
   }
 
   Future<ResponseStream<Language>> listAllLanguages() async {
     var request = ListLanguagesRequest();
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listLanguages(request);
   }
 
   Future<User> getCurrentUser() async {
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.getCurrentUser(Empty());
   }
 
@@ -52,6 +72,9 @@ class ApiProvider {
 
     request.updateMask = mask;
 
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.updateCurrentUser(request);
   }
 
@@ -59,6 +82,10 @@ class ApiProvider {
     var request = ListMaterialsRequest.create();
     Date date = Date(year: 2020, month: 1, day: 1);
     request.updatedSince = date;
+
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listMaterials(request);
   }
 
@@ -66,6 +93,9 @@ class ApiProvider {
     var request = ListMaterialTopicsRequest.create();
     Date date = Date(year: 2020, month: 1, day: 1);
     request.updatedSince = date;
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listMaterialTopics(request);
   }
 
@@ -73,6 +103,10 @@ class ApiProvider {
     var request = ListMaterialTypesRequest.create();
     Date date = Date(year: 2020, month: 1, day: 1);
     request.updatedSince = date;
+
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listMaterialTypes(request);
   }
 
@@ -88,6 +122,9 @@ class ApiProvider {
 
     Stream<CreateUpdateMaterialsRequest> streamRequest = Stream.value(request);
 
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.createUpdateMaterials(streamRequest);
   }
 
@@ -95,6 +132,10 @@ class ApiProvider {
     var request = ListGroupsRequest.create();
     Date date = Date(year: 2020, month: 1, day: 1);
     //request.updatedSince = date;
+
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listGroups(request);
   }
 
@@ -102,6 +143,10 @@ class ApiProvider {
     var request = ListEvaluationCategoriesRequest.create();
     Date date = Date(year: 2020, month: 1, day: 1);
     //request.updatedSince = date;
+
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listEvaluationCategories(request);
   }
 
@@ -117,6 +162,9 @@ class ApiProvider {
 
     Stream<CreateUpdateGroupsRequest> streamRequest = Stream.value(request);
 
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.createUpdateGroups(streamRequest).first;
   }
 
@@ -128,22 +176,35 @@ class ApiProvider {
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
     request.updateMask = mask;
 
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.createUpdateGroupUsers(Stream.value(request)).first;
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
       GroupUser groupUser) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.deleteGroupUsers(Stream.value(groupUser));
   }
 
   Future<ResponseStream<User>> getUsers() async {
     var request = ListUsersRequest();
+
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.listUsers(request);
   }
 
   Future<CreateUsersResponse> createUsers(User user) async {
     var request = user;
 
+    if (client == null) {
+      await getGrpcClient();
+    }
     return client!.createUsers(Stream.value(request)).first;
   }
 }

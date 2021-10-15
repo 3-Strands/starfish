@@ -135,6 +135,9 @@ sending an invitation to use Starfish''';
   static const String alertLeaveThisGroup =
       'Are you sure you want to leave this group?';
 
+  // Validation Messages
+  static const String emptyEvaluateProgress =
+      'Please select evaluation categories.';
   static const String emptyMobileNumbers = 'Please enter mobile number.';
   static const String invalidMobileNumbers =
       'Please enter valid mobile number.';
@@ -185,15 +188,25 @@ sending an invitation to use Starfish''';
   static const String addActionText = 'Add Action';
   static const String materialActionPrefix = 'Action: ';
   static const String materialTitlePrefix = 'Title: ';
+  static const String selectActionTypeText = 'Select a type';
+
   static const List<String> materialActionsList = <String>[
     'Assigned to me and completed',
     'Assigned to me but incomplete',
     'Assigned to a group I lead',
     'No filter applied',
   ];
-
   // Menu Items
   static const String makeAdmin = 'Make Admin';
   static const String makeTeacher = 'Make Teacher';
   static const String makeRemove = 'Remove';
+
+  static const List<String> actionsList = <String>[
+    'Follow a set of instructions',
+    'Answer a question',
+    'Use a tool (no response)',
+    'Use a tool and enter a response',
+    'Fill in some numbers'
+  ];
+  static const String reuseActionText = 'Re-use an Action (optional)';
 }

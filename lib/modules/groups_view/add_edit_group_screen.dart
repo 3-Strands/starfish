@@ -260,14 +260,17 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               children: [
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                   // margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          Strings.selectPropleToInvite,
-                          textAlign: TextAlign.left,
-                          style: titleTextStyle,
+                        widgets.Padding(
+                          padding: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                          child: Text(
+                            Strings.selectPropleToInvite,
+                            textAlign: TextAlign.left,
+                            style: titleTextStyle,
+                          ),
                         ),
                         SizedBox(height: 11.h),
                         SearchBar(
@@ -278,21 +281,16 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                               }
                               setState(() {
                                 _query = value;
-                                // _filteredContactList = _contactsNotifier.value!
-                                //     .where((InviteContact inviteContact) {
-                                //   return inviteContact.contact.displayName !=
-                                //           null
-                                //       ? inviteContact.contact.displayName!
-                                //           .toLowerCase()
-                                //           .contains(value.toLowerCase())
-                                //       : false;
-                                // }).toList();
+                                
                               });
                             },
                             onDone: (String value) {}),
                         SizedBox(height: 11.h),
                         Expanded(
-                          child: _buildSlidingUpPanel(),
+                          child: widgets.Padding(
+                            padding: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                            child: _buildSlidingUpPanel(),
+                          ),
                         ),
                       ],
                     ),
@@ -320,6 +318,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             //_createUserAndSendInvite(_selectedContacts);
+                            _query = '';
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
@@ -336,7 +335,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           );
         });
       },
-    );
+    ).whenComplete(() {
+      print('Hey there, I\'m calling after hide bottomSheet');
+      _query = '';
+      FocusScope.of(context).requestFocus(new FocusNode());
+    });
   }
 
   _validateAndCreateUpdateGroup() {
@@ -344,6 +347,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
     } else if (_descriptionController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
+    } else if (_selectedLanguages.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
+    } else if (_selectedEvaluationCategories.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyEvaluateProgress);
     } else {
       _createUpdateGroup();
     }
@@ -755,6 +762,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 onPressed: () {
                   // _filteredContactList.clear();
                   // _loadContacts();
+                  _query = '';
                   Navigator.of(context).pop();
                 },
                 child: Text(Strings.cancel),

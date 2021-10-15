@@ -353,7 +353,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.createNewGroup);
+          Navigator.of(context).pushNamed(Routes.createNewGroup).then((value) => FocusScope.of(context)
+                            .requestFocus(new FocusNode()));
         },
         child: Icon(Icons.add),
       ),
@@ -424,7 +425,8 @@ class GroupListItem extends StatelessWidget {
                               group: group,
                             ),
                           ),
-                        );
+                        ).then((value) => FocusScope.of(context)
+                            .requestFocus(new FocusNode()));
                       },
                     ),
                   if (group.currentUserRole! == GroupUser_Role.LEARNER ||
