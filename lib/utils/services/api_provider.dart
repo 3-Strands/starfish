@@ -178,14 +178,10 @@ class ApiProvider {
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
     request.updateMask = mask;
 
-<<<<<<< HEAD
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateGroupUsers(Stream.value(request));
-=======
     return client!.createUpdateGroupUsers(Stream.value(request)).first;
->>>>>>> ac69a4a69f5c8fdad7390fbd2879877f8a2f82ec
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
