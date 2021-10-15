@@ -24,7 +24,7 @@ class _AddEditActionState extends State<AddEditAction>
   bool _isEditMode = false;
   final _addActionController = TextEditingController();
   final _descriptionController = TextEditingController();
-  late String _choiceText = Strings.noFilterApplied;
+  late String _choiceText = Strings.selectActionTypeText;
 
   @override
   void initState() {
@@ -179,7 +179,7 @@ class _AddEditActionState extends State<AddEditAction>
                             fontFamily: 'OpenSans',
                           ),
                           hint: Text(
-                            Strings.materialActionPrefix + _choiceText,
+                            _choiceText,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -194,7 +194,7 @@ class _AddEditActionState extends State<AddEditAction>
                               _choiceText = value!;
                             });
                           },
-                          items: Strings.materialActionsList
+                          items: Strings.actionsList
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,

@@ -319,6 +319,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             //_createUserAndSendInvite(_selectedContacts);
+                            _query = '';
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
@@ -335,7 +336,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           );
         });
       },
-    );
+    ).whenComplete(() {
+      print('Hey there, I\'m calling after hide bottomSheet');
+      _query = '';
+    });
   }
 
   _validateAndCreateUpdateGroup() {
@@ -752,6 +756,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 onPressed: () {
                   // _filteredContactList.clear();
                   // _loadContacts();
+                  _query = '';
                   Navigator.of(context).pop();
                 },
                 child: Text(Strings.cancel),
