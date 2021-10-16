@@ -50,23 +50,27 @@ class HiveGroupUser {
 }
 
 extension HiveGroupUserExt on HiveGroupUser {
+  HiveUser? get user {
+    return UserRepository().dbProvider.getUserById(this.userId!);
+  }
+
   String get name {
-    return UserRepository().dbProvider.getName(this.userId!);
+    return user != null ? user!.name! : user!.id!;
   }
 
   String get phone {
-    return UserRepository().dbProvider.getPhone(this.userId!);
+    return user != null ? user!.phone! : '';
   }
 
   String get diallingCode {
-    return UserRepository().dbProvider.getDiallingCode(this.userId!);
+    return user != null ? user!.diallingCode! : '';
   }
 
   bool get isInvited {
     return this.phone.isNotEmpty;
   }
 
-  HiveUser? get user {
-    return UserRepository().dbProvider.getUserById(this.userId!);
+  String get phoneWithDialingCode {
+    return user != null ? user!.phoneWithDialingCode : '';
   }
 }

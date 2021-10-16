@@ -104,7 +104,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               Align(
                 alignment: FractionalOffset.topLeft,
                 child: Text(
-                  '+${user.diallingCode} ${user.phone}',
+                  '${user.phoneWithDialingCode}',
                   maxLines: 1,
                   style: TextStyle(
                     color: AppColors.appTitle,
@@ -353,8 +353,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.createNewGroup).then((value) => FocusScope.of(context)
-                            .requestFocus(new FocusNode()));
+          Navigator.of(context).pushNamed(Routes.createNewGroup).then(
+              (value) => FocusScope.of(context).requestFocus(new FocusNode()));
         },
         child: Icon(Icons.add),
       ),

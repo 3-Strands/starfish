@@ -6,6 +6,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
@@ -13,11 +14,13 @@ import 'package:starfish/widgets/seprator_line_widget.dart';
 class UnInvitedGroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
   final Function(String) onRemove;
+  final Function(HiveUser) onInvite;
 
   UnInvitedGroupMemberListItem({
     Key? key,
     required this.groupUser,
     required this.onRemove,
+    required this.onInvite,
   }) : super(key: key);
 
   _UnInvitedGroupMemberListItemState createState() =>
@@ -202,7 +205,9 @@ class _UnInvitedGroupMemberListItemState
                               widget.groupUser.user!.phone = _phoneNumber;
                               widget.groupUser.user!.isUpdated = true;
                               bloc.userBloc
-                                  .createUpdateUser(widget.groupUser.user!);
+                                  .createUpdateUser(widget.groupUser.user!)
+                                  .then((value) =>
+                                      widget.onInvite(widget.groupUser.user!));
                             }
                           }
                         },

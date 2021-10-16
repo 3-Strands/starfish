@@ -171,7 +171,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     if (_recipentsList.length == 0) {
       return;
     }
-    String _result = await sendSMS(message: message, recipients: _recipentsList)
+    sendSms(message, _recipentsList);
+  }
+
+  sendSms(String message, List<String> phoneNumbers) async {
+    String _result = await sendSMS(message: message, recipients: phoneNumbers)
         .catchError((onError) {
       print('Send SMS Error');
     });
@@ -392,14 +396,18 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       isNew: true,
     ));*/
     _newUsers.forEach((HiveUser user) {
-      UserRepository()
-          .createUpdateUserInDB(user)
-          .then((value) => _newGroupUsers.add(HiveGroupUser(
-                groupId: _groupId,
-                userId: user.id,
-                role: GroupUser_Role.LEARNER.value,
-                isNew: true,
-              )));
+      UserRepository().createUpdateUserInDB(user).then((value) {
+        _newGroupUsers.add(HiveGroupUser(
+          groupId: _groupId,
+          userId: user.id,
+          role: GroupUser_Role.LEARNER.value,
+          isNew: true,
+        ));
+
+        if (_selectedContacts.length > 0) {
+          _sendInviteSMS(Strings.inviteSMS, _selectedContacts);
+        }
+      });
     });
 
     HiveGroup _hiveGroup = HiveGroup(
@@ -917,6 +925,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 _unInvitedPersonNames.remove(person);
               });
             }
+          },
+          onInvite: (HiveUser _user) {
+            sendSms(Strings.inviteSMS, [_user.phoneWithDialingCode]);
           },
         ),
       );

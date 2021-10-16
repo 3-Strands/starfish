@@ -50,4 +50,10 @@ class UserProvider {
         _userBox.values.firstWhereOrNull((element) => element.id == userId);
     return _user != null ? _user.diallingCode ?? '' : '';
   }
+
+  String getPhoneWithDialingCode(String userId) {
+    HiveUser? _user =
+        _userBox.values.firstWhereOrNull((element) => element.id == userId);
+    return _user != null ? _user.phoneWithDialingCode : '';
+  }
 }

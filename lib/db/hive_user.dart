@@ -105,3 +105,9 @@ class HiveUser extends HiveObject {
         countryIds: ${this.countryIds?.toString()}, languageIds: ${this.languageIds?.toString()}}''';
   }
 }
+
+extension HiveUserExt on HiveUser {
+  String get phoneWithDialingCode {
+    return this.phone != null ? '+${this.diallingCode}${this.phone}' : '';
+  }
+}
