@@ -33,6 +33,7 @@ class Strings {
   static const String create = 'Create';
   static const String invite = 'Invite';
   static const String leaveThisGroup = 'Leave this group';
+  static const String inviteGroupUser = 'Invite to Starfish';
 
   static const String resentOTP = 'Resend OTP';
   static const String enterOneTimePassword = 'Enter One Time Password';

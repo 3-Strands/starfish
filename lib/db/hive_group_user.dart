@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -59,5 +60,13 @@ extension HiveGroupUserExt on HiveGroupUser {
 
   String get diallingCode {
     return UserRepository().dbProvider.getDiallingCode(this.userId!);
+  }
+
+  bool get isInvited {
+    return this.phone.isNotEmpty;
+  }
+
+  HiveUser? get user {
+    return UserRepository().dbProvider.getUserById(this.userId!);
   }
 }

@@ -14,6 +14,10 @@ class UserProvider {
     return _userBox.values.toList();
   }
 
+  HiveUser? getUserById(String userId) {
+    return _userBox.values.firstWhereOrNull((element) => element.id == userId);
+  }
+
   Future<void> createUpdateUser(HiveUser user) async {
     int _currentIndex = -1;
     _userBox.values.toList().asMap().forEach((key, hiveUser) {

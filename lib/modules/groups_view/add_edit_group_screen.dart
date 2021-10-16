@@ -39,6 +39,7 @@ import 'package:starfish/widgets/group_member_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:starfish/widgets/invited_contact_list_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
+import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
 import 'package:starfish/widgets/uninvited_person_list_item.dart';
 import 'package:uuid/uuid.dart';
 
@@ -260,7 +261,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               children: [
                 Expanded(
                   child: Container(
-                   // margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                    // margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -281,14 +282,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                               }
                               setState(() {
                                 _query = value;
-                                
                               });
                             },
                             onDone: (String value) {}),
                         SizedBox(height: 11.h),
                         Expanded(
                           child: widgets.Padding(
-                            padding: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                            padding:
+                                EdgeInsets.only(left: 15.0.w, right: 15.0.w),
                             child: _buildSlidingUpPanel(),
                           ),
                         ),
@@ -659,10 +660,16 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   visible: _selectedContacts.toList().length > 0,
                 ),
 
-                if (_isEditMode && widget.group!.activeUsers != null)
+                if (_isEditMode &&
+                    widget.group!.activeUsers
+                            ?.where((element) => !element.isInvited)
+                            .toList() !=
+                        null)
                   Column(
-                    children: _invitedGroupMembersContainer(
-                        widget.group!.activeUsers!),
+                    children: _invitedGroupMembersContainer(widget
+                        .group!.activeUsers!
+                        .where((element) => !element.isInvited)
+                        .toList()),
                   ),
 
                 // Option 2.
@@ -741,6 +748,17 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   visible: _unInvitedPersonNames.toList().length > 0,
                 ),
 
+                if (_isEditMode &&
+                    widget.group!.activeUsers
+                            ?.where((element) => element.isInvited)
+                            .toList() !=
+                        null)
+                  Column(
+                    children: _unInvitedGroupMembersContainer(widget
+                        .group!.activeUsers!
+                        .where((element) => element.isInvited)
+                        .toList()),
+                  ),
                 if (widget.group?.editHistory != null)
                   _editHistoryContainer(widget.group),
 
@@ -863,6 +881,36 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _widgetList.add(
         UnInvitedPersonListItem(
           personName: person,
+          onRemove: (String person) {
+            if (_unInvitedPersonNames.contains(person)) {
+              setState(() {
+                _unInvitedPersonNames.remove(person);
+              });
+            }
+          },
+        ),
+      );
+    }
+    // Additional vertical spacing
+    if (_widgetList.length > 0) {
+      _widgetList.add(SizedBox(
+        height: 21.h,
+      ));
+    } else {
+      _widgetList.add(Container());
+    }
+
+    return _widgetList;
+  }
+
+  List<Widget> _unInvitedGroupMembersContainer(List<HiveGroupUser> groupUsers) {
+    final List<Widget> _widgetList = [];
+    groupUsers.sort((a, b) => a.name.compareTo(b.name));
+
+    for (HiveGroupUser groupUser in groupUsers) {
+      _widgetList.add(
+        UnInvitedGroupMemberListItem(
+          groupUser: groupUser,
           onRemove: (String person) {
             if (_unInvitedPersonNames.contains(person)) {
               setState(() {
