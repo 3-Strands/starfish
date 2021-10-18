@@ -1,3 +1,4 @@
+
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,16 +13,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await HiveDatabase().init();
-
-  final cron = Cron();
-
-  // Sync every 15 mins
-  // TODO: Check Connectivity before starting sync
-  cron.schedule(Schedule.parse('*/15 * * * *'), () async {
-    print('================ START SYNC =====================');
-    SyncService().syncAll();
-  });
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) async {
     await ConfigReader.initialize();

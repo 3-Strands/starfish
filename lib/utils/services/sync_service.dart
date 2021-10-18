@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart' as app;
+import 'package:flutter/widgets.dart';
 import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -18,6 +19,7 @@ import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
@@ -72,6 +74,13 @@ class SyncService {
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
+  void showAlert(BuildContext context) {
+    app.showDialog(
+        context: context,
+        builder: (context) => app.AlertDialog(
+              content: Text("Globle view testing."),
+            ));
+  }
 
   void syncAll() async {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
@@ -81,6 +90,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
+    showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
     syncUsers();
