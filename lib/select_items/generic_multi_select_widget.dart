@@ -177,6 +177,8 @@ class _MultiSelectState extends State<MultiSelect> {
         break;
       default:
     }
+
+    _changeStatusOfSelectAllButton();
   }
 
   _MultiSelectState() {
@@ -337,6 +339,16 @@ class _MultiSelectState extends State<MultiSelect> {
     });
   }
 
+  _changeStatusOfSelectAllButton() {
+    var _selectedItemsLenth =
+        _items.where((element) => element.isSelected == true).toList().length;
+    if (_selectedItemsLenth == _items.length) {
+      _isSelectAllSelected = true;
+    } else {
+      _isSelectAllSelected = false;
+    }
+  }
+
   Widget _listBuilder() {
     return Container(
       child: ListView.builder(
@@ -397,6 +409,7 @@ class _MultiSelectState extends State<MultiSelect> {
     setState(() {
       _items[index].isSelected = !_items[index].isSelected;
     });
+    _changeStatusOfSelectAllButton();
   }
 
   void _sendSelectedValues() {
