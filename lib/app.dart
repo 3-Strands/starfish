@@ -28,7 +28,7 @@ class _StarfishState extends State<Starfish> {
   void initState() {
     // Sync every 15 mins
     // TODO: Check Connectivity before starting sync
-    cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+    cron.schedule(Schedule.parse('*/15 * * * *'), () async {
       print('================ START SYNC =====================');
       SyncService().syncAll();
     });
