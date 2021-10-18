@@ -6,8 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/enums/action_type.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -24,7 +26,8 @@ class _AddEditActionState extends State<AddEditAction>
   bool _isEditMode = false;
   final _addActionController = TextEditingController();
   final _descriptionController = TextEditingController();
-  late String _choiceText = Strings.selectActionTypeText;
+
+  Action_Type _actionType = Action_Type.TEXT_INSTRUCTION;
 
   @override
   void initState() {
@@ -170,7 +173,7 @@ class _AddEditActionState extends State<AddEditAction>
                     child: DropdownButtonHideUnderline(
                       child: ButtonTheme(
                         alignedDropdown: true,
-                        child: DropdownButton<String>(
+                        child: DropdownButton<Action_Type>(
                           isExpanded: true,
                           iconSize: 35,
                           style: TextStyle(
@@ -179,7 +182,7 @@ class _AddEditActionState extends State<AddEditAction>
                             fontFamily: 'OpenSans',
                           ),
                           hint: Text(
-                            _choiceText,
+                            _actionType.about,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -189,17 +192,18 @@ class _AddEditActionState extends State<AddEditAction>
                             ),
                             textAlign: TextAlign.left,
                           ),
-                          onChanged: (String? value) {
+                          onChanged: (Action_Type? value) {
                             setState(() {
-                              _choiceText = value!;
+                              _actionType = value!;
                             });
                           },
-                          items: Strings.actionsList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
+                          items: Action_Type.values
+                              .map<DropdownMenuItem<Action_Type>>(
+                                  (Action_Type value) {
+                            return DropdownMenuItem<Action_Type>(
                               value: value,
                               child: Text(
-                                value,
+                                value.about,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
                                   fontSize: 14.sp,

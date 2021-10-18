@@ -202,12 +202,11 @@ sending an invitation to use Starfish''';
   static const String makeTeacher = 'Make Teacher';
   static const String makeRemove = 'Remove';
 
-  static const List<String> actionsList = <String>[
-    'Follow a set of instructions',
-    'Answer a question',
-    'Use a tool (no response)',
-    'Use a tool and enter a response',
-    'Fill in some numbers'
-  ];
+  static const String actionTypeTextInstruction = 'Follow a set of instructions';
+  static const String actionTypeTextResponse = 'Answer a question';
+  static const String actionTypeMaterialInstruction = 'Use a tool (no response)';
+  static const String actionTypeMaterialResponse = 'Use a tool and enter a response';
+  static const String actionType = 'Fill in some numbers';
+
   static const String reuseActionText = 'Re-use an Action (optional)';
 }
