@@ -150,8 +150,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _mobileNumber = _phoneNumberController.text,
           _countyCode = _countryCodeController.text
         });
+
+    var _phoneCountryId = _countryList
+        .where((item) => item.diallingCode == _countryCodeController.text)
+        .first
+        .id;
+
     _user.phone = _phoneNumberController.text;
     _user.diallingCode = _countryCodeController.text;
+    _user.phoneCountryId = _phoneCountryId;
     _user.isUpdated = true;
     _currentUserBox.putAt(0, _user);
   }
