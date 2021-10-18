@@ -1,8 +1,11 @@
+import 'package:cron/cron.dart';
+import 'package:cron/cron.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
@@ -18,9 +21,18 @@ class Starfish extends StatefulWidget {
   _StarfishState createState() => _StarfishState();
 }
 
+final cron = Cron();
+
 class _StarfishState extends State<Starfish> {
   @override
   void initState() {
+    // Sync every 15 mins
+    // TODO: Check Connectivity before starting sync
+    cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+      print('================ START SYNC =====================');
+      SyncService().syncAll();
+    });
+
     FBroadcast.instance().register(SyncService.kUpdateMaterial,
         (hiveMaterial, __) {
       print('Boradcast Receiver: kUpdateMaterial');
@@ -41,7 +53,6 @@ class _StarfishState extends State<Starfish> {
     }, context: this);
     super.initState();
   }
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -49,6 +60,7 @@ class _StarfishState extends State<Starfish> {
       designSize: Size(375, 812),
       builder: () => Provider(
         child: MaterialApp(
+            navigatorKey: NavigationService.navigatorKey, // set property
             debugShowCheckedModeBanner: false,
             title: '',
             theme: AppStyles.defaultTheme(),
