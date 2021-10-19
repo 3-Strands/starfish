@@ -35,7 +35,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SyncService {
   final DEBUG = false;
-  var flag = false;
+  bool _isDialogShowing = false;
 
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
@@ -78,40 +78,46 @@ class SyncService {
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
-  void showAlert(BuildContext context) {
-    app.showDialog(
-        context: context,
-        builder: (context) => app.CupertinoAlertDialog(
-              title: Text(
-                Strings.syncAlertTitleText,
-                style: TextStyle(color: app.Color(0xFF030303)),
-              ),
-              content: app.Column(
-                children: [
-                  Text(Strings
-                      .syncAlertContentText), // app.SizedBox(height: 10.h),
-                  app.SizedBox(
-                      width: 20.w,
-                      height: 20.h,
-                      child: app.CircularProgressIndicator()),
-                  // app.SizedBox(height: 5.h),
-                  app.Text(
-                    '\nSyncing...',
-                    style: TextStyle(
-                        color: app.Color(0xFF030303), fontSize: 12.sp),
-                  )
-                ],
-              ),
-              actions: <Widget>[
-                app.CupertinoDialogAction(
-                  child: Text(Strings.close),
-                  onPressed: () {
-                    flag = true;
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ));
+  void showAlert(BuildContext context) async {
+    
+    _isDialogShowing = true; 
+    await app
+        .showDialog(
+            context: context,
+            builder: (context) => app.CupertinoAlertDialog(
+                  title: Text(
+                    Strings.syncAlertTitleText,
+                    style: TextStyle(color: app.Color(0xFF030303)),
+                  ),
+                  content: app.Column(
+                    children: [
+                      Text(Strings
+                          .syncAlertContentText), // app.SizedBox(height: 10.h),
+                      app.SizedBox(
+                          width: 20.w,
+                          height: 20.h,
+                          child: app.CircularProgressIndicator()),
+                      // app.SizedBox(height: 5.h),
+                      app.Text(
+                        Strings.syncText,
+                        style: TextStyle(
+                            color: app.Color(0xFF030303), fontSize: 12.sp),
+                      )
+                    ],
+                  ),
+                  actions: <Widget>[
+                    app.CupertinoDialogAction(
+                      child: Text(Strings.close),
+                      onPressed: () {
+                        _isDialogShowing =
+                            false; // set it `false` since dialog is closed
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ))
+        .then((value) =>  _isDialogShowing =
+                            false);
   }
 
   void syncAll() async {
@@ -122,6 +128,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
+    // navigatorKey: Application.navKey, // GlobalKey()
     showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
@@ -134,12 +141,13 @@ class SyncService {
 
     syncEvaluationCategories();
     syncGroup();
-    Future.delayed(Duration(seconds: 5), () {
-      if (!flag)
-        Navigator.of(NavigationService.navigatorKey.currentContext!,
-                rootNavigator: true)
-            .pop(true);
-    });
+
+    if (_isDialogShowing) {
+      Future.delayed(Duration(seconds: 1), () {
+        _isDialogShowing = false; // set it `false` since dialog is closed
+        Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
+      });
+    }
 
     DateTime now = DateTime.now();
     print(DateFormat('HH:mm:ss').format(now));

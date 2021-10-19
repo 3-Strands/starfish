@@ -51,6 +51,7 @@ class Strings {
 
   static const String selectLanugagesDetail =
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.';
+  static const String syncText = '\nSyncing...';
 
   static const String lastSuccessfullSync = 'Last Successful Sync';
 

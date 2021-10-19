@@ -31,8 +31,6 @@ class _StarfishState extends State<Starfish> {
     // TODO: Check Connectivity before starting sync
     cron.schedule(Schedule.parse('*/15 * * * *'), () async {
       print('================ START SYNC =====================');
-      showAlert(NavigationService.navigatorKey.currentContext!);
-
       SyncService().syncAll();
     });
 
@@ -57,41 +55,7 @@ class _StarfishState extends State<Starfish> {
     super.initState();
   }
 
-  void showAlert(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-              title: Text(
-                "We are setting up Starfish for you!",
-                style: TextStyle(color: Color(0xFF030303)),
-              ),
-              content: Column(
-                children: [
-                  Text(
-                      "This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n"),
-                  // app.SizedBox(height: 10.h),
-                  SizedBox(
-                      width: 20.w,
-                      height: 20.h,
-                      child: CircularProgressIndicator()),
-                  // app.SizedBox(height: 5.h),
-                  Text(
-                    '\nSyncing...',
-                    style: TextStyle(color: Color(0xFF030303), fontSize: 12.sp),
-                  )
-                ],
-              ),
-              actions: <Widget>[
-                CupertinoDialogAction(
-                  child: Text("Close"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ));
-  }
-
+  
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
