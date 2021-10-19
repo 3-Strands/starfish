@@ -4,7 +4,6 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -155,44 +154,45 @@ class _MeState extends State<Me> {
                           SizedBox(
                             width: 30.sp,
                             child: PopupMenuButton(
-                                icon: Icon(
-                                  Icons.more_vert,
-                                  color: Color(0xFF3475F0),
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Color(0xFF3475F0),
+                              ),
+                              color: Colors.white,
+                              elevation: 20,
+                              shape: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.white, width: 2),
+                                  borderRadius: BorderRadius.circular(12.sp)),
+                              enabled: true,
+                              onSelected: (value) {
+                                setState(() {
+                                  // _value = value;
+                                });
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  child: Text(
+                                    Strings.editActionText,
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: "",
                                 ),
-                                color: Colors.white,
-                                elevation: 20,
-                                shape: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 2),
-                                    borderRadius: BorderRadius.circular(12.sp)),
-                                enabled: true,
-                                onSelected: (value) {
-                                  setState(() {
-                                    // _value = value;
-                                  });
-                                },
-                                itemBuilder: (context) => [
-                                      PopupMenuItem(
-                                        child: Text(
-                                          Strings.editActionText,
-                                          style: TextStyle(
-                                              color: Color(0xFF3475F0),
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        value: "",
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text(
-                                          Strings.deleteActionText,
-                                          style: TextStyle(
-                                              color: Color(0xFF3475F0),
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        value: "",
-                                      ),
-                                    ]),
+                                PopupMenuItem(
+                                  child: Text(
+                                    Strings.deleteActionText,
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: "",
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
