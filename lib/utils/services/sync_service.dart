@@ -79,8 +79,7 @@ class SyncService {
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
   void showAlert(BuildContext context) async {
-    
-    _isDialogShowing = true; 
+    _isDialogShowing = true;
     await app
         .showDialog(
             context: context,
@@ -116,8 +115,7 @@ class SyncService {
                     ),
                   ],
                 ))
-        .then((value) =>  _isDialogShowing =
-                            false);
+        .then((value) => _isDialogShowing = false);
   }
 
   void syncAll() async {
@@ -129,7 +127,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
-    showAlert(NavigationService.navigatorKey.currentContext!);
+   showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
     syncUsers();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -92,32 +93,41 @@ class _AddEditActionState extends State<AddEditAction>
                       color: Color(0xFF434141)),
                 ),
                 SizedBox(height: 13.h),
-                Container(
-                  height: 52.h,
-                  width: 345.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Select an action',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 16.sp, color: Color(0xFF434141)),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(Routes.selectActions).then(
+                          (value) => FocusScope.of(context).requestFocus(
+                            new FocusNode(),
                           ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color(0xFF434141),
-                            size: 20.sp,
-                          )
-                        ],
+                        );
+                  },
+                  child: Container(
+                    height: 52.h,
+                    width: 345.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Select an action',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 16.sp, color: Color(0xFF434141)),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF434141),
+                              size: 20.sp,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
