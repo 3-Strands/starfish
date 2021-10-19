@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
 import 'package:flutter/widgets.dart';
 import 'package:grpc/grpc.dart';
@@ -29,9 +30,11 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SyncService {
   final DEBUG = false;
+  var flag = false;
 
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
@@ -77,8 +80,37 @@ class SyncService {
   void showAlert(BuildContext context) {
     app.showDialog(
         context: context,
-        builder: (context) => app.AlertDialog(
-              content: Text("Globle view testing."),
+        builder: (context) => app.CupertinoAlertDialog(
+              title: Text(
+                "We are setting up Starfish for you!",
+                style: TextStyle(color: app.Color(0xFF030303)),
+              ),
+              content: app.Column(
+                children: [
+                  Text(
+                      "This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n"),
+                 // app.SizedBox(height: 10.h),
+                  app.SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: app.CircularProgressIndicator()),
+                 // app.SizedBox(height: 5.h),
+                  app.Text(
+                    '\nSyncing...',
+                    style: TextStyle(
+                        color: app.Color(0xFF030303), fontSize: 12.sp),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                app.CupertinoDialogAction(
+                  child: Text("Close"),
+                  onPressed: () {
+                    flag = true;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             ));
   }
 
@@ -102,6 +134,12 @@ class SyncService {
 
     syncEvaluationCategories();
     syncGroup();
+    Future.delayed(Duration(seconds: 5), () {
+      if (!flag)
+      Navigator.of(NavigationService.navigatorKey.currentContext!,
+              rootNavigator: true)
+          .pop(true);
+    });
 
     DateTime now = DateTime.now();
     print(DateFormat('HH:mm:ss').format(now));
