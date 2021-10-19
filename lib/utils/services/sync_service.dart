@@ -5,6 +5,7 @@ import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -82,19 +83,18 @@ class SyncService {
         context: context,
         builder: (context) => app.CupertinoAlertDialog(
               title: Text(
-                "We are setting up Starfish for you!",
+                Strings.syncAlertTitleText,
                 style: TextStyle(color: app.Color(0xFF030303)),
               ),
               content: app.Column(
                 children: [
-                  Text(
-                      "This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n"),
-                 // app.SizedBox(height: 10.h),
+                  Text(Strings
+                      .syncAlertContentText), // app.SizedBox(height: 10.h),
                   app.SizedBox(
                       width: 20.w,
                       height: 20.h,
                       child: app.CircularProgressIndicator()),
-                 // app.SizedBox(height: 5.h),
+                  // app.SizedBox(height: 5.h),
                   app.Text(
                     '\nSyncing...',
                     style: TextStyle(
@@ -104,7 +104,7 @@ class SyncService {
               ),
               actions: <Widget>[
                 app.CupertinoDialogAction(
-                  child: Text("Close"),
+                  child: Text(Strings.close),
                   onPressed: () {
                     flag = true;
                     Navigator.of(context).pop();
@@ -136,9 +136,9 @@ class SyncService {
     syncGroup();
     Future.delayed(Duration(seconds: 5), () {
       if (!flag)
-      Navigator.of(NavigationService.navigatorKey.currentContext!,
-              rootNavigator: true)
-          .pop(true);
+        Navigator.of(NavigationService.navigatorKey.currentContext!,
+                rootNavigator: true)
+            .pop(true);
     });
 
     DateTime now = DateTime.now();

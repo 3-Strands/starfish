@@ -135,7 +135,10 @@ sending an invitation to use Starfish''';
       'Entered dialing code doesn\'t exist.';
   static const String alertLeaveThisGroup =
       'Are you sure you want to leave this group?';
-
+  static const String syncAlertContentText =
+      'This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n';
+static const String syncAlertTitleText =
+      'We are setting up Starfish for you!';
   // Validation Messages
   static const String emptyEvaluateProgress =
       'Please select evaluation categories.';
@@ -202,10 +205,13 @@ sending an invitation to use Starfish''';
   static const String makeTeacher = 'Make Teacher';
   static const String makeRemove = 'Remove';
 
-  static const String actionTypeTextInstruction = 'Follow a set of instructions';
+  static const String actionTypeTextInstruction =
+      'Follow a set of instructions';
   static const String actionTypeTextResponse = 'Answer a question';
-  static const String actionTypeMaterialInstruction = 'Use a tool (no response)';
-  static const String actionTypeMaterialResponse = 'Use a tool and enter a response';
+  static const String actionTypeMaterialInstruction =
+      'Use a tool (no response)';
+  static const String actionTypeMaterialResponse =
+      'Use a tool and enter a response';
   static const String actionType = 'Fill in some numbers';
 
   static const String reuseActionText = 'Re-use an Action (optional)';
