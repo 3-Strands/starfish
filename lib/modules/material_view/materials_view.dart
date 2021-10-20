@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
@@ -29,17 +31,27 @@ class MaterialsScreen extends StatefulWidget {
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
+  late Box<HiveCurrentUser> _currentUserBox;
 
   late Box<HiveLanguage> _languageBox;
+  late HiveCurrentUser _user;
 
   late String _choiceText = Strings.noFilterApplied;
+
+  final Key _focusDetectorKey = UniqueKey();
 
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getAllLanguages();
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() {
+    _user = _currentUserBox.values.first;
   }
 
   _fetchMaterialData(AppBloc bloc) async {
@@ -80,112 +92,120 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.materialSceenBG,
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 14.h),
-              _buildLanguagesContainer(bloc),
-              SizedBox(height: 10.h),
-              _buildTopicsContainer(bloc),
-              SizedBox(height: 10.h),
-              SearchBar(
-                initialValue: bloc.materialBloc.query,
-                onValueChanged: (value) {
-                  setState(() {
-                    bloc.materialBloc.setQuery(value);
-                  });
-                },
-                onDone: (value) {
-                  setState(() {
-                    bloc.materialBloc.setQuery(value);
-                  });
-                },
-              ),
-              SizedBox(height: 10.h),
-              Container(
-                height: 60.h,
-                // width: 345.w,
-                margin: EdgeInsets.only(left: 15.w, right: 15.w),
-
-                decoration: BoxDecoration(
-                  color: AppColors.txtFieldBackground,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
+    return FocusDetector(
+      key: _focusDetectorKey,
+      onFocusLost: () {
+        print('Lost focus');
+        bloc.materialBloc.selectedLanguages.clear();
+        bloc.materialBloc.selectedTopics.clear();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.materialSceenBG,
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 14.h),
+                _buildLanguagesContainer(bloc),
+                SizedBox(height: 10.h),
+                _buildTopicsContainer(bloc),
+                SizedBox(height: 10.h),
+                SearchBar(
+                  initialValue: bloc.materialBloc.query,
+                  onValueChanged: (value) {
+                    setState(() {
+                      bloc.materialBloc.setQuery(value);
+                    });
+                  },
+                  onDone: (value) {
+                    setState(() {
+                      bloc.materialBloc.setQuery(value);
+                    });
+                  },
                 ),
-                child: Center(
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      alignedDropdown: true,
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        iconSize: 35,
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontSize: 16.sp,
-                          fontFamily: 'OpenSans',
-                        ),
-                        hint: Text(
-                          Strings.materialActionPrefix + _choiceText,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                SizedBox(height: 10.h),
+                Container(
+                  height: 60.h,
+                  // width: 345.w,
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+
+                  decoration: BoxDecoration(
+                    color: AppColors.txtFieldBackground,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Center(
+                    child: DropdownButtonHideUnderline(
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          iconSize: 35,
                           style: TextStyle(
                             color: Color(0xFF434141),
                             fontSize: 16.sp,
                             fontFamily: 'OpenSans',
                           ),
-                          textAlign: TextAlign.left,
-                        ),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _choiceText = value!;
-                          });
-                        },
-                        items: Strings.materialActionsList
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 14.sp,
-                                fontFamily: 'OpenSans',
-                              ),
+                          hint: Text(
+                            Strings.materialActionPrefix + _choiceText,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 16.sp,
+                              fontFamily: 'OpenSans',
                             ),
-                          );
-                        }).toList(),
+                            textAlign: TextAlign.left,
+                          ),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _choiceText = value!;
+                            });
+                          },
+                          items: Strings.materialActionsList
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 14.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
-              materialsList(bloc),
-              SizedBox(
-                height: 10.h,
-              ),
-            ],
+                SizedBox(
+                  height: 20.h,
+                ),
+                materialsList(bloc),
+                SizedBox(
+                  height: 10.h,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(Routes.addNewMaterial).then(
-                (value) => FocusScope.of(context).requestFocus(
-                  new FocusNode(),
-                ),
-              );
-        },
-        child: Icon(Icons.add),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(Routes.addNewMaterial).then(
+                  (value) => FocusScope.of(context).requestFocus(
+                    new FocusNode(),
+                  ),
+                );
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -233,9 +253,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  Widget _buildLanguagesContainer(AppBloc bloc) {
-    bloc.materialBloc.selectedLanguages = _languageList;
+  _seleanguage(AppBloc bloc) {
+    for (var languageId in _user.languageIds) {
+      _languageList
+          .where((item) => item.id == languageId)
+          .forEach((item) => {bloc.materialBloc.selectedLanguages.add(item)});
+    }
     _fetchMaterialData(bloc);
+  }
+
+  Widget _buildLanguagesContainer(AppBloc bloc) {
+    // bloc.materialBloc.selectedLanguages = _languageList;
+    _seleanguage(bloc);
 
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -250,6 +279,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             List<HiveLanguage> _selectedLanguages =
                 languages as List<HiveLanguage>;
             bloc.materialBloc.selectedLanguages = _selectedLanguages;
+
             _fetchMaterialData(bloc);
           });
         },

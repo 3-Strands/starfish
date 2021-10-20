@@ -85,23 +85,6 @@ class MaterialBloc extends Object {
     return _results;
   }
 
-  /*void addMaterial(HiveMaterial? material) {
-    print('add Material');
-    fetchMaterialsFromDB();
-    // _filteredMaterialsList.add(material!);
-    // _materials.sink.add(_filteredMaterialsList);
-  }
-
-  void editMaterial(HiveMaterial? material) {
-    print('edit Material');
-    final index = _filteredMaterialsList
-        .indexWhere((element) => element.id == material!.id);
-
-    _filteredMaterialsList.removeAt(index);
-    _filteredMaterialsList.insert(index, material!);
-    _materials.sink.add(_filteredMaterialsList);
-  }*/
-
   Future<void> createUpdateMaterial(HiveMaterial material) async {
     return materialRepository.createUpdateMaterialInDB(material).then((_) {
       fetchMaterialsFromDB();
