@@ -481,7 +481,7 @@ class _MeState extends State<Me> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Title: ${action.status}',
+                  'Title: {action.status}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,

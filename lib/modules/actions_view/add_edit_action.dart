@@ -1,4 +1,7 @@
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -6,15 +9,29 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/enums/action_type.dart';
+import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddEditAction extends StatefulWidget {
-  const AddEditAction({Key? key}) : super(key: key);
+  final HiveAction? action;
+
+  const AddEditAction({
+    Key? key,
+    this.action,
+  }) : super(key: key);
 
   @override
   _AddEditActionState createState() => _AddEditActionState();
@@ -23,15 +40,23 @@ class AddEditAction extends StatefulWidget {
 class _AddEditActionState extends State<AddEditAction>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  bool _isEditMode = false;
-  final _addActionController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late AppBloc bloc;
 
-  Action_Type _actionType = Action_Type.TEXT_INSTRUCTION;
+  final _actionNameController = TextEditingController();
+
+  bool _isEditMode = false;
+
+  Action_Type? _selectedActionType;
+  String? _instructions;
+  String? _question;
+  DateTime? _dueDate;
 
   @override
   void initState() {
     super.initState();
+    if (widget.action != null) {
+      _isEditMode = true;
+    }
     _controller = AnimationController(vsync: this);
   }
 
@@ -43,6 +68,8 @@ class _AddEditActionState extends State<AddEditAction>
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
+
     return Scaffold(
       backgroundColor: AppColors.actionScreenBG,
       appBar: AppBar(
@@ -133,7 +160,7 @@ class _AddEditActionState extends State<AddEditAction>
                 ),
                 SizedBox(height: 13.h),
                 TextFormField(
-                  controller: _addActionController,
+                  controller: _actionNameController,
                   keyboardType: TextInputType.url,
                   decoration: InputDecoration(
                     contentPadding:
@@ -161,94 +188,35 @@ class _AddEditActionState extends State<AddEditAction>
                       color: Color(0xFF434141)),
                 ),
                 SizedBox(height: 13.h),
-                Container(
-                  height: 52.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton<Action_Type>(
-                          isExpanded: true,
-                          iconSize: 35,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 16.sp,
-                            fontFamily: 'OpenSans',
-                          ),
-                          hint: Text(
-                            _actionType.about,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 16.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          onChanged: (Action_Type? value) {
-                            setState(() {
-                              _actionType = value!;
-                            });
-                          },
-                          items: Action_Type.values
-                              .map<DropdownMenuItem<Action_Type>>(
-                                  (Action_Type value) {
-                            return DropdownMenuItem<Action_Type>(
-                              value: value,
-                              child: Text(
-                                value.about,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 14.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
+                ActionTypeSelector(
+                  onActionTypeChange: (Action_Type? value) {
+                    debugPrint('ActionTypeSelector[ActionType]: $value');
+                    setState(() {
+                      _selectedActionType = value;
+                    });
+                  },
+                  onInstructionsChange: (String? value) {
+                    debugPrint('ActionTypeSelector[Instructions]: $value');
+                    setState(() {
+                      _instructions = value;
+                    });
+                  },
+                  onQuestionChange: (String? value) {
+                    debugPrint('ActionTypeSelector[Question]: $value');
+                    setState(() {
+                      _question = value;
+                    });
+                  },
+                  selectedActionType: _isEditMode
+                      ? Action_Type.valueOf(widget.action!.type!)
+                      : Action_Type.TEXT_INSTRUCTION,
+                  instructions: _isEditMode ? widget.action!.instructions : '',
+                  question: _isEditMode ? widget.action!.question : '',
                 ),
+
                 SizedBox(height: 20.h),
 
-                // Description
-                Text(
-                  'Instructions',
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 13.h),
-                Container(
-                  child: TextFormField(
-                    maxLines: 4,
-                    controller: _descriptionController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                        ),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-
-                // Topic Selection
+                // Assign action to group
                 Text(
                   'Assign this Action to',
                   textAlign: TextAlign.left,
@@ -294,31 +262,53 @@ class _AddEditActionState extends State<AddEditAction>
                       color: Color(0xFF434141)),
                 ),
                 SizedBox(height: 13.h),
-                Container(
-                  height: 52.h,
-                  width: 345.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Select due date',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 16.sp, color: Color(0xFF434141)),
-                          ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color(0xFF434141),
-                            size: 20.sp,
-                          )
-                        ],
+                InkWell(
+                  onTap: () {
+                    //TODO: show datepicker
+                    showDatePicker(
+                      context: context,
+                      currentDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(Duration(days: 365)),
+                      initialDate: _dueDate ?? DateTime.now(),
+                    ).then((DateTime? dateTime) {
+                      if (dateTime == null) {
+                        return;
+                      }
+                      setState(() {
+                        _dueDate = dateTime;
+                      });
+                    });
+                  },
+                  child: Container(
+                    height: 52.h,
+                    width: 345.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Text(
+                              _dueDate != null
+                                  //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
+                                  ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
+                                  : 'Select due date',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 16.sp, color: Color(0xFF434141)),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF434141),
+                              size: 20.sp,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -347,7 +337,9 @@ class _AddEditActionState extends State<AddEditAction>
             SizedBox(width: 25.w),
             Expanded(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _validateAndCreateUpdateAction();
+                },
                 child: Text(
                   _isEditMode ? Strings.update : Strings.create,
                 ),
@@ -360,5 +352,66 @@ class _AddEditActionState extends State<AddEditAction>
         ),
       ),
     );
+  }
+
+  _validateAndCreateUpdateAction() {
+    if (_actionNameController.text.isEmpty) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
+    } else {
+      _createUpdateAction();
+    }
+  }
+
+  _createUpdateAction() {
+    HiveAction? _hiveAction;
+
+    if (_isEditMode) {
+      _hiveAction = widget.action!;
+
+      _hiveAction.isUpdated = true;
+    } else {
+      _hiveAction = HiveAction(
+        id: UuidGenerator.uuid(),
+      );
+      _hiveAction.isNew = true;
+    }
+
+    _hiveAction.type = _selectedActionType!.value;
+    _hiveAction.name = _actionNameController.text;
+    //_hiveAction.creatorId=
+    //_hiveAction.groupId=
+    _hiveAction.instructions = _instructions;
+    _hiveAction.question = _question;
+    _hiveAction.dateDue =
+        _dueDate != null ? DateTimeUtils.toHiveDate(_dueDate!) : null;
+
+    bloc.actionBloc
+        .createUpdateAction(_hiveAction)
+        .then((value) => print('record(s) saved.'))
+        .onError((error, stackTrace) {
+      print('Error: ${error.toString()}.');
+      StarfishSnackbar.showErrorMessage(
+          context,
+          _isEditMode
+              ? Strings.updateActionFailed
+              : Strings.createActionSuccess);
+    }).whenComplete(() {
+      // Broadcast to sync the local changes with the server
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateActions,
+        value: _hiveAction,
+      );
+
+      Alerts.showMessageBox(
+          context: context,
+          title: Strings.dialogInfo,
+          message: _isEditMode
+              ? Strings.updateActionSuccess
+              : Strings.createActionSuccess,
+          callback: () {
+            Navigator.of(context).pop();
+          });
+    });
+    ;
   }
 }

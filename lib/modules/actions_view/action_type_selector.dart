@@ -1,0 +1,287 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/strings.dart';
+import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/enums/action_type.dart';
+
+class ActionTypeSelector extends StatefulWidget {
+  Action_Type? selectedActionType;
+  String? instructions;
+  String? question;
+  final Function(Action_Type?) onActionTypeChange;
+  final Function(String?) onInstructionsChange;
+  final Function(String?) onQuestionChange;
+
+  ActionTypeSelector({
+    Key? key,
+    required this.onActionTypeChange,
+    required this.onInstructionsChange,
+    required this.onQuestionChange,
+    this.selectedActionType = Action_Type.TEXT_INSTRUCTION,
+    this.instructions = '',
+    this.question = '',
+  }) : super(key: key);
+
+  @override
+  _ActionTypeSelectorState createState() => _ActionTypeSelectorState();
+}
+
+class _ActionTypeSelectorState extends State<ActionTypeSelector> {
+  final TextEditingController _instructionController = TextEditingController();
+  final TextEditingController _questionController = TextEditingController();
+
+  Action_Type _selectedActionType = Action_Type.TEXT_INSTRUCTION;
+
+  @override
+  void initState() {
+    super.initState();
+    _instructionController.text = widget.instructions!;
+    _questionController.text = widget.question!;
+
+    if (widget.selectedActionType != null) {
+      _selectedActionType = widget.selectedActionType!;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 52.h,
+            decoration: BoxDecoration(
+              color: AppColors.txtFieldBackground,
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<Action_Type>(
+                  isExpanded: true,
+                  iconSize: 35,
+                  style: TextStyle(
+                    color: Color(0xFF434141),
+                    fontSize: 16.sp,
+                    fontFamily: 'OpenSans',
+                  ),
+                  hint: Text(
+                    widget.selectedActionType!.about,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Color(0xFF434141),
+                      fontSize: 16.sp,
+                      fontFamily: 'OpenSans',
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                  onChanged: (Action_Type? value) {
+                    setState(() {
+                      _selectedActionType = value!;
+                      widget.onActionTypeChange(value);
+                    });
+                  },
+                  items: Action_Type.values
+                      .map<DropdownMenuItem<Action_Type>>((Action_Type value) {
+                    return DropdownMenuItem<Action_Type>(
+                      value: value,
+                      child: Text(
+                        value.about,
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 14.sp,
+                          fontFamily: 'OpenSans',
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          Text(
+            Strings.instructions,
+            textAlign: TextAlign.left,
+            style: titleTextStyle,
+          ),
+
+          SizedBox(height: 13.h),
+
+          TextFormField(
+            maxLines: 4,
+            controller: _instructionController,
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              hintText: Strings.hintInstructions,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: Colors.transparent,
+                ),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            onChanged: widget.onInstructionsChange,
+          ),
+
+          SizedBox(height: 20.h),
+
+          // Action_Type.TEXT_INSTRUCTION child view
+          Visibility(
+            child: Container(
+                margin: EdgeInsets.symmetric(vertical: 4.h),
+                child: Container()),
+            visible: _selectedActionType == Action_Type.TEXT_INSTRUCTION,
+          ),
+
+          // Action_Type.TEXT_RESPONSE child view
+          Visibility(
+            child: Container(
+              child: _questionsWidget(),
+            ),
+            visible: _selectedActionType == Action_Type.TEXT_RESPONSE,
+          ),
+
+          // Action_Type.MATERIAL_INSTRUCTION child view
+          Visibility(
+            child: Container(
+              child: _selectMaterialWidget(),
+            ),
+            visible: _selectedActionType == Action_Type.MATERIAL_INSTRUCTION,
+          ),
+
+          // Action_Type.MATERIAL_RESPONSE child view
+          Visibility(
+            child: Container(
+              child: Column(
+                children: [
+                  _selectMaterialWidget(),
+                  _questionsWidget(),
+                ],
+              ),
+            ),
+            visible: _selectedActionType == Action_Type.MATERIAL_RESPONSE,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _questionsWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          Strings.questionToBeAnswered,
+          textAlign: TextAlign.left,
+          style: titleTextStyle,
+        ),
+        SizedBox(height: 13.h),
+        TextFormField(
+          maxLines: 1,
+          controller: _questionController,
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+          ),
+          onChanged: (String? value) {
+            widget.onQuestionChange(value);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _selectMaterialWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          Strings.selectAMaterial,
+          textAlign: TextAlign.left,
+          style: titleTextStyle,
+        ),
+        SizedBox(height: 13.h),
+        Container(
+          height: 52.h,
+          decoration: BoxDecoration(
+            color: AppColors.txtFieldBackground,
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: ButtonTheme(
+              alignedDropdown: true,
+              child: DropdownButton<Action_Type>(
+                isExpanded: true,
+                iconSize: 35,
+                style: TextStyle(
+                  color: Color(0xFF434141),
+                  fontSize: 16.sp,
+                  fontFamily: 'OpenSans',
+                ),
+                hint: Text(
+                  widget.selectedActionType!.about,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Color(0xFF434141),
+                    fontSize: 16.sp,
+                    fontFamily: 'OpenSans',
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                onChanged: (Action_Type? value) {
+                  /*setState(() {
+                    widget.selectedActionType = value!;
+                  });
+                  widget.onActionTypeChange(value);*/
+                },
+                items: Action_Type.values
+                    .map<DropdownMenuItem<Action_Type>>((Action_Type value) {
+                  return DropdownMenuItem<Action_Type>(
+                    value: value,
+                    child: Text(
+                      value.about,
+                      style: TextStyle(
+                        color: Color(0xFF434141),
+                        fontSize: 14.sp,
+                        fontFamily: 'OpenSans',
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

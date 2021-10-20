@@ -36,6 +36,7 @@ class SyncService {
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
+  static final String kUpdateActions = 'updateActions';
 
   // Use this object to prevent concurrent access to data
   var lock = new Lock(reentrant: true);
