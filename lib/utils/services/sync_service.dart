@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
 import 'package:flutter/widgets.dart';
 import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -29,9 +31,11 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SyncService {
   final DEBUG = false;
+  bool _isDialogShowing = false;
 
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
@@ -75,12 +79,44 @@ class SyncService {
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
-  void showAlert(BuildContext context) {
-    app.showDialog(
-        context: context,
-        builder: (context) => app.AlertDialog(
-              content: Text("Globle view testing."),
-            ));
+  void showAlert(BuildContext context) async {
+    _isDialogShowing = true;
+    await app
+        .showDialog(
+            context: context,
+            builder: (context) => app.CupertinoAlertDialog(
+                  title: Text(
+                    Strings.syncAlertTitleText,
+                    style: TextStyle(color: app.Color(0xFF030303)),
+                  ),
+                  content: app.Column(
+                    children: [
+                      Text(Strings
+                          .syncAlertContentText), // app.SizedBox(height: 10.h),
+                      app.SizedBox(
+                          width: 20.w,
+                          height: 20.h,
+                          child: app.CircularProgressIndicator()),
+                      // app.SizedBox(height: 5.h),
+                      app.Text(
+                        Strings.syncText,
+                        style: TextStyle(
+                            color: app.Color(0xFF030303), fontSize: 12.sp),
+                      )
+                    ],
+                  ),
+                  actions: <Widget>[
+                    app.CupertinoDialogAction(
+                      child: Text(Strings.close),
+                      onPressed: () {
+                        _isDialogShowing =
+                            false; // set it `false` since dialog is closed
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ))
+        .then((value) => _isDialogShowing = false);
   }
 
   void syncAll() async {
@@ -91,7 +127,8 @@ class SyncService {
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
-    showAlert(NavigationService.navigatorKey.currentContext!);
+    // navigatorKey: Application.navKey, // GlobalKey()
+   showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
     syncUsers();
@@ -103,6 +140,13 @@ class SyncService {
 
     syncEvaluationCategories();
     syncGroup();
+
+    if (_isDialogShowing) {
+      Future.delayed(Duration(seconds: 1), () {
+        _isDialogShowing = false; // set it `false` since dialog is closed
+        Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
+      });
+    }
 
     DateTime now = DateTime.now();
     print(DateFormat('HH:mm:ss').format(now));

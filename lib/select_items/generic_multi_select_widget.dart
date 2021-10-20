@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/app_styles.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -177,6 +176,8 @@ class _MultiSelectState extends State<MultiSelect> {
         break;
       default:
     }
+
+    _changeStatusOfSelectAllButton();
   }
 
   _MultiSelectState() {
@@ -337,6 +338,16 @@ class _MultiSelectState extends State<MultiSelect> {
     });
   }
 
+  _changeStatusOfSelectAllButton() {
+    var _selectedItemsLenth =
+        _items.where((element) => element.isSelected == true).toList().length;
+    if (_selectedItemsLenth == _items.length) {
+      _isSelectAllSelected = true;
+    } else {
+      _isSelectAllSelected = false;
+    }
+  }
+
   Widget _listBuilder() {
     return Container(
       child: ListView.builder(
@@ -397,6 +408,7 @@ class _MultiSelectState extends State<MultiSelect> {
     setState(() {
       _items[index].isSelected = !_items[index].isSelected;
     });
+    _changeStatusOfSelectAllButton();
   }
 
   void _sendSelectedValues() {

@@ -51,6 +51,7 @@ class Strings {
 
   static const String selectLanugagesDetail =
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.';
+  static const String syncText = '\nSyncing...';
 
   static const String lastSuccessfullSync = 'Last Successful Sync';
 
@@ -139,7 +140,10 @@ sending an invitation to use Starfish''';
       'Entered dialing code doesn\'t exist.';
   static const String alertLeaveThisGroup =
       'Are you sure you want to leave this group?';
-
+  static const String syncAlertContentText =
+      'This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n';
+  static const String syncAlertTitleText =
+      'We are setting up Starfish for you!';
   // Validation Messages
   static const String emptyEvaluateProgress =
       'Please select evaluation categories.';

@@ -2,20 +2,18 @@ import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:getwidget/components/dropdown/gf_multiselect.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_date.dart';
-import 'package:starfish/enums/action_type.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
-import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -64,6 +62,23 @@ class _AddEditActionState extends State<AddEditAction>
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  _selectDate(BuildContext context) async {
+    showDatePicker(
+      context: context,
+      currentDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 365)),
+      initialDate: _dueDate ?? DateTime.now(),
+    ).then((DateTime? dateTime) {
+      if (dateTime == null) {
+        return;
+      }
+      setState(() {
+        _dueDate = dateTime;
+      });
+    });
   }
 
   @override
@@ -119,32 +134,41 @@ class _AddEditActionState extends State<AddEditAction>
                       color: Color(0xFF434141)),
                 ),
                 SizedBox(height: 13.h),
-                Container(
-                  height: 52.h,
-                  width: 345.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Select an action',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 16.sp, color: Color(0xFF434141)),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(Routes.selectActions).then(
+                          (value) => FocusScope.of(context).requestFocus(
+                            new FocusNode(),
                           ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color(0xFF434141),
-                            size: 20.sp,
-                          )
-                        ],
+                        );
+                  },
+                  child: Container(
+                    height: 52.h,
+                    width: 345.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Select an action',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 16.sp, color: Color(0xFF434141)),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF434141),
+                              size: 20.sp,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -223,7 +247,7 @@ class _AddEditActionState extends State<AddEditAction>
                   style: titleTextStyle,
                 ),
                 SizedBox(height: 13.h),
-                Container(
+                /* Container(
                   height: 52.h,
                   width: 345.w,
                   decoration: BoxDecoration(
@@ -251,7 +275,57 @@ class _AddEditActionState extends State<AddEditAction>
                       ),
                     ),
                   ),
+                ),*/
+
+                Container(
+                  //height: 54.h,
+                  decoration: BoxDecoration(
+                      color: Color(0xFFEFEFEF),
+                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                  width: MediaQuery.of(context).size.width,
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: GFMultiSelect(
+                      //hideDropdownUnderline: true,
+                      items: [
+                        "Me",
+                        "Group Name 1",
+                        "Group Name 2",
+                        "Group Name 3"
+                      ],
+                      onSelect: (value) {
+                        print('selected $value ');
+                      },
+                      dropdownTitleTileText: 'Select option(s)',
+                      dropdownTitleTileColor: Color(0xFFEFEFEF),
+                      dropdownTitleTileMargin: EdgeInsets.only(
+                          top: 2.sp, left: 10.sp, right: 5.sp, bottom: 2.sp),
+                      dropdownTitleTilePadding: EdgeInsets.all(10),
+                      dropdownUnderlineBorder:
+                          const BorderSide(color: Colors.transparent, width: 0),
+                      dropdownTitleTileBorder:
+                          Border.all(color: Colors.transparent, width: 0),
+                      dropdownTitleTileBorderRadius: BorderRadius.circular(5),
+                      expandedIcon: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.black54,
+                      ),
+                      collapsedIcon: const Icon(
+                        Icons.keyboard_arrow_up,
+                        color: Colors.black54,
+                      ),
+                      submitButton: Text('OK'),
+                      dropdownTitleTileTextStyle:
+                          const TextStyle(fontSize: 14, color: Colors.black54),
+                      type: GFCheckboxType.circle,
+                      activeBgColor: Colors.green.withOpacity(0.5),
+                      inactiveBorderColor: Colors.grey[200]!,
+                      padding: const EdgeInsets.all(6),
+                      margin: const EdgeInsets.all(6),
+                    ),
+                  ),
                 ),
+
                 SizedBox(height: 20.h),
                 Text(
                   'Due date',
@@ -264,21 +338,7 @@ class _AddEditActionState extends State<AddEditAction>
                 SizedBox(height: 13.h),
                 InkWell(
                   onTap: () {
-                    //TODO: show datepicker
-                    showDatePicker(
-                      context: context,
-                      currentDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(Duration(days: 365)),
-                      initialDate: _dueDate ?? DateTime.now(),
-                    ).then((DateTime? dateTime) {
-                      if (dateTime == null) {
-                        return;
-                      }
-                      setState(() {
-                        _dueDate = dateTime;
-                      });
-                    });
+                    _selectDate(context);
                   },
                   child: Container(
                     height: 52.h,
@@ -412,6 +472,5 @@ class _AddEditActionState extends State<AddEditAction>
             Navigator.of(context).pop();
           });
     });
-    ;
   }
 }
