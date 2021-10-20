@@ -40,6 +40,7 @@ class SyncService {
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
+  static final String kUpdateActions = 'updateActions';
 
   // Use this object to prevent concurrent access to data
   var lock = new Lock(reentrant: true);
@@ -79,8 +80,7 @@ class SyncService {
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
   void showAlert(BuildContext context) async {
-    
-    _isDialogShowing = true; 
+    _isDialogShowing = true;
     await app
         .showDialog(
             context: context,
@@ -116,8 +116,7 @@ class SyncService {
                     ),
                   ],
                 ))
-        .then((value) =>  _isDialogShowing =
-                            false);
+        .then((value) => _isDialogShowing = false);
   }
 
   void syncAll() async {
@@ -129,7 +128,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
-    showAlert(NavigationService.navigatorKey.currentContext!);
+   showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
     syncUsers();

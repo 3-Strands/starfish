@@ -107,6 +107,7 @@ class Strings {
   static const String hintEvaluateProgress =
       'Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.';
   static const String hintPersonName = 'Enter the person\'s name here';
+  static const String hintInstructions = 'Instructions';
 
   // Labels
   static const String descripton = 'Description';
@@ -125,6 +126,9 @@ sending an invitation to use Starfish''';
       'Explain why this material is inappropriate';
   static const String selectPropleToInvite = 'Select people to invite';
   static const String viewTeachersAndLearners = 'View Teachers and Learners';
+  static const String instructions = 'Instructions';
+  static const String selectAMaterial = 'Select a Material';
+  static const String questionToBeAnswered = 'Question to be answered';
 
   // Info/Alert messages
   static const String emptyFullName = 'Please enter name.';
@@ -138,7 +142,7 @@ sending an invitation to use Starfish''';
       'Are you sure you want to leave this group?';
   static const String syncAlertContentText =
       'This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n';
-static const String syncAlertTitleText =
+  static const String syncAlertTitleText =
       'We are setting up Starfish for you!';
   // Validation Messages
   static const String emptyEvaluateProgress =
@@ -167,6 +171,11 @@ static const String syncAlertTitleText =
   static const String createGroupFailed = 'Failed to create group.';
   static const String updateGroupSuccess = 'Group updated successfully.';
   static const String updateGroupFailed = 'Failed to update group.';
+
+  static const String createActionSuccess = 'Action created successfully.';
+  static const String createActionFailed = 'Failed to create action.';
+  static const String updateActionSuccess = 'Action updated successfully.';
+  static const String updateActionFailed = 'Failed to update action.';
 
   static const String inviteSMS =
       '''Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>''';
@@ -210,9 +219,9 @@ static const String syncAlertTitleText =
       'Follow a set of instructions';
   static const String actionTypeTextResponse = 'Answer a question';
   static const String actionTypeMaterialInstruction =
-      'Use a tool (no response)';
+      'Use a Material (no response)';
   static const String actionTypeMaterialResponse =
-      'Use a tool and enter a response';
+      'Use and respond to a Material';
   static const String actionType = 'Fill in some numbers';
 
   static const String reuseActionText = 'Re-use an Action (optional)';
