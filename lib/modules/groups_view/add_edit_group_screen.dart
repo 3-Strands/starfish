@@ -189,10 +189,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         valueListenable: _contactsNotifier,
         builder: (BuildContext context, List<InviteContact>? snapshot,
             Widget? child) {
+          if (snapshot == null) {
+            return Center(child: Text(Strings.loading),);
+          }
           List<InviteContact> _listToShow = [];
 
           if (_query.isNotEmpty) {
-            _listToShow = snapshot!
+            _listToShow = snapshot
                 .where((data) =>
                     (data.contact.displayName ?? '')
                         .toLowerCase()
@@ -202,7 +205,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         .startsWith(_query.toLowerCase()))
                 .toList();
           } else {
-            _listToShow = snapshot!;
+            _listToShow = snapshot;
           }
           return ListView.builder(
             itemCount: _listToShow.length,
@@ -227,7 +230,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
   }
 
-  Future<List<InviteContact>> _loadContacts() async {
+  _loadContacts() async {
     ContactsService.getContacts().then((List<Contact> contactList) {
       List<InviteContact> _contactList = [];
       contactList.forEach((Contact contact) {
@@ -240,7 +243,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _contactsNotifier.value = _contactList;
     });
 
-    return _filteredContactList;
+    //return _filteredContactList;
   }
 
   _showContactList() {

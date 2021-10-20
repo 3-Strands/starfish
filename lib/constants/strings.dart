@@ -176,6 +176,7 @@ sending an invitation to use Starfish''';
   static const String createActionFailed = 'Failed to create action.';
   static const String updateActionSuccess = 'Action updated successfully.';
   static const String updateActionFailed = 'Failed to update action.';
+  static const String loading = 'loading...';
 
   static const String inviteSMS =
       '''Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>''';
