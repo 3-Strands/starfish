@@ -527,24 +527,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   }
 
   _addUpdateUserProfile() {
-    HiveMaterial _hiveMaterial = HiveMaterial(
-      title: _titleController.text,
-      url: _webLinkController.text,
-      description: _descriptionController.text,
-      languageIds: _selectedLanguages
-          .map((HiveLanguage language) => language.id)
-          .toList(),
-      typeIds: _selectedTypes.map((HiveMaterialType type) => type.id).toList(),
-      topics:
-          _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList(),
-      visibility: _visibleTo != null ? _visibleTo!.value.value : 0,
-      editability: _editableBy != null ? _editableBy!.value.value : 0,
-    );
-
     final bloc = Provider.of(context);
 
+    HiveMaterial? _hiveMaterial;
+
     if (_isEditMode) {
-      debugPrint('update material');
+      _hiveMaterial = widget.material!;
 
       _hiveMaterial.id = widget.material?.id;
       _hiveMaterial.creatorId = widget.material?.creatorId;
@@ -552,9 +540,23 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
       _hiveMaterial.isUpdated = true;
     } else {
-      _hiveMaterial.id = UuidGenerator.uuid();
-      _hiveMaterial.isNew = true;
+      _hiveMaterial = HiveMaterial(
+        id: UuidGenerator.uuid(),
+        isNew: true,
+      );
     }
+    _hiveMaterial.title = _titleController.text;
+    _hiveMaterial.url = _webLinkController.text;
+    _hiveMaterial.description = _descriptionController.text;
+    _hiveMaterial.languageIds =
+        _selectedLanguages.map((HiveLanguage language) => language.id).toList();
+    _hiveMaterial.typeIds =
+        _selectedTypes.map((HiveMaterialType type) => type.id).toList();
+    _hiveMaterial.topics =
+        _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList();
+    _hiveMaterial.visibility = _visibleTo != null ? _visibleTo!.value.value : 0;
+    _hiveMaterial.editability =
+        _editableBy != null ? _editableBy!.value.value : 0;
 
     bloc.materialBloc
         .createUpdateMaterial(_hiveMaterial)
