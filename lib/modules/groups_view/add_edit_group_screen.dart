@@ -1,9 +1,9 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgets;
 import 'package:fbroadcast/fbroadcast.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
@@ -187,48 +187,56 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       //margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
 
       child: ValueListenableBuilder<List<InviteContact>?>(
-        valueListenable: _contactsNotifier,
-        builder: (BuildContext context, List<InviteContact>? snapshot,
-            Widget? child) {
-          List<InviteContact> _listToShow = [];
+          valueListenable: _contactsNotifier,
+          builder: (BuildContext context, List<InviteContact>? snapshot,
+              Widget? child) {
 
-          if (_query.isNotEmpty) {
-            _listToShow = snapshot!
-                .where((data) =>
-                    (data.contact.displayName ?? '')
-                        .toLowerCase()
-                        .contains(_query.toLowerCase()) ||
-                    (data.contact.displayName ?? '')
-                        .toLowerCase()
-                        .startsWith(_query.toLowerCase()))
-                .toList();
-          } else {
-            _listToShow = snapshot!;
-          }
-          return ListView.builder(
-            itemCount: _listToShow.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ContactListItem(
-                contact: _listToShow.elementAt(index),
-                onTap: (InviteContact contact) {
-                  setState(() {
-                    if (!contact.isSelected &&
-                        _selectedContacts.contains(contact)) {
-                      _selectedContacts.remove(contact);
-                    } else {
-                      _selectedContacts.add(contact);
-                    }
-                  });
+            if (snapshot!.length == 0) {
+              return widgets.Center(child: Text('Contacts are Loading...'));
+            }
+
+            List<InviteContact> _listToShow = [];
+
+            if (_query.isNotEmpty) {
+              _listToShow = snapshot
+                  .where((data) =>
+                      (data.contact.displayName ?? '')
+                          .toLowerCase()
+                          .contains(_query.toLowerCase()) ||
+                      (data.contact.displayName ?? '')
+                          .toLowerCase()
+                          .startsWith(_query.toLowerCase()))
+                  .toList();
+            } else {
+              _listToShow = snapshot;
+            }
+            return Scrollbar(
+              thickness:5.sp,
+              isAlwaysShown: false,
+              child: ListView.builder(
+                itemCount: _listToShow.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ContactListItem(
+                    contact: _listToShow.elementAt(index),
+                    onTap: (InviteContact contact) {
+                      setState(() {
+                        if (!contact.isSelected &&
+                            _selectedContacts.contains(contact)) {
+                          _selectedContacts.remove(contact);
+                        } else {
+                          _selectedContacts.add(contact);
+                        }
+                      });
+                    },
+                  );
                 },
-              );
-            },
-          );
-        },
-      ),
+              ),
+            );
+          }),
     );
   }
 
-  Future<List<InviteContact>> _loadContacts() async {
+   _loadContacts() async {
     ContactsService.getContacts().then((List<Contact> contactList) {
       List<InviteContact> _contactList = [];
       contactList.forEach((Contact contact) {
@@ -241,7 +249,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _contactsNotifier.value = _contactList;
     });
 
-    return _filteredContactList;
+    //return _filteredContactList ?;
   }
 
   _showContactList() {
