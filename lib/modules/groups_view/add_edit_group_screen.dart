@@ -41,7 +41,6 @@ import 'package:starfish/widgets/invited_contact_list_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
 import 'package:starfish/widgets/uninvited_person_list_item.dart';
-import 'package:uuid/uuid.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
   final HiveGroup? group;
@@ -361,7 +360,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
   }
 
-  // TODO: yet to verify
   _createUpdateGroup() async {
     String? _groupId;
     if (_isEditMode) {
@@ -386,54 +384,55 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     });
 
     List<HiveGroupUser> _newGroupUsers = [];
-    // Add self as Admin
-    /*HiveCurrentUser _currentUser =
+    // Add self as Admin, without this local added records will not be filtered
+    // based on role hence will not be visible
+    HiveCurrentUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
     _newGroupUsers.add(HiveGroupUser(
       groupId: _groupId,
       userId: _currentUser.id,
       role: GroupUser_Role.ADMIN.value,
       isNew: true,
-    ));*/
-    _newUsers.forEach((HiveUser user) {
-      UserRepository().createUpdateUserInDB(user).then((value) {
+    ));
+    _newUsers.forEach((HiveUser user) async {
+      try {
+        await UserRepository().createUpdateUserInDB(user);
+
         _newGroupUsers.add(HiveGroupUser(
           groupId: _groupId,
           userId: user.id,
           role: GroupUser_Role.LEARNER.value,
           isNew: true,
         ));
+      } catch (error) {}
 
-        if (_selectedContacts.length > 0) {
-          _sendInviteSMS(Strings.inviteSMS, _selectedContacts);
-        }
-      });
+      if (_selectedContacts.length > 0) {
+        _sendInviteSMS(Strings.inviteSMS, _selectedContacts);
+      }
     });
 
-    HiveGroup _hiveGroup = HiveGroup(
-      id: _groupId,
-      name: _titleController.text,
-      description: _descriptionController.text,
-      languageIds: _selectedLanguages
-          .map((HiveLanguage language) => language.id)
-          .toList(),
-      evaluationCategoryIds: _selectedEvaluationCategories
-          .map((HiveEvaluationCategory category) => category.id!)
-          .toList(),
-    );
+    HiveGroup? _hiveGroup;
 
     if (_isEditMode) {
-      if (_hiveGroup.users != null) {
-        _hiveGroup.users?.addAll(_newGroupUsers);
-      } else {
-        _hiveGroup.users = _newGroupUsers;
-      }
+      _hiveGroup = widget.group!;
+      _hiveGroup.users?.addAll(_newGroupUsers);
 
       _hiveGroup.isUpdated = true;
     } else {
+      _hiveGroup = HiveGroup(
+        id: _groupId,
+        isNew: true,
+      );
       _hiveGroup.users = _newGroupUsers;
-      _hiveGroup.isNew = true;
     }
+    _hiveGroup.name = _titleController.text;
+    _hiveGroup.description = _descriptionController.text;
+    _hiveGroup.languageIds =
+        _selectedLanguages.map((HiveLanguage language) => language.id).toList();
+    _hiveGroup
+      ..evaluationCategoryIds = _selectedEvaluationCategories
+          .map((HiveEvaluationCategory category) => category.id!)
+          .toList();
 
     bloc.groupBloc
         .addEditGroup(_hiveGroup)
