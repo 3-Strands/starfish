@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/components/dropdown/gf_multiselect.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -27,8 +30,10 @@ class _AddEditActionState extends State<AddEditAction>
   bool _isEditMode = false;
   final _addActionController = TextEditingController();
   final _descriptionController = TextEditingController();
-
+  late String dateTime;
+  DateTime selectedDate = DateTime.now();
   Action_Type _actionType = Action_Type.TEXT_INSTRUCTION;
+  late String _setDate = 'Select due date';
 
   @override
   void initState() {
@@ -40,6 +45,20 @@ class _AddEditActionState extends State<AddEditAction>
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        initialDatePickerMode: DatePickerMode.day,
+        firstDate: DateTime(2015),
+        lastDate: DateTime(2101));
+    if (picked != null)
+      setState(() {
+        selectedDate = picked;
+       _setDate = DateFormat.yMd().format(selectedDate);
+      });
   }
 
   @override
@@ -265,7 +284,7 @@ class _AddEditActionState extends State<AddEditAction>
                   style: titleTextStyle,
                 ),
                 SizedBox(height: 13.h),
-                Container(
+                /* Container(
                   height: 52.h,
                   width: 345.w,
                   decoration: BoxDecoration(
@@ -293,7 +312,57 @@ class _AddEditActionState extends State<AddEditAction>
                       ),
                     ),
                   ),
+                ),*/
+
+                Container(
+                  //height: 54.h,
+                  decoration: BoxDecoration(
+                      color: Color(0xFFEFEFEF),
+                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                  width: MediaQuery.of(context).size.width,
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: GFMultiSelect(
+                      //hideDropdownUnderline: true,
+                      items: [
+                        "Me",
+                        "Group Name 1",
+                        "Group Name 2",
+                        "Group Name 3"
+                      ],
+                      onSelect: (value) {
+                        print('selected $value ');
+                      },
+                      dropdownTitleTileText: 'Select option(s)',
+                      dropdownTitleTileColor: Color(0xFFEFEFEF),
+                      dropdownTitleTileMargin: EdgeInsets.only(
+                          top: 2.sp, left: 10.sp, right: 5.sp, bottom: 2.sp),
+                      dropdownTitleTilePadding: EdgeInsets.all(10),
+                      dropdownUnderlineBorder:
+                          const BorderSide(color: Colors.transparent, width: 0),
+                      dropdownTitleTileBorder:
+                          Border.all(color: Colors.transparent, width: 0),
+                      dropdownTitleTileBorderRadius: BorderRadius.circular(5),
+                      expandedIcon: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.black54,
+                      ),
+                      collapsedIcon: const Icon(
+                        Icons.keyboard_arrow_up,
+                        color: Colors.black54,
+                      ),
+                      submitButton: Text('OK'),
+                      dropdownTitleTileTextStyle:
+                          const TextStyle(fontSize: 14, color: Colors.black54),
+                      type: GFCheckboxType.circle,
+                      activeBgColor: Colors.green.withOpacity(0.5),
+                      inactiveBorderColor: Colors.grey[200]!,
+                      padding: const EdgeInsets.all(6),
+                      margin: const EdgeInsets.all(6),
+                    ),
+                  ),
                 ),
+
                 SizedBox(height: 20.h),
                 Text(
                   'Due date',
@@ -304,31 +373,36 @@ class _AddEditActionState extends State<AddEditAction>
                       color: Color(0xFF434141)),
                 ),
                 SizedBox(height: 13.h),
-                Container(
-                  height: 52.h,
-                  width: 345.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Select due date',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 16.sp, color: Color(0xFF434141)),
-                          ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color(0xFF434141),
-                            size: 20.sp,
-                          )
-                        ],
+                InkWell(
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                  child: Container(
+                    height: 52.h,
+                    width: 345.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Text(
+                              _setDate,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 16.sp, color: Color(0xFF434141)),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF434141),
+                              size: 20.sp,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
