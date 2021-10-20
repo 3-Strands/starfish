@@ -15,4 +15,14 @@ class DateTimeUtils {
   static DateTime toDateTime(String dateTimeString, String dateFormat) {
     return new DateFormat(dateFormat).parse(dateTimeString);
   }
+
+  static HiveDate toHiveDate(DateTime dateTime) {
+    HiveDate _hiveDate = HiveDate();
+
+    _hiveDate.year = dateTime.year;
+    _hiveDate.month = dateTime.month;
+    _hiveDate.day = dateTime.day;
+
+    return _hiveDate;
+  }
 }
