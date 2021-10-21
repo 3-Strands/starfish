@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
@@ -50,6 +51,7 @@ class _MultiSelectState extends State<MultiSelect> {
   late Box<HiveMaterialTopic> _materialTopicBox;
   late Box<HiveMaterialType> _materialTypeBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
+  late Box<HiveGroup> _groupBox;
 
   List<Item> _items = [];
 
@@ -174,6 +176,26 @@ class _MultiSelectState extends State<MultiSelect> {
         });
 
         break;
+      case DataSourceType.groups:
+        _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+        List<HiveGroup> _groups = _groupBox.values.toList();
+
+        _groups.forEach((element) {
+          var type = Item(data: element, isSelected: false);
+          _items.add(type);
+        });
+
+        print('SELECTED: ${widget.selectedValues}');
+        List<HiveGroup> _selectedGroups =
+            widget.selectedValues as List<HiveGroup>;
+        _selectedGroups.forEach((element) {
+          final index = _items
+              .indexWhere((item) => (item.data as HiveGroup).id == element.id);
+          _items[index].isSelected = true;
+        });
+
+        break;
+
       default:
     }
 

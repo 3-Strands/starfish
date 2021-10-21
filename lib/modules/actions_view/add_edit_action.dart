@@ -2,8 +2,6 @@ import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
-import 'package:getwidget/components/dropdown/gf_multiselect.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -12,9 +10,12 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/repository/group_repository.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -45,6 +46,7 @@ class _AddEditActionState extends State<AddEditAction>
 
   bool _isEditMode = false;
 
+  List<HiveGroup>? _selectedGroups;
   HiveMaterial? _selectedMaterial;
   Action_Type? _selectedActionType;
   String? _instructions;
@@ -87,6 +89,22 @@ class _AddEditActionState extends State<AddEditAction>
         _dueDate = dateTime;
       });
     });
+  }
+
+  Widget _groupSelector(List<HiveGroup> groups) {
+    return SelectDropDown(
+      navTitle: Strings.assignActionTo,
+      placeholder: Strings.assignActionTo,
+      selectedValues: _selectedGroups,
+      showAllOption: false,
+      choice: SelectType.multiple,
+      dataSource: DataSourceType.groups,
+      onDoneClicked: <T>(values) {
+        setState(() {
+          _selectedGroups = values as List<HiveGroup>;
+        });
+      },
+    );
   }
 
   @override
@@ -164,7 +182,7 @@ class _AddEditActionState extends State<AddEditAction>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Select an action',
+                              Strings.selectAnAction,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   fontSize: 16.sp, color: Color(0xFF434141)),
@@ -183,7 +201,7 @@ class _AddEditActionState extends State<AddEditAction>
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Name of the Action',
+                  Strings.nameOfAction,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 16.sp,
@@ -212,7 +230,7 @@ class _AddEditActionState extends State<AddEditAction>
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Type of Action',
+                  Strings.typeOfAction,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 16.sp,
@@ -253,93 +271,27 @@ class _AddEditActionState extends State<AddEditAction>
 
                 // Assign action to group
                 Text(
-                  'Assign this Action to',
+                  Strings.assignActionTo,
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
                 SizedBox(height: 13.h),
-                /* Container(
-                  height: 52.h,
-                  width: 345.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Select option(s)',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 16.sp, color: Color(0xFF434141)),
-                          ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color(0xFF434141),
-                            size: 20.sp,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),*/
 
-                Container(
-                  //height: 54.h,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                      borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                  width: MediaQuery.of(context).size.width,
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: GFMultiSelect(
-                      //hideDropdownUnderline: true,
-                      items: [
-                        "Me",
-                        "Group Name 1",
-                        "Group Name 2",
-                        "Group Name 3"
-                      ],
-                      onSelect: (value) {
-                        print('selected $value ');
-                      },
-                      dropdownTitleTileText: 'Select option(s)',
-                      dropdownTitleTileColor: Color(0xFFEFEFEF),
-                      dropdownTitleTileMargin: EdgeInsets.only(
-                          top: 2.sp, left: 10.sp, right: 5.sp, bottom: 2.sp),
-                      dropdownTitleTilePadding: EdgeInsets.all(10),
-                      dropdownUnderlineBorder:
-                          const BorderSide(color: Colors.transparent, width: 0),
-                      dropdownTitleTileBorder:
-                          Border.all(color: Colors.transparent, width: 0),
-                      dropdownTitleTileBorderRadius: BorderRadius.circular(5),
-                      expandedIcon: const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.black54,
-                      ),
-                      collapsedIcon: const Icon(
-                        Icons.keyboard_arrow_up,
-                        color: Colors.black54,
-                      ),
-                      submitButton: Text('OK'),
-                      dropdownTitleTileTextStyle:
-                          const TextStyle(fontSize: 14, color: Colors.black54),
-                      type: GFCheckboxType.circle,
-                      activeBgColor: Colors.green.withOpacity(0.5),
-                      inactiveBorderColor: Colors.grey[200]!,
-                      padding: const EdgeInsets.all(6),
-                      margin: const EdgeInsets.all(6),
-                    ),
-                  ),
+                FutureBuilder(
+                  future: GroupRepository().fetchGroupsFromDB(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<HiveGroup>> snapshot) {
+                    if (snapshot.hasData) {
+                      return _groupSelector(snapshot.data!);
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
 
                 SizedBox(height: 20.h),
                 Text(
-                  'Due date',
+                  Strings.dueDate,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontSize: 16.sp,
@@ -367,7 +319,7 @@ class _AddEditActionState extends State<AddEditAction>
                               _dueDate != null
                                   //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
                                   ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
-                                  : 'Select due date',
+                                  : Strings.hintDueDate,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   fontSize: 16.sp, color: Color(0xFF434141)),
