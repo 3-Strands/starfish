@@ -36,6 +36,7 @@ class _ActionsScreenState extends State<ActionsScreen>
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: _tabController.length,
+      
       child: Scaffold(
         body: GestureDetector(
           onTap: () {
@@ -48,7 +49,7 @@ class _ActionsScreenState extends State<ActionsScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                TabBar(
+                _user.hasAdminOrTeacherRole?TabBar(
                   controller: _tabController,
                   indicatorColor: Color(0xFF3475F0),
                   labelColor: Color(0xFF3475F0),
@@ -63,13 +64,8 @@ class _ActionsScreenState extends State<ActionsScreen>
                             ? Strings.forMeTabText
                             : Strings.forGroupITeachTabText),
                   ),
-                ),
+                ):Container(),
 
-                // [
-                //   Tab(text: 'For Me'),
-                //   Tab(text: 'For Groups I Teach'),
-                // ],
-                //),
                 Expanded(
                   child: TabBarView(
                     children:
