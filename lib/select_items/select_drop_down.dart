@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
@@ -17,7 +18,8 @@ enum DataSourceType {
   languages,
   topics,
   types,
-  evaluationCategory
+  evaluationCategory,
+  groups,
 }
 
 class SelectDropDown extends StatefulWidget {
@@ -105,6 +107,13 @@ class _SelectDropDownState extends State<SelectDropDown> {
         });
 
         break;
+      case DataSourceType.groups:
+        List<HiveGroup> groups = value as List<HiveGroup>;
+        groups.forEach((element) {
+          _value += '${element.name}, ';
+        });
+        break;
+        
       default:
     }
 

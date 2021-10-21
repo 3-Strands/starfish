@@ -108,6 +108,7 @@ class Strings {
       'Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.';
   static const String hintPersonName = 'Enter the person\'s name here';
   static const String hintInstructions = 'Instructions';
+  static const String hintDueDate = 'Select due date';
 
   // Labels
   static const String descripton = 'Description';
@@ -129,6 +130,11 @@ sending an invitation to use Starfish''';
   static const String instructions = 'Instructions';
   static const String selectAMaterial = 'Select a Material';
   static const String questionToBeAnswered = 'Question to be answered';
+  static const String dueDate = 'Due date';
+  static const String selectAnAction = 'Select an action';
+  static const String nameOfAction = 'Name of the Action';
+  static const String typeOfAction = 'Type of Action';
+  static const String assignActionTo = 'Assign this Action to';
 
   // Info/Alert messages
   static const String emptyFullName = 'Please enter name.';
@@ -205,8 +211,6 @@ sending an invitation to use Starfish''';
   static const String materialTitlePrefix = 'Title: ';
   static const String forMeTabText = 'For Me';
   static const String forGroupITeachTabText = 'For Groups I Teach';
-
-  
 
   static const List<String> materialActionsList = <String>[
     'Assigned to me and completed',
