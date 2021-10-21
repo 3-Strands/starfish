@@ -126,6 +126,21 @@ class CreateUpdateActionsResponse_Status extends $pb.ProtobufEnum {
   const CreateUpdateActionsResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
+class CreateUpdateActionUserResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUpdateActionUserResponse_Status SUCCESS = CreateUpdateActionUserResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUpdateActionUserResponse_Status FAILURE = CreateUpdateActionUserResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateUpdateActionUserResponse_Status> values = <CreateUpdateActionUserResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateUpdateActionUserResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUpdateActionUserResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateUpdateActionUserResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class CreateUpdateGroupsResponse_Status extends $pb.ProtobufEnum {
   static const CreateUpdateGroupsResponse_Status SUCCESS = CreateUpdateGroupsResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
   static const CreateUpdateGroupsResponse_Status FAILURE = CreateUpdateGroupsResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
@@ -184,6 +199,21 @@ class CreateUsersResponse_Status extends $pb.ProtobufEnum {
   static CreateUsersResponse_Status? valueOf($core.int value) => _byValue[value];
 
   const CreateUsersResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
+class DeleteActionResponse_Status extends $pb.ProtobufEnum {
+  static const DeleteActionResponse_Status SUCCESS = DeleteActionResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const DeleteActionResponse_Status FAILURE = DeleteActionResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<DeleteActionResponse_Status> values = <DeleteActionResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, DeleteActionResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static DeleteActionResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const DeleteActionResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
 class DeleteGroupUsersResponse_Status extends $pb.ProtobufEnum {

@@ -8,11 +8,6 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
-import 'google/type/date.pbjson.dart' as $0;
-import 'google/protobuf/timestamp.pbjson.dart' as $2;
-import 'google/protobuf/field_mask.pbjson.dart' as $1;
-import 'google/protobuf/empty.pbjson.dart' as $3;
-
 @$core.Deprecated('Use actionTabDescriptor instead')
 const ActionTab$json = const {
   '1': 'ActionTab',
@@ -181,6 +176,39 @@ const CreateUpdateActionsResponse_Status$json = const {
 
 /// Descriptor for `CreateUpdateActionsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createUpdateActionsResponseDescriptor = $convert.base64Decode('ChtDcmVhdGVVcGRhdGVBY3Rpb25zUmVzcG9uc2USLAoGYWN0aW9uGAEgASgLMhQuc2lsLnN0YXJmaXNoLkFjdGlvblIGYWN0aW9uEkgKBnN0YXR1cxgCIAEoDjIwLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVBY3Rpb25zUmVzcG9uc2UuU3RhdHVzUgZzdGF0dXMSGAoHbWVzc2FnZRgDIAEoCVIHbWVzc2FnZSIiCgZTdGF0dXMSCwoHU1VDQ0VTUxAAEgsKB0ZBSUxVUkUQAQ==');
+@$core.Deprecated('Use createUpdateActionUserRequestDescriptor instead')
+const CreateUpdateActionUserRequest$json = const {
+  '1': 'CreateUpdateActionUserRequest',
+  '2': const [
+    const {'1': 'action_user', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.ActionUser', '10': 'actionUser'},
+    const {'1': 'update_mask', '3': 2, '4': 1, '5': 11, '6': '.google.protobuf.FieldMask', '10': 'updateMask'},
+  ],
+};
+
+/// Descriptor for `CreateUpdateActionUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createUpdateActionUserRequestDescriptor = $convert.base64Decode('Ch1DcmVhdGVVcGRhdGVBY3Rpb25Vc2VyUmVxdWVzdBI5CgthY3Rpb25fdXNlchgBIAEoCzIYLnNpbC5zdGFyZmlzaC5BY3Rpb25Vc2VyUgphY3Rpb25Vc2VyEjsKC3VwZGF0ZV9tYXNrGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLkZpZWxkTWFza1IKdXBkYXRlTWFzaw==');
+@$core.Deprecated('Use createUpdateActionUserResponseDescriptor instead')
+const CreateUpdateActionUserResponse$json = const {
+  '1': 'CreateUpdateActionUserResponse',
+  '2': const [
+    const {'1': 'action_user', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.ActionUser', '10': 'actionUser'},
+    const {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.sil.starfish.CreateUpdateActionUserResponse.Status', '10': 'status'},
+    const {'1': 'message', '3': 3, '4': 1, '5': 9, '10': 'message'},
+  ],
+  '4': const [CreateUpdateActionUserResponse_Status$json],
+};
+
+@$core.Deprecated('Use createUpdateActionUserResponseDescriptor instead')
+const CreateUpdateActionUserResponse_Status$json = const {
+  '1': 'Status',
+  '2': const [
+    const {'1': 'SUCCESS', '2': 0},
+    const {'1': 'FAILURE', '2': 1},
+  ],
+};
+
+/// Descriptor for `CreateUpdateActionUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createUpdateActionUserResponseDescriptor = $convert.base64Decode('Ch5DcmVhdGVVcGRhdGVBY3Rpb25Vc2VyUmVzcG9uc2USOQoLYWN0aW9uX3VzZXIYASABKAsyGC5zaWwuc3RhcmZpc2guQWN0aW9uVXNlclIKYWN0aW9uVXNlchJLCgZzdGF0dXMYAiABKA4yMy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uVXNlclJlc3BvbnNlLlN0YXR1c1IGc3RhdHVzEhgKB21lc3NhZ2UYAyABKAlSB21lc3NhZ2UiIgoGU3RhdHVzEgsKB1NVQ0NFU1MQABILCgdGQUlMVVJFEAE=');
 @$core.Deprecated('Use createUpdateGroupsRequestDescriptor instead')
 const CreateUpdateGroupsRequest$json = const {
   '1': 'CreateUpdateGroupsRequest',
@@ -302,6 +330,38 @@ const CreateUsersResponse_Status$json = const {
 
 /// Descriptor for `CreateUsersResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createUsersResponseDescriptor = $convert.base64Decode('ChNDcmVhdGVVc2Vyc1Jlc3BvbnNlEiYKBHVzZXIYASABKAsyEi5zaWwuc3RhcmZpc2guVXNlclIEdXNlchJACgZzdGF0dXMYAiABKA4yKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXNlcnNSZXNwb25zZS5TdGF0dXNSBnN0YXR1cxIYCgdtZXNzYWdlGAMgASgJUgdtZXNzYWdlIiIKBlN0YXR1cxILCgdTVUNDRVNTEAASCwoHRkFJTFVSRRAB');
+@$core.Deprecated('Use deleteActionRequestDescriptor instead')
+const DeleteActionRequest$json = const {
+  '1': 'DeleteActionRequest',
+  '2': const [
+    const {'1': 'action_id', '3': 1, '4': 1, '5': 9, '10': 'actionId'},
+  ],
+};
+
+/// Descriptor for `DeleteActionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteActionRequestDescriptor = $convert.base64Decode('ChNEZWxldGVBY3Rpb25SZXF1ZXN0EhsKCWFjdGlvbl9pZBgBIAEoCVIIYWN0aW9uSWQ=');
+@$core.Deprecated('Use deleteActionResponseDescriptor instead')
+const DeleteActionResponse$json = const {
+  '1': 'DeleteActionResponse',
+  '2': const [
+    const {'1': 'action_id', '3': 1, '4': 1, '5': 9, '10': 'actionId'},
+    const {'1': 'status', '3': 3, '4': 1, '5': 14, '6': '.sil.starfish.DeleteActionResponse.Status', '10': 'status'},
+    const {'1': 'message', '3': 4, '4': 1, '5': 9, '10': 'message'},
+  ],
+  '4': const [DeleteActionResponse_Status$json],
+};
+
+@$core.Deprecated('Use deleteActionResponseDescriptor instead')
+const DeleteActionResponse_Status$json = const {
+  '1': 'Status',
+  '2': const [
+    const {'1': 'SUCCESS', '2': 0},
+    const {'1': 'FAILURE', '2': 1},
+  ],
+};
+
+/// Descriptor for `DeleteActionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteActionResponseDescriptor = $convert.base64Decode('ChREZWxldGVBY3Rpb25SZXNwb25zZRIbCglhY3Rpb25faWQYASABKAlSCGFjdGlvbklkEkEKBnN0YXR1cxgDIAEoDjIpLnNpbC5zdGFyZmlzaC5EZWxldGVBY3Rpb25SZXNwb25zZS5TdGF0dXNSBnN0YXR1cxIYCgdtZXNzYWdlGAQgASgJUgdtZXNzYWdlIiIKBlN0YXR1cxILCgdTVUNDRVNTEAASCwoHRkFJTFVSRRAB');
 @$core.Deprecated('Use deleteGroupUsersResponseDescriptor instead')
 const DeleteGroupUsersResponse$json = const {
   '1': 'DeleteGroupUsersResponse',
@@ -638,72 +698,3 @@ const User$json = const {
 
 /// Descriptor for `User`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userDescriptor = $convert.base64Decode('CgRVc2VyEg4KAmlkGAEgASgJUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEhQKBXBob25lGAMgASgJUgVwaG9uZRIfCgtjb3VudHJ5X2lkcxgEIAMoCVIKY291bnRyeUlkcxIhCgxsYW5ndWFnZV9pZHMYBSADKAlSC2xhbmd1YWdlSWRzEh8KC2xpbmtfZ3JvdXBzGAYgASgIUgpsaW5rR3JvdXBzEi8KBmdyb3VwcxgHIAMoCzIXLnNpbC5zdGFyZmlzaC5Hcm91cFVzZXJSBmdyb3VwcxIyCgdhY3Rpb25zGAggAygLMhguc2lsLnN0YXJmaXNoLkFjdGlvblVzZXJSB2FjdGlvbnMSSQoUc2VsZWN0ZWRfYWN0aW9uc190YWIYCSABKA4yFy5zaWwuc3RhcmZpc2guQWN0aW9uVGFiUhJzZWxlY3RlZEFjdGlvbnNUYWISSgoUc2VsZWN0ZWRfcmVzdWx0c190YWIYCiABKA4yGC5zaWwuc3RhcmZpc2guUmVzdWx0c1RhYlISc2VsZWN0ZWRSZXN1bHRzVGFiEigKEHBob25lX2NvdW50cnlfaWQYCyABKAlSDnBob25lQ291bnRyeUlkEiMKDWRpYWxsaW5nX2NvZGUYDCABKAlSDGRpYWxsaW5nQ29kZQ==');
-const $core.Map<$core.String, $core.dynamic> StarfishServiceBase$json = const {
-  '1': 'Starfish',
-  '2': const [
-    const {'1': 'CreateMaterialFeedbacks', '2': '.sil.starfish.CreateMaterialFeedbacksRequest', '3': '.sil.starfish.CreateMaterialFeedbacksResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'CreateUpdateActions', '2': '.sil.starfish.CreateUpdateActionsRequest', '3': '.sil.starfish.CreateUpdateActionsResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'CreateUpdateGroups', '2': '.sil.starfish.CreateUpdateGroupsRequest', '3': '.sil.starfish.CreateUpdateGroupsResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'CreateUpdateGroupUsers', '2': '.sil.starfish.CreateUpdateGroupUsersRequest', '3': '.sil.starfish.CreateUpdateGroupUsersResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'CreateUpdateMaterials', '2': '.sil.starfish.CreateUpdateMaterialsRequest', '3': '.sil.starfish.CreateUpdateMaterialsResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'CreateUsers', '2': '.sil.starfish.User', '3': '.sil.starfish.CreateUsersResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'DeleteGroupUsers', '2': '.sil.starfish.GroupUser', '3': '.sil.starfish.DeleteGroupUsersResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'GetCurrentUser', '2': '.google.protobuf.Empty', '3': '.sil.starfish.User', '4': const {}},
-    const {'1': 'ListActions', '2': '.sil.starfish.ListActionsRequest', '3': '.sil.starfish.Action', '4': const {}, '6': true},
-    const {'1': 'ListAllCountries', '2': '.sil.starfish.ListAllCountriesRequest', '3': '.sil.starfish.Country', '4': const {}, '6': true},
-    const {'1': 'ListEvaluationCategories', '2': '.sil.starfish.ListEvaluationCategoriesRequest', '3': '.sil.starfish.EvaluationCategory', '4': const {}, '6': true},
-    const {'1': 'ListGroups', '2': '.sil.starfish.ListGroupsRequest', '3': '.sil.starfish.Group', '4': const {}, '6': true},
-    const {'1': 'ListLanguages', '2': '.sil.starfish.ListLanguagesRequest', '3': '.sil.starfish.Language', '4': const {}, '6': true},
-    const {'1': 'ListMaterials', '2': '.sil.starfish.ListMaterialsRequest', '3': '.sil.starfish.Material', '4': const {}, '6': true},
-    const {'1': 'ListMaterialTopics', '2': '.sil.starfish.ListMaterialTopicsRequest', '3': '.sil.starfish.MaterialTopic', '4': const {}, '6': true},
-    const {'1': 'ListMaterialTypes', '2': '.sil.starfish.ListMaterialTypesRequest', '3': '.sil.starfish.MaterialType', '4': const {}, '6': true},
-    const {'1': 'ListUsers', '2': '.sil.starfish.ListUsersRequest', '3': '.sil.starfish.User', '4': const {}, '6': true},
-    const {'1': 'UpdateCurrentUser', '2': '.sil.starfish.UpdateCurrentUserRequest', '3': '.sil.starfish.User', '4': const {}},
-  ],
-};
-
-@$core.Deprecated('Use starfishServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> StarfishServiceBase$messageJson = const {
-  '.sil.starfish.CreateMaterialFeedbacksRequest': CreateMaterialFeedbacksRequest$json,
-  '.sil.starfish.MaterialFeedback': MaterialFeedback$json,
-  '.sil.starfish.CreateMaterialFeedbacksResponse': CreateMaterialFeedbacksResponse$json,
-  '.sil.starfish.CreateUpdateActionsRequest': CreateUpdateActionsRequest$json,
-  '.sil.starfish.Action': Action$json,
-  '.google.type.Date': $0.Date$json,
-  '.sil.starfish.Edit': Edit$json,
-  '.google.protobuf.Timestamp': $2.Timestamp$json,
-  '.google.protobuf.FieldMask': $1.FieldMask$json,
-  '.sil.starfish.CreateUpdateActionsResponse': CreateUpdateActionsResponse$json,
-  '.sil.starfish.CreateUpdateGroupsRequest': CreateUpdateGroupsRequest$json,
-  '.sil.starfish.Group': Group$json,
-  '.sil.starfish.GroupUser': GroupUser$json,
-  '.sil.starfish.CreateUpdateGroupsResponse': CreateUpdateGroupsResponse$json,
-  '.sil.starfish.CreateUpdateGroupUsersRequest': CreateUpdateGroupUsersRequest$json,
-  '.sil.starfish.CreateUpdateGroupUsersResponse': CreateUpdateGroupUsersResponse$json,
-  '.sil.starfish.CreateUpdateMaterialsRequest': CreateUpdateMaterialsRequest$json,
-  '.sil.starfish.Material': Material$json,
-  '.sil.starfish.CreateUpdateMaterialsResponse': CreateUpdateMaterialsResponse$json,
-  '.sil.starfish.User': User$json,
-  '.sil.starfish.ActionUser': ActionUser$json,
-  '.sil.starfish.CreateUsersResponse': CreateUsersResponse$json,
-  '.sil.starfish.DeleteGroupUsersResponse': DeleteGroupUsersResponse$json,
-  '.google.protobuf.Empty': $3.Empty$json,
-  '.sil.starfish.ListActionsRequest': ListActionsRequest$json,
-  '.sil.starfish.ListAllCountriesRequest': ListAllCountriesRequest$json,
-  '.sil.starfish.Country': Country$json,
-  '.sil.starfish.ListEvaluationCategoriesRequest': ListEvaluationCategoriesRequest$json,
-  '.sil.starfish.EvaluationCategory': EvaluationCategory$json,
-  '.sil.starfish.ListGroupsRequest': ListGroupsRequest$json,
-  '.sil.starfish.ListLanguagesRequest': ListLanguagesRequest$json,
-  '.sil.starfish.Language': Language$json,
-  '.sil.starfish.ListMaterialsRequest': ListMaterialsRequest$json,
-  '.sil.starfish.ListMaterialTopicsRequest': ListMaterialTopicsRequest$json,
-  '.sil.starfish.MaterialTopic': MaterialTopic$json,
-  '.sil.starfish.ListMaterialTypesRequest': ListMaterialTypesRequest$json,
-  '.sil.starfish.MaterialType': MaterialType$json,
-  '.sil.starfish.ListUsersRequest': ListUsersRequest$json,
-  '.sil.starfish.UpdateCurrentUserRequest': UpdateCurrentUserRequest$json,
-};
-
-/// Descriptor for `Starfish`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List starfishServiceDescriptor = $convert.base64Decode('CghTdGFyZmlzaBJ8ChdDcmVhdGVNYXRlcmlhbEZlZWRiYWNrcxIsLnNpbC5zdGFyZmlzaC5DcmVhdGVNYXRlcmlhbEZlZWRiYWNrc1JlcXVlc3QaLS5zaWwuc3RhcmZpc2guQ3JlYXRlTWF0ZXJpYWxGZWVkYmFja3NSZXNwb25zZSIAKAEwARJwChNDcmVhdGVVcGRhdGVBY3Rpb25zEiguc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvbnNSZXF1ZXN0Gikuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvbnNSZXNwb25zZSIAKAEwARJtChJDcmVhdGVVcGRhdGVHcm91cHMSJy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBzUmVxdWVzdBooLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cHNSZXNwb25zZSIAKAEwARJ5ChZDcmVhdGVVcGRhdGVHcm91cFVzZXJzEisuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3VwVXNlcnNSZXF1ZXN0Giwuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3VwVXNlcnNSZXNwb25zZSIAKAEwARJ2ChVDcmVhdGVVcGRhdGVNYXRlcmlhbHMSKi5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzUmVxdWVzdBorLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVNYXRlcmlhbHNSZXNwb25zZSIAKAEwARJKCgtDcmVhdGVVc2VycxISLnNpbC5zdGFyZmlzaC5Vc2VyGiEuc2lsLnN0YXJmaXNoLkNyZWF0ZVVzZXJzUmVzcG9uc2UiACgBMAESWQoQRGVsZXRlR3JvdXBVc2VycxIXLnNpbC5zdGFyZmlzaC5Hcm91cFVzZXIaJi5zaWwuc3RhcmZpc2guRGVsZXRlR3JvdXBVc2Vyc1Jlc3BvbnNlIgAoATABEj4KDkdldEN1cnJlbnRVc2VyEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5GhIuc2lsLnN0YXJmaXNoLlVzZXIiABJJCgtMaXN0QWN0aW9ucxIgLnNpbC5zdGFyZmlzaC5MaXN0QWN0aW9uc1JlcXVlc3QaFC5zaWwuc3RhcmZpc2guQWN0aW9uIgAwARJUChBMaXN0QWxsQ291bnRyaWVzEiUuc2lsLnN0YXJmaXNoLkxpc3RBbGxDb3VudHJpZXNSZXF1ZXN0GhUuc2lsLnN0YXJmaXNoLkNvdW50cnkiADABEm8KGExpc3RFdmFsdWF0aW9uQ2F0ZWdvcmllcxItLnNpbC5zdGFyZmlzaC5MaXN0RXZhbHVhdGlvbkNhdGVnb3JpZXNSZXF1ZXN0GiAuc2lsLnN0YXJmaXNoLkV2YWx1YXRpb25DYXRlZ29yeSIAMAESRgoKTGlzdEdyb3VwcxIfLnNpbC5zdGFyZmlzaC5MaXN0R3JvdXBzUmVxdWVzdBoTLnNpbC5zdGFyZmlzaC5Hcm91cCIAMAESTwoNTGlzdExhbmd1YWdlcxIiLnNpbC5zdGFyZmlzaC5MaXN0TGFuZ3VhZ2VzUmVxdWVzdBoWLnNpbC5zdGFyZmlzaC5MYW5ndWFnZSIAMAESTwoNTGlzdE1hdGVyaWFscxIiLnNpbC5zdGFyZmlzaC5MaXN0TWF0ZXJpYWxzUmVxdWVzdBoWLnNpbC5zdGFyZmlzaC5NYXRlcmlhbCIAMAESXgoSTGlzdE1hdGVyaWFsVG9waWNzEicuc2lsLnN0YXJmaXNoLkxpc3RNYXRlcmlhbFRvcGljc1JlcXVlc3QaGy5zaWwuc3RhcmZpc2guTWF0ZXJpYWxUb3BpYyIAMAESWwoRTGlzdE1hdGVyaWFsVHlwZXMSJi5zaWwuc3RhcmZpc2guTGlzdE1hdGVyaWFsVHlwZXNSZXF1ZXN0Ghouc2lsLnN0YXJmaXNoLk1hdGVyaWFsVHlwZSIAMAESQwoJTGlzdFVzZXJzEh4uc2lsLnN0YXJmaXNoLkxpc3RVc2Vyc1JlcXVlc3QaEi5zaWwuc3RhcmZpc2guVXNlciIAMAESUQoRVXBkYXRlQ3VycmVudFVzZXISJi5zaWwuc3RhcmZpc2guVXBkYXRlQ3VycmVudFVzZXJSZXF1ZXN0GhIuc2lsLnN0YXJmaXNoLlVzZXIiAA==');

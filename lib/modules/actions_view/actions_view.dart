@@ -3,7 +3,6 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

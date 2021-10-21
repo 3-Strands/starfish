@@ -22,6 +22,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/navigation_service.dart';
+import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
@@ -32,6 +33,7 @@ import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/src/generated/starfish.pb.dart' as starfish;
 
 class SyncService {
   final DEBUG = false;
@@ -128,12 +130,13 @@ class SyncService {
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
-   showAlert(NavigationService.navigatorKey.currentContext!);
+    showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
     syncUsers();
     syncCountries();
     syncLanguages();
+    syncActions();
     syncMaterialTopics();
     syncMaterialTypes();
     syncMaterial();
@@ -596,5 +599,41 @@ class SyncService {
         .createUpdateGroupUserInDB(group: _hiveGroup, groupUser: groupUser);*/
       return _response;
     }
+  }
+
+  syncActions() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      actionBox.values.forEach((element) {
+        // element.delete();
+      });
+    }
+
+    await ActionRepository()
+        .getActions()
+        .then((ResponseStream<starfish.Action> stream) {
+      stream.listen((action) {
+        HiveAction _hiveAction = HiveAction.from(action);
+
+        int _currentIndex = -1;
+        actionBox.values.toList().asMap().forEach((key, hiveAction) {
+          if (hiveAction.id == action.id) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          actionBox.put(_currentIndex, _hiveAction);
+        } else {
+          actionBox.add(_hiveAction);
+        }
+      }, onError: ((err) {
+        print(err);
+      }), onDone: () {
+        print('Action Sync Done.');
+      });
+    });
   }
 }

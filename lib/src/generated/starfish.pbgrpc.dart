@@ -22,6 +22,18 @@ class StarfishClient extends $grpc.Client {
       ($0.CreateMaterialFeedbacksRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.CreateMaterialFeedbacksResponse.fromBuffer(value));
+  static final _$createUpdateActions = $grpc.ClientMethod<
+          $0.CreateUpdateActionsRequest, $0.CreateUpdateActionsResponse>(
+      '/sil.starfish.Starfish/CreateUpdateActions',
+      ($0.CreateUpdateActionsRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.CreateUpdateActionsResponse.fromBuffer(value));
+  static final _$createUpdateActionUsers = $grpc.ClientMethod<
+          $0.CreateUpdateActionUserRequest, $0.CreateUpdateActionUserResponse>(
+      '/sil.starfish.Starfish/CreateUpdateActionUsers',
+      ($0.CreateUpdateActionUserRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.CreateUpdateActionUserResponse.fromBuffer(value));
   static final _$createUpdateGroups = $grpc.ClientMethod<
           $0.CreateUpdateGroupsRequest, $0.CreateUpdateGroupsResponse>(
       '/sil.starfish.Starfish/CreateUpdateGroups',
@@ -46,6 +58,12 @@ class StarfishClient extends $grpc.Client {
           ($0.User value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.CreateUsersResponse.fromBuffer(value));
+  static final _$deleteActions =
+      $grpc.ClientMethod<$0.DeleteActionRequest, $0.DeleteActionResponse>(
+          '/sil.starfish.Starfish/DeleteActions',
+          ($0.DeleteActionRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.DeleteActionResponse.fromBuffer(value));
   static final _$deleteGroupUsers =
       $grpc.ClientMethod<$0.GroupUser, $0.DeleteGroupUsersResponse>(
           '/sil.starfish.Starfish/DeleteGroupUsers',
@@ -56,6 +74,11 @@ class StarfishClient extends $grpc.Client {
       '/sil.starfish.Starfish/GetCurrentUser',
       ($1.Empty value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.User.fromBuffer(value));
+  static final _$listActions =
+      $grpc.ClientMethod<$0.ListActionsRequest, $0.Action>(
+          '/sil.starfish.Starfish/ListActions',
+          ($0.ListActionsRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $0.Action.fromBuffer(value));
   static final _$listAllCountries =
       $grpc.ClientMethod<$0.ListAllCountriesRequest, $0.Country>(
           '/sil.starfish.Starfish/ListAllCountries',
@@ -114,6 +137,21 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
+  $grpc.ResponseStream<$0.CreateUpdateActionsResponse> createUpdateActions(
+      $async.Stream<$0.CreateUpdateActionsRequest> request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUpdateActions, request,
+        options: options);
+  }
+
+  $grpc.ResponseStream<$0.CreateUpdateActionUserResponse>
+      createUpdateActionUsers(
+          $async.Stream<$0.CreateUpdateActionUserRequest> request,
+          {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUpdateActionUsers, request,
+        options: options);
+  }
+
   $grpc.ResponseStream<$0.CreateUpdateGroupsResponse> createUpdateGroups(
       $async.Stream<$0.CreateUpdateGroupsRequest> request,
       {$grpc.CallOptions? options}) {
@@ -142,6 +180,12 @@ class StarfishClient extends $grpc.Client {
     return $createStreamingCall(_$createUsers, request, options: options);
   }
 
+  $grpc.ResponseStream<$0.DeleteActionResponse> deleteActions(
+      $async.Stream<$0.DeleteActionRequest> request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$deleteActions, request, options: options);
+  }
+
   $grpc.ResponseStream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
       $async.Stream<$0.GroupUser> request,
       {$grpc.CallOptions? options}) {
@@ -151,6 +195,13 @@ class StarfishClient extends $grpc.Client {
   $grpc.ResponseFuture<$0.User> getCurrentUser($1.Empty request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getCurrentUser, request, options: options);
+  }
+
+  $grpc.ResponseStream<$0.Action> listActions($0.ListActionsRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listActions, $async.Stream.fromIterable([request]),
+        options: options);
   }
 
   $grpc.ResponseStream<$0.Country> listAllCountries(
@@ -235,6 +286,24 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.CreateMaterialFeedbacksRequest.fromBuffer(value),
         ($0.CreateMaterialFeedbacksResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CreateUpdateActionsRequest,
+            $0.CreateUpdateActionsResponse>(
+        'CreateUpdateActions',
+        createUpdateActions,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.CreateUpdateActionsRequest.fromBuffer(value),
+        ($0.CreateUpdateActionsResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CreateUpdateActionUserRequest,
+            $0.CreateUpdateActionUserResponse>(
+        'CreateUpdateActionUsers',
+        createUpdateActionUsers,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.CreateUpdateActionUserRequest.fromBuffer(value),
+        ($0.CreateUpdateActionUserResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateUpdateGroupsRequest,
             $0.CreateUpdateGroupsResponse>(
         'CreateUpdateGroups',
@@ -269,6 +338,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.User.fromBuffer(value),
         ($0.CreateUsersResponse value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.DeleteActionRequest, $0.DeleteActionResponse>(
+            'DeleteActions',
+            deleteActions,
+            true,
+            true,
+            ($core.List<$core.int> value) =>
+                $0.DeleteActionRequest.fromBuffer(value),
+            ($0.DeleteActionResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.GroupUser, $0.DeleteGroupUsersResponse>(
         'DeleteGroupUsers',
         deleteGroupUsers,
@@ -283,6 +361,14 @@ abstract class StarfishServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
         ($0.User value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.ListActionsRequest, $0.Action>(
+        'ListActions',
+        listActions_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.ListActionsRequest.fromBuffer(value),
+        ($0.Action value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.ListAllCountriesRequest, $0.Country>(
         'ListAllCountries',
         listAllCountries_Pre,
@@ -363,6 +449,11 @@ abstract class StarfishServiceBase extends $grpc.Service {
     return getCurrentUser(call, await request);
   }
 
+  $async.Stream<$0.Action> listActions_Pre($grpc.ServiceCall call,
+      $async.Future<$0.ListActionsRequest> request) async* {
+    yield* listActions(call, await request);
+  }
+
   $async.Stream<$0.Country> listAllCountries_Pre($grpc.ServiceCall call,
       $async.Future<$0.ListAllCountriesRequest> request) async* {
     yield* listAllCountries(call, await request);
@@ -412,6 +503,12 @@ abstract class StarfishServiceBase extends $grpc.Service {
   $async.Stream<$0.CreateMaterialFeedbacksResponse> createMaterialFeedbacks(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateMaterialFeedbacksRequest> request);
+  $async.Stream<$0.CreateUpdateActionsResponse> createUpdateActions(
+      $grpc.ServiceCall call,
+      $async.Stream<$0.CreateUpdateActionsRequest> request);
+  $async.Stream<$0.CreateUpdateActionUserResponse> createUpdateActionUsers(
+      $grpc.ServiceCall call,
+      $async.Stream<$0.CreateUpdateActionUserRequest> request);
   $async.Stream<$0.CreateUpdateGroupsResponse> createUpdateGroups(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateGroupsRequest> request);
@@ -423,10 +520,14 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $async.Stream<$0.CreateUpdateMaterialsRequest> request);
   $async.Stream<$0.CreateUsersResponse> createUsers(
       $grpc.ServiceCall call, $async.Stream<$0.User> request);
+  $async.Stream<$0.DeleteActionResponse> deleteActions(
+      $grpc.ServiceCall call, $async.Stream<$0.DeleteActionRequest> request);
   $async.Stream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
       $grpc.ServiceCall call, $async.Stream<$0.GroupUser> request);
   $async.Future<$0.User> getCurrentUser(
       $grpc.ServiceCall call, $1.Empty request);
+  $async.Stream<$0.Action> listActions(
+      $grpc.ServiceCall call, $0.ListActionsRequest request);
   $async.Stream<$0.Country> listAllCountries(
       $grpc.ServiceCall call, $0.ListAllCountriesRequest request);
   $async.Stream<$0.EvaluationCategory> listEvaluationCategories(

@@ -253,7 +253,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  _seleanguage(AppBloc bloc) {
+  _selectLanguage(AppBloc bloc) {
     for (var languageId in _user.languageIds) {
       _languageList
           .where((item) => item.id == languageId)
@@ -264,7 +264,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
     // bloc.materialBloc.selectedLanguages = _languageList;
-    _seleanguage(bloc);
+    _selectLanguage(bloc);
 
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),

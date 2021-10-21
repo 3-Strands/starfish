@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
@@ -27,9 +29,16 @@ class _MeState extends State<Me> {
   ];
   late String _choiceText = 'This month';
 
+  _getActions(AppBloc bloc) async {
+    bloc.actionBloc.fetchActionsFromDB();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final bloc = Provider.of(context);
+    _getActions(bloc);
+
+    return SingleChildScrollView(
       child: Column(
         children: [
           SizedBox(
@@ -107,127 +116,38 @@ class _MeState extends State<Me> {
           SizedBox(
             height: 10.h,
           ),
-          Card(
-            margin: EdgeInsets.only(left: 15.w, right: 15.w),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-            ),
-            color: AppColors.txtFieldBackground,
-            child: InkWell(
-              onTap: () {
-                _onMeActionSheet(context);
-              },
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "#1",
-                            style: TextStyle(
-                                color: Color(0xFF797979),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 8.0, right: 8.sp),
-                              child: Text(
-                                "Sample Action Name with long text",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: false,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 30.sp,
-                            child: PopupMenuButton(
-                              icon: Icon(
-                                Icons.more_vert,
-                                color: Color(0xFF3475F0),
-                              ),
-                              color: Colors.white,
-                              elevation: 20,
-                              shape: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(12.sp)),
-                              enabled: true,
-                              onSelected: (value) {
-                                setState(() {
-                                  // _value = value;
-                                });
-                              },
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  child: Text(
-                                    Strings.editActionText,
-                                    style: TextStyle(
-                                        color: Color(0xFF3475F0),
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  value: "",
-                                ),
-                                PopupMenuItem(
-                                  child: Text(
-                                    Strings.deleteActionText,
-                                    style: TextStyle(
-                                        color: Color(0xFF3475F0),
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  value: "",
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ActionStatusWidget(
-                          title: ActionStatus.overdue,
-                          height: 30.h,
-                          width: 130.w,
-                        ),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Text(
-                          "Due : Aug 15",
-                          style: TextStyle(
-                            color: Color(0xFF797979),
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )
+          actionsList(bloc),
+          SizedBox(
+            height: 10.h,
+          ),
         ],
       ),
+    );
+  }
+
+  void _onActionSelection(HiveAction action) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(34.r),
+          topRight: Radius.circular(34.r),
+        ),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context,
+            StateSetter setState /*You can rename this!*/) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.70,
+            child: SingleChildScrollView(
+              child: _buildSlidingUpPanel(action),
+            ),
+          );
+        });
+      },
     );
   }
 
@@ -575,6 +495,171 @@ class _MeState extends State<Me> {
             height: 10.h,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget actionsList(AppBloc bloc) {
+    return StreamBuilder<List<HiveAction>>(
+      stream: bloc.actionBloc.actions,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<HiveAction> _listToShow;
+
+          if (bloc.actionBloc.query.isNotEmpty) {
+            String _query = bloc.actionBloc.query;
+            _listToShow = snapshot.data!
+                .where((item) =>
+                    item.name!.toLowerCase().contains(_query.toLowerCase()) ||
+                    item.name!.toLowerCase().startsWith(_query.toLowerCase()))
+                .toList();
+          } else {
+            _listToShow = snapshot.data!;
+          }
+          return ListView.builder(
+              shrinkWrap: true,
+              // padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: _listToShow.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                return MyActionListItem(
+                  action: _listToShow[index],
+                  onActionTap: _onActionSelection,
+                );
+              });
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+}
+
+class MyActionListItem extends StatelessWidget {
+  final HiveAction action;
+  final Function(HiveAction action) onActionTap;
+
+  MyActionListItem({required this.action, required this.onActionTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 10.h),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(15),
+        ),
+      ),
+      color: AppColors.txtFieldBackground,
+      child: InkWell(
+        onTap: () {
+          // _onMeActionSheet(context);
+        },
+        child: Padding(
+          padding:
+              EdgeInsets.only(left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10.sp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "#1",
+                      style: TextStyle(
+                          color: Color(0xFF797979),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 8.0, right: 8.sp),
+                        child: Text(
+                          action.name ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 30.sp,
+                      child: PopupMenuButton(
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: Color(0xFF3475F0),
+                        ),
+                        color: Colors.white,
+                        elevation: 20,
+                        shape: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.circular(12.sp)),
+                        enabled: true,
+                        onSelected: (value) {
+                          // setState(() {
+                          //   // _value = value;
+                          // });
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            child: Text(
+                              Strings.editActionText,
+                              style: TextStyle(
+                                  color: Color(0xFF3475F0),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            value: "",
+                          ),
+                          PopupMenuItem(
+                            child: Text(
+                              Strings.deleteActionText,
+                              style: TextStyle(
+                                  color: Color(0xFF3475F0),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            value: "",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ActionStatusWidget(
+                    title: ActionStatus.overdue,
+                    height: 30.h,
+                    width: 130.w,
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Text(
+                    "Due : Aug 15",
+                    style: TextStyle(
+                      color: Color(0xFF797979),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

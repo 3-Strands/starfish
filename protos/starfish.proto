@@ -20,6 +20,9 @@ service Starfish {
     // Create or update actions
     rpc CreateUpdateActions (stream CreateUpdateActionsRequest) returns (stream CreateUpdateActionsResponse) {}
 
+    // Create or update assignment of actions to users
+    rpc CreateUpdateActionUsers (stream CreateUpdateActionUserRequest) returns (stream CreateUpdateActionUserResponse) {}
+
     // Create or update groups
     rpc CreateUpdateGroups (stream CreateUpdateGroupsRequest) returns (stream CreateUpdateGroupsResponse) {}
 
@@ -31,6 +34,9 @@ service Starfish {
 
     // Create starfish users
     rpc CreateUsers (stream User) returns (stream CreateUsersResponse) {}
+
+    // Delete Actions.
+    rpc DeleteActions (stream DeleteActionRequest) returns (stream DeleteActionResponse) {}
 
     // Remove users from groups.
     // The role on GroupUser message is ignored in this procedure
@@ -231,6 +237,40 @@ message CreateUpdateActionsResponse {
 
 }
 
+message CreateUpdateActionUserRequest {
+
+    // The ActionUser resource that will be created or replace the existing one on the server.
+    // If the group and user are already connected then this will be an update request
+    // otherwise it will be a create request
+    ActionUser action_user = 1;
+
+    // The field mask specifying which fields of the ActionUser resource should be updated
+    // If not specified then all fields are updated
+    // If specified and some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateActionUserResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The ActionUser after update or create request.
+    ActionUser action_user = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateGroupsRequest {
 
     // The Group resource that will be created or replace the existing one on the server.
@@ -351,6 +391,32 @@ message CreateUsersResponse {
 
     // Error message or any relevant message in response to the request.
     string message = 3;
+
+}
+
+
+message DeleteActionRequest {
+
+    // The ID of the action to delete
+    string action_id = 1;
+
+}
+
+message DeleteActionResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The ID of the action that was requested to be deleted
+    string action_id = 1;
+
+    // The status of the deletion
+    Status status = 3;
+
+    // Error message or any other message related to the deletion
+    string message = 4;
 
 }
 

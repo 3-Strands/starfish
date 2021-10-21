@@ -139,6 +139,17 @@ class ApiProvider {
     return client!.listGroups(request);
   }
 
+  Future<ResponseStream<Action>> getActions() async {
+    var request = ListActionsRequest.create();
+    Date date = Date(year: 2020, month: 1, day: 1);
+    //request.updatedSince = date;
+
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.listActions(request);
+  }
+
   Future<ResponseStream<EvaluationCategory>> getEvaluationCategories() async {
     var request = ListEvaluationCategoriesRequest.create();
     Date date = Date(year: 2020, month: 1, day: 1);
