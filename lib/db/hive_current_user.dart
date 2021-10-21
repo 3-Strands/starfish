@@ -80,6 +80,19 @@ class HiveCurrentUser {
     );
   }
 
+  bool get hasAdminOrTeacherRole {
+    return this
+            .groups
+            .where((HiveGroupUser groupUser) =>
+                GroupUser_Role.valueOf(groupUser.role!) ==
+                    GroupUser_Role.ADMIN ||
+                GroupUser_Role.valueOf(groupUser.role!) ==
+                    GroupUser_Role.TEACHER)
+            .toList()
+            .length >
+        0;
+  }
+
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 
