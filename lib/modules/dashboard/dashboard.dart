@@ -8,8 +8,8 @@ import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
+import 'package:swipedetector/swipedetector.dart';
 import '../material_view/materials_view.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Dashboard extends StatefulWidget {

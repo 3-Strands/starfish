@@ -1,10 +1,8 @@
 import 'package:cron/cron.dart';
-import 'package:cron/cron.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/group_repository.dart';

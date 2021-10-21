@@ -7,6 +7,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -30,6 +31,7 @@ class _MeState extends State<Me> {
   ];
   late String _choiceText = 'This month';
 
+  Dashboard obj = new Dashboard();
   _getActions(AppBloc bloc) async {
     bloc.actionBloc.fetchActionsFromDB();
   }
@@ -40,88 +42,90 @@ class _MeState extends State<Me> {
     _getActions(bloc);
 
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            height: 52.h,
-            width: 345.w,
-            margin: EdgeInsets.only(left: 15.w, right: 15.w),
-            decoration: BoxDecoration(
-              color: AppColors.txtFieldBackground,
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20.h,
             ),
-            child: Center(
-              child: DropdownButtonHideUnderline(
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    // icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 35,
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 16.sp,
-                      fontFamily: 'OpenSans',
-                    ),
-                    hint: Text(
-                      _choiceText,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+            Container(
+              height: 52.h,
+              width: 345.w,
+              margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              decoration: BoxDecoration(
+                color: AppColors.txtFieldBackground,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: Center(
+                child: DropdownButtonHideUnderline(
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      // icon: Icon(Icons.arrow_drop_down),
+                      iconSize: 35,
                       style: TextStyle(
                         color: Color(0xFF434141),
                         fontSize: 16.sp,
                         fontFamily: 'OpenSans',
                       ),
-                      textAlign: TextAlign.left,
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        _choiceText = value!;
-                      });
-                    },
-                    items: _dropdownTitleList
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 14.sp,
-                            fontFamily: 'OpenSans',
-                          ),
+                      hint: Text(
+                        _choiceText,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 16.sp,
+                          fontFamily: 'OpenSans',
                         ),
-                      );
-                    }).toList(),
+                        textAlign: TextAlign.left,
+                      ),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _choiceText = value!;
+                        });
+                      },
+                      items: _dropdownTitleList
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 14.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 10.h),
-          SearchBar(
-            initialValue: '',
-            onValueChanged: (value) {
-              print('searched value $value');
-              setState(() {});
-            },
-            onDone: (value) {
-              print('searched value $value');
-            },
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          actionsList(bloc),
-          SizedBox(
-            height: 10.h,
-          ),
-        ],
+            SizedBox(height: 10.h),
+            SearchBar(
+              initialValue: '',
+              onValueChanged: (value) {
+                print('searched value $value');
+                setState(() {});
+              },
+              onDone: (value) {
+                print('searched value $value');
+              },
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            actionsList(bloc),
+            SizedBox(
+              height: 10.h,
+            ),
+          ],
+        ),
       ),
     );
   }

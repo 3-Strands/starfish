@@ -57,6 +57,7 @@ dependencies:
   synchronized: ^3.0.0
   focus_detector: ^2.0.0
   getwidget: ^2.0.4
+  swipedetector: ^1.2.0
 
 dev_dependencies:
   flutter_test:

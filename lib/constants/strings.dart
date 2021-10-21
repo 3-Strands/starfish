@@ -203,7 +203,10 @@ sending an invitation to use Starfish''';
   static const String addActionText = 'Add Action';
   static const String materialActionPrefix = 'Action: ';
   static const String materialTitlePrefix = 'Title: ';
-  static const String selectActionTypeText = 'Select a type';
+  static const String forMeTabText = 'For Me';
+  static const String forGroupITeachTabText = 'For Groups I Teach';
+
+  
 
   static const List<String> materialActionsList = <String>[
     'Assigned to me and completed',
