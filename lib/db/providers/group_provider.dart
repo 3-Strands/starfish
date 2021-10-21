@@ -122,4 +122,9 @@ class GroupProvider {
     _group.users.whe
     _groupBox.deleteAt(index)*/
   }
+
+  HiveGroup? getGroupById(String groupId) {
+    return _groupBox.values
+        .firstWhereOrNull((element) => element.id == groupId);
+  }
 }

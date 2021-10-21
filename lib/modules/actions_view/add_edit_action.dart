@@ -12,6 +12,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -44,6 +45,7 @@ class _AddEditActionState extends State<AddEditAction>
 
   bool _isEditMode = false;
 
+  HiveMaterial? _selectedMaterial;
   Action_Type? _selectedActionType;
   String? _instructions;
   String? _question;
@@ -55,6 +57,12 @@ class _AddEditActionState extends State<AddEditAction>
     if (widget.action != null) {
       _isEditMode = true;
     }
+    _selectedActionType = _isEditMode
+        ? Action_Type.valueOf(widget.action!.type!)
+        : Action_Type.TEXT_INSTRUCTION;
+
+    _selectedMaterial = _isEditMode ? widget.action!.material : null;
+
     _controller = AnimationController(vsync: this);
   }
 
@@ -231,9 +239,12 @@ class _AddEditActionState extends State<AddEditAction>
                       _question = value;
                     });
                   },
-                  selectedActionType: _isEditMode
-                      ? Action_Type.valueOf(widget.action!.type!)
-                      : Action_Type.TEXT_INSTRUCTION,
+                  onMaterialChange: (HiveMaterial? material) {
+                    setState(() {
+                      _selectedMaterial = material;
+                    });
+                  },
+                  selectedActionType: _selectedActionType,
                   instructions: _isEditMode ? widget.action!.instructions : '',
                   question: _isEditMode ? widget.action!.question : '',
                 ),
@@ -440,6 +451,8 @@ class _AddEditActionState extends State<AddEditAction>
     _hiveAction.name = _actionNameController.text;
     //_hiveAction.creatorId=
     //_hiveAction.groupId=
+    _hiveAction.materialId =
+        _selectedMaterial != null ? _selectedMaterial!.id : null;
     _hiveAction.instructions = _instructions;
     _hiveAction.question = _question;
     _hiveAction.dateDue =

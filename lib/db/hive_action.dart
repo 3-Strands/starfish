@@ -1,12 +1,17 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
+import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/material_provider.dart';
+import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 part 'hive_action.g.dart';
 
 @HiveType(typeId: 4)
-class HiveAction {
+class HiveAction extends HiveObject {
   @HiveField(0)
   String? id;
   @HiveField(1)
@@ -79,5 +84,19 @@ class HiveAction {
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
     instructions: ${this.instructions?.toString()}, materialId: ${this.materialId?.toString()}, 
     question: ${this.question}, dateDue: ${this.dateDue} }''';
+  }
+}
+
+extension HiveActionExt on HiveAction {
+  HiveMaterial? get material {
+    return this.materialId != null
+        ? MaterialProvider().getMaterialById(this.materialId!)
+        : null;
+  }
+
+  HiveGroup? get group {
+    return this.groupId != null
+        ? GroupProvider().getGroupById(this.groupId!)
+        : null;
   }
 }

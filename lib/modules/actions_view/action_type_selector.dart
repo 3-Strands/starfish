@@ -4,23 +4,29 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/enums/action_type.dart';
 
 class ActionTypeSelector extends StatefulWidget {
   Action_Type? selectedActionType;
+  HiveMaterial? selectedMaterial;
   String? instructions;
   String? question;
   final Function(Action_Type?) onActionTypeChange;
   final Function(String?) onInstructionsChange;
   final Function(String?) onQuestionChange;
+  final Function(HiveMaterial?) onMaterialChange;
 
   ActionTypeSelector({
     Key? key,
     required this.onActionTypeChange,
     required this.onInstructionsChange,
     required this.onQuestionChange,
+    required this.onMaterialChange,
     this.selectedActionType = Action_Type.TEXT_INSTRUCTION,
+    this.selectedMaterial,
     this.instructions = '',
     this.question = '',
   }) : super(key: key);
@@ -34,6 +40,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
   final TextEditingController _questionController = TextEditingController();
 
   Action_Type _selectedActionType = Action_Type.TEXT_INSTRUCTION;
+  HiveMaterial? _selectedMaterial;
 
   @override
   void initState() {
@@ -43,6 +50,10 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
 
     if (widget.selectedActionType != null) {
       _selectedActionType = widget.selectedActionType!;
+    }
+
+    if (widget.selectedActionType != null) {
+      _selectedMaterial = widget.selectedMaterial;
     }
   }
 
@@ -235,53 +246,68 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
               Radius.circular(10),
             ),
           ),
-          child: DropdownButtonHideUnderline(
-            child: ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<Action_Type>(
-                isExpanded: true,
-                iconSize: 35,
-                style: TextStyle(
-                  color: Color(0xFF434141),
-                  fontSize: 16.sp,
-                  fontFamily: 'OpenSans',
-                ),
-                hint: Text(
-                  widget.selectedActionType!.about,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Color(0xFF434141),
-                    fontSize: 16.sp,
-                    fontFamily: 'OpenSans',
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-                onChanged: (Action_Type? value) {
-                  /*setState(() {
-                    widget.selectedActionType = value!;
-                  });
-                  widget.onActionTypeChange(value);*/
-                },
-                items: Action_Type.values
-                    .map<DropdownMenuItem<Action_Type>>((Action_Type value) {
-                  return DropdownMenuItem<Action_Type>(
-                    value: value,
-                    child: Text(
-                      value.about,
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 14.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
+          child: FutureBuilder(
+            future: MaterialRepository().fetchMaterialsFromDB(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<HiveMaterial>> snapshot) {
+              if (snapshot.hasData) {
+                return _createMaterialSelector(snapshot.data!);
+              } else {
+                return Container();
+              }
+            },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _createMaterialSelector(List<HiveMaterial> materials) {
+    return DropdownButtonHideUnderline(
+      child: ButtonTheme(
+        alignedDropdown: true,
+        child: DropdownButton<HiveMaterial>(
+          isExpanded: true,
+          iconSize: 35,
+          style: TextStyle(
+            color: Color(0xFF434141),
+            fontSize: 16.sp,
+            fontFamily: 'OpenSans',
+          ),
+          hint: Text(
+            _selectedMaterial != null
+                ? _selectedMaterial!.title!
+                : Strings.selectAMaterial,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Color(0xFF434141),
+              fontSize: 16.sp,
+              fontFamily: 'OpenSans',
+            ),
+            textAlign: TextAlign.left,
+          ),
+          onChanged: (HiveMaterial? value) {
+            setState(() {
+              _selectedMaterial = value;
+            });
+          },
+          items: materials
+              .map<DropdownMenuItem<HiveMaterial>>((HiveMaterial value) {
+            return DropdownMenuItem<HiveMaterial>(
+              value: value,
+              child: Text(
+                value.title!,
+                style: TextStyle(
+                  color: Color(0xFF434141),
+                  fontSize: 14.sp,
+                  fontFamily: 'OpenSans',
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

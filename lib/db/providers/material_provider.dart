@@ -1,7 +1,8 @@
 import 'package:hive/hive.dart';
-import '../hive_database.dart';
-import '../hive_material.dart';
-import '../hive_material_topic.dart';
+import 'package:collection/collection.dart';
+import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_material_topic.dart';
 
 class MaterialProvider {
   late Box<HiveMaterial> _materialBox;
@@ -35,5 +36,10 @@ class MaterialProvider {
     } else {
       _materialBox.add(material);
     }
+  }
+
+  HiveMaterial? getMaterialById(String materialId) {
+    return _materialBox.values
+        .firstWhereOrNull((element) => element.id == materialId);
   }
 }

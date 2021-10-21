@@ -6,6 +6,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -602,9 +603,23 @@ class MyActionListItem extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12.sp)),
                         enabled: true,
                         onSelected: (value) {
-                          // setState(() {
-                          //   // _value = value;
-                          // });
+                          switch (value) {
+                            case 0:
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddEditAction(
+                                    action: action,
+                                  ),
+                                ),
+                              ).then((value) => FocusScope.of(context)
+                                  .requestFocus(new FocusNode()));
+                              break;
+                            case 1:
+                              //TODO: delete action
+
+                              break;
+                          }
                         },
                         itemBuilder: (context) => [
                           PopupMenuItem(
@@ -615,7 +630,7 @@ class MyActionListItem extends StatelessWidget {
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold),
                             ),
-                            value: "",
+                            value: 0,
                           ),
                           PopupMenuItem(
                             child: Text(
@@ -625,7 +640,7 @@ class MyActionListItem extends StatelessWidget {
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold),
                             ),
-                            value: "",
+                            value: 1,
                           ),
                         ],
                       ),
