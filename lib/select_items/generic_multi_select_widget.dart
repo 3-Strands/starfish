@@ -185,7 +185,6 @@ class _MultiSelectState extends State<MultiSelect> {
           _items.add(type);
         });
 
-        print('SELECTED: ${widget.selectedValues}');
         List<HiveGroup> _selectedGroups =
             widget.selectedValues as List<HiveGroup>;
         _selectedGroups.forEach((element) {
@@ -477,6 +476,16 @@ class _MultiSelectState extends State<MultiSelect> {
         break;
       case DataSourceType.evaluationCategory:
         List<HiveEvaluationCategory> selectedItems = [];
+        _items.forEach((item) {
+          if (item.isSelected == true) {
+            selectedItems.add(item.data);
+          }
+        });
+        widget.onDoneClicked(selectedItems);
+
+        break;
+      case DataSourceType.groups:
+        List<HiveGroup> selectedItems = [];
         _items.forEach((item) {
           if (item.isSelected == true) {
             selectedItems.add(item.data);

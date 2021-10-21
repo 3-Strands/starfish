@@ -46,7 +46,8 @@ class _AddEditActionState extends State<AddEditAction>
 
   bool _isEditMode = false;
 
-  List<HiveGroup>? _selectedGroups;
+  late List<HiveGroup> _selectedGroups = [];
+
   HiveMaterial? _selectedMaterial;
   Action_Type? _selectedActionType;
   String? _instructions;
@@ -89,22 +90,6 @@ class _AddEditActionState extends State<AddEditAction>
         _dueDate = dateTime;
       });
     });
-  }
-
-  Widget _groupSelector(List<HiveGroup> groups) {
-    return SelectDropDown(
-      navTitle: Strings.assignActionTo,
-      placeholder: Strings.assignActionTo,
-      selectedValues: _selectedGroups,
-      showAllOption: false,
-      choice: SelectType.multiple,
-      dataSource: DataSourceType.groups,
-      onDoneClicked: <T>(values) {
-        setState(() {
-          _selectedGroups = values as List<HiveGroup>;
-        });
-      },
-    );
   }
 
   @override
@@ -277,15 +262,17 @@ class _AddEditActionState extends State<AddEditAction>
                 ),
                 SizedBox(height: 13.h),
 
-                FutureBuilder(
-                  future: GroupRepository().fetchGroupsFromDB(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<HiveGroup>> snapshot) {
-                    if (snapshot.hasData) {
-                      return _groupSelector(snapshot.data!);
-                    } else {
-                      return Container();
-                    }
+                SelectDropDown(
+                  navTitle: Strings.assignActionTo,
+                  placeholder: Strings.assignActionTo,
+                  selectedValues: _selectedGroups,
+                  showAllOption: false,
+                  choice: SelectType.multiple,
+                  dataSource: DataSourceType.groups,
+                  onDoneClicked: <T>(values) {
+                    setState(() {
+                      _selectedGroups = values as List<HiveGroup>;
+                    });
                   },
                 ),
 
