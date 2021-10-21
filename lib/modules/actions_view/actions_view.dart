@@ -18,17 +18,16 @@ class ActionsScreen extends StatefulWidget {
 class _ActionsScreenState extends State<ActionsScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(length: 2, vsync: this, initialIndex: 0);
+    _tabController = new TabController(length: 1, vsync: this, initialIndex: 0);
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: _tabController.length,
       child: Scaffold(
         body: GestureDetector(
           onTap: () {
@@ -49,14 +48,20 @@ class _ActionsScreenState extends State<ActionsScreen>
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600), //For Selected tab
                   unselectedLabelColor: Color(0xFF797979),
-                  tabs: [
-                    Tab(text: 'For Me'),
-                    Tab(text: 'For Groups I Teach'),
-                  ],
+                  tabs: List.generate(
+                    _tabController.length,
+                    (index) => Tab(text: index == 0 ? 'For Me' : 'For Groups I Teach'),
+                  ),
                 ),
+
+                // [
+                //   Tab(text: 'For Me'),
+                //   Tab(text: 'For Groups I Teach'),
+                // ],
+                //),
                 Expanded(
                   child: TabBarView(
-                    children: [Me(), MyGroup()],
+                    children: _tabController.length == 2 ? [Me(), MyGroup()] : [Me()],
                     controller: _tabController,
                   ),
                 )
