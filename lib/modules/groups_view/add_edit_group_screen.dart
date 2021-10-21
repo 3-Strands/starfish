@@ -209,22 +209,26 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             } else {
               _listToShow = snapshot;
             }
-            return ListView.builder(
-                itemCount: _listToShow.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ContactListItem(
-                      contact: _listToShow.elementAt(index),
-                      onTap: (InviteContact contact) {
-                        setState(() {
-                          if (!contact.isSelected &&
-                              _selectedContacts.contains(contact)) {
-                            _selectedContacts.remove(contact);
-                          } else {
-                            _selectedContacts.add(contact);
-                          }
+            return Scrollbar(
+              thickness: 5.sp,
+              isAlwaysShown: false,
+              child: ListView.builder(
+                  itemCount: _listToShow.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ContactListItem(
+                        contact: _listToShow.elementAt(index),
+                        onTap: (InviteContact contact) {
+                          setState(() {
+                            if (!contact.isSelected &&
+                                _selectedContacts.contains(contact)) {
+                              _selectedContacts.remove(contact);
+                            } else {
+                              _selectedContacts.add(contact);
+                            }
+                          });
                         });
-                      });
-                });
+                  }),
+            );
           }),
     );
   }
