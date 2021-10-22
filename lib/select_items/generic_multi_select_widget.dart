@@ -371,11 +371,15 @@ class _MultiSelectState extends State<MultiSelect> {
 
   Widget _listBuilder() {
     return Container(
-      child: ListView.builder(
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          return ItemList(_items[index], this);
-        },
+      child: Scrollbar(
+        thickness: 5.sp,
+        isAlwaysShown: false,
+        child: ListView.builder(
+          itemCount: _items.length,
+          itemBuilder: (context, index) {
+            return ItemList(_items[index], this);
+          },
+        ),
       ),
     );
   }
