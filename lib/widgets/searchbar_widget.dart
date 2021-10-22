@@ -56,7 +56,21 @@ class _SearchBarState extends State<SearchBar> {
               controller: searchController,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
-                suffixIcon: Icon(Icons.search, color: Colors.blue),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      searchController.text.isNotEmpty
+                          ? Icons.close
+                          : Icons.search,
+                      color: Colors.blue),
+                  iconSize: 25.sp,
+                  color: Colors.green,
+                  splashColor: Colors.purple,
+                  onPressed: (){
+                    widget.onDone('');
+                    searchController.text = '';
+                  }
+                  ,
+                ),
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
