@@ -506,277 +506,281 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: _titleController,
-                  keyboardType: TextInputType.text,
-                  style: formTitleTextStyle,
-                  decoration: InputDecoration(
-                    hintText: Strings.hintGroupName,
-                    hintStyle: formTitleHintStyle,
-                    contentPadding: EdgeInsets.fromLTRB(0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.transparent,
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Description
-                Text(
-                  Strings.descripton,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: TextFormField(
-                    maxLines: 4,
-                    controller: _descriptionController,
+        child: Scrollbar(
+          thickness: 5.sp,
+          isAlwaysShown: false,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _titleController,
                     keyboardType: TextInputType.text,
+                    style: formTitleTextStyle,
                     decoration: InputDecoration(
+                      hintText: Strings.hintGroupName,
+                      hintStyle: formTitleHintStyle,
+                      contentPadding: EdgeInsets.fromLTRB(0.w, 0.0, 5.0.w, 0.0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(10.0.r),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(10.0.r),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0.r),
                         borderSide: BorderSide(
                           color: Colors.transparent,
                         ),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Colors.transparent,
                     ),
                   ),
-                ),
-                SizedBox(height: 21.h),
+                  SizedBox(height: 21.h),
 
-                // Language(s) used
-                Text(
-                  Strings.lanugagesUsed,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: SelectDropDown(
-                    navTitle: Strings.selectLanugages,
-                    placeholder: Strings.selectLanugages,
-                    selectedValues: _selectedLanguages,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.languages,
-                    onDoneClicked: <T>(languages) {
-                      setState(() {
-                        _selectedLanguages = languages as List<HiveLanguage>;
-                        // print("Selected languages ==>> $_selectedLanguages");
-                      });
-                    },
+                  // Description
+                  Text(
+                    Strings.descripton,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
                   ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Evaluate Progress
-                Text(
-                  Strings.evaluateProgress,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: SelectDropDown(
-                    navTitle: Strings.selectCategories,
-                    placeholder: Strings.selectCategories,
-                    selectedValues: _selectedEvaluationCategories,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.evaluationCategory,
-                    onDoneClicked: <T>(categories) {
-                      setState(() {
-                        _selectedEvaluationCategories =
-                            categories as List<HiveEvaluationCategory>;
-                        // print("Selected types ==>> $types");
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  Strings.hintEvaluateProgress,
-                  maxLines: 3,
-                  textAlign: TextAlign.left,
-                  style: italicDetailTextTextStyle,
-                ),
-                SizedBox(height: 40.h),
-
-                // Option 1.
-                Text(
-                  Strings.invitePeopleFromContactsList,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 20.h),
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(30.r),
-                  color: Color(0xFF3475F0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print('Show Contact List');
-                        _checkPermissionsAndShowContact();
-                      },
-                      child: Text(
-                        Strings.inviteFromContactsList,
-                        style: TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 14.sp,
-                          color: Color(0xFF3475F0),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: TextFormField(
+                      maxLines: 4,
+                      controller: _descriptionController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Selected Contacts
-                Visibility(
-                  child: Column(
-                    children: _invitedContactsContainer(_selectedContacts),
-                  ),
-                  visible: _selectedContacts.toList().length > 0,
-                ),
-
-                if (_isEditMode &&
-                    widget.group!.activeUsers
-                            ?.where((element) => !element.isInvited)
-                            .toList() !=
-                        null)
-                  Column(
-                    children: _invitedGroupMembersContainer(widget
-                        .group!.activeUsers!
-                        .where((element) => !element.isInvited)
-                        .toList()),
-                  ),
-
-                // Option 2.
-                Text(
-                  Strings.addWithoutInvite,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 20.h),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFEFEFEF),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  padding: EdgeInsets.only(left: 15.w),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _personNameController,
-                          keyboardType: TextInputType.text,
-                          style: textFormFieldText,
-                          decoration: InputDecoration(
-                            hintText: Strings.hintPersonName,
-                            hintStyle: textFormFieldText,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0.r),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0.r),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0.r),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: AppColors.txtFieldBackground,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
                           ),
                         ),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
-                      IconButton(
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
+
+                  // Language(s) used
+                  Text(
+                    Strings.lanugagesUsed,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: SelectDropDown(
+                      navTitle: Strings.selectLanugages,
+                      placeholder: Strings.selectLanugages,
+                      selectedValues: _selectedLanguages,
+                      choice: SelectType.multiple,
+                      dataSource: DataSourceType.languages,
+                      onDoneClicked: <T>(languages) {
+                        setState(() {
+                          _selectedLanguages = languages as List<HiveLanguage>;
+                          // print("Selected languages ==>> $_selectedLanguages");
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
+
+                  // Evaluate Progress
+                  Text(
+                    Strings.evaluateProgress,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: SelectDropDown(
+                      navTitle: Strings.selectCategories,
+                      placeholder: Strings.selectCategories,
+                      selectedValues: _selectedEvaluationCategories,
+                      choice: SelectType.multiple,
+                      dataSource: DataSourceType.evaluationCategory,
+                      onDoneClicked: <T>(categories) {
+                        setState(() {
+                          _selectedEvaluationCategories =
+                              categories as List<HiveEvaluationCategory>;
+                          // print("Selected types ==>> $types");
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    Strings.hintEvaluateProgress,
+                    maxLines: 3,
+                    textAlign: TextAlign.left,
+                    style: italicDetailTextTextStyle,
+                  ),
+                  SizedBox(height: 40.h),
+
+                  // Option 1.
+                  Text(
+                    Strings.invitePeopleFromContactsList,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 20.h),
+                  DottedBorder(
+                    borderType: BorderType.RRect,
+                    radius: Radius.circular(30.r),
+                    color: Color(0xFF3475F0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50.h,
+                      child: ElevatedButton(
                         onPressed: () {
-                          if (_personNameController.text.isNotEmpty) {
-                            setState(() {
-                              _unInvitedPersonNames
-                                  .add(_personNameController.text);
-
-                              _personNameController.text = '';
-                            });
-                          }
+                          print('Show Contact List');
+                          _checkPermissionsAndShowContact();
                         },
-                        icon: SvgPicture.asset(AssetsPath.nextIcon),
+                        child: Text(
+                          Strings.inviteFromContactsList,
+                          style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 14.sp,
+                            color: Color(0xFF3475F0),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-                // Selection persion without invite
-                Visibility(
-                  child: Column(
-                    children:
-                        _unInvitedContactsContainer(_unInvitedPersonNames),
-                  ),
-                  visible: _unInvitedPersonNames.toList().length > 0,
-                ),
+                  SizedBox(height: 21.h),
 
-                if (_isEditMode &&
-                    widget.group!.activeUsers
-                            ?.where((element) => element.isInvited)
-                            .toList() !=
-                        null)
-                  Column(
-                    children: _unInvitedGroupMembersContainer(widget
-                        .group!.activeUsers!
-                        .where((element) => element.isInvited)
-                        .toList()),
+                  // Selected Contacts
+                  Visibility(
+                    child: Column(
+                      children: _invitedContactsContainer(_selectedContacts),
+                    ),
+                    visible: _selectedContacts.toList().length > 0,
                   ),
-                if (widget.group?.editHistory != null)
-                  _editHistoryContainer(widget.group),
 
-                SizedBox(height: 59.h),
-              ],
+                  if (_isEditMode &&
+                      widget.group!.activeUsers
+                              ?.where((element) => !element.isInvited)
+                              .toList() !=
+                          null)
+                    Column(
+                      children: _invitedGroupMembersContainer(widget
+                          .group!.activeUsers!
+                          .where((element) => !element.isInvited)
+                          .toList()),
+                    ),
+
+                  // Option 2.
+                  Text(
+                    Strings.addWithoutInvite,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFEFEFEF),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    padding: EdgeInsets.only(left: 15.w),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _personNameController,
+                            keyboardType: TextInputType.text,
+                            style: textFormFieldText,
+                            decoration: InputDecoration(
+                              hintText: Strings.hintPersonName,
+                              hintStyle: textFormFieldText,
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0.r),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0.r),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0.r),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: AppColors.txtFieldBackground,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (_personNameController.text.isNotEmpty) {
+                              setState(() {
+                                _unInvitedPersonNames
+                                    .add(_personNameController.text);
+
+                                _personNameController.text = '';
+                              });
+                            }
+                          },
+                          icon: SvgPicture.asset(AssetsPath.nextIcon),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Selection persion without invite
+                  Visibility(
+                    child: Column(
+                      children:
+                          _unInvitedContactsContainer(_unInvitedPersonNames),
+                    ),
+                    visible: _unInvitedPersonNames.toList().length > 0,
+                  ),
+
+                  if (_isEditMode &&
+                      widget.group!.activeUsers
+                              ?.where((element) => element.isInvited)
+                              .toList() !=
+                          null)
+                    Column(
+                      children: _unInvitedGroupMembersContainer(widget
+                          .group!.activeUsers!
+                          .where((element) => element.isInvited)
+                          .toList()),
+                    ),
+                  if (widget.group?.editHistory != null)
+                    _editHistoryContainer(widget.group),
+
+                  SizedBox(height: 59.h),
+                ],
+              ),
             ),
           ),
         ),

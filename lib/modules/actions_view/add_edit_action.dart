@@ -130,201 +130,210 @@ class _AddEditActionState extends State<AddEditAction>
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  Strings.reuseActionText,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF434141)),
-                ),
-                SizedBox(height: 13.h),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(Routes.selectActions).then(
-                          (value) => FocusScope.of(context).requestFocus(
-                            new FocusNode(),
+        child: Scrollbar(
+          thickness: 5.sp,
+          isAlwaysShown: false,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    Strings.reuseActionText,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF434141)),
+                  ),
+                  SizedBox(height: 13.h),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(Routes.selectActions)
+                          .then(
+                            (value) => FocusScope.of(context).requestFocus(
+                              new FocusNode(),
+                            ),
+                          );
+                    },
+                    child: Container(
+                      height: 52.h,
+                      width: 345.w,
+                      decoration: BoxDecoration(
+                          color: Color(0xFFEFEFEF),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.sp))),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                Strings.selectAnAction,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 16.sp, color: Color(0xFF434141)),
+                              ),
+                              Spacer(),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Color(0xFF434141),
+                                size: 20.sp,
+                              )
+                            ],
                           ),
-                        );
-                  },
-                  child: Container(
-                    height: 52.h,
-                    width: 345.w,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFEFEFEF),
-                        borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              Strings.selectAnAction,
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 16.sp, color: Color(0xFF434141)),
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Color(0xFF434141),
-                              size: 20.sp,
-                            )
-                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  Strings.nameOfAction,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF434141)),
-                ),
-                SizedBox(height: 13.h),
-                TextFormField(
-                  controller: _actionNameController,
-                  keyboardType: TextInputType.url,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.txtFieldBackground,
+                  SizedBox(height: 20.h),
+                  Text(
+                    Strings.nameOfAction,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF434141)),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  Strings.typeOfAction,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF434141)),
-                ),
-                SizedBox(height: 13.h),
-                ActionTypeSelector(
-                  onActionTypeChange: (Action_Type? value) {
-                    debugPrint('ActionTypeSelector[ActionType]: $value');
-                    setState(() {
-                      _selectedActionType = value;
-                    });
-                  },
-                  onInstructionsChange: (String? value) {
-                    debugPrint('ActionTypeSelector[Instructions]: $value');
-                    setState(() {
-                      _instructions = value;
-                    });
-                  },
-                  onQuestionChange: (String? value) {
-                    debugPrint('ActionTypeSelector[Question]: $value');
-                    setState(() {
-                      _question = value;
-                    });
-                  },
-                  onMaterialChange: (HiveMaterial? material) {
-                    setState(() {
-                      _selectedMaterial = material;
-                    });
-                  },
-                  selectedActionType: _selectedActionType,
-                  instructions: _isEditMode ? widget.action!.instructions : '',
-                  question: _isEditMode ? widget.action!.question : '',
-                ),
+                  SizedBox(height: 13.h),
+                  TextFormField(
+                    controller: _actionNameController,
+                    keyboardType: TextInputType.url,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: AppColors.txtFieldBackground,
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Text(
+                    Strings.typeOfAction,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF434141)),
+                  ),
+                  SizedBox(height: 13.h),
+                  ActionTypeSelector(
+                    onActionTypeChange: (Action_Type? value) {
+                      debugPrint('ActionTypeSelector[ActionType]: $value');
+                      setState(() {
+                        _selectedActionType = value;
+                      });
+                    },
+                    onInstructionsChange: (String? value) {
+                      debugPrint('ActionTypeSelector[Instructions]: $value');
+                      setState(() {
+                        _instructions = value;
+                      });
+                    },
+                    onQuestionChange: (String? value) {
+                      debugPrint('ActionTypeSelector[Question]: $value');
+                      setState(() {
+                        _question = value;
+                      });
+                    },
+                    onMaterialChange: (HiveMaterial? material) {
+                      setState(() {
+                        _selectedMaterial = material;
+                      });
+                    },
+                    selectedActionType: _selectedActionType,
+                    instructions:
+                        _isEditMode ? widget.action!.instructions : '',
+                    question: _isEditMode ? widget.action!.question : '',
+                  ),
 
-                SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
 
-                // Assign action to group
-                Text(
-                  Strings.assignActionTo,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 13.h),
+                  // Assign action to group
+                  Text(
+                    Strings.assignActionTo,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 13.h),
 
-                SelectDropDown(
-                  navTitle: Strings.assignActionTo,
-                  placeholder: Strings.assignActionTo,
-                  selectedValues: _selectedGroups,
-                  showAllOption: false,
-                  choice: SelectType.multiple,
-                  dataSource: DataSourceType.groups,
-                  onDoneClicked: <T>(values) {
-                    setState(() {
-                      _selectedGroups = values as List<HiveGroup>;
-                    });
-                  },
-                ),
+                  SelectDropDown(
+                    navTitle: Strings.assignActionTo,
+                    placeholder: Strings.assignActionTo,
+                    selectedValues: _selectedGroups,
+                    showAllOption: false,
+                    choice: SelectType.multiple,
+                    dataSource: DataSourceType.groups,
+                    onDoneClicked: <T>(values) {
+                      setState(() {
+                        _selectedGroups = values as List<HiveGroup>;
+                      });
+                    },
+                  ),
 
-                SizedBox(height: 20.h),
-                Text(
-                  Strings.dueDate,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF434141)),
-                ),
-                SizedBox(height: 13.h),
-                InkWell(
-                  onTap: () {
-                    _selectDate(context);
-                  },
-                  child: Container(
-                    height: 52.h,
-                    width: 345.w,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFEFEFEF),
-                        borderRadius: BorderRadius.all(Radius.circular(10.sp))),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            Text(
-                              _dueDate != null
-                                  //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
-                                  ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
-                                  : Strings.hintDueDate,
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 16.sp, color: Color(0xFF434141)),
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Color(0xFF434141),
-                              size: 20.sp,
-                            )
-                          ],
+                  SizedBox(height: 20.h),
+                  Text(
+                    Strings.dueDate,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF434141)),
+                  ),
+                  SizedBox(height: 13.h),
+                  InkWell(
+                    onTap: () {
+                      _selectDate(context);
+                    },
+                    child: Container(
+                      height: 52.h,
+                      width: 345.w,
+                      decoration: BoxDecoration(
+                          color: Color(0xFFEFEFEF),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.sp))),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Text(
+                                _dueDate != null
+                                    //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
+                                    ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
+                                    : Strings.hintDueDate,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 16.sp, color: Color(0xFF434141)),
+                              ),
+                              Spacer(),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Color(0xFF434141),
+                                size: 20.sp,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-              ],
+                  SizedBox(height: 20.h),
+                ],
+              ),
             ),
           ),
         ),
