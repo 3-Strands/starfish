@@ -377,11 +377,15 @@ class _AddEditActionState extends State<AddEditAction>
     if (_actionNameController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
     } else {
-      _createUpdateAction();
+      // create a separate request for each groups as, action creted for each
+      //gorup will be considered as separate entity and therefor will have a different UUID
+      _selectedGroups.forEach((element) {
+        _createUpdateAction(element);
+      });
     }
   }
 
-  _createUpdateAction() {
+  _createUpdateAction(HiveGroup group) {
     HiveAction? _hiveAction;
 
     if (_isEditMode) {
@@ -398,7 +402,7 @@ class _AddEditActionState extends State<AddEditAction>
     _hiveAction.type = _selectedActionType!.value;
     _hiveAction.name = _actionNameController.text;
     //_hiveAction.creatorId=
-    //_hiveAction.groupId=
+    _hiveAction.groupId = group.id;
     _hiveAction.materialId =
         _selectedMaterial != null ? _selectedMaterial!.id : null;
     _hiveAction.instructions = _instructions;
