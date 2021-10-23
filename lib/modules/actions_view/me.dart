@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -219,7 +220,7 @@ class _MeState extends State<Me> {
                       width: 4.sp,
                     ),
                     ActionStatusWidget(
-                        title: ActionStatus.done, height: 36.h, width: 99.w)
+                        title: ActionStatus.DONE, height: 36.h, width: 99.w)
                   ],
                 ),
               ),
@@ -585,7 +586,7 @@ class MyActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8.sp),
                         child: Text(
-                          action.group != null ? action.group!.name! : '',
+                          action.name!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -663,7 +664,7 @@ class MyActionListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ActionStatusWidget(
-                    title: ActionStatus.overdue,
+                    title: action.actionStatus,
                     height: 30.h,
                     width: 130.w,
                   ),
@@ -671,7 +672,7 @@ class MyActionListItem extends StatelessWidget {
                     width: 10.w,
                   ),
                   Text(
-                    "Due : Aug 15",
+                    'Due: ${action.dateDue != null ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 16.sp,

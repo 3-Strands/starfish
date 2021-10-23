@@ -5,8 +5,10 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_action.g.dart';
 
@@ -98,5 +100,20 @@ extension HiveActionExt on HiveAction {
     return this.groupId != null
         ? GroupProvider().getGroupById(this.groupId!)
         : null;
+  }
+
+  ActionStatus get actionStatus {
+    if (this.dateDue == null) {
+      return ActionStatus.NOT_DONE;
+    }
+    // TODO: need to be updated as it depends on if the user have already taken
+    // action or not also,
+    if (this.dateDue!.toDateTime().isBefore(DateTime.now())) {
+      return ActionStatus.OVERDUE;
+    } else if (this.dateDue!.toDateTime().isAfter(DateTime.now())) {
+      return ActionStatus.NOT_DONE;
+    } else {
+      return ActionStatus.DONE;
+    }
   }
 }
