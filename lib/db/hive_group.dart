@@ -107,6 +107,16 @@ class HiveGroup extends HiveObject {
         .toList();
   }
 
+  List<String>? get teachersName {
+    return this
+        .activeUsers
+        ?.where((groupUser) =>
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN ||
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
+        .map((e) => e.name)
+        .toList();
+  }
+
   /// Returns all 'HiveGroupUser' where 'isDirty' is false
   List<HiveGroupUser>? get activeUsers {
     return this

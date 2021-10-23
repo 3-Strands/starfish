@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -253,37 +255,67 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   Widget actionsList(AppBloc bloc) {
-    return StreamBuilder<List<HiveAction>>(
-      stream: bloc.actionBloc.actions,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<HiveAction> _listToShow;
+    return StreamBuilder(
+        stream: bloc.actionBloc.actions,
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<HiveGroup, List<HiveAction>>> snapshot) {
+          if (snapshot.hasData) {
+            if (!snapshot.hasData) {
+              return Container();
+            }
 
-          if (bloc.actionBloc.query.isNotEmpty) {
-            String _query = bloc.actionBloc.query;
-            _listToShow = snapshot.data!
-                .where((item) =>
-                    item.name!.toLowerCase().contains(_query.toLowerCase()) ||
-                    item.name!.toLowerCase().startsWith(_query.toLowerCase()))
-                .toList();
-          } else {
-            _listToShow = snapshot.data!;
-          }
-          return ListView.builder(
-              shrinkWrap: true,
+            return GroupListView(
               physics: NeverScrollableScrollPhysics(),
-              itemCount: _listToShow.length,
-              itemBuilder: (BuildContext ctxt, int index) {
+              shrinkWrap: true,
+              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              sectionsCount: snapshot.data!.keys.toList().length,
+              countOfItemInSection: (int section) {
+                return snapshot.data!.values.toList()[section].length;
+              },
+              itemBuilder: (BuildContext context, IndexPath indexPath) {
                 return MyGroupActionListItem(
-                  action: _listToShow[index],
+                  action: snapshot.data!.values.toList()[indexPath.section]
+                      [indexPath.index],
                   onActionTap: _onActionSelection,
                 );
-              });
-        } else {
-          return Container();
-        }
-      },
-    );
+              },
+              groupHeaderBuilder: (BuildContext context, int section) {
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.sp, vertical: 8.sp),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${snapshot.data!.keys.toList()[section].name}',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF434141),
+                        ),
+                      ),
+                      Text(
+                        'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF797979),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => SizedBox(height: 10),
+              sectionSeparatorBuilder: (context, section) =>
+                  SizedBox(height: 10),
+            );
+          } else {
+            return Container(
+              color: AppColors.groupScreenBG,
+            );
+          }
+        });
   }
 
   void _onActionSelection(HiveAction action) {

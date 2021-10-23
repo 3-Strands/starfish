@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
@@ -510,6 +512,70 @@ class _MeState extends State<Me> {
   }
 
   Widget actionsList(AppBloc bloc) {
+    return StreamBuilder(
+        stream: bloc.actionBloc.actions,
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<HiveGroup, List<HiveAction>>> snapshot) {
+          if (snapshot.hasData) {
+            if (!snapshot.hasData) {
+              return Container();
+            }
+
+            return GroupListView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              sectionsCount: snapshot.data!.keys.toList().length,
+              countOfItemInSection: (int section) {
+                return snapshot.data!.values.toList()[section].length;
+              },
+              itemBuilder: (BuildContext context, IndexPath indexPath) {
+                return MyActionListItem(
+                  action: snapshot.data!.values.toList()[indexPath.section]
+                      [indexPath.index],
+                  onActionTap: _onActionSelection,
+                );
+              },
+              groupHeaderBuilder: (BuildContext context, int section) {
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${snapshot.data!.keys.toList()[section].name}',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF434141),
+                        ),
+                      ),
+                      Text(
+                        'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF797979),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => SizedBox(height: 10),
+              sectionSeparatorBuilder: (context, section) =>
+                  SizedBox(height: 10),
+            );
+          } else {
+            return Container(
+              color: AppColors.groupScreenBG,
+            );
+          }
+        });
+  }
+
+  /*Widget actionsList1(AppBloc bloc) {
     return StreamBuilder<List<HiveAction>>(
       stream: bloc.actionBloc.actions,
       builder: (context, snapshot) {
@@ -527,22 +593,23 @@ class _MeState extends State<Me> {
             _listToShow = snapshot.data!;
           }
           return ListView.builder(
-              shrinkWrap: true,
-              // padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: _listToShow.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return MyActionListItem(
-                  action: _listToShow[index],
-                  onActionTap: _onActionSelection,
-                );
-              });
+            shrinkWrap: true,
+            // padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: _listToShow.length,
+            itemBuilder: (BuildContext ctxt, int index) {
+              return MyActionListItem(
+                action: _listToShow[index],
+                onActionTap: _onActionSelection,
+              );
+            },
+          );
         } else {
           return Container();
         }
       },
     );
-  }
+  }*/
 }
 
 class MyActionListItem extends StatelessWidget {
