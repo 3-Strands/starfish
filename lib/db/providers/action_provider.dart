@@ -9,8 +9,10 @@ class ActionProvider {
     _actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
   }
 
-  Future<List<HiveAction>> getAllActions() async {
-    return _actionBox.values.toList();
+  Future<List<HiveAction>> getAllActions(List<String> groupIds) async {
+    return _actionBox.values.where((element) {
+      return groupIds.contains(element.groupId);
+    }).toList();
   }
 
   Future<void> createUpdateAction(HiveAction action) async {

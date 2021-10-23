@@ -33,7 +33,7 @@ class _MeState extends State<Me> {
 
   Dashboard obj = new Dashboard();
   _getActions(AppBloc bloc) async {
-    bloc.actionBloc.fetchActionsFromDB();
+    bloc.actionBloc.fetchMyActionsFromDB();
   }
 
   @override
@@ -585,7 +585,7 @@ class MyActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8.sp),
                         child: Text(
-                          action.name ?? '',
+                          action.group != null ? action.group!.name! : '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,

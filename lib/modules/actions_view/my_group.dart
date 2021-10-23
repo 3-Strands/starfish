@@ -29,7 +29,7 @@ class _MyGroupState extends State<MyGroup> {
   late String _choiceText = 'This month';
 
   _getActions(AppBloc bloc) async {
-    bloc.actionBloc.fetchActionsFromDB();
+    bloc.actionBloc.fetchGroupActionsFromDB();
   }
 
   @override
