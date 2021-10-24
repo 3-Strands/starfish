@@ -132,32 +132,6 @@ class _MeState extends State<Me> {
 
   void _onActionSelection(HiveAction action) {
     showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(34.r),
-          topRight: Radius.circular(34.r),
-        ),
-      ),
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (BuildContext context,
-            StateSetter setState /*You can rename this!*/) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.70,
-            child: SingleChildScrollView(
-              child: _buildSlidingUpPanel(action),
-            ),
-          );
-        });
-      },
-    );
-  }
-
-  Future<dynamic> _onMeActionSheet(BuildContext context) {
-    return showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -363,147 +337,6 @@ class _MeState extends State<Me> {
         });
   }
 
-  Widget _buildSlidingUpPanel(HiveAction action) {
-    return Container(
-      margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 22.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Title: {action.status}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Spacer(),
-                CustomIconButton(
-                  icon: Icon(
-                    Icons.open_in_new,
-                    color: Colors.blue,
-                    size: 18.sp,
-                  ),
-                  text: Strings.open,
-                  onButtonTap: () {},
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.completeTaskBGColor,
-            label: 'complete',
-            textStyle: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'OpenSans',
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.overdueTaskBGColor,
-            label: 'overdueTaskBGColor',
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                Strings.lanugages,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Color(0xFF3475F0),
-                  fontFamily: 'OpenSans',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacer(),
-              CustomIconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 18.sp,
-                ),
-                text: Strings.edit,
-                onButtonTap: () {},
-              ),
-            ],
-          ),
-          Text(
-            Strings.topics,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Color(0xFF3475F0),
-              fontFamily: 'OpenSans',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 63.h,
-          ),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              Strings.reportInappropriateMaterial,
-              style: TextStyle(
-                color: Color(0xFFF65A4A),
-                fontFamily: 'OpenSans',
-                fontSize: 16.sp,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 37.5.h,
-            color: Color(0xFFEFEFEF),
-            child: ElevatedButton(
-              onPressed: () {
-                //_closeSlidingUpPanelIfOpen();
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.r),
-                  ),
-                ),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
-              ),
-              child: Text(Strings.close),
-            ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget actionsList(AppBloc bloc) {
     return StreamBuilder<List<HiveAction>>(
       stream: bloc.actionBloc.actions,
@@ -558,7 +391,7 @@ class MyActionListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          // _onMeActionSheet(context);
+          onActionTap(action);
         },
         child: Padding(
           padding:

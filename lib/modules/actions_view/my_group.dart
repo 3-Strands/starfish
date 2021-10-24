@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
-import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/widgets/task_status.dart';
 
 class MyGroup extends StatefulWidget {
   const MyGroup({Key? key}) : super(key: key);
@@ -19,6 +20,8 @@ class MyGroup extends StatefulWidget {
 }
 
 class _MyGroupState extends State<MyGroup> {
+  late Box<HiveUser> _userBox;
+
   var _dropdownTitleList = <String>[
     'This month',
     'Next month',
@@ -27,6 +30,12 @@ class _MyGroupState extends State<MyGroup> {
     'All time'
   ];
   late String _choiceText = 'This month';
+
+  @override
+  void initState() {
+    super.initState();
+    _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
+  }
 
   _getActions(AppBloc bloc) async {
     bloc.actionBloc.fetchActionsFromDB();
@@ -115,130 +124,6 @@ class _MyGroupState extends State<MyGroup> {
           SizedBox(
             height: 10.h,
           ),
-          // Card(
-          //     margin: EdgeInsets.only(left: 15.w, right: 15.w),
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.all(
-          //         Radius.circular(15),
-          //       ),
-          //     ),
-          //     color: AppColors.txtFieldBackground,
-          //     child: Padding(
-          //       padding: EdgeInsets.only(
-          //           left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
-          //       child: Column(
-          //         children: [
-          //           Padding(
-          //             padding: EdgeInsets.only(left: 10.sp),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //               children: [
-          //                 Text(
-          //                   "#1",
-          //                   style: TextStyle(
-          //                       color: Color(0xFF797979),
-          //                       fontSize: 16.sp,
-          //                       fontWeight: FontWeight.bold),
-          //                 ),
-          //                 Expanded(
-          //                   child: Padding(
-          //                     padding: EdgeInsets.only(left: 8.0, right: 8.sp),
-          //                     child: Text(
-          //                       "Sample Action Name with long",
-          //                       maxLines: 1,
-          //                       overflow: TextOverflow.ellipsis,
-          //                       softWrap: false,
-          //                       style: TextStyle(
-          //                           color: Colors.black,
-          //                           fontSize: 16.sp,
-          //                           fontWeight: FontWeight.w500),
-          //                     ),
-          //                   ),
-          //                 ),
-          //                 SizedBox(
-          //                   width: 30.sp,
-          //                   child: PopupMenuButton(
-          //                       icon: Icon(
-          //                         Icons.more_vert,
-          //                         color: Color(0xFF3475F0),
-          //                       ),
-          //                       color: Colors.white,
-          //                       elevation: 20,
-          //                       shape: OutlineInputBorder(
-          //                           borderSide: BorderSide(
-          //                               color: Colors.white, width: 2),
-          //                           borderRadius: BorderRadius.circular(12.sp)),
-          //                       enabled: true,
-          //                       onSelected: (value) {
-          //                         setState(() {
-          //                           // _value = value;
-          //                         });
-          //                       },
-          //                       itemBuilder: (context) => [
-          //                             PopupMenuItem(
-          //                               child: Text(
-          //                                 "Edit Action",
-          //                                 style: TextStyle(
-          //                                     color: Color(0xFF3475F0),
-          //                                     fontSize: 16.sp,
-          //                                     fontWeight: FontWeight.bold),
-          //                               ),
-          //                               value: "",
-          //                             ),
-          //                             PopupMenuItem(
-          //                               child: Text(
-          //                                 "Delete Action",
-          //                                 style: TextStyle(
-          //                                     color: Color(0xFF3475F0),
-          //                                     fontSize: 16.sp,
-          //                                     fontWeight: FontWeight.bold),
-          //                               ),
-          //                               value: "",
-          //                             ),
-          //                           ]),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //           SizedBox(
-          //             height: 15.h,
-          //           ),
-          //           Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //             children: [
-          //               Spacer(),
-          //               Container(
-          //                 height: 51.sp,
-          //                 width: 99.sp,
-          //                 decoration: BoxDecoration(
-          //                     color: Color(0xFF6DE26B),
-          //                     borderRadius:
-          //                         BorderRadius.all(Radius.circular(8.5.sp))),
-          //               ),
-          //               Spacer(),
-          //               Container(
-          //                 height: 51.sp,
-          //                 width: 99.sp,
-          //                 decoration: BoxDecoration(
-          //                     color: Color(0xFFFFBE4A),
-          //                     borderRadius:
-          //                         BorderRadius.all(Radius.circular(8.5.sp))),
-          //               ),
-          //               Spacer(),
-          //               Container(
-          //                 height: 51.sp,
-          //                 width: 99.sp,
-          //                 decoration: BoxDecoration(
-          //                     color: Color(0xFFFF5E4D),
-          //                     borderRadius:
-          //                         BorderRadius.all(Radius.circular(8.5.sp))),
-          //               ),
-          //               Spacer(),
-          //             ],
-          //           )
-          //         ],
-          //       ),
-          //     )),
           actionsList(bloc),
           SizedBox(
             height: 10.h,
@@ -272,13 +157,121 @@ class _MyGroupState extends State<MyGroup> {
               itemBuilder: (BuildContext ctxt, int index) {
                 return MyGroupActionListItem(
                   action: _listToShow[index],
-                  onActionTap: _onActionSelection,
+                  onActionTap: _usersActionList,
                 );
               });
         } else {
           return Container();
         }
       },
+    );
+  }
+
+  void _usersActionList(HiveAction action) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(34.r),
+          topRight: Radius.circular(34.r),
+        ),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              height: 40.sp,
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              child: Align(
+                alignment: FractionalOffset.topLeft,
+                child: Text(
+                  action.name ?? '',
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Color(0xFF3475F0),
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20.sp,
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              child: Align(
+                alignment: FractionalOffset.topLeft,
+                child: Text(
+                  'Status of this action for learner',
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Color(0xFF4F4F4F),
+                      fontWeight: FontWeight.normal),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20.sp,
+            ),
+            _buildUserList(action),
+            SizedBox(
+              height: 20.sp,
+            ),
+            Container(
+              height: 75.h,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color(0xFFEFEFEF),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                child: Container(
+                  height: 37.5.h,
+                  color: Color(0xFFEFEFEF),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40.r),
+                        ),
+                      ),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                    ),
+                    child: Text(Strings.close),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildUserList(HiveAction action) {
+    var _userList = _userBox.values.toList();
+
+    List<Widget> users = [];
+
+    _userList.forEach((user) {
+      users.add(Container(height: 30.w, child: Text(user.name ?? '')));
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: users,
     );
   }
 
@@ -294,158 +287,198 @@ class _MyGroupState extends State<MyGroup> {
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (BuildContext context,
-            StateSetter setState /*You can rename this!*/) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.70,
-            child: SingleChildScrollView(
-              child: _buildSlidingUpPanel(action),
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              height: 40.sp,
             ),
-          );
-        });
-      },
-    );
-  }
-
-  Widget _buildSlidingUpPanel(HiveAction action) {
-    return Container(
-      margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 22.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Title: {action.status}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Spacer(),
-                CustomIconButton(
-                  icon: Icon(
-                    Icons.open_in_new,
-                    color: Colors.blue,
-                    size: 18.sp,
-                  ),
-                  text: Strings.open,
-                  onButtonTap: () {},
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.completeTaskBGColor,
-            label: 'complete',
-            textStyle: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'OpenSans',
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.overdueTaskBGColor,
-            label: 'overdueTaskBGColor',
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                Strings.lanugages,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Color(0xFF3475F0),
-                  fontFamily: 'OpenSans',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacer(),
-              CustomIconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 18.sp,
-                ),
-                text: Strings.edit,
-                onButtonTap: () {},
-              ),
-            ],
-          ),
-          Text(
-            Strings.topics,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Color(0xFF3475F0),
-              fontFamily: 'OpenSans',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 63.h,
-          ),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              Strings.reportInappropriateMaterial,
+            Text(
+              'Month: Jul 2021',
               style: TextStyle(
-                color: Color(0xFFF65A4A),
-                fontFamily: 'OpenSans',
-                fontSize: 16.sp,
-                fontStyle: FontStyle.italic,
+                  fontSize: 16.sp,
+                  color: Color(0xFF3475F0),
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 40.sp,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 44.h,
+                    width: 169.w,
+                    child: Text(
+                      'Action Follow a set of instructions',
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 53.sp,
+                  ),
+                  Icon(
+                    Icons.thumb_up_alt_outlined,
+                    size: 14.sp,
+                  ),
+                  SizedBox(
+                    width: 4.sp,
+                  ),
+                  ActionStatusWidget(
+                      title: ActionStatus.done, height: 36.h, width: 99.w)
+                ],
               ),
             ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 37.5.h,
-            color: Color(0xFFEFEFEF),
-            child: ElevatedButton(
-              onPressed: () {
-                //_closeSlidingUpPanelIfOpen();
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.r),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+              child: Text(
+                'Instructions: Instructions up to 200 characters are shown hereLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+                maxLines: 5,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Color(0xFF797979),
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Due: Jul 15',
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Color(0xFF4F4F4F),
+                      fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 100.h,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  Strings.howWasThisActionText,
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Color(0xFF4F4F4F),
+                      fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: 36.sp,
+                    width: 160.sp,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.sp),
+                      color: Color(0xFFC9C9C9),
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.thumb_up_outlined, size: 14.sp),
+                          SizedBox(
+                            width: 4.sp,
+                          ),
+                          Text(
+                            Strings.goodText,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontSize: 14.sp,
+                              color: Color(0xFF777777),
+                            ),
+                          ),
+                        ]),
+                  ),
+                  Container(
+                    height: 36.sp,
+                    width: 160.sp,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.sp),
+                      color: Color(0xFFC9C9C9),
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.thumb_down_outlined, size: 14.sp),
+                          SizedBox(
+                            width: 4.sp,
+                          ),
+                          Text(
+                            Strings.notSoGoodText,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontSize: 14.sp,
+                              color: Color(0xFF777777),
+                            ),
+                          ),
+                        ]),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 39.h,
+            ),
+            Container(
+              height: 75.h,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color(0xFFEFEFEF),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                child: Container(
+                  height: 37.5.h,
+                  color: Color(0xFFEFEFEF),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      //_closeSlidingUpPanelIfOpen();
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40.r),
+                        ),
+                      ),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                    ),
+                    child: Text(Strings.close),
                   ),
                 ),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
               ),
-              child: Text(Strings.close),
             ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }
@@ -466,112 +499,121 @@ class MyGroupActionListItem extends StatelessWidget {
         ),
       ),
       color: AppColors.txtFieldBackground,
-      child: Padding(
-        padding: EdgeInsets.only(left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 10.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "#1",
-                    style: TextStyle(
-                        color: Color(0xFF797979),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8.0, right: 8.sp),
-                      child: Text(
-                        action.name ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500),
+      child: InkWell(
+        onTap: () {
+          onActionTap(action);
+        },
+        child: Padding(
+          padding:
+              EdgeInsets.only(left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10.sp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "#1",
+                      style: TextStyle(
+                          color: Color(0xFF797979),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 8.0, right: 8.sp),
+                        child: Text(
+                          action.name ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 30.sp,
-                    child: PopupMenuButton(
-                        icon: Icon(
-                          Icons.more_vert,
-                          color: Color(0xFF3475F0),
-                        ),
-                        color: Colors.white,
-                        elevation: 20,
-                        shape: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.white, width: 2),
-                            borderRadius: BorderRadius.circular(12.sp)),
-                        enabled: true,
-                        onSelected: (value) {},
-                        itemBuilder: (context) => [
-                              PopupMenuItem(
-                                child: Text(
-                                  "Edit Action",
-                                  style: TextStyle(
-                                      color: Color(0xFF3475F0),
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 30.sp,
+                      child: PopupMenuButton(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Color(0xFF3475F0),
+                          ),
+                          color: Colors.white,
+                          elevation: 20,
+                          shape: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 2),
+                              borderRadius: BorderRadius.circular(12.sp)),
+                          enabled: true,
+                          onSelected: (value) {},
+                          itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  child: Text(
+                                    "Edit Action",
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: "",
                                 ),
-                                value: "",
-                              ),
-                              PopupMenuItem(
-                                child: Text(
-                                  "Delete Action",
-                                  style: TextStyle(
-                                      color: Color(0xFF3475F0),
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                PopupMenuItem(
+                                  child: Text(
+                                    "Delete Action",
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: "",
                                 ),
-                                value: "",
-                              ),
-                            ]),
-                  ),
-                ],
+                              ]),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 15.h,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Spacer(),
-                Container(
-                  height: 51.sp,
-                  width: 99.sp,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF6DE26B),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
-                ),
-                Spacer(),
-                Container(
-                  height: 51.sp,
-                  width: 99.sp,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFFFBE4A),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
-                ),
-                Spacer(),
-                Container(
-                  height: 51.sp,
-                  width: 99.sp,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFFF5E4D),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
-                ),
-                Spacer(),
-              ],
-            )
-          ],
+              SizedBox(
+                height: 15.h,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Spacer(),
+                  Container(
+                    height: 51.sp,
+                    width: 99.sp,
+                    decoration: BoxDecoration(
+                        color: Color(0xFF6DE26B),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(8.5.sp))),
+                  ),
+                  Spacer(),
+                  Container(
+                    height: 51.sp,
+                    width: 99.sp,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFFBE4A),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(8.5.sp))),
+                  ),
+                  Spacer(),
+                  Container(
+                    height: 51.sp,
+                    width: 99.sp,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFF5E4D),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(8.5.sp))),
+                  ),
+                  Spacer(),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
