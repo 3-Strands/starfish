@@ -8,8 +8,10 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -44,10 +46,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late List<HiveLanguage> _languageList = [];
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
+  late List<HiveGroup> _groupList = [];
 
   late Box<HiveCurrentUser> _currentUserBox;
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
+  late Box<HiveGroup> _groupBox;
 
   String _countyCode = '';
   String _mobileNumber = '';
@@ -62,9 +66,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
 
     _getCurrentUser();
     _getAllCountries();
+    _getGroups();
   }
 
   void _getCurrentUser() {
@@ -98,6 +104,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           .where((item) => item.id == languageId)
           .forEach((item) => {_selectedLanguages.add(item)});
     }
+  }
+
+  void _getGroups() async {
+    _groupList = _groupBox.values.toList();
   }
 
   void _updateName() async {
@@ -163,7 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox.putAt(0, _user);
   }
 
-  void updatelinkGroupStatus() async {
+  void updateLinkGroupStatus() async {
     _user.linkGroups = _user.linkGroups;
     _user.isUpdated = true;
     _currentUserBox.putAt(0, _user);
@@ -422,6 +432,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String getGroupName(String groupId) {
+    return _groupList.where((element) => element.id == groupId).first.name ??
+        '';
+  }
+
   Container _groupItem(HiveGroupUser group) {
     return Container(
       height: 240.h,
@@ -433,7 +448,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             height: 25.h,
             child: Align(
               alignment: FractionalOffset.topLeft,
-              child: Text(group.groupId!, style: titleTextStyle),
+              child: Text(getGroupName(group.groupId!), style: titleTextStyle),
             ),
           ),
           SizedBox(
@@ -815,7 +830,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             onPressed: () {
                               setState(() => {
                                     _user.linkGroups = !_user.linkGroups,
-                                    updatelinkGroupStatus()
+                                    updateLinkGroupStatus()
                                   });
                             },
                           ),
