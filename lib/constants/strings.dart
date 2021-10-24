@@ -233,4 +233,9 @@ sending an invitation to use Starfish''';
   static const String actionType = 'Fill in some numbers';
 
   static const String reuseActionText = 'Re-use an Action (optional)';
+
+  // Action Status
+  static const String actionStatusDone = "I did it";
+  static const String actionStatusNotDone = "I didn't do it yet";
+  static const String actionStatusOverdue = "Overdue";
 }

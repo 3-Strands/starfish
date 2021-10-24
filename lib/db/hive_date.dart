@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_date.g.dart';
 
@@ -26,5 +27,12 @@ class HiveDate {
 
   String toString() {
     return '{ year: ${this.year}, month: ${this.month}, day: ${this.day} }';
+  }
+}
+
+extension HiveDateExt on HiveDate {
+  DateTime toDateTime() {
+    String dateString = '${this.day}-${this.month}-${this.year}';
+    return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy');
   }
 }

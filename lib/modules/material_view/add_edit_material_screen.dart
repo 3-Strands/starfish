@@ -128,58 +128,90 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: _titleController,
-                  keyboardType: TextInputType.text,
-                  style: formTitleTextStyle,
-                  decoration: InputDecoration(
-                    hintText: Strings.hintMaterialName,
-                    hintStyle: formTitleHintStyle,
-                    contentPadding: EdgeInsets.fromLTRB(0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0.r),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.transparent,
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Description
-                Text(
-                  Strings.descripton,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: TextFormField(
-                    maxLines: 4,
-                    maxLength: 200,
-                    controller: _descriptionController,
+        child: Scrollbar(
+          thickness: 5.sp,
+          isAlwaysShown: false,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _titleController,
                     keyboardType: TextInputType.text,
+                    style: formTitleTextStyle,
                     decoration: InputDecoration(
+                      hintText: Strings.hintMaterialName,
+                      hintStyle: formTitleHintStyle,
+                      contentPadding: EdgeInsets.fromLTRB(0.w, 0.0, 5.0.w, 0.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0.r),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0.r),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0.r),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.transparent,
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
+
+                  // Description
+                  Text(
+                    Strings.descripton,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: TextFormField(
+                      maxLines: 4,
+                      maxLength: 200,
+                      controller: _descriptionController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
+
+                  // Web Link
+                  Text(
+                    Strings.addWebLink,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  TextFormField(
+                    controller: _webLinkController,
+                    keyboardType: TextInputType.url,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -190,287 +222,259 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         ),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: AppColors.txtFieldBackground,
                     ),
                   ),
-                ),
-                SizedBox(height: 21.h),
+                  SizedBox(height: 21.h),
 
-                // Web Link
-                Text(
-                  Strings.addWebLink,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                TextFormField(
-                  controller: _webLinkController,
-                  keyboardType: TextInputType.url,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
+                  // Upload Material
+                  Text(
+                    Strings.uploadAMaterial,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.txtFieldBackground,
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Upload Material
-                Text(
-                  Strings.uploadAMaterial,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                TextFormField(
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.txtFieldBackground,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
-                // Add Materials
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(30.r),
-                  color: Color(0xFF3475F0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        Strings.addMaterials,
-                        style: TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 14.sp,
-                          color: Color(0xFF3475F0),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
+                      filled: true,
+                      fillColor: AppColors.txtFieldBackground,
                     ),
                   ),
-                ),
-                SizedBox(height: 21.h),
+                  SizedBox(height: 10.h),
 
-                // Language Selection
-                Text(
-                  Strings.lanugages,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: SelectDropDown(
-                    navTitle: Strings.selectLanugages,
-                    placeholder: Strings.selectLanugages,
-                    selectedValues: _selectedLanguages,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.languages,
-                    onDoneClicked: <T>(languages) {
-                      setState(() {
-                        _selectedLanguages = languages as List<HiveLanguage>;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Type Selection
-                Text(
-                  Strings.type,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: SelectDropDown(
-                    navTitle: Strings.selectType,
-                    placeholder: Strings.selectType,
-                    selectedValues: _selectedTypes,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.types,
-                    onDoneClicked: <T>(types) {
-                      setState(() {
-                        _selectedTypes = types as List<HiveMaterialType>;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Topic Selection
-                Text(
-                  Strings.topics,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  child: SelectDropDown(
-                    navTitle: Strings.selectTopics,
-                    placeholder: Strings.selectTopics,
-                    selectedValues: _selectedTopics,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.topics,
-                    onDoneClicked: <T>(topics) {
-                      setState(() {
-                        _selectedTopics = topics as List<HiveMaterialTopic>;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                //Seen by
-                Text(
-                  Strings.seenBy,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  height: 52.h,
-                  width: double.infinity,
-                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<MaterialVisibility>(
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 16.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                      hint: Text(
-                        _choiceSeenByText,
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontSize: 16.sp,
-                          fontFamily: 'OpenSans',
+                  // Add Materials
+                  DottedBorder(
+                    borderType: BorderType.RRect,
+                    radius: Radius.circular(30.r),
+                    color: Color(0xFF3475F0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50.h,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Text(
+                          Strings.addMaterials,
+                          style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 14.sp,
+                            color: Color(0xFF3475F0),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          shadowColor: Colors.transparent,
                         ),
                       ),
-                      onTap: () {
-                        _dismissFieldFocus();
-                      },
-                      onChanged: (MaterialVisibility? value) {
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
+
+                  // Language Selection
+                  Text(
+                    Strings.lanugages,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: SelectDropDown(
+                      navTitle: Strings.selectLanugages,
+                      placeholder: Strings.selectLanugages,
+                      selectedValues: _selectedLanguages,
+                      choice: SelectType.multiple,
+                      dataSource: DataSourceType.languages,
+                      onDoneClicked: <T>(languages) {
                         setState(() {
-                          _visibleTo = value;
-                          _choiceSeenByText = _visibleTo!.displayName!;
+                          _selectedLanguages = languages as List<HiveLanguage>;
                         });
                       },
-                      items: MaterialVisibility.values()
-                          .map((MaterialVisibility visibility) {
-                        return DropdownMenuItem<MaterialVisibility>(
-                          value: visibility,
-                          child: Text(
-                            visibility.displayName ?? visibility.value.name,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 14.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                          ),
-                        );
-                      }).toList(),
                     ),
                   ),
-                ),
-                SizedBox(height: 21.h),
+                  SizedBox(height: 21.h),
 
-                //Edited by
-                Text(
-                  Strings.editedBy,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                Container(
-                  height: 52.h,
-                  width: double.infinity,
-                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+                  // Type Selection
+                  Text(
+                    Strings.type,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: SelectDropDown(
+                      navTitle: Strings.selectType,
+                      placeholder: Strings.selectType,
+                      selectedValues: _selectedTypes,
+                      choice: SelectType.multiple,
+                      dataSource: DataSourceType.types,
+                      onDoneClicked: <T>(types) {
+                        setState(() {
+                          _selectedTypes = types as List<HiveMaterialType>;
+                        });
+                      },
                     ),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<MaterialEditability>(
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 16.sp,
-                        fontFamily: 'OpenSans',
+                  SizedBox(height: 21.h),
+
+                  // Topic Selection
+                  Text(
+                    Strings.topics,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    child: SelectDropDown(
+                      navTitle: Strings.selectTopics,
+                      placeholder: Strings.selectTopics,
+                      selectedValues: _selectedTopics,
+                      choice: SelectType.multiple,
+                      dataSource: DataSourceType.topics,
+                      onDoneClicked: <T>(topics) {
+                        setState(() {
+                          _selectedTopics = topics as List<HiveMaterialTopic>;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
+
+                  //Seen by
+                  Text(
+                    Strings.seenBy,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    height: 52.h,
+                    width: double.infinity,
+                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
                       ),
-                      hint: Text(
-                        _choiceEditedByText,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<MaterialVisibility>(
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
                           fontFamily: 'OpenSans',
                         ),
-                      ),
-                      onTap: () {
-                        _dismissFieldFocus();
-                      },
-                      onChanged: (MaterialEditability? value) {
-                        _editableBy = value;
-                        _choiceEditedByText = _editableBy!.displayName!;
-                      },
-                      items: MaterialEditability.values()
-                          .map<DropdownMenuItem<MaterialEditability>>(
-                              (MaterialEditability editability) {
-                        return DropdownMenuItem<MaterialEditability>(
-                          value: editability,
-                          child: Text(
-                            editability.displayName ?? editability.value.name,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 14.sp,
-                              fontFamily: 'OpenSans',
-                            ),
+                        hint: Text(
+                          _choiceSeenByText,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 16.sp,
+                            fontFamily: 'OpenSans',
                           ),
-                        );
-                      }).toList(),
+                        ),
+                        onTap: () {
+                          _dismissFieldFocus();
+                        },
+                        onChanged: (MaterialVisibility? value) {
+                          setState(() {
+                            _visibleTo = value;
+                            _choiceSeenByText = _visibleTo!.displayName!;
+                          });
+                        },
+                        items: MaterialVisibility.values()
+                            .map((MaterialVisibility visibility) {
+                          return DropdownMenuItem<MaterialVisibility>(
+                            value: visibility,
+                            child: Text(
+                              visibility.displayName ?? visibility.value.name,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 14.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 21.h),
 
-                SizedBox(height: 21.h),
+                  //Edited by
+                  Text(
+                    Strings.editedBy,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  Container(
+                    height: 52.h,
+                    width: double.infinity,
+                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<MaterialEditability>(
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 16.sp,
+                          fontFamily: 'OpenSans',
+                        ),
+                        hint: Text(
+                          _choiceEditedByText,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 16.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                        ),
+                        onTap: () {
+                          _dismissFieldFocus();
+                        },
+                        onChanged: (MaterialEditability? value) {
+                          _editableBy = value;
+                          _choiceEditedByText = _editableBy!.displayName!;
+                        },
+                        items: MaterialEditability.values()
+                            .map<DropdownMenuItem<MaterialEditability>>(
+                                (MaterialEditability editability) {
+                          return DropdownMenuItem<MaterialEditability>(
+                            value: editability,
+                            child: Text(
+                              editability.displayName ?? editability.value.name,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 14.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
 
-                if (widget.material?.editHistory != null)
-                  _editHistoryContainer(widget.material),
+                  SizedBox(height: 21.h),
 
-                SizedBox(height: 11.h),
-              ],
+                  if (widget.material?.editHistory != null)
+                    _editHistoryContainer(widget.material),
+
+                  SizedBox(height: 11.h),
+                ],
+              ),
             ),
           ),
         ),

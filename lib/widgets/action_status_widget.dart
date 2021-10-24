@@ -3,24 +3,26 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ActionStatusWidget extends StatelessWidget {
-  final title;
+  final ActionStatus title;
   final height;
   final width;
 
   const ActionStatusWidget({
     Key? key,
-    this.title, this.height, this.width,
+    required this.title,
+    this.height,
+    this.width,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: this.height,//30.h,
-      width: this.width,//130.w,
+      height: this.height, //30.h,
+      width: this.width, //130.w,
       decoration: BoxDecoration(
-          color: title == ActionStatus.done
+          color: title == ActionStatus.DONE
               ? Color(0xFF6DE26B)
-              : (title == ActionStatus.notdone)
+              : (title == ActionStatus.NOT_DONE)
                   ? Color(0xFFFFBE4A)
                   : Color(0xFFFF5E4D),
           borderRadius: BorderRadius.all(Radius.circular(4.sp))),
@@ -33,10 +35,10 @@ class ActionStatusWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Spacer(),
-              if (title == ActionStatus.done)
+              if (title == ActionStatus.DONE)
                 Icon(Icons.check, size: 16.sp, color: Color(0xFF393939)),
               SizedBox(width: 2.sp),
-              Text(title,
+              Text(title.about,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,

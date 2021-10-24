@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -33,7 +36,7 @@ class _MeState extends State<Me> {
 
   Dashboard obj = new Dashboard();
   _getActions(AppBloc bloc) async {
-    bloc.actionBloc.fetchActionsFromDB();
+    bloc.actionBloc.fetchMyActionsFromDB();
   }
 
   @override
@@ -41,90 +44,94 @@ class _MeState extends State<Me> {
     final bloc = Provider.of(context);
     _getActions(bloc);
 
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            Container(
-              height: 52.h,
-              width: 345.w,
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              decoration: BoxDecoration(
-                color: AppColors.txtFieldBackground,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+    return Scrollbar(
+      thickness: 5.sp,
+      isAlwaysShown: false,
+      child: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
               ),
-              child: Center(
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      // icon: Icon(Icons.arrow_drop_down),
-                      iconSize: 35,
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 16.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                      hint: Text(
-                        _choiceText,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              Container(
+                height: 52.h,
+                width: 345.w,
+                margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                decoration: BoxDecoration(
+                  color: AppColors.txtFieldBackground,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                child: Center(
+                  child: DropdownButtonHideUnderline(
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        // icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 35,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
                           fontFamily: 'OpenSans',
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                      onChanged: (String? value) {
-                        setState(() {
-                          _choiceText = value!;
-                        });
-                      },
-                      items: _dropdownTitleList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 14.sp,
-                              fontFamily: 'OpenSans',
-                            ),
+                        hint: Text(
+                          _choiceText,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 16.sp,
+                            fontFamily: 'OpenSans',
                           ),
-                        );
-                      }).toList(),
+                          textAlign: TextAlign.left,
+                        ),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _choiceText = value!;
+                          });
+                        },
+                        items: _dropdownTitleList
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 14.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            SearchBar(
-              initialValue: '',
-              onValueChanged: (value) {
-                print('searched value $value');
-                setState(() {});
-              },
-              onDone: (value) {
-                print('searched value $value');
-              },
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            actionsList(bloc),
-            SizedBox(
-              height: 10.h,
-            ),
-          ],
+              SizedBox(height: 10.h),
+              SearchBar(
+                initialValue: '',
+                onValueChanged: (value) {
+                  print('searched value $value');
+                  setState(() {});
+                },
+                onDone: (value) {
+                  print('searched value $value');
+                },
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              actionsList(bloc),
+              SizedBox(
+                height: 10.h,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -189,7 +196,7 @@ class _MeState extends State<Me> {
                       width: 4.sp,
                     ),
                     ActionStatusWidget(
-                        title: ActionStatus.done, height: 36.h, width: 99.w)
+                        title: ActionStatus.DONE, height: 36.h, width: 99.w)
                   ],
                 ),
               ),
@@ -338,6 +345,70 @@ class _MeState extends State<Me> {
   }
 
   Widget actionsList(AppBloc bloc) {
+    return StreamBuilder(
+        stream: bloc.actionBloc.actions,
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<HiveGroup, List<HiveAction>>> snapshot) {
+          if (snapshot.hasData) {
+            if (!snapshot.hasData) {
+              return Container();
+            }
+
+            return GroupListView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              sectionsCount: snapshot.data!.keys.toList().length,
+              countOfItemInSection: (int section) {
+                return snapshot.data!.values.toList()[section].length;
+              },
+              itemBuilder: (BuildContext context, IndexPath indexPath) {
+                return MyActionListItem(
+                  action: snapshot.data!.values.toList()[indexPath.section]
+                      [indexPath.index],
+                  onActionTap: _onActionSelection,
+                );
+              },
+              groupHeaderBuilder: (BuildContext context, int section) {
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${snapshot.data!.keys.toList()[section].name}',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF434141),
+                        ),
+                      ),
+                      Text(
+                        'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF797979),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => SizedBox(height: 10),
+              sectionSeparatorBuilder: (context, section) =>
+                  SizedBox(height: 10),
+            );
+          } else {
+            return Container(
+              color: AppColors.groupScreenBG,
+            );
+          }
+        });
+  }
+
+  /*Widget actionsList1(AppBloc bloc) {
     return StreamBuilder<List<HiveAction>>(
       stream: bloc.actionBloc.actions,
       builder: (context, snapshot) {
@@ -355,22 +426,23 @@ class _MeState extends State<Me> {
             _listToShow = snapshot.data!;
           }
           return ListView.builder(
-              shrinkWrap: true,
-              // padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: _listToShow.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return MyActionListItem(
-                  action: _listToShow[index],
-                  onActionTap: _onActionSelection,
-                );
-              });
+            shrinkWrap: true,
+            // padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: _listToShow.length,
+            itemBuilder: (BuildContext ctxt, int index) {
+              return MyActionListItem(
+                action: _listToShow[index],
+                onActionTap: _onActionSelection,
+              );
+            },
+          );
         } else {
           return Container();
         }
       },
     );
-  }
+  }*/
 }
 
 class MyActionListItem extends StatelessWidget {
@@ -414,7 +486,7 @@ class MyActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8.sp),
                         child: Text(
-                          action.name ?? '',
+                          action.name!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -492,7 +564,7 @@ class MyActionListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ActionStatusWidget(
-                    title: ActionStatus.overdue,
+                    title: action.actionStatus,
                     height: 30.h,
                     width: 130.w,
                   ),
@@ -500,7 +572,7 @@ class MyActionListItem extends StatelessWidget {
                     width: 10.w,
                   ),
                   Text(
-                    "Due : Aug 15",
+                    'Due: ${action.dateDue != null ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 16.sp,

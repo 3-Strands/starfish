@@ -10,8 +10,8 @@ class ActionRepository {
 
   Future<ResponseStream<Action>> getActions() => apiProvider.getActions();
 
-  Future<List<HiveAction>> fetchAllActionsFromDB() =>
-      dbProvider.getAllActions();
+  Future<List<HiveAction>> fetchAllActionsFromDB(List<String> groupIds) =>
+      dbProvider.getAllActions(groupIds);
 
   Future<void> createUpdateActionInDB(HiveAction action) =>
       dbProvider.createUpdateAction(action);

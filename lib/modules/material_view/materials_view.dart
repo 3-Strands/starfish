@@ -105,94 +105,98 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 14.h),
-                _buildLanguagesContainer(bloc),
-                SizedBox(height: 10.h),
-                _buildTopicsContainer(bloc),
-                SizedBox(height: 10.h),
-                SearchBar(
-                  initialValue: bloc.materialBloc.query,
-                  onValueChanged: (value) {
-                    setState(() {
-                      bloc.materialBloc.setQuery(value);
-                    });
-                  },
-                  onDone: (value) {
-                    setState(() {
-                      bloc.materialBloc.setQuery(value);
-                    });
-                  },
-                ),
-                SizedBox(height: 10.h),
-                Container(
-                  height: 60.h,
-                  // width: 345.w,
-                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
-
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
+          child: Scrollbar(
+            thickness: 5.sp,
+            isAlwaysShown: false,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: 14.h),
+                  _buildLanguagesContainer(bloc),
+                  SizedBox(height: 10.h),
+                  _buildTopicsContainer(bloc),
+                  SizedBox(height: 10.h),
+                  SearchBar(
+                    initialValue: bloc.materialBloc.query,
+                    onValueChanged: (value) {
+                      setState(() {
+                        bloc.materialBloc.setQuery(value);
+                      });
+                    },
+                    onDone: (value) {
+                      setState(() {
+                        bloc.materialBloc.setQuery(value);
+                      });
+                    },
                   ),
-                  child: Center(
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          iconSize: 35,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 16.sp,
-                            fontFamily: 'OpenSans',
-                          ),
-                          hint: Text(
-                            Strings.materialActionPrefix + _choiceText,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                  SizedBox(height: 10.h),
+                  Container(
+                    height: 60.h,
+                    // width: 345.w,
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: Center(
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            iconSize: 35,
                             style: TextStyle(
                               color: Color(0xFF434141),
                               fontSize: 16.sp,
                               fontFamily: 'OpenSans',
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _choiceText = value!;
-                            });
-                          },
-                          items: Strings.materialActionsList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 14.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
+                            hint: Text(
+                              Strings.materialActionPrefix + _choiceText,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 16.sp,
+                                fontFamily: 'OpenSans',
                               ),
-                            );
-                          }).toList(),
+                              textAlign: TextAlign.left,
+                            ),
+                            onChanged: (String? value) {
+                              setState(() {
+                                _choiceText = value!;
+                              });
+                            },
+                            items: Strings.materialActionsList
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 14.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                materialsList(bloc),
-                SizedBox(
-                  height: 10.h,
-                ),
-              ],
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  materialsList(bloc),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -97,5 +98,15 @@ class HiveCurrentUser {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 
         countryIds: ${this.countryIds.toString()}, languageIds: ${this.languageIds.toString()}}''';
+  }
+}
+
+extension HiveCurrentUserExt on HiveCurrentUser {
+  List<HiveGroupUser> groupsWithRole(List<GroupUser_Role> groupUserRole) {
+    return this
+        .groups
+        .where((element) =>
+            groupUserRole.contains(GroupUser_Role.valueOf(element.role!)))
+        .toList();
   }
 }
