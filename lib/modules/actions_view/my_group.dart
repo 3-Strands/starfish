@@ -182,7 +182,7 @@ class _MyGroupState extends State<MyGroup> {
               child: Align(
                 alignment: FractionalOffset.topLeft,
                 child: Text(
-                  'Status of this action for learner',
+                  Strings.statusOfActionForLearner,
                   style: TextStyle(
                       fontSize: 16.sp,
                       color: Color(0xFF4F4F4F),
@@ -275,7 +275,7 @@ class _MyGroupState extends State<MyGroup> {
                         ),
                       ),
                       Text(
-                        'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                        '${Strings.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
@@ -299,11 +299,12 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   Widget _buildUserList(HiveAction action) {
-    var _userList = _userBox.values.toList();
-
     List<Widget> users = [];
 
-    _userList.forEach((user) {
+    if (action.users == null) {
+      return Container();
+    }
+    action.users!.forEach((user) {
       users.add(Container(height: 30.w, child: Text(user.name ?? '')));
     });
 
@@ -353,7 +354,7 @@ class _MyGroupState extends State<MyGroup> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Title: {action.status}',
+                  '${Strings.title}: {action.status}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,

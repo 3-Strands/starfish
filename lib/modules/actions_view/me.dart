@@ -152,17 +152,20 @@ class _MeState extends State<Me> {
         builder: (context) {
           return Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(
                 height: 40.sp,
               ),
-              Text(
-                'Month: Jul 2021',
-                style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Color(0xFF3475F0),
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              Center(
+                child: Text(
+                  '${Strings.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Color(0xFF3475F0),
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
               ),
               SizedBox(
                 height: 40.sp,
@@ -176,7 +179,7 @@ class _MeState extends State<Me> {
                       height: 44.h,
                       width: 169.w,
                       child: Text(
-                        'Action Follow a set of instructions',
+                        Strings.actionFollowInstructions,
                         maxLines: 2,
                         style: TextStyle(
                             fontSize: 16.sp,
@@ -203,7 +206,7 @@ class _MeState extends State<Me> {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                 child: Text(
-                  'Instructions: Instructions up to 200 characters are shown hereLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+                  '${Strings.instructions}: ${action.instructions}',
                   maxLines: 5,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -218,7 +221,7 @@ class _MeState extends State<Me> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    'Due: Jul 15',
+                    '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
                     maxLines: 1,
                     style: TextStyle(
                         fontSize: 16.sp,
@@ -407,42 +410,6 @@ class _MeState extends State<Me> {
           }
         });
   }
-
-  /*Widget actionsList1(AppBloc bloc) {
-    return StreamBuilder<List<HiveAction>>(
-      stream: bloc.actionBloc.actions,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<HiveAction> _listToShow;
-
-          if (bloc.actionBloc.query.isNotEmpty) {
-            String _query = bloc.actionBloc.query;
-            _listToShow = snapshot.data!
-                .where((item) =>
-                    item.name!.toLowerCase().contains(_query.toLowerCase()) ||
-                    item.name!.toLowerCase().startsWith(_query.toLowerCase()))
-                .toList();
-          } else {
-            _listToShow = snapshot.data!;
-          }
-          return ListView.builder(
-            shrinkWrap: true,
-            // padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: _listToShow.length,
-            itemBuilder: (BuildContext ctxt, int index) {
-              return MyActionListItem(
-                action: _listToShow[index],
-                onActionTap: _onActionSelection,
-              );
-            },
-          );
-        } else {
-          return Container();
-        }
-      },
-    );
-  }*/
 }
 
 class MyActionListItem extends StatelessWidget {

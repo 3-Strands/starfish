@@ -122,6 +122,14 @@ list to join your group in Starfish''';
       '''Option 2. Add a person's name, without 
 sending an invitation to use Starfish''';
   static const String history = 'History';
+  static const String month = 'Month';
+  static const String due = 'Due';
+  static const String teacher = 'Teacher';
+  static const String title = 'Title';
+  static const String actionFollowInstructions =
+      'Action Follow a set of instructions';
+  static const String statusOfActionForLearner =
+      'Status of this action for learner';
 
   static const String reportDialogDetailText =
       'Explain why this material is inappropriate';

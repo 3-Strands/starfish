@@ -2,9 +2,15 @@ import 'package:intl/intl.dart';
 import 'package:starfish/db/hive_date.dart';
 
 class DateTimeUtils {
-  static String formatHiveDate(HiveDate hiveDate) {
+  /*static String formatHiveDate(HiveDate hiveDate) {
     String dateString = '${hiveDate.day}-${hiveDate.month}-${hiveDate.year}';
     return formatDate(toDateTime(dateString, 'dd-MM-yyyy'), 'dd-MMM-yyyy');
+  }*/
+
+  static String formatHiveDate(HiveDate hiveDate,
+      {String requiredDateFormat = 'dd-MMM-yyyy'}) {
+    String dateString = '${hiveDate.day}-${hiveDate.month}-${hiveDate.year}';
+    return formatDate(toDateTime(dateString, 'dd-MM-yyyy'), requiredDateFormat);
   }
 
   static String formatDate(DateTime dateTime, String requiredDateFormat) {

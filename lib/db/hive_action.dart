@@ -2,7 +2,9 @@ import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
@@ -115,5 +117,16 @@ extension HiveActionExt on HiveAction {
     } else {
       return ActionStatus.DONE;
     }
+  }
+
+  List<HiveUser>? get users {
+    if (this.group == null) {
+      return null;
+    }
+    return this
+        .group!
+        .users
+        ?.map((HiveGroupUser groupUser) => groupUser.user!)
+        .toList();
   }
 }
