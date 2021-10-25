@@ -10,6 +10,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -299,30 +300,16 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   Widget _buildUserList(HiveAction action) {
-    List<Widget> users = [];
-
     if (action.users == null) {
       return Container();
     }
-    action.users!.forEach((user) {
-      users.add(
-        Container(
-          height: 30.w,
-          child: Text(user.name ?? ''),
-        ),
-      );
-    });
 
     return Container(
       height: 300.h,
       child: ListView.builder(
-        // Let the ListView know how many items it needs to build.
         itemCount: action.users!.length,
-        // Provide a builder function. This is where the magic happens.
-        // Convert each item into a widget based on the type of item it is.
         itemBuilder: (context, index) {
           final item = action.users![index];
-
           return ListTile(
             title: Row(
               children: [
@@ -364,44 +351,227 @@ class _MyGroupState extends State<MyGroup> {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   color: AppColors.selectedButtonBG,
-                ), // // icon-2
+                ),
               ],
             ),
+            onTap: () {
+              Navigator.pop(context);
+              _onActionSelection(action);
+            },
           );
         },
       ),
     );
-    // return Column(
-    //   crossAxisAlignment: CrossAxisAlignment.start,
-    //   children: users,
-    // );
   }
 
   void _onActionSelection(HiveAction action) {
-    print('on action selection');
     showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(34.r),
-          topRight: Radius.circular(34.r),
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(34.r),
+            topRight: Radius.circular(34.r),
+          ),
         ),
-      ),
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (BuildContext context,
-            StateSetter setState /*You can rename this!*/) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.70,
-            child: SingleChildScrollView(
-              child: _buildSlidingUpPanel(action),
-            ),
+        isScrollControlled: true,
+        isDismissible: true,
+        enableDrag: true,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 40.sp,
+              ),
+              Center(
+                child: Text(
+                  '${Strings.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Color(0xFF3475F0),
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(
+                height: 40.sp,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 44.h,
+                      width: 169.w,
+                      child: Text(
+                        Strings.actionFollowInstructions,
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 53.sp,
+                    ),
+                    Icon(
+                      Icons.thumb_up_alt_outlined,
+                      size: 14.sp,
+                    ),
+                    SizedBox(
+                      width: 4.sp,
+                    ),
+                    ActionStatusWidget(
+                        title: ActionStatus.DONE, height: 36.h, width: 99.w)
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: Text(
+                  '${Strings.instructions}: ${action.instructions}',
+                  maxLines: 5,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Color(0xFF797979),
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF4F4F4F),
+                        fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 100.h,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    Strings.howWasThisActionText,
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF4F4F4F),
+                        fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 36.sp,
+                      width: 160.sp,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4.sp),
+                        color: Color(0xFFC9C9C9),
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.thumb_up_outlined, size: 14.sp),
+                            SizedBox(
+                              width: 4.sp,
+                            ),
+                            Text(
+                              Strings.goodText,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontFamily: 'Rubik',
+                                fontSize: 14.sp,
+                                color: Color(0xFF777777),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    Container(
+                      height: 36.sp,
+                      width: 160.sp,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4.sp),
+                        color: Color(0xFFC9C9C9),
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.thumb_down_outlined, size: 14.sp),
+                            SizedBox(
+                              width: 4.sp,
+                            ),
+                            Text(
+                              Strings.notSoGoodText,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontFamily: 'Rubik',
+                                fontSize: 14.sp,
+                                color: Color(0xFF777777),
+                              ),
+                            ),
+                          ]),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 39.h,
+              ),
+              Container(
+                height: 75.h,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Color(0xFFEFEFEF),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                  child: Container(
+                    height: 37.5.h,
+                    color: Color(0xFFEFEFEF),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //_closeSlidingUpPanelIfOpen();
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40.r),
+                          ),
+                        ),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                      ),
+                      child: Text(Strings.close),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         });
-      },
-    );
   }
 
   Widget _buildSlidingUpPanel(HiveAction action) {
@@ -522,7 +692,6 @@ class _MyGroupState extends State<MyGroup> {
             color: Color(0xFFEFEFEF),
             child: ElevatedButton(
               onPressed: () {
-                //_closeSlidingUpPanelIfOpen();
                 Navigator.pop(context);
               },
               style: ButtonStyle(
