@@ -12,6 +12,7 @@
         </intent>
     </queries>
    <application
+        android:allowBackup="false"
         android:usesCleartextTraffic="true"
         android:label="Starfish"
         android:icon="@mipmap/ic_launcher">

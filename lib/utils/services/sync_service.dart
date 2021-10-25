@@ -129,6 +129,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
+    await lock.synchronized(() => syncLocalActionsToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
     showAlert(NavigationService.navigatorKey.currentContext!);
 
@@ -634,6 +635,46 @@ class SyncService {
       }), onDone: () {
         print('Action Sync Done.');
       });
+    });
+  }
+
+  syncLocalActionsToRemote() async {
+    print('============= START: Sync Local Actions to Remote =============');
+
+    actionBox.values
+        .where((element) =>
+            (element.isNew || element.isUpdated || element.isDirty))
+        .forEach((HiveAction _hiveAction) {
+      if (_hiveAction.isNew || _hiveAction.isUpdated) {
+        ActionRepository()
+            .createUpdateAction(
+          action: _hiveAction.toAction(),
+          fieldMaskPaths: kActionFieldMask,
+        )
+            .then((value) {
+          // update flag(s) isNew and/or isUpdated to false
+          _hiveAction.isNew = false;
+          _hiveAction.isUpdated = false;
+
+          ActionRepository().createUpdateActionInDB(_hiveAction);
+        }).onError((error, stackTrace) {
+          print('============= Error: ${error.toString()} ===============');
+        }).whenComplete(() {
+          print(
+              '============= END: Sync Local Actions to Remote ===============');
+        });
+      } else {
+        ActionRepository().deleteAction(_hiveAction.toAction()).then((value) {
+          _hiveAction.isDirty = false;
+
+          ActionRepository().createUpdateActionInDB(_hiveAction);
+        }).onError((error, stackTrace) {
+          print('============= Error: ${error.toString()} ===============');
+        }).whenComplete(() {
+          print(
+              '============= END: Sync Local Actions to Remote ===============');
+        });
+      }
     });
   }
 }

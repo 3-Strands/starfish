@@ -218,4 +218,34 @@ class ApiProvider {
     }
     return client!.createUsers(Stream.value(request)).first;
   }
+
+  Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction(
+    Action action,
+    List<String> fieldMaskPaths,
+  ) async {
+    var request = CreateUpdateActionsRequest.create();
+    request.action = action;
+
+    FieldMask mask = FieldMask(paths: fieldMaskPaths);
+    request.updateMask = mask;
+
+    Stream<CreateUpdateActionsRequest> streamRequest = Stream.value(request);
+
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateActions(streamRequest);
+  }
+
+  Future<ResponseStream<DeleteActionResponse>> deleteAction(
+      Action action) async {
+    var request = DeleteActionRequest.create();
+    request.actionId = action.id;
+
+    Stream<DeleteActionRequest> streamRequest = Stream.value(request);
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.deleteActions(streamRequest);
+  }
 }

@@ -305,13 +305,76 @@ class _MyGroupState extends State<MyGroup> {
       return Container();
     }
     action.users!.forEach((user) {
-      users.add(Container(height: 30.w, child: Text(user.name ?? '')));
+      users.add(
+        Container(
+          height: 30.w,
+          child: Text(user.name ?? ''),
+        ),
+      );
     });
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: users,
+    return Container(
+      height: 300.h,
+      child: ListView.builder(
+        // Let the ListView know how many items it needs to build.
+        itemCount: action.users!.length,
+        // Provide a builder function. This is where the magic happens.
+        // Convert each item into a widget based on the type of item it is.
+        itemBuilder: (context, index) {
+          final item = action.users![index];
+
+          return ListTile(
+            title: Row(
+              children: [
+                Text(
+                  item.name ?? '',
+                  style: TextStyle(
+                    color: AppColors.txtFieldTextColor,
+                    fontFamily: 'OpenSans',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                Container(
+                  width: 100.w,
+                  height: 20.h,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Done',
+                      style: TextStyle(
+                        color: AppColors.txtFieldTextColor,
+                        fontFamily: 'OpenSans',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            trailing: Wrap(
+              children: <Widget>[
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: AppColors.selectedButtonBG,
+                ), // // icon-2
+              ],
+            ),
+          );
+        },
+      ),
     );
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: users,
+    // );
   }
 
   void _onActionSelection(HiveAction action) {
