@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -468,27 +469,69 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           SizedBox(
             height: 63.h,
           ),
-          TextButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return ReportMaterialDialogBox(
-                    material: material,
-                  );
-                },
-              );
-            },
-            child: Text(
-              Strings.reportInappropriateMaterial,
-              style: TextStyle(
-                color: Color(0xFFF65A4A),
-                fontFamily: 'OpenSans',
-                fontSize: 16.sp,
-                fontStyle: FontStyle.italic,
-              ),
+          // TextButton(
+          //   onPressed: () {
+          //     showDialog(
+          //       context: context,
+          //       builder: (BuildContext context) {
+          //         return ReportMaterialDialogBox(
+          //           material: material,
+          //         );
+          //       },
+          //     );
+          //   },
+          //   child:
+          RichText(
+            text: new TextSpan(
+              children: [
+                new TextSpan(
+                  text: "If this material is inappropriate, ",
+                  style: TextStyle(
+                      color: Color(0xFFF65A4A),
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic),
+                ),
+                new TextSpan(
+                  text: 'click here',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.solid,
+                      color: Color(0xFFF65A4A),
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic),
+                  recognizer: new TapGestureRecognizer()
+                    ..onTap = () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ReportMaterialDialogBox(
+                            material: material,
+                          );
+                        },
+                      );
+                    },
+                ),
+                new TextSpan(
+                  text: ' to report it.',
+                  style: new TextStyle(
+                      color: Color(0xFFF65A4A),
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic),
+                ),
+              ],
             ),
           ),
+
+          //   Text(
+          //     Strings.reportInappropriateMaterial,
+          //     style: TextStyle(
+          //       color: Color(0xFFF65A4A),
+          //       fontFamily: 'OpenSans',
+          //       fontSize: 16.sp,
+          //       fontStyle: FontStyle.italic,
+          //     ),
+          //   ),
+          // ),
           SizedBox(
             height: 20.h,
           ),
@@ -556,6 +599,7 @@ class MaterialListItem extends StatelessWidget {
                       width: 240.w,
                       child: Text(
                         '${Strings.materialTitlePrefix} ${material.title}',
+                        
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(

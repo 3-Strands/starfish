@@ -65,6 +65,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
   contentBox(context) {
     return Container(
       height: 264.h,
+      width: 315.w,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: AppColors.popDialogBGColor,
@@ -76,9 +77,14 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
           SizedBox(
             height: 15.h,
           ),
-          Text(
-            widget.material.title ?? '',
-            style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal:61.sp),
+            child: Text(
+              widget.material.title ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+            ),
           ),
           SizedBox(
             height: 20.h,
@@ -92,37 +98,40 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 10.h,
           ),
           Container(
-            height: 111.h,
-            margin: EdgeInsets.fromLTRB(18.w, 0.0, 18.w, 0.0),
-            child: TextFormField(
-              controller: _reportTextController,
-              focusNode: _reportTextFocus,
-              onFieldSubmitted: (term) {
-                _reportTextFocus.unfocus();
-              },
-              onChanged: (text) {
-                setState(() {
-                  isDetailEmpty = (text.isNotEmpty) ? false : true;
-                });
-              },
-              maxLines: 4,
-              keyboardType: TextInputType.text,
-              style: textFormFieldText,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.fromLTRB(10.w, 10.0, 0.0, 10.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
+            height: 110.h,
+            width: 280.w,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: _reportTextController,
+                focusNode: _reportTextFocus,
+                onFieldSubmitted: (term) {
+                  _reportTextFocus.unfocus();
+                },
+                onChanged: (text) {
+                  setState(() {
+                    isDetailEmpty = (text.isNotEmpty) ? false : true;
+                  });
+                },
+                maxLines: 4,
+                keyboardType: TextInputType.text,
+                style: textFormFieldText,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(10.w, 10.0, 0.0, 10.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  filled: true,
+                  fillColor: AppColors.txtFieldBackground,
                 ),
-                focusedBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                filled: true,
-                fillColor: AppColors.txtFieldBackground,
               ),
             ),
           ),
@@ -190,7 +199,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                         fontWeight: FontWeight.normal,
                         fontSize: 16.sp,
                         color: (isDetailEmpty)
-                            ? AppColors.unselectedButtonBG
+                            ? Color(0xFF797979)
                             : AppColors.selectedButtonBG,
                       ),
                     ),
