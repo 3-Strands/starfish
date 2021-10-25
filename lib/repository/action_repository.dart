@@ -10,6 +10,18 @@ class ActionRepository {
 
   Future<ResponseStream<Action>> getActions() => apiProvider.getActions();
 
+  Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction({
+    required Action action,
+    required List<String> fieldMaskPaths,
+  }) =>
+      apiProvider.createUpdateAction(
+        action,
+        fieldMaskPaths,
+      );
+
+  Future<ResponseStream<DeleteActionResponse>> deleteAction(Action action) =>
+      apiProvider.deleteAction(action);
+
   Future<List<HiveAction>> fetchAllActionsFromDB(List<String> groupIds) =>
       dbProvider.getAllActions(groupIds);
 

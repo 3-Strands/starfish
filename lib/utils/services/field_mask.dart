@@ -37,3 +37,13 @@ final List<String> kUserFieldMask = [
   'name',
   'phone',
 ];
+
+final List<String> kActionFieldMask = [
+  'name',
+  'type',
+  'group_id',
+  'instructions',
+  'material_id',
+  'question',
+  'date_due',
+];
