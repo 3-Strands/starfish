@@ -10,6 +10,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_material.dart';
@@ -25,6 +26,7 @@ import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/widgets/history_item.dart';
 
 class AddEditAction extends StatefulWidget {
   final HiveAction? action;
@@ -338,6 +340,9 @@ class _AddEditActionState extends State<AddEditAction>
                     ),
                   ),
                   SizedBox(height: 20.h),
+
+                  if (widget.action?.editHistory != null)
+                    _editHistoryContainer(widget.action),
                 ],
               ),
             ),
@@ -377,6 +382,36 @@ class _AddEditActionState extends State<AddEditAction>
         ),
       ),
     );
+  }
+
+  Widget _editHistoryContainer(HiveAction? action) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _historyItems(action!)!,
+      ),
+    );
+  }
+
+  List<Widget>? _historyItems(HiveAction action) {
+    final List<Widget> _widgetList = [];
+    final header = Text(
+      Strings.history,
+      style: TextStyle(
+        fontFamily: 'OpenSans',
+        fontWeight: FontWeight.bold,
+        fontSize: 18.sp,
+        color: Color(0xFF3475F0),
+      ),
+    );
+    _widgetList.add(header);
+
+    for (HiveEdit edit in action.editHistory ?? []) {
+      _widgetList.add(HistoryItem(edit: edit));
+    }
+
+    return _widgetList;
   }
 
   _validateAndCreateUpdateAction() {
