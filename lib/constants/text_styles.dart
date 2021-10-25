@@ -36,7 +36,7 @@ var cancelButtonTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.normal,
   fontSize: 16.sp,
-  color: AppColors.unselectedButtonBG,
+  color: Color(0xFF797979),
 );
 
 var buttonTextStyle = TextStyle(
