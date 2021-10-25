@@ -11,7 +11,7 @@ class ActionProvider {
 
   Future<List<HiveAction>> getAllActions(List<String> groupIds) async {
     return _actionBox.values.where((element) {
-      return groupIds.contains(element.groupId);
+      return groupIds.contains(element.groupId) && !element.isDirty;
     }).toList();
   }
 
