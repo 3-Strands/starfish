@@ -354,7 +354,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   _validateAndCreateUpdateGroup() {
     if (_titleController.text.isEmpty) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyGroupTitle);
     } else if (_descriptionController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
     } else if (_selectedLanguages.length == 0) {

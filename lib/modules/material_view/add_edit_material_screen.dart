@@ -509,7 +509,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
   _validateInfo() {
     if (_titleController.text == '') {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyTitle);
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyMaterialTitle);
     } else if (_descriptionController.text == '') {
       StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
     } else if (_selectedLanguages.length == 0) {
