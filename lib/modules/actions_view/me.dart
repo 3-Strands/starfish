@@ -420,6 +420,7 @@ class MyActionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 10.h),
       shape: RoundedRectangleBorder(
@@ -492,7 +493,9 @@ class MyActionListItem extends StatelessWidget {
                                   .requestFocus(new FocusNode()));
                               break;
                             case 1:
-                              //TODO: delete action
+                              // Mark this action for deletion
+                              action.isDirty = true;
+                              bloc.actionBloc.createUpdateAction(action);
 
                               break;
                           }
