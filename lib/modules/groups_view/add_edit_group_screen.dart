@@ -515,34 +515,27 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFormField(
-                    controller: _titleController,
-                    keyboardType: TextInputType.text,
-                    style: formTitleTextStyle,
-                    decoration: InputDecoration(
-                      hintText: Strings.hintGroupName,
-                      hintStyle: formTitleHintStyle,
-                      contentPadding: EdgeInsets.fromLTRB(0.w, 0.0, 5.0.w, 0.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0.r),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
+                  Container(
+                    child: TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      controller: _titleController,
+                      style: formTitleTextStyle,
+                      decoration: InputDecoration(
+                        hintText: Strings.hintGroupName,
+                        hintStyle: formTitleHintStyle,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0.r),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                          ),
                         ),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0.r),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                        ),
-                      ),
-                      filled: true,
-                      fillColor: Colors.transparent,
                     ),
                   ),
                   SizedBox(height: 21.h),
