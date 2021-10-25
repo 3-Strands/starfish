@@ -11,6 +11,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
@@ -42,14 +43,14 @@ class _AddEditActionState extends State<AddEditAction>
   late AnimationController _controller;
   late AppBloc bloc;
 
-  final _actionNameController = TextEditingController();
+  final TextEditingController _actionNameController = TextEditingController();
+  Action_Type? _selectedActionType = Action_Type.TEXT_INSTRUCTION;
 
   bool _isEditMode = false;
 
-  late List<HiveGroup> _selectedGroups = [];
+  List<HiveGroup> _selectedGroups = [];
 
   HiveMaterial? _selectedMaterial;
-  Action_Type? _selectedActionType;
   String? _instructions;
   String? _question;
   DateTime? _dueDate;
@@ -59,12 +60,16 @@ class _AddEditActionState extends State<AddEditAction>
     super.initState();
     if (widget.action != null) {
       _isEditMode = true;
-    }
-    _selectedActionType = _isEditMode
-        ? Action_Type.valueOf(widget.action!.type!)
-        : Action_Type.TEXT_INSTRUCTION;
 
-    _selectedMaterial = _isEditMode ? widget.action!.material : null;
+      _selectedActionType = Action_Type.valueOf(widget.action!.type!) ??
+          Action_Type.TEXT_INSTRUCTION;
+      _actionNameController.text = widget.action!.name!;
+      _selectedMaterial = widget.action!.material;
+
+      _selectedGroups =
+          widget.action!.group != null ? [widget.action!.group!] : [];
+      _dueDate = widget.action!.dateDue?.toDateTime();
+    }
 
     _controller = AnimationController(vsync: this);
   }
@@ -269,6 +274,7 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 13.h),
 
+                  // List groups where current user have Admin or Teacher Role only
                   SelectDropDown(
                     navTitle: Strings.assignActionTo,
                     placeholder: Strings.assignActionTo,

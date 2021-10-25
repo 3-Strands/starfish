@@ -4,6 +4,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
@@ -12,6 +13,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/select_items/item.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 class MultiSelect extends StatefulWidget {
   final String navTitle;
@@ -52,6 +54,7 @@ class _MultiSelectState extends State<MultiSelect> {
   late Box<HiveMaterialType> _materialTypeBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
   late Box<HiveGroup> _groupBox;
+  late Box<HiveCurrentUser> _currentUserBox;
 
   List<Item> _items = [];
 
@@ -178,11 +181,18 @@ class _MultiSelectState extends State<MultiSelect> {
         break;
       case DataSourceType.groups:
         _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+        _currentUserBox =
+            Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+
+        final currentUserId = _currentUserBox.values.first.id;
         List<HiveGroup> _groups = _groupBox.values.toList();
 
         _groups.forEach((element) {
-          var type = Item(data: element, isSelected: false);
-          _items.add(type);
+          if (element.getMyRole(currentUserId) == GroupUser_Role.ADMIN ||
+              element.getMyRole(currentUserId) == GroupUser_Role.TEACHER) {
+            var type = Item(data: element, isSelected: false);
+            _items.add(type);
+          }
         });
 
         List<HiveGroup> _selectedGroups =
