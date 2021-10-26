@@ -308,19 +308,30 @@ const CreateUpdateMaterialsResponse_Status$json = const {
 
 /// Descriptor for `CreateUpdateMaterialsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createUpdateMaterialsResponseDescriptor = $convert.base64Decode('Ch1DcmVhdGVVcGRhdGVNYXRlcmlhbHNSZXNwb25zZRIyCghtYXRlcmlhbBgBIAEoCzIWLnNpbC5zdGFyZmlzaC5NYXRlcmlhbFIIbWF0ZXJpYWwSSgoGc3RhdHVzGAIgASgOMjIuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU1hdGVyaWFsc1Jlc3BvbnNlLlN0YXR1c1IGc3RhdHVzEhgKB21lc3NhZ2UYAyABKAlSB21lc3NhZ2UiIgoGU3RhdHVzEgsKB1NVQ0NFU1MQABILCgdGQUlMVVJFEAE=');
-@$core.Deprecated('Use createUsersResponseDescriptor instead')
-const CreateUsersResponse$json = const {
-  '1': 'CreateUsersResponse',
+@$core.Deprecated('Use createUpdateUserRequestDescriptor instead')
+const CreateUpdateUserRequest$json = const {
+  '1': 'CreateUpdateUserRequest',
   '2': const [
     const {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.User', '10': 'user'},
-    const {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.sil.starfish.CreateUsersResponse.Status', '10': 'status'},
-    const {'1': 'message', '3': 3, '4': 1, '5': 9, '10': 'message'},
+    const {'1': 'update_mask', '3': 2, '4': 1, '5': 11, '6': '.google.protobuf.FieldMask', '10': 'updateMask'},
   ],
-  '4': const [CreateUsersResponse_Status$json],
 };
 
-@$core.Deprecated('Use createUsersResponseDescriptor instead')
-const CreateUsersResponse_Status$json = const {
+/// Descriptor for `CreateUpdateUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createUpdateUserRequestDescriptor = $convert.base64Decode('ChdDcmVhdGVVcGRhdGVVc2VyUmVxdWVzdBImCgR1c2VyGAEgASgLMhIuc2lsLnN0YXJmaXNoLlVzZXJSBHVzZXISOwoLdXBkYXRlX21hc2sYAiABKAsyGi5nb29nbGUucHJvdG9idWYuRmllbGRNYXNrUgp1cGRhdGVNYXNr');
+@$core.Deprecated('Use createUpdateUserResponseDescriptor instead')
+const CreateUpdateUserResponse$json = const {
+  '1': 'CreateUpdateUserResponse',
+  '2': const [
+    const {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.User', '10': 'user'},
+    const {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.sil.starfish.CreateUpdateUserResponse.Status', '10': 'status'},
+    const {'1': 'message', '3': 3, '4': 1, '5': 9, '10': 'message'},
+  ],
+  '4': const [CreateUpdateUserResponse_Status$json],
+};
+
+@$core.Deprecated('Use createUpdateUserResponseDescriptor instead')
+const CreateUpdateUserResponse_Status$json = const {
   '1': 'Status',
   '2': const [
     const {'1': 'SUCCESS', '2': 0},
@@ -328,8 +339,8 @@ const CreateUsersResponse_Status$json = const {
   ],
 };
 
-/// Descriptor for `CreateUsersResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createUsersResponseDescriptor = $convert.base64Decode('ChNDcmVhdGVVc2Vyc1Jlc3BvbnNlEiYKBHVzZXIYASABKAsyEi5zaWwuc3RhcmZpc2guVXNlclIEdXNlchJACgZzdGF0dXMYAiABKA4yKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXNlcnNSZXNwb25zZS5TdGF0dXNSBnN0YXR1cxIYCgdtZXNzYWdlGAMgASgJUgdtZXNzYWdlIiIKBlN0YXR1cxILCgdTVUNDRVNTEAASCwoHRkFJTFVSRRAB');
+/// Descriptor for `CreateUpdateUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List createUpdateUserResponseDescriptor = $convert.base64Decode('ChhDcmVhdGVVcGRhdGVVc2VyUmVzcG9uc2USJgoEdXNlchgBIAEoCzISLnNpbC5zdGFyZmlzaC5Vc2VyUgR1c2VyEkUKBnN0YXR1cxgCIAEoDjItLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVzcG9uc2UuU3RhdHVzUgZzdGF0dXMSGAoHbWVzc2FnZRgDIAEoCVIHbWVzc2FnZSIiCgZTdGF0dXMSCwoHU1VDQ0VTUxAAEgsKB0ZBSUxVUkUQAQ==');
 @$core.Deprecated('Use deleteActionRequestDescriptor instead')
 const DeleteActionRequest$json = const {
   '1': 'DeleteActionRequest',
@@ -693,8 +704,21 @@ const User$json = const {
     const {'1': 'selected_results_tab', '3': 10, '4': 1, '5': 14, '6': '.sil.starfish.ResultsTab', '10': 'selectedResultsTab'},
     const {'1': 'phone_country_id', '3': 11, '4': 1, '5': 9, '10': 'phoneCountryId'},
     const {'1': 'dialling_code', '3': 12, '4': 1, '5': 9, '10': 'diallingCode'},
+    const {'1': 'status', '3': 13, '4': 1, '5': 14, '6': '.sil.starfish.User.Status', '10': 'status'},
+    const {'1': 'creator_id', '3': 14, '4': 1, '5': 9, '10': 'creatorId'},
+  ],
+  '4': const [User_Status$json],
+};
+
+@$core.Deprecated('Use userDescriptor instead')
+const User_Status$json = const {
+  '1': 'Status',
+  '2': const [
+    const {'1': 'STATUS_UNSPECIFIED', '2': 0},
+    const {'1': 'ACTIVE', '2': 1},
+    const {'1': 'ACCOUNT_PENDING', '2': 2},
   ],
 };
 
 /// Descriptor for `User`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userDescriptor = $convert.base64Decode('CgRVc2VyEg4KAmlkGAEgASgJUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEhQKBXBob25lGAMgASgJUgVwaG9uZRIfCgtjb3VudHJ5X2lkcxgEIAMoCVIKY291bnRyeUlkcxIhCgxsYW5ndWFnZV9pZHMYBSADKAlSC2xhbmd1YWdlSWRzEh8KC2xpbmtfZ3JvdXBzGAYgASgIUgpsaW5rR3JvdXBzEi8KBmdyb3VwcxgHIAMoCzIXLnNpbC5zdGFyZmlzaC5Hcm91cFVzZXJSBmdyb3VwcxIyCgdhY3Rpb25zGAggAygLMhguc2lsLnN0YXJmaXNoLkFjdGlvblVzZXJSB2FjdGlvbnMSSQoUc2VsZWN0ZWRfYWN0aW9uc190YWIYCSABKA4yFy5zaWwuc3RhcmZpc2guQWN0aW9uVGFiUhJzZWxlY3RlZEFjdGlvbnNUYWISSgoUc2VsZWN0ZWRfcmVzdWx0c190YWIYCiABKA4yGC5zaWwuc3RhcmZpc2guUmVzdWx0c1RhYlISc2VsZWN0ZWRSZXN1bHRzVGFiEigKEHBob25lX2NvdW50cnlfaWQYCyABKAlSDnBob25lQ291bnRyeUlkEiMKDWRpYWxsaW5nX2NvZGUYDCABKAlSDGRpYWxsaW5nQ29kZQ==');
+final $typed_data.Uint8List userDescriptor = $convert.base64Decode('CgRVc2VyEg4KAmlkGAEgASgJUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEhQKBXBob25lGAMgASgJUgVwaG9uZRIfCgtjb3VudHJ5X2lkcxgEIAMoCVIKY291bnRyeUlkcxIhCgxsYW5ndWFnZV9pZHMYBSADKAlSC2xhbmd1YWdlSWRzEh8KC2xpbmtfZ3JvdXBzGAYgASgIUgpsaW5rR3JvdXBzEi8KBmdyb3VwcxgHIAMoCzIXLnNpbC5zdGFyZmlzaC5Hcm91cFVzZXJSBmdyb3VwcxIyCgdhY3Rpb25zGAggAygLMhguc2lsLnN0YXJmaXNoLkFjdGlvblVzZXJSB2FjdGlvbnMSSQoUc2VsZWN0ZWRfYWN0aW9uc190YWIYCSABKA4yFy5zaWwuc3RhcmZpc2guQWN0aW9uVGFiUhJzZWxlY3RlZEFjdGlvbnNUYWISSgoUc2VsZWN0ZWRfcmVzdWx0c190YWIYCiABKA4yGC5zaWwuc3RhcmZpc2guUmVzdWx0c1RhYlISc2VsZWN0ZWRSZXN1bHRzVGFiEigKEHBob25lX2NvdW50cnlfaWQYCyABKAlSDnBob25lQ291bnRyeUlkEiMKDWRpYWxsaW5nX2NvZGUYDCABKAlSDGRpYWxsaW5nQ29kZRIxCgZzdGF0dXMYDSABKA4yGS5zaWwuc3RhcmZpc2guVXNlci5TdGF0dXNSBnN0YXR1cxIdCgpjcmVhdG9yX2lkGA4gASgJUgljcmVhdG9ySWQiQQoGU3RhdHVzEhYKElNUQVRVU19VTlNQRUNJRklFRBAAEgoKBkFDVElWRRABEhMKD0FDQ09VTlRfUEVORElORxAC');

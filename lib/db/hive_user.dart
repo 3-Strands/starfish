@@ -32,10 +32,14 @@ class HiveUser extends HiveObject {
   @HiveField(11)
   String? phoneCountryId;
   @HiveField(12)
-  bool isNew = false;
+  int? status = User_Status.STATUS_UNSPECIFIED.value;
   @HiveField(13)
-  bool isUpdated = false;
+  String? creatorId;
   @HiveField(14)
+  bool isNew = false;
+  @HiveField(15)
+  bool isUpdated = false;
+  @HiveField(16)
   bool isDeleted = false;
 
   HiveUser({
@@ -51,6 +55,8 @@ class HiveUser extends HiveObject {
     this.selectedResultsTab,
     this.phoneCountryId,
     this.diallingCode,
+    this.status,
+    this.creatorId,
     this.isNew = false,
     this.isUpdated = false,
     this.isDeleted = false,
@@ -69,6 +75,8 @@ class HiveUser extends HiveObject {
     this.selectedResultsTab = user.selectedResultsTab.value;
     this.phoneCountryId = user.phoneCountryId;
     this.diallingCode = user.diallingCode;
+    this.status = user.status.value;
+    this.creatorId = user.creatorId;
     this.isNew = false;
     this.isUpdated = false;
     this.isDeleted = false;
@@ -92,6 +100,8 @@ class HiveUser extends HiveObject {
           : ResultsTab.RESULTS_UNSPECIFIED,
       phoneCountryId: this.phoneCountryId,
       diallingCode: this.diallingCode,
+      status: User_Status.valueOf(this.status!),
+      creatorId: this.creatorId,
     );
   }
 
@@ -102,7 +112,8 @@ class HiveUser extends HiveObject {
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 
-        countryIds: ${this.countryIds?.toString()}, languageIds: ${this.languageIds?.toString()}}''';
+        countryIds: ${this.countryIds?.toString()}, languageIds: ${this.languageIds?.toString()},
+        creatorId: ${this.creatorId}, status: ${this.status}}''';
   }
 }
 

@@ -36,6 +36,8 @@ final List<String> kGroupUserFieldMask = [
 final List<String> kUserFieldMask = [
   'name',
   'phone',
+  'phone_country_id',
+  'dialling_code'
 ];
 
 final List<String> kActionFieldMask = [

@@ -10,8 +10,9 @@ class UserRepository {
 
   Future<ResponseStream<User>> getUsers() => apiProvider.getUsers();
 
-  Future<CreateUsersResponse> createUsers(User user) =>
-      apiProvider.createUsers(user);
+  Future<CreateUpdateUserResponse> createUpdateUsers(
+          User user, List<String> fieldMaskPaths) =>
+      apiProvider.createUpdateUsers(user, fieldMaskPaths);
 
   Future<List<HiveUser>> getUsersFromDB() => dbProvider.getUsers();
 

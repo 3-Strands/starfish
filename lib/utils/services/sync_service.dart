@@ -525,10 +525,11 @@ class SyncService {
     ]);
   }
 
-  Future<CreateUsersResponse> addUserToSyncQueue(HiveUser _hiveUser) async {
+  Future<CreateUpdateUserResponse> addUserToSyncQueue(
+      HiveUser _hiveUser) async {
     print('LOCAL User : ${_hiveUser.name}');
-    CreateUsersResponse _response =
-        await UserRepository().createUsers(_hiveUser.toUser());
+    CreateUpdateUserResponse _response = await UserRepository()
+        .createUpdateUsers(_hiveUser.toUser(), kUserFieldMask);
 
     print('REMOTE User [${_response.status}]: ${_response.user.name}');
 

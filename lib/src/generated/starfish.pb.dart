@@ -1214,18 +1214,83 @@ class CreateUpdateMaterialsResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(3);
 }
 
-class CreateUsersResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUsersResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+class CreateUpdateUserRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<User>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
-    ..e<CreateUsersResponse_Status>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: CreateUsersResponse_Status.SUCCESS, valueOf: CreateUsersResponse_Status.valueOf, enumValues: CreateUsersResponse_Status.values)
+    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..hasRequiredFields = false
+  ;
+
+  CreateUpdateUserRequest._() : super();
+  factory CreateUpdateUserRequest({
+    User? user,
+    $3.FieldMask? updateMask,
+  }) {
+    final _result = create();
+    if (user != null) {
+      _result.user = user;
+    }
+    if (updateMask != null) {
+      _result.updateMask = updateMask;
+    }
+    return _result;
+  }
+  factory CreateUpdateUserRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CreateUpdateUserRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CreateUpdateUserRequest clone() => CreateUpdateUserRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CreateUpdateUserRequest copyWith(void Function(CreateUpdateUserRequest) updates) => super.copyWith((message) => updates(message as CreateUpdateUserRequest)) as CreateUpdateUserRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CreateUpdateUserRequest create() => CreateUpdateUserRequest._();
+  CreateUpdateUserRequest createEmptyInstance() => create();
+  static $pb.PbList<CreateUpdateUserRequest> createRepeated() => $pb.PbList<CreateUpdateUserRequest>();
+  @$core.pragma('dart2js:noInline')
+  static CreateUpdateUserRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateUpdateUserRequest>(create);
+  static CreateUpdateUserRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  User get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(User v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  User ensureUser() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $3.FieldMask get updateMask => $_getN(1);
+  @$pb.TagNumber(2)
+  set updateMask($3.FieldMask v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUpdateMask() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUpdateMask() => clearField(2);
+  @$pb.TagNumber(2)
+  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+}
+
+class CreateUpdateUserResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<User>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
+    ..e<CreateUpdateUserResponse_Status>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: CreateUpdateUserResponse_Status.SUCCESS, valueOf: CreateUpdateUserResponse_Status.valueOf, enumValues: CreateUpdateUserResponse_Status.values)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  CreateUsersResponse._() : super();
-  factory CreateUsersResponse({
+  CreateUpdateUserResponse._() : super();
+  factory CreateUpdateUserResponse({
     User? user,
-    CreateUsersResponse_Status? status,
+    CreateUpdateUserResponse_Status? status,
     $core.String? message,
   }) {
     final _result = create();
@@ -1240,26 +1305,26 @@ class CreateUsersResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory CreateUsersResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory CreateUsersResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory CreateUpdateUserResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CreateUpdateUserResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  CreateUsersResponse clone() => CreateUsersResponse()..mergeFromMessage(this);
+  CreateUpdateUserResponse clone() => CreateUpdateUserResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  CreateUsersResponse copyWith(void Function(CreateUsersResponse) updates) => super.copyWith((message) => updates(message as CreateUsersResponse)) as CreateUsersResponse; // ignore: deprecated_member_use
+  CreateUpdateUserResponse copyWith(void Function(CreateUpdateUserResponse) updates) => super.copyWith((message) => updates(message as CreateUpdateUserResponse)) as CreateUpdateUserResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static CreateUsersResponse create() => CreateUsersResponse._();
-  CreateUsersResponse createEmptyInstance() => create();
-  static $pb.PbList<CreateUsersResponse> createRepeated() => $pb.PbList<CreateUsersResponse>();
+  static CreateUpdateUserResponse create() => CreateUpdateUserResponse._();
+  CreateUpdateUserResponse createEmptyInstance() => create();
+  static $pb.PbList<CreateUpdateUserResponse> createRepeated() => $pb.PbList<CreateUpdateUserResponse>();
   @$core.pragma('dart2js:noInline')
-  static CreateUsersResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateUsersResponse>(create);
-  static CreateUsersResponse? _defaultInstance;
+  static CreateUpdateUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateUpdateUserResponse>(create);
+  static CreateUpdateUserResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   User get user => $_getN(0);
@@ -1273,9 +1338,9 @@ class CreateUsersResponse extends $pb.GeneratedMessage {
   User ensureUser() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  CreateUsersResponse_Status get status => $_getN(1);
+  CreateUpdateUserResponse_Status get status => $_getN(1);
   @$pb.TagNumber(2)
-  set status(CreateUsersResponse_Status v) { setField(2, v); }
+  set status(CreateUpdateUserResponse_Status v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasStatus() => $_has(1);
   @$pb.TagNumber(2)
@@ -2881,6 +2946,8 @@ class User extends $pb.GeneratedMessage {
     ..e<ResultsTab>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'selectedResultsTab', $pb.PbFieldType.OE, defaultOrMaker: ResultsTab.RESULTS_UNSPECIFIED, valueOf: ResultsTab.valueOf, enumValues: ResultsTab.values)
     ..aOS(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'phoneCountryId')
     ..aOS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'diallingCode')
+    ..e<User_Status>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: User_Status.STATUS_UNSPECIFIED, valueOf: User_Status.valueOf, enumValues: User_Status.values)
+    ..aOS(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'creatorId')
     ..hasRequiredFields = false
   ;
 
@@ -2898,6 +2965,8 @@ class User extends $pb.GeneratedMessage {
     ResultsTab? selectedResultsTab,
     $core.String? phoneCountryId,
     $core.String? diallingCode,
+    User_Status? status,
+    $core.String? creatorId,
   }) {
     final _result = create();
     if (id != null) {
@@ -2935,6 +3004,12 @@ class User extends $pb.GeneratedMessage {
     }
     if (diallingCode != null) {
       _result.diallingCode = diallingCode;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (creatorId != null) {
+      _result.creatorId = creatorId;
     }
     return _result;
   }
@@ -3042,5 +3117,23 @@ class User extends $pb.GeneratedMessage {
   $core.bool hasDiallingCode() => $_has(11);
   @$pb.TagNumber(12)
   void clearDiallingCode() => clearField(12);
+
+  @$pb.TagNumber(13)
+  User_Status get status => $_getN(12);
+  @$pb.TagNumber(13)
+  set status(User_Status v) { setField(13, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasStatus() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearStatus() => clearField(13);
+
+  @$pb.TagNumber(14)
+  $core.String get creatorId => $_getSZ(13);
+  @$pb.TagNumber(14)
+  set creatorId($core.String v) { $_setString(13, v); }
+  @$pb.TagNumber(14)
+  $core.bool hasCreatorId() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearCreatorId() => clearField(14);
 }
 

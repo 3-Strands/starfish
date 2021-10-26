@@ -46,14 +46,13 @@ class _StarfishState extends State<Starfish> {
       SyncService.kUpdateUsers: (hiveUsers, __) {
         print('Boradcast Receiver: kUpdateUsers');
 
-        (hiveUsers as List<User>)
-            .forEach((user) => UserRepository().createUsers(user));
+        (hiveUsers as List<User>).forEach(
+            (user) => UserRepository().createUpdateUsers(user, kUserFieldMask));
       }
     }, context: this);
     super.initState();
   }
 
-  
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

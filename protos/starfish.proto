@@ -32,8 +32,15 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
-    // Create starfish users
-    rpc CreateUsers (stream User) returns (stream CreateUsersResponse) {}
+    // Create or update starfish users
+    // Created users start with pending status
+    // When creating a user and another user already exists with the same phone country and phone number
+    // then instead of creating a new user the existing user will be returned in the response (and
+    // made pending if the existing user is inactive in Starfish app).
+    // When updating a user it is only permitted to update pending users that were created by the requesting user.
+    // When setting the phone number to a number of an eisting user, then the user being updated is merged
+    // with the existing user.
+    rpc CreateUpdateUsers (stream CreateUpdateUserRequest) returns (stream CreateUpdateUserResponse) {}
 
     // Delete Actions.
     rpc DeleteActions (stream DeleteActionRequest) returns (stream DeleteActionResponse) {}
@@ -376,17 +383,36 @@ message CreateUpdateMaterialsResponse {
 
 }
 
-message CreateUsersResponse {
+message CreateUpdateUserRequest {
+
+    // The User resource that will be created or replace the existing one on the server.
+    // The ID of the user resource is optional for a create request.
+    // If the ID is present and a User exists with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // If the ID is given in a create request and is valid UUID version 4 then this ID will be used for the
+    // new resource, otherwise an ID will be generated
+    User user = 1;
+
+    // The field mask specifying which fields of the User resource should be updated
+    // If not specified then all fields are updated
+    // If specified and some fields excluded, then these fields will be ignored (in the case of update)
+    // or set to the default value (in the case of create)
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateUserResponse {
 
     enum Status {
         SUCCESS = 0;
         FAILURE = 1;
     }
 
-    // The User after created.
+    // The User after created or update.
     User user = 1;
 
-    // The status of the create request.
+    // The status of the create/update request.
     Status status = 2;
 
     // Error message or any relevant message in response to the request.
@@ -708,6 +734,12 @@ message UpdateCurrentUserRequest {
 
 message User {
 
+    enum Status {
+        STATUS_UNSPECIFIED = 0;
+        ACTIVE = 1;
+        ACCOUNT_PENDING = 2;
+    }
+
     // The ID is a version 4 UUID. Once assigned it cannot be changed.
     // The client may specify the UUID when requesting object creation,
     // otherwise server will generate it.
@@ -741,5 +773,10 @@ message User {
 
     // Output only. Dependent on the value of phone_country_id.
     string dialling_code = 12;
+
+    Status status = 13;
+
+    // The user ID of the user that created this user in Starfish
+    string creator_id = 14;
 
 }

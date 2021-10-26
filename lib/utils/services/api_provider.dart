@@ -210,13 +210,18 @@ class ApiProvider {
     return client!.listUsers(request);
   }
 
-  Future<CreateUsersResponse> createUsers(User user) async {
-    var request = user;
+  Future<CreateUpdateUserResponse> createUpdateUsers(
+      User user, List<String> fieldMaskPaths) async {
+    var request = CreateUpdateUserRequest.create();
+    request.user = user;
+
+    FieldMask mask = FieldMask(paths: fieldMaskPaths);
+    request.updateMask = mask;
 
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUsers(Stream.value(request)).first;
+    return client!.createUpdateUsers(Stream.value(request)).first;
   }
 
   Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction(

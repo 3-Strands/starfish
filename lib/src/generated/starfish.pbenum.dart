@@ -186,19 +186,19 @@ class CreateUpdateMaterialsResponse_Status extends $pb.ProtobufEnum {
   const CreateUpdateMaterialsResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
-class CreateUsersResponse_Status extends $pb.ProtobufEnum {
-  static const CreateUsersResponse_Status SUCCESS = CreateUsersResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
-  static const CreateUsersResponse_Status FAILURE = CreateUsersResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+class CreateUpdateUserResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUpdateUserResponse_Status SUCCESS = CreateUpdateUserResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUpdateUserResponse_Status FAILURE = CreateUpdateUserResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
 
-  static const $core.List<CreateUsersResponse_Status> values = <CreateUsersResponse_Status> [
+  static const $core.List<CreateUpdateUserResponse_Status> values = <CreateUpdateUserResponse_Status> [
     SUCCESS,
     FAILURE,
   ];
 
-  static final $core.Map<$core.int, CreateUsersResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static CreateUsersResponse_Status? valueOf($core.int value) => _byValue[value];
+  static final $core.Map<$core.int, CreateUpdateUserResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUpdateUserResponse_Status? valueOf($core.int value) => _byValue[value];
 
-  const CreateUsersResponse_Status._($core.int v, $core.String n) : super(v, n);
+  const CreateUpdateUserResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
 class DeleteActionResponse_Status extends $pb.ProtobufEnum {
@@ -335,5 +335,22 @@ class MaterialFeedback_Type extends $pb.ProtobufEnum {
   static MaterialFeedback_Type? valueOf($core.int value) => _byValue[value];
 
   const MaterialFeedback_Type._($core.int v, $core.String n) : super(v, n);
+}
+
+class User_Status extends $pb.ProtobufEnum {
+  static const User_Status STATUS_UNSPECIFIED = User_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'STATUS_UNSPECIFIED');
+  static const User_Status ACTIVE = User_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ACTIVE');
+  static const User_Status ACCOUNT_PENDING = User_Status._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ACCOUNT_PENDING');
+
+  static const $core.List<User_Status> values = <User_Status> [
+    STATUS_UNSPECIFIED,
+    ACTIVE,
+    ACCOUNT_PENDING,
+  ];
+
+  static final $core.Map<$core.int, User_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static User_Status? valueOf($core.int value) => _byValue[value];
+
+  const User_Status._($core.int v, $core.String n) : super(v, n);
 }
 
