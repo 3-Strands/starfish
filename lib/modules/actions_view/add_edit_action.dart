@@ -281,7 +281,7 @@ class _AddEditActionState extends State<AddEditAction>
                     navTitle: Strings.assignActionTo,
                     placeholder: Strings.assignActionTo,
                     selectedValues: _selectedGroups,
-                    showAllOption: false,
+                    enableSelectAllOption: false,
                     choice: SelectType.multiple,
                     dataSource: DataSourceType.groups,
                     onDoneClicked: <T>(values) {
