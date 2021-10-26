@@ -26,7 +26,7 @@ class SelectDropDown extends StatefulWidget {
   final String navTitle;
   final int maxSelectItemLimit;
   final String placeholder;
-  final bool showAllOption;
+  final bool enableSelectAllOption;
   final bool enabled;
   final selectedValues;
   final SelectType choice;
@@ -39,7 +39,7 @@ class SelectDropDown extends StatefulWidget {
     required this.navTitle,
     required this.placeholder,
     this.enabled = true,
-    this.showAllOption = false,
+    this.enableSelectAllOption = false,
     required this.selectedValues,
     required this.choice,
     required this.dataSource,
@@ -157,7 +157,7 @@ class _SelectDropDownState extends State<SelectDropDown> {
                     showSelectedValue(items);
                     widget.onDoneClicked(items);
                   },
-                  showAllOption: widget.showAllOption,
+                  enableSelectAllOption: widget.enableSelectAllOption,
                   maxSelectItemLimit: widget.maxSelectItemLimit,
                 ),
               ),

@@ -22,7 +22,7 @@ class MultiSelect extends StatefulWidget {
   final DataSourceType dataSource;
   final int maxSelectItemLimit;
   final selectedValues;
-  final bool showAllOption;
+  final bool enableSelectAllOption;
 
   final Function<T>(T) onDoneClicked;
 
@@ -33,7 +33,7 @@ class MultiSelect extends StatefulWidget {
       required this.dataSource,
       required this.onDoneClicked,
       required this.selectedValues,
-      required this.showAllOption,
+      required this.enableSelectAllOption,
       required this.maxSelectItemLimit})
       : super(key: key);
 
@@ -353,7 +353,7 @@ class _MultiSelectState extends State<MultiSelect> {
                         _updateStatus();
                       })
                     }),
-            visible: widget.showAllOption,
+            visible: widget.enableSelectAllOption,
           ),
           SizedBox(
             height: 5.h,
