@@ -45,8 +45,8 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
   @override
   void initState() {
     super.initState();
-    _instructionController.text = widget.instructions!;
-    _questionController.text = widget.question!;
+    _instructionController.text = widget.instructions ?? '';
+    _questionController.text = widget.question ?? '';
 
     if (widget.selectedActionType != null) {
       _selectedActionType = widget.selectedActionType!;

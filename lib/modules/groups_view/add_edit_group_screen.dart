@@ -602,19 +602,19 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: Strings.selectCategories,
-                      placeholder: Strings.selectCategories,
-                      selectedValues: _selectedEvaluationCategories,
-                      choice: SelectType.multiple,
-                      dataSource: DataSourceType.evaluationCategory,
-                      onDoneClicked: <T>(categories) {
-                        setState(() {
-                          _selectedEvaluationCategories =
-                              categories as List<HiveEvaluationCategory>;
-                          // print("Selected types ==>> $types");
-                        });
-                      },
-                    ),
+                        navTitle: Strings.selectCategories,
+                        placeholder: Strings.selectCategories,
+                        selectedValues: _selectedEvaluationCategories,
+                        choice: SelectType.multiple,
+                        dataSource: DataSourceType.evaluationCategory,
+                        onDoneClicked: <T>(categories) {
+                          setState(() {
+                            _selectedEvaluationCategories =
+                                categories as List<HiveEvaluationCategory>;
+                            // print("Selected types ==>> $types");
+                          });
+                        },
+                        maxSelectItemLimit: 3),
                   ),
                   SizedBox(height: 10.h),
                   Text(

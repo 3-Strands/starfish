@@ -14,13 +14,15 @@ import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/select_items/item.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 
 class MultiSelect extends StatefulWidget {
   final String navTitle;
   final SelectType choice;
   final DataSourceType dataSource;
+  final int maxSelectItemLimit;
   final selectedValues;
-  final bool showAllOption;
+  final bool enableSelectAllOption;
 
   final Function<T>(T) onDoneClicked;
 
@@ -31,7 +33,8 @@ class MultiSelect extends StatefulWidget {
       required this.dataSource,
       required this.onDoneClicked,
       required this.selectedValues,
-      required this.showAllOption})
+      required this.enableSelectAllOption,
+      required this.maxSelectItemLimit})
       : super(key: key);
 
   @override
@@ -350,7 +353,7 @@ class _MultiSelectState extends State<MultiSelect> {
                         _updateStatus();
                       })
                     }),
-            visible: widget.showAllOption,
+            visible: widget.enableSelectAllOption,
           ),
           SizedBox(
             height: 5.h,
@@ -440,6 +443,25 @@ class _MultiSelectState extends State<MultiSelect> {
   void _multiSelectItemTapped(Item selectedItem) {
     final index =
         _items.indexWhere((element) => element.data.id == selectedItem.data.id);
+
+    if (widget.maxSelectItemLimit > 0) {
+      var selectedItemCount =
+          _items.where((element) => element.isSelected == true).length;
+
+      if (_items[index].isSelected == true &&
+          selectedItemCount == widget.maxSelectItemLimit) {
+        setState(() {
+          _items[index].isSelected = !_items[index].isSelected;
+        });
+        return;
+      }
+
+      if (selectedItemCount == widget.maxSelectItemLimit) {
+        return StarfishSnackbar.showErrorMessage(
+            context, 'Maximum $selectedItemCount items can be selected.');
+      }
+    }
+
     setState(() {
       _items[index].isSelected = !_items[index].isSelected;
     });

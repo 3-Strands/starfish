@@ -299,7 +299,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         navTitle: Strings.selectTopics,
         placeholder: Strings.selectTopics,
         selectedValues: bloc.materialBloc.selectedTopics,
-        showAllOption: true,
+        enableSelectAllOption: true,
         choice: SelectType.multiple,
         dataSource: DataSourceType.topics,
         onDoneClicked: <T>(topics) {
@@ -599,7 +599,6 @@ class MaterialListItem extends StatelessWidget {
                       width: 240.w,
                       child: Text(
                         '${Strings.materialTitlePrefix} ${material.title}',
-                        
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(
