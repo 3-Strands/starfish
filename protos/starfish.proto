@@ -178,6 +178,9 @@ message AuthenticateRequest {
 
     string firebase_jwt = 1;
 
+    // The name of the user being authenticated.
+    string user_name = 2;
+
 }
 
 message AuthenticateResponse {
