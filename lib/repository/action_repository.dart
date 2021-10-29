@@ -1,5 +1,6 @@
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/api_provider.dart';
@@ -27,4 +28,7 @@ class ActionRepository {
 
   Future<void> createUpdateActionInDB(HiveAction action) =>
       dbProvider.createUpdateAction(action);
+
+  Future<void> createUpdateUserActionInDB(HiveActionUser actionUser) =>
+      dbProvider.createUpdateUserAction(actionUser);
 }

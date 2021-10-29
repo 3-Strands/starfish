@@ -4,15 +4,19 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 part 'hive_action_user.g.dart';
 
 @HiveType(typeId: 15)
-class HiveActionUser {
+class HiveActionUser extends HiveObject {
   @HiveField(0)
   String? actionId;
   @HiveField(1)
   String? userId;
-  @HiveField(2) // ActionUser_Status
-  int? status;
+  @HiveField(2)
+  int? status = ActionUser_Status.UNSPECIFIED_STATUS.value;
   @HiveField(3)
   String? teacherResponse;
+  @HiveField(4)
+  String? userResponse;
+  @HiveField(5)
+  int? evaluation = ActionUser_Evaluation.UNSPECIFIED_EVALUATION.value;
 
   HiveActionUser(
       {this.actionId, this.userId, this.status, this.teacherResponse});
@@ -22,6 +26,8 @@ class HiveActionUser {
     this.userId = actionUser.userId;
     this.status = actionUser.status.value;
     this.teacherResponse = actionUser.teacherResponse;
+    this.userResponse = actionUser.userResponse;
+    this.evaluation = actionUser.evaluation.value;
   }
 
   ActionUser toActionUser() {
@@ -29,10 +35,14 @@ class HiveActionUser {
         actionId: this.actionId,
         userId: this.userId,
         status: ActionUser_Status.valueOf(this.status!),
-        teacherResponse: this.teacherResponse);
+        teacherResponse: this.teacherResponse,
+        userResponse: this.userResponse,
+        evaluation: ActionUser_Evaluation.valueOf(this.evaluation!));
   }
 
   String toString() {
-    return '{ actionId: ${this.actionId}, userId: ${this.userId}, status: ${this.status}, teacherResponse: ${this.teacherResponse} }';
+    return '''{ actionId: ${this.actionId}, userId: ${this.userId}, status: ${this.status}, 
+              teacherResponse: ${this.teacherResponse}, teacherResponse: ${this.teacherResponse},
+              evaluation: ${this.evaluation} }''';
   }
 }

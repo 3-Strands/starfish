@@ -100,7 +100,9 @@ class HiveUser extends HiveObject {
           : ResultsTab.RESULTS_UNSPECIFIED,
       phoneCountryId: this.phoneCountryId,
       diallingCode: this.diallingCode,
-      status: User_Status.valueOf(this.status!),
+      status: this.status != null
+          ? User_Status.valueOf(this.status!)
+          : User_Status.STATUS_UNSPECIFIED,
       creatorId: this.creatorId,
     );
   }

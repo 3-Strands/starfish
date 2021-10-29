@@ -36,7 +36,7 @@ class HiveDatabase {
   static const String GROUP_BOX = 'groupBox'; //12
   // HiveGroupAction // 13
   static const String EVALUATION_CATEGORIES_BOX = 'evaluationCategoryBox'; //14
-  // HiveActionUser 15
+  static const String ACTION_USER_BOX = 'actionUserBox'; // HiveActionUser 15
   static const String USER_BOX = 'userBox'; // 16
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();

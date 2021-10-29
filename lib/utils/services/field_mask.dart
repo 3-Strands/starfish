@@ -49,3 +49,9 @@ final List<String> kActionFieldMask = [
   'question',
   'date_due',
 ];
+
+final List<String> kActionUserFieldMask = [
+  'status',
+  'userResponse',
+  'evaluation',
+];
