@@ -198,8 +198,11 @@ class _MultiSelectState extends State<MultiSelect> {
           }
         });
 
+        _items.insert(0, Item(data: HiveGroup(id: '-1', name: 'Me')));
+
         List<HiveGroup> _selectedGroups =
             widget.selectedValues as List<HiveGroup>;
+
         _selectedGroups.forEach((element) {
           final index = _items
               .indexWhere((item) => (item.data as HiveGroup).id == element.id);
@@ -323,7 +326,7 @@ class _MultiSelectState extends State<MultiSelect> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  'Select all',
+                                  Strings.selectAll,
                                   style: TextStyle(
                                     fontFamily: 'OpenSans',
                                     fontWeight: FontWeight.bold,
@@ -469,6 +472,14 @@ class _MultiSelectState extends State<MultiSelect> {
   }
 
   void _sendSelectedValues() {
+    List<dynamic> selectedValues = [];
+    _items.forEach((item) {
+      if (item.isSelected == true) {
+        selectedValues.add(item.data);
+      }
+    });
+    widget.onDoneClicked(selectedValues);
+/*
     switch (widget.dataSource) {
       case DataSourceType.countries:
         List<HiveCountry> selectedItems = [];
@@ -522,6 +533,7 @@ class _MultiSelectState extends State<MultiSelect> {
         break;
       case DataSourceType.groups:
         List<HiveGroup> selectedItems = [];
+
         _items.forEach((item) {
           if (item.isSelected == true) {
             selectedItems.add(item.data);
@@ -532,6 +544,7 @@ class _MultiSelectState extends State<MultiSelect> {
         break;
       default:
     }
+    */
   }
 }
 

@@ -88,6 +88,7 @@ class HiveDatabase {
     await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX);
     await Hive.openBox<HiveGroup>(GROUP_BOX);
     await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX);
+    await Hive.openBox<HiveActionUser>(ACTION_USER_BOX);
     await Hive.openBox<HiveUser>(USER_BOX);
   }
 }

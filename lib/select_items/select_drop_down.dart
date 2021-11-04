@@ -66,6 +66,7 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
   void showSelectedValue(value) {
     String _value = '';
+
     switch (widget.dataSource) {
       case DataSourceType.country:
         HiveCountry country = value as HiveCountry;
@@ -110,10 +111,13 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.groups:
-        List<HiveGroup> groups = value as List<HiveGroup>;
+        List<HiveGroup> groups = List<HiveGroup>.from(value as List<dynamic>);
+
+        // List<HiveGroup> groups = value as List<HiveGroup>;
         groups.forEach((element) {
           _value += '${element.name}, ';
         });
+
         break;
 
       default:

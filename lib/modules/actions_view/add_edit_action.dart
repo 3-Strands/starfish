@@ -286,7 +286,9 @@ class _AddEditActionState extends State<AddEditAction>
                     dataSource: DataSourceType.groups,
                     onDoneClicked: <T>(values) {
                       setState(() {
-                        _selectedGroups = values as List<HiveGroup>;
+                        _selectedGroups =
+                            List<HiveGroup>.from(values as List<dynamic>);
+                        // _selectedGroups = values as List<HiveGroup>;
                       });
                     },
                   ),

@@ -46,7 +46,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   void initState() {
     super.initState();
-    _phoneNumberController.text = '8638302141';
+    // _phoneNumberController.text = '8638302141';
+    _phoneNumberController.text = '9873572747';
+
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
     SyncService obj = SyncService();

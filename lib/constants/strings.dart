@@ -49,6 +49,8 @@ class Strings {
   static const String selectLanugages = 'Select Language(s)';
   static const String lanugagesUsed = 'Language(s) used';
 
+  static const String selectAll = 'Select all';
+
   static const String selectLanugagesDetail =
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.';
   static const String syncText = '\nSyncing...';
@@ -166,7 +168,8 @@ sending an invitation to use Starfish''';
       'Please enter valid mobile number.';
 
   static const String emptyTitle = 'Please enter title.';
-  static const String emptyMaterialTitle = 'Please enter the name of the material.';
+  static const String emptyMaterialTitle =
+      'Please enter the name of the material.';
   static const String emptyGroupTitle = 'Please enter the name of the group.';
 
   static const String emptyName = 'Please enter name.';
