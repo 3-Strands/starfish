@@ -2,8 +2,7 @@
   "language": "English",
   "helloWorld": "This is an example of speech synthesis in English. Please Follow the code to understand the method of building applications that support multiple languages."
 
-
-  'countryCodeHint': '+1',
+  'countryCodeHint': '1',
    'phoneNumberHint': 'Phone Number',
   'phoneAuthenticationTitle':
       'Select Country and enter Phone Number to get One Time Password',
@@ -55,207 +54,192 @@
 
   'selectAll': 'Select all',
 
-  selectLanugagesDetail:
+  'selectLanugagesDetail':
       'These are the languages spoken by the COMMUNITIES you are working with. You can also change this later.',
-  syncText: '\nSyncing...',
+  'syncText': '\nSyncing...',
 
-  lastSuccessfullSync: 'Last Successful Sync',
+  'lastSuccessfullSync': 'Last Successful Sync',
 
-  forGroupAdmin: 'For Group Admins',
+  'forGroupAdmin': 'For Group Admins',
 
-  myGroups: 'My Groups',
+  'myGroups': 'My Groups',
 
-  nameHint: 'Full Name',
-  enterName: 'Enter Your Name',
-  enterNameDetail:
+  'nameHint': 'Full Name',
+  'enterName': 'Enter Your Name',
+  'enterNameDetail':
       'This name will be shown in groups. You can change this later.',
 
-  materialsTabItemText: 'Materials',
-  groupsTabItemText: 'Groups',
-  actionsTabItemText: 'Actions',
+  'materialsTabItemText': 'Materials',
+  'groupsTabItemText': 'Groups',
+  'actionsTabItemText': 'Actions',
 
-  settings: 'Settings',
+  'settings': 'Settings',
 
-  name: 'Name',
-  mobile: 'Mobile',
+  'name': 'Name',
+  'mobile': 'Mobile',
 
-  linkMyGroups:
+  'linkMyGroups':
       'Link my groups to a project in everylanguage.app',
 
-  topics: 'Topic(s)',
-  selectTopics: 'Select topic(s)',
-  reportInappropriateMaterial:
+  'topics': 'Topic(s)',
+  'selectTopics': 'Select topic(s)',
+  'reportInappropriateMaterial':
       'If this material is inappropriate, click here to report it.',
 
-  type: 'Type',
-  selectType: 'Select a type',
+  'type': 'Type',
+  'selectType': 'Select a type',
 
-  editedBy: 'Can be edited by',
-  seenBy: 'Can be seen by',
-  selectCategories: 'Select Categories',
+  'editedBy': 'Can be edited by',
+  'seenBy': 'Can be seen by',
+  'selectCategories': 'Select Categories',
 
-  noFilterApplied: 'No filter applied',
+  'noFilterApplied': 'No filter applied',
 
-  // Screen Titles
-  addNewMaterial: 'Add New Material',
-  addMaterials: 'Add Materials',
+  'addNewMaterial': 'Add New Material',
+  'addMaterials': 'Add Materials',
 
-  editMaterial: 'Edit Material',
-  dialogInfo: 'Info',
-  dialogAlert: 'Alert',
-  createGroup: 'Create Group',
-  editGroup: 'Edit Group',
+  'editMaterial': 'Edit Material',
+  'dialogInfo': 'Info',
+  'dialogAlert': 'Alert',
+  'createGroup': 'Create Group',
+  'editGroup': 'Edit Group',
 
-  // Hints
-  hintMaterialName: 'Name of the Material',
-  searchBarHint: 'Search',
-  hintGroupName: 'Name of the Group',
-  hintEvaluateProgress:
+  'hintMaterialName': 'Name of the Material',
+  'searchBarHint': 'Search',
+  'hintGroupName': 'Name of the Group',
+  'hintEvaluateProgress':
       'Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.',
-  hintPersonName: 'Enter the person\'s name here',
-  hintInstructions: 'Instructions',
-  hintDueDate: 'Select due date',
+  'hintPersonName': 'Enter the person\'s name here',
+  'hintInstructions': 'Instructions',
+  'hintDueDate': 'Select due date',
 
-  // Labels
-  descripton: 'Description',
-  addWebLink: 'Add web link',
-  uploadAMaterial: 'Upload a material',
-  evaluateProgress: 'Evaluate Progress',
-  invitePeopleFromContactsList:
+  'descripton': 'Description',
+  'addWebLink': 'Add web link',
+  'uploadAMaterial': 'Upload a material',
+  'evaluateProgress': 'Evaluate Progress',
+  'invitePeopleFromContactsList':
       '''Option 1. Invite people from your contacts
 list to join your group in Starfish''',
-  addWithoutInvite:
+  'addWithoutInvite':
       '''Option 2. Add a person's name, without 
 sending an invitation to use Starfish''',
-  history: 'History',
-  month: 'Month',
-  due: 'Due',
-  teacher: 'Teacher',
-  title: 'Title',
-  actionFollowInstructions:
+  'history': 'History',
+  'month': 'Month',
+  'due': 'Due',
+  'teacher': 'Teacher',
+  'title': 'Title',
+  'actionFollowInstructions':
       'Action Follow a set of instructions',
-  statusOfActionForLearner:
+  'statusOfActionForLearner':
       'Status of this action for learner',
 
-  reportDialogDetailText:
+  'reportDialogDetailText':
       'Explain why this material is inappropriate',
-  selectPropleToInvite: 'Select people to invite',
-  viewTeachersAndLearners: 'View Teachers and Learners',
-  instructions: 'Instructions',
-  selectAMaterial: 'Select a Material',
-  questionToBeAnswered: 'Question to be answered',
-  dueDate: 'Due date',
-  selectAnAction: 'Select an action',
-  nameOfAction: 'Name of the Action',
-  typeOfAction: 'Type of Action',
-  assignActionTo: 'Assign this Action to',
+  'selectPropleToInvite': 'Select people to invite',
+  'viewTeachersAndLearners': 'View Teachers and Learners',
+  'instructions': 'Instructions',
+  'selectAMaterial': 'Select a Material',
+  'questionToBeAnswered': 'Question to be answered',
+  'dueDate': 'Due date',
+  'selectAnAction': 'Select an action',
+  'nameOfAction': 'Name of the Action',
+  'typeOfAction': 'Type of Action',
+  'assignActionTo': 'Assign this Action to',
 
-  // Info/Alert messages
-  emptyFullName: 'Please enter name.',
-  invalidFullName: 'Please enter valid name.',
-  emptySelectCountry: 'Please select country.',
-  emptySelectLanguage: 'Please select languages.',
-  emptyDialingCode: 'Please enter dialing code.',
-  dialingCodeNotExist:
+  'emptyFullName': 'Please enter name.',
+  'invalidFullName': 'Please enter valid name.',
+  'emptySelectCountry': 'Please select country.',
+  'emptySelectLanguage': 'Please select languages.',
+  'emptyDialingCode': 'Please enter dialing code.',
+  'dialingCodeNotExist':
       'Entered dialing code doesn\'t exist.',
-  alertLeaveThisGroup:
+  'alertLeaveThisGroup':
       'Are you sure you want to leave this group?',
-  syncAlertContentText:
+  'syncAlertContentText':
       'This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n',
-  syncAlertTitleText:
+  'syncAlertTitleText':
       'We are setting up Starfish for you!',
-  // Validation Messages
-  emptyEvaluateProgress:
+
+  'emptyEvaluateProgress':
       'Please select evaluation categories.',
-  emptyMobileNumbers: 'Please enter mobile number.',
-  invalidMobileNumbers:
+  'emptyMobileNumbers': 'Please enter mobile number.',
+  'invalidMobileNumbers':
       'Please enter valid mobile number.',
 
-  emptyTitle: 'Please enter title.',
-  emptyMaterialTitle:
+  'emptyTitle': 'Please enter title.',
+  'emptyMaterialTitle':
       'Please enter the name of the material.',
-  emptyGroupTitle: 'Please enter the name of the group.',
+  'emptyGroupTitle': 'Please enter the name of the group.',
 
-  emptyName: 'Please enter name.',
-  emptyDescription: 'Please enter description.',
-  emptySelectType: 'Please select type.',
-  emptySelectTopic: 'Please select topic.',
+  'emptyName': 'Please enter name.',
+  'emptyDescription': 'Please enter description.',
+  'emptySelectType': 'Please select type.',
+  'emptySelectTopic': 'Please select topic.',
 
-  addMaterialSuccess: 'Material saved successfully.',
-  addMaterialFailed: 'Failed to save Material.',
-  updateMaterialSuccess: 'Material updated successfully.',
-  updateMaterialFailed: 'Failed to update Material.',
-  emptyMaterialFeedback: 'Please enter detail.',
-  addMaterialFeedbackSuccess:
+  'addMaterialSuccess': 'Material saved successfully.',
+  'addMaterialFailed': 'Failed to save Material.',
+  'updateMaterialSuccess': 'Material updated successfully.',
+  'updateMaterialFailed': 'Failed to update Material.',
+  'emptyMaterialFeedback': 'Please enter detail.',
+  'addMaterialFeedbackSuccess':
       'Material feedback saved successfully.',
-  internetRequiredToChangeCountriesOrLanguage:
+  'internetRequiredToChangeCountriesOrLanguage':
       'You can change the countries and languages only when your internet is working',
 
-  createGroupSuccess: 'Group created successfully.',
-  createGroupFailed: 'Failed to create group.',
-  updateGroupSuccess: 'Group updated successfully.',
-  updateGroupFailed: 'Failed to update group.',
+  'createGroupSuccess': 'Group created successfully.',
+  'createGroupFailed': 'Failed to create group.',
+  'updateGroupSuccess': 'Group updated successfully.',
+  'updateGroupFailed': 'Failed to update group.',
 
-  createActionSuccess: 'Action created successfully.',
-  createActionFailed: 'Failed to create action.',
-  updateActionSuccess: 'Action updated successfully.',
-  updateActionFailed: 'Failed to update action.',
-  loading: 'loading...',
+  'createActionSuccess': 'Action created successfully.',
+  'createActionFailed': 'Failed to create action.',
+  'updateActionSuccess': 'Action updated successfully.',
+  'updateActionFailed': 'Failed to update action.',
+  'loading': 'loading...',
 
-  inviteSMS:
+  'inviteSMS':
       '''Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>''',
 
-  groupFilterPrefix: 'Groups',
-  groupFilterAll: 'All of my groups',
-  groupFilterLearner: 'Groups I\'m a learner in',
-  groupFilterAdminCoLead: 'Groups I teach or co-lead',
+  'groupFilterPrefix': 'Groups',
+  'groupFilterAll': 'All of my groups',
+  'groupFilterLearner': 'Groups I\'m a learner in',
+  'groupFilterAdminCoLead': 'Groups I teach or co-lead',
 
-  visibilityGroupView: 'Groups I teach or administer',
-  visibilityAllView: 'Anyone at all',
+  'visibilityGroupView': 'Groups I teach or administer',
+  'visibilityAllView': 'Anyone at all',
 
-  editabilityCreatorEdit: 'Only me',
-  editabilityGroupEdit: 'Other Teacher of my Groups',
+  'editabilityCreatorEdit': 'Only me',
+  'editabilityGroupEdit': 'Other Teacher of my Groups',
 
-  adminNamePrifix: 'Admin',
+  'adminNamePrifix': 'Admin',
 
-  /// actions
-  editActionText: 'Edit Action',
-  deleteActionText: 'Delete Action',
-  notSoGoodText: 'Not so Good',
-  goodText: 'Good',
-  howWasThisActionText: 'How was this action?',
-  addActionText: 'Add Action',
-  materialActionPrefix: 'Action: ',
-  materialTitlePrefix: 'Title: ',
-  forMeTabText: 'For Me',
-  forGroupITeachTabText: 'For Groups I Teach',
+  'editActionText': 'Edit Action',
+  'deleteActionText': 'Delete Action',
+  'notSoGoodText': 'Not so Good',
+  'goodText': 'Good',
+  'howWasThisActionText': 'How was this action?',
+  'addActionText': 'Add Action',
+  'materialActionPrefix': 'Action: ',
+  'materialTitlePrefix': 'Title: ',
+  'forMeTabText': 'For Me',
+  'forGroupITeachTabText': 'For Groups I Teach',
 
-  static const List<String> materialActionsList: <String>[
-    'Assigned to me and completed',
-    'Assigned to me but incomplete',
-    'Assigned to a group I lead',
-    'No filter applied',
-  ],
-  // Menu Items
-  makeAdmin: 'Make Admin',
-  makeTeacher: 'Make Teacher',
-  makeRemove: 'Remove',
+  'makeAdmin': 'Make Admin',
+  'makeTeacher': 'Make Teacher',
+  'makeRemove': 'Remove',
 
-  actionTypeTextInstruction:
+  'actionTypeTextInstruction':
       'Follow a set of instructions',
-  actionTypeTextResponse: 'Answer a question',
-  actionTypeMaterialInstruction:
+  'actionTypeTextResponse': 'Answer a question',
+  'actionTypeMaterialInstruction':
       'Use a Material (no response)',
-  actionTypeMaterialResponse:
+  'actionTypeMaterialResponse':
       'Use and respond to a Material',
-  actionType: 'Fill in some numbers',
+  'actionType': 'Fill in some numbers',
 
-  reuseActionText: 'Re-use an Action (optional)',
+  'reuseActionText': 'Re-use an Action (optional)',
 
-  // Action Status
-  actionStatusDone: "I did it",
-  actionStatusNotDone: "I didn't do it yet",
-  actionStatusOverdue: "Overdue",
-
-
+  'actionStatusDone': "I did it",
+  'actionStatusNotDone': "I didn't do it yet",
+  'actionStatusOverdue': "Overdue"
 }
