@@ -108,7 +108,7 @@
   "hintGroupName": "Name of the Group",
   "hintEvaluateProgress":
       "Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.",
-  "hintPersonName": "Enter the person\"s name here",
+  "hintPersonName": "Enter the person's name here",
   "hintInstructions": "Instructions",
   "hintDueDate": "Select due date",
 
@@ -116,12 +116,8 @@
   "addWebLink": "Add web link",
   "uploadAMaterial": "Upload a material",
   "evaluateProgress": "Evaluate Progress",
-  "invitePeopleFromContactsList":
-      """Option 1. Invite people from your contacts
-list to join your group in Starfish""",
-  "addWithoutInvite":
-      """Option 2. Add a person"s name, without 
-sending an invitation to use Starfish""",
+  "invitePeopleFromContactsList": "Option 1. Invite people from your contacts list to join your group in Starfish",
+  "addWithoutInvite": "Option 2. Add a person's name, without sending an invitation to use Starfish",
   "history": "History",
   "month": "Month",
   "due": "Due",
@@ -151,7 +147,7 @@ sending an invitation to use Starfish""",
   "emptySelectLanguage": "Please select languages.",
   "emptyDialingCode": "Please enter dialing code.",
   "dialingCodeNotExist":
-      "Entered dialing code doesn\"t exist.",
+      "Entered dialing code doesn't exist.",
   "alertLeaveThisGroup":
       "Are you sure you want to leave this group?",
   "syncAlertContentText":
@@ -197,11 +193,11 @@ sending an invitation to use Starfish""",
   "loading": "loading...",
 
   "inviteSMS":
-      """Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>""",
+      "Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>",
 
   "groupFilterPrefix": "Groups",
   "groupFilterAll": "All of my groups",
-  "groupFilterLearner": "Groups I\"m a learner in",
+  "groupFilterLearner": "Groups I'm a learner in",
   "groupFilterAdminCoLead": "Groups I teach or co-lead",
 
   "visibilityGroupView": "Groups I teach or administer",
@@ -239,6 +235,6 @@ sending an invitation to use Starfish""",
   "reuseActionText": "Re-use an Action (optional)",
 
   "actionStatusDone": "I did it",
-  "actionStatusNotDone": "I didn"t do it yet",
+  "actionStatusNotDone": "I didn't do it yet",
   "actionStatusOverdue": "Overdue"
 }
