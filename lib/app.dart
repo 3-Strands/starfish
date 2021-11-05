@@ -13,7 +13,10 @@ import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'config/routes/routes.dart';
 import 'constants/app_styles.dart';
+import 'l10n/l10n.dart';
 import 'modules/splash/splash.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class Starfish extends StatefulWidget {
   @override
@@ -60,6 +63,13 @@ class _StarfishState extends State<Starfish> {
       designSize: Size(375, 812),
       builder: () => Provider(
         child: MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: L10n.all,
             navigatorKey: NavigationService.navigatorKey, // set property
             debugShowCheckedModeBanner: false,
             title: '',
