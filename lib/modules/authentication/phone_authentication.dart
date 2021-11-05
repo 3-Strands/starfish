@@ -93,8 +93,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                           navTitle: Strings.selectCountry,
                           placeholder: Strings.selectCountry,
                           selectedValues: _selectedCountry,
-                          choice: SelectType.single,
-                          dataSource: DataSourceType.country,
+                          dataSource: _countryList,
+                          type: SelectType.single,
+                          dataSourceType: DataSourceType.country,
                           onDoneClicked: <T>(country) {
                             setState(() {
                               _selectedCountry = country as HiveCountry;
@@ -103,48 +104,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                             });
                           },
                         ),
-                        // available configuration for single choice
-                        // Container(
-                        //   height: 80.h,
-                        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                        //   decoration: BoxDecoration(
-                        //     color: AppColors.txtFieldBackground,
-                        //     borderRadius: BorderRadius.all(
-                        //       Radius.circular(10),
-                        //     ),
-                        //   ),
-                        //   child: Center(
-                        //     child: SmartSelect<HiveCountry>.single(
-                        //       title: Strings.country,
-                        //       placeholder: Strings.selectCountry,
-                        //       selectedValue: _selectedCountry,
-                        //       // value: _selectedCountry,
-                        //       onChange: (selected) => setState(() => {
-                        //             _selectedCountry = selected.value,
-                        //             _countryCodeController.text =
-                        //                 _selectedCountry.diallingCode,
-                        //           }),
-                        //       choiceItems:
-                        //           S2Choice.listFrom<HiveCountry, HiveCountry>(
-                        //         source: _countryList,
-                        //         value: (index, item) => item,
-                        //         title: (index, item) => item.name,
-                        //         //  group: (index, item) => item['brand'],
-                        //       ),
-                        //       choiceGrouped: false,
-                        //       modalType: S2ModalType.fullPage,
-                        //       modalFilter: true,
-                        //       modalFilterAuto: true,
-                        //       tileBuilder: (context, state) {
-                        //         return S2Tile.fromState(
-                        //           state,
-                        //           isTwoLine: true,
-                        //         );
-                        //       },
-                        //     ),
-                        //   ),
-                        // ),
-
                         SizedBox(height: 30.h),
                         _phoneNumberContainer(),
                       ],

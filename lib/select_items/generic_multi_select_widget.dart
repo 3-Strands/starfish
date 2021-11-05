@@ -18,10 +18,11 @@ import 'package:starfish/utils/helpers/snackbar.dart';
 
 class MultiSelect extends StatefulWidget {
   final String navTitle;
-  final SelectType choice;
-  final DataSourceType dataSource;
+  final SelectType type;
+  final DataSourceType dataSourceType;
   final int maxSelectItemLimit;
   final selectedValues;
+  final dataSource;
   final bool enableSelectAllOption;
 
   final Function<T>(T) onDoneClicked;
@@ -29,10 +30,11 @@ class MultiSelect extends StatefulWidget {
   MultiSelect(
       {Key? key,
       required this.navTitle,
-      required this.choice,
-      required this.dataSource,
+      required this.type,
+      required this.dataSourceType,
       required this.onDoneClicked,
       required this.selectedValues,
+      required this.dataSource,
       required this.enableSelectAllOption,
       required this.maxSelectItemLimit})
       : super(key: key);
@@ -51,12 +53,6 @@ class _MultiSelectState extends State<MultiSelect> {
   final TextEditingController _searchTextController =
       new TextEditingController();
 
-  late Box<HiveCountry> _countryBox;
-  late Box<HiveLanguage> _languageBox;
-  late Box<HiveMaterialTopic> _materialTopicBox;
-  late Box<HiveMaterialType> _materialTypeBox;
-  late Box<HiveEvaluationCategory> _evaluationCategoryBox;
-  late Box<HiveGroup> _groupBox;
   late Box<HiveCurrentUser> _currentUserBox;
 
   List<Item> _items = [];
@@ -71,12 +67,15 @@ class _MultiSelectState extends State<MultiSelect> {
     super.initState();
     appBarTitle = Text(widget.navTitle);
 
-    switch (widget.dataSource) {
-      case DataSourceType.country:
-        _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-        List<HiveCountry> _countries = _countryBox.values.toList();
+    print('init state');
+    print(widget.dataSource);
+    print('==========');
 
+    switch (widget.dataSourceType) {
+      case DataSourceType.country:
+        List<HiveCountry> _countries = widget.dataSource as List<HiveCountry>;
         HiveCountry _selectedCountry = widget.selectedValues as HiveCountry;
+
         _countries.forEach((element) {
           if (element.id == _selectedCountry.id) {
             var country = Item(data: element, isSelected: true);
@@ -89,8 +88,7 @@ class _MultiSelectState extends State<MultiSelect> {
 
         break;
       case DataSourceType.countries:
-        _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-        List<HiveCountry> _countries = _countryBox.values.toList();
+        List<HiveCountry> _countries = widget.dataSource as List<HiveCountry>;
 
         List<HiveCountry> _selectedCountries =
             widget.selectedValues as List<HiveCountry>;
@@ -107,8 +105,7 @@ class _MultiSelectState extends State<MultiSelect> {
 
         break;
       case DataSourceType.languages:
-        _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-        List<HiveLanguage> _languages = _languageBox.values.toList();
+        List<HiveLanguage> _languages = widget.dataSource as List<HiveLanguage>;
 
         _languages.forEach((element) {
           var language = Item(data: element, isSelected: false);
@@ -125,9 +122,8 @@ class _MultiSelectState extends State<MultiSelect> {
 
         break;
       case DataSourceType.topics:
-        _materialTopicBox =
-            Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
-        List<HiveMaterialTopic> _topics = _materialTopicBox.values.toList();
+        List<HiveMaterialTopic> _topics =
+            widget.dataSource as List<HiveMaterialTopic>;
 
         _topics.forEach((element) {
           var topic = Item(data: element, isSelected: false);
@@ -144,9 +140,8 @@ class _MultiSelectState extends State<MultiSelect> {
 
         break;
       case DataSourceType.types:
-        _materialTypeBox =
-            Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
-        List<HiveMaterialType> _types = _materialTypeBox.values.toList();
+        List<HiveMaterialType> _types =
+            widget.dataSource as List<HiveMaterialType>;
 
         _types.forEach((element) {
           var type = Item(data: element, isSelected: false);
@@ -163,10 +158,8 @@ class _MultiSelectState extends State<MultiSelect> {
 
         break;
       case DataSourceType.evaluationCategory:
-        _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
-            HiveDatabase.EVALUATION_CATEGORIES_BOX);
         List<HiveEvaluationCategory> _types =
-            _evaluationCategoryBox.values.toList();
+            widget.dataSource as List<HiveEvaluationCategory>;
 
         _types.forEach((element) {
           var type = Item(data: element, isSelected: false);
@@ -183,12 +176,11 @@ class _MultiSelectState extends State<MultiSelect> {
 
         break;
       case DataSourceType.groups:
-        _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+        List<HiveGroup> _groups = widget.dataSource as List<HiveGroup>;
+
         _currentUserBox =
             Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-
         final currentUserId = _currentUserBox.values.first.id;
-        List<HiveGroup> _groups = _groupBox.values.toList();
 
         _groups.forEach((element) {
           if (element.getMyRole(currentUserId) == GroupUser_Role.ADMIN ||
@@ -197,8 +189,6 @@ class _MultiSelectState extends State<MultiSelect> {
             _items.add(type);
           }
         });
-
-        _items.insert(0, Item(data: HiveGroup(id: '-1', name: 'Me')));
 
         List<HiveGroup> _selectedGroups =
             widget.selectedValues as List<HiveGroup>;
@@ -425,7 +415,7 @@ class _MultiSelectState extends State<MultiSelect> {
   }
 
   itemTapped(Item selectedItem) {
-    if (widget.choice == SelectType.single) {
+    if (widget.type == SelectType.single) {
       _singleSelectItemTapped(selectedItem);
     } else {
       _multiSelectItemTapped(selectedItem);
@@ -479,72 +469,6 @@ class _MultiSelectState extends State<MultiSelect> {
       }
     });
     widget.onDoneClicked(selectedValues);
-/*
-    switch (widget.dataSource) {
-      case DataSourceType.countries:
-        List<HiveCountry> selectedItems = [];
-        _items.forEach((item) {
-          if (item.isSelected == true) {
-            selectedItems.add(item.data);
-          }
-        });
-        widget.onDoneClicked(selectedItems);
-
-        break;
-      case DataSourceType.languages:
-        List<HiveLanguage> selectedItems = [];
-        _items.forEach((item) {
-          if (item.isSelected == true) {
-            selectedItems.add(item.data);
-          }
-        });
-        widget.onDoneClicked(selectedItems);
-
-        break;
-      case DataSourceType.topics:
-        List<HiveMaterialTopic> selectedItems = [];
-        _items.forEach((item) {
-          if (item.isSelected == true) {
-            selectedItems.add(item.data);
-          }
-        });
-        widget.onDoneClicked(selectedItems);
-
-        break;
-      case DataSourceType.types:
-        List<HiveMaterialType> selectedItems = [];
-        _items.forEach((item) {
-          if (item.isSelected == true) {
-            selectedItems.add(item.data);
-          }
-        });
-        widget.onDoneClicked(selectedItems);
-
-        break;
-      case DataSourceType.evaluationCategory:
-        List<HiveEvaluationCategory> selectedItems = [];
-        _items.forEach((item) {
-          if (item.isSelected == true) {
-            selectedItems.add(item.data);
-          }
-        });
-        widget.onDoneClicked(selectedItems);
-
-        break;
-      case DataSourceType.groups:
-        List<HiveGroup> selectedItems = [];
-
-        _items.forEach((item) {
-          if (item.isSelected == true) {
-            selectedItems.add(item.data);
-          }
-        });
-        widget.onDoneClicked(selectedItems);
-
-        break;
-      default:
-    }
-    */
   }
 }
 

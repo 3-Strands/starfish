@@ -1,5 +1,6 @@
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -10,6 +11,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_date.dart';
@@ -52,14 +54,25 @@ class _AddEditActionState extends State<AddEditAction>
 
   List<HiveGroup> _selectedGroups = [];
 
+  late List<HiveGroup> _groupList;
+  late Box<HiveGroup> _groupBox;
+
   HiveMaterial? _selectedMaterial;
   String? _instructions;
   String? _question;
   DateTime? _dueDate;
 
+  void _getAllGroups() async {
+    _groupList = _groupBox.values.toList();
+    _groupList.insert(0, HiveGroup(id: '-1', name: 'Me'));
+  }
+
   @override
   void initState() {
     super.initState();
+    _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    _getAllGroups();
+
     if (widget.action != null) {
       _isEditMode = true;
 
@@ -281,9 +294,10 @@ class _AddEditActionState extends State<AddEditAction>
                     navTitle: Strings.assignActionTo,
                     placeholder: Strings.assignActionTo,
                     selectedValues: _selectedGroups,
+                    dataSource: _groupList,
                     enableSelectAllOption: false,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.groups,
+                    type: SelectType.multiple,
+                    dataSourceType: DataSourceType.groups,
                     onDoneClicked: <T>(values) {
                       setState(() {
                         _selectedGroups =

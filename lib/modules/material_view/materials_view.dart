@@ -32,9 +32,13 @@ class MaterialsScreen extends StatefulWidget {
 
 class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
+  late List<HiveMaterialTopic> _topicList;
+
   late Box<HiveCurrentUser> _currentUserBox;
 
   late Box<HiveLanguage> _languageBox;
+  late Box<HiveMaterialTopic> _topicBox;
+
   late HiveCurrentUser _user;
 
   late String _choiceText = Strings.noFilterApplied;
@@ -45,9 +49,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _topicBox = Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getAllLanguages();
+    _getAllTopics();
     _getCurrentUser();
   }
 
@@ -61,6 +67,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
+  }
+
+  void _getAllTopics() {
+    _topicList = _topicBox.values.toList();
   }
 
   void _onMaterialSelection(HiveMaterial material) {
@@ -277,14 +287,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         navTitle: Strings.selectLanugages,
         placeholder: Strings.selectLanugages,
         selectedValues: bloc.materialBloc.selectedLanguages,
-        choice: SelectType.multiple,
-        dataSource: DataSourceType.languages,
+        dataSource: _languageList,
+        type: SelectType.multiple,
+        dataSourceType: DataSourceType.languages,
         onDoneClicked: <T>(languages) {
           setState(() {
             List<HiveLanguage> _selectedLanguages =
-                languages as List<HiveLanguage>;
+                List<HiveLanguage>.from(languages as List<dynamic>);
+            // List<HiveLanguage> _selectedLanguages =
+            //     languages as List<HiveLanguage>;
             bloc.materialBloc.selectedLanguages = _selectedLanguages;
-
             _fetchMaterialData(bloc);
           });
         },
@@ -299,13 +311,17 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         navTitle: Strings.selectTopics,
         placeholder: Strings.selectTopics,
         selectedValues: bloc.materialBloc.selectedTopics,
+        dataSource: _topicList,
         enableSelectAllOption: true,
-        choice: SelectType.multiple,
-        dataSource: DataSourceType.topics,
+        type: SelectType.multiple,
+        dataSourceType: DataSourceType.topics,
         onDoneClicked: <T>(topics) {
           setState(() {
             List<HiveMaterialTopic> _selectedTopics =
-                topics as List<HiveMaterialTopic>;
+                List<HiveMaterialTopic>.from(topics as List<dynamic>);
+
+            // List<HiveMaterialTopic> _selectedTopics =
+            //     topics as List<HiveMaterialTopic>;
             bloc.materialBloc.selectedTopics = _selectedTopics;
             _fetchMaterialData(bloc);
           });

@@ -213,11 +213,14 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         navTitle: Strings.selectCountry,
                         placeholder: Strings.selectCountry,
                         selectedValues: _selectedCountries,
-                        choice: SelectType.multiple,
-                        dataSource: DataSourceType.countries,
+                        dataSource: _countryList,
+                        type: SelectType.multiple,
+                        dataSourceType: DataSourceType.countries,
                         onDoneClicked: <T>(countries) {
                           setState(() {
-                            _selectedCountries = countries as List<HiveCountry>;
+                            // _selectedCountries = countries as List<HiveCountry>;
+                            _selectedCountries = List<HiveCountry>.from(
+                                countries as List<dynamic>);
                             _updateUserCountries();
                           });
                         },
@@ -243,12 +246,17 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         navTitle: Strings.selectLanugages,
                         placeholder: Strings.selectLanugages,
                         selectedValues: _selectedLanguages,
-                        choice: SelectType.multiple,
-                        dataSource: DataSourceType.languages,
+                        dataSource: _languageList,
+                        type: SelectType.multiple,
+                        dataSourceType: DataSourceType.languages,
                         onDoneClicked: <T>(languages) {
+                          // setState(() {
+                          //   _selectedLanguages =
+                          //       languages as List<HiveLanguage>;
+                          // });
                           setState(() {
-                            _selectedLanguages =
-                                languages as List<HiveLanguage>;
+                            _selectedLanguages = List<HiveLanguage>.from(
+                                languages as List<dynamic>);
                           });
                         },
                       ),

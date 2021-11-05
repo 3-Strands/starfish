@@ -29,8 +29,9 @@ class SelectDropDown extends StatefulWidget {
   final bool enableSelectAllOption;
   final bool enabled;
   final selectedValues;
-  final SelectType choice;
-  final DataSourceType dataSource;
+  final dataSource;
+  final SelectType type;
+  final DataSourceType dataSourceType;
 
   final Function<T>(T) onDoneClicked;
 
@@ -41,8 +42,9 @@ class SelectDropDown extends StatefulWidget {
     this.enabled = true,
     this.enableSelectAllOption = false,
     required this.selectedValues,
-    required this.choice,
     required this.dataSource,
+    required this.type,
+    required this.dataSourceType,
     required this.onDoneClicked,
     this.maxSelectItemLimit = 0,
   }) : super(key: key);
@@ -67,7 +69,7 @@ class _SelectDropDownState extends State<SelectDropDown> {
   void showSelectedValue(value) {
     String _value = '';
 
-    switch (widget.dataSource) {
+    switch (widget.dataSourceType) {
       case DataSourceType.country:
         HiveCountry country = value as HiveCountry;
         _value = country.name;
@@ -75,45 +77,67 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.countries:
-        List<HiveCountry> countries = value as List<HiveCountry>;
+        // List<HiveCountry> countries = value as List<HiveCountry>;
+
+        List<HiveCountry> countries =
+            List<HiveCountry>.from(value as List<dynamic>);
+
         countries.forEach((element) {
           _value += '${element.name}, ';
         });
 
         break;
       case DataSourceType.languages:
-        List<HiveLanguage> languages = value as List<HiveLanguage>;
+
+        // List<HiveLanguage> languages = value as List<HiveLanguage>;
+
+        List<HiveLanguage> languages =
+            List<HiveLanguage>.from(value as List<dynamic>);
+
         languages.forEach((element) {
           _value += '${element.name}, ';
         });
 
         break;
       case DataSourceType.topics:
-        List<HiveMaterialTopic> topics = value as List<HiveMaterialTopic>;
+        // List<HiveMaterialTopic> topics = value as List<HiveMaterialTopic>;
+
+        List<HiveMaterialTopic> topics =
+            List<HiveMaterialTopic>.from(value as List<dynamic>);
+
         topics.forEach((element) {
           _value += '${element.name}, ';
         });
 
         break;
       case DataSourceType.types:
-        List<HiveMaterialType> types = value as List<HiveMaterialType>;
+        // List<HiveMaterialType> types = value as List<HiveMaterialType>;
+
+        List<HiveMaterialType> types =
+            List<HiveMaterialType>.from(value as List<dynamic>);
+
         types.forEach((element) {
           _value += '${element.name}, ';
         });
 
         break;
       case DataSourceType.evaluationCategory:
+        // List<HiveEvaluationCategory> cateogries =
+        //     value as List<HiveEvaluationCategory>;
+
         List<HiveEvaluationCategory> cateogries =
-            value as List<HiveEvaluationCategory>;
+            List<HiveEvaluationCategory>.from(value as List<dynamic>);
+
         cateogries.forEach((element) {
           _value += '${element.name}, ';
         });
 
         break;
       case DataSourceType.groups:
+        // List<HiveGroup> groups = value as List<HiveGroup>;
+
         List<HiveGroup> groups = List<HiveGroup>.from(value as List<dynamic>);
 
-        // List<HiveGroup> groups = value as List<HiveGroup>;
         groups.forEach((element) {
           _value += '${element.name}, ';
         });
@@ -124,7 +148,7 @@ class _SelectDropDownState extends State<SelectDropDown> {
     }
 
     setState(() {
-      if (widget.choice == SelectType.multiple) {
+      if (widget.type == SelectType.multiple) {
         if (_value.length == 0) {
           _selectedValue = widget.placeholder;
         } else {
@@ -155,8 +179,9 @@ class _SelectDropDownState extends State<SelectDropDown> {
                 builder: (context) => MultiSelect(
                   navTitle: widget.navTitle,
                   selectedValues: widget.selectedValues,
-                  choice: widget.choice,
                   dataSource: widget.dataSource,
+                  type: widget.type,
+                  dataSourceType: widget.dataSourceType,
                   onDoneClicked: <T>(items) {
                     showSelectedValue(items);
                     widget.onDoneClicked(items);

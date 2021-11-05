@@ -667,12 +667,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     navTitle: Strings.selectCountry,
                     placeholder: Strings.selectCountry,
                     selectedValues: _selectedCountries,
+                    dataSource: _countryList,
                     enabled: true,
-                    choice: SelectType.multiple,
-                    dataSource: DataSourceType.countries,
+                    type: SelectType.multiple,
+                    dataSourceType: DataSourceType.countries,
                     onDoneClicked: <T>(countries) {
                       List<HiveCountry> selectedCountries =
-                          countries as List<HiveCountry>;
+                          List<HiveCountry>.from(countries as List<dynamic>);
+
+                      // List<HiveCountry> selectedCountries =
+                      //     countries as List<HiveCountry>;
 
                       if (selectedCountries.length == 0) {
                         return StarfishSnackbar.showErrorMessage(
@@ -715,12 +719,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       navTitle: Strings.selectLanugages,
                       placeholder: Strings.selectLanugages,
                       selectedValues: _selectedLanguages,
+                      dataSource: _languageList,
                       enabled: true,
-                      choice: SelectType.multiple,
-                      dataSource: DataSourceType.languages,
+                      type: SelectType.multiple,
+                      dataSourceType: DataSourceType.languages,
                       onDoneClicked: <T>(languages) {
                         List<HiveLanguage> selectedLanguages =
-                            languages as List<HiveLanguage>;
+                            List<HiveLanguage>.from(languages as List<dynamic>);
+
+                        // List<HiveLanguage> selectedLanguages =
+                        //     languages as List<HiveLanguage>;
 
                         if (selectedLanguages.length == 0) {
                           return StarfishSnackbar.showErrorMessage(

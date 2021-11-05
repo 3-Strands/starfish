@@ -76,6 +76,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
   late Box<HiveUser> _userBox;
 
+  late List<HiveLanguage> _languageList;
+  late List<HiveEvaluationCategory> _evaluationCategoryList;
+
   late AppBloc bloc;
 
   @override
@@ -83,9 +86,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
     _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
+
+    _getAllLanguages();
+    _getAllEvaluationCategories();
 
     Permission.contacts.status.then((PermissionStatus permissionStatus) {
       if (permissionStatus == PermissionStatus.granted) {
@@ -110,6 +117,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               : false)
           .toList();
     }
+  }
+
+  void _getAllLanguages() {
+    _languageList = _languageBox.values.toList();
+  }
+
+  void _getAllEvaluationCategories() {
+    _evaluationCategoryList = _evaluationCategoryBox.values.toList();
   }
 
   Future<void> _checkPermissionsAndShowContact() async {
@@ -581,11 +596,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       navTitle: Strings.selectLanugages,
                       placeholder: Strings.selectLanugages,
                       selectedValues: _selectedLanguages,
-                      choice: SelectType.multiple,
-                      dataSource: DataSourceType.languages,
+                      dataSource: _languageList,
+                      type: SelectType.multiple,
+                      dataSourceType: DataSourceType.languages,
                       onDoneClicked: <T>(languages) {
                         setState(() {
-                          _selectedLanguages = languages as List<HiveLanguage>;
+                          _selectedLanguages = List<HiveLanguage>.from(
+                              languages as List<dynamic>);
+
+                          // _selectedLanguages = languages as List<HiveLanguage>;
                           // print("Selected languages ==>> $_selectedLanguages");
                         });
                       },
@@ -605,12 +624,17 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         navTitle: Strings.selectCategories,
                         placeholder: Strings.selectCategories,
                         selectedValues: _selectedEvaluationCategories,
-                        choice: SelectType.multiple,
-                        dataSource: DataSourceType.evaluationCategory,
+                        dataSource: _evaluationCategoryList,
+                        type: SelectType.multiple,
+                        dataSourceType: DataSourceType.evaluationCategory,
                         onDoneClicked: <T>(categories) {
                           setState(() {
                             _selectedEvaluationCategories =
-                                categories as List<HiveEvaluationCategory>;
+                                List<HiveEvaluationCategory>.from(
+                                    categories as List<dynamic>);
+
+                            // _selectedEvaluationCategories =
+                            //     categories as List<HiveEvaluationCategory>;
                             // print("Selected types ==>> $types");
                           });
                         },

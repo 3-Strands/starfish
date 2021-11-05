@@ -54,6 +54,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   late Box<HiveMaterialType> _materialTypeBox;
   late Box<HiveMaterialTopic> _materialTopicBox;
 
+  late List<HiveLanguage> _languageList;
+  late List<HiveMaterialType> _typeList;
+  late List<HiveMaterialTopic> _topicList;
+
   late String _choiceSeenByText = Strings.seenBy;
   late String _choiceEditedByText = Strings.editedBy;
 
@@ -67,6 +71,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
     _materialTopicBox =
         Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
+
+    _getAllLanguages();
+    _getAllMaterialTypes();
+    _getAllMaterialTopics();
 
     if (widget.material != null) {
       _isEditMode = true;
@@ -90,6 +98,18 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               widget.material!.topics!.contains(topic.name))
           .toList();
     }
+  }
+
+  void _getAllLanguages() {
+    _languageList = _languageBox.values.toList();
+  }
+
+  void _getAllMaterialTypes() {
+    _typeList = _materialTypeBox.values.toList();
+  }
+
+  void _getAllMaterialTopics() {
+    _topicList = _materialTopicBox.values.toList();
   }
 
   @override
@@ -285,11 +305,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       navTitle: Strings.selectLanugages,
                       placeholder: Strings.selectLanugages,
                       selectedValues: _selectedLanguages,
-                      choice: SelectType.multiple,
-                      dataSource: DataSourceType.languages,
+                      dataSource: _languageList,
+                      type: SelectType.multiple,
+                      dataSourceType: DataSourceType.languages,
                       onDoneClicked: <T>(languages) {
                         setState(() {
-                          _selectedLanguages = languages as List<HiveLanguage>;
+                          _selectedLanguages = List<HiveLanguage>.from(
+                              languages as List<dynamic>);
+                          // _selectedLanguages = languages as List<HiveLanguage>;
                         });
                       },
                     ),
@@ -308,11 +331,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       navTitle: Strings.selectType,
                       placeholder: Strings.selectType,
                       selectedValues: _selectedTypes,
-                      choice: SelectType.multiple,
-                      dataSource: DataSourceType.types,
+                      dataSource: _typeList,
+                      type: SelectType.multiple,
+                      dataSourceType: DataSourceType.types,
                       onDoneClicked: <T>(types) {
                         setState(() {
-                          _selectedTypes = types as List<HiveMaterialType>;
+                          _selectedTypes = List<HiveMaterialType>.from(
+                              types as List<dynamic>);
+
+                          // _selectedTypes = types as List<HiveMaterialType>;
                         });
                       },
                     ),
@@ -331,11 +358,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       navTitle: Strings.selectTopics,
                       placeholder: Strings.selectTopics,
                       selectedValues: _selectedTopics,
-                      choice: SelectType.multiple,
-                      dataSource: DataSourceType.topics,
+                      dataSource: _topicList,
+                      type: SelectType.multiple,
+                      dataSourceType: DataSourceType.topics,
                       onDoneClicked: <T>(topics) {
                         setState(() {
-                          _selectedTopics = topics as List<HiveMaterialTopic>;
+                          _selectedTopics = List<HiveMaterialTopic>.from(
+                              topics as List<dynamic>);
+
+                          // _selectedTopics = topics as List<HiveMaterialTopic>;
                         });
                       },
                     ),
