@@ -88,7 +88,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.languages:
-
         // List<HiveLanguage> languages = value as List<HiveLanguage>;
 
         List<HiveLanguage> languages =

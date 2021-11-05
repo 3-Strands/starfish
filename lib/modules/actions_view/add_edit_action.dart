@@ -65,6 +65,8 @@ class _AddEditActionState extends State<AddEditAction>
   void _getAllGroups() async {
     _groupList = _groupBox.values.toList();
     _groupList.insert(0, HiveGroup(id: '-1', name: 'Me'));
+    print('_getAllGroups');
+    print(_groupList);
   }
 
   @override
