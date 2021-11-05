@@ -120,13 +120,18 @@ class _MyGroupState extends State<MyGroup> {
             ),
             SizedBox(height: 10.h),
             SearchBar(
-              initialValue: '',
+              initialValue: bloc.actionBloc.query,
               onValueChanged: (value) {
                 print('searched value $value');
-                setState(() {});
+                setState(() {
+                  bloc.actionBloc.query = value;
+                });
               },
               onDone: (value) {
                 print('searched value $value');
+                setState(() {
+                  bloc.actionBloc.query = value;
+                });
               },
             ),
             SizedBox(

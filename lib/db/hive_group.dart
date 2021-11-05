@@ -152,4 +152,15 @@ extension HiveGroupExt on HiveGroup {
         ? GroupUser_Role.valueOf(_groupUser.role!)!
         : GroupUser_Role.UNSPECIFIED_ROLE;
   }
+
+  bool containsUserName(String query) {
+    if (this.activeUsers == null) {
+      return false;
+    }
+    return this
+            .activeUsers!
+            .where((element) => element.name.toLowerCase().contains(query))
+            .length >
+        0;
+  }
 }
