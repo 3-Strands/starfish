@@ -44,10 +44,17 @@ class ActionBloc extends Object {
       //_allActions = value;
 
       value.forEach((element) {
-        if (_groupActionListMap.containsKey(element.group)) {
-          _groupActionListMap[element.group!]!.add(element);
-        } else {
-          _groupActionListMap[element.group!] = [element];
+        if (element.name!.toLowerCase().contains(query.toLowerCase()) ||
+            (element.group != null &&
+                    (element.group!.name!
+                        .toLowerCase()
+                        .contains(query.toLowerCase())) ||
+                element.group!.containsUserName(query))) {
+          if (_groupActionListMap.containsKey(element.group)) {
+            _groupActionListMap[element.group!]!.add(element);
+          } else {
+            _groupActionListMap[element.group!] = [element];
+          }
         }
       });
     }).whenComplete(
