@@ -1,7 +1,15 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_user.g.dart';
 
@@ -122,5 +130,25 @@ class HiveUser extends HiveObject {
 extension HiveUserExt on HiveUser {
   String get phoneWithDialingCode {
     return this.phone != null ? '+${this.diallingCode}${this.phone}' : '';
+  }
+
+  ActionStatus actionStatusbyId(HiveAction action) {
+    if (this.actions == null || this.actions?.length == 0) {
+      return ActionStatus.UNSPECIFIED_STATUS;
+    }
+    if (action.dateDue != null &&
+        action.dateDue!
+            .toDateTime()
+            .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+      return ActionStatus.OVERDUE;
+    }
+    HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
+        element.actionId! == action.id! && element.userId! == this.id);
+
+    if (actionUser == null) {
+      return ActionStatus.UNSPECIFIED_STATUS;
+    } else {
+      return ActionUser_Status.valueOf(actionUser.status!)!.convertTo();
+    }
   }
 }
