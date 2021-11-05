@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
@@ -25,15 +26,6 @@ class MyGroup extends StatefulWidget {
 }
 
 class _MyGroupState extends State<MyGroup> {
-  var _dropdownTitleList = <String>[
-    'This month',
-    'Next month',
-    'Last month',
-    'Last 3 month',
-    'All time'
-  ];
-  late String _choiceText = 'This month';
-
   late Box<HiveUser> _userBox;
 
   @override
@@ -74,7 +66,7 @@ class _MyGroupState extends State<MyGroup> {
                 child: DropdownButtonHideUnderline(
                   child: ButtonTheme(
                     alignedDropdown: true,
-                    child: DropdownButton<String>(
+                    child: DropdownButton<ActionFilter>(
                       isExpanded: true,
                       // icon: Icon(Icons.arrow_drop_down),
                       iconSize: 35,
@@ -84,7 +76,7 @@ class _MyGroupState extends State<MyGroup> {
                         fontFamily: 'OpenSans',
                       ),
                       hint: Text(
-                        _choiceText,
+                        bloc.actionBloc.actionFilter.about,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -94,17 +86,18 @@ class _MyGroupState extends State<MyGroup> {
                         ),
                         textAlign: TextAlign.left,
                       ),
-                      onChanged: (String? value) {
+                      onChanged: (ActionFilter? value) {
                         setState(() {
-                          _choiceText = value!;
+                          bloc.actionBloc.actionFilter = value!;
                         });
                       },
-                      items: _dropdownTitleList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
+                      items: ActionFilter.values
+                          .map<DropdownMenuItem<ActionFilter>>(
+                              (ActionFilter value) {
+                        return DropdownMenuItem<ActionFilter>(
                           value: value,
                           child: Text(
-                            value,
+                            value.about,
                             style: TextStyle(
                               color: Color(0xFF434141),
                               fontSize: 14.sp,

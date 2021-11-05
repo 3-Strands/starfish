@@ -232,6 +232,14 @@ sending an invitation to use Starfish''';
     'Assigned to a group I lead',
     'No filter applied',
   ];
+
+  // Action Filter
+  static const String actionFilterThisMonth = "This Month";
+  static const String actionFilterNextMonth = "Next Month";
+  static const String actionFilterLastMonth = "Last Month";
+  static const String actionFilterLastThreeMonth = "Last Three Months";
+  static const String actionFilterAllTime = "All Time";
+
   // Menu Items
   static const String makeAdmin = 'Make Admin';
   static const String makeTeacher = 'Make Teacher';
