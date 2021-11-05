@@ -299,16 +299,16 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   Widget _buildUserList(HiveAction action) {
-    if (action.users == null) {
+    if (action.learners == null) {
       return Container();
     }
 
     return Container(
       height: 300.h,
       child: ListView.builder(
-        itemCount: action.users!.length,
+        itemCount: action.learners!.length,
         itemBuilder: (context, index) {
-          final item = action.users![index];
+          final item = action.learners![index];
           return ListTile(
             title: Row(
               children: [
