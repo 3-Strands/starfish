@@ -33,6 +33,8 @@ class HiveGroup extends HiveObject {
   bool isUpdated = false;
   @HiveField(10)
   bool isDirty = false;
+  @HiveField(11)
+  bool isMe = false;
 
   HiveGroup({
     this.id,
@@ -46,6 +48,7 @@ class HiveGroup extends HiveObject {
     this.isNew = false,
     this.isUpdated = false,
     this.isDirty = false,
+    this.isMe = false,
   });
 
   HiveGroup.from(Group group) {
