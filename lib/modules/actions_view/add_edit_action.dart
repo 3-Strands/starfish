@@ -463,7 +463,9 @@ class _AddEditActionState extends State<AddEditAction>
     _hiveAction.type = _selectedActionType!.value;
     _hiveAction.name = _actionNameController.text;
     //_hiveAction.creatorId=
-    _hiveAction.groupId = group.id;
+    if (group.isMe == false) {
+      _hiveAction.groupId = group.id;
+    }
     _hiveAction.materialId =
         _selectedMaterial != null ? _selectedMaterial!.id : null;
     _hiveAction.instructions = _instructions;
