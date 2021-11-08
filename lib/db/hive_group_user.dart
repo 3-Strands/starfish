@@ -67,7 +67,8 @@ extension HiveGroupUserExt on HiveGroupUser {
   }
 
   bool get isInvited {
-    return this.phone.isNotEmpty;
+    return user != null &&
+        User_Status.valueOf(user!.status!)! != User_Status.ACTIVE;
   }
 
   String get phoneWithDialingCode {
