@@ -23,12 +23,16 @@ class ActionRepository {
   Future<ResponseStream<DeleteActionResponse>> deleteAction(Action action) =>
       apiProvider.deleteAction(action);
 
-  Future<List<HiveAction>> fetchAllActionsFromDB(List<String> groupIds) =>
-      dbProvider.getAllActions(groupIds);
+  Future<List<HiveAction>> fetchAllActionsForGroupFromDB(
+          List<String> groupIds) =>
+      dbProvider.getAllActionsForGroup(groupIds);
+
+  Future<List<HiveAction>> fetchAllActionsForMeFromDB(List<String> groupIds) =>
+      dbProvider.getAllActionsForMe(groupIds);
 
   Future<void> createUpdateActionInDB(HiveAction action) =>
       dbProvider.createUpdateAction(action);
 
-  Future<void> createUpdateUserActionInDB(HiveActionUser actionUser) =>
-      dbProvider.createUpdateUserAction(actionUser);
+  Future<void> createUpdateActionUserInDB(HiveActionUser actionUser) =>
+      dbProvider.createUpdateActionUser(actionUser);
 }

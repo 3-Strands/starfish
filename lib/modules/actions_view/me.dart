@@ -7,6 +7,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
@@ -25,14 +26,14 @@ class Me extends StatefulWidget {
 }
 
 class _MeState extends State<Me> {
-  var _dropdownTitleList = <String>[
+  /*var _dropdownTitleList = <String>[
     'This month',
     'Next month',
     'Last month',
     'Last 3 month',
     'All time'
   ];
-  late String _choiceText = 'This month';
+  late String _choiceText = 'This month';*/
 
   Dashboard obj = new Dashboard();
   _getActions(AppBloc bloc) async {
@@ -68,7 +69,7 @@ class _MeState extends State<Me> {
                   child: DropdownButtonHideUnderline(
                     child: ButtonTheme(
                       alignedDropdown: true,
-                      child: DropdownButton<String>(
+                      child: DropdownButton<ActionFilter>(
                         isExpanded: true,
                         // icon: Icon(Icons.arrow_drop_down),
                         iconSize: 35,
@@ -78,7 +79,7 @@ class _MeState extends State<Me> {
                           fontFamily: 'OpenSans',
                         ),
                         hint: Text(
-                          _choiceText,
+                          bloc.actionBloc.actionFilter.about,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -88,17 +89,18 @@ class _MeState extends State<Me> {
                           ),
                           textAlign: TextAlign.left,
                         ),
-                        onChanged: (String? value) {
+                        onChanged: (ActionFilter? value) {
                           setState(() {
-                            _choiceText = value!;
+                            bloc.actionBloc.actionFilter = value!;
                           });
                         },
-                        items: _dropdownTitleList
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
+                        items: ActionFilter.values
+                            .map<DropdownMenuItem<ActionFilter>>(
+                                (ActionFilter value) {
+                          return DropdownMenuItem<ActionFilter>(
                             value: value,
                             child: Text(
-                              value,
+                              value.about,
                               style: TextStyle(
                                 color: Color(0xFF434141),
                                 fontSize: 14.sp,
@@ -117,10 +119,15 @@ class _MeState extends State<Me> {
                 initialValue: '',
                 onValueChanged: (value) {
                   print('searched value $value');
-                  setState(() {});
+                  setState(() {
+                    bloc.actionBloc.query = value;
+                  });
                 },
                 onDone: (value) {
                   print('searched value $value');
+                  setState(() {
+                    bloc.actionBloc.query = value;
+                  });
                 },
               ),
               SizedBox(
@@ -387,14 +394,15 @@ class _MeState extends State<Me> {
                           color: Color(0xFF434141),
                         ),
                       ),
-                      Text(
-                        'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF797979),
+                      if (snapshot.data!.keys.toList()[section].id != null)
+                        Text(
+                          'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF797979),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 );
@@ -534,7 +542,8 @@ class MyActionListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ActionStatusWidget(
-                    title: action.actionStatus,
+                    title: ActionStatus
+                        .NOT_DONE, //TODO: should have the status of the action for the user
                     height: 30.h,
                     width: 130.w,
                   ),

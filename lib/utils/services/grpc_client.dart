@@ -62,7 +62,7 @@ class Singleton {
       channel,
       options: CallOptions(
         metadata: {
-          'authorization': '$token',
+          'authorization': '9873572747',
           'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
         },
       ),

@@ -1,5 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_date.dart';
@@ -31,7 +32,11 @@ class ActionBloc extends Object {
     return actionRepository.createUpdateActionInDB(action);
   }
 
-  _fetchActionsFromDB(List<GroupUser_Role> groupUserRole) async {
+  fetchGroupActionsFromDB() async {
+    final List<GroupUser_Role> groupUserRole = [
+      GroupUser_Role.ADMIN,
+      GroupUser_Role.TEACHER
+    ];
     final Map<HiveGroup, List<HiveAction>> _groupActionListMap = Map();
 
     final CurrentUserRepository _currentUserRepository =
@@ -44,7 +49,7 @@ class ActionBloc extends Object {
     });
 
     actionRepository
-        .fetchAllActionsFromDB(_groupIdsWithMatchingRole)
+        .fetchAllActionsForGroupFromDB(_groupIdsWithMatchingRole)
         .then((value) {
       //_allActions = value;
 
@@ -69,12 +74,63 @@ class ActionBloc extends Object {
   }
 
   fetchMyActionsFromDB() async {
+    final List<GroupUser_Role> groupUserRole = [
+      GroupUser_Role.LEARNER,
+    ];
+    final Map<HiveGroup, List<HiveAction>> _groupActionListMap = Map();
+
+    final CurrentUserRepository _currentUserRepository =
+        CurrentUserRepository();
+    HiveCurrentUser _currentUser = await _currentUserRepository.getUserFromDB();
+
+    List<String> _groupIdsWithMatchingRole = [];
+    _currentUser.groupsWithRole(groupUserRole).forEach((element) {
+      _groupIdsWithMatchingRole.add(element.groupId!);
+    });
+
+    HiveGroup _dummyGroupSelf = HiveGroup(id: null, name: "Self Assigned");
+
+    actionRepository
+        .fetchAllActionsForMeFromDB(_groupIdsWithMatchingRole)
+        .then((value) {
+      //_allActions = value;
+
+      value.forEach((element) {
+        if (_filterAction(element) &&
+            (element.name!.toLowerCase().contains(query.toLowerCase()) ||
+                (element.group != null &&
+                        (element.group!.name!
+                            .toLowerCase()
+                            .contains(query.toLowerCase()) ||
+                    element.group!.containsUserName(query))))) {
+          if (element.isIndividualAction) {
+            print("action is Individual Action");
+            if (_groupActionListMap.containsKey(_dummyGroupSelf)) {
+              _groupActionListMap[_dummyGroupSelf]!.add(element);
+            } else {
+              _groupActionListMap[_dummyGroupSelf] = [element];
+            }
+          } else {
+            if (_groupActionListMap.containsKey(element.group)) {
+              _groupActionListMap[element.group!]!.add(element);
+            } else {
+              _groupActionListMap[element.group!] = [element];
+            }
+          }
+        }
+      });
+    }).whenComplete(
+      () => {_actions.sink.add(_groupActionListMap)},
+    );
+  }
+
+  /*fetchMyActionsFromDB() async {
     return _fetchActionsFromDB([GroupUser_Role.LEARNER]);
   }
 
   fetchGroupActionsFromDB() async {
     return _fetchActionsFromDB([GroupUser_Role.ADMIN, GroupUser_Role.TEACHER]);
-  }
+  }*/
 
   bool _filterAction(HiveAction hiveAction) {
     switch (actionFilter) {
@@ -94,5 +150,9 @@ class ActionBloc extends Object {
       default:
         return true;
     }
+  }
+
+  Future<void> createUpdateActionUser(HiveActionUser hiveActionUser) async {
+    return actionRepository.createUpdateActionUserInDB(hiveActionUser);
   }
 }

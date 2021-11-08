@@ -6,6 +6,8 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -142,8 +144,11 @@ extension HiveUserExt on HiveUser {
             .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
       return ActionStatus.OVERDUE;
     }
-    HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
-        element.actionId! == action.id! && element.userId! == this.id);
+    /*HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
+        element.actionId! == action.id! && element.userId! == this.id);*/
+
+    HiveActionUser? actionUser =
+        ActionProvider().getActionUser(this.id!, action.id!);
 
     if (actionUser == null) {
       return ActionStatus.UNSPECIFIED_STATUS;

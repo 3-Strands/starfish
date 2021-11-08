@@ -6,11 +6,13 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -308,12 +310,12 @@ class _MyGroupState extends State<MyGroup> {
       child: ListView.builder(
         itemCount: action.learners!.length,
         itemBuilder: (context, index) {
-          final item = action.learners![index];
+          final hiveUser = action.learners![index];
           return ListTile(
             title: Row(
               children: [
                 Text(
-                  item.name ?? '',
+                  hiveUser.name ?? '',
                   style: TextStyle(
                     color: AppColors.txtFieldTextColor,
                     fontFamily: 'OpenSans',
@@ -344,7 +346,7 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                 ),*/
                 UserActionStatusWidget(
-                  title: item.actionStatusbyId(action),
+                  title: hiveUser.actionStatusbyId(action),
                   height: 20.h,
                   width: 100.w,
                 ),
@@ -360,7 +362,7 @@ class _MyGroupState extends State<MyGroup> {
             ),
             onTap: () {
               Navigator.pop(context);
-              _onActionSelection(action);
+              _onActionSelection(action, hiveUser);
             },
           );
         },
@@ -368,7 +370,11 @@ class _MyGroupState extends State<MyGroup> {
     );
   }
 
-  void _onActionSelection(HiveAction action) {
+  void _onActionSelection(HiveAction action, HiveUser user) {
+    HiveActionUser hiveActionUser = new HiveActionUser();
+    hiveActionUser.actionId = action.id!;
+    hiveActionUser.userId = user.id!;
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -381,6 +387,7 @@ class _MyGroupState extends State<MyGroup> {
         isDismissible: true,
         enableDrag: true,
         builder: (context) {
+          final bloc = Provider.of(context);
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,8 +436,31 @@ class _MyGroupState extends State<MyGroup> {
                     SizedBox(
                       width: 4.sp,
                     ),
-                    ActionStatusWidget(
-                        title: ActionStatus.DONE, height: 36.h, width: 99.w)
+                    InkWell(
+                      onTap: () {
+                        if (user.actionStatusbyId(action) ==
+                            ActionStatus.NOT_DONE) {
+                          hiveActionUser.status =
+                              ActionUser_Status.COMPLETE.value;
+                        } else if (user.actionStatusbyId(action) ==
+                            ActionStatus.DONE) {
+                          hiveActionUser.status =
+                              ActionUser_Status.INCOMPLETE.value;
+                        } else {
+                          hiveActionUser.status =
+                              ActionUser_Status.UNSPECIFIED_STATUS.value;
+                        }
+
+                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
+
+                        // TODO: should we update the status of this action on HiveUser also????
+                      },
+                      child: UserActionStatusWidget(
+                        title: user.actionStatusbyId(action),
+                        height: 36.h,
+                        width: 99.w,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -485,55 +515,79 @@ class _MyGroupState extends State<MyGroup> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: 36.sp,
-                      width: 160.sp,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.sp),
-                        color: Color(0xFFC9C9C9),
-                      ),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.thumb_up_outlined, size: 14.sp),
-                            SizedBox(
-                              width: 4.sp,
-                            ),
-                            Text(
-                              Strings.goodText,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 14.sp,
-                                color: Color(0xFF777777),
+                    InkWell(
+                      onTap: () {
+                        hiveActionUser.evaluation =
+                            ActionUser_Evaluation.GOOD.value;
+
+                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
+                      },
+                      child: Container(
+                        height: 36.sp,
+                        width: 160.sp,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.sp),
+                          color: ActionUser_Evaluation.valueOf(
+                                      hiveActionUser.evaluation!) ==
+                                  ActionUser_Evaluation.GOOD
+                              ? Color(0xFF6DE26B)
+                              : Color(0xFFC9C9C9),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.thumb_up_outlined, size: 14.sp),
+                              SizedBox(
+                                width: 4.sp,
                               ),
-                            ),
-                          ]),
+                              Text(
+                                Strings.goodText,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontFamily: 'Rubik',
+                                  fontSize: 14.sp,
+                                  color: Color(0xFF777777),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
-                    Container(
-                      height: 36.sp,
-                      width: 160.sp,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.sp),
-                        color: Color(0xFFC9C9C9),
-                      ),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.thumb_down_outlined, size: 14.sp),
-                            SizedBox(
-                              width: 4.sp,
-                            ),
-                            Text(
-                              Strings.notSoGoodText,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 14.sp,
-                                color: Color(0xFF777777),
+                    InkWell(
+                      onTap: () {
+                        hiveActionUser.evaluation =
+                            ActionUser_Evaluation.BAD.value;
+
+                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
+                      },
+                      child: Container(
+                        height: 36.sp,
+                        width: 160.sp,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.sp),
+                          color: ActionUser_Evaluation.valueOf(
+                                      hiveActionUser.evaluation!) ==
+                                  ActionUser_Evaluation.BAD
+                              ? Color(0xFF6DE26B)
+                              : Color(0xFFC9C9C9),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.thumb_down_outlined, size: 14.sp),
+                              SizedBox(
+                                width: 4.sp,
                               ),
-                            ),
-                          ]),
+                              Text(
+                                Strings.notSoGoodText,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontFamily: 'Rubik',
+                                  fontSize: 14.sp,
+                                  color: Color(0xFF777777),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
                   ],
                 ),

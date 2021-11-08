@@ -104,7 +104,7 @@ extension HiveActionExt on HiveAction {
         : null;
   }
 
-  ActionStatus get actionStatus {
+  /*ActionStatus get actionStatus {
     if (this.dateDue == null) {
       return ActionStatus.NOT_DONE;
     }
@@ -117,7 +117,7 @@ extension HiveActionExt on HiveAction {
     } else {
       return ActionStatus.DONE;
     }
-  }
+  }*/
 
   List<HiveUser>? get users {
     if (this.group == null) {
@@ -141,5 +141,9 @@ extension HiveActionExt on HiveAction {
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER)
         .map((HiveGroupUser groupUser) => groupUser.user!)
         .toList();
+  }
+
+  bool get isIndividualAction {
+    return groupId!.isEmpty;
   }
 }

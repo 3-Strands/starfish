@@ -17,6 +17,12 @@ class HiveActionUser extends HiveObject {
   String? userResponse;
   @HiveField(5)
   int? evaluation = ActionUser_Evaluation.UNSPECIFIED_EVALUATION.value;
+  @HiveField(6)
+  bool isNew = false;
+  @HiveField(7)
+  bool isUpdated = false;
+  @HiveField(8)
+  bool isDirty = false;
 
   HiveActionUser(
       {this.actionId, this.userId, this.status, this.teacherResponse});
