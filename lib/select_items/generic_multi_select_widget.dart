@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -44,6 +45,8 @@ class MultiSelect extends StatefulWidget {
 }
 
 class _MultiSelectState extends State<MultiSelect> {
+  final Key _focusDetectorKey = UniqueKey();
+
   Icon actionIcon = Icon(Icons.search);
 
   late Widget appBarTitle;
@@ -66,10 +69,6 @@ class _MultiSelectState extends State<MultiSelect> {
   void initState() {
     super.initState();
     appBarTitle = Text(widget.navTitle);
-
-    print('init state');
-    print(widget.dataSource);
-    print('==========');
 
     switch (widget.dataSourceType) {
       case DataSourceType.country:
@@ -183,10 +182,14 @@ class _MultiSelectState extends State<MultiSelect> {
         final currentUserId = _currentUserBox.values.first.id;
 
         _groups.forEach((element) {
-          if (element.getMyRole(currentUserId) == GroupUser_Role.ADMIN ||
-              element.getMyRole(currentUserId) == GroupUser_Role.TEACHER) {
-            var type = Item(data: element, isSelected: false);
-            _items.add(type);
+          if (element.isMe == true) {
+            _items.add(Item(data: element, isSelected: false));
+          } else {
+            if (element.getMyRole(currentUserId) == GroupUser_Role.ADMIN ||
+                element.getMyRole(currentUserId) == GroupUser_Role.TEACHER) {
+              var type = Item(data: element, isSelected: false);
+              _items.add(type);
+            }
           }
         });
 
@@ -282,79 +285,83 @@ class _MultiSelectState extends State<MultiSelect> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: appBarTitle,
-        automaticallyImplyLeading: true,
-        leading: BackButton(
-          onPressed: () => Navigator.pop(context, {_sendSelectedValues()}),
+    return FocusDetector(
+      key: _focusDetectorKey,
+      onFocusLost: () {
+        _sendSelectedValues();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: appBarTitle,
+          automaticallyImplyLeading: true,
+          actions: [
+            navigationSearchBar(),
+          ],
         ),
-        actions: [
-          navigationSearchBar(),
-        ],
-      ),
-      body: Column(
-        children: [
-          Visibility(
-            child: InkWell(
-                child: Container(
-                  height: 50.0,
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(left: 15.w, top: 5.h),
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            height: 60.h,
-                            width: MediaQuery.of(context).size.width - 88.0.w,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  Strings.selectAll,
-                                  style: TextStyle(
-                                    fontFamily: 'OpenSans',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.sp,
+        body: Column(
+          children: [
+            Visibility(
+              child: InkWell(
+                  child: Container(
+                    height: 50.0,
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(left: 15.w, top: 5.h),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              height: 60.h,
+                              width: MediaQuery.of(context).size.width - 88.0.w,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    Strings.selectAll,
+                                    style: TextStyle(
+                                      fontFamily: 'OpenSans',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.sp,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Container(
-                        width: 60.w,
-                        child: Icon(
-                          (this._isSelectAllSelected == true)
-                              ? Icons.check_box
-                              : Icons.check_box_outline_blank,
-                          color: AppColors.selectedButtonBG,
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
+                        Container(
+                          width: 60.w,
+                          child: Icon(
+                            (this._isSelectAllSelected == true)
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: AppColors.selectedButtonBG,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                onTap: () => {
-                      setState(() {
-                        _isSelectAllSelected = !_isSelectAllSelected;
-                        _updateStatus();
-                      })
-                    }),
-            visible: widget.enableSelectAllOption,
-          ),
-          SizedBox(
-            height: 5.h,
-          ),
-          Expanded(
-            child: _isSearching ? _searchListBuilder() : _listBuilder(),
-          ),
-        ],
+                  onTap: () => {
+                        setState(() {
+                          _isSelectAllSelected = !_isSelectAllSelected;
+                          _updateStatus();
+                        })
+                      }),
+              visible: widget.enableSelectAllOption,
+            ),
+            SizedBox(
+              height: 5.h,
+            ),
+            Expanded(
+              child: _isSearching ? _searchListBuilder() : _listBuilder(),
+            ),
+          ],
+        ),
       ),
     );
   }

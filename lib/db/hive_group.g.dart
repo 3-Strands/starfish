@@ -28,6 +28,7 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       isNew: fields[8] as bool,
       isUpdated: fields[9] as bool,
       isDirty: fields[10] as bool,
+      isMe: fields[11] as bool,
     );
   }
 
@@ -56,7 +57,9 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       ..writeByte(9)
       ..write(obj.isUpdated)
       ..writeByte(10)
-      ..write(obj.isDirty);
+      ..write(obj.isDirty)
+      ..writeByte(11)
+      ..write(obj.isMe);
   }
 
   @override

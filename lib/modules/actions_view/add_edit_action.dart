@@ -11,6 +11,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
@@ -56,6 +57,7 @@ class _AddEditActionState extends State<AddEditAction>
 
   late List<HiveGroup> _groupList;
   late Box<HiveGroup> _groupBox;
+  late Box<HiveCurrentUser> _currentUserBox;
 
   HiveMaterial? _selectedMaterial;
   String? _instructions;
@@ -64,9 +66,10 @@ class _AddEditActionState extends State<AddEditAction>
 
   void _getAllGroups() async {
     _groupList = _groupBox.values.toList();
-    _groupList.insert(0, HiveGroup(id: '-1', name: 'Me'));
-    print('_getAllGroups');
-    print(_groupList);
+
+    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    final currentUserId = _currentUserBox.values.first.id;
+    _groupList.insert(0, HiveGroup(id: currentUserId, name: 'Me', isMe: true));
   }
 
   @override
@@ -304,7 +307,6 @@ class _AddEditActionState extends State<AddEditAction>
                       setState(() {
                         _selectedGroups =
                             List<HiveGroup>.from(values as List<dynamic>);
-                        // _selectedGroups = values as List<HiveGroup>;
                       });
                     },
                   ),
@@ -461,7 +463,9 @@ class _AddEditActionState extends State<AddEditAction>
     _hiveAction.type = _selectedActionType!.value;
     _hiveAction.name = _actionNameController.text;
     //_hiveAction.creatorId=
-    _hiveAction.groupId = group.id;
+    if (group.isMe == false) {
+      _hiveAction.groupId = group.id;
+    }
     _hiveAction.materialId =
         _selectedMaterial != null ? _selectedMaterial!.id : null;
     _hiveAction.instructions = _instructions;

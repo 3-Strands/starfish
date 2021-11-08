@@ -278,7 +278,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
-    // bloc.materialBloc.selectedLanguages = _languageList;
     _selectLanguage(bloc);
 
     return Container(
@@ -294,8 +293,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           setState(() {
             List<HiveLanguage> _selectedLanguages =
                 List<HiveLanguage>.from(languages as List<dynamic>);
-            // List<HiveLanguage> _selectedLanguages =
-            //     languages as List<HiveLanguage>;
             bloc.materialBloc.selectedLanguages = _selectedLanguages;
             _fetchMaterialData(bloc);
           });
@@ -319,9 +316,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           setState(() {
             List<HiveMaterialTopic> _selectedTopics =
                 List<HiveMaterialTopic>.from(topics as List<dynamic>);
-
-            // List<HiveMaterialTopic> _selectedTopics =
-            //     topics as List<HiveMaterialTopic>;
             bloc.materialBloc.selectedTopics = _selectedTopics;
             _fetchMaterialData(bloc);
           });

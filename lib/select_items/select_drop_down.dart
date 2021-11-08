@@ -77,8 +77,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.countries:
-        // List<HiveCountry> countries = value as List<HiveCountry>;
-
         List<HiveCountry> countries =
             List<HiveCountry>.from(value as List<dynamic>);
 
@@ -88,8 +86,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.languages:
-        // List<HiveLanguage> languages = value as List<HiveLanguage>;
-
         List<HiveLanguage> languages =
             List<HiveLanguage>.from(value as List<dynamic>);
 
@@ -99,8 +95,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.topics:
-        // List<HiveMaterialTopic> topics = value as List<HiveMaterialTopic>;
-
         List<HiveMaterialTopic> topics =
             List<HiveMaterialTopic>.from(value as List<dynamic>);
 
@@ -110,8 +104,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.types:
-        // List<HiveMaterialType> types = value as List<HiveMaterialType>;
-
         List<HiveMaterialType> types =
             List<HiveMaterialType>.from(value as List<dynamic>);
 
@@ -121,9 +113,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.evaluationCategory:
-        // List<HiveEvaluationCategory> cateogries =
-        //     value as List<HiveEvaluationCategory>;
-
         List<HiveEvaluationCategory> cateogries =
             List<HiveEvaluationCategory>.from(value as List<dynamic>);
 
@@ -133,8 +122,6 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
         break;
       case DataSourceType.groups:
-        // List<HiveGroup> groups = value as List<HiveGroup>;
-
         List<HiveGroup> groups = List<HiveGroup>.from(value as List<dynamic>);
 
         groups.forEach((element) {
