@@ -17,6 +17,7 @@ import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/task_status.dart';
+import 'package:starfish/widgets/user_action_status_widget.dart';
 
 class MyGroup extends StatefulWidget {
   const MyGroup({Key? key}) : super(key: key);
@@ -298,16 +299,16 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   Widget _buildUserList(HiveAction action) {
-    if (action.users == null) {
+    if (action.learners == null) {
       return Container();
     }
 
     return Container(
       height: 300.h,
       child: ListView.builder(
-        itemCount: action.users!.length,
+        itemCount: action.learners!.length,
         itemBuilder: (context, index) {
-          final item = action.users![index];
+          final item = action.learners![index];
           return ListTile(
             title: Row(
               children: [
@@ -321,7 +322,7 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                 ),
                 SizedBox(width: 10.w),
-                Container(
+                /*Container(
                   width: 100.w,
                   height: 20.h,
                   decoration: BoxDecoration(
@@ -332,7 +333,7 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                   child: Center(
                     child: Text(
-                      'Done',
+                      "${item.actionStatusbyId(action.id!)}",
                       style: TextStyle(
                         color: AppColors.txtFieldTextColor,
                         fontFamily: 'OpenSans',
@@ -341,6 +342,11 @@ class _MyGroupState extends State<MyGroup> {
                       ),
                     ),
                   ),
+                ),*/
+                UserActionStatusWidget(
+                  title: item.actionStatusbyId(action),
+                  height: 20.h,
+                  width: 100.w,
                 ),
               ],
             ),

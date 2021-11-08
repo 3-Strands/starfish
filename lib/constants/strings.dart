@@ -260,4 +260,8 @@ sending an invitation to use Starfish''';
   static const String actionStatusDone = "I did it";
   static const String actionStatusNotDone = "I didn't do it yet";
   static const String actionStatusOverdue = "Overdue";
+
+  // Action Status for Group User
+  static const String groupActionStatusDone = "Did it";
+  static const String groupActionStatusNotDone = "Not done";
 }

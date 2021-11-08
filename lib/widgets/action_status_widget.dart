@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 class ActionStatusWidget extends StatelessWidget {
   final ActionStatus title;
@@ -20,11 +21,7 @@ class ActionStatusWidget extends StatelessWidget {
       height: this.height, //30.h,
       width: this.width, //130.w,
       decoration: BoxDecoration(
-          color: title == ActionStatus.DONE
-              ? Color(0xFF6DE26B)
-              : (title == ActionStatus.NOT_DONE)
-                  ? Color(0xFFFFBE4A)
-                  : Color(0xFFFF5E4D),
+          color: _statusColor(title),
           borderRadius: BorderRadius.all(Radius.circular(4.sp))),
       child: Padding(
         padding:
@@ -50,5 +47,19 @@ class ActionStatusWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _statusColor(ActionStatus status) {
+    switch (status) {
+      case ActionStatus.DONE:
+        return Color(0xFF6DE26B);
+      case ActionStatus.NOT_DONE:
+        return Color(0xFFFFBE4A);
+      case ActionStatus.OVERDUE:
+        return Color(0xFFFF5E4D);
+      case ActionStatus.UNSPECIFIED_STATUS:
+      default:
+        return Colors.white;
+    }
   }
 }

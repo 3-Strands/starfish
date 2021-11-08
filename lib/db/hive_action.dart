@@ -129,4 +129,17 @@ extension HiveActionExt on HiveAction {
         ?.map((HiveGroupUser groupUser) => groupUser.user!)
         .toList();
   }
+
+  List<HiveUser>? get learners {
+    if (this.group == null) {
+      return null;
+    }
+    return this
+        .group!
+        .users
+        ?.where((element) =>
+            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER)
+        .map((HiveGroupUser groupUser) => groupUser.user!)
+        .toList();
+  }
 }
