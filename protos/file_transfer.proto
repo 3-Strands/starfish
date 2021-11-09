@@ -24,8 +24,14 @@ service FileTransfer {
     // A stream of download request can be given.
     // For each request one or more files may be added to the return stream.
     // Any download request that doesn't point to a real file or files will be ignored.
-    rpc Download(stream DownloadRequest) returns (stream FileData) {}
+    rpc Download(stream DownloadRequest) returns (stream DownloadResponse) {}
 
+}
+
+// These values represent entities that can uploaded files attached to them
+enum EntityType {
+    ENTITY_UNSPECIFIED = 0;
+    MATERIAL = 1;
 }
 
 // To transfer the contents of a file it should be broken into chunks.
@@ -59,7 +65,11 @@ message FileMetaData {
     int64 size = 3;
 
     // The MD5 checksum for the file.
+    // If this is included in the upload request, the server will check it before processing the uploaded file
     string md5_checksum = 4;
+
+    // The type of entity this file is being uploaded for
+    EntityType entity_type = 5;
 
 }
 
@@ -82,13 +92,24 @@ message UploadStatus {
 
 }
 
+// When processing download requests and a request can't be processed
+// a DownloadError message is added to the stream
+// It's possible that some of the file was already added to the stream
+// In this case the DownloadError includes the corresponding file metadata
+message DownloadError {
+
+    // The request that could not be processed
+    DownloadRequest request = 1;
+
+    // The metadata of the file for which download failed, if applicable
+    FileMetaData file_meta_data = 2;
+
+    // The reason the request could not be processed
+    string error = 3;
+
+}
 
 message DownloadRequest {
-
-    enum EntityType {
-        ENTITY_UNSPECIFIED = 0;
-        MATERIAL = 1;
-    }
 
     // The type of entity from which to download a file
     EntityType entity_type = 1;
@@ -100,4 +121,21 @@ message DownloadRequest {
     // if this is left empty then all files of the entity will be added to the stream
     repeated string filenames = 3;
 
+}
+
+message DownloadResponse {
+
+    oneof response {
+
+        // Used to mark the beginning of a file in the stream
+        // and give information about the file
+        FileMetaData meta_data = 1;
+
+        // Each chunk will probably be 1KB in size.
+        bytes chunk = 2;
+
+        // Indicates a particular download request failed
+        DownloadError error = 3;
+
+    };
 }
