@@ -29,14 +29,16 @@ class _ActionsScreenState extends State<ActionsScreen>
     super.initState();
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _user = _currentUserBox.values.first;
-    _tabController = new TabController(length: _user.hasAdminOrTeacherRole ? 2 : 1, vsync: this, initialIndex: 0);
+    _tabController = new TabController(
+        length: _user.hasAdminOrTeacherRole ? 2 : 1,
+        vsync: this,
+        initialIndex: 0);
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: _tabController.length,
-      
       child: Scaffold(
         body: GestureDetector(
           onTap: () {
@@ -49,23 +51,24 @@ class _ActionsScreenState extends State<ActionsScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _user.hasAdminOrTeacherRole?TabBar(
-                  controller: _tabController,
-                  indicatorColor: Color(0xFF3475F0),
-                  labelColor: Color(0xFF3475F0),
-                  labelStyle: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600), //For Selected tab
-                  unselectedLabelColor: Color(0xFF797979),
-                  tabs: List.generate(
-                    _tabController.length,
-                    (index) => Tab(
-                        text: index == 0
-                            ? Strings.forMeTabText
-                            : Strings.forGroupITeachTabText),
-                  ),
-                ):Container(),
-
+                _user.hasAdminOrTeacherRole
+                    ? TabBar(
+                        controller: _tabController,
+                        indicatorColor: Color(0xFF3475F0),
+                        labelColor: Color(0xFF3475F0),
+                        labelStyle: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600), //For Selected tab
+                        unselectedLabelColor: Color(0xFF797979),
+                        tabs: List.generate(
+                          _tabController.length,
+                          (index) => Tab(
+                              text: index == 0
+                                  ? Strings.forMeTabText
+                                  : Strings.forGroupITeachTabText),
+                        ),
+                      )
+                    : Container(),
                 Expanded(
                   child: TabBarView(
                     children:

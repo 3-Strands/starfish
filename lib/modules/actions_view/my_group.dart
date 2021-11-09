@@ -492,8 +492,31 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                 ),
               ),
+              // Record the response to the Question
               SizedBox(
-                height: 100.h,
+                height: 110.h,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                      ? Column(
+                          children: [
+                            Text('Question: ${action.question}'),
+                            TextField(
+                              decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  hintText:
+                                      'Write an answer to the qustion here'),
+                              onSubmitted: (value) {
+                                print(value);
+                                hiveActionUser.teacherResponse = value;
+                                bloc.actionBloc
+                                    .createUpdateActionUser(hiveActionUser);
+                              },
+                            ),
+                          ],
+                        )
+                      : Container(),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -609,7 +632,6 @@ class _MyGroupState extends State<MyGroup> {
                     color: Color(0xFFEFEFEF),
                     child: ElevatedButton(
                       onPressed: () {
-                        //_closeSlidingUpPanelIfOpen();
                         Navigator.pop(context);
                       },
                       style: ButtonStyle(

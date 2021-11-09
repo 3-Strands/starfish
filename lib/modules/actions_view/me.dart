@@ -6,11 +6,14 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -145,6 +148,12 @@ class _MeState extends State<Me> {
   }
 
   void _onActionSelection(HiveAction action) {
+    HiveActionUser hiveActionUser = new HiveActionUser();
+    hiveActionUser.actionId = action.id!;
+
+    final dbProvider = CurrentUserProvider();
+    dbProvider.getUser().then((user) => {hiveActionUser.userId = user.id});
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -157,6 +166,7 @@ class _MeState extends State<Me> {
         isDismissible: true,
         enableDrag: true,
         builder: (context) {
+          final bloc = Provider.of(context);
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,8 +248,31 @@ class _MeState extends State<Me> {
                   ),
                 ),
               ),
+              // Record the response to the Question
               SizedBox(
-                height: 100.h,
+                height: 110.h,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                      ? Column(
+                          children: [
+                            Text('Question: ${action.question}'),
+                            TextField(
+                              decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  hintText:
+                                      'Write an answer to the qustion here'),
+                              onSubmitted: (value) {
+                                print(value);
+                                hiveActionUser.userResponse = value;
+                                bloc.actionBloc
+                                    .createUpdateActionUser(hiveActionUser);
+                              },
+                            ),
+                          ],
+                        )
+                      : Container(),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -261,55 +294,82 @@ class _MeState extends State<Me> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: 36.sp,
-                      width: 160.sp,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.sp),
-                        color: Color(0xFFC9C9C9),
-                      ),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.thumb_up_outlined, size: 14.sp),
-                            SizedBox(
-                              width: 4.sp,
-                            ),
-                            Text(
-                              Strings.goodText,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 14.sp,
-                                color: Color(0xFF777777),
+                    InkWell(
+                      onTap: () {
+                        print('GOOD tap');
+                        hiveActionUser.evaluation =
+                            ActionUser_Evaluation.GOOD.value;
+
+                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
+                      },
+                      child: Container(
+                        height: 36.sp,
+                        width: 160.sp,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.sp),
+                          color: ActionUser_Evaluation.valueOf(
+                                      hiveActionUser.evaluation!) ==
+                                  ActionUser_Evaluation.GOOD
+                              ? Color(0xFF6DE26B)
+                              : Color(0xFFC9C9C9),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.thumb_up_outlined, size: 14.sp),
+                              SizedBox(
+                                width: 4.sp,
                               ),
-                            ),
-                          ]),
+                              Text(
+                                Strings.goodText,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontFamily: 'Rubik',
+                                  fontSize: 14.sp,
+                                  color: Color(0xFF777777),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
-                    Container(
-                      height: 36.sp,
-                      width: 160.sp,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.sp),
-                        color: Color(0xFFC9C9C9),
-                      ),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.thumb_down_outlined, size: 14.sp),
-                            SizedBox(
-                              width: 4.sp,
-                            ),
-                            Text(
-                              Strings.notSoGoodText,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 14.sp,
-                                color: Color(0xFF777777),
+                    InkWell(
+                      onTap: () {
+                        print('BAD tap');
+
+                        hiveActionUser.evaluation =
+                            ActionUser_Evaluation.BAD.value;
+
+                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
+                      },
+                      child: Container(
+                        height: 36.sp,
+                        width: 160.sp,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.sp),
+                          color: ActionUser_Evaluation.valueOf(
+                                      hiveActionUser.evaluation!) ==
+                                  ActionUser_Evaluation.BAD
+                              ? Color(0xFF6DE26B)
+                              : Color(0xFFC9C9C9),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.thumb_down_outlined, size: 14.sp),
+                              SizedBox(
+                                width: 4.sp,
                               ),
-                            ),
-                          ]),
+                              Text(
+                                Strings.notSoGoodText,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontFamily: 'Rubik',
+                                  fontSize: 14.sp,
+                                  color: Color(0xFF777777),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
                   ],
                 ),
