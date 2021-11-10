@@ -12,21 +12,24 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 
 class ActionBloc extends Object {
   final ActionRepository actionRepository = ActionRepository();
-  late BehaviorSubject<Map<HiveGroup, List<HiveAction>>> _actions;
+  late BehaviorSubject<Map<HiveGroup, List<HiveAction>>> _actionsForMe;
+  late BehaviorSubject<Map<HiveGroup, List<HiveAction>>> _actionsForGroup;
 
   ActionFilter actionFilter = ActionFilter.THIS_MONTH;
 
   String query = '';
 
-  List<HiveAction> _allActions = [];
-  List<HiveAction> _filteredActionList = [];
-
   ActionBloc() {
     //initializes the subject with element already
-    _actions = new BehaviorSubject<Map<HiveGroup, List<HiveAction>>>();
+    _actionsForMe = new BehaviorSubject<Map<HiveGroup, List<HiveAction>>>();
+    _actionsForGroup = new BehaviorSubject<Map<HiveGroup, List<HiveAction>>>();
   }
 
-  Stream<Map<HiveGroup, List<HiveAction>>> get actions => _actions.stream;
+  Stream<Map<HiveGroup, List<HiveAction>>> get actionsForMe =>
+      _actionsForMe.stream;
+
+  Stream<Map<HiveGroup, List<HiveAction>>> get actionsForGroup =>
+      _actionsForGroup.stream;
 
   Future<void> createUpdateAction(HiveAction action) async {
     return actionRepository.createUpdateActionInDB(action);
@@ -69,7 +72,7 @@ class ActionBloc extends Object {
         }
       });
     }).whenComplete(
-      () => {_actions.sink.add(_groupActionListMap)},
+      () => {_actionsForGroup.sink.add(_groupActionListMap)},
     );
   }
 
@@ -99,10 +102,10 @@ class ActionBloc extends Object {
         if (_filterAction(element) &&
             (element.name!.toLowerCase().contains(query.toLowerCase()) ||
                 (element.group != null &&
-                        (element.group!.name!
+                    (element.group!.name!
                             .toLowerCase()
                             .contains(query.toLowerCase()) ||
-                    element.group!.containsUserName(query))))) {
+                        element.group!.containsUserName(query))))) {
           if (element.isIndividualAction) {
             print("action is Individual Action");
             if (_groupActionListMap.containsKey(_dummyGroupSelf)) {
@@ -120,7 +123,7 @@ class ActionBloc extends Object {
         }
       });
     }).whenComplete(
-      () => {_actions.sink.add(_groupActionListMap)},
+      () => {_actionsForMe.sink.add(_groupActionListMap)},
     );
   }
 

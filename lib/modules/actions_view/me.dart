@@ -416,7 +416,7 @@ class _MeState extends State<Me> {
 
   Widget actionsList(AppBloc bloc) {
     return StreamBuilder(
-        stream: bloc.actionBloc.actions,
+        stream: bloc.actionBloc.actionsForMe,
         builder: (BuildContext context,
             AsyncSnapshot<Map<HiveGroup, List<HiveAction>>> snapshot) {
           if (snapshot.hasData) {
