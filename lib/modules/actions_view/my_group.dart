@@ -238,7 +238,7 @@ class _MyGroupState extends State<MyGroup> {
 
   Widget actionsList(AppBloc bloc) {
     return StreamBuilder(
-        stream: bloc.actionBloc.actions,
+        stream: bloc.actionBloc.actionsForGroup,
         builder: (BuildContext context,
             AsyncSnapshot<Map<HiveGroup, List<HiveAction>>> snapshot) {
           if (snapshot.hasData) {
@@ -899,27 +899,66 @@ class MyGroupActionListItem extends StatelessWidget {
                     height: 51.sp,
                     width: 99.sp,
                     decoration: BoxDecoration(
-                        color: Color(0xFF6DE26B),
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(8.5.sp))),
+                      color: Color(0xFF6DE26B),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.5.sp),
+                      ),
+                    ),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
+                    child: Text(
+                      "${action.memberCountByActionStatus(ActionStatus.DONE)} ${Strings.membersDidIt}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF000000),
+                        fontFamily: "Rubik",
+                        fontSize: 14.sp,
+                      ),
+                    ),
                   ),
                   Spacer(),
                   Container(
                     height: 51.sp,
                     width: 99.sp,
                     decoration: BoxDecoration(
-                        color: Color(0xFFFFBE4A),
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(8.5.sp))),
+                      color: Color(0xFFFFBE4A),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.5.sp),
+                      ),
+                    ),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
+                    child: Text(
+                      "${action.memberCountByActionStatus(ActionStatus.NOT_DONE)} ${Strings.memberDidNotDoItYet}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF000000),
+                        fontFamily: "Rubik",
+                        fontSize: 14.sp,
+                      ),
+                    ),
                   ),
                   Spacer(),
                   Container(
                     height: 51.sp,
                     width: 99.sp,
                     decoration: BoxDecoration(
-                        color: Color(0xFFFF5E4D),
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(8.5.sp))),
+                      color: Color(0xFFFF5E4D),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.5.sp),
+                      ),
+                    ),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
+                    child: Text(
+                      "${action.memberCountByActionStatus(ActionStatus.OVERDUE)} ${Strings.memberIsOverdue}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF000000),
+                        fontFamily: "Rubik",
+                        fontSize: 14.sp,
+                      ),
+                    ),
                   ),
                   Spacer(),
                 ],

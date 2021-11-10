@@ -146,4 +146,15 @@ extension HiveActionExt on HiveAction {
   bool get isIndividualAction {
     return groupId!.isEmpty;
   }
+
+  int memberCountByActionStatus(ActionStatus actionStatus) {
+    int i = 0;
+    this.users?.forEach((element) {
+      print("memberCountByActionStatus: ${element.actionStatusbyId(this)}");
+      if (element.actionStatusbyId(this) == actionStatus) {
+        i++;
+      }
+    });
+    return i;
+  }
 }
