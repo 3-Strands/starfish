@@ -147,6 +147,8 @@ class _MeState extends State<Me> {
     );
   }
 
+  void _updateActionStatus() {}
+
   void _onActionSelection(HiveAction action) {
     HiveActionUser hiveActionUser = new HiveActionUser();
     hiveActionUser.actionId = action.id!;
@@ -167,250 +169,258 @@ class _MeState extends State<Me> {
         enableDrag: true,
         builder: (context) {
           final bloc = Provider.of(context);
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 40.sp,
-              ),
-              Center(
-                child: Text(
-                  '${Strings.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
-                  style: TextStyle(
-                      fontSize: 16.sp,
-                      color: Color(0xFF3475F0),
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 40.sp,
                 ),
-              ),
-              SizedBox(
-                height: 40.sp,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 44.h,
-                      width: 169.w,
-                      child: Text(
-                        Strings.actionFollowInstructions,
-                        maxLines: 2,
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 53.sp,
-                    ),
-                    Icon(
-                      Icons.thumb_up_alt_outlined,
-                      size: 14.sp,
-                    ),
-                    SizedBox(
-                      width: 4.sp,
-                    ),
-                    ActionStatusWidget(
-                        title: ActionStatus.DONE, height: 36.h, width: 99.w)
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                child: Text(
-                  '${Strings.instructions}: ${action.instructions}',
-                  maxLines: 5,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Color(0xFF797979),
-                    fontStyle: FontStyle.italic,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Align(
-                  alignment: Alignment.centerRight,
+                Center(
                   child: Text(
-                    '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
-                    maxLines: 1,
+                    '${Strings.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
                     style: TextStyle(
                         fontSize: 16.sp,
-                        color: Color(0xFF4F4F4F),
-                        fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.right,
+                        color: Color(0xFF3475F0),
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-              // Record the response to the Question
-              SizedBox(
-                height: 110.h,
-                child: Padding(
+                SizedBox(
+                  height: 40.sp,
+                ),
+                Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: (action.type == Action_Type.TEXT_RESPONSE.value)
-                      ? Column(
-                          children: [
-                            Text('Question: ${action.question}'),
-                            TextField(
-                              decoration: InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  hintText:
-                                      'Write an answer to the qustion here'),
-                              onSubmitted: (value) {
-                                print(value);
-                                hiveActionUser.userResponse = value;
-                                bloc.actionBloc
-                                    .createUpdateActionUser(hiveActionUser);
-                              },
-                            ),
-                          ],
-                        )
-                      : Container(),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 44.h,
+                        width: 169.w,
+                        child: Text(
+                          Strings.actionFollowInstructions,
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 53.sp,
+                      ),
+                      Icon(
+                        Icons.thumb_up_alt_outlined,
+                        size: 14.sp,
+                      ),
+                      SizedBox(
+                        width: 4.sp,
+                      ),
+                      ActionStatusWidget(
+                          title: ActionStatus.DONE, height: 36.h, width: 99.w)
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                   child: Text(
-                    Strings.howWasThisActionText,
-                    maxLines: 1,
+                    '${Strings.instructions}: ${action.instructions}',
+                    maxLines: 5,
                     style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Color(0xFF4F4F4F),
-                        fontWeight: FontWeight.w500),
+                      fontSize: 14.sp,
+                      color: Color(0xFF797979),
+                      fontStyle: FontStyle.italic,
+                    ),
                     textAlign: TextAlign.left,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        print('GOOD tap');
-                        hiveActionUser.evaluation =
-                            ActionUser_Evaluation.GOOD.value;
-
-                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
-                      },
-                      child: Container(
-                        height: 36.sp,
-                        width: 160.sp,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.sp),
-                          color: ActionUser_Evaluation.valueOf(
-                                      hiveActionUser.evaluation!) ==
-                                  ActionUser_Evaluation.GOOD
-                              ? Color(0xFF6DE26B)
-                              : Color(0xFFC9C9C9),
-                        ),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.thumb_up_outlined, size: 14.sp),
-                              SizedBox(
-                                width: 4.sp,
-                              ),
-                              Text(
-                                Strings.goodText,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontFamily: 'Rubik',
-                                  fontSize: 14.sp,
-                                  color: Color(0xFF777777),
-                                ),
-                              ),
-                            ]),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print('BAD tap');
-
-                        hiveActionUser.evaluation =
-                            ActionUser_Evaluation.BAD.value;
-
-                        bloc.actionBloc.createUpdateActionUser(hiveActionUser);
-                      },
-                      child: Container(
-                        height: 36.sp,
-                        width: 160.sp,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.sp),
-                          color: ActionUser_Evaluation.valueOf(
-                                      hiveActionUser.evaluation!) ==
-                                  ActionUser_Evaluation.BAD
-                              ? Color(0xFF6DE26B)
-                              : Color(0xFFC9C9C9),
-                        ),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.thumb_down_outlined, size: 14.sp),
-                              SizedBox(
-                                width: 4.sp,
-                              ),
-                              Text(
-                                Strings.notSoGoodText,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontFamily: 'Rubik',
-                                  fontSize: 14.sp,
-                                  color: Color(0xFF777777),
-                                ),
-                              ),
-                            ]),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 39.h,
-              ),
-              Container(
-                height: 75.h,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Color(0xFFEFEFEF),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-                  child: Container(
-                    height: 37.5.h,
-                    color: Color(0xFFEFEFEF),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        //_closeSlidingUpPanelIfOpen();
-                        Navigator.pop(context);
-                      },
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40.r),
-                          ),
-                        ),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
-                      ),
-                      child: Text(Strings.close),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.right,
                     ),
                   ),
                 ),
-              ),
-            ],
-          );
+                // Record the response to the Question
+                SizedBox(
+                  height: 110.h,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                        ? Column(
+                            children: [
+                              Text('Question: ${action.question}'),
+                              TextField(
+                                decoration: InputDecoration(
+                                    border: UnderlineInputBorder(),
+                                    hintText:
+                                        'Write an answer to the qustion here'),
+                                onSubmitted: (value) {
+                                  print(value);
+                                  hiveActionUser.userResponse = value;
+                                  bloc.actionBloc
+                                      .createUpdateActionUser(hiveActionUser);
+                                },
+                              ),
+                            ],
+                          )
+                        : Container(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      Strings.howWasThisActionText,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          print('GOOD tap');
+                          setState(() {
+                            hiveActionUser.evaluation =
+                                ActionUser_Evaluation.GOOD.value;
+                          });
+
+                          bloc.actionBloc
+                              .createUpdateActionUser(hiveActionUser);
+                        },
+                        child: Container(
+                          height: 36.sp,
+                          width: 160.sp,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.sp),
+                            color: ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation.GOOD
+                                ? Color(0xFF6DE26B)
+                                : Color(0xFFC9C9C9),
+                          ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.thumb_up_outlined, size: 14.sp),
+                                SizedBox(
+                                  width: 4.sp,
+                                ),
+                                Text(
+                                  Strings.goodText,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: 'Rubik',
+                                    fontSize: 14.sp,
+                                    color: Color(0xFF777777),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          print('BAD tap');
+                          setState(() {
+                            hiveActionUser.evaluation =
+                                ActionUser_Evaluation.BAD.value;
+                          });
+
+                          bloc.actionBloc
+                              .createUpdateActionUser(hiveActionUser);
+                        },
+                        child: Container(
+                          height: 36.sp,
+                          width: 160.sp,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.sp),
+                            color: ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation.BAD
+                                ? Color(0xFF6DE26B)
+                                : Color(0xFFC9C9C9),
+                          ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.thumb_down_outlined, size: 14.sp),
+                                SizedBox(
+                                  width: 4.sp,
+                                ),
+                                Text(
+                                  Strings.notSoGoodText,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: 'Rubik',
+                                    fontSize: 14.sp,
+                                    color: Color(0xFF777777),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 39.h,
+                ),
+                Container(
+                  height: 75.h,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEFEFEF),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                    child: Container(
+                      height: 37.5.h,
+                      color: Color(0xFFEFEFEF),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          //_closeSlidingUpPanelIfOpen();
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.r),
+                            ),
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color(0xFFADADAD)),
+                        ),
+                        child: Text(Strings.close),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
         });
   }
 
