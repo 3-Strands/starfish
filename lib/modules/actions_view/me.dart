@@ -38,7 +38,6 @@ class _MeState extends State<Me> {
   ];
   late String _choiceText = 'This month';*/
 
-  Dashboard obj = new Dashboard();
   _getActions(AppBloc bloc) async {
     bloc.actionBloc.fetchMyActionsFromDB();
   }
@@ -146,8 +145,6 @@ class _MeState extends State<Me> {
       ),
     );
   }
-
-  void _updateActionStatus() {}
 
   void _onActionSelection(HiveAction action) {
     HiveActionUser hiveActionUser = new HiveActionUser();
@@ -447,6 +444,7 @@ class _MeState extends State<Me> {
                   action: snapshot.data!.values.toList()[indexPath.section]
                       [indexPath.index],
                   onActionTap: _onActionSelection,
+                  index: indexPath.index,
                 );
               },
               groupHeaderBuilder: (BuildContext context, int section) {
@@ -492,9 +490,11 @@ class _MeState extends State<Me> {
 
 class MyActionListItem extends StatelessWidget {
   final HiveAction action;
+  final index;
   final Function(HiveAction action) onActionTap;
 
-  MyActionListItem({required this.action, required this.onActionTap});
+  MyActionListItem(
+      {required this.action, required this.onActionTap, this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -522,7 +522,7 @@ class MyActionListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "#1",
+                      "#${index + 1}",
                       style: TextStyle(
                           color: Color(0xFF797979),
                           fontSize: 16.sp,
@@ -611,12 +611,12 @@ class MyActionListItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  ActionStatusWidget(
-                    title: ActionStatus
-                        .NOT_DONE, //TODO: should have the status of the action for the user
-                    height: 30.h,
-                    width: 130.w,
-                  ),
+                  // ActionStatusWidget(
+                  //   title: action.ActionStatus
+                  //       .NOT_DONE, //TODO: should have the status of the action for the user
+                  //   height: 30.h,
+                  //   width: 130.w,
+                  // ),
                   SizedBox(
                     width: 10.w,
                   ),

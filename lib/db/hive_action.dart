@@ -1,4 +1,7 @@
+import 'package:collection/collection.dart';
+
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
@@ -144,6 +147,27 @@ extension HiveActionExt on HiveAction {
   }
 
   bool get isIndividualAction {
-    return groupId!.isEmpty;
+    return (groupId == null || groupId!.isEmpty) ? true : false;
+  }
+
+  ActionStatus get actionStatus {
+    if (this.isIndividualAction) {
+      HiveUser? hiveUser = this.users?.firstWhereOrNull(
+          (element) => element.id == creatorId && groupId!.isEmpty);
+
+      /*HiveActionUser? hiveActionUser = hiveUser?.actions!.firstWhere(
+          (element) => element.userId == creatorId && element.actionId == id);
+
+      ActionUser_Status.valueOf(hiveActionUser!.status!);*/
+
+      return hiveUser != null
+          ? hiveUser.actionStatusbyId(this)
+          : ActionStatus.UNSPECIFIED_STATUS;
+    } else {
+      HiveUser? hiveUser = this.users?.firstWhereOrNull(
+          (element) => element.id == creatorId && groupId == element);
+    }
+
+    return ActionStatus.UNSPECIFIED_STATUS;
   }
 }

@@ -99,10 +99,10 @@ class ActionBloc extends Object {
         if (_filterAction(element) &&
             (element.name!.toLowerCase().contains(query.toLowerCase()) ||
                 (element.group != null &&
-                        (element.group!.name!
+                    (element.group!.name!
                             .toLowerCase()
                             .contains(query.toLowerCase()) ||
-                    element.group!.containsUserName(query))))) {
+                        element.group!.containsUserName(query))))) {
           if (element.isIndividualAction) {
             print("action is Individual Action");
             if (_groupActionListMap.containsKey(_dummyGroupSelf)) {

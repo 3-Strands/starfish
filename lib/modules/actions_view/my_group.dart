@@ -259,6 +259,7 @@ class _MyGroupState extends State<MyGroup> {
                   action: snapshot.data!.values.toList()[indexPath.section]
                       [indexPath.index],
                   onActionTap: _usersActionList,
+                  index: indexPath.index,
                 );
               },
               groupHeaderBuilder: (BuildContext context, int section) {
@@ -805,9 +806,11 @@ class _MyGroupState extends State<MyGroup> {
 
 class MyGroupActionListItem extends StatelessWidget {
   final HiveAction action;
+  final index;
   final Function(HiveAction action) onActionTap;
 
-  MyGroupActionListItem({required this.action, required this.onActionTap});
+  MyGroupActionListItem(
+      {required this.action, required this.onActionTap, this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -834,7 +837,7 @@ class MyGroupActionListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "#1",
+                      "#${index + 1}",
                       style: TextStyle(
                           color: Color(0xFF797979),
                           fontSize: 16.sp,
