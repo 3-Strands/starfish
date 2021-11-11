@@ -170,4 +170,15 @@ extension HiveActionExt on HiveAction {
 
     return ActionStatus.UNSPECIFIED_STATUS;
   }
+
+  int memberCountByActionStatus(ActionStatus actionStatus) {
+    int i = 0;
+    this.users?.forEach((element) {
+      print("memberCountByActionStatus: ${element.actionStatusbyId(this)}");
+      if (element.actionStatusbyId(this) == actionStatus) {
+        i++;
+      }
+    });
+    return i;
+  }
 }
