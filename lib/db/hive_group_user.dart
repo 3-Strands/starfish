@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -52,6 +54,10 @@ class HiveGroupUser {
 extension HiveGroupUserExt on HiveGroupUser {
   HiveUser? get user {
     return UserRepository().dbProvider.getUserById(this.userId!);
+  }
+
+  HiveGroup? get group {
+    return GroupRepository().dbProvider.getGroupById(this.groupId!);
   }
 
   String get name {

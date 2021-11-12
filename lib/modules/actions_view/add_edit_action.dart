@@ -462,7 +462,7 @@ class _AddEditActionState extends State<AddEditAction>
 
     _hiveAction.type = _selectedActionType!.value;
     _hiveAction.name = _actionNameController.text;
-    //_hiveAction.creatorId=
+    _hiveAction.creatorId = _currentUserBox.values.first.id;
     if (group.isMe == false) {
       _hiveAction.groupId = group.id;
     }

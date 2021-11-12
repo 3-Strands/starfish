@@ -3,6 +3,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/repository/action_repository.dart';
@@ -48,6 +49,8 @@ class ActionBloc extends Object {
 
     List<String> _groupIdsWithMatchingRole = [];
     _currentUser.groupsWithRole(groupUserRole).forEach((element) {
+      print(
+          "GROUP: ${element.group!.name} : ${element.user!.name} : ${GroupUser_Role.valueOf(element.role!)}");
       _groupIdsWithMatchingRole.add(element.groupId!);
     });
 
