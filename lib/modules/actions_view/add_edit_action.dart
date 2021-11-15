@@ -461,6 +461,17 @@ class _AddEditActionState extends State<AddEditAction>
       _selectedGroups.forEach((element) {
         _createUpdateAction(element);
       });
+
+      Alerts.showMessageBox(
+        context: context,
+        title: Strings.dialogInfo,
+        message: _isEditMode
+            ? Strings.updateActionSuccess
+            : Strings.createActionSuccess,
+        callback: () {
+          Navigator.of(context).pop();
+        },
+      );
     }
   }
 
@@ -507,16 +518,6 @@ class _AddEditActionState extends State<AddEditAction>
         SyncService.kUpdateActions,
         value: _hiveAction,
       );
-
-      Alerts.showMessageBox(
-          context: context,
-          title: Strings.dialogInfo,
-          message: _isEditMode
-              ? Strings.updateActionSuccess
-              : Strings.createActionSuccess,
-          callback: () {
-            Navigator.of(context).pop();
-          });
     });
   }
 }
