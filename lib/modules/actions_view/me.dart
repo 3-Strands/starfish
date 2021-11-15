@@ -445,6 +445,7 @@ class _MeState extends State<Me> {
               },
               itemBuilder: (BuildContext context, IndexPath indexPath) {
                 return MyActionListItem(
+                  index: indexPath.index,
                   action: snapshot.data!.values.toList()[indexPath.section]
                       [indexPath.index],
                   onActionTap: _onActionSelection,
@@ -492,14 +493,15 @@ class _MeState extends State<Me> {
 }
 
 class MyActionListItem extends StatelessWidget {
+  final int index;
   final HiveAction action;
   final Function(HiveAction action) onActionTap;
 
-  MyActionListItem({required this.action, required this.onActionTap});
+  MyActionListItem(
+      {required this.action, required this.onActionTap, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    print("MYAction => ${action.toString()}");
     final bloc = Provider.of(context);
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 10.h),
@@ -524,7 +526,7 @@ class MyActionListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "#1",
+                      "#${index + 1}",
                       style: TextStyle(
                           color: Color(0xFF797979),
                           fontSize: 16.sp,
