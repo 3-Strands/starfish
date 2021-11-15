@@ -176,6 +176,12 @@ sending an invitation to use Starfish''';
   static const String emptyDescription = 'Please enter description.';
   static const String emptySelectType = 'Please select type.';
   static const String emptySelectTopic = 'Please select topic.';
+  static const String emptyActionName = 'Please enter action name.';
+  static const String emptyActionInstructions = 'Please enter instructions.';
+  static const String emptyActionQuestion = 'Please enter question.';
+  static const String emptyActionMaterial = 'Please select material';
+  static const String selectActionGroup = 'Please assign action to';
+  static const String emptyActionDueDate = 'Please select due date';
 
   static const String addMaterialSuccess = 'Material saved successfully.';
   static const String addMaterialFailed = 'Failed to save Material.';

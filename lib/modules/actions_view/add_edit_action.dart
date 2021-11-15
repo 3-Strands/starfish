@@ -274,6 +274,7 @@ class _AddEditActionState extends State<AddEditAction>
                       });
                     },
                     onMaterialChange: (HiveMaterial? material) {
+                      print('ActionTypeSelector[material]: $material');
                       setState(() {
                         _selectedMaterial = material;
                       });
@@ -436,7 +437,24 @@ class _AddEditActionState extends State<AddEditAction>
 
   _validateAndCreateUpdateAction() {
     if (_actionNameController.text.isEmpty) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyName);
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionName);
+    } else if ((_selectedActionType == Action_Type.TEXT_INSTRUCTION ||
+            _selectedActionType == Action_Type.MATERIAL_INSTRUCTION) &&
+        (_instructions == null || _instructions!.isEmpty)) {
+      StarfishSnackbar.showErrorMessage(
+          context, Strings.emptyActionInstructions);
+    } else if ((_selectedActionType == Action_Type.TEXT_RESPONSE ||
+            _selectedActionType == Action_Type.MATERIAL_RESPONSE) &&
+        (_question == null || _question!.isEmpty)) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionQuestion);
+    } else if ((_selectedActionType == Action_Type.MATERIAL_INSTRUCTION ||
+            _selectedActionType == Action_Type.MATERIAL_RESPONSE) &&
+        _selectedMaterial == null) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionMaterial);
+    } else if (_selectedGroups.length == 0) {
+      StarfishSnackbar.showErrorMessage(context, Strings.selectActionGroup);
+    } else if (_dueDate == null) {
+      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionDueDate);
     } else {
       // create a separate request for each groups as, action creted for each
       //gorup will be considered as separate entity and therefor will have a different UUID

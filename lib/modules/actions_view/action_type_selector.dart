@@ -290,6 +290,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
           onChanged: (HiveMaterial? value) {
             setState(() {
               _selectedMaterial = value;
+              widget.onMaterialChange(_selectedMaterial);
             });
           },
           items: materials
