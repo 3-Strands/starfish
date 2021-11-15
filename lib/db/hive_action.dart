@@ -6,12 +6,15 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/src/generated/starfish.pbjson.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_action.g.dart';
@@ -90,11 +93,17 @@ class HiveAction extends HiveObject {
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
     instructions: ${this.instructions?.toString()}, materialId: ${this.materialId?.toString()}, 
     question: ${this.question}, dateDue: ${this.dateDue}, isIndividualAction: ${this.isIndividualAction}
-    creator: ${this.creator}, group: ${this.group} }''';
+    creator: ${this.creator}, group: ${this.group}, actionStatus: ${this.actionStatus} }''';
   }
 }
 
 extension HiveActionExt on HiveAction {
+  bool get hasValidDueDate {
+    return this.dateDue!.year != 0 &&
+        this.dateDue!.month != 0 &&
+        this.dateDue!.day != 0;
+  }
+
   HiveMaterial? get material {
     return this.materialId != null
         ? MaterialProvider().getMaterialById(this.materialId!)
@@ -163,28 +172,44 @@ extension HiveActionExt on HiveAction {
 
   HiveUser? get creator {
     // user created individual action i.e. for me
-    return UserProvider().getUserById(this.creatorId!);
+    HiveUser currentUser = CurrentUserProvider().user;
+    if (this.isIndividualAction) {
+      return currentUser.id == creatorId ? currentUser : null;
+    } else {
+      return this
+          .group!
+          .users
+          ?.firstWhereOrNull((element) =>
+              element.groupId == groupId && element.userId == creatorId)
+          //?.map((HiveGroupUser groupUser) => groupUser.user!)
+          ?.user!;
+    }
   }
 
   ActionStatus get actionStatus {
+    HiveUser currentUser = CurrentUserProvider().user;
+
+    return currentUser.actionStatusbyId(this);
+  }
+  /*ActionStatus get actionStatus {
     HiveUser? hiveUser;
     if (this.isIndividualAction) {
-      hiveUser = this.users?.firstWhereOrNull(
-          (element) => element.id == creatorId && groupId!.isEmpty);
+      hiveUser = this.creator;
 
-      /*HiveActionUser? hiveActionUser = hiveUser?.actions!.firstWhere(
+      HiveActionUser? hiveActionUser = hiveUser?.actions!.firstWhere(
           (element) => element.userId == creatorId && element.actionId == id);
 
-      ActionUser_Status.valueOf(hiveActionUser!.status!);*/
+      ActionUser_Status.valueOf(hiveActionUser!.status!);
 
     } else {
-      /*hiveUser = this.group!.users?.firstWhereOrNull(
-          (element) => element.id == creatorId && groupId == element.);*/
-
+      hiveUser = this.group!.users?.firstWhereOrNull(
+          (element) => element.id == creatorId && groupId == element.);
+      HiveUser currentUser = CurrentUserProvider().user;
       hiveUser = this
           .group!
           .users
-          ?.where((element) => element.groupId == groupId)
+          ?.where((HiveGroupUser element) =>
+              element.groupId == groupId && element.userId == currentUser.id)
           .map((HiveGroupUser groupUser) => groupUser.user!)
           .first;
     }
@@ -192,5 +217,5 @@ extension HiveActionExt on HiveAction {
     return hiveUser != null
         ? hiveUser.actionStatusbyId(this)
         : ActionStatus.UNSPECIFIED_STATUS;
-  }
+  }*/
 }

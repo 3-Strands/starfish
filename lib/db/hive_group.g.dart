@@ -35,7 +35,7 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
   @override
   void write(BinaryWriter writer, HiveGroup obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)

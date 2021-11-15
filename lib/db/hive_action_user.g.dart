@@ -21,13 +21,18 @@ class HiveActionUserAdapter extends TypeAdapter<HiveActionUser> {
       userId: fields[1] as String?,
       status: fields[2] as int?,
       teacherResponse: fields[3] as String?,
-    );
+    )
+      ..userResponse = fields[4] as String?
+      ..evaluation = fields[5] as int?
+      ..isNew = fields[6] as bool
+      ..isUpdated = fields[7] as bool
+      ..isDirty = fields[8] as bool;
   }
 
   @override
   void write(BinaryWriter writer, HiveActionUser obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.actionId)
       ..writeByte(1)
@@ -35,7 +40,17 @@ class HiveActionUserAdapter extends TypeAdapter<HiveActionUser> {
       ..writeByte(2)
       ..write(obj.status)
       ..writeByte(3)
-      ..write(obj.teacherResponse);
+      ..write(obj.teacherResponse)
+      ..writeByte(4)
+      ..write(obj.userResponse)
+      ..writeByte(5)
+      ..write(obj.evaluation)
+      ..writeByte(6)
+      ..write(obj.isNew)
+      ..writeByte(7)
+      ..write(obj.isUpdated)
+      ..writeByte(8)
+      ..write(obj.isDirty);
   }
 
   @override

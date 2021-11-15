@@ -614,10 +614,8 @@ class MyActionListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ActionStatusWidget(
-                    title: action.isIndividualAction && action.creator != null
-                        ? action.creator!.actionStatusbyId(action)
-                        : ActionStatus
-                            .UNSPECIFIED_STATUS, //TODO: should have the status of the action for the user
+                    title: action
+                        .actionStatus, //TODO: should have the status of the action for the user
                     height: 30.h,
                     width: 130.w,
                   ),
@@ -625,7 +623,7 @@ class MyActionListItem extends StatelessWidget {
                     width: 10.w,
                   ),
                   Text(
-                    'Due: ${action.dateDue != null ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    'Due: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 16.sp,

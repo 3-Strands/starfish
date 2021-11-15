@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
@@ -92,6 +93,25 @@ class HiveUser extends HiveObject {
     this.isDeleted = false;
   }
 
+  HiveUser.fromCurrentUser(HiveCurrentUser user) {
+    this.id = user.id;
+    this.name = user.name;
+    this.phone = user.phone;
+    this.linkGroups = user.linkGroups;
+    this.countryIds = user.countryIds;
+    this.groups = user.groups;
+    this.actions = user.actions;
+    this.selectedActionsTab = user.selectedActionsTab;
+    this.selectedResultsTab = user.selectedResultsTab;
+    this.phoneCountryId = user.phoneCountryId;
+    this.diallingCode = user.diallingCode;
+    this.status = user.status;
+    this.creatorId = user.creatorId;
+    this.isNew = false;
+    this.isUpdated = false;
+    this.isDeleted = false;
+  }
+
   User toUser() {
     return User(
       id: this.id,
@@ -138,22 +158,32 @@ extension HiveUserExt on HiveUser {
     if (this.actions == null || this.actions?.length == 0) {
       return ActionStatus.UNSPECIFIED_STATUS;
     }
-    if (action.dateDue != null &&
-        action.dateDue!
-            .toDateTime()
-            .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
-      return ActionStatus.OVERDUE;
-    }
     /*HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
         element.actionId! == action.id! && element.userId! == this.id);*/
 
     HiveActionUser? actionUser =
         ActionProvider().getActionUser(this.id!, action.id!);
 
-    if (actionUser == null) {
-      return ActionStatus.UNSPECIFIED_STATUS;
+    if (actionUser != null) {
+      ActionStatus? actionStatus =
+          ActionUser_Status.valueOf(actionUser.status!)!.convertTo();
+
+      //
+      if (actionStatus == ActionStatus.DONE) {
+        return ActionStatus.DONE;
+      }
+    }
+
+    // We need to check if the action is not done yet, if it's overdue or not
+    if (action.dateDue == null || !action.hasValidDueDate) {
+      return ActionStatus.NOT_DONE;
+    } else if (action.dateDue != null &&
+        action.dateDue!
+            .toDateTime()
+            .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+      return ActionStatus.OVERDUE;
     } else {
-      return ActionUser_Status.valueOf(actionUser.status!)!.convertTo();
+      return ActionStatus.NOT_DONE;
     }
   }
 }

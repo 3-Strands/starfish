@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_user.dart';
 
 class CurrentUserProvider {
   late Box<HiveCurrentUser> _currentUserBox;
@@ -16,4 +17,10 @@ class CurrentUserProvider {
   /*Future<int> updateUser(HiveCurrentUser user) async {
     return _currentUserBox.add(user);
   }*/
+}
+
+extension CurrentUserProviderExt on CurrentUserProvider {
+  HiveUser get user {
+    return HiveUser.fromCurrentUser(_currentUserBox.values.first);
+  }
 }

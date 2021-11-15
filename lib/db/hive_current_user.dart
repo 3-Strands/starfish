@@ -46,6 +46,12 @@ class HiveCurrentUser {
   String phoneCountryId;
 
   @HiveField(12)
+  int? status = User_Status.STATUS_UNSPECIFIED.value;
+
+  @HiveField(13)
+  String? creatorId;
+
+  @HiveField(14)
   bool isUpdated;
 
   HiveCurrentUser({
@@ -61,6 +67,8 @@ class HiveCurrentUser {
     required this.selectedResultsTab,
     required this.phoneCountryId,
     required this.diallingCode,
+    required this.status,
+    required this.creatorId,
     this.isUpdated = false,
   });
 
@@ -78,6 +86,10 @@ class HiveCurrentUser {
       selectedResultsTab: ResultsTab.valueOf(this.selectedResultsTab),
       phoneCountryId: this.phoneCountryId,
       diallingCode: this.diallingCode,
+      status: this.status != null
+          ? User_Status.valueOf(this.status!)
+          : User_Status.STATUS_UNSPECIFIED,
+      creatorId: this.creatorId,
     );
   }
 

@@ -187,6 +187,8 @@ class SyncService {
         phoneCountryId: user.phoneCountryId,
         selectedActionsTab: user.selectedActionsTab.value,
         selectedResultsTab: user.selectedResultsTab.value,
+        status: user.status.value,
+        creatorId: user.creatorId
       );
 
       var filterData = currentUserBox.values
