@@ -438,7 +438,6 @@ class _MeState extends State<Me> {
             return GroupListView(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
               sectionsCount: snapshot.data!.keys.toList().length,
               countOfItemInSection: (int section) {
                 return snapshot.data!.values.toList()[section].length;
@@ -454,7 +453,7 @@ class _MeState extends State<Me> {
               groupHeaderBuilder: (BuildContext context, int section) {
                 return Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.w),
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
