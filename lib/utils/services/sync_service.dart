@@ -666,7 +666,7 @@ class SyncService {
           print(
               '============= END: Sync Local Actions to Remote ===============');
         });
-      } else {
+      } else if (_hiveAction.isDirty) {
         ActionRepository().deleteAction(_hiveAction.toAction()).then((value) {
           _hiveAction.isDirty = false;
 

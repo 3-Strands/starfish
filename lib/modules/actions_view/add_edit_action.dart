@@ -78,8 +78,12 @@ class _AddEditActionState extends State<AddEditAction>
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
     _getAllGroups();
 
+    print("ACTION: ${widget.action}");
     if (widget.action != null) {
       _isEditMode = true;
+
+      _instructions = widget.action!.instructions;
+      _question = widget.action!.question;
 
       _selectedActionType = Action_Type.valueOf(widget.action!.type!) ??
           Action_Type.TEXT_INSTRUCTION;
@@ -283,6 +287,7 @@ class _AddEditActionState extends State<AddEditAction>
                     instructions:
                         _isEditMode ? widget.action!.instructions : '',
                     question: _isEditMode ? widget.action!.question : '',
+                    selectedMaterial: _selectedMaterial,
                   ),
 
                   SizedBox(height: 20.h),

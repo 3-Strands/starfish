@@ -93,7 +93,7 @@ class HiveAction extends HiveObject {
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
     instructions: ${this.instructions?.toString()}, materialId: ${this.materialId?.toString()}, 
     question: ${this.question}, dateDue: ${this.dateDue}, isIndividualAction: ${this.isIndividualAction}
-    creator: ${this.creator}, group: ${this.group}, actionStatus: ${this.actionStatus} }''';
+    creator: ${this.creator}, group: ${this.group}, actionStatus: ${this.actionStatus}, material: ${this.material} }''';
   }
 }
 
