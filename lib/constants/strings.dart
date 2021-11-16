@@ -20,6 +20,7 @@ class Strings {
   static const String cancel = 'Cancel';
   static const String add = 'Add';
   static const String update = 'Update';
+  static const String delete = 'Delete';
   static const String ok = 'OK';
   static const String no = 'No';
   static const String yes = 'Yes';
@@ -160,6 +161,10 @@ sending an invitation to use Starfish''';
       'This may take a few minutes while we download your data from the server. Please make sure you are connected to the internet.\n';
   static const String syncAlertTitleText =
       'We are setting up Starfish for you!';
+  static const String deleteActionTitle = "Delete Action?";
+  static const String deleteActionMessage =
+      "Are you sure you want to delete this action and its data for this group?";
+
   // Validation Messages
   static const String emptyEvaluateProgress =
       'Please select evaluation categories.';

@@ -12,8 +12,10 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -871,27 +873,45 @@ class MyGroupActionListItem extends StatelessWidget {
                                   BorderSide(color: Colors.white, width: 2),
                               borderRadius: BorderRadius.circular(12.sp)),
                           enabled: true,
-                          onSelected: (value) {},
+                          onSelected: (value) {
+                            switch (value) {
+                              case 0:
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddEditAction(
+                                      action: action,
+                                    ),
+                                  ),
+                                ).then((value) => FocusScope.of(context)
+                                    .requestFocus(new FocusNode()));
+                                break;
+                              case 1:
+                                _deleteAction(context, action);
+
+                                break;
+                            }
+                          },
                           itemBuilder: (context) => [
                                 PopupMenuItem(
                                   child: Text(
-                                    "Edit Action",
+                                    Strings.editActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  value: "",
+                                  value: 0,
                                 ),
                                 PopupMenuItem(
                                   child: Text(
-                                    "Delete Action",
+                                    Strings.deleteActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  value: "",
+                                  value: 1,
                                 ),
                               ]),
                     ),
@@ -978,5 +998,21 @@ class MyGroupActionListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _deleteAction(BuildContext context, HiveAction action) {
+    final bloc = Provider.of(context);
+    Alerts.showMessageBox(
+        context: context,
+        title: Strings.deleteActionTitle,
+        message: Strings.deleteActionMessage,
+        positiveButtonText: Strings.delete,
+        negativeButtonText: Strings.cancel,
+        positiveActionCallback: () {
+          // Mark this action for deletion
+          action.isDirty = true;
+          bloc.actionBloc.createUpdateAction(action);
+        },
+        negativeActionCallback: () {});
   }
 }

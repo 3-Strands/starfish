@@ -16,6 +16,7 @@ import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -574,9 +575,7 @@ class MyActionListItem extends StatelessWidget {
                                   .requestFocus(new FocusNode()));
                               break;
                             case 1:
-                              // Mark this action for deletion
-                              action.isDirty = true;
-                              bloc.actionBloc.createUpdateAction(action);
+                              _deleteAction(context, action);
 
                               break;
                           }
@@ -638,5 +637,21 @@ class MyActionListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _deleteAction(BuildContext context, HiveAction action) {
+    final bloc = Provider.of(context);
+    Alerts.showMessageBox(
+        context: context,
+        title: Strings.deleteActionTitle,
+        message: Strings.deleteActionMessage,
+        positiveButtonText: Strings.delete,
+        negativeButtonText: Strings.cancel,
+        positiveActionCallback: () {
+          // Mark this action for deletion
+          action.isDirty = true;
+          bloc.actionBloc.createUpdateAction(action);
+        },
+        negativeActionCallback: () {});
   }
 }
