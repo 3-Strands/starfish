@@ -5,9 +5,11 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -50,10 +52,16 @@ class ActionBloc extends Object {
     HiveCurrentUser _currentUser = await _currentUserRepository.getUserFromDB();
 
     List<String> _groupIdsWithMatchingRole = [];
-    _currentUser.groupsWithRole(groupUserRole).forEach((element) {
+    /*_currentUser.groupsWithRole(groupUserRole).forEach((element) {
       print(
           "GROUP: ${element.group!.name} : ${element.user!.name} : ${GroupUser_Role.valueOf(element.role!)}");
       _groupIdsWithMatchingRole.add(element.groupId!);
+    });*/
+
+    GroupProvider()
+        .userGroupsWithRole(_currentUser.id, groupUserRole)
+        ?.forEach((element) {
+      _groupIdsWithMatchingRole.add(element.id!);
     });
 
     actionRepository
@@ -92,8 +100,13 @@ class ActionBloc extends Object {
     HiveCurrentUser _currentUser = await _currentUserRepository.getUserFromDB();
 
     List<String> _groupIdsWithMatchingRole = [];
-    _currentUser.groupsWithRole(groupUserRole).forEach((element) {
+    /*_currentUser.groupsWithRole(groupUserRole).forEach((element) {
       _groupIdsWithMatchingRole.add(element.groupId!);
+    });*/
+    GroupProvider()
+        .userGroupsWithRole(_currentUser.id, groupUserRole)
+        ?.forEach((element) {
+      _groupIdsWithMatchingRole.add(element.id!);
     });
 
     HiveGroup _dummyGroupSelf = HiveGroup(id: null, name: "Self Assigned");

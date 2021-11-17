@@ -23,6 +23,11 @@ class ActionProvider {
     }).toList();
   }
 
+  @Deprecated("Used for Debug")
+  Future<List<HiveAction>> getAllActions() async {
+    return _actionBox.values.toList();
+  }
+
   Future<List<HiveAction>> getAllActionsForMe(List<String> groupIds) async {
     return _actionBox.values.where((element) {
       return (element.isIndividualAction ||

@@ -5,6 +5,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 class GroupProvider {
   late Box<HiveGroup> _groupBox;
@@ -126,5 +127,16 @@ class GroupProvider {
   HiveGroup? getGroupById(String groupId) {
     return _groupBox.values
         .firstWhereOrNull((element) => element.id == groupId);
+  }
+
+  List<HiveGroup>? userGroupsWithRole(
+      String userId, List<GroupUser_Role> groupUserRoleList) {
+    List<HiveGroup> _groupList = _groupBox.values.toList();
+    if (_groupList.length == 0) {
+      return null;
+    }
+    return _groupList.where((element) {
+      return groupUserRoleList.contains(element.getMyRole(userId));
+    }).toList();
   }
 }
