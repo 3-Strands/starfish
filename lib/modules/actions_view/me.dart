@@ -154,6 +154,7 @@ class _MeState extends State<Me> {
   void _onActionSelection(HiveAction action) {
     HiveActionUser hiveActionUser = new HiveActionUser();
     hiveActionUser.actionId = action.id!;
+    hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
 
     final dbProvider = CurrentUserProvider();
     dbProvider.getUser().then((user) => {hiveActionUser.userId = user.id});
@@ -261,6 +262,7 @@ class _MeState extends State<Me> {
                     padding: const EdgeInsets.all(15.0),
                     child: (action.type == Action_Type.TEXT_RESPONSE.value)
                         ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text('Question: ${action.question}'),
                               TextField(
@@ -343,7 +345,7 @@ class _MeState extends State<Me> {
                       ),
                       InkWell(
                         onTap: () {
-                          print('BAD tap');
+                          print('BAD tap: $hiveActionUser');
                           setState(() {
                             hiveActionUser.evaluation =
                                 ActionUser_Evaluation.BAD.value;

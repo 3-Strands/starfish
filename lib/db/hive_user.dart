@@ -165,8 +165,9 @@ extension HiveUserExt on HiveUser {
         ActionProvider().getActionUser(this.id!, action.id!);
 
     if (actionUser != null) {
-      ActionStatus? actionStatus =
-          ActionUser_Status.valueOf(actionUser.status!)!.convertTo();
+      ActionStatus? actionStatus = actionUser.status != null
+          ? ActionUser_Status.valueOf(actionUser.status!)!.convertTo()
+          : ActionStatus.UNSPECIFIED_STATUS;
 
       //
       if (actionStatus == ActionStatus.DONE) {
