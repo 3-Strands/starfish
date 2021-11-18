@@ -1,5 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_group_action.g.dart';
@@ -35,5 +40,11 @@ class HiveGroupAction extends HiveObject {
   @override
   String toString() {
     return '{ groupId: ${this.groupId}, actionId: ${this.actionId}, dueDate: ${this.dueDate} }';
+  }
+}
+
+extension HiveGroupActionExt on HiveGroupAction {
+  HiveAction? get action {
+    return ActionProvider().getActionbyId(this.actionId!);
   }
 }

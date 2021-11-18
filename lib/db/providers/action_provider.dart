@@ -88,4 +88,16 @@ class ActionProvider {
       _actionUserBox.add(actionUser);
     }
   }
+
+  HiveAction? getActionbyId(String actionId) {
+    return _actionBox.values
+        .firstWhereOrNull((HiveAction action) => action.id! == actionId);
+  }
+
+  List<HiveAction>? getGroupActions(String groupId) {
+    return _actionBox.values
+        .where((element) =>
+            !element.isIndividualAction && element.groupId == groupId)
+        .toList();
+  }
 }

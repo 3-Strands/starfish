@@ -503,8 +503,38 @@ class GroupListItem extends StatelessWidget {
                   height: 51.sp,
                   width: 99.sp,
                   decoration: BoxDecoration(
+                      color: Color(0xFF6DE26B),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Text(
+                    "${group.actionsCompleted} Actions Completed",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 12.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  height: 51.sp,
+                  width: 99.sp,
+                  decoration: BoxDecoration(
                       color: Color(0xFFFFBE4A),
                       borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Text(
+                    "${group.actionsNotDoneYet} Actions Incomplete",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 12.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 Spacer(),
                 Container(
@@ -513,15 +543,18 @@ class GroupListItem extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: Color(0xFFFF5E4D),
                       borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Text(
+                    "${group.actionsOverdue} Actions Overdue",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 12.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                Spacer(),
-                Container(
-                  height: 51.sp,
-                  width: 99.sp,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF6DE26B),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
-                )
               ],
             )
           ],
