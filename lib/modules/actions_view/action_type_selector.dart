@@ -182,6 +182,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
               child: Column(
                 children: [
                   _selectMaterialWidget(),
+                  SizedBox(height: 20.h),
                   _questionsWidget(),
                 ],
               ),
