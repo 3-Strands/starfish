@@ -44,7 +44,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late String _choiceText = Strings.noFilterApplied;
 
   final Key _focusDetectorKey = UniqueKey();
-
+  late AppBloc bloc;
   @override
   void initState() {
     super.initState();
@@ -55,6 +55,13 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     _getAllLanguages();
     _getAllTopics();
     _getCurrentUser();
+  }
+
+  @override
+  void didChangeDependencies() {
+    bloc = Provider.of(context);
+    _selectLanguage(bloc);
+    super.didChangeDependencies();
   }
 
   void _getCurrentUser() {
@@ -100,14 +107,25 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final bloc = Provider.of(context);
+  void deactivate() {
+    print('deactivate');
+    super.deactivate();
+  }
 
+  @override
+  void dispose() {
+    print('dispose');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FocusDetector(
       key: _focusDetectorKey,
       onFocusLost: () {
         print('Lost focus');
         bloc.materialBloc.selectedLanguages.clear();
+        _selectLanguage(bloc);
         bloc.materialBloc.selectedTopics.clear();
       },
       child: Scaffold(
@@ -269,6 +287,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   _selectLanguage(AppBloc bloc) {
+    print('select language');
     for (var languageId in _user.languageIds) {
       _languageList
           .where((item) => item.id == languageId)
@@ -278,8 +297,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
-    _selectLanguage(bloc);
-
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
