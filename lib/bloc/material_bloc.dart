@@ -77,7 +77,7 @@ class MaterialBloc extends Object {
   List<HiveMaterial> _filterMaterials() {
     List<HiveMaterial> _results = [];
     _allMaterials.forEach((element) {
-      if (/*_ifMaterialSupportsLanguage(element, selectedLanguages)*/ true &&
+      if (_ifMaterialSupportsLanguage(element, selectedLanguages) &&
           _ifMaterialSupportsTopic(element, selectedTopics)) {
         _results.add(element);
       }
