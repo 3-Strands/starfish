@@ -632,16 +632,18 @@ class MaterialListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              TaskStatus(
-                height: 17.h,
-                color: AppColors.completeTaskBGColor,
-                label: 'complete',
-              ),
-              TaskStatus(
-                height: 17.h,
-                color: AppColors.overdueTaskBGColor,
-                label: 'overdueTaskBGColor',
-              ),
+              if (material.isAssignedToMe)
+                TaskStatus(
+                  height: 17.h,
+                  color: AppColors.completeTaskBGColor,
+                  label: 'Assigned to me and completed',
+                ),
+              if (material.isAssignedToGroupWithLeaderRole)
+                TaskStatus(
+                  height: 17.h,
+                  color: Color(0xFFCBE8FA),
+                  label: 'Assigned to group that I teach/co-lead',
+                ),
             ],
           ),
         ),

@@ -1,7 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
+import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_material.g.dart';
@@ -13,7 +16,7 @@ class HiveMaterial extends HiveObject {
   @HiveField(1)
   String? creatorId;
   @HiveField(2)
-  String? status;
+  int? status;
   @HiveField(3)
   int? visibility;
   @HiveField(4)
@@ -70,7 +73,7 @@ class HiveMaterial extends HiveObject {
   HiveMaterial.from(Material material) {
     this.id = material.id;
     this.creatorId = material.creatorId;
-    this.status = material.status.toString(); // Material_Status
+    this.status = material.status.value; // Material_Status
     this.visibility = material.visibility.value; // Material_Visibility
     this.editability = material.editability.value; // Material_Editability
     this.title = material.title;
@@ -94,7 +97,7 @@ class HiveMaterial extends HiveObject {
     return Material(
       id: this.id,
       creatorId: this.creatorId,
-      //status: this.status,
+      status: Material_Status.valueOf(this.status!),
       visibility: Material_Visibility.valueOf(this.visibility!),
       editability: Material_Editability.valueOf(this.editability!),
       title: this.title,
@@ -115,5 +118,34 @@ class HiveMaterial extends HiveObject {
   @override
   String toString() {
     return '{id: ${this.id}, creatorId: ${this.creatorId}, status: ${this.status}, visibility: ${this.visibility}, editability: ${this.editability}, title: ${this.title}, description: ${this.description}, targetAudience: ${this.targetAudience},}';
+  }
+}
+
+extension HiveMaterialExt on HiveMaterial {
+  bool get isAssignedToMe {
+    bool isAssigned = false;
+    ActionProvider().getAllActions().forEach((action) {
+      if ((action.materialId != null || action.materialId!.isNotEmpty) &&
+          action.isIndividualAction &&
+          action.materialId == this.id) {
+        isAssigned = true;
+      }
+    });
+
+    return isAssigned;
+  }
+
+  bool get isAssignedToGroupWithLeaderRole {
+    bool isAssigned = false;
+    ActionProvider().getAllActions().forEach((action) {
+      if ((action.materialId != null || action.materialId!.isNotEmpty) &&
+          !action.isIndividualAction &&
+          (action.leaders != null && action.leaders!.length > 0) &&
+          action.materialId == this.id) {
+        isAssigned = true;
+      }
+    });
+
+    return isAssigned;
   }
 }

@@ -28,7 +28,9 @@ class ActionRepository {
       dbProvider.getAllActionsForGroup(groupIds);
 
   @Deprecated("Used for Debug")
-  Future<List<HiveAction>> fetchAllActions() => dbProvider.getAllActions();
+  List<HiveAction> fetchAllActions() => dbProvider.getAllActions();
+
+  List<HiveActionUser> getAllActionsUser() => dbProvider.getAllActionsUser();
 
   Future<List<HiveAction>> fetchAllActionsForMeFromDB(List<String> groupIds) =>
       dbProvider.getAllActionsForMe(groupIds);

@@ -31,7 +31,12 @@ class TaskStatus extends StatelessWidget {
       child: Center(
           child: Text(
         label,
-        style: textStyle ?? TextStyle(fontSize: 12),
+        style: textStyle ??
+            TextStyle(
+              fontSize: 11.sp,
+              fontFamily: "Rubik",
+              color: Colors.black,
+            ),
       )),
     );
   }

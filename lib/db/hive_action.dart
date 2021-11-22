@@ -9,13 +9,8 @@ import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
-import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
-import 'package:starfish/src/generated/starfish.pbjson.dart';
-import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_action.g.dart';
 
@@ -151,6 +146,21 @@ extension HiveActionExt on HiveAction {
         .users
         ?.where((element) =>
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER)
+        .map((HiveGroupUser groupUser) => groupUser.user!)
+        .toList();
+  }
+
+  List<HiveUser>? get leaders {
+    // Admin and Teachers
+    if (this.group == null) {
+      return null;
+    }
+    return this
+        .group!
+        .users
+        ?.where((element) =>
+            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.ADMIN ||
+            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER)
         .map((HiveGroupUser groupUser) => groupUser.user!)
         .toList();
   }
