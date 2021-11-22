@@ -13,10 +13,12 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
@@ -652,14 +654,14 @@ class MaterialListItem extends StatelessWidget {
               if (material.isAssignedToMe)
                 TaskStatus(
                   height: 17.h,
-                  color: AppColors.completeTaskBGColor,
-                  label: 'Assigned to me and completed',
+                  color: getMyTaskStatusColor(material),
+                  label: getMyTaskLabel(material),
                 ),
               if (material.isAssignedToGroupWithLeaderRole)
                 TaskStatus(
                   height: 17.h,
                   color: Color(0xFFCBE8FA),
-                  label: 'Assigned to group that I teach/co-lead',
+                  label: Strings.assignedToGroup,
                 ),
             ],
           ),
@@ -667,5 +669,29 @@ class MaterialListItem extends StatelessWidget {
       ),
       elevation: 5,
     );
+  }
+
+  Color getMyTaskStatusColor(HiveMaterial material) {
+    if (material.myActionStatus == ActionStatus.DONE) {
+      return AppColors.completeTaskBGColor;
+    } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
+      return AppColors.notCompletedTaskBGColor;
+    } else if (material.myActionStatus == ActionStatus.OVERDUE) {
+      return AppColors.overdueTaskBGColor;
+    } else {
+      return Colors.transparent;
+    }
+  }
+
+  String getMyTaskLabel(HiveMaterial material) {
+    if (material.myActionStatus == ActionStatus.DONE) {
+      return Strings.assignedToMeDone;
+    } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
+      return Strings.assignedToMeNotDone;
+    } else if (material.myActionStatus == ActionStatus.OVERDUE) {
+      return Strings.assignedToMeOverdue;
+    } else {
+      return '';
+    }
   }
 }

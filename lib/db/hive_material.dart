@@ -5,6 +5,7 @@ import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_material.g.dart';
@@ -147,5 +148,39 @@ extension HiveMaterialExt on HiveMaterial {
     });
 
     return isAssigned;
+  }
+
+  ActionStatus get myActionStatus {
+    bool statusOverdue = false;
+    bool statusNotDone = false;
+    bool statusDone = false;
+    ActionProvider().getAllActions().forEach((action) {
+      if ((action.materialId != null || action.materialId!.isNotEmpty) &&
+          action.isIndividualAction &&
+          action.materialId == this.id) {
+        if (action.actionStatus == ActionStatus.OVERDUE) {
+          statusOverdue = true;
+          statusDone = false;
+        } else if (action.actionStatus == ActionStatus.NOT_DONE) {
+          statusNotDone = true;
+          statusDone = false;
+        } else if (action.actionStatus == ActionStatus.DONE) {
+          statusDone = true;
+        } else {
+          statusDone = false;
+        }
+      }
+    });
+
+    if (statusDone) {
+      return ActionStatus.DONE;
+    }
+    if (statusNotDone) {
+      return ActionStatus.NOT_DONE;
+    }
+    if (statusOverdue) {
+      return ActionStatus.OVERDUE;
+    }
+    return ActionStatus.UNSPECIFIED_STATUS;
   }
 }
