@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
@@ -275,7 +278,18 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       width: double.infinity,
                       height: 50.h,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(allowMultiple: true);
+
+                          if (result != null) {
+                            List<File> files = result.paths
+                                .map((path) => File(path!))
+                                .toList();
+                          } else {
+                            // User canceled the picker
+                          }
+                        },
                         child: Text(
                           Strings.addMaterials,
                           style: TextStyle(
