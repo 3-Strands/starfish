@@ -418,7 +418,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           SizedBox(
             height: 20.h,
           ),
-          TaskStatus(
+          /*TaskStatus(
             height: 30.h,
             color: AppColors.completeTaskBGColor,
             label: 'complete',
@@ -435,7 +435,24 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             height: 30.h,
             color: AppColors.overdueTaskBGColor,
             label: 'overdueTaskBGColor',
+          ),*/
+
+          if (material.isAssignedToMe)
+            TaskStatus(
+              height: 30.h,
+              color: getMyTaskStatusColor(material),
+              label: getMyTaskLabel(material),
+            ),
+          SizedBox(
+            height: 10.h,
           ),
+
+          if (material.isAssignedToGroupWithLeaderRole)
+            TaskStatus(
+              height: 30.h,
+              color: Color(0xFFCBE8FA),
+              label: Strings.assignedToGroup,
+            ),
           SizedBox(
             height: 30.h,
           ),
@@ -670,28 +687,28 @@ class MaterialListItem extends StatelessWidget {
       elevation: 5,
     );
   }
+}
 
-  Color getMyTaskStatusColor(HiveMaterial material) {
-    if (material.myActionStatus == ActionStatus.DONE) {
-      return AppColors.completeTaskBGColor;
-    } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
-      return AppColors.notCompletedTaskBGColor;
-    } else if (material.myActionStatus == ActionStatus.OVERDUE) {
-      return AppColors.overdueTaskBGColor;
-    } else {
-      return Colors.transparent;
-    }
+Color getMyTaskStatusColor(HiveMaterial material) {
+  if (material.myActionStatus == ActionStatus.DONE) {
+    return AppColors.completeTaskBGColor;
+  } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
+    return AppColors.notCompletedTaskBGColor;
+  } else if (material.myActionStatus == ActionStatus.OVERDUE) {
+    return AppColors.overdueTaskBGColor;
+  } else {
+    return Colors.transparent;
   }
+}
 
-  String getMyTaskLabel(HiveMaterial material) {
-    if (material.myActionStatus == ActionStatus.DONE) {
-      return Strings.assignedToMeDone;
-    } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
-      return Strings.assignedToMeNotDone;
-    } else if (material.myActionStatus == ActionStatus.OVERDUE) {
-      return Strings.assignedToMeOverdue;
-    } else {
-      return '';
-    }
+String getMyTaskLabel(HiveMaterial material) {
+  if (material.myActionStatus == ActionStatus.DONE) {
+    return Strings.assignedToMeDone;
+  } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
+    return Strings.assignedToMeNotDone;
+  } else if (material.myActionStatus == ActionStatus.OVERDUE) {
+    return Strings.assignedToMeOverdue;
+  } else {
+    return '';
   }
 }
