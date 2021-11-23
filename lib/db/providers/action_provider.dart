@@ -23,9 +23,12 @@ class ActionProvider {
     }).toList();
   }
 
-  @Deprecated("Used for Debug")
-  Future<List<HiveAction>> getAllActions() async {
+  List<HiveAction> getAllActions() {
     return _actionBox.values.toList();
+  }
+
+  List<HiveActionUser> getAllActionsUser() {
+    return _actionUserBox.values.toList();
   }
 
   Future<List<HiveAction>> getAllActionsForMe(List<String> groupIds) async {
@@ -87,5 +90,17 @@ class ActionProvider {
       actionUser.isNew = true;
       _actionUserBox.add(actionUser);
     }
+  }
+
+  HiveAction? getActionbyId(String actionId) {
+    return _actionBox.values
+        .firstWhereOrNull((HiveAction action) => action.id! == actionId);
+  }
+
+  List<HiveAction>? getGroupActions(String groupId) {
+    return _actionBox.values
+        .where((element) =>
+            !element.isIndividualAction && element.groupId == groupId)
+        .toList();
   }
 }

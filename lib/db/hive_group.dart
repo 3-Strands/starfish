@@ -2,9 +2,12 @@ import 'dart:core';
 import 'package:collection/collection.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_group.g.dart';
@@ -131,8 +134,7 @@ class HiveGroup extends HiveObject {
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
     languageIds: ${this.languageIds?.toString()}, users: ${this.users?.toString()}, 
-    actions: ${this.actions?.toString()}, editHistory: ${this.editHistory?.toString()}, 
-    currentUserRole: ${this.currentUserRole} }''';
+    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
   }
 }
 
@@ -165,5 +167,33 @@ extension HiveGroupExt on HiveGroup {
             .where((element) => element.name.toLowerCase().contains(query))
             .length >
         0;
+  }
+
+  List<HiveAction>? get groupActionList {
+    return ActionProvider().getGroupActions(this.id!);
+  }
+
+  int get actionsCompleted {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) =>
+        count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
+
+    return count;
+  }
+
+  int get actionsNotDoneYet {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) =>
+        count += hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
+
+    return count;
+  }
+
+  int get actionsOverdue {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) =>
+        count += hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
+
+    return count;
   }
 }

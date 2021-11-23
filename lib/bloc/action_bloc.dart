@@ -35,9 +35,10 @@ class ActionBloc extends Object {
       _actionsForGroup.stream;
 
   Future<void> createUpdateAction(HiveAction action) async {
-    return actionRepository
-        .createUpdateActionInDB(action)
-        .then((value) => fetchMyActionsFromDB());
+    return actionRepository.createUpdateActionInDB(action).then((value) {
+      fetchMyActionsFromDB();
+      fetchGroupActionsFromDB();
+    });
   }
 
   fetchGroupActionsFromDB() async {

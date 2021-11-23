@@ -279,4 +279,11 @@ sending an invitation to use Starfish''';
   static const String memberDidNotDoItYet = "Members\ndidn't do it yet";
   static const String memberIsOverdue = "Member is overdue";
   static const String membersDidIt = "Members\ndid it";
+
+  static const String assignedToGroup =
+      "Assigned to group that I teach/co-lead";
+  static const String assignedToMeDone = "Assigned to me and completed";
+  static const String assignedToMeNotDone =
+      "Assigned to me, but not complete yet";
+  static const String assignedToMeOverdue = "Assigned to me and overdue";
 }
