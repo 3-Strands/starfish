@@ -1,5 +1,5 @@
-
 import 'package:cron/cron.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -11,6 +11,7 @@ import 'db/hive_database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
 
   await HiveDatabase().init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
