@@ -20,26 +20,13 @@ class GroupProvider {
 
   Future<void> addEditGroup(HiveGroup group) async {
     int _currentIndex = -1;
-    List<HiveGroupUser>? _localGroupUsers;
     _groupBox.values.toList().asMap().forEach((key, hiveGroup) {
       if (hiveGroup.id == group.id) {
         _currentIndex = key;
-
-        _localGroupUsers = hiveGroup.users
-            ?.where((element) =>
-                element.isNew || element.isUpdated || element.isDirty)
-            .toList();
       }
     });
 
     if (_currentIndex > -1) {
-      if (_localGroupUsers != null && _localGroupUsers!.length > 0) {
-        if (group.users == null) {
-          group.users = _localGroupUsers;
-        } else {
-          group.users?.addAll(_localGroupUsers!);
-        }
-      }
       return _groupBox.put(_currentIndex, group);
     } else {
       _groupBox.add(group);
