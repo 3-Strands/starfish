@@ -1,9 +1,8 @@
 {
   "language": "मानक हिन्दी",
-  "helloWorld": "यह अंग्रेजी में वाक् संश्लेषण का एक उदाहरण है। एकाधिक भाषाओं का समर्थन करने वाले एप्लिकेशन बनाने की विधि को समझने के लिए कृपया कोड का पालन करें।",
-  "phoneNumberHint": "Phone Number",
+  "phoneNumberHint": "फ़ोन नंबर",
   "phoneAuthenticationTitle":
-      "Select Country and enter Phone Number to get One Time Password",
+      "वन टाइम पासवर्ड पाने के लिए देश चुनें और फोन नंबर दर्ज करें",
   "searchLanguagesPlaceholder": "Search languages",
   "searchTopicsPlaceholder": "Search topics",
   "emailHint": "Enter email of project admin",
@@ -11,8 +10,8 @@
   "projectAdminEmailSectionTitle":
       "Enter the email ID of the Project Admin in everylanguage.app",
 
-  "exit": "Exit",
-  "next": "Next",
+  "exit": "बाहर जाएं",
+  "next": "अगला",
   "back": "Back",
   "finish": "Finish",
   "edit": "Edit",
@@ -41,7 +40,7 @@
 
   "myCountry": "My Country",
   "country": "Country",
-  "selectCountry": "Select Country",
+  "selectCountry": "देश चुनें",
   "selectCountryDetail":
       "The list of languages shown below is based on the country you select.",
 

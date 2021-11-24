@@ -59,6 +59,9 @@ dependencies:
   synchronized: ^3.0.0
   focus_detector: ^2.0.0
   swipedetector: ^1.2.0
+  firebase_core: "^1.10.0"
+  firebase_auth: ^3.2.0
+  firebase_auth_web: ^3.2.0
   file_picker: ^4.2.4
 
 dev_dependencies:
