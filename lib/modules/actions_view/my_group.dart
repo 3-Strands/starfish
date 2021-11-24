@@ -16,7 +16,6 @@ import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
-import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,12 +30,9 @@ class MyGroup extends StatefulWidget {
 }
 
 class _MyGroupState extends State<MyGroup> {
-  late Box<HiveUser> _userBox;
-
   @override
   void initState() {
     super.initState();
-    _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
   }
 
   _getActions(AppBloc bloc) async {
@@ -326,27 +322,6 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                 ),
                 SizedBox(width: 10.w),
-                /*Container(
-                  width: 100.w,
-                  height: 20.h,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "${item.actionStatusbyId(action.id!)}",
-                      style: TextStyle(
-                        color: AppColors.txtFieldTextColor,
-                        fontFamily: 'OpenSans',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ),*/
                 UserActionStatusWidget(
                   title: hiveUser.actionStatusbyId(action),
                   height: 20.h,
@@ -662,146 +637,6 @@ class _MyGroupState extends State<MyGroup> {
             );
           });
         });
-  }
-
-  Widget _buildSlidingUpPanel(HiveAction action) {
-    return Container(
-      margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 22.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  '${Strings.title}: {action.status}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Spacer(),
-                CustomIconButton(
-                  icon: Icon(
-                    Icons.open_in_new,
-                    color: Colors.blue,
-                    size: 18.sp,
-                  ),
-                  text: Strings.open,
-                  onButtonTap: () {},
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.completeTaskBGColor,
-            label: 'complete',
-            textStyle: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'OpenSans',
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.overdueTaskBGColor,
-            label: 'overdueTaskBGColor',
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                Strings.lanugages,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Color(0xFF3475F0),
-                  fontFamily: 'OpenSans',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacer(),
-              CustomIconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 18.sp,
-                ),
-                text: Strings.edit,
-                onButtonTap: () {},
-              ),
-            ],
-          ),
-          Text(
-            Strings.topics,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Color(0xFF3475F0),
-              fontFamily: 'OpenSans',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 63.h,
-          ),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              Strings.reportInappropriateMaterial,
-              style: TextStyle(
-                color: Color(0xFFF65A4A),
-                fontFamily: 'OpenSans',
-                fontSize: 16.sp,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 37.5.h,
-            color: Color(0xFFEFEFEF),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.r),
-                  ),
-                ),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
-              ),
-              child: Text(Strings.close),
-            ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-        ],
-      ),
-    );
   }
 }
 

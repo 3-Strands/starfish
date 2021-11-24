@@ -153,7 +153,7 @@ class SyncService {
     }
 
     DateTime now = DateTime.now();
-    print(DateFormat('HH:mm:ss').format(now));
+    //print(DateFormat('HH:mm:ss').format(now));
     HiveLastSyncDateTime _lastSyncDateTime = new HiveLastSyncDateTime(
         year: now.year,
         month: now.month,
@@ -175,21 +175,20 @@ class SyncService {
           (user.actions.map((e) => HiveActionUser.from(e)).toList());
 
       HiveCurrentUser _user = HiveCurrentUser(
-        id: user.id,
-        name: user.name,
-        phone: user.phone,
-        linkGroups: user.linkGroups,
-        countryIds: user.countryIds,
-        languageIds: user.languageIds,
-        groups: groups,
-        actions: actions,
-        diallingCode: user.diallingCode,
-        phoneCountryId: user.phoneCountryId,
-        selectedActionsTab: user.selectedActionsTab.value,
-        selectedResultsTab: user.selectedResultsTab.value,
-        status: user.status.value,
-        creatorId: user.creatorId
-      );
+          id: user.id,
+          name: user.name,
+          phone: user.phone,
+          linkGroups: user.linkGroups,
+          countryIds: user.countryIds,
+          languageIds: user.languageIds,
+          groups: groups,
+          actions: actions,
+          diallingCode: user.diallingCode,
+          phoneCountryId: user.phoneCountryId,
+          selectedActionsTab: user.selectedActionsTab.value,
+          selectedResultsTab: user.selectedResultsTab.value,
+          status: user.status.value,
+          creatorId: user.creatorId);
 
       var filterData = currentUserBox.values
           .where((currentUser) => currentUser.id == user.id)
@@ -529,11 +528,8 @@ class SyncService {
 
   Future<CreateUpdateUserResponse> addUserToSyncQueue(
       HiveUser _hiveUser) async {
-    print('LOCAL User : ${_hiveUser.name}');
     CreateUpdateUserResponse _response = await UserRepository()
         .createUpdateUsers(_hiveUser.toUser(), kUserFieldMask);
-
-    print('REMOTE User [${_response.status}]: ${_response.user.name}');
 
     _hiveUser.isNew = false;
     _hiveUser.isUpdated = false;
@@ -553,13 +549,11 @@ class SyncService {
 
   Future<CreateUpdateGroupsResponse> addGroupToSyncQueue(
       HiveGroup _hiveGroup) async {
-    print('LOCAL Group : ${_hiveGroup.name}');
     CreateUpdateGroupsResponse _response = await GroupRepository()
         .createUpdateGroup(
             group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
 
-    print('REMOTE Group[${_response.status}]: ${_response.group.name}');
-    // update flag(s) isNew and/or isUpdated to false
+   // update flag(s) isNew and/or isUpdated to false
     _hiveGroup.isNew = false;
     _hiveGroup.isUpdated = false;
 

@@ -44,103 +44,99 @@ class _GroupsScreenState extends State<GroupsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.70,
-          child: SingleChildScrollView(
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.70,
             child: _buildSlidingUpPanel(group),
-          ),
-        );
+          );
+        });
       },
     );
   }
 
   Widget _buildUsersList(List<HiveGroupUser> users) {
-    List<Widget> _users = [];
-    users.forEach((user) {
-      _users.add(
-        Container(
-          height: 80.h,
-          width: MediaQuery.of(context).size.width - 10.0,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 27.h,
-                    width: MediaQuery.of(context).size.width - 160.0,
-                    child: Text(
-                      user.name,
-                      textAlign: TextAlign.left,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        color: AppColors.appTitle,
-                        fontFamily: 'OpenSans',
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.70 - 150,
+      child: ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+          return Container(
+            height: 80.h,
+            width: MediaQuery.of(context).size.width - 10.0,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 27.h,
+                      width: MediaQuery.of(context).size.width - 160.0,
+                      child: Text(
+                        user.name,
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: AppColors.appTitle,
+                          fontFamily: 'OpenSans',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  Spacer(),
-                  Container(
-                    width: 90.w,
-                    margin: EdgeInsets.only(right: 0.w),
-                    child: Text(
-                      GroupUser_Role.valueOf(user.role!).toString(),
-                      textAlign: TextAlign.right,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        color: AppColors.appTitle,
-                        fontFamily: 'OpenSans',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.normal,
+                    Spacer(),
+                    Container(
+                      width: 90.w,
+                      margin: EdgeInsets.only(right: 0.w),
+                      child: Text(
+                        GroupUser_Role.valueOf(user.role!).toString(),
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: AppColors.appTitle,
+                          fontFamily: 'OpenSans',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Spacer(),
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: Text(
-                  '${user.phoneWithDialingCode}',
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: AppColors.appTitle,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.normal,
+                  ],
+                ),
+                Spacer(),
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: Text(
+                    '${user.phoneWithDialingCode}',
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: AppColors.appTitle,
+                      fontFamily: 'OpenSans',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              SepratorLine(
-                hight: 1.h,
-                edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-              ),
-              SizedBox(
-                height: 10.h,
-              )
-            ],
-          ),
-        ),
-      );
-    });
-
-    return Container(
-      height: 200.h,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _users,
+                SizedBox(
+                  height: 10.h,
+                ),
+                SepratorLine(
+                  hight: 1.h,
+                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                ),
+                SizedBox(
+                  height: 10.h,
+                )
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildSlidingUpPanel(HiveGroup group) {
-    debugPrint('_buildSlidingUpPanel: $group');
     return Container(
       margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
       child: Column(
@@ -168,7 +164,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
           ),
           _buildUsersList(group.users!),
           SizedBox(
-            height: 200.h,
+            height: 20.h,
           ),
           Container(
             width: MediaQuery.of(context).size.width,
