@@ -145,13 +145,15 @@ class HiveUser extends HiveObject {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 
         countryIds: ${this.countryIds?.toString()}, languageIds: ${this.languageIds?.toString()},
-        creatorId: ${this.creatorId}, status: ${this.status}}''';
+        creatorId: ${this.creatorId}, status: ${this.status}}, isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDeleted: ${this.isDeleted} ''';
   }
 }
 
 extension HiveUserExt on HiveUser {
   String get phoneWithDialingCode {
-    return this.phone != null ? '+${this.diallingCode}${this.phone}' : '';
+    return this.phone != null && this.phone!.isNotEmpty
+        ? '+${this.diallingCode} ${this.phone}'
+        : '';
   }
 
   ActionStatus actionStatusbyId(HiveAction action) {
