@@ -15,6 +15,12 @@ import 'google/protobuf/empty.pb.dart' as $1;
 export 'starfish.pb.dart';
 
 class StarfishClient extends $grpc.Client {
+  static final _$authenticate =
+      $grpc.ClientMethod<$0.AuthenticateRequest, $0.AuthenticateResponse>(
+          '/sil.starfish.Starfish/Authenticate',
+          ($0.AuthenticateRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.AuthenticateResponse.fromBuffer(value));
   static final _$createMaterialFeedbacks = $grpc.ClientMethod<
           $0.CreateMaterialFeedbacksRequest,
           $0.CreateMaterialFeedbacksResponse>(
@@ -128,6 +134,12 @@ class StarfishClient extends $grpc.Client {
       {$grpc.CallOptions? options,
       $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
+
+  $grpc.ResponseFuture<$0.AuthenticateResponse> authenticate(
+      $0.AuthenticateRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$authenticate, request, options: options);
+  }
 
   $grpc.ResponseStream<$0.CreateMaterialFeedbacksResponse>
       createMaterialFeedbacks(
@@ -277,6 +289,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
   $core.String get $name => 'sil.starfish.Starfish';
 
   StarfishServiceBase() {
+    $addMethod(
+        $grpc.ServiceMethod<$0.AuthenticateRequest, $0.AuthenticateResponse>(
+            'Authenticate',
+            authenticate_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $0.AuthenticateRequest.fromBuffer(value),
+            ($0.AuthenticateResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateMaterialFeedbacksRequest,
             $0.CreateMaterialFeedbacksResponse>(
         'CreateMaterialFeedbacks',
@@ -446,6 +467,12 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($0.User value) => value.writeToBuffer()));
   }
 
+  $async.Future<$0.AuthenticateResponse> authenticate_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.AuthenticateRequest> request) async {
+    return authenticate(call, await request);
+  }
+
   $async.Future<$0.User> getCurrentUser_Pre(
       $grpc.ServiceCall call, $async.Future<$1.Empty> request) async {
     return getCurrentUser(call, await request);
@@ -502,6 +529,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
     return updateCurrentUser(call, await request);
   }
 
+  $async.Future<$0.AuthenticateResponse> authenticate(
+      $grpc.ServiceCall call, $0.AuthenticateRequest request);
   $async.Stream<$0.CreateMaterialFeedbacksResponse> createMaterialFeedbacks(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateMaterialFeedbacksRequest> request);

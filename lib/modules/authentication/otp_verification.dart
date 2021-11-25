@@ -278,7 +278,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                           setState(() {
                             _isLoading = false;
                           }),
-                          _sendDataAtServer(data),
+                          _getUserInfo(data),
                         });
                   } catch (e) {
                     setState(() {
@@ -302,11 +302,17 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
-  void _sendDataAtServer(UserCredential credential) {
-    debugPrint('user =>>, ${credential.user}');
-    debugPrint('user name =>>, ${credential.user!.displayName}');
-    debugPrint('uid =>>, ${credential.user!.uid}');
+  void _getUserInfo(UserCredential credential) {
+    // debugPrint('user =>>, ${credential.user}');
+    // debugPrint('uid =>>, ${credential.user!.uid}');
+    // debugPrint('user name =>>, ${credential.user!.displayName}');
 
+    credential.user!.getIdToken(true).then((jwtToken) =>
+        {_sendDataAtServer(jwtToken, credential.user!.displayName)});
+  }
+
+  void _sendDataAtServer(String token, String? userName) {
+    debugPrint('user token=>>, $token');
     StarfishSharedPreference().setAccessToken(widget.phoneNumber);
     Navigator.of(context).pushNamed(Routes.showProfile);
   }

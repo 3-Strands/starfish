@@ -10,8 +10,8 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'google/type/date.pb.dart' as $2;
-import 'google/protobuf/field_mask.pb.dart' as $3;
-import 'google/protobuf/timestamp.pb.dart' as $4;
+import 'google/protobuf/timestamp.pb.dart' as $3;
+import 'google/protobuf/field_mask.pb.dart' as $4;
 
 import 'starfish.pbenum.dart';
 
@@ -303,6 +303,130 @@ class ActionUser extends $pb.GeneratedMessage {
   void clearEvaluation() => clearField(8);
 }
 
+class AuthenticateRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AuthenticateRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'firebaseJwt')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userName')
+    ..hasRequiredFields = false
+  ;
+
+  AuthenticateRequest._() : super();
+  factory AuthenticateRequest({
+    $core.String? firebaseJwt,
+    $core.String? userName,
+  }) {
+    final _result = create();
+    if (firebaseJwt != null) {
+      _result.firebaseJwt = firebaseJwt;
+    }
+    if (userName != null) {
+      _result.userName = userName;
+    }
+    return _result;
+  }
+  factory AuthenticateRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AuthenticateRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  AuthenticateRequest clone() => AuthenticateRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  AuthenticateRequest copyWith(void Function(AuthenticateRequest) updates) => super.copyWith((message) => updates(message as AuthenticateRequest)) as AuthenticateRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static AuthenticateRequest create() => AuthenticateRequest._();
+  AuthenticateRequest createEmptyInstance() => create();
+  static $pb.PbList<AuthenticateRequest> createRepeated() => $pb.PbList<AuthenticateRequest>();
+  @$core.pragma('dart2js:noInline')
+  static AuthenticateRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AuthenticateRequest>(create);
+  static AuthenticateRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get firebaseJwt => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set firebaseJwt($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasFirebaseJwt() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFirebaseJwt() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get userName => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set userName($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUserName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUserName() => clearField(2);
+}
+
+class AuthenticateResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AuthenticateResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userToken')
+    ..aOM<$3.Timestamp>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt', subBuilder: $3.Timestamp.create)
+    ..hasRequiredFields = false
+  ;
+
+  AuthenticateResponse._() : super();
+  factory AuthenticateResponse({
+    $core.String? userToken,
+    $3.Timestamp? expiresAt,
+  }) {
+    final _result = create();
+    if (userToken != null) {
+      _result.userToken = userToken;
+    }
+    if (expiresAt != null) {
+      _result.expiresAt = expiresAt;
+    }
+    return _result;
+  }
+  factory AuthenticateResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AuthenticateResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  AuthenticateResponse clone() => AuthenticateResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  AuthenticateResponse copyWith(void Function(AuthenticateResponse) updates) => super.copyWith((message) => updates(message as AuthenticateResponse)) as AuthenticateResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static AuthenticateResponse create() => AuthenticateResponse._();
+  AuthenticateResponse createEmptyInstance() => create();
+  static $pb.PbList<AuthenticateResponse> createRepeated() => $pb.PbList<AuthenticateResponse>();
+  @$core.pragma('dart2js:noInline')
+  static AuthenticateResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AuthenticateResponse>(create);
+  static AuthenticateResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userToken => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userToken($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserToken() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserToken() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $3.Timestamp get expiresAt => $_getN(1);
+  @$pb.TagNumber(2)
+  set expiresAt($3.Timestamp v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasExpiresAt() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearExpiresAt() => clearField(2);
+  @$pb.TagNumber(2)
+  $3.Timestamp ensureExpiresAt() => $_ensure(1);
+}
+
 class Country extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Country', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
@@ -507,14 +631,14 @@ class CreateMaterialFeedbacksResponse extends $pb.GeneratedMessage {
 class CreateUpdateActionsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateActionsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<Action>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action', subBuilder: Action.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateActionsRequest._() : super();
   factory CreateUpdateActionsRequest({
     Action? action,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (action != null) {
@@ -558,15 +682,15 @@ class CreateUpdateActionsRequest extends $pb.GeneratedMessage {
   Action ensureAction() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateActionsResponse extends $pb.GeneratedMessage {
@@ -649,14 +773,14 @@ class CreateUpdateActionsResponse extends $pb.GeneratedMessage {
 class CreateUpdateActionUserRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateActionUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<ActionUser>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'actionUser', subBuilder: ActionUser.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateActionUserRequest._() : super();
   factory CreateUpdateActionUserRequest({
     ActionUser? actionUser,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (actionUser != null) {
@@ -700,15 +824,15 @@ class CreateUpdateActionUserRequest extends $pb.GeneratedMessage {
   ActionUser ensureActionUser() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateActionUserResponse extends $pb.GeneratedMessage {
@@ -791,14 +915,14 @@ class CreateUpdateActionUserResponse extends $pb.GeneratedMessage {
 class CreateUpdateGroupsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateGroupsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<Group>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'group', subBuilder: Group.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateGroupsRequest._() : super();
   factory CreateUpdateGroupsRequest({
     Group? group,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (group != null) {
@@ -842,15 +966,15 @@ class CreateUpdateGroupsRequest extends $pb.GeneratedMessage {
   Group ensureGroup() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateGroupsResponse extends $pb.GeneratedMessage {
@@ -933,14 +1057,14 @@ class CreateUpdateGroupsResponse extends $pb.GeneratedMessage {
 class CreateUpdateGroupUsersRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateGroupUsersRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<GroupUser>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupUser', subBuilder: GroupUser.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateGroupUsersRequest._() : super();
   factory CreateUpdateGroupUsersRequest({
     GroupUser? groupUser,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (groupUser != null) {
@@ -984,15 +1108,15 @@ class CreateUpdateGroupUsersRequest extends $pb.GeneratedMessage {
   GroupUser ensureGroupUser() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateGroupUsersResponse extends $pb.GeneratedMessage {
@@ -1075,14 +1199,14 @@ class CreateUpdateGroupUsersResponse extends $pb.GeneratedMessage {
 class CreateUpdateMaterialsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateMaterialsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<Material>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'material', subBuilder: Material.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateMaterialsRequest._() : super();
   factory CreateUpdateMaterialsRequest({
     Material? material,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (material != null) {
@@ -1126,15 +1250,15 @@ class CreateUpdateMaterialsRequest extends $pb.GeneratedMessage {
   Material ensureMaterial() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateMaterialsResponse extends $pb.GeneratedMessage {
@@ -1217,14 +1341,14 @@ class CreateUpdateMaterialsResponse extends $pb.GeneratedMessage {
 class CreateUpdateUserRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<User>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   CreateUpdateUserRequest._() : super();
   factory CreateUpdateUserRequest({
     User? user,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (user != null) {
@@ -1268,15 +1392,15 @@ class CreateUpdateUserRequest extends $pb.GeneratedMessage {
   User ensureUser() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class CreateUpdateUserResponse extends $pb.GeneratedMessage {
@@ -1570,7 +1694,7 @@ class DeleteGroupUsersResponse extends $pb.GeneratedMessage {
 class Edit extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Edit', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')
-    ..aOM<$4.Timestamp>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'time', subBuilder: $4.Timestamp.create)
+    ..aOM<$3.Timestamp>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'time', subBuilder: $3.Timestamp.create)
     ..e<Edit_Event>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'event', $pb.PbFieldType.OE, defaultOrMaker: Edit_Event.EVENT_UNSPECIFIED, valueOf: Edit_Event.valueOf, enumValues: Edit_Event.values)
     ..hasRequiredFields = false
   ;
@@ -1578,7 +1702,7 @@ class Edit extends $pb.GeneratedMessage {
   Edit._() : super();
   factory Edit({
     $core.String? username,
-    $4.Timestamp? time,
+    $3.Timestamp? time,
     Edit_Event? event,
   }) {
     final _result = create();
@@ -1624,15 +1748,15 @@ class Edit extends $pb.GeneratedMessage {
   void clearUsername() => clearField(1);
 
   @$pb.TagNumber(3)
-  $4.Timestamp get time => $_getN(1);
+  $3.Timestamp get time => $_getN(1);
   @$pb.TagNumber(3)
-  set time($4.Timestamp v) { setField(3, v); }
+  set time($3.Timestamp v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasTime() => $_has(1);
   @$pb.TagNumber(3)
   void clearTime() => clearField(3);
   @$pb.TagNumber(3)
-  $4.Timestamp ensureTime() => $_ensure(1);
+  $3.Timestamp ensureTime() => $_ensure(1);
 
   @$pb.TagNumber(4)
   Edit_Event get event => $_getN(2);
@@ -2870,14 +2994,14 @@ class MaterialType extends $pb.GeneratedMessage {
 class UpdateCurrentUserRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UpdateCurrentUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<User>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
-    ..aOM<$3.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $3.FieldMask.create)
+    ..aOM<$4.FieldMask>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateMask', subBuilder: $4.FieldMask.create)
     ..hasRequiredFields = false
   ;
 
   UpdateCurrentUserRequest._() : super();
   factory UpdateCurrentUserRequest({
     User? user,
-    $3.FieldMask? updateMask,
+    $4.FieldMask? updateMask,
   }) {
     final _result = create();
     if (user != null) {
@@ -2921,15 +3045,15 @@ class UpdateCurrentUserRequest extends $pb.GeneratedMessage {
   User ensureUser() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.FieldMask get updateMask => $_getN(1);
+  $4.FieldMask get updateMask => $_getN(1);
   @$pb.TagNumber(2)
-  set updateMask($3.FieldMask v) { setField(2, v); }
+  set updateMask($4.FieldMask v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasUpdateMask() => $_has(1);
   @$pb.TagNumber(2)
   void clearUpdateMask() => clearField(2);
   @$pb.TagNumber(2)
-  $3.FieldMask ensureUpdateMask() => $_ensure(1);
+  $4.FieldMask ensureUpdateMask() => $_ensure(1);
 }
 
 class User extends $pb.GeneratedMessage {

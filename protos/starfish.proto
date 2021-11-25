@@ -14,6 +14,10 @@ import "google/protobuf/timestamp.proto";
 // The Starfish API, for communicating with Starfish app.
 service Starfish {
 
+    // Authenticate a user by taking a JWT from Firebase and returning a native token
+    // If no JWT is passed in the message body the server will look for it in the request metadata, under "authorization"
+    rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse) {}
+
     // Create feedbacks for materials
     rpc CreateMaterialFeedbacks (stream CreateMaterialFeedbacksRequest) returns (stream CreateMaterialFeedbacksResponse) {}
 
@@ -167,6 +171,24 @@ message ActionUser {
     string user_response = 7;
 
     Evaluation evaluation = 8;
+
+}
+
+message AuthenticateRequest {
+
+    string firebase_jwt = 1;
+
+    // The name of the user being authenticated.
+    string user_name = 2;
+
+}
+
+message AuthenticateResponse {
+
+    string user_token = 1;
+
+    // The time the token expires
+    google.protobuf.Timestamp expires_at = 2;
 
 }
 

@@ -99,6 +99,28 @@ const ActionUser_Evaluation$json = const {
 
 /// Descriptor for `ActionUser`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List actionUserDescriptor = $convert.base64Decode('CgpBY3Rpb25Vc2VyEhsKCWFjdGlvbl9pZBgCIAEoCVIIYWN0aW9uSWQSFwoHdXNlcl9pZBgDIAEoCVIGdXNlcklkEjcKBnN0YXR1cxgEIAEoDjIfLnNpbC5zdGFyZmlzaC5BY3Rpb25Vc2VyLlN0YXR1c1IGc3RhdHVzEikKEHRlYWNoZXJfcmVzcG9uc2UYBSABKAlSD3RlYWNoZXJSZXNwb25zZRIjCg11c2VyX3Jlc3BvbnNlGAcgASgJUgx1c2VyUmVzcG9uc2USQwoKZXZhbHVhdGlvbhgIIAEoDjIjLnNpbC5zdGFyZmlzaC5BY3Rpb25Vc2VyLkV2YWx1YXRpb25SCmV2YWx1YXRpb24iPgoGU3RhdHVzEhYKElVOU1BFQ0lGSUVEX1NUQVRVUxAAEg4KCklOQ09NUExFVEUQARIMCghDT01QTEVURRACIjsKCkV2YWx1YXRpb24SGgoWVU5TUEVDSUZJRURfRVZBTFVBVElPThAAEggKBEdPT0QQARIHCgNCQUQQAg==');
+@$core.Deprecated('Use authenticateRequestDescriptor instead')
+const AuthenticateRequest$json = const {
+  '1': 'AuthenticateRequest',
+  '2': const [
+    const {'1': 'firebase_jwt', '3': 1, '4': 1, '5': 9, '10': 'firebaseJwt'},
+    const {'1': 'user_name', '3': 2, '4': 1, '5': 9, '10': 'userName'},
+  ],
+};
+
+/// Descriptor for `AuthenticateRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List authenticateRequestDescriptor = $convert.base64Decode('ChNBdXRoZW50aWNhdGVSZXF1ZXN0EiEKDGZpcmViYXNlX2p3dBgBIAEoCVILZmlyZWJhc2VKd3QSGwoJdXNlcl9uYW1lGAIgASgJUgh1c2VyTmFtZQ==');
+@$core.Deprecated('Use authenticateResponseDescriptor instead')
+const AuthenticateResponse$json = const {
+  '1': 'AuthenticateResponse',
+  '2': const [
+    const {'1': 'user_token', '3': 1, '4': 1, '5': 9, '10': 'userToken'},
+    const {'1': 'expires_at', '3': 2, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'expiresAt'},
+  ],
+};
+
+/// Descriptor for `AuthenticateResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List authenticateResponseDescriptor = $convert.base64Decode('ChRBdXRoZW50aWNhdGVSZXNwb25zZRIdCgp1c2VyX3Rva2VuGAEgASgJUgl1c2VyVG9rZW4SOQoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWV4cGlyZXNBdA==');
 @$core.Deprecated('Use countryDescriptor instead')
 const Country$json = const {
   '1': 'Country',
