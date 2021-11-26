@@ -25,6 +25,16 @@ class ApiProvider {
     // print("received client ==>> $client");
   }
 
+  Future<AuthenticateResponse> authenticate(
+      String jwtToken, String userName) async {
+    var request =
+        AuthenticateRequest(firebaseJwt: jwtToken, userName: userName);
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.authenticate(request);
+  }
+
   Future<ResponseStream<Country>> listAllCountries() async {
     var request = ListAllCountriesRequest();
     if (client == null) {

@@ -6,6 +6,8 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -311,10 +313,17 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         {_sendDataAtServer(jwtToken, credential.user!.displayName)});
   }
 
-  void _sendDataAtServer(String token, String? userName) {
-    debugPrint('user token=>>, $token');
-    StarfishSharedPreference().setAccessToken(widget.phoneNumber);
-    Navigator.of(context).pushNamed(Routes.showProfile);
+  Future<void> _sendDataAtServer(String jwtToken, String? userName) async {
+    debugPrint('user token=>>, $jwtToken');
+
+    final CurrentUserRepository _currentUserRepository =
+        CurrentUserRepository();
+    AuthenticateResponse _currentUser = await _currentUserRepository.apiProvider
+        .authenticate(jwtToken, userName ?? '');
+    if (_currentUser.userToken.isNotEmpty) {
+      StarfishSharedPreference().setAccessToken(widget.phoneNumber);
+      Navigator.of(context).pushNamed(Routes.showProfile);
+    }
   }
 
   void _handleError(e) {

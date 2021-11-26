@@ -8,6 +8,9 @@ class UserRepository {
   final dbProvider = UserProvider();
   final apiProvider = ApiProvider();
 
+  Future<AuthenticateResponse> authenticate(String jwtToken, String userName) =>
+      apiProvider.authenticate(jwtToken, userName);
+
   Future<ResponseStream<User>> getUsers() => apiProvider.getUsers();
 
   Future<CreateUpdateUserResponse> createUpdateUsers(
