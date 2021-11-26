@@ -53,7 +53,17 @@ class Singleton {
 
   Future initGprcClient() async {
     String token = await StarfishSharedPreference().getAccessToken();
+    print('token ==>> $token');
 
+    Map<String, String>? metadata;
+    if (token.isEmpty) {
+      metadata = {'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'};
+    } else {
+      metadata = {
+        'authorization': '9873572747',
+        'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
+      };
+    }
     final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
         host: "sandbox-api.everylanguage.app",
         port: 443,
@@ -61,11 +71,11 @@ class Singleton {
     client = StarfishClient(
       channel,
       options: CallOptions(
-        metadata: {
-          'authorization': '9873572747',
-          'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
-        },
-      ),
+          // metadata: {
+          //   'authorization': '9873572747',
+          //   'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
+          // },
+          metadata: metadata),
     );
   }
 }
