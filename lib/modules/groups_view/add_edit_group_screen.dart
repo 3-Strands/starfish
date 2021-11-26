@@ -405,17 +405,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     });
 
     List<HiveGroupUser> _newGroupUsers = [];
-    // Add self as Admin, without this local added records will not be filtered
-    // based on role hence will not be visible
-    HiveCurrentUser _currentUser =
-        await CurrentUserRepository().getUserFromDB();
-    _newGroupUsers.add(HiveGroupUser(
-      groupId: _groupId,
-      userId: _currentUser.id,
-      role: GroupUser_Role.ADMIN.value,
-      isNew: true,
-    ));
-    _newUsers.forEach((HiveUser user) async {
+    if (false == _isEditMode) {
+      // Add self as Admin, without this local added records will not be filtered
+      // based on role hence will not be visible
+      HiveCurrentUser _currentUser =
+          await CurrentUserRepository().getUserFromDB();
+      _newGroupUsers.add(HiveGroupUser(
+        groupId: _groupId,
+        userId: _currentUser.id,
+        role: GroupUser_Role.ADMIN.value,
+        isNew: true,
+      ));
+    }
+    //_newUsers.forEach((HiveUser user) async {
+    await Future.forEach(_newUsers, (HiveUser user) async {
       try {
         await UserRepository().createUpdateUserInDB(user);
 
@@ -450,10 +453,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _hiveGroup.description = _descriptionController.text;
     _hiveGroup.languageIds =
         _selectedLanguages.map((HiveLanguage language) => language.id).toList();
-    _hiveGroup
-      ..evaluationCategoryIds = _selectedEvaluationCategories
-          .map((HiveEvaluationCategory category) => category.id!)
-          .toList();
+    _hiveGroup.evaluationCategoryIds = _selectedEvaluationCategories
+        .map((HiveEvaluationCategory category) => category.id!)
+        .toList();
 
     bloc.groupBloc
         .addEditGroup(_hiveGroup)

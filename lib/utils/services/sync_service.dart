@@ -530,11 +530,13 @@ class SyncService {
       HiveUser _hiveUser) async {
     CreateUpdateUserResponse _response = await UserRepository()
         .createUpdateUsers(_hiveUser.toUser(), kUserFieldMask);
+    if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
+      _hiveUser.isNew = false;
+      _hiveUser.isUpdated = false;
 
-    _hiveUser.isNew = false;
-    _hiveUser.isUpdated = false;
+      await UserRepository().createUpdateUserInDB(_hiveUser);
+    }
 
-    await UserRepository().createUpdateUserInDB(_hiveUser);
     return _response;
   }
 
@@ -590,6 +592,11 @@ class SyncService {
               fieldMaskPaths: kGroupUserFieldMask);
 
       print('REMOTE GroupUser[${_response.status}]: ${_response.message} ');
+      if (_response.status == CreateUpdateGroupUsersResponse_Status.SUCCESS) {
+        groupUser.isNew = false;
+        groupUser.isUpdated = false;
+
+      }
       /*groupUser.isNew = false;
       groupUser.isUpdated = false;
 
