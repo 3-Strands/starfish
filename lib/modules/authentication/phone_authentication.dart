@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:starfish/app.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -39,9 +39,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   late Box<HiveCountry> _countryBox;
   late List<HiveCountry> _countryList;
-
-// simple usage
-  // List<Country> _countriesList = [];
 
   HiveCountry _selectedCountry =
       HiveCountry(id: '', name: Strings.selectCountry, diallingCode: '');
@@ -91,15 +88,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       SizedBox(height: 50.h),
                       TitleLabel(
                         title: AppLocalizations.of(context)!
-                            .phoneAuthenticationTitle, //Strings.phoneAuthenticationTitle,
+                            .phoneAuthenticationTitle, //Strings.selectCountry
                         align: TextAlign.center,
                       ),
                       SizedBox(height: 30.h),
                       SelectDropDown(
-                        navTitle: AppLocalizations.of(context)!
-                            .selectCountry, //Strings.selectCountry,
-                        placeholder: AppLocalizations.of(context)!
-                            .selectCountry, //Strings.selectCountry,
+                        navTitle: AppLocalizations.of(context)!.selectCountry,
+                        placeholder:
+                            AppLocalizations.of(context)!.selectCountry,
                         selectedValues: _selectedCountry,
                         dataSource: _countryList,
                         type: SelectType.single,
@@ -162,8 +158,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!
-            .countryCodeHint, //Strings.countryCodeHint,
+        hintText: AppLocalizations.of(context)!.countryCodeHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -198,8 +193,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!
-            .phoneNumberHint, //Strings.phoneNumberHint,
+        hintText: AppLocalizations.of(context)!.phoneNumberHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -263,7 +257,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           height: 37.h,
           child: ElevatedButton(
             child: Text(
-              AppLocalizations.of(context)!.next, //Strings.next,
+              AppLocalizations.of(context)!.next,
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),
@@ -279,51 +273,12 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 });
                 var phoneNumber =
                     '${_countryCodeController.text} ${_phoneNumberController.text}';
-                await auth.verifyPhoneNumber(
-                  phoneNumber: phoneNumber, // '+91 712 312 3456',
-                  verificationCompleted: (PhoneAuthCredential credential) {
-                    setState(() {
-                      _isLoading = false;
-                    });
 
-                    debugPrint('credential ==>> $credential');
-                  },
-                  verificationFailed: (FirebaseAuthException e) {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                    debugPrint('FirebaseAuthException ==>> $e');
-                    if (e.code == 'invalid-phone-number') {
-                      return StarfishSnackbar.showErrorMessage(
-                          context, e.message ?? '');
-                    }
-                  },
-                  codeSent: (String verificationId, int? resendToken) async {
-                    setState(() {
-                      _isLoading = false;
-                    });
-
-                    debugPrint(
-                        'verificationId ==>> $verificationId resendToken ==>> $resendToken');
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OTPVerificationScreen(
-                          varificationId: verificationId,
-                          resentToken: resendToken,
-                          phoneNumber: phoneNumber,
-                          timeout: 20,
-                        ),
-                      ),
-                    );
-                  },
-                  timeout: const Duration(seconds: 20),
-                  codeAutoRetrievalTimeout: (String verificationId) {
-                    // Auto-resolution timed out...
-                    print('codeAutoRetrievalTimeout ==>> $verificationId');
-                  },
-                );
+                if (kIsWeb) {
+                  _authenticateOnWeb(phoneNumber);
+                } else {
+                  _authenticateOnDevice(phoneNumber);
+                }
               }
             },
             style: ElevatedButton.styleFrom(
@@ -338,6 +293,59 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         ),
       ),
     );
+  }
+
+  _authenticateOnDevice(String phoneNumber) async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: phoneNumber, // '+91 712 312 3456',
+      verificationCompleted: (PhoneAuthCredential credential) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        debugPrint('credential ==>> $credential');
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (e.code == 'invalid-phone-number') {
+          return StarfishSnackbar.showErrorMessage(context, e.message ?? '');
+        }
+      },
+      codeSent: (String verificationId, int? resendToken) async {
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OTPVerificationScreen(
+              varificationId: verificationId,
+              resentToken: resendToken,
+              phoneNumber: phoneNumber,
+              timeout: 20,
+            ),
+          ),
+        );
+      },
+      timeout: const Duration(seconds: 20),
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Auto-resolution timed out...
+        print('codeAutoRetrievalTimeout ==>> $verificationId');
+      },
+    );
+  }
+
+  _authenticateOnWeb(String phoneNumber) async {
+    await auth.signInWithPhoneNumber(phoneNumber);
+    ConfirmationResult confirmationResult =
+        await auth.signInWithPhoneNumber(phoneNumber);
+    UserCredential userCredential = await confirmationResult.confirm('123456');
+    print(userCredential);
+    // await auth
+    //     .signInWithPhoneNumber(phoneNumber)
+    //     .then((value) => print('value ==>> $value'));
   }
 
   _fieldFocusChange(
