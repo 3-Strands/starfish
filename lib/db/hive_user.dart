@@ -66,7 +66,7 @@ class HiveUser extends HiveObject {
     this.selectedResultsTab,
     this.phoneCountryId,
     this.diallingCode,
-    this.status,
+    this.status = 0,
     this.creatorId,
     this.isNew = false,
     this.isUpdated = false,
