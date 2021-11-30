@@ -10,6 +10,7 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
@@ -318,12 +319,23 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
     final CurrentUserRepository _currentUserRepository =
         CurrentUserRepository();
-    AuthenticateResponse _currentUser = await _currentUserRepository.apiProvider
+    /*AuthenticateResponse _currentUser = await _currentUserRepository.apiProvider
         .authenticate(jwtToken, userName ?? '');
     if (_currentUser.userToken.isNotEmpty) {
+      StarfishSharedPreference().setLoginStatus(true);
       StarfishSharedPreference().setAccessToken(widget.phoneNumber);
       Navigator.of(context).pushNamed(Routes.showProfile);
-    }
+    }*/
+    _currentUserRepository.apiProvider
+        .authenticate(jwtToken, userName ?? '')
+        .then((AuthenticateResponse _currentUser) {
+      if (_currentUser.userToken.isNotEmpty) {
+        StarfishSharedPreference().setLoginStatus(true);
+        StarfishSharedPreference().setAccessToken(widget.phoneNumber);
+
+        Navigator.of(context).pushNamed(Routes.showProfile);
+      }
+    });
   }
 
   void _handleError(e) {

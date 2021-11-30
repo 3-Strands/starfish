@@ -1,3 +1,5 @@
+import 'package:cron/cron.dart';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -7,6 +9,12 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/repository/group_repository.dart';
+import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/repository/user_repository.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/services/field_mask.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:swipedetector/swipedetector.dart';
 import '../material_view/materials_view.dart';
@@ -23,8 +31,35 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> _widgetOptions = [];
   late PageController _pageController;
 
+  final cron = Cron();
+
   @override
   void initState() {
+    // Sync every 15 mins
+    // TODO: Check Connectivity before starting sync
+    cron.schedule(Schedule.parse('*/15 * * * *'), () async {
+      print('================ START SYNC =====================');
+      SyncService().syncAll();
+    });
+    FBroadcast.instance().register(SyncService.kUpdateMaterial,
+        (hiveMaterial, __) {
+      print('Boradcast Receiver: kUpdateMaterial');
+      MaterialRepository().createUpdateMaterial(
+          material: hiveMaterial, fieldMaskPaths: kMaterialFieldMask);
+    }, more: {
+      SyncService.kUpdateGroup: (hiveGroup, __) {
+        print('Boradcast Receiver: kUpdateGroup');
+        GroupRepository().createUpdateGroup(
+            group: hiveGroup, fieldMaskPaths: kGroupFieldMask);
+      },
+      SyncService.kUpdateUsers: (hiveUsers, __) {
+        print('Boradcast Receiver: kUpdateUsers');
+
+        (hiveUsers as List<User>).forEach(
+            (user) => UserRepository().createUpdateUsers(user, kUserFieldMask));
+      }
+    }, context: this);
+
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
     var actionsWidget = ActionsScreen();
@@ -38,6 +73,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void dispose() {
     _pageController.dispose();
+    FBroadcast.instance().unregister(this);
     super.dispose();
   }
 
