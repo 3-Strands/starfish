@@ -276,7 +276,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                             verificationId: widget.varificationId ?? '',
                             smsCode: _smsCode);
 
-                    await auth.signInWithCredential(credential).then((data) => {
+                    auth.signInWithCredential(credential).then((data) => {
                           setState(() {
                             _isLoading = false;
                           }),
@@ -310,7 +310,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     // debugPrint('user name =>>, ${credential.user!.displayName}');
 
     credential.user!.getIdToken(true).then((jwtToken) =>
-        {_sendDataAtServer(jwtToken, credential.user!.displayName)});
+        {_sendDataAtServer(jwtToken, credential.user!.phoneNumber)});
   }
 
   Future<void> _sendDataAtServer(String jwtToken, String? userName) async {
