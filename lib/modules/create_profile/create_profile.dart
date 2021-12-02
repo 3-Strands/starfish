@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -56,8 +57,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getCurrentUser();
-    _getAllCountries();
-    _getAllLanguages();
+    //_getAllCountries();
+    //_getAllLanguages();
   }
 
   void _getCurrentUser() {
@@ -69,6 +70,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
+    for (HiveCountry _country in _countryList) {
+      print("Country: ${_country.name}");
+    }
 
     for (var countryId in _user.countryIds) {
       _countryList
@@ -76,7 +80,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           .forEach((item) => {_selectedCountries.add(item)});
     }
 
-    _getAllLanguages();
+    //_getAllLanguages();
   }
 
   void _getAllLanguages() {
@@ -105,8 +109,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
     await CurrentUserRepository()
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
-        .then((value) => {
-              SyncService().syncLanguages(),
+        .then((value) async => {
+              await SyncService().syncLanguages(),
+              //_getAllLanguages(),
               setState(() => _isLoading = false),
               _user.countryIds = value.countryIds,
               _currentUserBox.putAt(0, _user),
@@ -139,6 +144,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
     var fieldMaskPaths = ['name', 'country_ids', 'language_ids'];
 
+    if (_nameController.text.isNotEmpty) {
+      _user.name = _nameController.text;
+    }
     _user.countryIds = _selectedCountryIds;
     _user.languageIds = _selectedLanguageIds;
 
@@ -162,6 +170,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ProfileBloc profileBloc = new ProfileBloc();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
@@ -209,22 +218,33 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         ),
                       ),
                       SizedBox(height: 10.h),
-                      SelectDropDown(
-                        navTitle: Strings.selectCountry,
-                        placeholder: Strings.selectCountry,
-                        selectedValues: _selectedCountries,
-                        dataSource: _countryList,
-                        type: SelectType.multiple,
-                        dataSourceType: DataSourceType.countries,
-                        onDoneClicked: <T>(countries) {
-                          setState(() {
-                            // _selectedCountries = countries as List<HiveCountry>;
-                            _selectedCountries = List<HiveCountry>.from(
-                                countries as List<dynamic>);
-                            _updateUserCountries();
-                          });
-                        },
-                      ),
+
+                      StreamBuilder(
+                          stream: profileBloc.countries,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<HiveCountry>?> snapshot) {
+                            if (snapshot.hasData) {
+                              return SelectDropDown(
+                                navTitle: Strings.selectCountry,
+                                placeholder: Strings.selectCountry,
+                                selectedValues: _selectedCountries,
+                                dataSource: snapshot.data,
+                                type: SelectType.multiple,
+                                dataSourceType: DataSourceType.countries,
+                                onDoneClicked: <T>(countries) {
+                                  setState(() {
+                                    // _selectedCountries = countries as List<HiveCountry>;
+                                    _selectedCountries = List<HiveCountry>.from(
+                                        countries as List<dynamic>);
+                                    _updateUserCountries();
+                                  });
+                                },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+
                       SizedBox(height: 10.h),
                       Align(
                         alignment: FractionalOffset.topLeft,
@@ -242,24 +262,36 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                         ),
                       ),
                       SizedBox(height: 10.h),
-                      SelectDropDown(
-                        navTitle: Strings.selectLanugages,
-                        placeholder: Strings.selectLanugages,
-                        selectedValues: _selectedLanguages,
-                        dataSource: _languageList,
-                        type: SelectType.multiple,
-                        dataSourceType: DataSourceType.languages,
-                        onDoneClicked: <T>(languages) {
-                          // setState(() {
-                          //   _selectedLanguages =
-                          //       languages as List<HiveLanguage>;
-                          // });
-                          setState(() {
-                            _selectedLanguages = List<HiveLanguage>.from(
-                                languages as List<dynamic>);
-                          });
-                        },
-                      ),
+
+                      StreamBuilder(
+                          stream: profileBloc.languages,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<HiveLanguage>?> snapshot) {
+                            if (snapshot.hasData) {
+                              return SelectDropDown(
+                                navTitle: Strings.selectLanugages,
+                                placeholder: Strings.selectLanugages,
+                                selectedValues: _selectedLanguages,
+                                dataSource: snapshot.data,
+                                type: SelectType.multiple,
+                                dataSourceType: DataSourceType.languages,
+                                onDoneClicked: <T>(languages) {
+                                  // setState(() {
+                                  //   _selectedLanguages =
+                                  //       languages as List<HiveLanguage>;
+                                  // });
+                                  setState(() {
+                                    _selectedLanguages =
+                                        List<HiveLanguage>.from(
+                                            languages as List<dynamic>);
+                                  });
+                                },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+
                       SizedBox(height: 10.h),
                       Align(
                         alignment: FractionalOffset.topLeft,

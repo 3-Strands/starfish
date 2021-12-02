@@ -50,8 +50,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     super.initState();
 
     _isPhoneNumberEmpty = false;
-    _countryCodeController.text = '+91';
-    _phoneNumberController.text = '9873572747';
+    //_countryCodeController.text = '+91';
+    //_phoneNumberController.text = '8997618642';
 
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
@@ -277,7 +277,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 if (kIsWeb) {
                   _authenticateOnWeb(phoneNumber);
                 } else {
-                  _authenticateOnDevice(phoneNumber);
+                  _authenticateOnDevice(
+                      _countryCodeController.text, _phoneNumberController.text);
                 }
               }
             },
@@ -295,9 +296,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  _authenticateOnDevice(String phoneNumber) async {
+  _authenticateOnDevice(String dialingCode, String phoneNumber) async {
+    final String phoneNumberWithDialingCode = dialingCode + phoneNumber;
     await auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber, // '+91 712 312 3456',
+      phoneNumber: phoneNumberWithDialingCode, // '+91 712 312 3456',
       verificationCompleted: (PhoneAuthCredential credential) {
         setState(() {
           _isLoading = false;
@@ -323,6 +325,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
             builder: (context) => OTPVerificationScreen(
               varificationId: verificationId,
               resentToken: resendToken,
+              dialingCode: dialingCode,
               phoneNumber: phoneNumber,
               timeout: 20,
             ),

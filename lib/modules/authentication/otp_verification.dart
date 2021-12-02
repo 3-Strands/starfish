@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:starfish/config/app_config.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
@@ -23,10 +24,12 @@ class OTPVerificationScreen extends StatefulWidget {
       this.varificationId,
       this.resentToken,
       required this.timeout,
+      required this.dialingCode,
       required this.phoneNumber})
       : super(key: key);
 
   final String title;
+  final String dialingCode;
   final String phoneNumber;
   final String? varificationId;
   final int? resentToken;
@@ -331,11 +334,31 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         .then((AuthenticateResponse _currentUser) {
       if (_currentUser.userToken.isNotEmpty) {
         StarfishSharedPreference().setLoginStatus(true);
-        StarfishSharedPreference().setAccessToken(widget.phoneNumber);
+        _setAccessToken(widget.dialingCode, widget.phoneNumber, _currentUser);
+        SyncService().clearAll();
 
-        Navigator.of(context).pushNamed(Routes.showProfile);
+        Future.wait([
+          SyncService().syncCurrentUser(),
+          SyncService().syncCountries(),
+          SyncService().syncLanguages(),
+        ]).then((value) {
+          Navigator.of(context).pushNamed(Routes.showProfile);
+        });
       }
     });
+  }
+
+  _setAccessToken(String dialingCode, String phoneNumnber,
+      AuthenticateResponse authenticateResponse) {
+    if (FlavorConfig.isDevelopment()) {
+      //SANDBOX
+      StarfishSharedPreference().setAccessToken(
+          widget.dialingCode.substring(1, widget.dialingCode.length) +
+              widget.phoneNumber);
+    } else if (FlavorConfig.isProduction()) {
+      // LIVE
+      StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
+    }
   }
 
   void _handleError(e) {

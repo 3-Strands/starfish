@@ -25,6 +25,7 @@ class Routes {
   static final routes = <String, WidgetBuilder>{
     phoneAuthentication: (BuildContext context) => PhoneAuthenticationScreen(),
     otpVerification: (BuildContext context) => OTPVerificationScreen(
+          dialingCode: '',
           phoneNumber: '',
           timeout: 0,
         ),

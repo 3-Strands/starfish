@@ -6,12 +6,12 @@ class StarfishSharedPreference {
 
   setLoginStatus(bool value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(_kUserLoggedIn, value);
+    await prefs.setBool(_kUserLoggedIn, value);
   }
 
   setAccessToken(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_kAccessToken, value);
+    await prefs.setString(_kAccessToken, value);
   }
 
   Future<bool> isUserLoggedIn() async {

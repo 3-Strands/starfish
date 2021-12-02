@@ -164,7 +164,21 @@ class SyncService {
     lastSyncBox.add(_lastSyncDateTime);
   }
 
-  syncCurrentUser() async {
+  void clearAll() async {
+    await lastSyncBox.clear();
+    //await languageBox.clear();
+    await currentUserBox.clear();
+    await actionBox.clear();
+    await materialBox.clear();
+    await groupBox.clear();
+    await materialFeedbackBox.clear();
+    await materialTopicBox.clear();
+    await materialTypeBox.clear();
+    await evaluationCategoryBox.clear();
+    await userBox.clear();
+  }
+
+  Future syncCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
       print("get current user");
       List<HiveGroupUser> groups = (user.groups
@@ -200,7 +214,7 @@ class SyncService {
         currentUserBox.putAt(0, _user);
       }
 
-      StarfishSharedPreference().setAccessToken(user.phone);
+      //StarfishSharedPreference().setAccessToken(user.phone);
     });
   }
 
@@ -238,7 +252,7 @@ class SyncService {
     });
   }
 
-  syncCountries() async {
+  Future syncCountries() async {
     await AppDataRepository()
         .getAllCountries()
         .then((ResponseStream<Country> country) {
@@ -268,7 +282,7 @@ class SyncService {
     });
   }
 
-  syncLanguages() async {
+  Future syncLanguages() async {
     languageBox.clear();
     await AppDataRepository()
         .getAllLanguages()
@@ -555,7 +569,7 @@ class SyncService {
         .createUpdateGroup(
             group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
 
-   // update flag(s) isNew and/or isUpdated to false
+    // update flag(s) isNew and/or isUpdated to false
     _hiveGroup.isNew = false;
     _hiveGroup.isUpdated = false;
 
@@ -595,7 +609,6 @@ class SyncService {
       if (_response.status == CreateUpdateGroupUsersResponse_Status.SUCCESS) {
         groupUser.isNew = false;
         groupUser.isUpdated = false;
-
       }
       /*groupUser.isNew = false;
       groupUser.isUpdated = false;

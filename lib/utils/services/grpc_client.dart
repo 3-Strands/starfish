@@ -60,7 +60,7 @@ class Singleton {
       metadata = {'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'};
     } else {
       metadata = {
-        'authorization': '9873572747',
+        'authorization': token,
         'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
       };
     }
