@@ -5,6 +5,7 @@
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
+import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:fixnum/fixnum.dart' as $fixnum;
@@ -98,6 +99,7 @@ class FileMetaData extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'filename')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'size')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'md5Checksum')
+    ..e<EntityType>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityType', $pb.PbFieldType.OE, defaultOrMaker: EntityType.ENTITY_UNSPECIFIED, valueOf: EntityType.valueOf, enumValues: EntityType.values)
     ..hasRequiredFields = false
   ;
 
@@ -107,6 +109,7 @@ class FileMetaData extends $pb.GeneratedMessage {
     $core.String? filename,
     $fixnum.Int64? size,
     $core.String? md5Checksum,
+    EntityType? entityType,
   }) {
     final _result = create();
     if (entityId != null) {
@@ -120,6 +123,9 @@ class FileMetaData extends $pb.GeneratedMessage {
     }
     if (md5Checksum != null) {
       _result.md5Checksum = md5Checksum;
+    }
+    if (entityType != null) {
+      _result.entityType = entityType;
     }
     return _result;
   }
@@ -179,6 +185,15 @@ class FileMetaData extends $pb.GeneratedMessage {
   $core.bool hasMd5Checksum() => $_has(3);
   @$pb.TagNumber(4)
   void clearMd5Checksum() => clearField(4);
+
+  @$pb.TagNumber(5)
+  EntityType get entityType => $_getN(4);
+  @$pb.TagNumber(5)
+  set entityType(EntityType v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasEntityType() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearEntityType() => clearField(5);
 }
 
 class UploadStatus extends $pb.GeneratedMessage {
@@ -258,9 +273,88 @@ class UploadStatus extends $pb.GeneratedMessage {
   void clearMessage() => clearField(3);
 }
 
+class DownloadError extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DownloadError', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<DownloadRequest>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'request', subBuilder: DownloadRequest.create)
+    ..aOM<FileMetaData>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fileMetaData', subBuilder: FileMetaData.create)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'error')
+    ..hasRequiredFields = false
+  ;
+
+  DownloadError._() : super();
+  factory DownloadError({
+    DownloadRequest? request,
+    FileMetaData? fileMetaData,
+    $core.String? error,
+  }) {
+    final _result = create();
+    if (request != null) {
+      _result.request = request;
+    }
+    if (fileMetaData != null) {
+      _result.fileMetaData = fileMetaData;
+    }
+    if (error != null) {
+      _result.error = error;
+    }
+    return _result;
+  }
+  factory DownloadError.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DownloadError.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DownloadError clone() => DownloadError()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DownloadError copyWith(void Function(DownloadError) updates) => super.copyWith((message) => updates(message as DownloadError)) as DownloadError; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DownloadError create() => DownloadError._();
+  DownloadError createEmptyInstance() => create();
+  static $pb.PbList<DownloadError> createRepeated() => $pb.PbList<DownloadError>();
+  @$core.pragma('dart2js:noInline')
+  static DownloadError getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DownloadError>(create);
+  static DownloadError? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  DownloadRequest get request => $_getN(0);
+  @$pb.TagNumber(1)
+  set request(DownloadRequest v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRequest() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRequest() => clearField(1);
+  @$pb.TagNumber(1)
+  DownloadRequest ensureRequest() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  FileMetaData get fileMetaData => $_getN(1);
+  @$pb.TagNumber(2)
+  set fileMetaData(FileMetaData v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasFileMetaData() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearFileMetaData() => clearField(2);
+  @$pb.TagNumber(2)
+  FileMetaData ensureFileMetaData() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.String get error => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set error($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasError() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearError() => clearField(3);
+}
+
 class DownloadRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DownloadRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..e<DownloadRequest_EntityType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityType', $pb.PbFieldType.OE, defaultOrMaker: DownloadRequest_EntityType.ENTITY_UNSPECIFIED, valueOf: DownloadRequest_EntityType.valueOf, enumValues: DownloadRequest_EntityType.values)
+    ..e<EntityType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityType', $pb.PbFieldType.OE, defaultOrMaker: EntityType.ENTITY_UNSPECIFIED, valueOf: EntityType.valueOf, enumValues: EntityType.values)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityId')
     ..pPS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'filenames')
     ..hasRequiredFields = false
@@ -268,7 +362,7 @@ class DownloadRequest extends $pb.GeneratedMessage {
 
   DownloadRequest._() : super();
   factory DownloadRequest({
-    DownloadRequest_EntityType? entityType,
+    EntityType? entityType,
     $core.String? entityId,
     $core.Iterable<$core.String>? filenames,
   }) {
@@ -306,9 +400,9 @@ class DownloadRequest extends $pb.GeneratedMessage {
   static DownloadRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  DownloadRequest_EntityType get entityType => $_getN(0);
+  EntityType get entityType => $_getN(0);
   @$pb.TagNumber(1)
-  set entityType(DownloadRequest_EntityType v) { setField(1, v); }
+  set entityType(EntityType v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasEntityType() => $_has(0);
   @$pb.TagNumber(1)
@@ -325,5 +419,115 @@ class DownloadRequest extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.List<$core.String> get filenames => $_getList(2);
+}
+
+enum DownloadResponse_Response {
+  metaData, 
+  chunk, 
+  error, 
+  notSet
+}
+
+class DownloadResponse extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, DownloadResponse_Response> _DownloadResponse_ResponseByTag = {
+    1 : DownloadResponse_Response.metaData,
+    2 : DownloadResponse_Response.chunk,
+    3 : DownloadResponse_Response.error,
+    0 : DownloadResponse_Response.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DownloadResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..oo(0, [1, 2, 3])
+    ..aOM<FileMetaData>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metaData', subBuilder: FileMetaData.create)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'chunk', $pb.PbFieldType.OY)
+    ..aOM<DownloadError>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'error', subBuilder: DownloadError.create)
+    ..hasRequiredFields = false
+  ;
+
+  DownloadResponse._() : super();
+  factory DownloadResponse({
+    FileMetaData? metaData,
+    $core.List<$core.int>? chunk,
+    DownloadError? error,
+  }) {
+    final _result = create();
+    if (metaData != null) {
+      _result.metaData = metaData;
+    }
+    if (chunk != null) {
+      _result.chunk = chunk;
+    }
+    if (error != null) {
+      _result.error = error;
+    }
+    return _result;
+  }
+  factory DownloadResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DownloadResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DownloadResponse clone() => DownloadResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DownloadResponse copyWith(void Function(DownloadResponse) updates) => super.copyWith((message) => updates(message as DownloadResponse)) as DownloadResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DownloadResponse create() => DownloadResponse._();
+  DownloadResponse createEmptyInstance() => create();
+  static $pb.PbList<DownloadResponse> createRepeated() => $pb.PbList<DownloadResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DownloadResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DownloadResponse>(create);
+  static DownloadResponse? _defaultInstance;
+
+  DownloadResponse_Response whichResponse() => _DownloadResponse_ResponseByTag[$_whichOneof(0)]!;
+  void clearResponse() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  FileMetaData get metaData => $_getN(0);
+  @$pb.TagNumber(1)
+  set metaData(FileMetaData v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMetaData() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMetaData() => clearField(1);
+  @$pb.TagNumber(1)
+  FileMetaData ensureMetaData() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get chunk => $_getN(1);
+  @$pb.TagNumber(2)
+  set chunk($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasChunk() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearChunk() => clearField(2);
+
+  @$pb.TagNumber(3)
+  DownloadError get error => $_getN(2);
+  @$pb.TagNumber(3)
+  set error(DownloadError v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasError() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearError() => clearField(3);
+  @$pb.TagNumber(3)
+  DownloadError ensureError() => $_ensure(2);
+}
+
+class FileTransferApi {
+  $pb.RpcClient _client;
+  FileTransferApi(this._client);
+
+  $async.Future<UploadStatus> upload($pb.ClientContext? ctx, FileData request) {
+    var emptyResponse = UploadStatus();
+    return _client.invoke<UploadStatus>(ctx, 'FileTransfer', 'Upload', request, emptyResponse);
+  }
+  $async.Future<DownloadResponse> download($pb.ClientContext? ctx, DownloadRequest request) {
+    var emptyResponse = DownloadResponse();
+    return _client.invoke<DownloadResponse>(ctx, 'FileTransfer', 'Download', request, emptyResponse);
+  }
 }
 

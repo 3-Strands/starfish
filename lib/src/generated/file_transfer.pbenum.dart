@@ -9,6 +9,21 @@
 import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+class EntityType extends $pb.ProtobufEnum {
+  static const EntityType ENTITY_UNSPECIFIED = EntityType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ENTITY_UNSPECIFIED');
+  static const EntityType MATERIAL = EntityType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL');
+
+  static const $core.List<EntityType> values = <EntityType> [
+    ENTITY_UNSPECIFIED,
+    MATERIAL,
+  ];
+
+  static final $core.Map<$core.int, EntityType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static EntityType? valueOf($core.int value) => _byValue[value];
+
+  const EntityType._($core.int v, $core.String n) : super(v, n);
+}
+
 class UploadStatus_Status extends $pb.ProtobufEnum {
   static const UploadStatus_Status UNKNOWN = UploadStatus_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNKNOWN');
   static const UploadStatus_Status OK = UploadStatus_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'OK');
@@ -24,20 +39,5 @@ class UploadStatus_Status extends $pb.ProtobufEnum {
   static UploadStatus_Status? valueOf($core.int value) => _byValue[value];
 
   const UploadStatus_Status._($core.int v, $core.String n) : super(v, n);
-}
-
-class DownloadRequest_EntityType extends $pb.ProtobufEnum {
-  static const DownloadRequest_EntityType ENTITY_UNSPECIFIED = DownloadRequest_EntityType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ENTITY_UNSPECIFIED');
-  static const DownloadRequest_EntityType MATERIAL = DownloadRequest_EntityType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL');
-
-  static const $core.List<DownloadRequest_EntityType> values = <DownloadRequest_EntityType> [
-    ENTITY_UNSPECIFIED,
-    MATERIAL,
-  ];
-
-  static final $core.Map<$core.int, DownloadRequest_EntityType> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static DownloadRequest_EntityType? valueOf($core.int value) => _byValue[value];
-
-  const DownloadRequest_EntityType._($core.int v, $core.String n) : super(v, n);
 }
 
