@@ -116,7 +116,9 @@ class _MultiSelectState extends State<MultiSelect> {
         _selectedLanguages.forEach((element) {
           final index = _items.indexWhere(
               (item) => (item.data as HiveLanguage).id == element.id);
-          _items[index].isSelected = true;
+          if (index > -1) {
+            _items[index].isSelected = true;
+          }
         });
 
         break;
