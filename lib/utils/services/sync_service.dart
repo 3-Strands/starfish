@@ -354,7 +354,7 @@ class SyncService {
     });
   }
 
-  syncMaterialTopics() async {
+  Future syncMaterialTopics() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -393,7 +393,7 @@ class SyncService {
     });
   }
 
-  syncMaterialTypes() async {
+  Future syncMaterialTypes() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -480,7 +480,7 @@ class SyncService {
     });
   }
 
-  syncEvaluationCategories() async {
+  Future syncEvaluationCategories() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */

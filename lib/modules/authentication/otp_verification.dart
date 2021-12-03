@@ -7,6 +7,7 @@ import 'package:starfish/config/app_config.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -331,20 +332,44 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     }*/
     _currentUserRepository.apiProvider
         .authenticate(jwtToken, userName ?? '')
-        .then((AuthenticateResponse _currentUser) {
+        .then((AuthenticateResponse _currentUser) async {
       if (_currentUser.userToken.isNotEmpty) {
         StarfishSharedPreference().setLoginStatus(true);
         _setAccessToken(widget.dialingCode, widget.phoneNumber, _currentUser);
-        SyncService().clearAll();
 
-        Future.wait([
-          SyncService().syncCurrentUser(),
-          SyncService().syncCountries(),
-          SyncService().syncLanguages(),
-        ]).then((value) {
-          Navigator.of(context).pushNamed(Routes.showProfile);
+        bool hasCurrentUser =
+            _currentUserRepository.dbProvider.hasCurrentUser();
+
+        if (!hasCurrentUser) {
+          _prepareAppAndNavigate();
+          return;
+        }
+
+        HiveCurrentUser _existingUser =
+            await _currentUserRepository.dbProvider.getUser();
+        CurrentUserRepository().apiProvider.getCurrentUser().then((user) {
+          if (_existingUser.id == user.id) {
+            Navigator.of(context).pushNamed(Routes.showProfile);
+          } else {
+            _prepareAppAndNavigate();
+          }
         });
       }
+    });
+  }
+
+  _prepareAppAndNavigate() {
+    SyncService().clearAll();
+
+    Future.wait([
+      SyncService().syncCurrentUser(),
+      SyncService().syncCountries(),
+      SyncService().syncLanguages(),
+      SyncService().syncMaterialTopics(),
+      SyncService().syncMaterialTypes(),
+      SyncService().syncEvaluationCategories(),
+    ]).then((value) {
+      Navigator.of(context).pushNamed(Routes.showProfile);
     });
   }
 
