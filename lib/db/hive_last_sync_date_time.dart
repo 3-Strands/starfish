@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_last_sync_date_time.g.dart';
 
@@ -25,4 +26,12 @@ class HiveLastSyncDateTime {
     required this.minute,
     required this.second,
   });
+}
+
+extension HiveLastSyncDateTimeExt on HiveLastSyncDateTime {
+  DateTime toDateTime() {
+    String dateString =
+        '${this.day}-${this.month}-${this.year} ${this.hour}:${this.minute}';
+    return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy HH:mm');
+  }
 }

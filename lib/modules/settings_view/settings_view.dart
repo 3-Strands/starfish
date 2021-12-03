@@ -11,9 +11,11 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -52,6 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
+  late Box<HiveLastSyncDateTime> _lastSyncDataTimeBox;
 
   String _countyCode = '';
   String _mobileNumber = '';
@@ -67,10 +70,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    _lastSyncDataTimeBox =
+        Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
 
     _getCurrentUser();
     _getAllCountries();
     _getGroups();
+  }
+
+  String lastSyncDataTime() {
+    HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
+
+    return DateTimeUtils.formatDate(
+        _lastSyncDateTime.toDateTime(), "dd-MMM-yyyy HH:mm");
   }
 
   void _getCurrentUser() {
@@ -777,18 +789,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       alignment: FractionalOffset.topLeft,
                       child: Text.rich(
                         TextSpan(
-                          text: Strings.lastSuccessfullSync + ': ',
+                          text: "${Strings.lastSuccessfullSync}: ",
                           style: TextStyle(
-                              color: AppColors.appTitle,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 22.sp),
+                            color: AppColors.appTitle,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18.sp,
+                          ),
                           children: [
                             TextSpan(
-                              text: '',
+                              text: lastSyncDataTime(),
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Roboto',
-                                fontSize: ScreenUtil().setSp(22),
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
