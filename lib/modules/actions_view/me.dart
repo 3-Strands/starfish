@@ -203,7 +203,7 @@ class _MeState extends State<Me> {
                         height: 44.h,
                         width: 169.w,
                         child: Text(
-                          Strings.actionFollowInstructions,
+                          action.name ?? '',
                           maxLines: 2,
                           style: TextStyle(
                               fontSize: 16.sp,
