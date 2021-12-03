@@ -56,7 +56,7 @@ class HiveMaterial extends HiveObject {
   HiveMaterial({
     this.id,
     this.creatorId,
-    this.status,
+    this.status = 0,
     this.title,
     this.description,
     this.url,
@@ -98,9 +98,9 @@ class HiveMaterial extends HiveObject {
     return Material(
       id: this.id,
       creatorId: this.creatorId,
-      status: Material_Status.valueOf(this.status!),
-      visibility: Material_Visibility.valueOf(this.visibility!),
-      editability: Material_Editability.valueOf(this.editability!),
+      status: Material_Status.valueOf(this.status ?? 0),
+      visibility: Material_Visibility.valueOf(this.visibility ?? 0),
+      editability: Material_Editability.valueOf(this.editability ?? 0),
       title: this.title,
       description: this.description,
       targetAudience: this.targetAudience,
@@ -126,7 +126,7 @@ extension HiveMaterialExt on HiveMaterial {
   bool get isAssignedToMe {
     bool isAssigned = false;
     ActionProvider().getAllActions().forEach((action) {
-      if ((action.materialId != null || action.materialId!.isNotEmpty) &&
+      if ((action.materialId != null && action.materialId!.isNotEmpty) &&
           action.isIndividualAction &&
           action.materialId == this.id) {
         isAssigned = true;
@@ -139,7 +139,7 @@ extension HiveMaterialExt on HiveMaterial {
   bool get isAssignedToGroupWithLeaderRole {
     bool isAssigned = false;
     ActionProvider().getAllActions().forEach((action) {
-      if ((action.materialId != null || action.materialId!.isNotEmpty) &&
+      if ((action.materialId != null && action.materialId!.isNotEmpty) &&
           !action.isIndividualAction &&
           (action.leaders != null && action.leaders!.length > 0) &&
           action.materialId == this.id) {
