@@ -1,6 +1,9 @@
 import 'package:hive/hive.dart';
-import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -53,7 +56,15 @@ class HiveGroupUser {
 
 extension HiveGroupUserExt on HiveGroupUser {
   HiveUser? get user {
-    return UserRepository().dbProvider.getUserById(this.userId!);
+    HiveUser? _user = CurrentUserRepository().dbProvider.user;
+
+    if (_user.id == this.userId) {
+      return _user;
+    }
+
+    _user = UserRepository().dbProvider.getUserById(this.userId!);
+
+    return _user;
   }
 
   HiveGroup? get group {
@@ -61,7 +72,7 @@ extension HiveGroupUserExt on HiveGroupUser {
   }
 
   String get name {
-    return user != null ? user!.name! : user!.id!;
+    return user != null ? user!.name! : 'Unknown User';
   }
 
   String get phone {
