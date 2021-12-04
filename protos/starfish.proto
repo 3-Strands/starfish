@@ -542,6 +542,9 @@ message Group {
 
     // A description of the group.
     string description = 8;
+
+    // The email address of the EveryLanguage user responsible for linking this group to a project.
+    string link_email = 9;
 }
 
 // Connection between a User and a Group
