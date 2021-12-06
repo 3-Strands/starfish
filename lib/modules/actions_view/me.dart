@@ -214,7 +214,9 @@ class _MeState extends State<Me> {
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Row(
+                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         height: 44.h,
@@ -229,32 +231,34 @@ class _MeState extends State<Me> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      SizedBox(
-                        width: 50.sp,
-                      ),
-                      Icon(
-                        Icons.thumb_up_alt_outlined,
-                        size: 14.sp,
-                      ),
-                      SizedBox(
-                        width: 4.sp,
-                      ),
-                      ActionStatusWidget(
-                        onTap: (ActionStatus newStatus) {
-                          setModalState(() {
-                            hiveActionUser!.status =
-                                newStatus.toActionUserStatus().value;
-                          });
-                          setState(
-                              () {}); // To trigger the main view to redraw.
-                          bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser!);
-                        },
-                        actionStatus:
-                            ActionUser_Status.valueOf(hiveActionUser!.status!)!
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/hand_right.png',
+                            height: 14.sp,
+                            width: 14.sp,
+                          ),
+                          SizedBox(
+                            width: 4.sp,
+                          ),
+                          ActionStatusWidget(
+                            onTap: (ActionStatus newStatus) {
+                              setModalState(() {
+                                hiveActionUser!.status =
+                                    newStatus.toActionUserStatus().value;
+                              });
+                              setState(
+                                  () {}); // To trigger the main view to redraw.
+                              bloc.actionBloc
+                                  .createUpdateActionUser(hiveActionUser!);
+                            },
+                            actionStatus: ActionUser_Status.valueOf(
+                                    hiveActionUser!.status!)!
                                 .convertTo(),
-                        height: 36.h,
-                        width: 99.w,
+                            height: 36.h,
+                            width: 102.w,
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -277,7 +281,7 @@ class _MeState extends State<Me> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
+                      '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
                       maxLines: 1,
                       style: TextStyle(
                           fontSize: 16.sp,
@@ -358,7 +362,12 @@ class _MeState extends State<Me> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.thumb_up_outlined, size: 14.sp),
+                                //Icon(Icons.thumb_up_outlined, size: 14.sp),
+                                Image.asset(
+                                  'assets/images/thumbs_up.png',
+                                  height: 14.sp,
+                                  width: 14.sp,
+                                ),
                                 SizedBox(
                                   width: 4.sp,
                                 ),
@@ -399,7 +408,12 @@ class _MeState extends State<Me> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.thumb_down_outlined, size: 14.sp),
+                                //Icon(Icons.thumb_down_outlined, size: 14.sp),
+                                Image.asset(
+                                  'assets/images/thumbs_down.png',
+                                  height: 14.sp,
+                                  width: 14.sp,
+                                ),
                                 SizedBox(
                                   width: 4.sp,
                                 ),
