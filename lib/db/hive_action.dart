@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_action_user.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
@@ -10,6 +12,9 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/action_user_status.dart';
+import 'package:starfish/repository/action_repository.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 part 'hive_action.g.dart';
@@ -197,9 +202,28 @@ extension HiveActionExt on HiveAction {
   }
 
   ActionStatus get actionStatus {
-    HiveUser currentUser = CurrentUserProvider().user;
+    /*HiveUser currentUser = CurrentUserProvider().user;
 
-    return currentUser.actionStatusbyId(this);
+    return currentUser.actionStatusbyId(this);*/
+
+    return this.mineAction != null
+        ? ActionUser_Status.valueOf(mineAction!.status!)!.convertTo()
+        : ActionStatus.UNSPECIFIED_STATUS;
+  }
+
+  HiveActionUser? get mineAction {
+    HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
+    HiveActionUser? hiveActionUser = _currentUser.actions
+        .firstWhereOrNull((element) => element.actionId == this.id);
+
+    // Check if action is only in local DB
+    if (hiveActionUser == null) {
+      hiveActionUser = ActionRepository()
+          .getAllActionsUser()
+          .firstWhereOrNull((element) => element.actionId == this.id);
+    }
+
+    return hiveActionUser;
   }
   /*ActionStatus get actionStatus {
     HiveUser? hiveUser;

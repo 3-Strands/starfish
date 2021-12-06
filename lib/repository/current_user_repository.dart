@@ -13,4 +13,6 @@ class CurrentUserRepository {
       apiProvider.updateCurrentUser(user, fieldMaskPaths);
 
   Future<HiveCurrentUser> getUserFromDB() => dbProvider.getUser();
+
+  HiveCurrentUser getUserSyncFromDB() => dbProvider.getUserSync();
 }

@@ -27,4 +27,17 @@ extension ActionStatusExt on ActionStatus {
   String get about => selfValues[this]!;
 
   String get aboutGroup => groupValues[this]!;
+
+  ActionUser_Status toActionUserStatus() {
+    switch (this) {
+      case ActionStatus.DONE:
+        return ActionUser_Status.COMPLETE;
+      case ActionStatus.NOT_DONE:
+      case ActionStatus.OVERDUE:
+        return ActionUser_Status.INCOMPLETE;
+      case ActionStatus.UNSPECIFIED_STATUS:
+      default:
+        return ActionUser_Status.UNSPECIFIED_STATUS;
+    }
+  }
 }

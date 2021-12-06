@@ -15,6 +15,10 @@ class CurrentUserProvider {
     return _currentUserBox.values.first;
   }
 
+  HiveCurrentUser getUserSync() {
+    return _currentUserBox.values.first;
+  }
+
   bool hasCurrentUser() {
     return _currentUserBox.values.firstOrNull != null;
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:collection/collection.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
@@ -12,8 +14,11 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
+import 'package:starfish/repository/action_repository.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -151,13 +156,24 @@ class _MeState extends State<Me> {
 
   void _updateActionStatus() {}
 
-  void _onActionSelection(HiveAction action) {
-    HiveActionUser hiveActionUser = new HiveActionUser();
+  void _onActionSelection(HiveAction action) async {
+    /*HiveActionUser hiveActionUser = new HiveActionUser();
     hiveActionUser.actionId = action.id!;
     hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
 
     final dbProvider = CurrentUserProvider();
-    dbProvider.getUser().then((user) => {hiveActionUser.userId = user.id});
+    dbProvider.getUser().then((user) => {hiveActionUser.userId = user.id});*/
+
+    HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
+
+    HiveActionUser? hiveActionUser = action.mineAction;
+
+    if (hiveActionUser == null) {
+      hiveActionUser = new HiveActionUser();
+      hiveActionUser.actionId = action.id!;
+      hiveActionUser.userId = _currentUser.id;
+      hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
+    }
 
     showModalBottomSheet(
         context: context,
@@ -172,8 +188,9 @@ class _MeState extends State<Me> {
         enableDrag: true,
         builder: (context) {
           final bloc = Provider.of(context);
+
           return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
+              builder: (BuildContext context, StateSetter setModalState) {
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +230,7 @@ class _MeState extends State<Me> {
                         ),
                       ),
                       SizedBox(
-                        width: 53.sp,
+                        width: 50.sp,
                       ),
                       Icon(
                         Icons.thumb_up_alt_outlined,
@@ -223,7 +240,22 @@ class _MeState extends State<Me> {
                         width: 4.sp,
                       ),
                       ActionStatusWidget(
-                          title: ActionStatus.DONE, height: 36.h, width: 99.w)
+                        onTap: (ActionStatus newStatus) {
+                          setModalState(() {
+                            hiveActionUser!.status =
+                                newStatus.toActionUserStatus().value;
+                          });
+                          setState(
+                              () {}); // To trigger the main view to redraw.
+                          bloc.actionBloc
+                              .createUpdateActionUser(hiveActionUser!);
+                        },
+                        actionStatus:
+                            ActionUser_Status.valueOf(hiveActionUser!.status!)!
+                                .convertTo(),
+                        height: 36.h,
+                        width: 99.w,
+                      ),
                     ],
                   ),
                 ),
@@ -271,8 +303,7 @@ class _MeState extends State<Me> {
                                     hintText:
                                         'Write an answer to the qustion here'),
                                 onSubmitted: (value) {
-                                  print(value);
-                                  hiveActionUser.userResponse = value;
+                                  hiveActionUser!.userResponse = value;
                                   bloc.actionBloc
                                       .createUpdateActionUser(hiveActionUser);
                                 },
@@ -303,15 +334,15 @@ class _MeState extends State<Me> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
+                        // GOOD
                         onTap: () {
-                          print('GOOD tap');
-                          setState(() {
-                            hiveActionUser.evaluation =
+                          setModalState(() {
+                            hiveActionUser!.evaluation =
                                 ActionUser_Evaluation.GOOD.value;
                           });
 
                           bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser);
+                              .createUpdateActionUser(hiveActionUser!);
                         },
                         child: Container(
                           height: 36.sp,
@@ -344,15 +375,15 @@ class _MeState extends State<Me> {
                         ),
                       ),
                       InkWell(
+                        // NOT SO GOOD
                         onTap: () {
-                          print('BAD tap: $hiveActionUser');
-                          setState(() {
-                            hiveActionUser.evaluation =
+                          setModalState(() {
+                            hiveActionUser!.evaluation =
                                 ActionUser_Evaluation.BAD.value;
                           });
 
                           bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser);
+                              .createUpdateActionUser(hiveActionUser!);
                         },
                         child: Container(
                           height: 36.sp,
@@ -362,7 +393,7 @@ class _MeState extends State<Me> {
                             color: ActionUser_Evaluation.valueOf(
                                         hiveActionUser.evaluation!) ==
                                     ActionUser_Evaluation.BAD
-                                ? Color(0xFF6DE26B)
+                                ? Color(0xFFFFBE4A)
                                 : Color(0xFFC9C9C9),
                           ),
                           child: Row(
@@ -616,8 +647,8 @@ class MyActionListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ActionStatusWidget(
-                    title: action
-                        .actionStatus, //TODO: should have the status of the action for the user
+                    onTap: (_) {},
+                    actionStatus: action.actionStatus,
                     height: 30.h,
                     width: 130.w,
                   ),
