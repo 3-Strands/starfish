@@ -866,7 +866,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _widgetList.add(header);
 
     for (HiveEdit edit in group.editHistory ?? []) {
-      _widgetList.add(HistoryItem(edit: edit));
+      _widgetList.add(HistoryItem(edit: edit, type: 'Group'));
     }
 
     return _widgetList;

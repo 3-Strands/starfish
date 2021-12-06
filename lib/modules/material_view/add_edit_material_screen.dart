@@ -7,6 +7,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/material_bloc.dart';
+import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -64,6 +67,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   late String _choiceSeenByText = Strings.seenBy;
   late String _choiceEditedByText = Strings.editedBy;
 
+  late AppBloc bloc;
+
   bool _isEditMode = false;
 
   @override
@@ -117,6 +122,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
+
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
       appBar: AppBar(
@@ -651,7 +658,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     _widgetList.add(header);
 
     for (HiveEdit edit in material.editHistory ?? []) {
-      _widgetList.add(HistoryItem(edit: edit));
+      _widgetList.add(HistoryItem(
+        edit: edit,
+        type: 'Material',
+      ));
     }
 
     return _widgetList;

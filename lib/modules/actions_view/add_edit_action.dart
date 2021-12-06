@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
-import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +17,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
+import 'package:starfish/modules/actions_view/select_action.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
@@ -47,6 +47,7 @@ class _AddEditActionState extends State<AddEditAction>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late AppBloc bloc;
+  late HiveAction? _actionToBeReused;
 
   final TextEditingController _actionNameController = TextEditingController();
   Action_Type? _selectedActionType = Action_Type.TEXT_INSTRUCTION;
@@ -96,6 +97,7 @@ class _AddEditActionState extends State<AddEditAction>
     }
 
     _controller = AnimationController(vsync: this);
+    _actionToBeReused = null;
   }
 
   @override
@@ -125,6 +127,19 @@ class _AddEditActionState extends State<AddEditAction>
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
 
+    if (_actionToBeReused != null) {
+      _instructions = _actionToBeReused!.instructions;
+      _question = _actionToBeReused!.question;
+
+      _selectedActionType = Action_Type.valueOf(_actionToBeReused!.type!) ??
+          Action_Type.TEXT_INSTRUCTION;
+      _actionNameController.text = _actionToBeReused!.name!;
+      _selectedMaterial = _actionToBeReused!.material;
+
+      _selectedGroups =
+          _actionToBeReused!.group != null ? [_actionToBeReused!.group!] : [];
+      _dueDate = _actionToBeReused!.dateDue?.toDateTime();
+    }
     return Scaffold(
       backgroundColor: AppColors.actionScreenBG,
       appBar: AppBar(
@@ -178,14 +193,18 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 13.h),
                   InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(Routes.selectActions)
-                          .then(
-                            (value) => FocusScope.of(context).requestFocus(
-                              new FocusNode(),
-                            ),
-                          );
+                    onTap: () async {
+                      HiveAction? action = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => SelectActions(),
+                          fullscreenDialog: true,
+                        ),
+                      );
+
+                      setState(() {
+                        _actionToBeReused = action;
+                      });
                     },
                     child: Container(
                       height: 52.h,
@@ -202,7 +221,9 @@ class _AddEditActionState extends State<AddEditAction>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                Strings.selectAnAction,
+                                _actionToBeReused != null
+                                    ? _actionToBeReused!.name!
+                                    : Strings.selectAnAction,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: 16.sp, color: Color(0xFF434141)),
@@ -434,7 +455,10 @@ class _AddEditActionState extends State<AddEditAction>
     _widgetList.add(header);
 
     for (HiveEdit edit in action.editHistory ?? []) {
-      _widgetList.add(HistoryItem(edit: edit));
+      _widgetList.add(HistoryItem(
+        edit: edit,
+        type: "Action",
+      ));
     }
 
     return _widgetList;

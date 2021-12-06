@@ -17,15 +17,18 @@ class ActionBloc extends Object {
   final ActionRepository actionRepository = ActionRepository();
   late BehaviorSubject<Map<HiveGroup, List<HiveAction>>> _actionsForMe;
   late BehaviorSubject<Map<HiveGroup, List<HiveAction>>> _actionsForGroup;
+  late BehaviorSubject<List<HiveAction>> _actionsToReuse;
 
   ActionFilter actionFilter = ActionFilter.THIS_MONTH;
 
   String query = '';
+  String reuseActionQuery = '';
 
   ActionBloc() {
     //initializes the subject with element already
     _actionsForMe = new BehaviorSubject<Map<HiveGroup, List<HiveAction>>>();
     _actionsForGroup = new BehaviorSubject<Map<HiveGroup, List<HiveAction>>>();
+    _actionsToReuse = new BehaviorSubject<List<HiveAction>>();
   }
 
   Stream<Map<HiveGroup, List<HiveAction>>> get actionsForMe =>
@@ -33,6 +36,8 @@ class ActionBloc extends Object {
 
   Stream<Map<HiveGroup, List<HiveAction>>> get actionsForGroup =>
       _actionsForGroup.stream;
+
+  Stream<List<HiveAction>> get actions => _actionsToReuse.stream;
 
   Future<void> createUpdateAction(HiveAction action) async {
     return actionRepository.createUpdateActionInDB(action).then((value) {
@@ -144,6 +149,17 @@ class ActionBloc extends Object {
     }).whenComplete(
       () => {_actionsForMe.sink.add(_groupActionListMap)},
     );
+  }
+
+  fetchActions() async {
+    _actionsToReuse.sink.add(actionRepository.dbProvider
+        .getAllActions()
+        .where((element) => reuseActionQuery.isEmpty
+            ? true
+            : element.name!
+                .toLowerCase()
+                .contains(reuseActionQuery.toLowerCase()))
+        .toList());
   }
 
   /*fetchMyActionsFromDB() async {

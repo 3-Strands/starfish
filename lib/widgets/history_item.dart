@@ -8,10 +8,12 @@ import 'package:starfish/widgets/seprator_line_widget.dart';
 
 class HistoryItem extends StatelessWidget {
   final HiveEdit? edit;
+  final String type;
 
   HistoryItem({
     Key? key,
     required this.edit,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -26,8 +28,8 @@ class HistoryItem extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
-                    ? 'Material added by: '
-                    : 'Material edited by: ',
+                    ? '$type added by: '
+                    : '$type edited by: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,
@@ -52,8 +54,8 @@ class HistoryItem extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
-                    ? 'Material added on: '
-                    : 'Material edited on: ',
+                    ? '$type added on: '
+                    : '$type edited on: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,
