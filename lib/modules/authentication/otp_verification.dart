@@ -45,14 +45,26 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   bool _otpEmpty = true;
   bool _isLoading = false;
 
-  late int _timeout;
   late Timer _timer;
+
+  late String _title;
+  late String _dialingCode;
+  late String _phoneNumber;
+  late String? _verificationId;
+  late int? _resendToken;
+  late int _timeout;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
+    _title = widget.title;
+    _dialingCode = widget.dialingCode;
+    _phoneNumber = widget.phoneNumber;
+    _verificationId = widget.varificationId;
+    _resendToken = widget.resentToken;
     _timeout = widget.timeout;
+
     _startResentOptTimer();
     super.initState();
   }
@@ -196,7 +208,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   Container _resendOTPContainer() {
     return Container(
       height: 46.h,
-      // padding: EdgeInsets.all(19.0),
       color: Colors.transparent,
       child: (_timeout > 0)
           ? Text(
@@ -204,7 +215,27 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               style: resentOTPTextStyle,
             )
           : TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                await auth.verifyPhoneNumber(
+                  phoneNumber: _dialingCode + _phoneNumber,
+                  verificationCompleted: (PhoneAuthCredential credential) {
+                    debugPrint('credential ==>> $credential');
+                  },
+                  verificationFailed: (FirebaseAuthException e) {},
+                  codeSent: (String verificationId, int? resendToken) async {
+                    _verificationId = verificationId;
+                    _resendToken = resendToken;
+                    setState(() {
+                      _timeout = 20;
+                    });
+                  },
+                  forceResendingToken: _resendToken,
+                  timeout: Duration(seconds: 20),
+                  codeAutoRetrievalTimeout: (String verificationId) {
+                    print('codeAutoRetrievalTimeout ==>> $verificationId');
+                  },
+                );
+              },
               child: Text(
                 Strings.resentOTP,
                 style: resentOTPTextStyle,
@@ -278,7 +309,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   try {
                     PhoneAuthCredential credential =
                         PhoneAuthProvider.credential(
-                            verificationId: widget.varificationId ?? '',
+                            verificationId: _verificationId ?? '',
                             smsCode: _smsCode);
 
                     auth.signInWithCredential(credential).then((data) => {
@@ -327,7 +358,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         .authenticate(jwtToken, userName ?? '');
     if (_currentUser.userToken.isNotEmpty) {
       StarfishSharedPreference().setLoginStatus(true);
-      StarfishSharedPreference().setAccessToken(widget.phoneNumber);
+      StarfishSharedPreference().setAccessToken(_phoneNumber);
       Navigator.of(context).pushNamed(Routes.showProfile);
     }*/
     _currentUserRepository.apiProvider
@@ -335,7 +366,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         .then((AuthenticateResponse _currentUser) async {
       if (_currentUser.userToken.isNotEmpty) {
         StarfishSharedPreference().setLoginStatus(true);
-        _setAccessToken(widget.dialingCode, widget.phoneNumber, _currentUser);
+        _setAccessToken(_dialingCode, _phoneNumber, _currentUser);
 
         bool hasCurrentUser =
             _currentUserRepository.dbProvider.hasCurrentUser();
@@ -383,8 +414,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     if (FlavorConfig.isDevelopment()) {
       //SANDBOX
       StarfishSharedPreference().setAccessToken(
-          widget.dialingCode.substring(1, widget.dialingCode.length) +
-              widget.phoneNumber);
+          _dialingCode.substring(1, _dialingCode.length) + _phoneNumber);
     } else if (FlavorConfig.isProduction()) {
       // LIVE
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
