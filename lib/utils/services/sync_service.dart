@@ -131,7 +131,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     await lock.synchronized(() => syncLocalActionsToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
-    showAlert(NavigationService.navigatorKey.currentContext!);
+    //showAlert(NavigationService.navigatorKey.currentContext!);
 
     syncCurrentUser();
     syncUsers();
@@ -145,12 +145,12 @@ class SyncService {
     syncEvaluationCategories();
     syncGroup();
 
-    if (_isDialogShowing) {
+    /*if (_isDialogShowing) {
       Future.delayed(Duration(seconds: 1), () {
         _isDialogShowing = false; // set it `false` since dialog is closed
         Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
       });
-    }
+    }*/
 
     DateTime now = DateTime.now();
     //print(DateFormat('HH:mm:ss').format(now));
@@ -218,7 +218,7 @@ class SyncService {
     });
   }
 
-  syncUsers() async {
+  Future syncUsers() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -318,7 +318,7 @@ class SyncService {
     });
   }
 
-  syncMaterial() async {
+  Future syncMaterial() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -459,7 +459,7 @@ class SyncService {
     });
   }
 
-  syncGroup() async {
+  Future syncGroup() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -619,7 +619,7 @@ class SyncService {
     }
   }
 
-  syncActions() async {
+  Future syncActions() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */

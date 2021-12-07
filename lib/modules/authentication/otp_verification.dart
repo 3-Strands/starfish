@@ -368,6 +368,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       SyncService().syncMaterialTopics(),
       SyncService().syncMaterialTypes(),
       SyncService().syncEvaluationCategories(),
+      SyncService().syncMaterial(),
+      SyncService().syncGroup(),
+      SyncService().syncActions(),
+      SyncService().syncUsers(),
     ]).then((value) {
       Navigator.of(context).pushNamed(Routes.showProfile);
     });
