@@ -290,9 +290,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               .pickFiles(allowMultiple: true);
 
                           if (result != null) {
-                            List<File> files = result.paths
+                            List<File> _selectedFiles = result.paths
                                 .map((path) => File(path!))
                                 .toList();
+
+                            //bloc.materialBloc.setSelectedFiles(_selectedFiles);
+
+                            bloc.materialBloc.uploadMaterial(
+                                "bbcf5dfe-897d-4c59-81fc-2201a149ea2c",
+                                _selectedFiles.first);
                           } else {
                             // User canceled the picker
                           }

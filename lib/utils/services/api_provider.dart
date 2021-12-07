@@ -1,9 +1,13 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:grpc/grpc.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
+import 'package:starfish/src/generated/file_transfer.pb.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'grpc_client.dart';
 
 class ApiProvider {
@@ -262,5 +266,24 @@ class ApiProvider {
       await getGrpcClient();
     }
     return client!.deleteActions(streamRequest);
+  }
+
+  Future<ResponseStream<UploadStatus>> uploadFile(
+      Stream<FileData> request) async {
+    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
+        host: "sandbox-api.everylanguage.app",
+        port: 443,
+        transportSecure: true);
+
+    Map<String, String>? metadata = {
+      'authorization': await StarfishSharedPreference().getAccessToken(),
+      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
+    };
+    FileTransferClient client = FileTransferClient(
+      channel,
+      options: CallOptions(metadata: metadata),
+    );
+
+    return client.upload(request);
   }
 }

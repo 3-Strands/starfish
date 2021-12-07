@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/src/generated/file_transfer.pb.dart';
 
 class MaterialBloc extends Object {
   MaterialRepository materialRepository = MaterialRepository();
@@ -19,6 +24,7 @@ class MaterialBloc extends Object {
   // Add data to Stream
   Stream<List<HiveMaterial>> get materials => _materials.stream;
 
+  List<File> _selectedFiles = [];
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
@@ -91,7 +97,47 @@ class MaterialBloc extends Object {
     });
   }
 
+  StreamController<FileData> _controller = StreamController<FileData>();
+
+  Stream<FileData> get fileDataStream => _controller.stream;
+
+  uploadMaterial(String entityId, File file) async* {
+    //BehaviorSubject<FileData> _fileData = new BehaviorSubject<FileData>();
+
+// Add data to Stream
+    //Stream<FileData> fileDataStream = _controller.stream;
+
+    //File file = _selectedFiles.first;
+    //Stream<List<int>> inputStream = file.openRead();
+
+    FileMetaData metaData = FileMetaData(
+      entityId: entityId,
+      filename: file.path.split("/").last,
+      entityType: EntityType.MATERIAL,
+    );
+
+    FileData fileMetaData = FileData(metaData: metaData);
+    //FileData fileData = FileData(chunk: chunk);
+
+    _controller.sink.add(fileMetaData);
+    //_fileData.sink.add(fileData);
+
+    materialRepository.apiProvider
+        .uploadFile(Stream.value(fileMetaData))
+        .then((responseStream) {
+      print("UploadStatus: =>>");
+      responseStream.listen((value) {
+        print("UploadStatus: $value");
+      });
+    });
+  }
+
+  void setSelectedFiles(List<File> selectedFiles) {
+    _selectedFiles = selectedFiles;
+  }
+
   void dispose() {
     _materials.close();
+    _controller.close();
   }
 }
