@@ -253,7 +253,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       List<InviteContact> _contactList = [];
       contactList.forEach((Contact contact) {
         // Add only contacts having atleast one phone numbers added
-        if (contact.phones != null) {
+        if (contact.phones != null && contact.phones!.length > 0) {
           _contactList.add(InviteContact(contact: contact));
           // _filteredContactList.add(InviteContact(contact: contact));
         }
