@@ -152,6 +152,10 @@ class SyncService {
       });
     }*/
 
+    updateLastSyncDateTime();
+  }
+
+  void updateLastSyncDateTime() {
     DateTime now = DateTime.now();
     //print(DateFormat('HH:mm:ss').format(now));
     HiveLastSyncDateTime _lastSyncDateTime = new HiveLastSyncDateTime(

@@ -373,6 +373,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       SyncService().syncActions(),
       SyncService().syncUsers(),
     ]).then((value) {
+      SyncService().updateLastSyncDateTime();
       Navigator.of(context).pushNamed(Routes.showProfile);
     });
   }
