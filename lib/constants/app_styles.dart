@@ -22,7 +22,7 @@ class AppStyles {
             fontFamily: "OpenSans",
             fontStyle: FontStyle.normal,
             color: AppColors.txtFieldTextColor,
-            fontSize: 18.0),
+            fontSize: 16.0.sp),
         errorStyle: TextStyle(
           color: Colors.red,
           fontFamily: "OpenSans",
