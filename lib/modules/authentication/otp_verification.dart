@@ -311,17 +311,17 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         PhoneAuthProvider.credential(
                             verificationId: _verificationId ?? '',
                             smsCode: _smsCode);
-
-                    auth.signInWithCredential(credential).then((data) => {
-                          setState(() {
-                            _isLoading = false;
-                          }),
-                          _getUserInfo(data),
-                        });
+                    print(credential);
+                    auth
+                        .signInWithCredential(credential)
+                        .then((data) => {
+                              setState(() {
+                                _isLoading = false;
+                              }),
+                              _getUserInfo(data),
+                            })
+                        .onError((error, stackTrace) => _handleError(error));
                   } catch (e) {
-                    setState(() {
-                      _isLoading = false;
-                    });
                     _handleError(e);
                   }
                 },
@@ -421,8 +421,11 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     }
   }
 
-  void _handleError(e) {
+  _handleError(dynamic e) {
     debugPrint(e.message);
+    setState(() {
+      _isLoading = false;
+    });
     StarfishSnackbar.showErrorMessage(context, '${e.message}');
   }
 }
