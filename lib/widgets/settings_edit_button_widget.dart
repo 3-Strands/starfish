@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditButton extends StatefulWidget {
   final Function(bool isEditable) onButtonClicked;
@@ -42,7 +42,7 @@ class _EditButtonState extends State<EditButton> {
               size: 18.sp,
             ),
             Text(
-              Strings.edit,
+              AppLocalizations.of(context)!.edit,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: Colors.blue,
@@ -71,7 +71,7 @@ class _EditButtonState extends State<EditButton> {
         ),
         child: Center(
           child: Text(
-            Strings.save,
+            AppLocalizations.of(context)!.save,
             style: TextStyle(
               fontSize: 14.sp,
               color: Colors.white,

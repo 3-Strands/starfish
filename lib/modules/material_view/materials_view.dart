@@ -18,10 +18,10 @@ import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -43,7 +43,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   late HiveCurrentUser _user;
 
-  late String _choiceText = Strings.noFilterApplied;
+  late String _choiceText = AppLocalizations.of(context)!.noFilterApplied;
 
   final Key _focusDetectorKey = UniqueKey();
   late AppBloc bloc;
@@ -185,7 +185,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                               fontFamily: 'OpenSans',
                             ),
                             hint: Text(
-                              Strings.materialActionPrefix + _choiceText,
+                              AppLocalizations.of(context)!
+                                      .materialActionPrefix +
+                                  _choiceText,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -302,8 +304,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
-        navTitle: Strings.selectLanugages,
-        placeholder: Strings.selectLanugages,
+        navTitle: AppLocalizations.of(context)!.selectLanugages,
+        placeholder: AppLocalizations.of(context)!.selectLanugages,
         selectedValues: bloc.materialBloc.selectedLanguages,
         dataSource: _languageList,
         type: SelectType.multiple,
@@ -324,8 +326,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
-        navTitle: Strings.selectTopics,
-        placeholder: Strings.selectTopics,
+        navTitle: AppLocalizations.of(context)!.selectTopics,
+        placeholder: AppLocalizations.of(context)!.selectTopics,
         selectedValues: bloc.materialBloc.selectedTopics,
         dataSource: _topicList,
         enableSelectAllOption: true,
@@ -389,7 +391,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 Container(
                   width: 240.w,
                   child: Text(
-                    '${Strings.materialTitlePrefix} ${material.title}',
+                    '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
                     style: TextStyle(
@@ -407,7 +409,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     color: Colors.blue,
                     size: 18.sp,
                   ),
-                  text: Strings.open,
+                  text: AppLocalizations.of(context)!.open,
                   onButtonTap: () {
                     GeneralFunctions.openUrl(material.url!);
                   },
@@ -441,7 +443,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             TaskStatus(
               height: 30.h,
               color: getMyTaskStatusColor(material),
-              label: getMyTaskLabel(material),
+              label: getMyTaskLabel(context, material),
             ),
           SizedBox(
             height: 10.h,
@@ -451,7 +453,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             TaskStatus(
               height: 30.h,
               color: Color(0xFFCBE8FA),
-              label: Strings.assignedToGroup,
+              label: AppLocalizations.of(context)!.assignedToGroup,
             ),
           SizedBox(
             height: 30.h,
@@ -460,7 +462,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                Strings.lanugages,
+                AppLocalizations.of(context)!.lanugages,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   color: Color(0xFF3475F0),
@@ -476,7 +478,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   color: Colors.blue,
                   size: 18.sp,
                 ),
-                text: Strings.edit,
+                text: AppLocalizations.of(context)!.edit,
                 onButtonTap: () {
                   Navigator.pop(context);
                   Navigator.push(
@@ -499,7 +501,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             height: 47.h,
           ),
           Text(
-            Strings.topics,
+            AppLocalizations.of(context)!.topics,
             textAlign: TextAlign.left,
             style: TextStyle(
               color: Color(0xFF3475F0),
@@ -569,7 +571,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           ),
 
           //   Text(
-          //     Strings.reportInappropriateMaterial,
+          //      AppLocalizations.of(context)!.reportInappropriateMaterial,
           //     style: TextStyle(
           //       color: Color(0xFFF65A4A),
           //       fontFamily: 'OpenSans',
@@ -599,7 +601,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
               ),
-              child: Text(Strings.close),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ),
           SizedBox(
@@ -644,7 +646,7 @@ class MaterialListItem extends StatelessWidget {
                     Container(
                       width: 240.w,
                       child: Text(
-                        '${Strings.materialTitlePrefix} ${material.title}',
+                        '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(
@@ -660,7 +662,7 @@ class MaterialListItem extends StatelessWidget {
                         color: Colors.blue,
                         size: 18.sp,
                       ),
-                      text: Strings.open,
+                      text: AppLocalizations.of(context)!.open,
                       onButtonTap: () {
                         GeneralFunctions.openUrl(material.url!);
                       },
@@ -672,13 +674,13 @@ class MaterialListItem extends StatelessWidget {
                 TaskStatus(
                   height: 17.h,
                   color: getMyTaskStatusColor(material),
-                  label: getMyTaskLabel(material),
+                  label: getMyTaskLabel(context, material),
                 ),
               if (material.isAssignedToGroupWithLeaderRole)
                 TaskStatus(
                   height: 17.h,
                   color: Color(0xFFCBE8FA),
-                  label: Strings.assignedToGroup,
+                  label: AppLocalizations.of(context)!.assignedToGroup,
                 ),
             ],
           ),
@@ -701,13 +703,13 @@ Color getMyTaskStatusColor(HiveMaterial material) {
   }
 }
 
-String getMyTaskLabel(HiveMaterial material) {
+String getMyTaskLabel(BuildContext context, HiveMaterial material) {
   if (material.myActionStatus == ActionStatus.DONE) {
-    return Strings.assignedToMeDone;
+    return AppLocalizations.of(context)!.assignedToMeDone;
   } else if (material.myActionStatus == ActionStatus.NOT_DONE) {
-    return Strings.assignedToMeNotDone;
+    return AppLocalizations.of(context)!.assignedToMeNotDone;
   } else if (material.myActionStatus == ActionStatus.OVERDUE) {
-    return Strings.assignedToMeOverdue;
+    return AppLocalizations.of(context)!.assignedToMeOverdue;
   } else {
     return '';
   }

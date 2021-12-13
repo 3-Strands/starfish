@@ -4,7 +4,6 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -15,6 +14,7 @@ import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GroupsScreen extends StatefulWidget {
   GroupsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -184,7 +184,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
               ),
-              child: Text(Strings.close),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ),
           SizedBox(
@@ -310,10 +310,14 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                 onLeaveGroupTap: (HiveGroup group) {
                                   Alerts.showMessageBox(
                                       context: context,
-                                      title: Strings.dialogAlert,
-                                      message: Strings.alertLeaveThisGroup,
-                                      negativeButtonText: Strings.cancel,
-                                      positiveButtonText: Strings.leave,
+                                      title: AppLocalizations.of(context)!
+                                          .dialogAlert,
+                                      message: AppLocalizations.of(context)!
+                                          .alertLeaveThisGroup,
+                                      negativeButtonText:
+                                          AppLocalizations.of(context)!.cancel,
+                                      positiveButtonText:
+                                          AppLocalizations.of(context)!.leave,
                                       negativeActionCallback: () {},
                                       positiveActionCallback: () {
                                         bloc.groupBloc.leaveGroup(
@@ -419,7 +423,7 @@ class GroupListItem extends StatelessWidget {
                         color: Colors.blue,
                         size: 18.sp,
                       ),
-                      text: Strings.edit,
+                      text: AppLocalizations.of(context)!.edit,
                       onButtonTap: () {
                         Navigator.push(
                           context,
@@ -439,7 +443,7 @@ class GroupListItem extends StatelessWidget {
                         this.onLeaveGroupTap(group);
                       },
                       child: Text(
-                        Strings.leaveThisGroup,
+                        AppLocalizations.of(context)!.leaveThisGroup,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
                           fontSize: 12.sp,
@@ -455,7 +459,7 @@ class GroupListItem extends StatelessWidget {
             ),
             SizedBox(height: 10.sp),
             Text(
-              '${Strings.adminNamePrifix}: ${group.adminName}',
+              '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontFamily: 'OpenSans',
@@ -481,7 +485,7 @@ class GroupListItem extends StatelessWidget {
                     padding:
                         EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                     child: Text(
-                      Strings.viewTeachersAndLearners,
+                      AppLocalizations.of(context)!.viewTeachersAndLearners,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontFamily: 'Rubic',

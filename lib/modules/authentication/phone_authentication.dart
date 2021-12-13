@@ -63,8 +63,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
-    print('_countryList ==>>');
-    print(_countryList);
   }
 
   @override
@@ -90,7 +88,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       SizedBox(height: 50.h),
                       TitleLabel(
                         title: AppLocalizations.of(context)!
-                            .phoneAuthenticationTitle, //Strings.selectCountry
+                            .phoneAuthenticationTitle, // Strings.selectCountry
                         align: TextAlign.center,
                       ),
                       SizedBox(height: 30.h),

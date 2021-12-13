@@ -6,7 +6,6 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/app_config.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -17,6 +16,7 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   OTPVerificationScreen(
@@ -111,7 +111,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     AppLogo(hight: 156.h, width: 163.w),
                     SizedBox(height: 50.h),
                     TitleLabel(
-                      title: Strings.enterOneTimePassword,
+                      title: AppLocalizations.of(context)!.enterOneTimePassword,
                       align: TextAlign.center,
                     ),
                     SizedBox(height: 30.h),
@@ -237,7 +237,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 );
               },
               child: Text(
-                Strings.resentOTP,
+                AppLocalizations.of(context)!.resentOTP,
                 style: resentOTPTextStyle,
               ),
             ),
@@ -264,7 +264,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  Strings.back,
+                  AppLocalizations.of(context)!.back,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
@@ -293,7 +293,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  Strings.next,
+                  AppLocalizations.of(context)!.next,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),

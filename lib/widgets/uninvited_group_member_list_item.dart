@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UnInvitedGroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
@@ -75,7 +74,7 @@ class _UnInvitedGroupMemberListItemState
                       });
                     },
                     child: Text(
-                      Strings.inviteGroupUser,
+                      AppLocalizations.of(context)!.inviteGroupUser,
                       style: TextStyle(
                         fontFamily: 'OpenSans',
                         fontSize: 12.sp,
@@ -123,7 +122,8 @@ class _UnInvitedGroupMemberListItemState
                         keyboardType: TextInputType.phone,
                         //style: textFormFieldText,
                         decoration: InputDecoration(
-                          hintText: '', //Strings.countryCodeHint,
+                          hintText:
+                              '', // AppLocalizations.of(context)!.countryCodeHint,
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                           border: OutlineInputBorder(
@@ -192,11 +192,13 @@ class _UnInvitedGroupMemberListItemState
                           String _phoneNumber = _phoneNumberController.text;
 
                           if (_dialingCode.isEmpty) {
-                            StarfishSnackbar.showErrorMessage(
-                                context, Strings.emptyDialingCode);
+                            StarfishSnackbar.showErrorMessage(context,
+                                AppLocalizations.of(context)!.emptyDialingCode);
                           } else if (_phoneNumber.isEmpty) {
                             StarfishSnackbar.showErrorMessage(
-                                context, Strings.emptyMobileNumbers);
+                                context,
+                                AppLocalizations.of(context)!
+                                    .emptyMobileNumbers);
                           } else {
                             ///TODO: invite this user by sending SMS
                             if (widget.groupUser.user != null) {
@@ -212,7 +214,7 @@ class _UnInvitedGroupMemberListItemState
                           }
                         },
                         child: Text(
-                          Strings.invite,
+                          AppLocalizations.of(context)!.invite,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
                             fontSize: 12.sp,

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/enums/action_type.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActionTypeSelector extends StatefulWidget {
   Action_Type? selectedActionType;
@@ -122,7 +121,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
           SizedBox(height: 20.h),
 
           Text(
-            Strings.instructions,
+            AppLocalizations.of(context)!.instructions,
             textAlign: TextAlign.left,
             style: titleTextStyle,
           ),
@@ -134,7 +133,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
             controller: _instructionController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
-              hintText: Strings.hintInstructions,
+              hintText: AppLocalizations.of(context)!.hintInstructions,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -199,7 +198,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          Strings.questionToBeAnswered,
+          AppLocalizations.of(context)!.questionToBeAnswered,
           textAlign: TextAlign.left,
           style: titleTextStyle,
         ),
@@ -234,7 +233,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          Strings.selectAMaterial,
+          AppLocalizations.of(context)!.selectAMaterial,
           textAlign: TextAlign.left,
           style: titleTextStyle,
         ),
@@ -278,7 +277,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
           hint: Text(
             _selectedMaterial != null
                 ? _selectedMaterial!.title!
-                : Strings.selectAMaterial,
+                : AppLocalizations.of(context)!.selectAMaterial,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(

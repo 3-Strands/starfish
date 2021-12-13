@@ -16,9 +16,9 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:swipedetector/swipedetector.dart';
 import '../material_view/materials_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -132,17 +132,17 @@ class _DashboardState extends State<Dashboard> {
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.metericalsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.metericalsIcon),
-                  label: Strings.materialsTabItemText,
+                  label: AppLocalizations.of(context)!.materialsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.groupsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.groupsIcon),
-                  label: Strings.groupsTabItemText,
+                  label: AppLocalizations.of(context)!.groupsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.actionsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.actionsIcon),
-                  label: Strings.actionsTabItemText,
+                  label: AppLocalizations.of(context)!.actionsTabItemText,
                 ),
               ],
               currentIndex: _selectedIndex,
@@ -166,13 +166,13 @@ class _DashboardState extends State<Dashboard> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          title = Strings.materialsTabItemText;
+          title = AppLocalizations.of(context)!.materialsTabItemText;
           break;
         case 1:
-          title = Strings.groupsTabItemText;
+          title = AppLocalizations.of(context)!.groupsTabItemText;
           break;
         case 2:
-          title = Strings.actionsTabItemText;
+          title = AppLocalizations.of(context)!.actionsTabItemText;
           break;
         default:
         // title = "Results";
