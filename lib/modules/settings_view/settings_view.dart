@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
@@ -18,6 +19,7 @@ import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
@@ -178,11 +180,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .first
         .id;
 
+    var fieldMaskPaths = ['diallingCode', 'phoneCountryId', 'phone'];
+
+    HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.phone = _phoneNumberController.text;
     _user.diallingCode = _countryCodeController.text;
     _user.phoneCountryId = _phoneCountryId;
     _user.isUpdated = true;
-    _currentUserBox.putAt(0, _user);
+
+    await CurrentUserRepository()
+        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
+        .then(
+          (value) => {
+            _currentUserBox.putAt(0, _user),
+          },
+        )
+        .whenComplete(() {
+      StarfishSharedPreference().setLoginStatus(false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.phoneAuthentication, (Route<dynamic> route) => false);
+    });
   }
 
   void updateLinkGroupStatus() async {

@@ -50,8 +50,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     super.initState();
 
     _isPhoneNumberEmpty = false;
-    //_countryCodeController.text = '+91';
-    //_phoneNumberController.text = '8997618642';
+    // _countryCodeController.text = '+91';
+    // _phoneNumberController.text = '7906157381';
 
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
@@ -63,6 +63,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
+    print('_countryList ==>>');
+    print(_countryList);
   }
 
   @override
@@ -327,12 +329,12 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               resentToken: resendToken,
               dialingCode: dialingCode,
               phoneNumber: phoneNumber,
-              timeout: 20,
+              timeout: 60,
             ),
           ),
         );
       },
-      timeout: const Duration(seconds: 20),
+      timeout: Duration(seconds: 60),
       codeAutoRetrievalTimeout: (String verificationId) {
         // Auto-resolution timed out...
         print('codeAutoRetrievalTimeout ==>> $verificationId');
