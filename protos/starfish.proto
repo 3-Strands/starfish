@@ -27,11 +27,17 @@ service Starfish {
     // Create or update assignment of actions to users
     rpc CreateUpdateActionUsers (stream CreateUpdateActionUserRequest) returns (stream CreateUpdateActionUserResponse) {}
 
+    // Create or update group evaluations
+    rpc CreateUpdateGroupEvaluations (stream CreateUpdateGroupEvaluationRequest) returns (stream CreateUpdateGroupEvaluationResponse) {}
+
     // Create or update groups
     rpc CreateUpdateGroups (stream CreateUpdateGroupsRequest) returns (stream CreateUpdateGroupsResponse) {}
 
     // Add users to groups or change the role of users in groups
     rpc CreateUpdateGroupUsers (stream CreateUpdateGroupUsersRequest) returns (stream CreateUpdateGroupUsersResponse) {}
+
+    // Create or update group evaluations
+    rpc CreateUpdateLearnerEvaluations (stream CreateUpdateLearnerEvaluationRequest) returns (stream CreateUpdateLearnerEvaluationResponse) {}
 
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
@@ -42,7 +48,7 @@ service Starfish {
     // then instead of creating a new user the existing user will be returned in the response (and
     // made pending if the existing user is inactive in Starfish app).
     // When updating a user it is only permitted to update pending users that were created by the requesting user.
-    // When setting the phone number to a number of an eisting user, then the user being updated is merged
+    // When setting the phone number to a number of an existing user, then the user being updated is merged
     // with the existing user.
     rpc CreateUpdateUsers (stream CreateUpdateUserRequest) returns (stream CreateUpdateUserResponse) {}
 
@@ -68,8 +74,14 @@ service Starfish {
     // List the groups this user is a member of
     rpc ListGroups (ListGroupsRequest) returns (stream Group) {}
 
+    // List the groups this user is a member of
+    rpc ListGroupEvaluations (ListGroupEvaluationsRequest) returns (stream GroupEvaluation) {}
+
     // List languages in the current user's countries
     rpc ListLanguages (ListLanguagesRequest) returns (stream Language) {}
+
+    // List the groups this user is a member of
+    rpc ListLearnerEvaluations (ListLearnerEvaluationsRequest) returns (stream LearnerEvaluation) {}
 
     // List materials that the current user is permitted to see
     rpc ListMaterials (ListMaterialsRequest) returns (stream Material) {}
@@ -300,6 +312,37 @@ message CreateUpdateActionUserResponse {
 
 }
 
+message CreateUpdateGroupEvaluationRequest {
+
+    // The GroupEvaluation resource that will be created or replace the existing one on the server.
+    // The ID of the group evaluation resource is optional for a create request.
+    // If the ID is present and a GroupEvaluation exists with that ID then the request will be taken as an update
+    // Otherwise it will be a create request.
+    // For an update, only the evaluation field is set, all other fields are ignored.
+    // Setting evaluation to "EVAL_UNSPECIFIED" deletes the group evaluation
+    // A create request that duplicates user_id, group_id and month with an existing GroupEvaluation will fail.
+    GroupEvaluation group_evaluation = 1;
+
+}
+
+message CreateUpdateGroupEvaluationResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The GroupEvaluation after the update or create action.
+    GroupEvaluation group_evaluation = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateGroupsRequest {
 
     // The Group resource that will be created or replace the existing one on the server.
@@ -359,6 +402,40 @@ message CreateUpdateGroupUsersResponse {
 
     // The GroupUser resource after update or create request.
     GroupUser group_user = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateUpdateLearnerEvaluationRequest {
+
+    // The LearnerEvaluation resource that will be created or replace the existing one on the server.
+    // The ID of the learner evaluation resource is optional for a create request.
+    // If the ID is present and a LearnerEvaluation exists with that ID then the request will be taken as an update
+    // If no ID is given, then a search will be made using the learner ID, the group ID,
+    // the category_id and the month. If a matching LearnerEvaluation is found then this is treated as an update request
+    // Otherwise it will be a create request.
+    // For an update, only the evaluation field is set, and the evaluator is set to be the current user,
+    // all other fields are ignored.
+    // A create request that includes an ID and duplicates an existing entry on learner_id, group_id,
+    // category_id and month will fail.
+    LearnerEvaluation learner_evaluation = 1;
+
+}
+
+message CreateUpdateLearnerEvaluationResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The LearnerEvaluation after the update or create action.
+    LearnerEvaluation learner_evaluation = 1;
 
     // The status of the update or create request.
     Status status = 2;
@@ -547,6 +624,31 @@ message Group {
     string link_email = 9;
 }
 
+// An evaluation of a literacy group by a user
+message GroupEvaluation {
+
+    enum Evaluation {
+        EVAL_UNSPECIFIED = 0;
+        BAD = 1;
+        GOOD = 2;
+    }
+
+    string id  = 1;
+
+    // The user who makes the evaluation
+    string user_id = 2;
+
+    // The group which is evaluated
+    string group_id = 3;
+
+    // The month to which this evaluation applies (day is not relevant)
+    // In output the day value is set to 0, and ignored in input
+    google.type.Date month = 4;
+
+    // The evaluation for this group
+    Evaluation evaluation = 5;
+}
+
 // Connection between a User and a Group
 message GroupUser {
 
@@ -571,6 +673,33 @@ message Language {
 
     string name = 2;
 
+}
+
+// An evaluation of a learner in the context of a literacy group
+message LearnerEvaluation {
+
+    string id  = 1;
+
+    // The ID of the user being evaluated as learner
+    // This user should have "learner" role in the group
+    string learner_id = 2;
+
+    // The ID of the user who last edited this evaluation
+    // This user should have "teacher" or "admin" role in the group
+    string evaluator_id = 3;
+
+    // The ID of the group which is the context of this evaluation
+    string group_id = 4;
+
+    // The month to which this evaluation applies (day is not relevant)
+    // In output the day value is set to 0, and ignored in input
+    google.type.Date month = 5;
+
+    // The ID of the category to which this evaluation belongs
+    string category_id = 6;
+
+    // The evaluation value which is an integer between 0 and 5 inclusive
+    int32 evaluation = 7;
 }
 
 message ListActionsRequest {
@@ -601,7 +730,21 @@ message ListGroupsRequest {
 
 }
 
+message ListGroupEvaluationsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
 message ListLanguagesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
+message ListLearnerEvaluationsRequest {
 
     // Only return results updated at this date or later
     google.type.Date updated_since = 1;
