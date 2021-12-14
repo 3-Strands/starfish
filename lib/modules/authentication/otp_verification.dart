@@ -194,8 +194,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           )
         ],
         onCompleted: (value) {
-          print('completed sms code=>>');
-          print(value);
           setState(() {
             _otpEmpty = false;
           });
