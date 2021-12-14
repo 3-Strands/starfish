@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/app_config.dart';
@@ -24,6 +25,7 @@ class OTPVerificationScreen extends StatefulWidget {
       this.title = '',
       this.varificationId,
       this.resentToken,
+      this.confirmationResult,
       required this.timeout,
       required this.dialingCode,
       required this.phoneNumber})
@@ -34,6 +36,7 @@ class OTPVerificationScreen extends StatefulWidget {
   final String phoneNumber;
   final String? varificationId;
   final int? resentToken;
+  final ConfirmationResult? confirmationResult;
   final int timeout;
 
   @override
@@ -53,6 +56,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   late String? _verificationId;
   late int? _resendToken;
   late int _timeout;
+  late ConfirmationResult? _confirmationResult;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -64,6 +68,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     _verificationId = widget.varificationId;
     _resendToken = widget.resentToken;
     _timeout = widget.timeout;
+    _confirmationResult = widget.confirmationResult;
 
     _startResentOptTimer();
     super.initState();
@@ -205,6 +210,66 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
+  _resentOTPOnPhone() async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: _dialingCode + _phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) {
+        debugPrint('credential ==>> $credential');
+      },
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) async {
+        _verificationId = verificationId;
+        _resendToken = resendToken;
+        setState(() {
+          _timeout = 60;
+        });
+      },
+      forceResendingToken: _resendToken,
+      timeout: Duration(seconds: 60),
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print('codeAutoRetrievalTimeout ==>> $verificationId');
+      },
+    );
+  }
+
+  _resentOTPOnWeb() async {
+    var phoneNumber = _dialingCode + _phoneNumber;
+    await auth.signInWithPhoneNumber(phoneNumber).then((confirmationResult) => {
+          setState(() {
+            _confirmationResult = confirmationResult;
+            _timeout = 60;
+          })
+        });
+  }
+
+  _verfiyPhoneNumberWithOTP() async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: _verificationId ?? '', smsCode: _smsCode);
+      auth
+          .signInWithCredential(credential)
+          .then((data) => {
+                setState(() {
+                  _isLoading = false;
+                }),
+                _getUserInfo(data),
+              })
+          .onError((error, stackTrace) => _handleError(error));
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  _verfiyPhoneNumberWithOTPOnWeb() async {
+    UserCredential userCredential =
+        await _confirmationResult!.confirm(_smsCode);
+    print(userCredential);
+    setState(() {
+      _isLoading = false;
+    });
+    _getUserInfo(userCredential);
+  }
+
   Container _resendOTPContainer() {
     return Container(
       height: 46.h,
@@ -215,26 +280,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               style: resentOTPTextStyle,
             )
           : TextButton(
-              onPressed: () async {
-                await auth.verifyPhoneNumber(
-                  phoneNumber: _dialingCode + _phoneNumber,
-                  verificationCompleted: (PhoneAuthCredential credential) {
-                    debugPrint('credential ==>> $credential');
-                  },
-                  verificationFailed: (FirebaseAuthException e) {},
-                  codeSent: (String verificationId, int? resendToken) async {
-                    _verificationId = verificationId;
-                    _resendToken = resendToken;
-                    setState(() {
-                      _timeout = 20;
-                    });
-                  },
-                  forceResendingToken: _resendToken,
-                  timeout: Duration(seconds: 20),
-                  codeAutoRetrievalTimeout: (String verificationId) {
-                    print('codeAutoRetrievalTimeout ==>> $verificationId');
-                  },
-                );
+              onPressed: () {
+                if (kIsWeb) {
+                  _resentOTPOnWeb();
+                } else {
+                  _resentOTPOnPhone();
+                }
               },
               child: Text(
                 AppLocalizations.of(context)!.resentOTP,
@@ -306,23 +357,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     _isLoading = true;
                   });
 
-                  try {
-                    PhoneAuthCredential credential =
-                        PhoneAuthProvider.credential(
-                            verificationId: _verificationId ?? '',
-                            smsCode: _smsCode);
-                    print(credential);
-                    auth
-                        .signInWithCredential(credential)
-                        .then((data) => {
-                              setState(() {
-                                _isLoading = false;
-                              }),
-                              _getUserInfo(data),
-                            })
-                        .onError((error, stackTrace) => _handleError(error));
-                  } catch (e) {
-                    _handleError(e);
+                  if (kIsWeb) {
+                    _verfiyPhoneNumberWithOTPOnWeb();
+                  } else {
+                    _verfiyPhoneNumberWithOTP();
                   }
                 },
                 style: ElevatedButton.styleFrom(

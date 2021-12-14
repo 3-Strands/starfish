@@ -50,8 +50,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     super.initState();
 
     _isPhoneNumberEmpty = false;
-    // _countryCodeController.text = '+91';
-    // _phoneNumberController.text = '7906157381';
+    _countryCodeController.text = '+91';
+    _phoneNumberController.text = '7123123456';
 
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
@@ -271,11 +271,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 setState(() {
                   _isLoading = true;
                 });
-                var phoneNumber =
-                    '${_countryCodeController.text} ${_phoneNumberController.text}';
 
                 if (kIsWeb) {
-                  _authenticateOnWeb(phoneNumber);
+                  _authenticateOnWeb(
+                      _countryCodeController.text, _phoneNumberController.text);
                 } else {
                   _authenticateOnDevice(
                       _countryCodeController.text, _phoneNumberController.text);
@@ -340,15 +339,32 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  _authenticateOnWeb(String phoneNumber) async {
-    await auth.signInWithPhoneNumber(phoneNumber);
-    ConfirmationResult confirmationResult =
-        await auth.signInWithPhoneNumber(phoneNumber);
-    UserCredential userCredential = await confirmationResult.confirm('123456');
-    print(userCredential);
-    // await auth
-    //     .signInWithPhoneNumber(phoneNumber)
-    //     .then((value) => print('value ==>> $value'));
+  _authenticateOnWeb(String dialingCode, String phoneNumber) async {
+    await auth
+        .signInWithPhoneNumber(dialingCode + phoneNumber)
+        .then((confirmationResult) => {
+              print('confirmationResult'),
+              setState(() {
+                _isLoading = false;
+              }),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OTPVerificationScreen(
+                    varificationId: '',
+                    confirmationResult: confirmationResult,
+                    dialingCode: dialingCode,
+                    phoneNumber: phoneNumber,
+                    timeout: 60,
+                  ),
+                ),
+              ),
+            })
+        .onError((error, stackTrace) => {
+              setState(() {
+                _isLoading = false;
+              }),
+            });
   }
 
   _fieldFocusChange(
