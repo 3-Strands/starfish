@@ -68,6 +68,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     });
   }
 
+/*
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
     for (HiveCountry _country in _countryList) {
@@ -91,6 +92,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           .forEach((item) => {_selectedLanguages.add(item)});
     }
   }
+*/
 
   _updateUserCountries() async {
     setState(() {

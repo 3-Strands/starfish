@@ -57,7 +57,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   Widget _buildUsersList(List<HiveGroupUser> users) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.70 - 150,
+      height: MediaQuery.of(context).size.height * 0.70 - 180,
       child: ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) {

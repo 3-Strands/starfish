@@ -198,8 +198,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   Widget _buildSlidingUpPanel() {
     return Container(
-      //margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-
       child: ValueListenableBuilder<List<InviteContact>?>(
           valueListenable: _contactsNotifier,
           builder: (BuildContext context, List<InviteContact>? snapshot,
@@ -285,7 +283,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               children: [
                 Expanded(
                   child: Container(
-                    // margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -308,7 +305,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                                 _query = value;
                               });
                             },
-                            onDone: (String value) {}),
+                            onDone: (String value) {
+                              setState(() {
+                                _query = value;
+                              });
+                            }),
                         SizedBox(height: 11.h),
                         Expanded(
                           child: widgets.Padding(

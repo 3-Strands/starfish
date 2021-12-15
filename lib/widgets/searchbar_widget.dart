@@ -64,8 +64,8 @@ class _SearchBarState extends State<SearchBar> {
                   color: Colors.green,
                   splashColor: Colors.purple,
                   onPressed: () {
-                    widget.onDone('');
                     searchController.text = '';
+                    widget.onDone('');
                   },
                 ),
                 border: InputBorder.none,

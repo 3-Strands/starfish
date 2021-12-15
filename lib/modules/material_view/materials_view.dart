@@ -95,8 +95,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return StatefulBuilder(builder: (BuildContext context,
-            StateSetter setState /*You can rename this!*/) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.70,
             child: SingleChildScrollView(

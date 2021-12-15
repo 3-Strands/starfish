@@ -40,15 +40,18 @@ class _ContactListItemState extends State<ContactListItem> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.contact.contact.displayName ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'OpenSans',
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF434141),
+                Container(
+                  width: MediaQuery.of(context).size.width - 70.0,
+                  child: Text(
+                    widget.contact.contact.displayName ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF434141),
+                    ),
                   ),
                 ),
                 Visibility(
