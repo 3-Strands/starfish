@@ -42,6 +42,9 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
+    // Create or update teacher responses
+    rpc CreateUpdateTeacherResponses (stream CreateUpdateTeacherResponseRequest) returns (stream CreateUpdateTeacherResponseResponse) {}
+
     // Create or update starfish users
     // Created users start with pending status
     // When creating a user and another user already exists with the same phone country and phone number
@@ -91,6 +94,9 @@ service Starfish {
 
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
+
+    // List the groups this user is a member of
+    rpc ListTeacherResponses (ListTeacherResponsesRequest) returns (stream TeacherResponse) {}
 
     // List users that the current user has access to
     rpc ListUsers (ListUsersRequest) returns (stream User) {}
@@ -482,6 +488,31 @@ message CreateUpdateMaterialsResponse {
 
 }
 
+message CreateUpdateTeacherResponseRequest {
+
+    // The TeacherResponse resource that will be created or replace the existing one on the server.
+    TeacherResponse teacher_response = 1;
+
+}
+
+message CreateUpdateTeacherResponseResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The TeacherResponse after the update or create action.
+    TeacherResponse teacher_response = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateUserRequest {
 
     // The User resource that will be created or replace the existing one on the server.
@@ -772,6 +803,13 @@ message ListMaterialTypesRequest {
 
 }
 
+message ListTeacherResponsesRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
 message ListUsersRequest {
 
     // Only return results updated at this date or later
@@ -887,6 +925,30 @@ message MaterialType {
 
     string name = 2;
 
+}
+
+// A response of a teacher to a learner in a group
+message TeacherResponse {
+
+    string id  = 1;
+
+    // The ID of the user being responded to as learner
+    // This user should have "learner" role in the group
+    string learner_id = 2;
+
+    // The ID of the user giving this response as teacher
+    // This user should have "teacher" or "admin" role in the group
+    string teacher_id = 3;
+
+    // The ID of the group which is the context of this response
+    string group_id = 4;
+
+    // The month to which this response applies (day is not relevant)
+    // In output the day value is set to 0, and ignored in input
+    google.type.Date month = 5;
+
+    // The response
+    string response = 6;
 }
 
 message UpdateCurrentUserRequest {
