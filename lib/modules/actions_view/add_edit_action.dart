@@ -472,9 +472,7 @@ class _AddEditActionState extends State<AddEditAction>
     if (_actionNameController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptyActionName);
-    } else if ((_selectedActionType == Action_Type.TEXT_INSTRUCTION ||
-            _selectedActionType == Action_Type.MATERIAL_INSTRUCTION) &&
-        (_instructions == null || _instructions!.isEmpty)) {
+    } else if (_instructions == null || _instructions!.isEmpty) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptyActionInstructions);
     } else if ((_selectedActionType == Action_Type.TEXT_RESPONSE ||
