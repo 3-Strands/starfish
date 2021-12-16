@@ -62,7 +62,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   @override
   void didChangeDependencies() {
     bloc = Provider.of(context);
-    _selectLanguage(bloc);
     super.didChangeDependencies();
   }
 
@@ -109,26 +108,20 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   @override
-  void deactivate() {
-    print('deactivate');
-    super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    print('dispose');
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return FocusDetector(
       key: _focusDetectorKey,
+      onFocusGained: () {
+        print('Gained focus');
+        _fetchMaterialData(bloc);
+      },
       onFocusLost: () {
         print('Lost focus');
+        /*
         bloc.materialBloc.selectedLanguages.clear();
         _selectLanguage(bloc);
         bloc.materialBloc.selectedTopics.clear();
+        */
       },
       child: Scaffold(
         backgroundColor: AppColors.materialSceenBG,
@@ -290,6 +283,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
+/*
   _selectLanguage(AppBloc bloc) {
     print('select language');
     for (var languageId in _user.languageIds) {
@@ -299,6 +293,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     }
     _fetchMaterialData(bloc);
   }
+*/
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
     return Container(
