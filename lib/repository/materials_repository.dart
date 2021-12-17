@@ -1,4 +1,5 @@
 import 'package:grpc/grpc.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
@@ -32,6 +33,7 @@ class MaterialRepository {
   Future<List<HiveMaterialTopic>> fetchMaterialTopicsFromDB() =>
       materialProvider.getMateialTypes();
 
-  Future<void> createUpdateMaterialInDB(HiveMaterial material) =>
-      materialProvider.createUpdateMaterial(material);
+  Future<void> createUpdateMaterialInDB(HiveMaterial material,
+          {List<HiveFile>? files}) =>
+      materialProvider.createUpdateMaterial(material, files: files);
 }

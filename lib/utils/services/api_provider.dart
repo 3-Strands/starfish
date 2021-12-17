@@ -278,7 +278,6 @@ class ApiProvider {
     Map<String, String>? metadata = {
       'authorization': await StarfishSharedPreference().getAccessToken(),
       'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0',
-      'content-type': 'multipart/form-data'
     };
     FileTransferClient client = FileTransferClient(
       channel,

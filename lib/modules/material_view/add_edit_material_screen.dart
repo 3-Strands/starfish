@@ -19,12 +19,14 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
@@ -53,6 +55,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
   List<HiveMaterialTopic> _selectedTopics = [];
+  List<File> _selectedFiles = [];
+
   MaterialVisibility? _visibleTo;
   MaterialEditability? _editableBy;
 
@@ -290,15 +294,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               .pickFiles(allowMultiple: true);
 
                           if (result != null) {
-                            List<File> _selectedFiles = result.paths
+                            _selectedFiles = result.paths
                                 .map((path) => File(path!))
                                 .toList();
 
                             //bloc.materialBloc.setSelectedFiles(_selectedFiles);
+                            /*bloc.materialBloc.uploadMaterial(
+                                "2a27cced-a504-4655-9e04-1fd6af82aad3",
+                                _selectedFiles.first);*/
 
-                            bloc.materialBloc.uploadMaterial(
-                                "bbcf5dfe-897d-4c59-81fc-2201a149ea2c",
-                                _selectedFiles.first);
                           } else {
                             // User canceled the picker
                           }
@@ -613,8 +617,19 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     _hiveMaterial.editability =
         _editableBy != null ? _editableBy!.value.value : 0;
 
+    // check if there is any file is added, if yes, store them in HiveFile box
+    List<HiveFile>? _files;
+    if (_selectedFiles.length > 0) {
+      _files = _selectedFiles
+          .map((file) => HiveFile(
+                entityId: _hiveMaterial!.id,
+                entityType: EntityType.MATERIAL.value,
+                filepath: file.path,
+              ))
+          .toList();
+    }
     bloc.materialBloc
-        .createUpdateMaterial(_hiveMaterial)
+        .createUpdateMaterial(_hiveMaterial, files: _files)
         .then((value) => debugPrint('record(s) saved.'))
         .onError((error, stackTrace) {
       StarfishSnackbar.showErrorMessage(
