@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -16,6 +15,7 @@ import 'package:starfish/select_items/item.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MultiSelect extends StatefulWidget {
   final String navTitle;
@@ -265,7 +265,7 @@ class _MultiSelectState extends State<MultiSelect> {
                 ),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search, color: Colors.white),
-                  hintText: Strings.searchBarHint,
+                  hintText: AppLocalizations.of(context)!.searchBarHint,
                   hintStyle: TextStyle(color: Colors.white),
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -324,7 +324,7 @@ class _MultiSelectState extends State<MultiSelect> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    Strings.selectAll,
+                                    AppLocalizations.of(context)!.selectAll,
                                     style: TextStyle(
                                       fontFamily: 'OpenSans',
                                       fontWeight: FontWeight.bold,

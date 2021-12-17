@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/app_config.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -17,6 +17,7 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   OTPVerificationScreen(
@@ -24,6 +25,7 @@ class OTPVerificationScreen extends StatefulWidget {
       this.title = '',
       this.varificationId,
       this.resentToken,
+      this.confirmationResult,
       required this.timeout,
       required this.dialingCode,
       required this.phoneNumber})
@@ -34,6 +36,7 @@ class OTPVerificationScreen extends StatefulWidget {
   final String phoneNumber;
   final String? varificationId;
   final int? resentToken;
+  final ConfirmationResult? confirmationResult;
   final int timeout;
 
   @override
@@ -53,6 +56,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   late String? _verificationId;
   late int? _resendToken;
   late int _timeout;
+  late ConfirmationResult? _confirmationResult;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -64,6 +68,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     _verificationId = widget.varificationId;
     _resendToken = widget.resentToken;
     _timeout = widget.timeout;
+    _confirmationResult = widget.confirmationResult;
 
     _startResentOptTimer();
     super.initState();
@@ -111,7 +116,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     AppLogo(hight: 156.h, width: 163.w),
                     SizedBox(height: 50.h),
                     TitleLabel(
-                      title: Strings.enterOneTimePassword,
+                      title: AppLocalizations.of(context)!.enterOneTimePassword,
                       align: TextAlign.center,
                     ),
                     SizedBox(height: 30.h),
@@ -189,8 +194,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           )
         ],
         onCompleted: (value) {
-          print('completed sms code=>>');
-          print(value);
           setState(() {
             _otpEmpty = false;
           });
@@ -205,6 +208,66 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
+  _resentOTPOnPhone() async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: _dialingCode + _phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) {
+        debugPrint('credential ==>> $credential');
+      },
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) async {
+        _verificationId = verificationId;
+        _resendToken = resendToken;
+        setState(() {
+          _timeout = 60;
+        });
+      },
+      forceResendingToken: _resendToken,
+      timeout: Duration(seconds: 60),
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print('codeAutoRetrievalTimeout ==>> $verificationId');
+      },
+    );
+  }
+
+  _resentOTPOnWeb() async {
+    var phoneNumber = _dialingCode + _phoneNumber;
+    await auth.signInWithPhoneNumber(phoneNumber).then((confirmationResult) => {
+          setState(() {
+            _confirmationResult = confirmationResult;
+            _timeout = 60;
+          })
+        });
+  }
+
+  _verfiyPhoneNumberWithOTP() async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: _verificationId ?? '', smsCode: _smsCode);
+      auth
+          .signInWithCredential(credential)
+          .then((data) => {
+                setState(() {
+                  _isLoading = false;
+                }),
+                _getUserInfo(data),
+              })
+          .onError((error, stackTrace) => _handleError(error));
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  _verfiyPhoneNumberWithOTPOnWeb() async {
+    UserCredential userCredential =
+        await _confirmationResult!.confirm(_smsCode);
+    print(userCredential);
+    setState(() {
+      _isLoading = false;
+    });
+    _getUserInfo(userCredential);
+  }
+
   Container _resendOTPContainer() {
     return Container(
       height: 46.h,
@@ -215,29 +278,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               style: resentOTPTextStyle,
             )
           : TextButton(
-              onPressed: () async {
-                await auth.verifyPhoneNumber(
-                  phoneNumber: _dialingCode + _phoneNumber,
-                  verificationCompleted: (PhoneAuthCredential credential) {
-                    debugPrint('credential ==>> $credential');
-                  },
-                  verificationFailed: (FirebaseAuthException e) {},
-                  codeSent: (String verificationId, int? resendToken) async {
-                    _verificationId = verificationId;
-                    _resendToken = resendToken;
-                    setState(() {
-                      _timeout = 20;
-                    });
-                  },
-                  forceResendingToken: _resendToken,
-                  timeout: Duration(seconds: 20),
-                  codeAutoRetrievalTimeout: (String verificationId) {
-                    print('codeAutoRetrievalTimeout ==>> $verificationId');
-                  },
-                );
+              onPressed: () {
+                if (kIsWeb) {
+                  _resentOTPOnWeb();
+                } else {
+                  _resentOTPOnPhone();
+                }
               },
               child: Text(
-                Strings.resentOTP,
+                AppLocalizations.of(context)!.resentOTP,
                 style: resentOTPTextStyle,
               ),
             ),
@@ -264,7 +313,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  Strings.back,
+                  AppLocalizations.of(context)!.back,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
@@ -293,7 +342,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  Strings.next,
+                  AppLocalizations.of(context)!.next,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
@@ -306,23 +355,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     _isLoading = true;
                   });
 
-                  try {
-                    PhoneAuthCredential credential =
-                        PhoneAuthProvider.credential(
-                            verificationId: _verificationId ?? '',
-                            smsCode: _smsCode);
-                    print(credential);
-                    auth
-                        .signInWithCredential(credential)
-                        .then((data) => {
-                              setState(() {
-                                _isLoading = false;
-                              }),
-                              _getUserInfo(data),
-                            })
-                        .onError((error, stackTrace) => _handleError(error));
-                  } catch (e) {
-                    _handleError(e);
+                  if (kIsWeb) {
+                    _verfiyPhoneNumberWithOTPOnWeb();
+                  } else {
+                    _verfiyPhoneNumberWithOTP();
                   }
                 },
                 style: ElevatedButton.styleFrom(

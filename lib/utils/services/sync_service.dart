@@ -40,6 +40,7 @@ import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/src/generated/starfish.pb.dart' as starfish;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SyncService {
   final DEBUG = false;
@@ -96,12 +97,12 @@ class SyncService {
             context: context,
             builder: (context) => app.CupertinoAlertDialog(
                   title: Text(
-                    Strings.syncAlertTitleText,
+                    AppLocalizations.of(context)!.syncAlertTitleText,
                     style: TextStyle(color: app.Color(0xFF030303)),
                   ),
                   content: app.Column(
                     children: [
-                      Text(Strings
+                      Text(AppLocalizations.of(context)!
                           .syncAlertContentText), // app.SizedBox(height: 10.h),
                       app.SizedBox(
                           width: 20.w,
@@ -109,7 +110,7 @@ class SyncService {
                           child: app.CircularProgressIndicator()),
                       // app.SizedBox(height: 5.h),
                       app.Text(
-                        Strings.syncText,
+                        AppLocalizations.of(context)!.syncText,
                         style: TextStyle(
                             color: app.Color(0xFF030303), fontSize: 12.sp),
                       )
@@ -117,7 +118,7 @@ class SyncService {
                   ),
                   actions: <Widget>[
                     app.CupertinoDialogAction(
-                      child: Text(Strings.close),
+                      child: Text(AppLocalizations.of(context)!.close),
                       onPressed: () {
                         _isDialogShowing =
                             false; // set it `false` since dialog is closed

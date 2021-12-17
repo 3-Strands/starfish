@@ -7,7 +7,6 @@ import 'package:starfish/constants/app_colors.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -19,7 +18,6 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/actions_view/select_action.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
@@ -30,6 +28,7 @@ import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddEditAction extends StatefulWidget {
   final HiveAction? action;
@@ -152,7 +151,9 @@ class _AddEditActionState extends State<AddEditAction>
             children: <Widget>[
               AppLogo(hight: 36.h, width: 37.w),
               Text(
-                _isEditMode ? Strings.editActionText : Strings.addActionText,
+                _isEditMode
+                    ? AppLocalizations.of(context)!.editActionText
+                    : AppLocalizations.of(context)!.addActionText,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -184,7 +185,7 @@ class _AddEditActionState extends State<AddEditAction>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    Strings.reuseActionText,
+                    AppLocalizations.of(context)!.reuseActionText,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16.sp,
@@ -223,7 +224,8 @@ class _AddEditActionState extends State<AddEditAction>
                               Text(
                                 _actionToBeReused != null
                                     ? _actionToBeReused!.name!
-                                    : Strings.selectAnAction,
+                                    : AppLocalizations.of(context)!
+                                        .selectAnAction,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: 16.sp, color: Color(0xFF434141)),
@@ -242,7 +244,7 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 20.h),
                   Text(
-                    Strings.nameOfAction,
+                    AppLocalizations.of(context)!.nameOfAction,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16.sp,
@@ -271,7 +273,7 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 20.h),
                   Text(
-                    Strings.typeOfAction,
+                    AppLocalizations.of(context)!.typeOfAction,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16.sp,
@@ -315,7 +317,7 @@ class _AddEditActionState extends State<AddEditAction>
 
                   // Assign action to group
                   Text(
-                    Strings.assignActionTo,
+                    AppLocalizations.of(context)!.assignActionTo,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -323,8 +325,8 @@ class _AddEditActionState extends State<AddEditAction>
 
                   // List groups where current user have Admin or Teacher Role only
                   SelectDropDown(
-                    navTitle: Strings.assignActionTo,
-                    placeholder: Strings.assignActionTo,
+                    navTitle: AppLocalizations.of(context)!.assignActionTo,
+                    placeholder: AppLocalizations.of(context)!.assignActionTo,
                     selectedValues: _selectedGroups,
                     dataSource: _groupList,
                     enableSelectAllOption: false,
@@ -340,7 +342,7 @@ class _AddEditActionState extends State<AddEditAction>
 
                   SizedBox(height: 20.h),
                   Text(
-                    Strings.dueDate,
+                    AppLocalizations.of(context)!.dueDate,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16.sp,
@@ -369,7 +371,7 @@ class _AddEditActionState extends State<AddEditAction>
                                 _dueDate != null
                                     //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
                                     ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
-                                    : Strings.hintDueDate,
+                                    : AppLocalizations.of(context)!.hintDueDate,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: 16.sp, color: Color(0xFF434141)),
@@ -408,7 +410,7 @@ class _AddEditActionState extends State<AddEditAction>
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(Strings.cancel),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
             ),
             SizedBox(width: 25.w),
@@ -418,7 +420,9 @@ class _AddEditActionState extends State<AddEditAction>
                   _validateAndCreateUpdateAction();
                 },
                 child: Text(
-                  _isEditMode ? Strings.update : Strings.create,
+                  _isEditMode
+                      ? AppLocalizations.of(context)!.update
+                      : AppLocalizations.of(context)!.create,
                 ),
                 style: ElevatedButton.styleFrom(
                   primary: AppColors.selectedButtonBG,
@@ -444,7 +448,7 @@ class _AddEditActionState extends State<AddEditAction>
   List<Widget>? _historyItems(HiveAction action) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      Strings.history,
+      AppLocalizations.of(context)!.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
@@ -466,24 +470,27 @@ class _AddEditActionState extends State<AddEditAction>
 
   _validateAndCreateUpdateAction() {
     if (_actionNameController.text.isEmpty) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionName);
-    } else if ((_selectedActionType == Action_Type.TEXT_INSTRUCTION ||
-            _selectedActionType == Action_Type.MATERIAL_INSTRUCTION) &&
-        (_instructions == null || _instructions!.isEmpty)) {
       StarfishSnackbar.showErrorMessage(
-          context, Strings.emptyActionInstructions);
+          context, AppLocalizations.of(context)!.emptyActionName);
+    } else if (_instructions == null || _instructions!.isEmpty) {
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyActionInstructions);
     } else if ((_selectedActionType == Action_Type.TEXT_RESPONSE ||
             _selectedActionType == Action_Type.MATERIAL_RESPONSE) &&
         (_question == null || _question!.isEmpty)) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionQuestion);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyActionQuestion);
     } else if ((_selectedActionType == Action_Type.MATERIAL_INSTRUCTION ||
             _selectedActionType == Action_Type.MATERIAL_RESPONSE) &&
         _selectedMaterial == null) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionMaterial);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyActionMaterial);
     } else if (_selectedGroups.length == 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.selectActionGroup);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.selectActionGroup);
     } else if (_dueDate == null) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyActionDueDate);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyActionDueDate);
     } else {
       // create a separate request for each groups as, action creted for each
       //gorup will be considered as separate entity and therefor will have a different UUID
@@ -493,10 +500,10 @@ class _AddEditActionState extends State<AddEditAction>
 
       Alerts.showMessageBox(
         context: context,
-        title: Strings.dialogInfo,
+        title: AppLocalizations.of(context)!.dialogInfo,
         message: _isEditMode
-            ? Strings.updateActionSuccess
-            : Strings.createActionSuccess,
+            ? AppLocalizations.of(context)!.updateActionSuccess
+            : AppLocalizations.of(context)!.createActionSuccess,
         callback: () {
           Navigator.of(context).pop();
         },
@@ -539,8 +546,8 @@ class _AddEditActionState extends State<AddEditAction>
       StarfishSnackbar.showErrorMessage(
           context,
           _isEditMode
-              ? Strings.updateActionFailed
-              : Strings.createActionSuccess);
+              ? AppLocalizations.of(context)!.updateActionFailed
+              : AppLocalizations.of(context)!.createActionSuccess);
     }).whenComplete(() {
       // Broadcast to sync the local changes with the server
       FBroadcast.instance().broadcast(

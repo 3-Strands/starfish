@@ -13,7 +13,6 @@ import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
@@ -34,6 +33,7 @@ import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
@@ -68,8 +68,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   late List<HiveMaterialType> _typeList;
   late List<HiveMaterialTopic> _topicList;
 
-  late String _choiceSeenByText = Strings.seenBy;
-  late String _choiceEditedByText = Strings.editedBy;
+  late String _choiceSeenByText = AppLocalizations.of(context)!.seenBy;
+  late String _choiceEditedByText = AppLocalizations.of(context)!.editedBy;
 
   late AppBloc bloc;
 
@@ -140,7 +140,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             children: <Widget>[
               AppLogo(hight: 36.h, width: 37.w),
               Text(
-                _isEditMode ? Strings.editMaterial : Strings.addNewMaterial,
+                _isEditMode
+                    ? AppLocalizations.of(context)!.editMaterial
+                    : AppLocalizations.of(context)!.addNewMaterial,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -178,7 +180,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       controller: _titleController,
                       style: formTitleTextStyle,
                       decoration: InputDecoration(
-                        hintText: Strings.hintMaterialName,
+                        hintText:
+                            AppLocalizations.of(context)!.hintMaterialName,
                         hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -198,7 +201,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Description
                   Text(
-                    Strings.descripton,
+                    AppLocalizations.of(context)!.descripton,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -228,7 +231,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Web Link
                   Text(
-                    Strings.addWebLink,
+                    AppLocalizations.of(context)!.addWebLink,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -256,7 +259,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Upload Material
                   Text(
-                    Strings.uploadAMaterial,
+                    AppLocalizations.of(context)!.uploadAMaterial,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -308,7 +311,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           }
                         },
                         child: Text(
-                          Strings.addMaterials,
+                          AppLocalizations.of(context)!.addMaterials,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
                             fontSize: 14.sp,
@@ -326,15 +329,16 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Language Selection
                   Text(
-                    Strings.lanugages,
+                    AppLocalizations.of(context)!.lanugages,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: Strings.selectLanugages,
-                      placeholder: Strings.selectLanugages,
+                      navTitle: AppLocalizations.of(context)!.selectLanugages,
+                      placeholder:
+                          AppLocalizations.of(context)!.selectLanugages,
                       selectedValues: _selectedLanguages,
                       dataSource: _languageList,
                       type: SelectType.multiple,
@@ -352,15 +356,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Type Selection
                   Text(
-                    Strings.type,
+                    AppLocalizations.of(context)!.type,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: Strings.selectType,
-                      placeholder: Strings.selectType,
+                      navTitle: AppLocalizations.of(context)!.selectType,
+                      placeholder: AppLocalizations.of(context)!.selectType,
                       selectedValues: _selectedTypes,
                       dataSource: _typeList,
                       type: SelectType.multiple,
@@ -379,15 +383,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Topic Selection
                   Text(
-                    Strings.topics,
+                    AppLocalizations.of(context)!.topics,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: Strings.selectTopics,
-                      placeholder: Strings.selectTopics,
+                      navTitle: AppLocalizations.of(context)!.selectTopics,
+                      placeholder: AppLocalizations.of(context)!.selectTopics,
                       selectedValues: _selectedTopics,
                       dataSource: _topicList,
                       type: SelectType.multiple,
@@ -406,7 +410,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Seen by
                   Text(
-                    Strings.seenBy,
+                    AppLocalizations.of(context)!.seenBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -466,7 +470,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Edited by
                   Text(
-                    Strings.editedBy,
+                    AppLocalizations.of(context)!.editedBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -546,7 +550,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(Strings.cancel),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
             ),
             SizedBox(width: 25.w),
@@ -556,7 +560,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   _validateInfo();
                 },
                 child: Text(
-                  _isEditMode ? Strings.update : Strings.add,
+                  _isEditMode
+                      ? AppLocalizations.of(context)!.update
+                      : AppLocalizations.of(context)!.add,
                 ),
                 style: ElevatedButton.styleFrom(
                   primary: AppColors.selectedButtonBG,
@@ -571,15 +577,20 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
   _validateInfo() {
     if (_titleController.text == '') {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyMaterialTitle);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyMaterialTitle);
     } else if (_descriptionController.text == '') {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptyDescription);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyDescription);
     } else if (_selectedLanguages.length == 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptySelectLanguage);
     } else if (_selectedTypes.length == 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectType);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptySelectType);
     } else if (_selectedTopics.length == 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectTopic);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptySelectTopic);
     } else {
       _addUpdateUserProfile();
     }
@@ -635,8 +646,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       StarfishSnackbar.showErrorMessage(
           context,
           _isEditMode
-              ? Strings.updateMaterialFailed
-              : Strings.addMaterialFailed);
+              ? AppLocalizations.of(context)!.updateMaterialFailed
+              : AppLocalizations.of(context)!.addMaterialFailed);
     }).whenComplete(() {
       // Broadcast to sync the local changes with the server
       FBroadcast.instance().broadcast(
@@ -645,10 +656,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       );
       Alerts.showMessageBox(
           context: context,
-          title: Strings.dialogInfo,
+          title: AppLocalizations.of(context)!.dialogInfo,
           message: _isEditMode
-              ? Strings.updateMaterialSuccess
-              : Strings.addMaterialSuccess,
+              ? AppLocalizations.of(context)!.updateMaterialSuccess
+              : AppLocalizations.of(context)!.addMaterialSuccess,
           callback: () {
             Navigator.of(context).pop();
           });
@@ -668,7 +679,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   List<Widget>? _historyItems(HiveMaterial material) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      Strings.history,
+      AppLocalizations.of(context)!.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,

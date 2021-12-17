@@ -235,5 +235,25 @@
 
   "actionStatusDone": "मैंने यह किया है",
   "actionStatusNotDone": "मैंने अभी तक नहीं किया",
-  "actionStatusOverdue": "अतिदेय"
+  "actionStatusOverdue": "अतिदेय",
+
+  "delete": "हटाएं",     
+  "deleteActionTitle": "कार्रवाई हटाएं?",     
+  "deleteActionMessage": "क्या आप वाकई इस समूह के लिए इस कार्रवाई और इसके डेटा को हटाना चाहते हैं?",
+  "memberIsOverdue": "सदस्य अतिदेय है",
+  "memberDidNotDoItYet": "सदस्यों ने अभी तक ऐसा नहीं किया",  
+  "emptyActionName": "कृपया क्रिया का नाम दर्ज करें।",
+  "emptyActionInstructions": "कृपया निर्देश दर्ज करें।",
+  "emptyActionQuestion": "कृपया प्रश्न दर्ज करें।",
+  "emptyActionMaterial": "कृपया सामग्री का चयन करें।",
+  "selectActionGroup": "कृपया कार्रवाई सौंपें।",
+  "emptyActionDueDate": "कृपया नियत तिथि का चयन करें।",
+
+  "membersDidIt": "सदस्यों ने किया",
+  "assignedToGroup": "उस समूह को असाइन किया गया जिसे मैं पढ़ाता/सह-नेतृत्व करता/करती हूं",
+
+  "assignedToMeDone": "मुझे सौंपा और पूरा किया",  
+  "assignedToMeNotDone":
+      "मुझे सौंपा गया है, लेकिन अभी तक पूरा नहीं हुआ है",
+  "assignedToMeOverdue": "मुझे सौंपा और अतिदेय"
 }

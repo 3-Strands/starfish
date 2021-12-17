@@ -4,7 +4,6 @@ import 'package:hive/hive.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -19,6 +18,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/italic_title_label_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
@@ -68,6 +68,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     });
   }
 
+/*
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
     for (HiveCountry _country in _countryList) {
@@ -91,6 +92,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           .forEach((item) => {_selectedLanguages.add(item)});
     }
   }
+*/
 
   _updateUserCountries() async {
     setState(() {
@@ -124,9 +126,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     if (validationMsg.isNotEmpty) {
       return StarfishSnackbar.showErrorMessage(context, validationMsg);
     } else if (_selectedCountries.length == 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectCountry);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptySelectCountry);
     } else if (_selectedLanguages.length == 0) {
-      StarfishSnackbar.showErrorMessage(context, Strings.emptySelectLanguage);
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptySelectLanguage);
     } else {
       _updateUserProfile();
     }
@@ -195,7 +199,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: Strings.enterName,
+                          title: AppLocalizations.of(context)!.enterName,
                           align: TextAlign.left,
                         ),
                       ),
@@ -204,7 +208,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       SizedBox(height: 10.h),
                       Align(
                         alignment: FractionalOffset.topLeft,
-                        child: ItalicitleLabel(title: Strings.enterNameDetail),
+                        child: ItalicitleLabel(
+                            title:
+                                AppLocalizations.of(context)!.enterNameDetail),
                       ),
                       //--------------------------
                       SizedBox(height: 30.h),
@@ -213,7 +219,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: Strings.selectCountry,
+                          title: AppLocalizations.of(context)!.selectCountry,
                           align: TextAlign.left,
                         ),
                       ),
@@ -225,8 +231,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                               AsyncSnapshot<List<HiveCountry>?> snapshot) {
                             if (snapshot.hasData) {
                               return SelectDropDown(
-                                navTitle: Strings.selectCountry,
-                                placeholder: Strings.selectCountry,
+                                navTitle:
+                                    AppLocalizations.of(context)!.selectCountry,
+                                placeholder:
+                                    AppLocalizations.of(context)!.selectCountry,
                                 selectedValues: _selectedCountries,
                                 dataSource: snapshot.data,
                                 type: SelectType.multiple,
@@ -248,8 +256,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       SizedBox(height: 10.h),
                       Align(
                         alignment: FractionalOffset.topLeft,
-                        child:
-                            ItalicitleLabel(title: Strings.selectCountryDetail),
+                        child: ItalicitleLabel(
+                            title: AppLocalizations.of(context)!
+                                .selectCountryDetail),
                       ),
                       //--------------------------
                       SizedBox(height: 30.h),
@@ -257,7 +266,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: Strings.selectLanugages,
+                          title: AppLocalizations.of(context)!.selectLanugages,
                           align: TextAlign.left,
                         ),
                       ),
@@ -269,8 +278,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                               AsyncSnapshot<List<HiveLanguage>?> snapshot) {
                             if (snapshot.hasData) {
                               return SelectDropDown(
-                                navTitle: Strings.selectLanugages,
-                                placeholder: Strings.selectLanugages,
+                                navTitle: AppLocalizations.of(context)!
+                                    .selectLanugages,
+                                placeholder: AppLocalizations.of(context)!
+                                    .selectLanugages,
                                 selectedValues: _selectedLanguages,
                                 dataSource: snapshot.data,
                                 type: SelectType.multiple,
@@ -296,7 +307,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: ItalicitleLabel(
-                            title: Strings.selectLanugagesDetail),
+                            title: AppLocalizations.of(context)!
+                                .selectLanugagesDetail),
                       ),
                     ],
                   ),
@@ -327,7 +339,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         keyboardType: TextInputType.text,
         style: textFormFieldText,
         decoration: InputDecoration(
-          hintText: Strings.nameHint,
+          hintText: AppLocalizations.of(context)!.nameHint,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -392,7 +404,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           height: 37.h,
           child: ElevatedButton(
             child: Text(
-              Strings.finish,
+              AppLocalizations.of(context)!.finish,
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),

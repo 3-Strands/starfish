@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchBar extends StatefulWidget {
   final String initialValue;
@@ -65,11 +63,10 @@ class _SearchBarState extends State<SearchBar> {
                   iconSize: 25.sp,
                   color: Colors.green,
                   splashColor: Colors.purple,
-                  onPressed: (){
-                    widget.onDone('');
+                  onPressed: () {
                     searchController.text = '';
-                  }
-                  ,
+                    widget.onDone('');
+                  },
                 ),
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -77,7 +74,7 @@ class _SearchBarState extends State<SearchBar> {
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
                 isCollapsed: true,
-                hintText: Strings.searchBarHint,
+                hintText: AppLocalizations.of(context)!.searchBarHint,
                 hintStyle: textFormFieldText,
               ),
               onChanged: (value) => {widget.onValueChanged(value)},

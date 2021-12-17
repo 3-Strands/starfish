@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReportMaterialDialogBox extends StatefulWidget {
   final HiveMaterial material;
@@ -78,7 +78,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 15.h,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal:61.sp),
+            padding: EdgeInsets.symmetric(horizontal: 61.sp),
             child: Text(
               widget.material.title ?? '',
               maxLines: 1,
@@ -90,7 +90,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 20.h,
           ),
           Text(
-            Strings.reportDialogDetailText,
+            AppLocalizations.of(context)!.reportDialogDetailText,
             style: TextStyle(fontSize: 13.sp),
             textAlign: TextAlign.center,
           ),
@@ -150,7 +150,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      Strings.cancel,
+                      AppLocalizations.of(context)!.cancel,
                       style: cancelButtonTextStyle,
                     ),
                   ),
@@ -184,8 +184,10 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                           .whenComplete(() => {
                                 Alerts.showMessageBox(
                                   context: context,
-                                  title: Strings.dialogInfo,
-                                  message: Strings.addMaterialFeedbackSuccess,
+                                  title:
+                                      AppLocalizations.of(context)!.dialogInfo,
+                                  message: AppLocalizations.of(context)!
+                                      .addMaterialFeedbackSuccess,
                                   callback: () {
                                     Navigator.of(context).pop();
                                   },
@@ -193,7 +195,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                               });
                     },
                     child: Text(
-                      Strings.sendFeedback,
+                      AppLocalizations.of(context)!.sendFeedback,
                       style: TextStyle(
                         fontFamily: 'OpenSans',
                         fontWeight: FontWeight.normal,

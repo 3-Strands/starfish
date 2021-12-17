@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:collection/collection.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_current_user.dart';
-import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
-import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
-import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/widgets/task_status.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Me extends StatefulWidget {
   const Me({Key? key}) : super(key: key);
@@ -200,7 +194,7 @@ class _MeState extends State<Me> {
                 ),
                 Center(
                   child: Text(
-                    '${Strings.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                    '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
                     style: TextStyle(
                         fontSize: 16.sp,
                         color: Color(0xFF3475F0),
@@ -266,7 +260,7 @@ class _MeState extends State<Me> {
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                   child: Text(
-                    '${Strings.instructions}: ${action.instructions}',
+                    '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
                     maxLines: 5,
                     style: TextStyle(
                       fontSize: 14.sp,
@@ -281,7 +275,7 @@ class _MeState extends State<Me> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '${Strings.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                      '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
                       maxLines: 1,
                       style: TextStyle(
                           fontSize: 16.sp,
@@ -322,7 +316,7 @@ class _MeState extends State<Me> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      Strings.howWasThisActionText,
+                      AppLocalizations.of(context)!.howWasThisActionText,
                       maxLines: 1,
                       style: TextStyle(
                           fontSize: 16.sp,
@@ -372,7 +366,7 @@ class _MeState extends State<Me> {
                                   width: 4.sp,
                                 ),
                                 Text(
-                                  Strings.goodText,
+                                  AppLocalizations.of(context)!.goodText,
                                   maxLines: 1,
                                   style: TextStyle(
                                     fontFamily: 'Rubik',
@@ -418,7 +412,7 @@ class _MeState extends State<Me> {
                                   width: 4.sp,
                                 ),
                                 Text(
-                                  Strings.notSoGoodText,
+                                  AppLocalizations.of(context)!.notSoGoodText,
                                   maxLines: 1,
                                   style: TextStyle(
                                     fontFamily: 'Rubik',
@@ -462,7 +456,7 @@ class _MeState extends State<Me> {
                           backgroundColor: MaterialStateProperty.all<Color>(
                               Color(0xFFADADAD)),
                         ),
-                        child: Text(Strings.close),
+                        child: Text(AppLocalizations.of(context)!.close),
                       ),
                     ),
                   ),
@@ -630,7 +624,7 @@ class MyActionListItem extends StatelessWidget {
                         itemBuilder: (context) => [
                           PopupMenuItem(
                             child: Text(
-                              Strings.editActionText,
+                              AppLocalizations.of(context)!.editActionText,
                               style: TextStyle(
                                   color: Color(0xFF3475F0),
                                   fontSize: 16.sp,
@@ -640,7 +634,7 @@ class MyActionListItem extends StatelessWidget {
                           ),
                           PopupMenuItem(
                             child: Text(
-                              Strings.deleteActionText,
+                              AppLocalizations.of(context)!.deleteActionText,
                               style: TextStyle(
                                   color: Color(0xFF3475F0),
                                   fontSize: 16.sp,
@@ -690,10 +684,10 @@ class MyActionListItem extends StatelessWidget {
     final bloc = Provider.of(context);
     Alerts.showMessageBox(
         context: context,
-        title: Strings.deleteActionTitle,
-        message: Strings.deleteActionMessage,
-        positiveButtonText: Strings.delete,
-        negativeButtonText: Strings.cancel,
+        title: AppLocalizations.of(context)!.deleteActionTitle,
+        message: AppLocalizations.of(context)!.deleteActionMessage,
+        positiveButtonText: AppLocalizations.of(context)!.delete,
+        negativeButtonText: AppLocalizations.of(context)!.cancel,
         positiveActionCallback: () {
           // Mark this action for deletion
           action.isDirty = true;

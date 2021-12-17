@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
@@ -70,7 +69,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     child: Text(
-                      Strings.makeAdmin,
+                      AppLocalizations.of(context)!.makeAdmin,
                       style: TextStyle(
                           color: Color(0xFF3475F0),
                           fontSize: 16.sp,
@@ -80,7 +79,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   ),
                   PopupMenuItem(
                     child: Text(
-                      Strings.makeTeacher,
+                      AppLocalizations.of(context)!.makeTeacher,
                       style: TextStyle(
                           color: Color(0xFF3475F0),
                           fontSize: 16.sp,
@@ -90,7 +89,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   ),
                   PopupMenuItem(
                     child: Text(
-                      Strings.makeRemove,
+                      AppLocalizations.of(context)!.makeRemove,
                       style: TextStyle(
                           color: Color(0xFF3475F0),
                           fontSize: 16.sp,

@@ -13,7 +13,6 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
-import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/date_time_utils.dart';
@@ -26,6 +25,7 @@ import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   SettingsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -135,7 +135,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // true
     if (_nameController.text.isEmpty) {
       setState(() => {_nameController.text = _userName});
-      return StarfishSnackbar.showErrorMessage(context, Strings.emptyFullName);
+      return StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.emptyFullName);
     }
 
     setState(() => {_userName = _nameController.text});
@@ -155,7 +156,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!isDialingCodeExist) {
       setState(() => {_countryCodeController.text = _countyCode});
       return StarfishSnackbar.showErrorMessage(
-          context, Strings.dialingCodeNotExist);
+          context, AppLocalizations.of(context)!.dialingCodeNotExist);
     }
     /* ----------------------------------------------------------------- */
 
@@ -258,7 +259,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  Strings.name,
+                  AppLocalizations.of(context)!.name,
                   textAlign: TextAlign.end,
                   style: titleTextStyle,
                 ),
@@ -306,7 +307,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         keyboardType: TextInputType.text,
         style: textFormFieldText,
         decoration: InputDecoration(
-          hintText: Strings.nameHint,
+          hintText: AppLocalizations.of(context)!.nameHint,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -335,7 +336,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  Strings.mobile,
+                  AppLocalizations.of(context)!.mobile,
                   textAlign: TextAlign.end,
                   style: titleTextStyle,
                 ),
@@ -404,7 +405,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: '', //Strings.countryCodeHint,
+        hintText: '', // AppLocalizations.of(context)!.countryCodeHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -434,7 +435,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: Strings.phoneNumberHint,
+        hintText: AppLocalizations.of(context)!.phoneNumberHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -487,7 +488,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             height: 45.h,
             child: Align(
               alignment: FractionalOffset.topLeft,
-              child: Text(Strings.projectAdminEmailSectionTitle,
+              child: Text(
+                  AppLocalizations.of(context)!.projectAdminEmailSectionTitle,
                   style: titleTextStyle),
             ),
           ),
@@ -522,7 +524,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.emailAddress,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: Strings.emailHint,
+        hintText: AppLocalizations.of(context)!.emailHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -552,7 +554,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.emailAddress,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: Strings.confirmEmailHint,
+        hintText: AppLocalizations.of(context)!.confirmEmailHint,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -615,7 +617,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           height: 37.h,
           child: ElevatedButton(
             child: Text(
-              Strings.back,
+              AppLocalizations.of(context)!.back,
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),
@@ -654,7 +656,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: <Widget>[
               AppLogo(hight: 36.h, width: 37.w),
               Text(
-                Strings.settings,
+                AppLocalizations.of(context)!.settings,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -687,14 +689,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
-                      title: Strings.myCountry,
+                      title: AppLocalizations.of(context)!.myCountry,
                       align: TextAlign.left,
                     ),
                   ),
                   SizedBox(height: 10.h),
                   SelectDropDown(
-                    navTitle: Strings.selectCountry,
-                    placeholder: Strings.selectCountry,
+                    navTitle: AppLocalizations.of(context)!.selectCountry,
+                    placeholder: AppLocalizations.of(context)!.selectCountry,
                     selectedValues: _selectedCountries,
                     dataSource: _countryList,
                     enabled: true,
@@ -708,8 +710,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       //     countries as List<HiveCountry>;
 
                       if (selectedCountries.length == 0) {
-                        return StarfishSnackbar.showErrorMessage(
-                            context, Strings.emptySelectCountry);
+                        return StarfishSnackbar.showErrorMessage(context,
+                            AppLocalizations.of(context)!.emptySelectCountry);
                       }
 
                       GeneralFunctions()
@@ -737,7 +739,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
-                      title: Strings.myLanugages,
+                      title: AppLocalizations.of(context)!.myLanugages,
                       align: TextAlign.left,
                     ),
                   ),
@@ -745,8 +747,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   Container(
                     child: SelectDropDown(
-                      navTitle: Strings.selectLanugages,
-                      placeholder: Strings.selectLanugages,
+                      navTitle: AppLocalizations.of(context)!.selectLanugages,
+                      placeholder:
+                          AppLocalizations.of(context)!.selectLanugages,
                       selectedValues: _selectedLanguages,
                       dataSource: _languageList,
                       enabled: true,
@@ -761,7 +764,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                         if (selectedLanguages.length == 0) {
                           return StarfishSnackbar.showErrorMessage(
-                              context, Strings.emptySelectLanguage);
+                              context,
+                              AppLocalizations.of(context)!
+                                  .emptySelectLanguage);
                         }
 
                         GeneralFunctions()
@@ -790,7 +795,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
-                      title: Strings.lastSuccessfullSync,
+                      title: AppLocalizations.of(context)!.lastSuccessfullSync,
                       align: TextAlign.left,
                     ),
                   ),
@@ -806,7 +811,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       alignment: FractionalOffset.topLeft,
                       child: Text.rich(
                         TextSpan(
-                          text: "${Strings.lastSuccessfullSync}: ",
+                          text:
+                              "${AppLocalizations.of(context)!.lastSuccessfullSync}: ",
                           style: TextStyle(
                             color: AppColors.appTitle,
                             fontWeight: FontWeight.normal,
@@ -836,7 +842,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
-                      title: Strings.forGroupAdmin,
+                      title: AppLocalizations.of(context)!.forGroupAdmin,
                       align: TextAlign.left,
                     ),
                   ),
@@ -855,7 +861,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           width: 300.w,
                           height: 44.h,
                           child: Text(
-                            Strings.linkMyGroups,
+                            AppLocalizations.of(context)!.linkMyGroups,
                             textAlign: TextAlign.left,
                             style: titleTextStyle,
                           ),
@@ -888,7 +894,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Align(
                     alignment: FractionalOffset.topLeft,
                     child: TitleLabel(
-                      title: Strings.myGroups,
+                      title: AppLocalizations.of(context)!.myGroups,
                       align: TextAlign.left,
                     ),
                   ),

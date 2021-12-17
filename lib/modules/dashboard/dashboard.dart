@@ -2,10 +2,16 @@ import 'package:cron/cron.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
@@ -16,9 +22,9 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:swipedetector/swipedetector.dart';
 import '../material_view/materials_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -31,13 +37,19 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> _widgetOptions = [];
   late PageController _pageController;
 
+  late AppBloc bloc;
+  late List<HiveLanguage> _languageList;
+  late Box<HiveLanguage> _languageBox;
+  late Box<HiveCurrentUser> _currentUserBox;
+  late HiveCurrentUser _user;
+
   final cron = Cron();
 
   @override
   void initState() {
     // Sync every 15 mins
     // TODO: Check Connectivity before starting sync
-    cron.schedule(Schedule.parse('*/15 * * * *'), () async {
+    cron.schedule(Schedule.parse('*/2 * * * *'), () async {
       print('================ START SYNC =====================');
       SyncService().syncAll();
     });
@@ -60,6 +72,11 @@ class _DashboardState extends State<Dashboard> {
       }
     }, context: this);
 
+    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    _getAllLanguages();
+    _getCurrentUser();
+
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
     var actionsWidget = ActionsScreen();
@@ -68,6 +85,20 @@ class _DashboardState extends State<Dashboard> {
     _pageController = PageController(initialPage: _selectedIndex);
 
     super.initState();
+  }
+
+  void _getAllLanguages() {
+    _languageList = _languageBox.values.toList();
+  }
+
+  void _getCurrentUser() {
+    _user = _currentUserBox.values.first;
+  }
+
+  @override
+  void didChangeDependencies() {
+    bloc = Provider.of(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -132,17 +163,17 @@ class _DashboardState extends State<Dashboard> {
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.metericalsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.metericalsIcon),
-                  label: Strings.materialsTabItemText,
+                  label: AppLocalizations.of(context)!.materialsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.groupsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.groupsIcon),
-                  label: Strings.groupsTabItemText,
+                  label: AppLocalizations.of(context)!.groupsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.actionsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.actionsIcon),
-                  label: Strings.actionsTabItemText,
+                  label: AppLocalizations.of(context)!.actionsTabItemText,
                 ),
               ],
               currentIndex: _selectedIndex,
@@ -166,13 +197,13 @@ class _DashboardState extends State<Dashboard> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          title = Strings.materialsTabItemText;
+          title = AppLocalizations.of(context)!.materialsTabItemText;
           break;
         case 1:
-          title = Strings.groupsTabItemText;
+          title = AppLocalizations.of(context)!.groupsTabItemText;
           break;
         case 2:
-          title = Strings.actionsTabItemText;
+          title = AppLocalizations.of(context)!.actionsTabItemText;
           break;
         default:
         // title = "Results";
@@ -180,7 +211,25 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  _cleanMaterialFilterValues() {
+    bloc.materialBloc.selectedLanguages.clear();
+    _selectLanguage(bloc);
+    bloc.materialBloc.selectedTopics.clear();
+  }
+
+  _selectLanguage(AppBloc bloc) {
+    for (var languageId in _user.languageIds) {
+      _languageList
+          .where((item) => item.id == languageId)
+          .forEach((item) => {bloc.materialBloc.selectedLanguages.add(item)});
+    }
+  }
+
   void onPageChanged(int index) {
+    if (index != 0) {
+      _cleanMaterialFilterValues();
+    }
+
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {
       this._selectedIndex = index;
