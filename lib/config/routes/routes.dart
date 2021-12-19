@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
 import 'package:starfish/modules/authentication/phone_authentication.dart';
@@ -34,7 +35,9 @@ class Routes {
     settings: (BuildContext context) => SettingsScreen(),
     addNewMaterial: (BuildContext context) => AddEditMaterialScreen(),
     addActions: (BuildContext context) => AddEditAction(),
-    selectActions: (BuildContext context) => SelectActions(),
+    selectActions: (BuildContext context) => SelectActions(
+          onSelect: (action) {},
+        ),
     createNewGroup: (BuildContext context) => AddEditGroupScreen(),
   };
 }

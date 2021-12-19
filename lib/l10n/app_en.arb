@@ -255,5 +255,10 @@
   "assignedToMeDone": "Assigned to me and completed",
   "assignedToMeNotDone":
       "Assigned to me, but not complete yet",
-  "assignedToMeOverdue": "Assigned to me and overdue"
+  "assignedToMeOverdue": "Assigned to me and overdue",
+
+  "question": "Question",
+  "questionTextEditHint": "Write an answer to the question here",
+
+  "selectAction": "Select Action"
 }

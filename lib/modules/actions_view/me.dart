@@ -21,6 +21,7 @@ import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/widgets/title_label_widget.dart';
 
 class Me extends StatefulWidget {
   const Me({Key? key}) : super(key: key);
@@ -294,12 +295,15 @@ class _MeState extends State<Me> {
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('Question: ${action.question}'),
+                              Align(
+                                alignment: FractionalOffset.topLeft,
+                                child: Text('Question: ${action.question}'),
+                              ),
                               TextField(
                                 decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    hintText:
-                                        'Write an answer to the qustion here'),
+                                    hintText: AppLocalizations.of(context)!
+                                        .questionTextEditHint),
                                 onSubmitted: (value) {
                                   hiveActionUser!.userResponse = value;
                                   bloc.actionBloc

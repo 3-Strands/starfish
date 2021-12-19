@@ -255,5 +255,10 @@
   "assignedToMeDone": "मुझे सौंपा और पूरा किया",  
   "assignedToMeNotDone":
       "मुझे सौंपा गया है, लेकिन अभी तक पूरा नहीं हुआ है",
-  "assignedToMeOverdue": "मुझे सौंपा और अतिदेय"
+  "assignedToMeOverdue": "मुझे सौंपा और अतिदेय",
+
+  "question": "प्रश्न",
+  "questionTextEditHint": "प्रश्न का उत्तर यहाँ लिखें",
+    
+  "selectAction": "कार्रवाई चुनें"
 }
