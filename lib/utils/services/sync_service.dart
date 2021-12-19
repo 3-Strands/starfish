@@ -1,16 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
 import 'package:flutter/widgets.dart';
 import 'package:grpc/grpc.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -27,6 +33,7 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
@@ -61,6 +68,7 @@ class SyncService {
   late Box<HiveGroup> groupBox;
   late Box<HiveEvaluationCategory> evaluationCategoryBox;
   late Box<HiveUser> userBox;
+  late Box<HiveFile> fileBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -80,6 +88,7 @@ class SyncService {
     evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
+    fileBox = Hive.box<HiveFile>(HiveDatabase.FILE_BOX);
   }
   void showAlert(BuildContext context) async {
     _isDialogShowing = true;
@@ -132,6 +141,8 @@ class SyncService {
     await lock.synchronized(() => syncLocalActionsToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
     //showAlert(NavigationService.navigatorKey.currentContext!);
+
+    downloadMaterial();
 
     syncCurrentUser();
     syncUsers();
@@ -697,5 +708,83 @@ class SyncService {
         });
       }
     });
+  }
+
+  // TODO:
+  downloadMaterial() async {
+    print('============= START: Download Material =============');
+
+    fileBox.values.forEach((element) {
+      print('FILES: $element');
+    });
+
+    final Map<String, String>? metadata = {
+      'authorization': await StarfishSharedPreference().getAccessToken(),
+      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
+    };
+
+    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
+        host: "sandbox-api.everylanguage.app",
+        port: 443,
+        transportSecure: true);
+
+    FileTransferClient? client = FileTransferClient(
+      channel,
+      options: CallOptions(metadata: metadata),
+    );
+
+    ResponseStream<FileData> responseStream = client.download(Stream.value(
+        DownloadRequest(
+            entityId: "bbcf5dfe-897d-4c59-81fc-2201a149ea2c",
+            entityType: EntityType.MATERIAL,
+            filenames: ["IMG-20211212-WA0000.jpg"].toList())));
+
+    String? filePath = await getFilePath("IMG-20211212-WA0000.jpg");
+
+    if (filePath == null) {
+      print("Storage NOT accessible");
+    }
+
+    try {
+      File file = File(filePath!);
+      await file.create();
+      RandomAccessFile randomAccessFile = await file.open(mode: FileMode.write);
+
+      responseStream.listen((FileData fileData) async {
+        //print("DATA Received: $fileData");
+        if (fileData.hasMetaData()) {
+          print("META DATA: ${fileData.metaData}");
+        } else if (fileData.hasChunk()) {
+          //print("FILE CHUNK:");
+          randomAccessFile.writeFrom(fileData.chunk);
+        }
+      }, onDone: () {
+        print("FILE Transfer DONE");
+        randomAccessFile.closeSync();
+      }, onError: (error, stackTrace) {
+        print("FILE Transfer ERROR:: $error");
+      }, cancelOnError: true);
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
+  Future<String?> getFilePath(String filename) async {
+    List<Directory>? directories =
+        await getExternalStorageDirectories(type: StorageDirectory.downloads);
+    if (directories == null || directories.length == 0) {
+      return null;
+    }
+    String appDocumentsPath = directories.first.path;
+
+    /*/Directory? appDocumentsPath = await getApplicationDocumentsDirectory();
+    if (appDocumentsPath == null) {
+      return null;
+    }
+    String filePath = '${appDocumentsPath.path}/$filename';*/
+
+    String filePath = '$appDocumentsPath/$filename';
+    print("FILE PATH: $filePath");
+    return filePath;
   }
 }

@@ -2,12 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:grpc/grpc_or_grpcweb.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 
 class MaterialBloc extends Object {
   MaterialRepository materialRepository = MaterialRepository();
@@ -16,13 +21,23 @@ class MaterialBloc extends Object {
   String query = '';
 
   late BehaviorSubject<List<HiveMaterial>> _materials;
+  late BehaviorSubject<FileData> _fileData;
 
   MaterialBloc() {
     _materials = new BehaviorSubject<List<HiveMaterial>>();
+    _fileData = new BehaviorSubject<FileData>();
+
+    _fileData.stream.listen((event) {
+      if (event.hasChunk()) {
+        return;
+      }
+      print("File UploadRequest: $event");
+    });
   }
 
   // Add data to Stream
   Stream<List<HiveMaterial>> get materials => _materials.stream;
+  Stream<FileData> get fileData => _fileData.stream;
 
   List<File> _selectedFiles = [];
   List<HiveMaterial> _allMaterials = [];
@@ -91,45 +106,87 @@ class MaterialBloc extends Object {
     return _results;
   }
 
-  Future<void> createUpdateMaterial(HiveMaterial material) async {
-    return materialRepository.createUpdateMaterialInDB(material).then((_) {
+  Future<void> createUpdateMaterial(HiveMaterial material,
+      {List<HiveFile>? files}) async {
+    return materialRepository
+        .createUpdateMaterialInDB(material, files: files)
+        .then((_) {
       fetchMaterialsFromDB();
     });
   }
 
-  StreamController<FileData> _controller = StreamController<FileData>();
+  uploadMaterial(String entityId, File file) async {
+/*    final Map<String, String>? metadata = {
+      'authorization': await StarfishSharedPreference().getAccessToken(),
+      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
+    };
 
-  Stream<FileData> get fileDataStream => _controller.stream;
+    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
+        host: "sandbox-api.everylanguage.app",
+        port: 443,
+        transportSecure: true);
 
-  uploadMaterial(String entityId, File file) async* {
-    //BehaviorSubject<FileData> _fileData = new BehaviorSubject<FileData>();
-
-// Add data to Stream
-    //Stream<FileData> fileDataStream = _controller.stream;
-
-    //File file = _selectedFiles.first;
-    //Stream<List<int>> inputStream = file.openRead();
+    FileTransferClient? client = FileTransferClient(
+      channel,
+      options: CallOptions(metadata: metadata),
+    );
+*/
+    /*StreamController<FileData> _controller = 
+        StreamController<FileData>.broadcast();*/
 
     FileMetaData metaData = FileMetaData(
       entityId: entityId,
       filename: file.path.split("/").last,
       entityType: EntityType.MATERIAL,
     );
-
     FileData fileMetaData = FileData(metaData: metaData);
-    //FileData fileData = FileData(chunk: chunk);
 
-    _controller.sink.add(fileMetaData);
-    //_fileData.sink.add(fileData);
+    /*ResponseStream<UploadStatus> responseStream =
+        client.upload(_controller.stream);*/
 
-    materialRepository.apiProvider
-        .uploadFile(Stream.value(fileMetaData))
-        .then((responseStream) {
-      print("UploadStatus: =>>");
+    /*materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
       responseStream.listen((value) {
-        print("UploadStatus: $value");
+        print("File UploadStatus: $value");
       });
-    });
+    });*/
+
+    /*responseStream.listen((value) {
+      print("File UploadStatus: $value");
+    });*/
+
+    _fileData.sink.add(fileMetaData);
+
+    /*Stream<List<int>> inputStream = file.openRead();
+    inputStream.listen((event) {
+      _controller.sink.add(FileData(chunk: event));
+    }, onDone: () {
+      print("DONE");
+      _controller.sink.add(fileMetaData);
+      _controller.close();
+    }, onError: (error) {
+      print("ERROR: $error");
+    });*/
+
+    final semicolon = ';'.codeUnitAt(0);
+    RandomAccessFile randomAccessFile = file.openSync(mode: FileMode.read);
+    //final result = <int>[];
+    while (true) {
+      final byte = await randomAccessFile.readByte();
+      //result.add(byte);
+      _fileData.sink.add(FileData(chunk: [byte].toList()));
+      if (byte == semicolon) {
+        //print(String.fromCharCodes(result));
+        _fileData.sink.add(fileMetaData);
+        //_controller.sink.done;
+        //_controller.close();
+        await randomAccessFile.close();
+        break;
+      }
+    }
+  }
+
+  _handleUploadError(Object? error, StackTrace stackTrace) {
+    print("UploadStatus[onError]: $error");
   }
 
   void setSelectedFiles(List<File> selectedFiles) {
@@ -138,6 +195,6 @@ class MaterialBloc extends Object {
 
   void dispose() {
     _materials.close();
-    _controller.close();
+    _fileData.close();
   }
 }

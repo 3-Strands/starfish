@@ -15,6 +15,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
@@ -38,6 +39,7 @@ class HiveDatabase {
   static const String EVALUATION_CATEGORIES_BOX = 'evaluationCategoryBox'; //14
   static const String ACTION_USER_BOX = 'actionUserBox'; // HiveActionUser 15
   static const String USER_BOX = 'userBox'; // 16
+  static const String FILE_BOX = 'fileBox'; //17
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -70,6 +72,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveGroupAdapter());
     Hive.registerAdapter(HiveGroupActionAdapter());
     Hive.registerAdapter(HiveEvaluationCategoryAdapter());
+    Hive.registerAdapter(HiveFileAdapter());
 
     await openBoxes();
   }
@@ -90,5 +93,6 @@ class HiveDatabase {
     await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX);
     await Hive.openBox<HiveActionUser>(ACTION_USER_BOX);
     await Hive.openBox<HiveUser>(USER_BOX);
+    await Hive.openBox<HiveFile>(FILE_BOX);
   }
 }
