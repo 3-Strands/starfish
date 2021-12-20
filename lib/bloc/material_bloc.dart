@@ -145,11 +145,11 @@ class MaterialBloc extends Object {
     /*ResponseStream<UploadStatus> responseStream =
         client.upload(_controller.stream);*/
 
-    materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
+ /*   materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
       responseStream.listen((value) {
         print("File UploadStatus: $value");
       });
-    });
+    });*/
 
     /*responseStream.listen((value) {
       print("File UploadStatus: $value");

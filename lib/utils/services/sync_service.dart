@@ -724,15 +724,8 @@ class SyncService {
   uploadMaterial(String entityId, File file) async {
     print(
         '============= START: Sync Local File $entityId :: ${file.path} =============');
-    StreamController<FileData> _controller =
-        StreamController<FileData>.broadcast();
+    StreamController<FileData> _controller = StreamController();
 
-    _controller.stream.listen((value) {
-      if (value.hasChunk()) {
-        return;
-      }
-      print("FileData: $value");
-    });
     FileMetaData metaData = FileMetaData(
       entityId: entityId,
       filename: file.path.split("/").last,
@@ -752,19 +745,19 @@ class SyncService {
 
         if (uploadStatus.status == UploadStatus_Status.OK ||
             uploadStatus.status == UploadStatus_Status.FAILED) {
-          _controller.sink.done;
+          _controller.done;
         }
       });
     });
 
-    _controller.sink.add(fileMetaData);
+    _controller.add(fileMetaData);
 
     Stream<List<int>> inputStream = file.openRead();
     inputStream.listen((event) {
-      _controller.sink.add(FileData(chunk: event));
+      _controller.add(FileData(chunk: event));
     }, onDone: () {
       print("DONE");
-      _controller.sink.add(fileMetaData);
+      //_controller.sink.add(fileMetaData);
       _controller.close();
     }, onError: (error) {
       print("ERROR: $error");
