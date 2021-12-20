@@ -6,9 +6,11 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SelectActions extends StatefulWidget {
-  const SelectActions({Key? key}) : super(key: key);
+  SelectActions({Key? key, required this.onSelect}) : super(key: key);
+  final Function(HiveAction) onSelect;
 
   @override
   _SelectActionsState createState() => _SelectActionsState();
@@ -31,7 +33,7 @@ class _SelectActionsState extends State<SelectActions>
     bloc.actionBloc.fetchActions();
     return new Scaffold(
       appBar: new AppBar(
-        title: Text('Select Action'),
+        title: Text(AppLocalizations.of(context)!.selectAction),
         elevation: 0.0,
       ),
       body: Column(
@@ -65,7 +67,8 @@ class _SelectActionsState extends State<SelectActions>
                         padding: const EdgeInsets.all(8.0),
                         child: InkWell(
                           onTap: () {
-                            Navigator.pop(context, action);
+                            widget.onSelect(action);
+                            Navigator.pop(context);
                           },
                           child: Card(
                             // color: Colors.lightBlue,

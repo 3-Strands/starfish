@@ -132,20 +132,20 @@ class SyncService {
   }
 
   void syncAll() async {
-    //await syncLocalCurrentUser(kCurrentUserFieldMask);
-    //await syncLocalMaterialsToRemote();
+    await syncLocalCurrentUser(kCurrentUserFieldMask);
+    await syncLocalMaterialsToRemote();
 
     // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
-    /*await lock.synchronized(() => syncLocalUsersToRemote());
+    await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     await lock.synchronized(() => syncLocalActionsToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
     //showAlert(NavigationService.navigatorKey.currentContext!);
-*/
-    //syncLocalFiles();
+
+    syncLocalFiles();
     syncFiles();
-/*
+
     syncCurrentUser();
     syncUsers();
     syncCountries();
@@ -157,7 +157,7 @@ class SyncService {
 
     syncEvaluationCategories();
     syncGroup();
-*/
+
     /*if (_isDialogShowing) {
       Future.delayed(Duration(seconds: 1), () {
         _isDialogShowing = false; // set it `false` since dialog is closed

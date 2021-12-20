@@ -477,12 +477,15 @@ class _MyGroupState extends State<MyGroup> {
                     child: (action.type == Action_Type.TEXT_RESPONSE.value)
                         ? Column(
                             children: [
-                              Text('Question: ${action.question}'),
+                              Align(
+                                alignment: FractionalOffset.topLeft,
+                                child: Text('Question: ${action.question}'),
+                              ),
                               TextField(
                                 decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
-                                    hintText:
-                                        'Write an answer to the qustion here'),
+                                    hintText: AppLocalizations.of(context)!
+                                        .questionTextEditHint),
                                 onSubmitted: (value) {
                                   print(value);
                                   hiveActionUser.teacherResponse = value;

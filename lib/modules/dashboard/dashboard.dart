@@ -49,7 +49,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     // Sync every 15 mins
     // TODO: Check Connectivity before starting sync
-    cron.schedule(Schedule.parse('*/2 * * * *'), () async {
+    cron.schedule(Schedule.parse('*/15 * * * *'), () async {
       print('================ START SYNC =====================');
       SyncService().syncAll();
     });
@@ -135,7 +135,8 @@ class _DashboardState extends State<Dashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SettingsScreen()),
+                                builder: (context) => SettingsScreen(),
+                              ),
                             );
                           },
                         );

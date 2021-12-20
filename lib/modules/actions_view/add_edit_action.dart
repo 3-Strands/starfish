@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -63,6 +65,7 @@ class _AddEditActionState extends State<AddEditAction>
   String? _instructions;
   String? _question;
   DateTime? _dueDate;
+  bool _showGroupField = true;
 
   void _getAllGroups() async {
     _groupList = _groupBox.values.toList();
@@ -78,7 +81,6 @@ class _AddEditActionState extends State<AddEditAction>
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
     _getAllGroups();
 
-    print("ACTION: ${widget.action}");
     if (widget.action != null) {
       _isEditMode = true;
 
@@ -126,19 +128,44 @@ class _AddEditActionState extends State<AddEditAction>
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
 
+/*
     if (_actionToBeReused != null) {
-      _instructions = _actionToBeReused!.instructions;
-      _question = _actionToBeReused!.question;
+      print("_actionToBeReused ==>> $_actionToBeReused");
 
-      _selectedActionType = Action_Type.valueOf(_actionToBeReused!.type!) ??
-          Action_Type.TEXT_INSTRUCTION;
-      _actionNameController.text = _actionToBeReused!.name!;
-      _selectedMaterial = _actionToBeReused!.material;
+    _instructions = _actionToBeReused!.instructions;
+    _question = _actionToBeReused!.question;
 
+    _selectedActionType = Action_Type.valueOf(_actionToBeReused!.type!) ??
+        Action_Type.TEXT_INSTRUCTION;
+    _actionNameController.text = _actionToBeReused!.name!;
+    _selectedMaterial = _actionToBeReused!.material;
+
+    setState(() {
       _selectedGroups =
           _actionToBeReused!.group != null ? [_actionToBeReused!.group!] : [];
-      _dueDate = _actionToBeReused!.dateDue?.toDateTime();
+      _showGroupField = true;
+    });
+    _dueDate = _actionToBeReused!.dateDue?.toDateTime();
+    } 
+*/
+
+    _receivedReuseActionBtnResponse(HiveAction action) {
+      setState(() {
+        _actionToBeReused = action;
+        _instructions = _actionToBeReused!.instructions;
+        _question = _actionToBeReused!.question;
+
+        _selectedActionType = Action_Type.valueOf(_actionToBeReused!.type!) ??
+            Action_Type.TEXT_INSTRUCTION;
+        _actionNameController.text = _actionToBeReused!.name!;
+        _selectedMaterial = _actionToBeReused!.material;
+
+        _selectedGroups =
+            _actionToBeReused!.group != null ? [_actionToBeReused!.group!] : [];
+        _dueDate = _actionToBeReused!.dateDue?.toDateTime();
+      });
     }
+
     return Scaffold(
       backgroundColor: AppColors.actionScreenBG,
       appBar: AppBar(
@@ -195,17 +222,24 @@ class _AddEditActionState extends State<AddEditAction>
                   SizedBox(height: 13.h),
                   InkWell(
                     onTap: () async {
-                      HiveAction? action = await Navigator.push(
+                      setState(() {
+                        _showGroupField = false;
+                      });
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => SelectActions(),
+                          builder: (BuildContext context) => SelectActions(
+                            onSelect: (action) {
+                              _receivedReuseActionBtnResponse(action);
+                            },
+                          ),
                           fullscreenDialog: true,
                         ),
-                      );
-
-                      setState(() {
-                        _actionToBeReused = action;
-                      });
+                      ).then((value) => {
+                            setState(() {
+                              _showGroupField = true;
+                            })
+                          });
                     },
                     child: Container(
                       height: 52.h,
@@ -324,22 +358,7 @@ class _AddEditActionState extends State<AddEditAction>
                   SizedBox(height: 13.h),
 
                   // List groups where current user have Admin or Teacher Role only
-                  SelectDropDown(
-                    navTitle: AppLocalizations.of(context)!.assignActionTo,
-                    placeholder: AppLocalizations.of(context)!.assignActionTo,
-                    selectedValues: _selectedGroups,
-                    dataSource: _groupList,
-                    enableSelectAllOption: false,
-                    type: SelectType.multiple,
-                    dataSourceType: DataSourceType.groups,
-                    onDoneClicked: <T>(values) {
-                      setState(() {
-                        _selectedGroups =
-                            List<HiveGroup>.from(values as List<dynamic>);
-                      });
-                    },
-                  ),
-
+                  (_showGroupField) ? selectDropDown() : emptyContainer(),
                   SizedBox(height: 20.h),
                   Text(
                     AppLocalizations.of(context)!.dueDate,
@@ -432,6 +451,28 @@ class _AddEditActionState extends State<AddEditAction>
           ],
         ),
       ),
+    );
+  }
+
+  Widget emptyContainer() {
+    return new Container();
+  }
+
+  Widget selectDropDown() {
+    return new SelectDropDown(
+      navTitle: AppLocalizations.of(context)!.assignActionTo,
+      placeholder: AppLocalizations.of(context)!.assignActionTo,
+      selectedValues: _selectedGroups,
+      dataSource: _groupList,
+      enableSelectAllOption: false,
+      enabled: !_isEditMode,
+      type: SelectType.multiple,
+      dataSourceType: DataSourceType.groups,
+      onDoneClicked: <T>(values) {
+        setState(() {
+          _selectedGroups = List<HiveGroup>.from(values as List<dynamic>);
+        });
+      },
     );
   }
 
