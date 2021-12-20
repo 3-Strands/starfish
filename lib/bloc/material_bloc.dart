@@ -115,6 +115,7 @@ class MaterialBloc extends Object {
     });
   }
 
+  @Deprecated('upload is to be done using syncService')
   uploadMaterial(String entityId, File file) async {
 /*    final Map<String, String>? metadata = {
       'authorization': await StarfishSharedPreference().getAccessToken(),
@@ -144,11 +145,11 @@ class MaterialBloc extends Object {
     /*ResponseStream<UploadStatus> responseStream =
         client.upload(_controller.stream);*/
 
-    /*materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
+    materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
       responseStream.listen((value) {
         print("File UploadStatus: $value");
       });
-    });*/
+    });
 
     /*responseStream.listen((value) {
       print("File UploadStatus: $value");

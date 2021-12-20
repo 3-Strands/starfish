@@ -279,11 +279,30 @@ class ApiProvider {
       'authorization': await StarfishSharedPreference().getAccessToken(),
       'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0',
     };
-    FileTransferClient client = FileTransferClient(
+    FileTransferClient fileTransferClient = FileTransferClient(
       channel,
       options: CallOptions(metadata: metadata),
     );
 
-    return client.upload(request);
+    return fileTransferClient.upload(request);
+  }
+
+  Future<ResponseStream<FileData>> downloadFile(
+      Stream<DownloadRequest> request) async {
+    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
+        host: "sandbox-api.everylanguage.app",
+        port: 443,
+        transportSecure: true);
+
+    Map<String, String>? metadata = {
+      'authorization': await StarfishSharedPreference().getAccessToken(),
+      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0',
+    };
+    FileTransferClient fileTransferClient = FileTransferClient(
+      channel,
+      options: CallOptions(metadata: metadata),
+    );
+
+    return fileTransferClient.download(request);
   }
 }

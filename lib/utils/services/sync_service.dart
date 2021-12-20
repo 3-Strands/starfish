@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart' as app;
@@ -131,19 +132,20 @@ class SyncService {
   }
 
   void syncAll() async {
-    await syncLocalCurrentUser(kCurrentUserFieldMask);
-    await syncLocalMaterialsToRemote();
+    //await syncLocalCurrentUser(kCurrentUserFieldMask);
+    //await syncLocalMaterialsToRemote();
 
     // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
-    await lock.synchronized(() => syncLocalUsersToRemote());
+    /*await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     await lock.synchronized(() => syncLocalActionsToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
     //showAlert(NavigationService.navigatorKey.currentContext!);
-
-    downloadMaterial();
-
+*/
+    //syncLocalFiles();
+    syncFiles();
+/*
     syncCurrentUser();
     syncUsers();
     syncCountries();
@@ -155,7 +157,7 @@ class SyncService {
 
     syncEvaluationCategories();
     syncGroup();
-
+*/
     /*if (_isDialogShowing) {
       Future.delayed(Duration(seconds: 1), () {
         _isDialogShowing = false; // set it `false` since dialog is closed
@@ -710,53 +712,119 @@ class SyncService {
     });
   }
 
-  // TODO:
-  downloadMaterial() async {
-    print('============= START: Download Material =============');
+  syncLocalFiles() async {
+    print('============= START: Sync Local Files to Remote =============');
+    fileBox.values.forEach((hiveFile) {
+      // TODO: Check existance of the the file before upload
+      uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!));
+    });
+    //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
+  }
 
-    fileBox.values.forEach((element) {
-      print('FILES: $element');
+  uploadMaterial(String entityId, File file) async {
+    print(
+        '============= START: Sync Local File $entityId :: ${file.path} =============');
+    StreamController<FileData> _controller =
+        StreamController<FileData>.broadcast();
+
+    _controller.stream.listen((value) {
+      if (value.hasChunk()) {
+        return;
+      }
+      print("FileData: $value");
+    });
+    FileMetaData metaData = FileMetaData(
+      entityId: entityId,
+      filename: file.path.split("/").last,
+      entityType: EntityType.MATERIAL,
+    );
+    FileData fileMetaData = FileData(metaData: metaData);
+
+    /*ResponseStream<UploadStatus> responseStream =
+        client.upload(_controller.stream);*/
+
+    MaterialRepository()
+        .apiProvider
+        .uploadFile(_controller.stream)
+        .then((responseStream) {
+      responseStream.listen((UploadStatus uploadStatus) {
+        print("File UploadStatus: $uploadStatus");
+
+        if (uploadStatus.status == UploadStatus_Status.OK ||
+            uploadStatus.status == UploadStatus_Status.FAILED) {
+          _controller.sink.done;
+        }
+      });
     });
 
-    final Map<String, String>? metadata = {
-      'authorization': await StarfishSharedPreference().getAccessToken(),
-      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
-    };
+    _controller.sink.add(fileMetaData);
 
-    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-        host: "sandbox-api.everylanguage.app",
-        port: 443,
-        transportSecure: true);
+    Stream<List<int>> inputStream = file.openRead();
+    inputStream.listen((event) {
+      _controller.sink.add(FileData(chunk: event));
+    }, onDone: () {
+      print("DONE");
+      _controller.sink.add(fileMetaData);
+      _controller.close();
+    }, onError: (error) {
+      print("ERROR: $error");
+    });
 
-    FileTransferClient? client = FileTransferClient(
-      channel,
-      options: CallOptions(metadata: metadata),
-    );
+    /*final semicolon = ';'.codeUnitAt(0);
+    RandomAccessFile randomAccessFile = file.openSync(mode: FileMode.read);
+    //final result = <int>[];
+    while (true) {
+      final byte = await randomAccessFile.readByte();
+      //result.add(byte);
+      _controller.sink.add(FileData(chunk: [byte].toList()));
+      if (byte == semicolon) {
+        //print(String.fromCharCodes(result));
+        _controller.sink.add(fileMetaData);
+        //_controller.sink.done;
+        //_controller.close();
+        await randomAccessFile.close();
+        break;
+      }
+    }*/
+  }
 
-    ResponseStream<FileData> responseStream = client.download(Stream.value(
-        DownloadRequest(
-            entityId: "bbcf5dfe-897d-4c59-81fc-2201a149ea2c",
-            entityType: EntityType.MATERIAL,
-            filenames: ["IMG-20211212-WA0000.jpg"].toList())));
+  syncFiles() async {
+    print('============= START: SyncFiles FROM Remote =============');
+    materialBox.values.forEach((hiveMaterial) {
+      hiveMaterial.files!.forEach((String filename) {
+        print('=============DownloadMaterial: $filename =============');
+        downloadMaterial(hiveMaterial.id!, filename);
+      });
+    });
+    //downloadMaterial(materialBox.values.first);
+  }
 
-    String? filePath = await getFilePath("IMG-20211212-WA0000.jpg");
-
+  // TODO: don't download the file again if already downloaded.
+  downloadMaterial(String entityId, String filename) async {
+    String? filePath = await getFilePath(filename);
     if (filePath == null) {
       print("Storage NOT accessible");
+      return;
     }
 
-    try {
-      File file = File(filePath!);
-      await file.create();
-      RandomAccessFile randomAccessFile = await file.open(mode: FileMode.write);
+    File file = File(filePath);
+    await file.create();
+    RandomAccessFile randomAccessFile = await file.open(mode: FileMode.write);
 
+    MaterialRepository()
+        .apiProvider
+        .downloadFile(Stream.value(DownloadRequest(
+            entityId: entityId,
+            entityType: EntityType.MATERIAL,
+            filenames: [filename].toList())))
+        .then((responseStream) {
       responseStream.listen((FileData fileData) async {
         //print("DATA Received: $fileData");
         if (fileData.hasMetaData()) {
           print("META DATA: ${fileData.metaData}");
         } else if (fileData.hasChunk()) {
           //print("FILE CHUNK:");
-          randomAccessFile.writeFrom(fileData.chunk);
+          randomAccessFile.writeFromSync(fileData.chunk);
         }
       }, onDone: () {
         print("FILE Transfer DONE");
@@ -764,26 +832,26 @@ class SyncService {
       }, onError: (error, stackTrace) {
         print("FILE Transfer ERROR:: $error");
       }, cancelOnError: true);
-    } catch (e) {
-      print("Exception: $e");
-    }
+    });
   }
 
+  // TODO:
   Future<String?> getFilePath(String filename) async {
-    List<Directory>? directories =
+    /*List<Directory>? directories =
         await getExternalStorageDirectories(type: StorageDirectory.downloads);
     if (directories == null || directories.length == 0) {
       return null;
     }
     String appDocumentsPath = directories.first.path;
 
-    /*/Directory? appDocumentsPath = await getApplicationDocumentsDirectory();
+    String filePath = '$appDocumentsPath/$filename';
+    */
+
+    Directory? appDocumentsPath = await getApplicationDocumentsDirectory();
     if (appDocumentsPath == null) {
       return null;
     }
-    String filePath = '${appDocumentsPath.path}/$filename';*/
-
-    String filePath = '$appDocumentsPath/$filename';
+    String filePath = '${appDocumentsPath.path}/$filename';
     print("FILE PATH: $filePath");
     return filePath;
   }
