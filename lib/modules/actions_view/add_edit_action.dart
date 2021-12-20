@@ -236,7 +236,7 @@ class _AddEditActionState extends State<AddEditAction>
                       });
                     },
                     onMaterialChange: (HiveMaterial? material) {
-                      print('ActionTypeSelector[material]: $material');
+                      debugPrint('ActionTypeSelector[material]: $material');
                       setState(() {
                         _selectedMaterial = material;
                       });
@@ -356,7 +356,6 @@ class _AddEditActionState extends State<AddEditAction>
       _selectedGroups =
           _actionToBeReused!.group != null ? [_actionToBeReused!.group!] : [];
 
-      print('_selectedGroups ==>> $_selectedGroups');
       _dueDate = _actionToBeReused!.dateDue?.toDateTime();
     });
   }
@@ -509,7 +508,6 @@ class _AddEditActionState extends State<AddEditAction>
       onDoneClicked: <T>(values) {
         setState(() {
           _selectedGroups = List<HiveGroup>.from(values as List<dynamic>);
-          print('_selectedGroups ==>> $_selectedGroups');
         });
       },
     );
