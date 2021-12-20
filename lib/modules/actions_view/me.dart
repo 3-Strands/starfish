@@ -123,13 +123,11 @@ class _MeState extends State<Me> {
               SearchBar(
                 initialValue: '',
                 onValueChanged: (value) {
-                  print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
                   });
                 },
                 onDone: (value) {
-                  print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
                   });
