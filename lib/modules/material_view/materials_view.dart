@@ -651,17 +651,18 @@ class MaterialListItem extends StatelessWidget {
                       ),
                     ),
                     Spacer(),
-                    CustomIconButton(
-                      icon: Icon(
-                        Icons.open_in_new,
-                        color: Colors.blue,
-                        size: 18.sp,
+                    if (material.url != null && material.url!.isNotEmpty)
+                      CustomIconButton(
+                        icon: Icon(
+                          Icons.open_in_new,
+                          color: Colors.blue,
+                          size: 18.sp,
+                        ),
+                        text: AppLocalizations.of(context)!.open,
+                        onButtonTap: () {
+                          GeneralFunctions.openUrl(material.url!);
+                        },
                       ),
-                      text: AppLocalizations.of(context)!.open,
-                      onButtonTap: () {
-                        GeneralFunctions.openUrl(material.url!);
-                      },
-                    ),
                   ],
                 ),
               ),
