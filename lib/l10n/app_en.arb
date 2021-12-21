@@ -261,6 +261,7 @@
   "questionTextEditHint": "Write an answer to the question here",
 
   "selectAction": "Select Action",
+  "selectAction": "Select Action",
 
   "actionWasAssignedTo": "This Action was Assigned to:"
 }

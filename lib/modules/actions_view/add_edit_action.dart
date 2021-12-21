@@ -174,6 +174,71 @@ class _AddEditActionState extends State<AddEditAction>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    AppLocalizations.of(context)!.reuseActionText,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF434141)),
+                  ),
+                  SizedBox(height: 13.h),
+                  InkWell(
+                    onTap: () async {
+                      setState(() {
+                        _showGroupField = false;
+                      });
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => SelectActions(
+                            onSelect: (action) {
+                              _receivedReuseActionBtnResponse(action);
+                            },
+                          ),
+                          fullscreenDialog: true,
+                        ),
+                      ).then((value) => {
+                            setState(() {
+                              _showGroupField = true;
+                            })
+                          });
+                    },
+                    child: Container(
+                      height: 52.h,
+                      width: 345.w,
+                      decoration: BoxDecoration(
+                          color: Color(0xFFEFEFEF),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.sp))),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _actionToBeReused != null
+                                    ? _actionToBeReused!.name!
+                                    : AppLocalizations.of(context)!
+                                        .selectAnAction,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 16.sp, color: Color(0xFF434141)),
+                              ),
+                              Spacer(),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Color(0xFF434141),
+                                size: 20.sp,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   (!_isEditMode)
                       ? _showReuseAnAction()
                       : _showGroupNameContainer(),
@@ -247,6 +312,18 @@ class _AddEditActionState extends State<AddEditAction>
                     question: _isEditMode ? widget.action!.question : '',
                     selectedMaterial: _selectedMaterial,
                   ),
+
+                  SizedBox(height: 20.h),
+
+                  // Assign action to group
+                  Text(
+                    AppLocalizations.of(context)!.assignActionTo,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 13.h),
+
+                  // List groups where current user have Admin or Teacher Role only
                   (!_isEditMode) ? _assignToThisAction() : _emptyContainer(),
                   SizedBox(height: 20.h),
                   Text(
@@ -340,6 +417,10 @@ class _AddEditActionState extends State<AddEditAction>
         ),
       ),
     );
+  }
+
+  Widget emptyContainer() {
+    return new Container();
   }
 
   _receivedReuseActionBtnResponse(HiveAction action) {

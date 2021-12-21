@@ -636,6 +636,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 entityId: _hiveMaterial!.id,
                 entityType: EntityType.MATERIAL.value,
                 filepath: file.path,
+                filename: file.path.split("/").last,
               ))
           .toList();
     }
