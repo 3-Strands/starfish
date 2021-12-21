@@ -143,8 +143,8 @@ class SyncService {
     // navigatorKey: Application.navKey, // GlobalKey()
     //showAlert(NavigationService.navigatorKey.currentContext!);
 
-    syncLocalFiles();
-    syncFiles();
+    //await lock.synchronized(() => syncLocalFiles()); // Upload local files
+    await lock.synchronized(() => syncFiles()); // Download remote files
 
     syncCurrentUser();
     syncUsers();
@@ -335,6 +335,31 @@ class SyncService {
     });
   }
 
+  Future syncMaterialFiles(HiveMaterial _hiveMaterial) async {
+    if (_hiveMaterial.files == null || _hiveMaterial.files!.length == 0) {
+      return;
+    }
+
+    _hiveMaterial.files?.forEach((String filename) {
+      HiveFile? _hiveFile = fileBox.values.firstWhereOrNull(
+          (HiveFile element) =>
+              element.entityId == _hiveMaterial.id &&
+              element.filename == filename);
+
+      if (_hiveFile != null) {
+        // TODO: verify if files is correctly downloaded or physically exists after successful download
+        return;
+      }
+      _hiveFile = HiveFile(
+          entityId: _hiveMaterial.id,
+          filename: filename,
+          entityType: EntityType.MATERIAL.value,
+          isSynced: false);
+
+      fileBox.add(_hiveFile);
+    });
+  }
+
   Future syncMaterial() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
@@ -350,6 +375,8 @@ class SyncService {
         .then((ResponseStream<Material> stream) {
       stream.listen((material) {
         HiveMaterial _hiveMaterial = HiveMaterial.from(material);
+
+        syncMaterialFiles(_hiveMaterial);
 
         int _currentIndex = -1;
         materialBox.values.toList().asMap().forEach((key, hiveMaterial) {
@@ -783,18 +810,24 @@ class SyncService {
 
   syncFiles() async {
     print('============= START: SyncFiles FROM Remote =============');
-    materialBox.values.forEach((hiveMaterial) {
-      hiveMaterial.files!.forEach((String filename) {
-        print('=============DownloadMaterial: $filename =============');
-        downloadMaterial(hiveMaterial.id!, filename);
-      });
-    });
+    // Filter items not downloaded yet
+    fileBox.values
+        .where((hiveFile) {
+          return false == hiveFile.isSynced && null == hiveFile.filepath;
+        })
+        .toList()
+        .forEach((HiveFile hiveFile) {
+          print(
+              '=============DownloadMaterial: ${hiveFile.filename} =============');
+          downloadMaterial(hiveFile); //.entityId!, file.remoteFileName!);
+        });
     //downloadMaterial(materialBox.values.first);
   }
 
   // TODO: don't download the file again if already downloaded.
-  downloadMaterial(String entityId, String filename) async {
-    String? filePath = await getFilePath(filename);
+  downloadMaterial(HiveFile hiveFile) async {
+    //String entityId, String remoteFilename) async {
+    String? filePath = await getFilePath(hiveFile.filename!);
     if (filePath == null) {
       print("Storage NOT accessible");
       return;
@@ -807,9 +840,9 @@ class SyncService {
     MaterialRepository()
         .apiProvider
         .downloadFile(Stream.value(DownloadRequest(
-            entityId: entityId,
+            entityId: hiveFile.entityId,
             entityType: EntityType.MATERIAL,
-            filenames: [filename].toList())))
+            filenames: [hiveFile.filename!].toList())))
         .then((responseStream) {
       responseStream.listen((FileData fileData) async {
         //print("DATA Received: $fileData");
@@ -822,6 +855,23 @@ class SyncService {
       }, onDone: () {
         print("FILE Transfer DONE");
         randomAccessFile.closeSync();
+
+        // Update downloaded file info in `FILE_BOX`
+
+        int _currentIndex = -1;
+        fileBox.values.toList().asMap().forEach((key, _hiveFile) {
+          if (hiveFile.entityId == _hiveFile.entityId &&
+              hiveFile.filename == _hiveFile.filename) {
+            _currentIndex = key;
+          }
+        });
+
+        if (_currentIndex > -1) {
+          hiveFile.filepath = file.path;
+          hiveFile.isSynced = true;
+
+          fileBox.put(_currentIndex, hiveFile);
+        }
       }, onError: (error, stackTrace) {
         print("FILE Transfer ERROR:: $error");
       }, cancelOnError: true);

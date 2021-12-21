@@ -10,12 +10,21 @@ class HiveFile extends HiveObject {
   @HiveField(1)
   int? entityType;
   @HiveField(2)
-  String? filepath;
+  String? filepath; // local file path
+  @HiveField(3)
+  String? filename;
+  @HiveField(4)
+  String? md5Checksum;
+  @HiveField(5)
+  bool? isSynced = false;
 
   HiveFile({
     this.entityId,
     this.entityType,
     this.filepath,
+    this.filename,
+    this.md5Checksum,
+    this.isSynced,
   });
 
   @override
@@ -41,12 +50,12 @@ class HiveFile extends HiveObject {
 
   @override
   String toString() {
-    return '{entityId: ${this.entityId}, entityType: ${this.entityType}, filepath: ${this.filepath},}';
+    return '{entityId: ${this.entityId}, entityType: ${this.entityType}, filepath: ${this.filepath}, filename: ${this.filename}, md5Checksum: ${this.md5Checksum}, isSynced: ${this.isSynced}}';
   }
 }
 
-extension HiveFileExt on HiveFile {
+/*extension HiveFileExt on HiveFile {
   String get filename {
     return filepath!.split("/").last;
   }
-}
+}*/
