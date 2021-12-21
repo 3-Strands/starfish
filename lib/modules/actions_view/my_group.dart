@@ -846,6 +846,7 @@ class MyGroupActionListItem extends StatelessWidget {
         positiveButtonText: AppLocalizations.of(context)!.delete,
         negativeButtonText: AppLocalizations.of(context)!.cancel,
         positiveActionCallback: () {
+          print('delete aaction');
           // Mark this action for deletion
           action.isDirty = true;
           bloc.actionBloc.createUpdateAction(action);
