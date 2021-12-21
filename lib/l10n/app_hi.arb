@@ -260,5 +260,8 @@
   "question": "प्रश्न",
   "questionTextEditHint": "प्रश्न का उत्तर यहाँ लिखें",
     
-  "selectAction": "कार्रवाई चुनें"
+  "selectAction": "कार्रवाई चुनें",
+  "selectAction": "कार्रवाई चुनें",
+
+  "actionWasAssignedTo": "यह कार्य सौंपा गया था:"
 }
