@@ -20,19 +20,28 @@ class HiveFileAdapter extends TypeAdapter<HiveFile> {
       entityId: fields[0] as String?,
       entityType: fields[1] as int?,
       filepath: fields[2] as String?,
+      filename: fields[3] as String?,
+      md5Checksum: fields[4] as String?,
+      isSynced: fields[5] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveFile obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.entityId)
       ..writeByte(1)
       ..write(obj.entityType)
       ..writeByte(2)
-      ..write(obj.filepath);
+      ..write(obj.filepath)
+      ..writeByte(3)
+      ..write(obj.filename)
+      ..writeByte(4)
+      ..write(obj.md5Checksum)
+      ..writeByte(5)
+      ..write(obj.isSynced);
   }
 
   @override

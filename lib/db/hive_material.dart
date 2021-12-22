@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -182,5 +186,33 @@ extension HiveMaterialExt on HiveMaterial {
       return ActionStatus.OVERDUE;
     }
     return ActionStatus.UNSPECIFIED_STATUS;
+  }
+
+  List<File>? get localFiles {
+    List<File> _files = [];
+
+    if (this.files == null) {
+      return _files;
+    }
+
+    this.files!.forEach((filename) {
+      HiveFile? _hiveFile = MaterialProvider().getFiles().firstWhereOrNull(
+          (hiveFile) =>
+              hiveFile.entityId == this.id && hiveFile.filename == filename);
+
+      if (_hiveFile != null &&
+          _hiveFile.filepath != null &&
+          File(_hiveFile.filepath!).existsSync()) {
+        _files.add(File(_hiveFile.filepath!));
+      }
+    });
+
+    return _files;
+  }
+
+  File? get localImageFile {
+    return this.localFiles?.firstWhereOrNull((_file) => ['jpg', 'png']
+        .toList()
+        .contains(_file.path.split("/").last.split(".").last));
   }
 }

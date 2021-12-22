@@ -67,4 +67,8 @@ class MaterialProvider {
       }
     });
   }
+
+  List<HiveFile> getFiles() {
+    return _fileBox.values.toList();
+  }
 }
