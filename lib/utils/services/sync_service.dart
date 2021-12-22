@@ -146,7 +146,7 @@ class SyncService {
     // navigatorKey: Application.navKey, // GlobalKey()
     //showAlert(NavigationService.navigatorKey.currentContext!);
 
-    //await lock.synchronized(() => syncLocalFiles()); // Upload local files
+    await lock.synchronized(() => syncLocalFiles()); // Upload local files
     await lock.synchronized(() => syncFiles()); // Download remote files
 
     syncCurrentUser();
@@ -744,7 +744,10 @@ class SyncService {
 
   syncLocalFiles() async {
     print('============= START: Sync Local Files to Remote =============');
-    fileBox.values.forEach((hiveFile) {
+    // upload files form `File Box` excluding those which are added from remote i.e. `filepath == null`
+    fileBox.values
+        .where((element) => element.filepath != null)
+        .forEach((hiveFile) {
       // TODO: Check existance of the the file before upload
       uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!));
     });
