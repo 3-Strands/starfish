@@ -26,6 +26,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
+import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
@@ -302,9 +303,30 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               .pickFiles(allowMultiple: true);
 
                           if (result != null) {
-                            _selectedFiles = result.paths
-                                .map((path) => File(path!))
-                                .toList();
+                            // if single selected file is IMAGE
+                            if (result.count == 1) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImageCropperScreen(
+                                    sourceImage: File(result.paths.first!),
+                                    onDone: (File? _newFile) {
+                                      if (_newFile == null) {
+                                        return;
+                                      }
+                                      _selectedFiles.add(_newFile);
+                                    },
+                                  ),
+                                ),
+                              ).then((value) => {
+                                    // Handle cropped image here
+                                  });
+                              ;
+                            } else {
+                              _selectedFiles = result.paths
+                                  .map((path) => File(path!))
+                                  .toList();
+                            }
 
                             //bloc.materialBloc.setSelectedFiles(_selectedFiles);
                             /*bloc.materialBloc.uploadMaterial(
