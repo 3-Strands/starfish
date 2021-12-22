@@ -135,6 +135,9 @@ class SyncService {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
 
+    fileBox.values.forEach((element) {
+      print('FILE_BOX: $element');
+    });
     // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());

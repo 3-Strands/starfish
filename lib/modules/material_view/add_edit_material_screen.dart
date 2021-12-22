@@ -4,9 +4,12 @@ import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/material_bloc.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
@@ -34,6 +37,7 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
@@ -281,6 +285,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       fillColor: AppColors.txtFieldBackground,
                     ),
                   ),
+                  if (_isEditMode) _previewFiles(widget.material!),
                   SizedBox(height: 10.h),
 
                   // Add Materials
@@ -698,6 +703,84 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     }
 
     return _widgetList;
+  }
+
+  Widget _previewFiles(HiveMaterial _hiveMaterial) {
+    if (_hiveMaterial.localFiles == null) {
+      return Container();
+    }
+    final List<Widget> _widgetList = [];
+
+    if (_hiveMaterial.localImageFile != null) {
+      final imagePreview = Card(
+        margin: EdgeInsets.only(top: 10.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          height: 150.h,
+          alignment: Alignment.center,
+          child: Image.file(
+            _hiveMaterial.localImageFile!,
+            fit: BoxFit.fill,
+          ),
+        ),
+        elevation: 4,
+      );
+
+      _widgetList.add(imagePreview);
+      _widgetList.add(SizedBox(
+        height: 10.h,
+      ));
+    }
+
+    for (File file in _hiveMaterial.localFiles!) {
+      _widgetList.add(Container(
+        height: 30.h,
+        child: RichText(
+          textAlign: TextAlign.start,
+          text: TextSpan(
+            text: file.path.split("/").last,
+            style: TextStyle(
+              color: Color(0xFF3475F0),
+              fontFamily: 'OpenSans',
+              fontSize: 14.sp,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                if (Platform.isIOS) {
+                  return;
+                } else if (Platform.isAndroid) {
+                  OpenFile.open(file.path);
+                }
+                /*_copyFileToDownloads(file).then((value) {
+                  StarfishSnackbar.showSuccessMessage(
+                      context, 'File downloaded successfully.');
+                }, onError: (error) {
+                  print('Download Error $error');
+                  StarfishSnackbar.showErrorMessage(
+                      context, 'File downloaded failed.');
+                });*/
+              },
+          ),
+        ),
+      ));
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _widgetList,
+    );
+  }
+
+  Future<File> _copyFileToDownloads(File _sourceFile) async {
+    Directory? _destination = await getDownloadsDirectory();
+    String _destinationPath =
+        _destination!.path + _sourceFile.path.split("/").last;
+    return _sourceFile.copy(_destinationPath);
   }
 
   _dismissFieldFocus() {
