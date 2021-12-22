@@ -45,7 +45,7 @@ class OTPVerificationScreen extends StatefulWidget {
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   late String _smsCode;
-  bool _otpEmpty = true;
+  bool _otpEmpty = false;
   bool _isLoading = false;
 
   late Timer _timer;
@@ -62,6 +62,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   void initState() {
+    _smsCode = '+91';
+
     _title = widget.title;
     _dialingCode = widget.dialingCode;
     _phoneNumber = widget.phoneNumber;

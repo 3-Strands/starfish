@@ -524,12 +524,26 @@ class _AddEditActionState extends State<AddEditAction>
           alignment: FractionalOffset.topLeft,
           child: Align(
             alignment: FractionalOffset.topLeft,
-            child: Text(
-              AppLocalizations.of(context)!.actionWasAssignedTo +
-                  ' ' +
-                  _getAssingToGroupName(),
-              textAlign: TextAlign.left,
-              style: textFormFieldText,
+            child: RichText(
+              text: TextSpan(
+                text: AppLocalizations.of(context)!.actionWasAssignedTo + ' ',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF434141),
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: _getAssingToGroupName(),
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18.sp,
+                      color: Color(0xFF3475F0),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -540,15 +554,11 @@ class _AddEditActionState extends State<AddEditAction>
 
   String _getAssingToGroupName() {
     List<HiveGroup> groups = List<HiveGroup>.from(_selectedGroups);
-    if (groups.length == 0) {
-      return 'Me';
-    }
-
     String _value = '';
     groups.forEach((element) {
       _value += '${element.name}, ';
     });
-    return _value;
+    return _value.substring(0, _value.length - 2);
   }
 
   Widget _assignToThisAction() {

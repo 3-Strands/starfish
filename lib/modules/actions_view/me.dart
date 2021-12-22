@@ -123,13 +123,11 @@ class _MeState extends State<Me> {
               SearchBar(
                 initialValue: '',
                 onValueChanged: (value) {
-                  print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
                   });
                 },
                 onDone: (value) {
-                  print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
                   });
@@ -234,7 +232,7 @@ class _MeState extends State<Me> {
                             width: 14.sp,
                           ),
                           SizedBox(
-                            width: 4.sp,
+                            width: 6.sp,
                           ),
                           ActionStatusWidget(
                             onTap: (ActionStatus newStatus) {
@@ -251,7 +249,7 @@ class _MeState extends State<Me> {
                                     hiveActionUser!.status!)!
                                 .convertTo(),
                             height: 36.h,
-                            width: 102.w,
+                            width: 130.w,
                           ),
                         ],
                       ),
@@ -288,32 +286,41 @@ class _MeState extends State<Me> {
                 ),
                 // Record the response to the Question
                 SizedBox(
-                  height: 110.h,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: (action.type == Action_Type.TEXT_RESPONSE.value)
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Align(
+                  // height: 110.h,
+                  child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Align(
                                 alignment: FractionalOffset.topLeft,
-                                child: Text('Question: ${action.question}'),
+                                child: Text('Question: ${action.question}',
+                                    style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: Color(0xFF4F4F4F),
+                                        fontWeight: FontWeight.w500)),
                               ),
-                              TextField(
-                                decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    hintText: AppLocalizations.of(context)!
-                                        .questionTextEditHint),
-                                onSubmitted: (value) {
-                                  hiveActionUser!.userResponse = value;
-                                  bloc.actionBloc
-                                      .createUpdateActionUser(hiveActionUser);
-                                },
-                              ),
-                            ],
-                          )
-                        : Container(),
-                  ),
+                            ),
+                            TextField(
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: AppLocalizations.of(context)!
+                                      .questionTextEditHint),
+                              onSubmitted: (value) {
+                                hiveActionUser!.userResponse = value;
+                                bloc.actionBloc
+                                    .createUpdateActionUser(hiveActionUser);
+                              },
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 15.0, right: 15.0),
+                              height: 1.0,
+                              color: Color(0xFF3475F0),
+                            ),
+                          ],
+                        )
+                      : Container(),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(15.0),

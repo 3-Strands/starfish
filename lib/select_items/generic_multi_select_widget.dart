@@ -297,63 +297,72 @@ class _MultiSelectState extends State<MultiSelect> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: appBarTitle,
-          automaticallyImplyLeading: true,
+          automaticallyImplyLeading: false,
           actions: [
             navigationSearchBar(),
           ],
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios_rounded, size: 32),
+          ),
         ),
         body: Column(
           children: [
             Visibility(
-              child: InkWell(
-                  child: Container(
-                    height: 50.0,
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.only(left: 15.w, top: 5.h),
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        Row(
-                          children: <Widget>[
-                            Container(
-                              height: 60.h,
-                              width: MediaQuery.of(context).size.width - 88.0.w,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of(context)!.selectAll,
-                                    style: TextStyle(
-                                      fontFamily: 'OpenSans',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.sp,
+              child: Card(
+                child: InkWell(
+                    child: Container(
+                      height: 40,
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.only(left: 15.w, top: 5.h),
+                      color: Colors.white,
+                      child: Row(
+                        children: [
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                height: 60.h,
+                                width:
+                                    MediaQuery.of(context).size.width - 90.0.w,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      AppLocalizations.of(context)!.selectAll,
+                                      style: TextStyle(
+                                        fontFamily: 'OpenSans',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.sp,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Container(
-                          width: 60.w,
-                          child: Icon(
-                            (this._isSelectAllSelected == true)
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: AppColors.selectedButtonBG,
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
+                          Container(
+                            width: 60.w,
+                            child: Icon(
+                              (this._isSelectAllSelected == true)
+                                  ? Icons.check_box
+                                  : Icons.check_box_outline_blank,
+                              color: AppColors.selectedButtonBG,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  onTap: () => {
-                        setState(() {
-                          _isSelectAllSelected = !_isSelectAllSelected;
-                          _updateStatus();
-                        })
-                      }),
+                    onTap: () => {
+                          setState(() {
+                            _isSelectAllSelected = !_isSelectAllSelected;
+                            _updateStatus();
+                          })
+                        }),
+              ),
               visible: widget.enableSelectAllOption,
             ),
             SizedBox(
@@ -423,7 +432,7 @@ class _MultiSelectState extends State<MultiSelect> {
     }
   }
 
-  itemTapped(Item selectedItem) {
+  _itemTapped(Item selectedItem) {
     if (widget.type == SelectType.single) {
       _singleSelectItemTapped(selectedItem);
     } else {
@@ -493,7 +502,7 @@ class ItemList extends StatelessWidget {
       child: InkWell(
           child: Container(
             margin: EdgeInsets.only(left: 15.w),
-            height: 70,
+            height: 60,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
@@ -502,7 +511,7 @@ class ItemList extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Container(
-                          height: 60.h,
+                          height: 40.h,
                           width: MediaQuery.of(context).size.width - 90.0.w,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -535,7 +544,7 @@ class ItemList extends StatelessWidget {
               ],
             ),
           ),
-          onTap: () => {this.obj.itemTapped(this.item)}),
+          onTap: () => {this.obj._itemTapped(this.item)}),
       elevation: 2,
     );
   }
