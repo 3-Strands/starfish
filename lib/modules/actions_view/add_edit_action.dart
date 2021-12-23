@@ -65,7 +65,7 @@ class _AddEditActionState extends State<AddEditAction>
   String? _instructions;
   String? _question;
   DateTime? _dueDate;
-  bool _showGroupField = true;
+  bool _shouldRedrawWidegets = false;
 
   void _getAllGroups() async {
     _groupList = _groupBox.values.toList();
@@ -174,71 +174,6 @@ class _AddEditActionState extends State<AddEditAction>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.reuseActionText,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF434141)),
-                  ),
-                  SizedBox(height: 13.h),
-                  InkWell(
-                    onTap: () async {
-                      setState(() {
-                        _showGroupField = false;
-                      });
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => SelectActions(
-                            onSelect: (action) {
-                              _receivedReuseActionBtnResponse(action);
-                            },
-                          ),
-                          fullscreenDialog: true,
-                        ),
-                      ).then((value) => {
-                            setState(() {
-                              _showGroupField = true;
-                            })
-                          });
-                    },
-                    child: Container(
-                      height: 52.h,
-                      width: 345.w,
-                      decoration: BoxDecoration(
-                          color: Color(0xFFEFEFEF),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.sp))),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                _actionToBeReused != null
-                                    ? _actionToBeReused!.name!
-                                    : AppLocalizations.of(context)!
-                                        .selectAnAction,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    fontSize: 16.sp, color: Color(0xFF434141)),
-                              ),
-                              Spacer(),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Color(0xFF434141),
-                                size: 20.sp,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                   (!_isEditMode)
                       ? _showReuseAnAction()
                       : _showGroupNameContainer(),
@@ -281,50 +216,14 @@ class _AddEditActionState extends State<AddEditAction>
                         color: Color(0xFF434141)),
                   ),
                   SizedBox(height: 13.h),
-                  ActionTypeSelector(
-                    onActionTypeChange: (Action_Type? value) {
-                      debugPrint('ActionTypeSelector[ActionType]: $value');
-                      setState(() {
-                        _selectedActionType = value;
-                      });
-                    },
-                    onInstructionsChange: (String? value) {
-                      debugPrint('ActionTypeSelector[Instructions]: $value');
-                      setState(() {
-                        _instructions = value;
-                      });
-                    },
-                    onQuestionChange: (String? value) {
-                      debugPrint('ActionTypeSelector[Question]: $value');
-                      setState(() {
-                        _question = value;
-                      });
-                    },
-                    onMaterialChange: (HiveMaterial? material) {
-                      debugPrint('ActionTypeSelector[material]: $material');
-                      setState(() {
-                        _selectedMaterial = material;
-                      });
-                    },
-                    selectedActionType: _selectedActionType,
-                    instructions:
-                        _isEditMode ? widget.action!.instructions : '',
-                    question: _isEditMode ? widget.action!.question : '',
-                    selectedMaterial: _selectedMaterial,
-                  ),
+                  _typesOfActions(),
 
                   SizedBox(height: 20.h),
 
                   // Assign action to group
-                  Text(
-                    AppLocalizations.of(context)!.assignActionTo,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 13.h),
-
                   // List groups where current user have Admin or Teacher Role only
-                  (!_isEditMode) ? _assignToThisAction() : _emptyContainer(),
+                  _assignToThisAction(),
+
                   SizedBox(height: 20.h),
                   Text(
                     AppLocalizations.of(context)!.dueDate,
@@ -425,6 +324,7 @@ class _AddEditActionState extends State<AddEditAction>
 
   _receivedReuseActionBtnResponse(HiveAction action) {
     setState(() {
+      print("_actionToBeReused ==>> $_actionToBeReused");
       _actionToBeReused = action;
       _instructions = _actionToBeReused!.instructions;
       _question = _actionToBeReused!.question;
@@ -446,20 +346,20 @@ class _AddEditActionState extends State<AddEditAction>
       children: [
         Align(
           alignment: FractionalOffset.topLeft,
-          child: Align(
-            alignment: FractionalOffset.topLeft,
-            child: Text(
-              AppLocalizations.of(context)!.assignActionTo,
-              textAlign: TextAlign.left,
-              style: titleTextStyle,
-            ),
+          child: Text(
+            AppLocalizations.of(context)!.reuseActionText,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF434141)),
           ),
         ),
         SizedBox(height: 13.h),
         InkWell(
           onTap: () async {
             setState(() {
-              _showGroupField = false;
+              _shouldRedrawWidegets = true;
             });
             await Navigator.push(
               context,
@@ -473,7 +373,7 @@ class _AddEditActionState extends State<AddEditAction>
               ),
             ).then((value) => {
                   setState(() {
-                    _showGroupField = true;
+                    _shouldRedrawWidegets = false;
                   })
                 });
           },
@@ -481,11 +381,8 @@ class _AddEditActionState extends State<AddEditAction>
             height: 52.h,
             width: 345.w,
             decoration: BoxDecoration(
-              color: Color(0xFFEFEFEF),
-              borderRadius: BorderRadius.all(
-                Radius.circular(10.sp),
-              ),
-            ),
+                color: Color(0xFFEFEFEF),
+                borderRadius: BorderRadius.all(Radius.circular(10.sp))),
             child: Padding(
               padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
               child: Align(
@@ -561,8 +458,49 @@ class _AddEditActionState extends State<AddEditAction>
     return _value.substring(0, _value.length - 2);
   }
 
+  Widget _typesOfActions() {
+    if (_shouldRedrawWidegets) {
+      return _emptyContainer();
+    } else {
+      return ActionTypeSelector(
+        onActionTypeChange: (Action_Type? value) {
+          debugPrint('ActionTypeSelector[ActionType]: $value');
+          setState(() {
+            _selectedActionType = value;
+          });
+        },
+        onInstructionsChange: (String? value) {
+          debugPrint('ActionTypeSelector[Instructions]: $value');
+          setState(() {
+            _instructions = value;
+          });
+        },
+        onQuestionChange: (String? value) {
+          debugPrint('ActionTypeSelector[Question]: $value');
+          setState(() {
+            _question = value;
+          });
+        },
+        onMaterialChange: (HiveMaterial? material) {
+          debugPrint('ActionTypeSelector[material]: $material');
+          setState(() {
+            _selectedMaterial = material;
+          });
+        },
+        selectedActionType: _selectedActionType,
+        instructions: _instructions ?? '',
+        question: _question ?? '',
+        selectedMaterial: _selectedMaterial,
+      );
+    }
+  }
+
   Widget _assignToThisAction() {
     // Assign action to group
+    if (_shouldRedrawWidegets || _isEditMode) {
+      return _emptyContainer();
+    }
+
     return Column(
       children: [
         Align(
@@ -577,7 +515,7 @@ class _AddEditActionState extends State<AddEditAction>
         SizedBox(height: 13.h),
 
         // List groups where current user have Admin or Teacher Role only
-        (_showGroupField) ? _selectDropDown() : _emptyContainer(),
+        _selectDropDown(),
       ],
     );
   }
