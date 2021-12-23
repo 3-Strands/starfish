@@ -578,6 +578,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   Container(
                     child: TextFormField(
                       maxLines: 4,
+                      maxLength: 200,
                       controller: _descriptionController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(

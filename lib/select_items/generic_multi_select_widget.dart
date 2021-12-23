@@ -519,6 +519,7 @@ class ItemList extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 '${this.item.data.name}',
+                                maxLines: 2,
                                 style: TextStyle(
                                   fontFamily: 'OpenSans',
                                   fontWeight: FontWeight.normal,

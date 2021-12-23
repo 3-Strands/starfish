@@ -130,6 +130,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
 
           TextFormField(
             maxLines: 4,
+            maxLength: 200,
             controller: _instructionController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
