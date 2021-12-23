@@ -147,8 +147,6 @@ class _MeState extends State<Me> {
     );
   }
 
-  void _updateActionStatus() {}
-
   void _onActionSelection(HiveAction action) async {
     /*HiveActionUser hiveActionUser = new HiveActionUser();
     hiveActionUser.actionId = action.id!;
