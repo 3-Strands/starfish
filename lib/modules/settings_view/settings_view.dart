@@ -68,6 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    print("init Settings View");
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
@@ -99,7 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  void _getAllCountries() async {
+  void _getAllCountries() {
     _countryList = _countryBox.values.toList();
 
     for (var countryId in _user.countryIds) {
@@ -111,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _getAllLanguages();
   }
 
-  void _getAllLanguages() async {
+  void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
     for (var languageId in _user.languageIds) {
       _languageList
@@ -120,8 +121,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _getGroups() async {
+  void _getGroups() {
     _groupList = _groupBox.values.toList();
+    _groupList.forEach((element) {
+      print("Group: $element");
+    });
   }
 
   void _updateName() async {

@@ -415,12 +415,17 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       // based on role hence will not be visible
       HiveCurrentUser _currentUser =
           await CurrentUserRepository().getUserFromDB();
-      _newGroupUsers.add(HiveGroupUser(
+      HiveGroupUser _hiveGroupUser = HiveGroupUser(
         groupId: _groupId,
         userId: _currentUser.id,
         role: GroupUser_Role.ADMIN.value,
         isNew: true,
-      ));
+      );
+      _newGroupUsers.add(_hiveGroupUser);
+
+      // Add self `HiveGroupUser` model to the `HiveCurrentUser` also
+      _currentUser.groups.add(_hiveGroupUser);
+      CurrentUserRepository().dbProvider.updateUser(_currentUser);
     }
     //_newUsers.forEach((HiveUser user) async {
     await Future.forEach(_newUsers, (HiveUser user) async {

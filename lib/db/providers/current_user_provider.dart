@@ -26,6 +26,10 @@ class CurrentUserProvider {
   /*Future<int> updateUser(HiveCurrentUser user) async {
     return _currentUserBox.add(user);
   }*/
+
+  void updateUser(HiveCurrentUser _hiveCurrentUser) {
+    _currentUserBox.putAt(0, _hiveCurrentUser);
+  }
 }
 
 extension CurrentUserProviderExt on CurrentUserProvider {
