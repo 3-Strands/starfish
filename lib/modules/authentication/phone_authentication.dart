@@ -50,8 +50,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     super.initState();
 
     _isPhoneNumberEmpty = false;
-    _countryCodeController.text = '+91';
-    _phoneNumberController.text = '7123123456';
+    // _countryCodeController.text = '+91';
+    // _phoneNumberController.text = '7123123456';
 
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 

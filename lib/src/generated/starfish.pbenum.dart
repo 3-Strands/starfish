@@ -141,6 +141,21 @@ class CreateUpdateActionUserResponse_Status extends $pb.ProtobufEnum {
   const CreateUpdateActionUserResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
+class CreateUpdateGroupEvaluationResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUpdateGroupEvaluationResponse_Status SUCCESS = CreateUpdateGroupEvaluationResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUpdateGroupEvaluationResponse_Status FAILURE = CreateUpdateGroupEvaluationResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateUpdateGroupEvaluationResponse_Status> values = <CreateUpdateGroupEvaluationResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateUpdateGroupEvaluationResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUpdateGroupEvaluationResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateUpdateGroupEvaluationResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class CreateUpdateGroupsResponse_Status extends $pb.ProtobufEnum {
   static const CreateUpdateGroupsResponse_Status SUCCESS = CreateUpdateGroupsResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
   static const CreateUpdateGroupsResponse_Status FAILURE = CreateUpdateGroupsResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
@@ -171,6 +186,21 @@ class CreateUpdateGroupUsersResponse_Status extends $pb.ProtobufEnum {
   const CreateUpdateGroupUsersResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
+class CreateUpdateLearnerEvaluationResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUpdateLearnerEvaluationResponse_Status SUCCESS = CreateUpdateLearnerEvaluationResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUpdateLearnerEvaluationResponse_Status FAILURE = CreateUpdateLearnerEvaluationResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateUpdateLearnerEvaluationResponse_Status> values = <CreateUpdateLearnerEvaluationResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateUpdateLearnerEvaluationResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUpdateLearnerEvaluationResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateUpdateLearnerEvaluationResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class CreateUpdateMaterialsResponse_Status extends $pb.ProtobufEnum {
   static const CreateUpdateMaterialsResponse_Status SUCCESS = CreateUpdateMaterialsResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
   static const CreateUpdateMaterialsResponse_Status FAILURE = CreateUpdateMaterialsResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
@@ -184,6 +214,21 @@ class CreateUpdateMaterialsResponse_Status extends $pb.ProtobufEnum {
   static CreateUpdateMaterialsResponse_Status? valueOf($core.int value) => _byValue[value];
 
   const CreateUpdateMaterialsResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
+class CreateUpdateTeacherResponseResponse_Status extends $pb.ProtobufEnum {
+  static const CreateUpdateTeacherResponseResponse_Status SUCCESS = CreateUpdateTeacherResponseResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const CreateUpdateTeacherResponseResponse_Status FAILURE = CreateUpdateTeacherResponseResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<CreateUpdateTeacherResponseResponse_Status> values = <CreateUpdateTeacherResponseResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, CreateUpdateTeacherResponseResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static CreateUpdateTeacherResponseResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const CreateUpdateTeacherResponseResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
 class CreateUpdateUserResponse_Status extends $pb.ProtobufEnum {
@@ -248,6 +293,23 @@ class Edit_Event extends $pb.ProtobufEnum {
   static Edit_Event? valueOf($core.int value) => _byValue[value];
 
   const Edit_Event._($core.int v, $core.String n) : super(v, n);
+}
+
+class GroupEvaluation_Evaluation extends $pb.ProtobufEnum {
+  static const GroupEvaluation_Evaluation EVAL_UNSPECIFIED = GroupEvaluation_Evaluation._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'EVAL_UNSPECIFIED');
+  static const GroupEvaluation_Evaluation BAD = GroupEvaluation_Evaluation._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'BAD');
+  static const GroupEvaluation_Evaluation GOOD = GroupEvaluation_Evaluation._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GOOD');
+
+  static const $core.List<GroupEvaluation_Evaluation> values = <GroupEvaluation_Evaluation> [
+    EVAL_UNSPECIFIED,
+    BAD,
+    GOOD,
+  ];
+
+  static final $core.Map<$core.int, GroupEvaluation_Evaluation> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static GroupEvaluation_Evaluation? valueOf($core.int value) => _byValue[value];
+
+  const GroupEvaluation_Evaluation._($core.int v, $core.String n) : super(v, n);
 }
 
 class GroupUser_Role extends $pb.ProtobufEnum {

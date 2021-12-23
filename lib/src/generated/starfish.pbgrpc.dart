@@ -40,6 +40,13 @@ class StarfishClient extends $grpc.Client {
       ($0.CreateUpdateActionUserRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.CreateUpdateActionUserResponse.fromBuffer(value));
+  static final _$createUpdateGroupEvaluations = $grpc.ClientMethod<
+          $0.CreateUpdateGroupEvaluationRequest,
+          $0.CreateUpdateGroupEvaluationResponse>(
+      '/sil.starfish.Starfish/CreateUpdateGroupEvaluations',
+      ($0.CreateUpdateGroupEvaluationRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.CreateUpdateGroupEvaluationResponse.fromBuffer(value));
   static final _$createUpdateGroups = $grpc.ClientMethod<
           $0.CreateUpdateGroupsRequest, $0.CreateUpdateGroupsResponse>(
       '/sil.starfish.Starfish/CreateUpdateGroups',
@@ -52,12 +59,26 @@ class StarfishClient extends $grpc.Client {
       ($0.CreateUpdateGroupUsersRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.CreateUpdateGroupUsersResponse.fromBuffer(value));
+  static final _$createUpdateLearnerEvaluations = $grpc.ClientMethod<
+          $0.CreateUpdateLearnerEvaluationRequest,
+          $0.CreateUpdateLearnerEvaluationResponse>(
+      '/sil.starfish.Starfish/CreateUpdateLearnerEvaluations',
+      ($0.CreateUpdateLearnerEvaluationRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.CreateUpdateLearnerEvaluationResponse.fromBuffer(value));
   static final _$createUpdateMaterials = $grpc.ClientMethod<
           $0.CreateUpdateMaterialsRequest, $0.CreateUpdateMaterialsResponse>(
       '/sil.starfish.Starfish/CreateUpdateMaterials',
       ($0.CreateUpdateMaterialsRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.CreateUpdateMaterialsResponse.fromBuffer(value));
+  static final _$createUpdateTeacherResponses = $grpc.ClientMethod<
+          $0.CreateUpdateTeacherResponseRequest,
+          $0.CreateUpdateTeacherResponseResponse>(
+      '/sil.starfish.Starfish/CreateUpdateTeacherResponses',
+      ($0.CreateUpdateTeacherResponseRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.CreateUpdateTeacherResponseResponse.fromBuffer(value));
   static final _$createUpdateUsers = $grpc.ClientMethod<
           $0.CreateUpdateUserRequest, $0.CreateUpdateUserResponse>(
       '/sil.starfish.Starfish/CreateUpdateUsers',
@@ -100,11 +121,22 @@ class StarfishClient extends $grpc.Client {
           '/sil.starfish.Starfish/ListGroups',
           ($0.ListGroupsRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $0.Group.fromBuffer(value));
+  static final _$listGroupEvaluations =
+      $grpc.ClientMethod<$0.ListGroupEvaluationsRequest, $0.GroupEvaluation>(
+          '/sil.starfish.Starfish/ListGroupEvaluations',
+          ($0.ListGroupEvaluationsRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.GroupEvaluation.fromBuffer(value));
   static final _$listLanguages =
       $grpc.ClientMethod<$0.ListLanguagesRequest, $0.Language>(
           '/sil.starfish.Starfish/ListLanguages',
           ($0.ListLanguagesRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $0.Language.fromBuffer(value));
+  static final _$listLearnerEvaluations = $grpc.ClientMethod<
+          $0.ListLearnerEvaluationsRequest, $0.LearnerEvaluation>(
+      '/sil.starfish.Starfish/ListLearnerEvaluations',
+      ($0.ListLearnerEvaluationsRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.LearnerEvaluation.fromBuffer(value));
   static final _$listMaterials =
       $grpc.ClientMethod<$0.ListMaterialsRequest, $0.Material>(
           '/sil.starfish.Starfish/ListMaterials',
@@ -120,6 +152,12 @@ class StarfishClient extends $grpc.Client {
           '/sil.starfish.Starfish/ListMaterialTypes',
           ($0.ListMaterialTypesRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) => $0.MaterialType.fromBuffer(value));
+  static final _$listTeacherResponses =
+      $grpc.ClientMethod<$0.ListTeacherResponsesRequest, $0.TeacherResponse>(
+          '/sil.starfish.Starfish/ListTeacherResponses',
+          ($0.ListTeacherResponsesRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.TeacherResponse.fromBuffer(value));
   static final _$listUsers = $grpc.ClientMethod<$0.ListUsersRequest, $0.User>(
       '/sil.starfish.Starfish/ListUsers',
       ($0.ListUsersRequest value) => value.writeToBuffer(),
@@ -164,6 +202,14 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
+  $grpc.ResponseStream<$0.CreateUpdateGroupEvaluationResponse>
+      createUpdateGroupEvaluations(
+          $async.Stream<$0.CreateUpdateGroupEvaluationRequest> request,
+          {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUpdateGroupEvaluations, request,
+        options: options);
+  }
+
   $grpc.ResponseStream<$0.CreateUpdateGroupsResponse> createUpdateGroups(
       $async.Stream<$0.CreateUpdateGroupsRequest> request,
       {$grpc.CallOptions? options}) {
@@ -179,10 +225,26 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
+  $grpc.ResponseStream<$0.CreateUpdateLearnerEvaluationResponse>
+      createUpdateLearnerEvaluations(
+          $async.Stream<$0.CreateUpdateLearnerEvaluationRequest> request,
+          {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUpdateLearnerEvaluations, request,
+        options: options);
+  }
+
   $grpc.ResponseStream<$0.CreateUpdateMaterialsResponse> createUpdateMaterials(
       $async.Stream<$0.CreateUpdateMaterialsRequest> request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$createUpdateMaterials, request,
+        options: options);
+  }
+
+  $grpc.ResponseStream<$0.CreateUpdateTeacherResponseResponse>
+      createUpdateTeacherResponses(
+          $async.Stream<$0.CreateUpdateTeacherResponseRequest> request,
+          {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUpdateTeacherResponses, request,
         options: options);
   }
 
@@ -239,11 +301,27 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
+  $grpc.ResponseStream<$0.GroupEvaluation> listGroupEvaluations(
+      $0.ListGroupEvaluationsRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listGroupEvaluations, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
   $grpc.ResponseStream<$0.Language> listLanguages(
       $0.ListLanguagesRequest request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(
         _$listLanguages, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
+  $grpc.ResponseStream<$0.LearnerEvaluation> listLearnerEvaluations(
+      $0.ListLearnerEvaluationsRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listLearnerEvaluations, $async.Stream.fromIterable([request]),
         options: options);
   }
 
@@ -268,6 +346,14 @@ class StarfishClient extends $grpc.Client {
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(
         _$listMaterialTypes, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
+  $grpc.ResponseStream<$0.TeacherResponse> listTeacherResponses(
+      $0.ListTeacherResponsesRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listTeacherResponses, $async.Stream.fromIterable([request]),
         options: options);
   }
 
@@ -325,6 +411,16 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.CreateUpdateActionUserRequest.fromBuffer(value),
         ($0.CreateUpdateActionUserResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CreateUpdateGroupEvaluationRequest,
+            $0.CreateUpdateGroupEvaluationResponse>(
+        'CreateUpdateGroupEvaluations',
+        createUpdateGroupEvaluations,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.CreateUpdateGroupEvaluationRequest.fromBuffer(value),
+        ($0.CreateUpdateGroupEvaluationResponse value) =>
+            value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateUpdateGroupsRequest,
             $0.CreateUpdateGroupsResponse>(
         'CreateUpdateGroups',
@@ -343,6 +439,16 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.CreateUpdateGroupUsersRequest.fromBuffer(value),
         ($0.CreateUpdateGroupUsersResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CreateUpdateLearnerEvaluationRequest,
+            $0.CreateUpdateLearnerEvaluationResponse>(
+        'CreateUpdateLearnerEvaluations',
+        createUpdateLearnerEvaluations,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.CreateUpdateLearnerEvaluationRequest.fromBuffer(value),
+        ($0.CreateUpdateLearnerEvaluationResponse value) =>
+            value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateUpdateMaterialsRequest,
             $0.CreateUpdateMaterialsResponse>(
         'CreateUpdateMaterials',
@@ -352,6 +458,16 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.CreateUpdateMaterialsRequest.fromBuffer(value),
         ($0.CreateUpdateMaterialsResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CreateUpdateTeacherResponseRequest,
+            $0.CreateUpdateTeacherResponseResponse>(
+        'CreateUpdateTeacherResponses',
+        createUpdateTeacherResponses,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.CreateUpdateTeacherResponseRequest.fromBuffer(value),
+        ($0.CreateUpdateTeacherResponseResponse value) =>
+            value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateUpdateUserRequest,
             $0.CreateUpdateUserResponse>(
         'CreateUpdateUsers',
@@ -416,6 +532,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.ListGroupsRequest.fromBuffer(value),
         ($0.Group value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.ListGroupEvaluationsRequest, $0.GroupEvaluation>(
+            'ListGroupEvaluations',
+            listGroupEvaluations_Pre,
+            false,
+            true,
+            ($core.List<$core.int> value) =>
+                $0.ListGroupEvaluationsRequest.fromBuffer(value),
+            ($0.GroupEvaluation value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.ListLanguagesRequest, $0.Language>(
         'ListLanguages',
         listLanguages_Pre,
@@ -424,6 +549,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.ListLanguagesRequest.fromBuffer(value),
         ($0.Language value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.ListLearnerEvaluationsRequest,
+            $0.LearnerEvaluation>(
+        'ListLearnerEvaluations',
+        listLearnerEvaluations_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.ListLearnerEvaluationsRequest.fromBuffer(value),
+        ($0.LearnerEvaluation value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.ListMaterialsRequest, $0.Material>(
         'ListMaterials',
         listMaterials_Pre,
@@ -450,6 +584,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.ListMaterialTypesRequest.fromBuffer(value),
             ($0.MaterialType value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.ListTeacherResponsesRequest, $0.TeacherResponse>(
+            'ListTeacherResponses',
+            listTeacherResponses_Pre,
+            false,
+            true,
+            ($core.List<$core.int> value) =>
+                $0.ListTeacherResponsesRequest.fromBuffer(value),
+            ($0.TeacherResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.ListUsersRequest, $0.User>(
         'ListUsers',
         listUsers_Pre,
@@ -499,9 +642,21 @@ abstract class StarfishServiceBase extends $grpc.Service {
     yield* listGroups(call, await request);
   }
 
+  $async.Stream<$0.GroupEvaluation> listGroupEvaluations_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.ListGroupEvaluationsRequest> request) async* {
+    yield* listGroupEvaluations(call, await request);
+  }
+
   $async.Stream<$0.Language> listLanguages_Pre($grpc.ServiceCall call,
       $async.Future<$0.ListLanguagesRequest> request) async* {
     yield* listLanguages(call, await request);
+  }
+
+  $async.Stream<$0.LearnerEvaluation> listLearnerEvaluations_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.ListLearnerEvaluationsRequest> request) async* {
+    yield* listLearnerEvaluations(call, await request);
   }
 
   $async.Stream<$0.Material> listMaterials_Pre($grpc.ServiceCall call,
@@ -517,6 +672,12 @@ abstract class StarfishServiceBase extends $grpc.Service {
   $async.Stream<$0.MaterialType> listMaterialTypes_Pre($grpc.ServiceCall call,
       $async.Future<$0.ListMaterialTypesRequest> request) async* {
     yield* listMaterialTypes(call, await request);
+  }
+
+  $async.Stream<$0.TeacherResponse> listTeacherResponses_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.ListTeacherResponsesRequest> request) async* {
+    yield* listTeacherResponses(call, await request);
   }
 
   $async.Stream<$0.User> listUsers_Pre($grpc.ServiceCall call,
@@ -540,15 +701,24 @@ abstract class StarfishServiceBase extends $grpc.Service {
   $async.Stream<$0.CreateUpdateActionUserResponse> createUpdateActionUsers(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateActionUserRequest> request);
+  $async.Stream<$0.CreateUpdateGroupEvaluationResponse>
+      createUpdateGroupEvaluations($grpc.ServiceCall call,
+          $async.Stream<$0.CreateUpdateGroupEvaluationRequest> request);
   $async.Stream<$0.CreateUpdateGroupsResponse> createUpdateGroups(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateGroupsRequest> request);
   $async.Stream<$0.CreateUpdateGroupUsersResponse> createUpdateGroupUsers(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateGroupUsersRequest> request);
+  $async.Stream<$0.CreateUpdateLearnerEvaluationResponse>
+      createUpdateLearnerEvaluations($grpc.ServiceCall call,
+          $async.Stream<$0.CreateUpdateLearnerEvaluationRequest> request);
   $async.Stream<$0.CreateUpdateMaterialsResponse> createUpdateMaterials(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateMaterialsRequest> request);
+  $async.Stream<$0.CreateUpdateTeacherResponseResponse>
+      createUpdateTeacherResponses($grpc.ServiceCall call,
+          $async.Stream<$0.CreateUpdateTeacherResponseRequest> request);
   $async.Stream<$0.CreateUpdateUserResponse> createUpdateUsers(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateUserRequest> request);
@@ -566,14 +736,20 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.ListEvaluationCategoriesRequest request);
   $async.Stream<$0.Group> listGroups(
       $grpc.ServiceCall call, $0.ListGroupsRequest request);
+  $async.Stream<$0.GroupEvaluation> listGroupEvaluations(
+      $grpc.ServiceCall call, $0.ListGroupEvaluationsRequest request);
   $async.Stream<$0.Language> listLanguages(
       $grpc.ServiceCall call, $0.ListLanguagesRequest request);
+  $async.Stream<$0.LearnerEvaluation> listLearnerEvaluations(
+      $grpc.ServiceCall call, $0.ListLearnerEvaluationsRequest request);
   $async.Stream<$0.Material> listMaterials(
       $grpc.ServiceCall call, $0.ListMaterialsRequest request);
   $async.Stream<$0.MaterialTopic> listMaterialTopics(
       $grpc.ServiceCall call, $0.ListMaterialTopicsRequest request);
   $async.Stream<$0.MaterialType> listMaterialTypes(
       $grpc.ServiceCall call, $0.ListMaterialTypesRequest request);
+  $async.Stream<$0.TeacherResponse> listTeacherResponses(
+      $grpc.ServiceCall call, $0.ListTeacherResponsesRequest request);
   $async.Stream<$0.User> listUsers(
       $grpc.ServiceCall call, $0.ListUsersRequest request);
   $async.Future<$0.User> updateCurrentUser(
