@@ -912,12 +912,11 @@ class SyncService {
     actionUserBox.values
         .where((element) => (element.isNew || element.isUpdated))
         .forEach((HiveActionUser _hiveActionUser) {
-      print('SyncActionUSer: $_hiveActionUser');
       if (_hiveActionUser.isNew || _hiveActionUser.isUpdated) {
         ActionRepository()
             .createUpdateActionUsers(
           actionUser: _hiveActionUser.toActionUser(),
-          fieldMaskPaths: kActionFieldMask,
+          fieldMaskPaths: kActionUserFieldMask,
         )
             .then((value) {
           // delete this actionuser form `ACTION_USER_BOX`
