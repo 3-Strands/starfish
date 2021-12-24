@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -16,6 +18,7 @@ import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
@@ -64,6 +67,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   bool isMobileEditable = false;
   bool isNameEditable = false;
+
+  late AppBloc bloc;
 
   @override
   void initState() {
@@ -213,7 +218,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox.putAt(0, _user);
   }
 
-  void updateCountries() async {
+  void _updateCountries() async {
     var fieldMaskPaths = ['country_ids'];
     List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
@@ -471,7 +476,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
         '';
   }
 
+  String getGroupLinkedEmaill(String groupId) {
+    return _groupList
+            .where((element) => element.id == groupId)
+            .first
+            .linkEmail ??
+        '';
+  }
+
+  _updateGroupLinkedEmaill(String groupId, String emailId) async {
+    var group = _groupList.where((element) => element.id == groupId).first;
+    group.linkEmail = emailId;
+    group.isUpdated = true;
+
+    bloc.groupBloc
+        .addEditGroup(group)
+        .then((value) => print('record(s) saved.'))
+        .onError((error, stackTrace) {
+      print('Error: ${error.toString()}.');
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.updateGroupFailed);
+    }).whenComplete(() {
+      // Broadcast to sync the local changes with the server
+    });
+  }
+
   Container _groupItem(HiveGroupUser group) {
+    final _emailController = TextEditingController();
+    final FocusNode _emailFocus = FocusNode();
+    _emailController.text = getGroupLinkedEmaill(group.groupId!);
+
+    final _confirmEmailController = TextEditingController();
+    final FocusNode _confirmEmailFocus = FocusNode();
+
     return Container(
       height: 240.h,
       // color: Colors.green,
@@ -500,77 +537,103 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SizedBox(height: 10.h),
           Container(
             height: 52.h,
-            child: _emailField(),
+            child: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (input) => input!.isValidEmail()
+                  ? null
+                  : AppLocalizations.of(context)!.alertInvalidEmaill,
+              controller: _emailController,
+              focusNode: _emailFocus,
+              onFieldSubmitted: (term) {
+                if (term.isValidEmail()) {
+                  _emailController.text = term;
+                } else {
+                  Alerts.showMessageBox(
+                      context: context,
+                      title: AppLocalizations.of(context)!.dialogAlert,
+                      message: AppLocalizations.of(context)!.alertInvalidEmaill,
+                      positiveButtonText: AppLocalizations.of(context)!.ok,
+                      positiveActionCallback: () {});
+                }
+                _emailFocus.unfocus();
+              },
+              keyboardType: TextInputType.emailAddress,
+              style: textFormFieldText,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.emailHint,
+                contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                filled: true,
+                fillColor: AppColors.txtFieldBackground,
+              ),
+            ),
           ),
           SizedBox(height: 10.h),
           Container(
             height: 52.h,
-            child: _confirmEmailField(),
+            child: TextFormField(
+              controller: _confirmEmailController,
+              focusNode: _confirmEmailFocus,
+              onFieldSubmitted: (term) {
+                _confirmEmailController.text = term;
+                if (_emailController.text.isValidEmail() &&
+                    _emailController.text == _confirmEmailController.text) {
+                  Alerts.showMessageBox(
+                      context: context,
+                      title: AppLocalizations.of(context)!.dialogAlert,
+                      message:
+                          AppLocalizations.of(context)!.alertSaveAdminEmail,
+                      negativeButtonText: AppLocalizations.of(context)!.no,
+                      positiveButtonText: AppLocalizations.of(context)!.yes,
+                      negativeActionCallback: () {},
+                      positiveActionCallback: () {
+                        print('yes');
+                        _updateGroupLinkedEmaill(
+                            group.groupId!, _emailController.text);
+                      });
+
+                  _confirmEmailFocus.unfocus();
+                } else {
+                  Alerts.showMessageBox(
+                      context: context,
+                      title: AppLocalizations.of(context)!.dialogAlert,
+                      message:
+                          AppLocalizations.of(context)!.alertEmailDoNotMatch,
+                      positiveButtonText: AppLocalizations.of(context)!.ok,
+                      positiveActionCallback: () {});
+                }
+              },
+              keyboardType: TextInputType.emailAddress,
+              style: textFormFieldText,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.confirmEmailHint,
+                contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                filled: true,
+                fillColor: AppColors.txtFieldBackground,
+              ),
+            ),
           ),
           SizedBox(height: 15.h),
           SepratorLine(
               hight: .5.h, edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
         ],
-      ),
-    );
-  }
-
-  TextFormField _emailField() {
-    final _emailController = TextEditingController();
-    final FocusNode _emailFocus = FocusNode();
-
-    return TextFormField(
-      controller: _emailController,
-      focusNode: _emailFocus,
-      onFieldSubmitted: (term) {
-        _emailFocus.unfocus();
-      },
-      keyboardType: TextInputType.emailAddress,
-      style: textFormFieldText,
-      decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.emailHint,
-        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
-      ),
-    );
-  }
-
-  TextFormField _confirmEmailField() {
-    final _confirmEmailController = TextEditingController();
-    final FocusNode _confirmEmailFocus = FocusNode();
-
-    return TextFormField(
-      controller: _confirmEmailController,
-      focusNode: _confirmEmailFocus,
-      onFieldSubmitted: (term) {
-        _confirmEmailFocus.unfocus();
-      },
-      keyboardType: TextInputType.emailAddress,
-      style: textFormFieldText,
-      decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.confirmEmailHint,
-        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
       ),
     );
   }
@@ -648,6 +711,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -729,7 +793,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         } else {
                           setState(() {
                             _selectedCountries = selectedCountries;
-                            updateCountries();
+                            _updateCountries();
                           });
                         }
                       });

@@ -263,5 +263,11 @@
   "selectAction": "Select Action",
   "selectAction": "Select Action",
 
-  "actionWasAssignedTo": "This Action was Assigned to:"
+  "actionWasAssignedTo": "This Action was Assigned to:",
+
+  "alertEmailDoNotMatch": "Email id doesn't match with confirm email id",
+
+  "alertSaveAdminEmail": "Do you want to save admin email?",
+
+  "alertInvalidEmaill": "Email format is not valid"
 }

@@ -263,5 +263,11 @@
   "selectAction": "कार्रवाई चुनें",
   "selectAction": "कार्रवाई चुनें",
 
-  "actionWasAssignedTo": "यह कार्य सौंपा गया था:"
+  "actionWasAssignedTo": "यह कार्य सौंपा गया था:",
+
+  "alertEmailDoNotMatch": "ईमेल आईडी कन्फर्म ईमेल आईडी से मेल नहीं खाती",
+
+  "alertSaveAdminEmail": "क्या आप व्यवस्थापक ईमेल सहेजना चाहते हैं?",
+
+  "alertInvalidEmaill": "ईमेल प्रारूप मान्य नहीं है"
 }

@@ -21,28 +21,31 @@ class HiveGroup extends HiveObject {
   @HiveField(2)
   String? description;
   @HiveField(3)
-  List<String>? languageIds;
+  String? linkEmail;
   @HiveField(4)
-  List<HiveGroupUser>? users;
+  List<String>? languageIds;
   @HiveField(5)
-  List<String>? evaluationCategoryIds;
+  List<HiveGroupUser>? users;
   @HiveField(6)
-  List<HiveGroupAction>? actions;
+  List<String>? evaluationCategoryIds;
   @HiveField(7)
-  List<HiveEdit>? editHistory;
+  List<HiveGroupAction>? actions;
   @HiveField(8)
-  bool isNew = false;
+  List<HiveEdit>? editHistory;
   @HiveField(9)
-  bool isUpdated = false;
+  bool isNew = false;
   @HiveField(10)
-  bool isDirty = false;
+  bool isUpdated = false;
   @HiveField(11)
+  bool isDirty = false;
+  @HiveField(12)
   bool isMe = false;
 
   HiveGroup({
     this.id,
     this.name,
     this.description,
+    this.linkEmail,
     this.languageIds,
     this.users,
     this.evaluationCategoryIds,
@@ -58,6 +61,7 @@ class HiveGroup extends HiveObject {
     this.id = group.id;
     this.name = group.name;
     this.description = group.description;
+    this.linkEmail = group.linkEmail;
     this.languageIds = group.languageIds;
     this.users =
         group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
@@ -74,6 +78,7 @@ class HiveGroup extends HiveObject {
       id: this.id,
       name: this.name,
       description: this.description,
+      linkEmail: this.linkEmail,
       languageIds: this.languageIds,
       users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
       evaluationCategoryIds: this.evaluationCategoryIds,
