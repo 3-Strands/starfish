@@ -20,15 +20,16 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       id: fields[0] as String?,
       name: fields[1] as String?,
       description: fields[2] as String?,
-      languageIds: (fields[3] as List?)?.cast<String>(),
-      users: (fields[4] as List?)?.cast<HiveGroupUser>(),
-      evaluationCategoryIds: (fields[5] as List?)?.cast<String>(),
-      actions: (fields[6] as List?)?.cast<HiveGroupAction>(),
-      editHistory: (fields[7] as List?)?.cast<HiveEdit>(),
-      isNew: fields[8] as bool,
-      isUpdated: fields[9] as bool,
-      isDirty: fields[10] as bool,
-      isMe: fields[11] as bool,
+      linkEmail: fields[3] as String?,
+      languageIds: (fields[4] as List?)?.cast<String>(),
+      users: (fields[5] as List?)?.cast<HiveGroupUser>(),
+      evaluationCategoryIds: (fields[6] as List?)?.cast<String>(),
+      actions: (fields[7] as List?)?.cast<HiveGroupAction>(),
+      editHistory: (fields[8] as List?)?.cast<HiveEdit>(),
+      isNew: fields[9] as bool,
+      isUpdated: fields[10] as bool,
+      isDirty: fields[11] as bool,
+      isMe: fields[12] as bool,
     );
   }
 
@@ -43,22 +44,24 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       ..writeByte(2)
       ..write(obj.description)
       ..writeByte(3)
-      ..write(obj.languageIds)
+      ..write(obj.linkEmail)
       ..writeByte(4)
-      ..write(obj.users)
+      ..write(obj.languageIds)
       ..writeByte(5)
-      ..write(obj.evaluationCategoryIds)
+      ..write(obj.users)
       ..writeByte(6)
-      ..write(obj.actions)
+      ..write(obj.evaluationCategoryIds)
       ..writeByte(7)
-      ..write(obj.editHistory)
+      ..write(obj.actions)
       ..writeByte(8)
-      ..write(obj.isNew)
+      ..write(obj.editHistory)
       ..writeByte(9)
-      ..write(obj.isUpdated)
+      ..write(obj.isNew)
       ..writeByte(10)
-      ..write(obj.isDirty)
+      ..write(obj.isUpdated)
       ..writeByte(11)
+      ..write(obj.isDirty)
+      ..writeByte(12)
       ..write(obj.isMe);
   }
 
