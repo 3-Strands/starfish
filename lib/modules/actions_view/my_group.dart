@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import 'package:flutter/material.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
@@ -344,9 +346,17 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   void _onActionSelection(HiveAction action, HiveUser user) {
-    HiveActionUser hiveActionUser = new HiveActionUser();
+    /*HiveActionUser hiveActionUser = new HiveActionUser();
     hiveActionUser.actionId = action.id!;
-    hiveActionUser.userId = user.id!;
+    hiveActionUser.userId = user.id!;*/
+
+    HiveActionUser? hiveActionUser = user.actionUser(action);
+    if (hiveActionUser == null) {
+      hiveActionUser = new HiveActionUser();
+      hiveActionUser.actionId = action.id!;
+      hiveActionUser.userId = user.id;
+      hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
+    }
 
     showModalBottomSheet(
         context: context,
@@ -362,7 +372,7 @@ class _MyGroupState extends State<MyGroup> {
         builder: (context) {
           final bloc = Provider.of(context);
           return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
+              builder: (BuildContext context, StateSetter setModalState) {
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +396,9 @@ class _MyGroupState extends State<MyGroup> {
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Row(
+                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         height: 44.h,
@@ -402,41 +414,46 @@ class _MyGroupState extends State<MyGroup> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      SizedBox(
-                        width: 53.sp,
-                      ),
-                      Icon(
-                        Icons.thumb_up_alt_outlined,
-                        size: 14.sp,
-                      ),
-                      SizedBox(
-                        width: 4.sp,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          if (user.actionStatusbyId(action) ==
-                              ActionStatus.NOT_DONE) {
-                            hiveActionUser.status =
-                                ActionUser_Status.COMPLETE.value;
-                          } else if (user.actionStatusbyId(action) ==
-                              ActionStatus.DONE) {
-                            hiveActionUser.status =
-                                ActionUser_Status.INCOMPLETE.value;
-                          } else {
-                            hiveActionUser.status =
-                                ActionUser_Status.UNSPECIFIED_STATUS.value;
-                          }
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/hand_right.png',
+                            height: 14.sp,
+                            width: 14.sp,
+                          ),
+                          SizedBox(
+                            width: 4.sp,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              setModalState(() {
+                                if (user.actionStatusbyId(action) ==
+                                    ActionStatus.NOT_DONE) {
+                                  hiveActionUser!.status =
+                                      ActionUser_Status.COMPLETE.value;
+                                } else if (user.actionStatusbyId(action) ==
+                                    ActionStatus.DONE) {
+                                  hiveActionUser!.status =
+                                      ActionUser_Status.INCOMPLETE.value;
+                                } else {
+                                  hiveActionUser!.status = ActionUser_Status
+                                      .UNSPECIFIED_STATUS.value;
+                                }
+                              });
+                              setState(
+                                  () {}); // To trigger the main view to redraw.
+                              bloc.actionBloc
+                                  .createUpdateActionUser(hiveActionUser!);
 
-                          bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser);
-
-                          // TODO: should we update the status of this action on HiveUser also????
-                        },
-                        child: UserActionStatusWidget(
-                          title: user.actionStatusbyId(action),
-                          height: 36.h,
-                          width: 99.w,
-                        ),
+                              // TODO: should we update the status of this action on HiveUser also????
+                            },
+                            child: UserActionStatusWidget(
+                              title: user.actionStatusbyId(action),
+                              height: 36.h,
+                              width: 130.w,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -487,10 +504,11 @@ class _MyGroupState extends State<MyGroup> {
                                     hintText: AppLocalizations.of(context)!
                                         .questionTextEditHint),
                                 onSubmitted: (value) {
-                                  print(value);
-                                  hiveActionUser.teacherResponse = value;
+                                  setModalState(() {
+                                    hiveActionUser!.teacherResponse = value;
+                                  });
                                   bloc.actionBloc
-                                      .createUpdateActionUser(hiveActionUser);
+                                      .createUpdateActionUser(hiveActionUser!);
                                 },
                               ),
                             ],
@@ -520,13 +538,13 @@ class _MyGroupState extends State<MyGroup> {
                     children: [
                       InkWell(
                         onTap: () {
-                          setState(() {
-                            hiveActionUser.evaluation =
+                          setModalState(() {
+                            hiveActionUser!.evaluation =
                                 ActionUser_Evaluation.GOOD.value;
                           });
 
                           bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser);
+                              .createUpdateActionUser(hiveActionUser!);
                         },
                         child: Container(
                           height: 36.sp,
@@ -534,7 +552,7 @@ class _MyGroupState extends State<MyGroup> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4.sp),
                             color: ActionUser_Evaluation.valueOf(
-                                        hiveActionUser.evaluation!) ==
+                                        hiveActionUser!.evaluation!) ==
                                     ActionUser_Evaluation.GOOD
                                 ? Color(0xFF6DE26B)
                                 : Color(0xFFC9C9C9),
@@ -542,7 +560,11 @@ class _MyGroupState extends State<MyGroup> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.thumb_up_outlined, size: 14.sp),
+                                Image.asset(
+                                  'assets/images/thumbs_up.png',
+                                  height: 14.sp,
+                                  width: 14.sp,
+                                ),
                                 SizedBox(
                                   width: 4.sp,
                                 ),
@@ -560,11 +582,13 @@ class _MyGroupState extends State<MyGroup> {
                       ),
                       InkWell(
                         onTap: () {
-                          hiveActionUser.evaluation =
-                              ActionUser_Evaluation.BAD.value;
+                          setModalState(() {
+                            hiveActionUser!.evaluation =
+                                ActionUser_Evaluation.BAD.value;
+                          });
 
                           bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser);
+                              .createUpdateActionUser(hiveActionUser!);
                         },
                         child: Container(
                           height: 36.sp,
@@ -580,7 +604,11 @@ class _MyGroupState extends State<MyGroup> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.thumb_down_outlined, size: 14.sp),
+                                Image.asset(
+                                  'assets/images/thumbs_down.png',
+                                  height: 14.sp,
+                                  width: 14.sp,
+                                ),
                                 SizedBox(
                                   width: 4.sp,
                                 ),
