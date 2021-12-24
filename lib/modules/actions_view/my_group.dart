@@ -598,7 +598,7 @@ class _MyGroupState extends State<MyGroup> {
                             color: ActionUser_Evaluation.valueOf(
                                         hiveActionUser.evaluation!) ==
                                     ActionUser_Evaluation.BAD
-                                ? Color(0xFF6DE26B)
+                                ? Color(0xFFFFBE4A)
                                 : Color(0xFFC9C9C9),
                           ),
                           child: Row(

@@ -27,6 +27,7 @@ import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/app_data_repository.dart';
@@ -70,6 +71,7 @@ class SyncService {
   late Box<HiveEvaluationCategory> evaluationCategoryBox;
   late Box<HiveUser> userBox;
   late Box<HiveFile> fileBox;
+  late Box<HiveActionUser> actionUserBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -90,6 +92,7 @@ class SyncService {
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
     fileBox = Hive.box<HiveFile>(HiveDatabase.FILE_BOX);
+    actionUserBox = Hive.box<HiveActionUser>(HiveDatabase.ACTION_USER_BOX);
   }
   void showAlert(BuildContext context) async {
     _isDialogShowing = true;
@@ -135,14 +138,13 @@ class SyncService {
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
 
-    fileBox.values.forEach((element) {
-      print('FILE_BOX: $element');
-    });
     // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     await lock.synchronized(() => syncLocalActionsToRemote());
+
+    await lock.synchronized(() => syncLocalHiveActionUserToRemote());
     // navigatorKey: Application.navKey, // GlobalKey()
     //showAlert(NavigationService.navigatorKey.currentContext!);
 
@@ -903,5 +905,31 @@ class SyncService {
     String filePath = '${appDocumentsPath.path}/$filename';
     print("FILE PATH: $filePath");
     return filePath;
+  }
+
+  Future syncLocalHiveActionUserToRemote() async {
+    print('============= START: Sync Local ActionUser to Remote =============');
+    actionUserBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .forEach((HiveActionUser _hiveActionUser) {
+      print('SyncActionUSer: $_hiveActionUser');
+      if (_hiveActionUser.isNew || _hiveActionUser.isUpdated) {
+        ActionRepository()
+            .createUpdateActionUsers(
+          actionUser: _hiveActionUser.toActionUser(),
+          fieldMaskPaths: kActionFieldMask,
+        )
+            .then((value) {
+          // delete this actionuser form `ACTION_USER_BOX`
+
+          ActionProvider().deleteActionUser(_hiveActionUser);
+        }).onError((error, stackTrace) {
+          print('============= Error: ${error.toString()} ===============');
+        }).whenComplete(() {
+          print(
+              '============= END: Sync Local ActionUser to Remote ===============');
+        });
+      }
+    });
   }
 }
