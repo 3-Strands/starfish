@@ -22,6 +22,23 @@ class MaterialEditability {
         .where((element) => !_hideValues.contains(element.value))
         .toList();
   }
+
+  static MaterialEditability valueOf(int index) {
+    switch (Material_Editability.valueOf(index)) {
+      case Material_Editability.CREATOR_EDIT:
+        return MaterialEditability(
+            value: Material_Editability.CREATOR_EDIT,
+            displayName: Material_Editability.CREATOR_EDIT.about);
+      case Material_Editability.GROUP_EDIT:
+        return MaterialEditability(
+            value: Material_Editability.GROUP_EDIT,
+            displayName: Material_Editability.GROUP_EDIT.about);
+      default:
+        return MaterialEditability(
+            value: Material_Editability.UNSPECIFIED_EDITABILITY,
+            displayName: Material_Editability.UNSPECIFIED_EDITABILITY.about);
+    }
+  }
 }
 
 extension Material_EditabilityExt on Material_Editability {

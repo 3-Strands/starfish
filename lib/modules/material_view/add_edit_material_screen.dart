@@ -30,6 +30,7 @@ import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
@@ -114,6 +115,16 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           .where((HiveMaterialTopic topic) =>
               widget.material!.topics!.contains(topic.name))
           .toList();
+
+      _choiceSeenByText = widget.material!.visibility != null
+          ? MaterialVisibility.valueOf(widget.material!.visibility!)
+              .displayName!
+          : AppLocalizations.of(context)!.seenBy;
+
+      _choiceEditedByText = widget.material!.editability != null
+          ? MaterialEditability.valueOf(widget.material!.editability!)
+              .displayName!
+          : AppLocalizations.of(context)!.editedBy;
     }
   }
 
@@ -321,7 +332,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               ).then((value) => {
                                     // Handle cropped image here
                                   });
-                              ;
                             } else {
                               _selectedFiles = result.paths
                                   .map((path) => File(path!))
@@ -531,8 +541,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           _dismissFieldFocus();
                         },
                         onChanged: (MaterialEditability? value) {
-                          _editableBy = value;
-                          _choiceEditedByText = _editableBy!.displayName!;
+                          setState(() {
+                            _editableBy = value;
+                            _choiceEditedByText = _editableBy!.displayName!;
+                          });
                         },
                         items: MaterialEditability.values()
                             .map<DropdownMenuItem<MaterialEditability>>(
