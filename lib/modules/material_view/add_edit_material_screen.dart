@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:starfish/bloc/app_bloc.dart';
@@ -30,6 +31,7 @@ import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
@@ -114,6 +116,16 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           .where((HiveMaterialTopic topic) =>
               widget.material!.topics!.contains(topic.name))
           .toList();
+
+      _choiceSeenByText = widget.material!.visibility != null
+          ? MaterialVisibility.valueOf(widget.material!.visibility!)
+              .displayName!
+          : AppLocalizations.of(context)!.seenBy;
+
+      _choiceEditedByText = widget.material!.editability != null
+          ? MaterialEditability.valueOf(widget.material!.editability!)
+              .displayName!
+          : AppLocalizations.of(context)!.editedBy;
     }
   }
 
@@ -289,6 +301,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   if (_isEditMode) _previewFiles(widget.material!),
                   SizedBox(height: 10.h),
 
+                  // Selected files (Not uploaded)
+                  _previewSelectedFiles(),
+
                   // Add Materials
                   DottedBorder(
                     borderType: BorderType.RRect,
@@ -304,7 +319,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                           if (result != null) {
                             // if single selected file is IMAGE
-                            if (result.count == 1) {
+                            if (result.count == 1 &&
+                                ['jpg', 'jpeg', 'png'].contains(result
+                                    .paths.first
+                                    ?.split("/")
+                                    .last
+                                    .split(".")
+                                    .last)) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -314,25 +335,22 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                                       if (_newFile == null) {
                                         return;
                                       }
-                                      _selectedFiles.add(_newFile);
+                                      setState(() {
+                                        _selectedFiles.add(_newFile);
+                                      });
                                     },
                                   ),
                                 ),
                               ).then((value) => {
                                     // Handle cropped image here
                                   });
-                              ;
                             } else {
-                              _selectedFiles = result.paths
-                                  .map((path) => File(path!))
-                                  .toList();
+                              setState(() {
+                                _selectedFiles = result.paths
+                                    .map((path) => File(path!))
+                                    .toList();
+                              });
                             }
-
-                            //bloc.materialBloc.setSelectedFiles(_selectedFiles);
-                            /*bloc.materialBloc.uploadMaterial(
-                                "2a27cced-a504-4655-9e04-1fd6af82aad3",
-                                _selectedFiles.first);*/
-
                           } else {
                             // User canceled the picker
                           }
@@ -531,8 +549,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           _dismissFieldFocus();
                         },
                         onChanged: (MaterialEditability? value) {
-                          _editableBy = value;
-                          _choiceEditedByText = _editableBy!.displayName!;
+                          setState(() {
+                            _editableBy = value;
+                            _choiceEditedByText = _editableBy!.displayName!;
+                          });
                         },
                         items: MaterialEditability.values()
                             .map<DropdownMenuItem<MaterialEditability>>(
@@ -785,6 +805,42 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   StarfishSnackbar.showErrorMessage(
                       context, 'File downloaded failed.');
                 });*/
+              },
+          ),
+        ),
+      ));
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _widgetList,
+    );
+  }
+
+  Widget _previewSelectedFiles() {
+    final List<Widget> _widgetList = [];
+
+    for (File file in _selectedFiles) {
+      _widgetList.add(Container(
+        height: 30.h,
+        child: RichText(
+          textAlign: TextAlign.start,
+          text: TextSpan(
+            text: file.path.split("/").last,
+            style: TextStyle(
+              color: Color(0xFF3475F0),
+              fontFamily: 'OpenSans',
+              fontSize: 14.sp,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                if (Platform.isIOS) {
+                  return;
+                } else if (Platform.isAndroid) {
+                  OpenFile.open(file.path);
+                }
               },
           ),
         ),

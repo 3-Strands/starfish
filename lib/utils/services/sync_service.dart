@@ -303,7 +303,7 @@ class SyncService {
   }
 
   Future syncLanguages() async {
-    languageBox.clear();
+    await languageBox.clear();
     await AppDataRepository()
         .getAllLanguages()
         .then((ResponseStream<Language> stream) {

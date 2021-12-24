@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -21,6 +22,27 @@ class MaterialVisibility {
         })
         .where((element) => !_hideValues.contains(element.value))
         .toList();
+  }
+
+  static MaterialVisibility valueOf(int index) {
+    switch (Material_Visibility.valueOf(index)) {
+      case Material_Visibility.ALL_VIEW:
+        return MaterialVisibility(
+            value: Material_Visibility.ALL_VIEW,
+            displayName: Material_Visibility.ALL_VIEW.about);
+      case Material_Visibility.GROUP_VIEW:
+        return MaterialVisibility(
+            value: Material_Visibility.GROUP_VIEW,
+            displayName: Material_Visibility.GROUP_VIEW.about);
+      case Material_Visibility.CREATOR_VIEW:
+        return MaterialVisibility(
+            value: Material_Visibility.CREATOR_VIEW,
+            displayName: Material_Visibility.CREATOR_VIEW.about);
+      default:
+        return MaterialVisibility(
+            value: Material_Visibility.UNSPECIFIED_VISIBILITY,
+            displayName: Material_Visibility.UNSPECIFIED_VISIBILITY.about);
+    }
   }
 }
 

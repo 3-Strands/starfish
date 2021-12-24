@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -50,7 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late HiveCurrentUser _user;
 
   late List<HiveCountry> _countryList = [];
-  late List<HiveLanguage> _languageList = [];
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
   late List<HiveGroup> _groupList = [];
@@ -69,6 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isNameEditable = false;
 
   late AppBloc bloc;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -83,6 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     _getCurrentUser();
     _getAllCountries();
+    _getAllLanguages();
     _getGroups();
   }
 
@@ -106,21 +108,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _getAllCountries() {
-    _countryList = _countryBox.values.toList();
-
     for (var countryId in _user.countryIds) {
-      _countryList
+      _countryBox.values
           .where((item) => item.id == countryId)
           .forEach((item) => {_selectedCountries.add(item)});
     }
-
-    _getAllLanguages();
   }
 
   void _getAllLanguages() {
-    _languageList = _languageBox.values.toList();
     for (var languageId in _user.languageIds) {
-      _languageList
+      _languageBox.values
           .where((item) => item.id == languageId)
           .forEach((item) => {_selectedLanguages.add(item)});
     }
@@ -128,9 +125,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _getGroups() {
     _groupList = _groupBox.values.toList();
-    _groupList.forEach((element) {
-      print("Group: $element");
-    });
   }
 
   void _updateName() async {
@@ -218,7 +212,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox.putAt(0, _user);
   }
 
-  void _updateCountries() async {
+  void updateCountries() async {
+    setState(() {
+      _isLoading = true;
+    });
     var fieldMaskPaths = ['country_ids'];
     List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
@@ -228,18 +225,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     await CurrentUserRepository()
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
-        .then(
-          (value) => {
-            _user.countryIds = value.countryIds,
-            _currentUserBox.putAt(0, _user),
-          },
-        )
-        .whenComplete(() {
-      SyncService().syncLanguages();
-    });
+        .then((value) async => {
+              await SyncService().syncLanguages(),
+              setState(() => _isLoading = false),
+              _user.countryIds = value.countryIds,
+              _currentUserBox.putAt(0, _user),
+            });
   }
 
   void updateLanguages() async {
+    setState(() => _isLoading = true);
+
     var fieldMaskPaths = ['language_ids'];
     List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
@@ -251,6 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
+            setState(() => _isLoading = false),
             _user.languageIds = value.languageIds,
             _currentUserBox.putAt(0, _user),
           },
@@ -712,6 +709,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    ProfileBloc profileBloc = new ProfileBloc();
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -739,249 +737,243 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Scrollbar(
-          thickness: 5.sp,
-          isAlwaysShown: false,
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.only(left: 15.w, right: 15.w),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20.h),
-                  _getNameSection(),
-                  SizedBox(height: 20.h),
-                  _getPhoneNumberSection(),
-                  SizedBox(height: 20.h),
+        child: Stack(
+          children: [
+            Scrollbar(
+              thickness: 5.sp,
+              isAlwaysShown: false,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 20.h),
+                      _getNameSection(),
+                      SizedBox(height: 20.h),
+                      _getPhoneNumberSection(),
+                      SizedBox(height: 20.h),
 
-                  //--> Select country section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: AppLocalizations.of(context)!.myCountry,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  SelectDropDown(
-                    navTitle: AppLocalizations.of(context)!.selectCountry,
-                    placeholder: AppLocalizations.of(context)!.selectCountry,
-                    selectedValues: _selectedCountries,
-                    dataSource: _countryList,
-                    enabled: true,
-                    type: SelectType.multiple,
-                    dataSourceType: DataSourceType.countries,
-                    onDoneClicked: <T>(countries) {
-                      List<HiveCountry> selectedCountries =
-                          List<HiveCountry>.from(countries as List<dynamic>);
-
-                      // List<HiveCountry> selectedCountries =
-                      //     countries as List<HiveCountry>;
-
-                      if (selectedCountries.length == 0) {
-                        return StarfishSnackbar.showErrorMessage(context,
-                            AppLocalizations.of(context)!.emptySelectCountry);
-                      }
-
-                      GeneralFunctions()
-                          .isNetworkAvailable()
-                          .then((onValue) async {
-                        if (!onValue) {
-                          return StarfishSnackbar.showErrorMessage(
-                              context,
-                              Strings
-                                  .internetRequiredToChangeCountriesOrLanguage);
-                        } else {
-                          setState(() {
-                            _selectedCountries = selectedCountries;
-                            _updateCountries();
-                          });
-                        }
-                      });
-                    },
-                  ),
-                  //--------------------------
-
-                  SizedBox(height: 20.h),
-
-                  //--> Select language section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: AppLocalizations.of(context)!.myLanugages,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-
-                  Container(
-                    child: SelectDropDown(
-                      navTitle: AppLocalizations.of(context)!.selectLanugages,
-                      placeholder:
-                          AppLocalizations.of(context)!.selectLanugages,
-                      selectedValues: _selectedLanguages,
-                      dataSource: _languageList,
-                      enabled: true,
-                      type: SelectType.multiple,
-                      dataSourceType: DataSourceType.languages,
-                      onDoneClicked: <T>(languages) {
-                        List<HiveLanguage> selectedLanguages =
-                            List<HiveLanguage>.from(languages as List<dynamic>);
-
-                        // List<HiveLanguage> selectedLanguages =
-                        //     languages as List<HiveLanguage>;
-
-                        if (selectedLanguages.length == 0) {
-                          return StarfishSnackbar.showErrorMessage(
-                              context,
-                              AppLocalizations.of(context)!
-                                  .emptySelectLanguage);
-                        }
-
-                        GeneralFunctions()
-                            .isNetworkAvailable()
-                            .then((onValue) async {
-                          if (!onValue) {
-                            return StarfishSnackbar.showErrorMessage(
-                                context,
-                                Strings
-                                    .internetRequiredToChangeCountriesOrLanguage);
+                      //--> Select country section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: AppLocalizations.of(context)!.myCountry,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      StreamBuilder(
+                        stream: profileBloc.countries,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<HiveCountry>?> snapshot) {
+                          if (snapshot.hasData) {
+                            return SelectDropDown(
+                              navTitle:
+                                  AppLocalizations.of(context)!.selectCountry,
+                              placeholder:
+                                  AppLocalizations.of(context)!.selectCountry,
+                              selectedValues: _selectedCountries,
+                              dataSource: snapshot.data,
+                              type: SelectType.multiple,
+                              dataSourceType: DataSourceType.countries,
+                              onDoneClicked: <T>(countries) {
+                                setState(() {
+                                  // _selectedCountries = countries as List<HiveCountry>;
+                                  _selectedCountries = List<HiveCountry>.from(
+                                      countries as List<dynamic>);
+                                  updateCountries();
+                                });
+                              },
+                            );
                           } else {
-                            setState(() {
-                              _selectedLanguages = selectedLanguages;
-                              updateLanguages();
-                            });
+                            return Container();
                           }
-                        });
-                      },
-                    ),
-                  ),
-                  //--------------------------
+                        },
+                      ),
+                      //--------------------------
 
-                  SizedBox(height: 39.h),
+                      SizedBox(height: 20.h),
 
-                  //--> Last successfull sync section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: AppLocalizations.of(context)!.lastSuccessfullSync,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 5.h),
-                  SepratorLine(
-                    hight: 1.h,
-                    edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                  ),
-                  SizedBox(height: 20.h),
+                      //--> Select language section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: AppLocalizations.of(context)!.myLanugages,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
 
-                  Container(
-                    child: Align(
-                      alignment: FractionalOffset.topLeft,
-                      child: Text.rich(
-                        TextSpan(
-                          text:
-                              "${AppLocalizations.of(context)!.lastSuccessfullSync}: ",
-                          style: TextStyle(
-                            color: AppColors.appTitle,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 18.sp,
-                          ),
-                          children: [
+                      Container(
+                        child: StreamBuilder(
+                          stream: profileBloc.languages,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<HiveLanguage>?> snapshot) {
+                            if (snapshot.hasData) {
+                              return SelectDropDown(
+                                navTitle: AppLocalizations.of(context)!
+                                    .selectLanugages,
+                                placeholder: AppLocalizations.of(context)!
+                                    .selectLanugages,
+                                selectedValues: _selectedLanguages,
+                                dataSource: snapshot.data,
+                                type: SelectType.multiple,
+                                dataSourceType: DataSourceType.languages,
+                                onDoneClicked: <T>(languages) {
+                                  // setState(() {
+                                  //   _selectedLanguages =
+                                  //       languages as List<HiveLanguage>;
+                                  // });
+                                  setState(() {
+                                    _selectedLanguages =
+                                        List<HiveLanguage>.from(
+                                            languages as List<dynamic>);
+
+                                    updateLanguages();
+                                  });
+                                },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                      //--------------------------
+
+                      SizedBox(height: 39.h),
+
+                      //--> Last successfull sync section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title:
+                              AppLocalizations.of(context)!.lastSuccessfullSync,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      SepratorLine(
+                        hight: 1.h,
+                        edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                      ),
+                      SizedBox(height: 20.h),
+
+                      Container(
+                        child: Align(
+                          alignment: FractionalOffset.topLeft,
+                          child: Text.rich(
                             TextSpan(
-                              text: lastSyncDataTime(),
+                              text:
+                                  "${AppLocalizations.of(context)!.lastSuccessfullSync}: ",
                               style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: 'Roboto',
+                                color: AppColors.appTitle,
+                                fontWeight: FontWeight.normal,
                                 fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: lastSyncDataTime(),
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Roboto',
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //--------------------------
+
+                      SizedBox(height: 50.h),
+
+                      //--> Group admin section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: AppLocalizations.of(context)!.forGroupAdmin,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      SepratorLine(
+                        hight: 1.h,
+                        edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                      ),
+                      SizedBox(height: 20.h),
+                      Container(
+                        height: 44.h,
+                        width: 345.w,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 300.w,
+                              height: 44.h,
+                              child: Text(
+                                AppLocalizations.of(context)!.linkMyGroups,
+                                textAlign: TextAlign.left,
+                                style: titleTextStyle,
                               ),
                             ),
+                            Container(
+                              width: 23.w,
+                              child: Center(
+                                child: IconButton(
+                                  icon: (_user.linkGroups == true)
+                                      ? Icon(Icons.check_box)
+                                      : Icon(Icons.check_box_outline_blank),
+                                  color: AppColors.selectedButtonBG,
+                                  onPressed: () {
+                                    setState(() => {
+                                          _user.linkGroups = !_user.linkGroups,
+                                          updateLinkGroupStatus()
+                                        });
+                                  },
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                  ),
+                      //--------------------------
 
-                  //--------------------------
+                      SizedBox(height: 50.h),
 
-                  SizedBox(height: 50.h),
-
-                  //--> Group admin section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: AppLocalizations.of(context)!.forGroupAdmin,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 5.h),
-                  SepratorLine(
-                    hight: 1.h,
-                    edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                  ),
-                  SizedBox(height: 20.h),
-                  Container(
-                    height: 44.h,
-                    width: 345.w,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 300.w,
-                          height: 44.h,
-                          child: Text(
-                            AppLocalizations.of(context)!.linkMyGroups,
-                            textAlign: TextAlign.left,
-                            style: titleTextStyle,
-                          ),
+                      //--> My groups section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: AppLocalizations.of(context)!.myGroups,
+                          align: TextAlign.left,
                         ),
-                        Container(
-                          width: 23.w,
-                          child: Center(
-                            child: IconButton(
-                              icon: (_user.linkGroups == true)
-                                  ? Icon(Icons.check_box)
-                                  : Icon(Icons.check_box_outline_blank),
-                              color: AppColors.selectedButtonBG,
-                              onPressed: () {
-                                setState(() => {
-                                      _user.linkGroups = !_user.linkGroups,
-                                      updateLinkGroupStatus()
-                                    });
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 5.h),
+                      SepratorLine(
+                        hight: 1.h,
+                        edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      _myGroupsList(),
+                      //--------------------------
+
+                      SizedBox(height: 10.h),
+                    ],
                   ),
-                  //--------------------------
-
-                  SizedBox(height: 50.h),
-
-                  //--> My groups section
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: TitleLabel(
-                      title: AppLocalizations.of(context)!.myGroups,
-                      align: TextAlign.left,
-                    ),
-                  ),
-                  SizedBox(height: 5.h),
-                  SepratorLine(
-                    hight: 1.h,
-                    edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  _myGroupsList(),
-                  //--------------------------
-
-                  SizedBox(height: 10.h),
-                ],
+                ),
               ),
             ),
-          ),
+            (_isLoading == true)
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container()
+          ],
         ),
       ),
       bottomNavigationBar: _footer(),
