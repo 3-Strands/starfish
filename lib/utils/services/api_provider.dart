@@ -268,6 +268,25 @@ class ApiProvider {
     return client!.deleteActions(streamRequest);
   }
 
+  Future<ResponseStream<CreateUpdateActionUserResponse>>
+      createUpdateActionUsers(
+    ActionUser actionUser,
+    List<String> fieldMaskPaths,
+  ) async {
+    var request = CreateUpdateActionUserRequest.create();
+    request.actionUser = actionUser;
+
+    FieldMask mask = FieldMask(paths: fieldMaskPaths);
+    request.updateMask = mask;
+
+    Stream<CreateUpdateActionUserRequest> streamRequest = Stream.value(request);
+
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateActionUsers(streamRequest);
+  }
+
   Future<ResponseStream<UploadStatus>> uploadFile(
       Stream<FileData> request) async {
     final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(

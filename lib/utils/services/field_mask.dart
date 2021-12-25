@@ -53,6 +53,7 @@ final List<String> kActionFieldMask = [
 
 final List<String> kActionUserFieldMask = [
   'status',
+  'teacherResponse',
   'userResponse',
   'evaluation',
 ];

@@ -40,4 +40,14 @@ class ActionRepository {
 
   Future<void> createUpdateActionUserInDB(HiveActionUser actionUser) =>
       dbProvider.createUpdateActionUser(actionUser);
+
+  Future<ResponseStream<CreateUpdateActionUserResponse>>
+      createUpdateActionUsers({
+    required ActionUser actionUser,
+    required List<String> fieldMaskPaths,
+  }) =>
+          apiProvider.createUpdateActionUsers(
+            actionUser,
+            fieldMaskPaths,
+          );
 }

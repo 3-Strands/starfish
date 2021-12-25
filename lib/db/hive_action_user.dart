@@ -46,9 +46,20 @@ class HiveActionUser extends HiveObject {
         evaluation: ActionUser_Evaluation.valueOf(this.evaluation!));
   }
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveActionUser &&
+          runtimeType == other.runtimeType &&
+          actionId == other.actionId &&
+          userId == other.userId;
+
+  @override
+  int get hashCode => actionId.hashCode ^ userId.hashCode;
+
   String toString() {
     return '''{ actionId: ${this.actionId}, userId: ${this.userId}, status: ${this.status}, 
-              teacherResponse: ${this.teacherResponse}, teacherResponse: ${this.teacherResponse},
+              teacherResponse: ${this.teacherResponse}, userResponse: ${this.userResponse},
               evaluation: ${this.evaluation} }''';
   }
 }

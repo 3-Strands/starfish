@@ -92,6 +92,20 @@ class ActionProvider {
     }
   }
 
+  Future<void> deleteActionUser(HiveActionUser actionUser) async {
+    int _currentIndex = -1;
+    _actionUserBox.values.toList().asMap().forEach((key, hiveActionUser) {
+      if (hiveActionUser.actionId == actionUser.actionId &&
+          hiveActionUser.userId == actionUser.userId) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _actionUserBox.deleteAt(_currentIndex);
+    }
+  }
+
   HiveAction? getActionbyId(String actionId) {
     return _actionBox.values
         .firstWhereOrNull((HiveAction action) => action.id! == actionId);

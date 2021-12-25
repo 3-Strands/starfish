@@ -189,4 +189,8 @@ extension HiveUserExt on HiveUser {
       return ActionStatus.NOT_DONE;
     }
   }
+
+  HiveActionUser? actionUser(HiveAction action) {
+    return ActionProvider().getActionUser(this.id!, action.id!);
+  }
 }
