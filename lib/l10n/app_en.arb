@@ -127,6 +127,8 @@
   "statusOfActionForLearner":
       "Status of this action for learner",
 
+  "appLanguage": "App Language",
+
   "reportDialogDetailText":
       "Explain why this material is inappropriate",
   "selectPropleToInvite": "Select people to invite",

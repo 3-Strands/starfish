@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
@@ -71,10 +72,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late AppBloc bloc;
   bool _isLoading = false;
 
+  late List<Map> _languages;
+  late Map _language;
+  late List<DropdownMenuItem<Map>> _dropdownLanguagesItem;
+
   @override
   void initState() {
     super.initState();
-    print("init Settings View");
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
@@ -82,10 +86,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _lastSyncDataTimeBox =
         Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
 
+    _populateAppLanguages(Strings.appLanguageList);
     _getCurrentUser();
     _getAllCountries();
     _getAllLanguages();
     _getGroups();
+  }
+
+  _populateAppLanguages(List<Map> languages) async {
+    _languages = languages;
+    _dropdownLanguagesItem = _buildDropDownLanguageItems(_languages);
+
+    await StarfishSharedPreference().getDeviceLanguage().then((value) => {
+          (value == '')
+              ? setState(() {
+                  _language = _dropdownLanguagesItem[0].value!;
+                })
+              : {
+                  _dropdownLanguagesItem.forEach((element) {
+                    if (element.value!.values.last == value) {
+                      setState(() {
+                        _language = element.value!;
+                      });
+                    }
+                  })
+                }
+        });
+  }
+
+  List<DropdownMenuItem<Map>> _buildDropDownLanguageItems(List listLanguage) {
+    List<DropdownMenuItem<Map>> items = [];
+    for (Map item in listLanguage) {
+      items.add(
+        DropdownMenuItem(
+          child: Text(item.values.first),
+          value: item,
+        ),
+      );
+    }
+    return items;
   }
 
   String lastSyncDataTime() {
@@ -753,6 +792,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _getPhoneNumberSection(),
                       SizedBox(height: 20.h),
 
+                      //--> App language section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: AppLocalizations.of(context)!.appLanguage,
+                          align: TextAlign.left,
+                        ),
+                      ),
+
+                      SizedBox(height: 10.h),
+
+                      Container(
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        child: Center(
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton(
+                                isExpanded: true,
+                                iconSize: 35,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 16.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                onChanged: (Map? value) {
+                                  setState(() {
+                                    _language = value!;
+                                    StarfishSharedPreference()
+                                        .setDeviceLanguage(value.values.last);
+                                    Starfish.of(context)!.setLocale(
+                                        Locale.fromSubtags(
+                                            languageCode: value.values.last));
+                                  });
+                                },
+                                value: _language,
+                                items: _dropdownLanguagesItem,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20.h),
+
                       //--> Select country section
                       Align(
                         alignment: FractionalOffset.topLeft,
@@ -778,7 +868,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               dataSourceType: DataSourceType.countries,
                               onDoneClicked: <T>(countries) {
                                 setState(() {
-                                  // _selectedCountries = countries as List<HiveCountry>;
                                   _selectedCountries = List<HiveCountry>.from(
                                       countries as List<dynamic>);
                                   updateCountries();
