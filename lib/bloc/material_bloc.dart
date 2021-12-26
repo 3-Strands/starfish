@@ -63,10 +63,12 @@ class MaterialBloc extends Object {
 
   bool _ifMaterialSupportsLanguage(
       HiveMaterial _material, List<HiveLanguage> _selectedLanguages) {
-    if (_selectedLanguages.length == 0) {
-      return true;
-    }
-    if (_material.languageIds == null || _material.languageIds!.length == 0) {
+    // if (_selectedLanguages.length == 0) {
+    //   return false;
+    // }
+    if (_selectedLanguages.length == 0 ||
+        _material.languageIds == null ||
+        _material.languageIds!.length == 0) {
       return false;
     }
 
@@ -145,7 +147,7 @@ class MaterialBloc extends Object {
     /*ResponseStream<UploadStatus> responseStream =
         client.upload(_controller.stream);*/
 
- /*   materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
+    /*   materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
       responseStream.listen((value) {
         print("File UploadStatus: $value");
       });
