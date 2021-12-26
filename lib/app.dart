@@ -20,6 +20,8 @@ class Starfish extends StatefulWidget {
 }
 
 class _StarfishState extends State<Starfish> {
+  late Locale _locale;
+
   @override
   void initState() {
     _locale = Locale('en');
@@ -29,14 +31,9 @@ class _StarfishState extends State<Starfish> {
   }
 
   initDeviceLanguage() async {
-    // final Locale appLocale = Localizations.localeOf(context);
-    // print(appLocale);
-
     await StarfishSharedPreference().getDeviceLanguage().then((value) =>
         {(value == '') ? setLocale(Locale('en')) : setLocale(Locale(value))});
   }
-
-  late Locale _locale;
 
   void setLocale(Locale value) {
     setState(() {
