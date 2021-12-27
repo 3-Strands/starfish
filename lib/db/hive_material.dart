@@ -191,8 +191,14 @@ extension HiveMaterialExt on HiveMaterial {
   List<File>? get localFiles {
     List<File> _files = [];
 
+    // if files are not synced with remote yet, files will be null or empty, so real local filepaths
     if (this.files == null) {
-      return _files;
+      return MaterialProvider()
+          .getFiles()
+          .where((element) => element.entityId == this.id)
+          .map((e) => File(e.filepath!))
+          .toList();
+      //return _files;
     }
 
     this.files!.forEach((filename) {
