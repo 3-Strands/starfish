@@ -318,7 +318,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               .pickFiles(allowMultiple: true);
 
                           if (result != null) {
-                            // if single selected file is IMAGE
+                            // if single selected file is IMAGE, open image in Cropper
                             if (result.count == 1 &&
                                 ['jpg', 'jpeg', 'png'].contains(result
                                     .paths.first
@@ -346,9 +346,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                                   });
                             } else {
                               setState(() {
-                                _selectedFiles = result.paths
+                                _selectedFiles.addAll(result.paths
                                     .map((path) => File(path!))
-                                    .toList();
+                                    .toList());
                               });
                             }
                           } else {
