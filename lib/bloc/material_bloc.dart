@@ -104,10 +104,6 @@ class MaterialBloc extends Object {
   }
 
   bool _applyMaterialFilter(HiveMaterial _material) {
-    print("_actionFilter ==>> $actionFilter");
-    print("_material.isAssignedToMe ==>> ${_material.isAssignedToMe}");
-    print("_material.myActionStatus ==>> ${_material.myActionStatus}");
-
     if (actionFilter == '' || actionFilter == 'No filter applied') {
       return true;
     } else if (actionFilter == 'Assigned to me and completed') {
