@@ -244,6 +244,11 @@ sending an invitation to use Starfish''';
     'No filter applied',
   ];
 
+  static const List<Map<String, String>> appLanguageList = [
+    {'name': 'English', 'code': 'en'},
+    {'name': 'हिन्दी', 'code': 'hi'}
+  ];
+
   // Action Filter
   static const String actionFilterThisMonth = "This Month";
   static const String actionFilterNextMonth = "Next Month";

@@ -127,6 +127,8 @@
   "statusOfActionForLearner":
       "शिक्षार्थी के लिए इस कार्रवाई की स्थिति",
 
+  "appLanguage": "ऐप भाषा",
+
   "reportDialogDetailText":
       "बताएं कि यह सामग्री अनुपयुक्त क्यों है",
   "selectPropleToInvite": "आमंत्रित करने के लिए लोगों का चयन करें",

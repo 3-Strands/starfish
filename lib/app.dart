@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'config/routes/routes.dart';
 import 'constants/app_styles.dart';
@@ -14,13 +15,30 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 class Starfish extends StatefulWidget {
   @override
   _StarfishState createState() => _StarfishState();
+  static _StarfishState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_StarfishState>();
 }
 
 class _StarfishState extends State<Starfish> {
+  late Locale _locale;
+
   @override
   void initState() {
+    _locale = Locale('en');
+    initDeviceLanguage();
     SyncService().syncAll();
     super.initState();
+  }
+
+  initDeviceLanguage() async {
+    await StarfishSharedPreference().getDeviceLanguage().then((value) =>
+        {(value == '') ? setLocale(Locale('en')) : setLocale(Locale(value))});
+  }
+
+  void setLocale(Locale value) {
+    setState(() {
+      _locale = value;
+    });
   }
 
   // This widget is the root of your application.
@@ -30,6 +48,7 @@ class _StarfishState extends State<Starfish> {
       designSize: Size(375, 812),
       builder: () => Provider(
         child: MaterialApp(
+            locale: _locale,
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
