@@ -13,10 +13,12 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/src/generated/starfish.pbenum.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -468,25 +470,34 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 ),
               ),
               Spacer(),
-              CustomIconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 18.sp,
-                ),
-                text: AppLocalizations.of(context)!.edit,
-                onButtonTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddEditMaterialScreen(
-                        material: material,
+
+              // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
+              if ((Material_Editability.valueOf(material.editability!) ==
+                          Material_Editability.CREATOR_EDIT &&
+                      material.creatorId ==
+                          CurrentUserProvider().getUserSync().id) ||
+                  (Material_Editability.valueOf(material.editability!) ==
+                          Material_Editability.GROUP_EDIT &&
+                      material.isAssignedToGroupWithLeaderRole))
+                CustomIconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.blue,
+                    size: 18.sp,
+                  ),
+                  text: AppLocalizations.of(context)!.edit,
+                  onButtonTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddEditMaterialScreen(
+                          material: material,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                ),
             ],
           ),
           SizedBox(
