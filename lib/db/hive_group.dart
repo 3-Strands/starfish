@@ -102,6 +102,14 @@ class HiveGroup extends HiveObject {
         GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
   }
 
+  List<HiveGroupUser>? get admins {
+    return this
+        .activeUsers
+        ?.where((groupUser) =>
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN)
+        .toList();
+  }
+
   List<HiveGroupUser>? get teachers {
     return this
         .activeUsers

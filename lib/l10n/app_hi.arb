@@ -269,5 +269,7 @@
 
   "alertSaveAdminEmail": "क्या आप व्यवस्थापक ईमेल सहेजना चाहते हैं?",
 
-  "alertInvalidEmaill": "ईमेल प्रारूप मान्य नहीं है"
+  "alertInvalidEmaill": "ईमेल प्रारूप मान्य नहीं है",
+
+  "alertGroupCanNotBeWithoutAdmin": "ग्रुप को बिना एडमिन के नहीं छोड़ा जा सकता"
 }

@@ -269,5 +269,7 @@
 
   "alertSaveAdminEmail": "Do you want to save admin email?",
 
-  "alertInvalidEmaill": "Email format is not valid"
+  "alertInvalidEmaill": "Email format is not valid",
+
+  "alertGroupCanNotBeWithoutAdmin": "Group cann't be left without Admin"
 }

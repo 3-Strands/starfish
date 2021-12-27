@@ -920,7 +920,36 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     groupUsers
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     for (HiveGroupUser groupUser in groupUsers) {
-      _widgetList.add(GroupMemberListItem(groupUser: groupUser));
+      _widgetList.add(
+        GroupMemberListItem(
+          groupUser: groupUser,
+          onChangeUserRole: (HiveGroupUser _groupUser, _groupUserRole) {
+            _groupUser.isUpdated = true;
+            _groupUser.role = _groupUserRole.value;
+
+            bloc.groupBloc.createUpdateGroupUser(_groupUser);
+          },
+          onRemoveUser: (_groupUser) {
+            // Check if the removed user is the only ADMIN in the group, if so, display alert else delete it
+            if (GroupUser_Role.valueOf(_groupUser.role!) ==
+                    GroupUser_Role.ADMIN &&
+                widget.group!.admins != null &&
+                widget.group!.admins!.length == 1) {
+              //show warning
+              Alerts.showMessageBox(
+                context: context,
+                title: AppLocalizations.of(context)!.dialogAlert,
+                message: AppLocalizations.of(context)!
+                    .alertGroupCanNotBeWithoutAdmin,
+                callback: () {},
+              );
+            } else {
+              _groupUser.isDirty = true;
+              bloc.groupBloc.createUpdateGroupUser(_groupUser);
+            }
+          },
+        ),
+      );
     }
     // Additional vertical spacing
     if (_widgetList.length > 0) {

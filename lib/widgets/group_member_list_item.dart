@@ -9,10 +9,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
+  final Function(HiveGroupUser, GroupUser_Role) onChangeUserRole;
+  final Function(HiveGroupUser) onRemoveUser;
 
   GroupMemberListItem({
     Key? key,
     required this.groupUser,
+    required this.onChangeUserRole,
+    required this.onRemoveUser,
   }) : super(key: key);
 
   _GroupMemberListItemState createState() => _GroupMemberListItemState();
@@ -101,6 +105,19 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 onSelected: (int value) {
                   switch (value) {
                     case 0:
+                      widget.onChangeUserRole(
+                          widget.groupUser, GroupUser_Role.ADMIN);
+                      break;
+                    case 1:
+                      widget.onChangeUserRole(
+                          widget.groupUser, GroupUser_Role.TEACHER);
+                      break;
+                    case 2:
+                      widget.onRemoveUser(widget.groupUser);
+                      break;
+                  }
+                  /*switch (value) {
+                    case 0:
                       widget.groupUser.role = GroupUser_Role.ADMIN.value;
                       widget.groupUser.isUpdated = true;
                       break;
@@ -113,7 +130,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       break;
                     default:
                   }
-                  bloc.groupBloc.createUpdateGroupUser(widget.groupUser);
+                  bloc.groupBloc.createUpdateGroupUser(widget.groupUser);*/
                 },
               ),
             ],
