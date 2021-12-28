@@ -970,12 +970,18 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   }
 
   Widget _unInvitedGroupMembersContainer() {
-    final List<Widget> _widgetList = [];
-    widget.group?.users!.sort((a, b) => a.name.compareTo(b.name));
+    List<HiveGroupUser>? _groupUsers =
+        widget.group?.users?.where((element) => element.phone.isEmpty).toList();
 
-    for (HiveGroupUser groupUser in widget.group!.users!
-        .where((element) => element.phone.isEmpty)
-        .toList()) {
+    if (_groupUsers == null) {
+      return Container();
+    }
+
+    final List<Widget> _widgetList = [];
+    _groupUsers
+        .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
+    for (HiveGroupUser groupUser in _groupUsers) {
       _widgetList.add(
         UnInvitedGroupMemberListItem(
           groupUser: groupUser,
