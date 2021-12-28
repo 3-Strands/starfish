@@ -121,4 +121,15 @@ extension HiveCurrentUserExt on HiveCurrentUser {
             groupUserRole.contains(GroupUser_Role.valueOf(element.role!)))
         .toList();
   }
+
+  String get diallingCodeWithPlus {
+    if (this.diallingCode.isEmpty) {
+      return this.diallingCode;
+    }
+
+    if (RegExp("^\\+[0-9]").hasMatch(this.diallingCode)) {
+      return this.diallingCode;
+    }
+    return '+${this.diallingCode}';
+  }
 }

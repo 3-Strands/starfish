@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
@@ -32,6 +35,13 @@ class _UnInvitedGroupMemberListItemState
   TextEditingController _dialingCodeController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   late AppBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _dialingCodeController.text =
+        CurrentUserProvider().getUserSync().diallingCodeWithPlus;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,8 +130,7 @@ class _UnInvitedGroupMemberListItemState
                         keyboardType: TextInputType.phone,
                         //style: textFormFieldText,
                         decoration: InputDecoration(
-                          hintText:
-                              '', // AppLocalizations.of(context)!.countryCodeHint,
+                          //hintText: '', // AppLocalizations.of(context)!.countryCodeHint,
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                           border: OutlineInputBorder(
