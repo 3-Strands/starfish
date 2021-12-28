@@ -273,5 +273,7 @@
 
   "alertInvalidEmaill": "ईमेल प्रारूप मान्य नहीं है",
 
-  "alertGroupCanNotBeWithoutAdmin": "ग्रुप को बिना एडमिन के नहीं छोड़ा जा सकता"
+  "alertGroupCanNotBeWithoutAdmin": "ग्रुप को बिना एडमिन के नहीं छोड़ा जा सकता",
+
+  "userStatusInvited": "आमंत्रित"
 }

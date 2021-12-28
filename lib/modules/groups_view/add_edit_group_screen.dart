@@ -707,26 +707,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 21.h),
 
-                  // Selected Contacts
-                  Visibility(
-                    child: Column(
-                      children: _invitedContactsContainer(_selectedContacts),
-                    ),
-                    visible: _selectedContacts.toList().length > 0,
-                  ),
-
-                  if (_isEditMode &&
-                      widget.group!.activeUsers
-                              ?.where((element) => !element.isInvited)
-                              .toList() !=
-                          null)
-                    Column(
-                      children: _invitedGroupMembersContainer(widget
-                          .group!.activeUsers!
-                          .where((element) => !element.isInvited)
-                          .toList()),
-                    ),
-
+                  _invitedGroupMembersContainer(),
+                  _invitedContactsContainer(),
                   // Option 2.
                   Text(
                     AppLocalizations.of(context)!.addWithoutInvite,
@@ -796,25 +778,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     ),
                   ),
                   // Selection persion without invite
-                  Visibility(
-                    child: Column(
-                      children:
-                          _unInvitedContactsContainer(_unInvitedPersonNames),
-                    ),
-                    visible: _unInvitedPersonNames.toList().length > 0,
-                  ),
+                  _unInvitedGroupMembersContainer(),
+                  _unInvitedContactsContainer(),
 
-                  if (_isEditMode &&
-                      widget.group!.activeUsers
-                              ?.where((element) => element.isInvited)
-                              .toList() !=
-                          null)
-                    Column(
-                      children: _unInvitedGroupMembersContainer(widget
-                          .group!.activeUsers!
-                          .where((element) => element.isInvited)
-                          .toList()),
-                    ),
                   if (widget.group?.editHistory != null)
                     _editHistoryContainer(widget.group),
 
@@ -895,31 +861,42 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     return _widgetList;
   }
 
-  List<Widget> _invitedContactsContainer(List<InviteContact> invitedContacts) {
+  Widget _invitedContactsContainer() {
     final List<Widget> _widgetList = [];
 
-    invitedContacts.sort((a, b) => a.contact.displayName!
+    _selectedContacts.sort((a, b) => a.contact.displayName!
         .toLowerCase()
         .compareTo(b.contact.displayName!.toLowerCase()));
-    for (InviteContact inviteContact in invitedContacts) {
+    for (InviteContact inviteContact in _selectedContacts) {
       _widgetList.add(InvitedContactListItem(contact: inviteContact));
     }
     // Additional vertical spacing
     if (_widgetList.length > 0) {
-      _widgetList.add(SizedBox(
-        height: 21.h,
-      ));
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _widgetList,
+      );
+    } else {
+      return Container();
     }
-
-    return _widgetList;
   }
 
-  List<Widget> _invitedGroupMembersContainer(List<HiveGroupUser> groupUsers) {
+  // Widget for the group members invited with phone numbers
+  Widget _invitedGroupMembersContainer() {
+    List<HiveGroupUser>? _groupUsers = widget.group?.users
+        ?.where((element) =>
+            (element.isInvited || element.isActive) && element.phone.isNotEmpty)
+        .toList();
+
+    if (_groupUsers == null) {
+      return Container();
+    }
+
     final List<Widget> _widgetList = [];
 
-    groupUsers
+    _groupUsers
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    for (HiveGroupUser groupUser in groupUsers) {
+    for (HiveGroupUser groupUser in _groupUsers) {
       _widgetList.add(
         GroupMemberListItem(
           groupUser: groupUser,
@@ -952,20 +929,22 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       );
     }
     // Additional vertical spacing
-    if (_widgetList.length > 0) {
-      _widgetList.add(SizedBox(
-        height: 21.h,
-      ));
+    if (_widgetList.length > 1) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _widgetList,
+      );
+    } else {
+      return Container();
     }
-
-    return _widgetList;
   }
 
-  List<Widget> _unInvitedContactsContainer(List<String> unInvitedPersons) {
+  Widget _unInvitedContactsContainer() {
     final List<Widget> _widgetList = [];
-    unInvitedPersons.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    _unInvitedPersonNames
+        .sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    for (String person in unInvitedPersons) {
+    for (String person in _unInvitedPersonNames) {
       _widgetList.add(
         UnInvitedPersonListItem(
           personName: person,
@@ -981,21 +960,22 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
     // Additional vertical spacing
     if (_widgetList.length > 0) {
-      _widgetList.add(SizedBox(
-        height: 21.h,
-      ));
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _widgetList,
+      );
     } else {
-      _widgetList.add(Container());
+      return Container();
     }
-
-    return _widgetList;
   }
 
-  List<Widget> _unInvitedGroupMembersContainer(List<HiveGroupUser> groupUsers) {
+  Widget _unInvitedGroupMembersContainer() {
     final List<Widget> _widgetList = [];
-    groupUsers.sort((a, b) => a.name.compareTo(b.name));
+    widget.group?.users!.sort((a, b) => a.name.compareTo(b.name));
 
-    for (HiveGroupUser groupUser in groupUsers) {
+    for (HiveGroupUser groupUser in widget.group!.users!
+        .where((element) => element.phone.isEmpty)
+        .toList()) {
       _widgetList.add(
         UnInvitedGroupMemberListItem(
           groupUser: groupUser,
@@ -1013,16 +993,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         ),
       );
     }
+
     // Additional vertical spacing
     if (_widgetList.length > 0) {
-      _widgetList.add(SizedBox(
-        height: 21.h,
-      ));
+      return Column(
+        children: _widgetList,
+      );
     } else {
-      _widgetList.add(Container());
+      return Container();
     }
-
-    return _widgetList;
   }
 
   _dismissFieldFocus() {

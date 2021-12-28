@@ -49,7 +49,8 @@ class HiveGroupUser {
   }
 
   String toString() {
-    return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)}, 
+    return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
+    user: ${this.user},  
     isNew: ${this.isNew}, , isUpdated: ${this.isUpdated}, , isDirty: ${this.isDirty}}''';
   }
 }
@@ -86,6 +87,11 @@ extension HiveGroupUserExt on HiveGroupUser {
   bool get isInvited {
     return user != null &&
         User_Status.valueOf(user!.status!)! != User_Status.ACTIVE;
+  }
+
+  bool get isActive {
+    return user != null &&
+        User_Status.valueOf(user!.status!)! == User_Status.ACTIVE;
   }
 
   String get phoneWithDialingCode {

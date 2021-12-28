@@ -55,68 +55,82 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   color: Color(0xFF434141),
                 ),
               ),
-              PopupMenuButton(
-                color: Colors.white,
-                elevation: 20,
-                shape: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                  borderRadius: BorderRadius.circular(12.sp),
-                ),
-                child: Text(
-                  '${GroupUser_Role.valueOf(widget.groupUser.role!)!.name}',
+              if (widget.groupUser.user != null &&
+                  User_Status.valueOf(widget.groupUser.user!.status!) ==
+                      User_Status.ACCOUNT_PENDING)
+                Text(
+                  AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
                   style: TextStyle(
                     fontFamily: 'OpenSans',
                     fontSize: 16.sp,
                     color: Color(0xFF3475F0),
                   ),
                 ),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    child: Text(
-                      AppLocalizations.of(context)!.makeAdmin,
-                      style: TextStyle(
-                          color: Color(0xFF3475F0),
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    value: 0,
+              if (widget.groupUser.user != null &&
+                  User_Status.valueOf(widget.groupUser.user!.status!) ==
+                      User_Status.ACTIVE)
+                PopupMenuButton(
+                  color: Colors.white,
+                  elevation: 20,
+                  shape: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                    borderRadius: BorderRadius.circular(12.sp),
                   ),
-                  PopupMenuItem(
-                    child: Text(
-                      AppLocalizations.of(context)!.makeTeacher,
-                      style: TextStyle(
-                          color: Color(0xFF3475F0),
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold),
+                  child: Text(
+                    '${GroupUser_Role.valueOf(widget.groupUser.role!)!.name}',
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 16.sp,
+                      color: Color(0xFF3475F0),
                     ),
-                    value: 1,
                   ),
-                  PopupMenuItem(
-                    child: Text(
-                      AppLocalizations.of(context)!.makeRemove,
-                      style: TextStyle(
-                          color: Color(0xFF3475F0),
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text(
+                        AppLocalizations.of(context)!.makeAdmin,
+                        style: TextStyle(
+                            color: Color(0xFF3475F0),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      value: 0,
                     ),
-                    value: 2,
-                  ),
-                ],
-                onSelected: (int value) {
-                  switch (value) {
-                    case 0:
-                      widget.onChangeUserRole(
-                          widget.groupUser, GroupUser_Role.ADMIN);
-                      break;
-                    case 1:
-                      widget.onChangeUserRole(
-                          widget.groupUser, GroupUser_Role.TEACHER);
-                      break;
-                    case 2:
-                      widget.onRemoveUser(widget.groupUser);
-                      break;
-                  }
-                  /*switch (value) {
+                    PopupMenuItem(
+                      child: Text(
+                        AppLocalizations.of(context)!.makeTeacher,
+                        style: TextStyle(
+                            color: Color(0xFF3475F0),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      value: 1,
+                    ),
+                    PopupMenuItem(
+                      child: Text(
+                        AppLocalizations.of(context)!.makeRemove,
+                        style: TextStyle(
+                            color: Color(0xFF3475F0),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      value: 2,
+                    ),
+                  ],
+                  onSelected: (int value) {
+                    switch (value) {
+                      case 0:
+                        widget.onChangeUserRole(
+                            widget.groupUser, GroupUser_Role.ADMIN);
+                        break;
+                      case 1:
+                        widget.onChangeUserRole(
+                            widget.groupUser, GroupUser_Role.TEACHER);
+                        break;
+                      case 2:
+                        widget.onRemoveUser(widget.groupUser);
+                        break;
+                    }
+                    /*switch (value) {
                     case 0:
                       widget.groupUser.role = GroupUser_Role.ADMIN.value;
                       widget.groupUser.isUpdated = true;
@@ -131,8 +145,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                     default:
                   }
                   bloc.groupBloc.createUpdateGroupUser(widget.groupUser);*/
-                },
-              ),
+                  },
+                ),
             ],
           ),
           SizedBox(

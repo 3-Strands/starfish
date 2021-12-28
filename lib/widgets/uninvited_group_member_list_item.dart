@@ -40,8 +40,6 @@ class _UnInvitedGroupMemberListItemState
     return InkWell(
       onTap: () {},
       child: Container(
-        width: 345.w,
-        height: 92.h,
         decoration: BoxDecoration(color: Colors.transparent),
         margin: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
         child: Column(
