@@ -171,19 +171,31 @@ class ActionBloc extends Object {
   }*/
 
   bool _filterAction(HiveAction hiveAction) {
+    var currentDate = DateTime.now();
+
+    print(DateTime.now().month + 1);
     switch (actionFilter) {
       case ActionFilter.THIS_MONTH:
         return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month == DateTime.now().month;
+            hiveAction.dateDue!.toDateTime().month == currentDate.month;
       case ActionFilter.NEXT_MONTH:
         return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month == DateTime.now().month + 1;
+            hiveAction.dateDue!.toDateTime().month ==
+                DateTime(currentDate.year, currentDate.month + 1,
+                        currentDate.day)
+                    .month;
       case ActionFilter.LAST_MONTH:
         return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month == DateTime.now().month - 1;
+            hiveAction.dateDue!.toDateTime().month ==
+                DateTime(currentDate.year, currentDate.month - 1,
+                        currentDate.day)
+                    .month;
       case ActionFilter.LAST_THREE_MONTH:
         return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month == DateTime.now().month - 3;
+            hiveAction.dateDue!.toDateTime().month ==
+                DateTime(currentDate.year, currentDate.month - 3,
+                        currentDate.day)
+                    .month;
       case ActionFilter.ALL_TIME:
       default:
         return true;
