@@ -38,12 +38,12 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicList;
 
-  late Box<HiveCurrentUser> _currentUserBox;
+  // late Box<HiveCurrentUser> _currentUserBox;
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
 
-  late HiveCurrentUser _user;
+  // late HiveCurrentUser _user;
 
   late String _choiceText = AppLocalizations.of(context)!.noFilterApplied;
 
@@ -54,11 +54,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _topicBox = Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    // _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getAllLanguages();
     _getAllTopics();
-    _getCurrentUser();
+    // _getCurrentUser();
   }
 
   @override
@@ -67,9 +67,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     super.didChangeDependencies();
   }
 
-  void _getCurrentUser() {
-    _user = _currentUserBox.values.first;
-  }
+  // void _getCurrentUser() {
+  //   _user = _currentUserBox.values.first;
+  // }
 
   _fetchMaterialData(AppBloc bloc) async {
     bloc.materialBloc.fetchMaterialsFromDB();
@@ -195,6 +195,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             onChanged: (String? value) {
                               setState(() {
                                 _choiceText = value!;
+                                bloc.materialBloc.setActionFilter(value);
+                                _fetchMaterialData(bloc);
                               });
                             },
                             items: Strings.materialActionsList

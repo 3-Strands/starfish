@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,19 +22,27 @@ class Starfish extends StatefulWidget {
 }
 
 class _StarfishState extends State<Starfish> {
-  late Locale _locale;
+  Locale _locale = Locale('en');
 
   @override
   void initState() {
-    _locale = Locale('en');
+    // _locale = Locale('en');
     initDeviceLanguage();
     SyncService().syncAll();
     super.initState();
   }
 
   initDeviceLanguage() async {
-    await StarfishSharedPreference().getDeviceLanguage().then((value) =>
-        {(value == '') ? setLocale(Locale('en')) : setLocale(Locale(value))});
+    String deviceLanguage = Platform.localeName.substring(0, 2);
+    await StarfishSharedPreference().getDeviceLanguage().then((value) => {
+          (value == '')
+              ? {
+                  (deviceLanguage == 'hi')
+                      ? setLocale(Locale(deviceLanguage))
+                      : setLocale(Locale('en'))
+                }
+              : setLocale(Locale(value))
+        });
   }
 
   void setLocale(Locale value) {

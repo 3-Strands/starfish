@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
@@ -19,6 +20,7 @@ class MaterialBloc extends Object {
   List<HiveLanguage> selectedLanguages = [];
   List<HiveMaterialTopic> selectedTopics = [];
   String query = '';
+  String actionFilter = '';
 
   late BehaviorSubject<List<HiveMaterial>> _materials;
   late BehaviorSubject<FileData> _fileData;
@@ -43,6 +45,10 @@ class MaterialBloc extends Object {
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
+  setActionFilter(String filter) {
+    actionFilter = filter;
+  }
+
   setQuery(String qury) {
     query = qury;
   }
@@ -64,7 +70,7 @@ class MaterialBloc extends Object {
   bool _ifMaterialSupportsLanguage(
       HiveMaterial _material, List<HiveLanguage> _selectedLanguages) {
     // if (_selectedLanguages.length == 0) {
-    //   return false;
+    //   return true;
     // }
     if (_selectedLanguages.length == 0 ||
         _material.languageIds == null ||
@@ -97,11 +103,40 @@ class MaterialBloc extends Object {
     return _materialTopicsSet.intersection(_selectdTopicsSet).length > 0;
   }
 
+  bool _applyMaterialFilter(HiveMaterial _material) {
+    if (actionFilter == '' || actionFilter == 'No filter applied') {
+      return true;
+    } else if (actionFilter == 'Assigned to me and completed') {
+      if (_material.isAssignedToMe &&
+          _material.myActionStatus == ActionStatus.DONE) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (actionFilter == 'Assigned to me but incomplete') {
+      if (_material.isAssignedToMe &&
+          _material.myActionStatus == ActionStatus.NOT_DONE) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (actionFilter == 'Assigned to a group I lead') {
+      if (_material.isAssignedToGroupWithLeaderRole) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
   List<HiveMaterial> _filterMaterials() {
     List<HiveMaterial> _results = [];
     _allMaterials.forEach((element) {
       if (_ifMaterialSupportsLanguage(element, selectedLanguages) &&
-          _ifMaterialSupportsTopic(element, selectedTopics)) {
+          _ifMaterialSupportsTopic(element, selectedTopics) &&
+          _applyMaterialFilter(element)) {
         _results.add(element);
       }
     });
