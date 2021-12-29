@@ -4,6 +4,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/enums/action_type.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -84,16 +85,24 @@ class _SelectActionsState extends State<SelectActions>
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                      "Type: ${Action_Type.valueOf(action.type!)!.about}",
+                                      AppLocalizations.of(context)!.type +
+                                          ': ' +
+                                          "${Action_Type.valueOf(action.type!)!.about}",
                                       style: TextStyle(
                                           fontSize: 14.sp,
                                           color: Color(0xFF797979))),
                                   Text(
-                                      "Used by: ${action.group != null ? action.group!.name : 'None'}",
+                                      AppLocalizations.of(context)!.usedBy +
+                                          ': ' +
+                                          "${action.group != null ? action.group!.name : 'None'}",
                                       style: TextStyle(
                                           fontSize: 14.sp,
                                           color: Color(0xFF797979))),
-                                  Text("Last used: ",
+                                  Text(
+                                      AppLocalizations.of(context)!
+                                              .createdDate +
+                                          ': ' +
+                                          "${_getCreatedDate(action)}",
                                       style: TextStyle(
                                           fontSize: 14.sp,
                                           color: Color(0xFF797979))),
@@ -116,6 +125,16 @@ class _SelectActionsState extends State<SelectActions>
         ],
       ),
     );
+  }
+
+  String _getCreatedDate(HiveAction action) {
+    if (action.editHistory != null && action.editHistory!.length > 0) {
+      var createdEvent =
+          action.editHistory!.where((element) => element.event == 1).first;
+      return DateTimeUtils.formatDate(createdEvent.time!, 'dd-MMM-yyyy');
+    } else {
+      return '';
+    }
   }
 
   @override

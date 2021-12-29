@@ -84,7 +84,9 @@
   "reportInappropriateMaterial":
       "If this material is inappropriate, click here to report it.",
 
-  "type": "Type",
+  "type": "Type",  
+  "usedBy": "Used By",
+  "createdDate": "Created Date",
   "selectType": "Select a type",
 
   "editedBy": "Can be edited by",

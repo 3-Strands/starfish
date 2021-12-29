@@ -294,7 +294,9 @@ class _MeState extends State<Me> {
                                 padding: const EdgeInsets.all(15.0),
                                 child: Align(
                                   alignment: FractionalOffset.topLeft,
-                                  child: Text('Question: ${action.question}',
+                                  child: Text(
+                                      AppLocalizations.of(context)!.question +
+                                          ': ${action.question}',
                                       style: TextStyle(
                                           fontSize: 16.sp,
                                           color: Color(0xFF4F4F4F),
