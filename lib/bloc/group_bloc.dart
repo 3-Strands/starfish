@@ -84,8 +84,7 @@ class GroupBloc extends Object {
 
     if (_groupUser != null) {
       /// Mark record as dirty
-      _groupUser.isDirty =
-          false; // TODO: This groupUser should be marked as dirty for deletion
+      _groupUser.isDirty = true; // marked as dirty for deletion
       createUpdateGroupUser(_groupUser);
     }
   }

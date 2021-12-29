@@ -929,7 +929,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       );
     }
     // Additional vertical spacing
-    if (_widgetList.length > 1) {
+    if (_widgetList.length > 0) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: _widgetList,
