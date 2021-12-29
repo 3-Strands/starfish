@@ -33,7 +33,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 2;
-  String title = Strings.actionsTabItemText;
+  late String title;
   List<Widget> _widgetOptions = [];
   late PageController _pageController;
 
@@ -98,6 +98,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   void didChangeDependencies() {
     bloc = Provider.of(context);
+    title = AppLocalizations.of(context)!.actionsTabItemText;
+
     super.didChangeDependencies();
   }
 
