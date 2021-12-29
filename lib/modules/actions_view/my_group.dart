@@ -498,7 +498,10 @@ class _MyGroupState extends State<MyGroup> {
                               children: [
                                 Align(
                                   alignment: FractionalOffset.topLeft,
-                                  child: Text('Question: ${action.question}'),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.question +
+                                        ': ${action.question}',
+                                  ),
                                 ),
                                 TextField(
                                   decoration: InputDecoration(
