@@ -277,5 +277,9 @@
 
   "alertGroupCanNotBeWithoutAdmin": "Group cann't be left without Admin",
 
-  "userStatusInvited": "Invited"
+  "userStatusInvited": "Invited",
+
+  "adminNameMe" : "Me",
+
+  "unknownUser" : "Unknown"
 }

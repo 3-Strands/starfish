@@ -98,8 +98,9 @@ class HiveGroup extends HiveObject {
   }
 
   HiveGroupUser? get admin {
-    return this.activeUsers?.firstWhereOrNull((groupUser) =>
-        GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);
+    /*return this.activeUsers?.firstWhereOrNull((groupUser) =>
+        GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);*/
+    return this.admins?.firstOrNull;
   }
 
   List<HiveGroupUser>? get admins {
@@ -156,7 +157,9 @@ extension HiveGroupExt on HiveGroup {
     if (this.currentUserRole == GroupUser_Role.ADMIN) {
       return 'Me';
     } else {
-      return this.admin != null ? this.admin!.userId! : 'NA';
+      return this.admin != null
+          ? (this.admin!.user != null ? this.admin!.user!.name! : 'Unknown')
+          : 'NA';
     }
   }
 
@@ -164,8 +167,8 @@ extension HiveGroupExt on HiveGroup {
     if (this.users == null) {
       return GroupUser_Role.UNSPECIFIED_ROLE;
     }
-    HiveGroupUser? _groupUser =
-        this.users!.firstWhereOrNull((element) => element.userId == userId);
+    HiveGroupUser? _groupUser = this.users!.firstWhereOrNull(
+        (element) => element.userId == userId && !element.isDirty);
     return _groupUser != null
         ? GroupUser_Role.valueOf(_groupUser.role!)!
         : GroupUser_Role.UNSPECIFIED_ROLE;

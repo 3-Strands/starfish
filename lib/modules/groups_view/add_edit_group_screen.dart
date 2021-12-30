@@ -905,6 +905,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             _groupUser.role = _groupUserRole.value;
 
             bloc.groupBloc.createUpdateGroupUser(_groupUser);
+            setState(() {});
           },
           onRemoveUser: (_groupUser) {
             // Check if the removed user is the only ADMIN in the group, if so, display alert else delete it

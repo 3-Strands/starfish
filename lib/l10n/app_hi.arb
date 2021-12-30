@@ -277,5 +277,9 @@
 
   "alertGroupCanNotBeWithoutAdmin": "ग्रुप को बिना एडमिन के नहीं छोड़ा जा सकता",
 
-  "userStatusInvited": "आमंत्रित"
+  "userStatusInvited": "आमंत्रित",
+
+  "adminNameMe" : "मैं",
+
+  "unknownUser" : "अज्ञात"
 }
