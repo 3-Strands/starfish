@@ -77,11 +77,13 @@ extension HiveGroupUserExt on HiveGroupUser {
   }
 
   String get phone {
-    return user != null ? user!.phone! : '';
+    return user != null && user!.phone != null ? user!.phone! : '';
   }
 
   String get diallingCode {
-    return user != null ? user!.diallingCode! : '';
+    return user != null && user!.diallingCode != null
+        ? user!.diallingCode!
+        : '';
   }
 
   bool get isInvited {
