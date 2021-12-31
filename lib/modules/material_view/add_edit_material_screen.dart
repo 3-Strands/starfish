@@ -314,7 +314,11 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       height: 50.h,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (_selectedFiles.length == 5) {
+                          if ((!_isEditMode && _selectedFiles.length == 5) ||
+                              (_isEditMode &&
+                                  (_selectedFiles.length +
+                                          widget.material!.files!.length) ==
+                                      5)) {
                             Alerts.showMessageBox(
                                 context: context,
                                 title: AppLocalizations.of(context)!.title,
