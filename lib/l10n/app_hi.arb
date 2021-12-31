@@ -281,5 +281,7 @@
 
   "adminNameMe" : "मैं",
 
-  "unknownUser" : "अज्ञात"
+  "unknownUser" : "अज्ञात",
+
+  "maxFilesSelected": "अधिकतम पांच(5) फाइलें अपलोड की जा सकती हैं।"
 }

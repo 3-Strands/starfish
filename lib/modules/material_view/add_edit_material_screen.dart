@@ -314,45 +314,57 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       height: 50.h,
                       child: ElevatedButton(
                         onPressed: () async {
-                          FilePickerResult? result = await FilePicker.platform
-                              .pickFiles(allowMultiple: true);
-
-                          if (result != null) {
-                            // if single selected file is IMAGE, open image in Cropper
-                            if (result.count == 1 &&
-                                ['jpg', 'jpeg', 'png'].contains(result
-                                    .paths.first
-                                    ?.split("/")
-                                    .last
-                                    .split(".")
-                                    .last)) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ImageCropperScreen(
-                                    sourceImage: File(result.paths.first!),
-                                    onDone: (File? _newFile) {
-                                      if (_newFile == null) {
-                                        return;
-                                      }
-                                      setState(() {
-                                        _selectedFiles.add(_newFile);
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ).then((value) => {
-                                    // Handle cropped image here
-                                  });
-                            } else {
-                              setState(() {
-                                _selectedFiles.addAll(result.paths
-                                    .map((path) => File(path!))
-                                    .toList());
-                              });
-                            }
+                          if (_selectedFiles.length == 5) {
+                            Alerts.showMessageBox(
+                                context: context,
+                                title: AppLocalizations.of(context)!.title,
+                                message: AppLocalizations.of(context)!
+                                    .maxFilesSelected,
+                                neutralButtonText:
+                                    AppLocalizations.of(context)!.ok,
+                                callback: () {});
+                            return;
                           } else {
-                            // User canceled the picker
+                            FilePickerResult? result = await FilePicker.platform
+                                .pickFiles(allowMultiple: false);
+
+                            if (result != null) {
+                              // if single selected file is IMAGE, open image in Cropper
+                              if (result.count == 1 &&
+                                  ['jpg', 'jpeg', 'png'].contains(result
+                                      .paths.first
+                                      ?.split("/")
+                                      .last
+                                      .split(".")
+                                      .last)) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ImageCropperScreen(
+                                      sourceImage: File(result.paths.first!),
+                                      onDone: (File? _newFile) {
+                                        if (_newFile == null) {
+                                          return;
+                                        }
+                                        setState(() {
+                                          _selectedFiles.add(_newFile);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ).then((value) => {
+                                      // Handle cropped image here
+                                    });
+                              } else {
+                                setState(() {
+                                  _selectedFiles.addAll(result.paths
+                                      .map((path) => File(path!))
+                                      .toList());
+                                });
+                              }
+                            } else {
+                              // User canceled the picker
+                            }
                           }
                         },
                         child: Text(

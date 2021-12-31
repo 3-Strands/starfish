@@ -281,5 +281,7 @@
 
   "adminNameMe" : "Me",
 
-  "unknownUser" : "Unknown"
+  "unknownUser" : "Unknown",
+
+  "maxFilesSelected": "Maximum five(5) files can be uploaded."
 }
