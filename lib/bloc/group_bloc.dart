@@ -85,29 +85,20 @@ class GroupBloc extends Object {
     if (_groupUser != null) {
       /// Mark record as dirty
       _groupUser.isDirty = true; // marked as dirty for deletion
-      createUpdateGroupUser(_groupUser);
+      createUpdateGroupUser(_groupUser).then((_) => fetchAllGroupsByRole());
     }
   }
 
-  /*deleteGroupUser(HiveGroupUser groupUser) async {
+  Future<void> createUpdateGroupUser(HiveGroupUser groupUser) async {
     List<HiveGroup> _groups = await repository.dbProvider.getGroups();
     HiveGroup? _group =
         _groups.firstWhereOrNull((element) => element.id == groupUser.groupId);
     if (_group == null) {
       return;
     }
-    return repository.deleteGroupUserFromDB(_group, groupUser);
-  }*/
-
-  createUpdateGroupUser(HiveGroupUser groupUser) async {
-    List<HiveGroup> _groups = await repository.dbProvider.getGroups();
-    HiveGroup? _group =
-        _groups.firstWhereOrNull((element) => element.id == groupUser.groupId);
-    if (_group == null) {
-      return;
-    }
-    return repository.createUpdateGroupUserInDB(
-        group: _group, groupUser: groupUser);
+    return repository
+        .createUpdateGroupUserInDB(group: _group, groupUser: groupUser)
+        .then((value) => fetchAllGroupsByRole());
   }
 
   void dispose() {

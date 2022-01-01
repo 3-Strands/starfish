@@ -286,4 +286,9 @@
   "inAppropriateMaterial": "यदि यह सामग्री अनुपयुक्त है, ",  
   "clickHere": "यहां क्लिक करें ",
   "toReportIt": "इसकी रिपोर्ट करने के लिए"
+  "adminNameMe" : "मैं",
+
+  "unknownUser" : "अज्ञात",
+
+  "maxFilesSelected": "अधिकतम पांच(5) फाइलें अपलोड की जा सकती हैं।"
 }

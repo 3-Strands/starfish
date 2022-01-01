@@ -286,4 +286,9 @@
   "inAppropriateMaterial": "If this material is inappropriate, ",  
   "clickHere": "Click here ",
   "toReportIt": "to report it."
+  "adminNameMe" : "Me",
+
+  "unknownUser" : "Unknown",
+
+  "maxFilesSelected": "Maximum five(5) files can be uploaded."
 }

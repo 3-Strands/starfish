@@ -150,9 +150,20 @@ class HiveUser extends HiveObject {
 }
 
 extension HiveUserExt on HiveUser {
+  String get diallingCodeWithPlus {
+    if (this.diallingCode != null || this.diallingCode!.isEmpty) {
+      return '';
+    }
+
+    if (RegExp("^\\+[0-9]").hasMatch(this.diallingCode!)) {
+      return this.diallingCode!;
+    }
+    return '+${this.diallingCode}';
+  }
+
   String get phoneWithDialingCode {
     return this.phone != null && this.phone!.isNotEmpty
-        ? '+${this.diallingCode} ${this.phone}'
+        ? '+${this.diallingCodeWithPlus} ${this.phone}'
         : '';
   }
 
