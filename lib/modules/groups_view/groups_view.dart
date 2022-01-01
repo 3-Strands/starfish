@@ -13,6 +13,7 @@ import 'package:starfish/modules/material_view/sync_time.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
@@ -390,19 +391,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   ),
                 ),
               ),
-              Container(
-                height: 40.h,
-                child: Center(
-                  child: Text(
-                    '${AppLocalizations.of(context)!.lastSync}: ${SyncTime().lastSyncDataTime()}',
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 14.sp,
-                      fontFamily: 'OpenSans',
-                    ),
-                  ),
-                ),
-              ),
+              LastSyncBottomWidget()
             ],
           ),
         ),

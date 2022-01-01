@@ -21,6 +21,7 @@ import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -236,19 +237,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   ),
                 ),
               ),
-              Container(
-                height: 40.h,
-                child: Center(
-                  child: Text(
-                    '${AppLocalizations.of(context)!.lastSync}: ${SyncTime().lastSyncDataTime()}',
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 14.sp,
-                      fontFamily: 'OpenSans',
-                    ),
-                  ),
-                ),
-              ),
+              LastSyncBottomWidget()
             ],
           ),
         ),

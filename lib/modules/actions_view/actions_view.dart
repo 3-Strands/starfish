@@ -9,6 +9,7 @@ import 'package:starfish/modules/actions_view/me.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/modules/material_view/sync_time.dart';
+import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 
 class ActionsScreen extends StatefulWidget {
   ActionsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -78,22 +79,7 @@ class _ActionsScreenState extends State<ActionsScreen>
                     controller: _tabController,
                   ),
                 ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Container(
-                  height: 40.h,
-                  child: Center(
-                    child: Text(
-                      '${AppLocalizations.of(context)!.lastSync}: ${SyncTime().lastSyncDataTime()}',
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 14.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                    ),
-                  ),
-                ),
+                LastSyncBottomWidget()
               ],
             ),
 
