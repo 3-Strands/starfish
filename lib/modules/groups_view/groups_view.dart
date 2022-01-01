@@ -32,8 +32,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   final Key _focusDetectorKey = UniqueKey();
 
-  double spaceInbetweenLastSyncTime = 10.h;
-
   @override
   void initState() {
     super.initState();
@@ -320,7 +318,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                       Map<UserGroupRoleFilter, List<HiveGroup>>>
                                   snapshot) {
                             if (snapshot.hasData) {
-                              spaceInbetweenLastSyncTime = 10.h;
                               return GroupListView(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -382,7 +379,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     SizedBox(height: 10),
                               );
                             } else {
-                              spaceInbetweenLastSyncTime = 300.h;
                               return Container(
                                 color: AppColors.groupScreenBG,
                               );

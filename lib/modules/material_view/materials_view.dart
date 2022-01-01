@@ -43,8 +43,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
 
-  double spaceInbetweenLastSyncTime = 10.h;
-
   // late HiveCurrentUser _user;
 
   late String _choiceText = AppLocalizations.of(context)!.noFilterApplied;
@@ -118,7 +116,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       key: _focusDetectorKey,
       onFocusGained: () {
         print('Gained focus');
-        spaceInbetweenLastSyncTime = 300.h;
         _fetchMaterialData(bloc);
       },
       onFocusLost: () {
@@ -274,8 +271,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       stream: bloc.materialBloc.materials,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          spaceInbetweenLastSyncTime = 10.h;
-
           List<HiveMaterial> _listToShow;
 
           if (bloc.materialBloc.query.isNotEmpty) {
@@ -308,7 +303,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 );
               });
         } else {
-          spaceInbetweenLastSyncTime = 300.h;
           return Container();
         }
       },
