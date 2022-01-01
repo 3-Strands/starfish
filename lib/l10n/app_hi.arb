@@ -57,6 +57,8 @@
 
   "lastSuccessfullSync": "अंतिम सफल समन्वयन",
 
+  "lastSync": "अंतिम समन्वयन",
+
   "forGroupAdmin": "ग्रुप व्यवस्थापक के लिए",
 
   "myGroups": "मेरे समूह",
@@ -145,6 +147,8 @@
   "assignActionTo": "इस क्रिया को सौंपना",
 
   "emptyFullName": "कृपया नाम दर्ज करें।",
+  "emptyEmail": "कृपया ईमेल दर्ज करें।",
+  "emptyConfirmEmail": "कृपया पुष्टि ईमेल दर्ज करें।",
   "invalidFullName": "कृपया मान्य नाम दर्ज करें।",
   "emptySelectCountry": "कृपया देश का चयन करें।",
   "emptySelectLanguage": "कृपया भाषाएं चुनें.",
@@ -277,5 +281,9 @@
 
   "alertGroupCanNotBeWithoutAdmin": "ग्रुप को बिना एडमिन के नहीं छोड़ा जा सकता",
 
-  "userStatusInvited": "आमंत्रित"
+  "userStatusInvited": "आमंत्रित",
+
+  "inAppropriateMaterial": "यदि यह सामग्री अनुपयुक्त है, ",  
+  "clickHere": "यहां क्लिक करें ",
+  "toReportIt": "इसकी रिपोर्ट करने के लिए"
 }

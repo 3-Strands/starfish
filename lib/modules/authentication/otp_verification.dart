@@ -62,7 +62,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   void initState() {
-    _smsCode = '+91';
+    // _smsCode = '+91';
 
     _title = widget.title;
     _dialingCode = widget.dialingCode;

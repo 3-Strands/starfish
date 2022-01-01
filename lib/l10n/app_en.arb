@@ -58,6 +58,8 @@
 
   "lastSuccessfullSync": "Last Successful Sync",
 
+  "lastSync": "Last Sync",
+
   "forGroupAdmin": "For Group Admins",
 
   "myGroups": "My Groups",
@@ -145,6 +147,8 @@
   "assignActionTo": "Assign this Action to",
 
   "emptyFullName": "Please enter name.",
+  "emptyEmail": "Please enter email.",
+  "emptyConfirmEmail": "Please enter confirm email.",
   "invalidFullName": "Please enter valid name.",
   "emptySelectCountry": "Please select country.",
   "emptySelectLanguage": "Please select languages.",
@@ -277,5 +281,9 @@
 
   "alertGroupCanNotBeWithoutAdmin": "Group cann't be left without Admin",
 
-  "userStatusInvited": "Invited"
+  "userStatusInvited": "Invited",
+
+  "inAppropriateMaterial": "If this material is inappropriate, ",  
+  "clickHere": "Click here ",
+  "toReportIt": "to report it."
 }
