@@ -14,18 +14,16 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
+import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
@@ -61,7 +59,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
-  late Box<HiveLastSyncDateTime> _lastSyncDataTimeBox;
 
   String _countyCode = '';
   String _mobileNumber = '';
@@ -89,8 +86,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
-    _lastSyncDataTimeBox =
-        Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
 
     _populateAppLanguages(Strings.appLanguageList);
     _getCurrentUser();
@@ -134,16 +129,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return items;
   }
 
-  String lastSyncDataTime() {
-    HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
-
-    return DateTimeUtils.formatDate(
-        _lastSyncDateTime.toDateTime(), "dd-MMM-yyyy HH:mm");
-  }
-
   void _getCurrentUser() {
     _user = _currentUserBox.values.first;
-    // print('_user.id ${_user.id}');
 
     setState(() {
       _nameController.text = _user.name;
@@ -824,7 +811,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               children: [
                                 TextSpan(
-                                  text: lastSyncDataTime(),
+                                  text: SyncTime().lastSyncDataTime(),
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'Roboto',
@@ -940,16 +927,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Column _myGroupsList() {
-  //   return Column(
-  //     children: <Widget>[
-  //       ..._user.groups.map((item) {
-  //         return _groupItem(item);
-  //       }).toList(),
-  //     ],
-  //   );
-  // }
-
   Column _myGroupsList() {
     return Column(
       children: [
@@ -961,13 +938,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             final item = _groups[index];
             final _emailController = TextEditingController();
             final FocusNode _emailFocus = FocusNode();
-            print("item['email'] ==>>");
-            print(item['email']);
             _emailController.text = item['email'];
 
             final _confirmEmailController = TextEditingController();
             final FocusNode _confirmEmailFocus = FocusNode();
-            _emailController.text = item['confirm_email'];
+            _confirmEmailController.text = item['confirm_email'];
 
             return Container(
               height: (item['is_editing'] == false) ? 200.h : 240.h,
@@ -991,17 +966,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: InkWell(
                             onTap: () {
                               setState(() {
-                                print("index ==>> $index");
                                 _groups[index]['email'] = _emailController.text;
                               });
-                              print('edit button tapped');
                               if (item['is_editing'] == false) {
                                 setState(() {
                                   item['is_editing'] = !item['is_editing'];
                                 });
                               } else {
                                 if (_emailController.text == '') {
-                                  print('if _emailController.text is empty');
                                   Alerts.showMessageBox(
                                       context: context,
                                       title: AppLocalizations.of(context)!
@@ -1013,9 +985,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       positiveActionCallback: () {});
                                 } else if (!_emailController.text
                                     .isValidEmail()) {
-                                  print(_emailController.text);
-                                  print('if _emailController.text is valid');
-
                                   Alerts.showMessageBox(
                                       context: context,
                                       title: AppLocalizations.of(context)!
@@ -1027,8 +996,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       positiveActionCallback: () {});
                                 } else if (_emailController.text !=
                                     _confirmEmailController.text) {
-                                  print('if email. doesnt match');
-
                                   Alerts.showMessageBox(
                                       context: context,
                                       title: AppLocalizations.of(context)!
@@ -1039,6 +1006,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           AppLocalizations.of(context)!.ok,
                                       positiveActionCallback: () {});
                                 } else {
+                                  if (item['is_editing'] == true) {
+                                    _updateGroupLinkedEmaill(
+                                        _groups[index]['id'],
+                                        _groups[index]['email']);
+                                  }
                                   setState(() {
                                     item['is_editing'] = !item['is_editing'];
                                   });
@@ -1072,6 +1044,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       controller: _emailController,
                       focusNode: _emailFocus,
                       onFieldSubmitted: (term) {
+                        _groups[index]['email'] = term;
                         _emailController.text = term;
                         _emailFocus.unfocus();
                       },
@@ -1120,7 +1093,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     AppLocalizations.of(context)!.yes,
                                 negativeActionCallback: () {},
                                 positiveActionCallback: () {
-                                  print('yes');
                                   _updateGroupLinkedEmaill(
                                       item['id'], _emailController.text);
                                 });
@@ -1167,179 +1139,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             );
-            // ListTile(
-            //   title: Text(item.groupId!),
-            // );
           },
         ),
       ],
     );
   }
 
-  Container _groupItem(HiveGroupUser group) {
-    final _emailController = TextEditingController();
-    final FocusNode _emailFocus = FocusNode();
-    _emailController.text = getGroupLinkedEmaill(group.groupId!);
-
-    final _confirmEmailController = TextEditingController();
-    final FocusNode _confirmEmailFocus = FocusNode();
-
-    bool isEditiable = false;
-
-    return Container(
-      height: (isEditiable == false) ? 200.h : 240.h,
-      margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 200.w,
-                height: 25.h,
-                child: Align(
-                  alignment: FractionalOffset.topLeft,
-                  child:
-                      Text(getGroupName(group.groupId!), style: titleTextStyle),
-                ),
-              ),
-              Visibility(
-                // visible: (_emailController.text.length > 0),
-                child: Container(
-                  height: 25.h,
-                  child: EditButton(
-                    onButtonClicked: (value) {
-                      print(value);
-                      setState(() {
-                        isEditiable = value;
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            height: 45.h,
-            child: Align(
-              alignment: FractionalOffset.topLeft,
-              child: Text(
-                  AppLocalizations.of(context)!.projectAdminEmailSectionTitle,
-                  style: titleTextStyle),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Container(
-            height: 52.h,
-            child: TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (input) => input!.isValidEmail()
-                  ? null
-                  : AppLocalizations.of(context)!.alertInvalidEmaill,
-              controller: _emailController,
-              focusNode: _emailFocus,
-              onFieldSubmitted: (term) {
-                if (term.isValidEmail()) {
-                  _emailController.text = term;
-                } else {
-                  Alerts.showMessageBox(
-                      context: context,
-                      title: AppLocalizations.of(context)!.dialogAlert,
-                      message: AppLocalizations.of(context)!.alertInvalidEmaill,
-                      positiveButtonText: AppLocalizations.of(context)!.ok,
-                      positiveActionCallback: () {});
-                }
-                _emailFocus.unfocus();
-              },
-              keyboardType: TextInputType.emailAddress,
-              style: textFormFieldText,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.emailHint,
-                contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppColors.txtFieldBackground,
-              ),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Visibility(
-            visible: isEditiable,
-            child: Container(
-              height: 52.h,
-              child: TextFormField(
-                controller: _confirmEmailController,
-                focusNode: _confirmEmailFocus,
-                onFieldSubmitted: (term) {
-                  _confirmEmailController.text = term;
-                  if (_emailController.text.isValidEmail() &&
-                      _emailController.text == _confirmEmailController.text) {
-                    Alerts.showMessageBox(
-                        context: context,
-                        title: AppLocalizations.of(context)!.dialogAlert,
-                        message:
-                            AppLocalizations.of(context)!.alertSaveAdminEmail,
-                        negativeButtonText: AppLocalizations.of(context)!.no,
-                        positiveButtonText: AppLocalizations.of(context)!.yes,
-                        negativeActionCallback: () {},
-                        positiveActionCallback: () {
-                          print('yes');
-                          _updateGroupLinkedEmaill(
-                              group.groupId!, _emailController.text);
-                        });
-
-                    _confirmEmailFocus.unfocus();
-                  } else {
-                    Alerts.showMessageBox(
-                        context: context,
-                        title: AppLocalizations.of(context)!.dialogAlert,
-                        message:
-                            AppLocalizations.of(context)!.alertEmailDoNotMatch,
-                        positiveButtonText: AppLocalizations.of(context)!.ok,
-                        positiveActionCallback: () {});
-                  }
-                },
-                keyboardType: TextInputType.emailAddress,
-                style: textFormFieldText,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.confirmEmailHint,
-                  contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: AppColors.txtFieldBackground,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 15.h),
-          SepratorLine(
-              hight: .5.h, edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
-        ],
-      ),
-    );
-  }
-
   _isUserAdminAtleastInOneGroup() {
-    print('_isUserAdminAtleastInOneGroup');
     _user.groups.forEach((group) {
       if (GroupUser_Role.valueOf(group.role!) == GroupUser_Role.ADMIN) {
         _groups.add({

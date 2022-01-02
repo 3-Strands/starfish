@@ -16,7 +16,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 // import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
-import 'package:starfish/modules/material_view/sync_time.dart';
+import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';

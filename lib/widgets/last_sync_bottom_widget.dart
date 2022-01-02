@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/modules/material_view/sync_time.dart';
+import 'package:starfish/utils/sync_time.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LastSyncBottomWidget extends StatefulWidget {
