@@ -270,7 +270,7 @@
 
   "assignedToMeDone": "Assigned to me and completed",
   "assignedToMeNotDone":
-      "Assigned to me, but not complete yet",
+      "Assigned to me, but not completed yet",
   "assignedToMeOverdue": "Assigned to me and overdue",
 
   "question": "Question",

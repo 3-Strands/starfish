@@ -666,7 +666,7 @@ class MyActionListItem extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 15.h,
+                height: 10.h,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
