@@ -61,8 +61,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
   }
 
   Widget _buildUsersList(List<HiveGroupUser> users) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.70 - 180,
+    return Expanded(
+      // height: MediaQuery.of(context).size.height * 0.70 - 200,
       child: ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) {
@@ -153,7 +153,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: 22.h,
+            height: 26.h,
             child: Align(
               alignment: FractionalOffset.topLeft,
               child: Text(
@@ -169,35 +169,42 @@ class _GroupsScreenState extends State<GroupsScreen> {
             ),
           ),
           SizedBox(
-            height: 40.h,
+            height: 36.h,
           ),
           _buildUsersList(group.users!),
           SizedBox(
             height: 20.h,
           ),
           Container(
+            height: 75.0,
             width: MediaQuery.of(context).size.width,
-            height: 37.5.h,
-            color: Color(0xFFEFEFEF),
-            child: ElevatedButton(
-              onPressed: () {
-                //_closeSlidingUpPanelIfOpen();
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.r),
+            // decoration: BoxDecoration(
+            //   color: Color(0xFFEFEFEF),
+            // ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+              child: Container(
+                height: 37.5.h,
+                color: Color(0xFFEFEFEF),
+                child: ElevatedButton(
+                  onPressed: () {
+                    //_closeSlidingUpPanelIfOpen();
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40.r),
+                      ),
+                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
                   ),
+                  child: Text(AppLocalizations.of(context)!.close),
                 ),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
               ),
-              child: Text(AppLocalizations.of(context)!.close),
             ),
-          ),
-          SizedBox(
-            height: 10.h,
           ),
         ],
       ),

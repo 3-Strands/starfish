@@ -777,7 +777,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       ],
                     ),
                   ),
-                  // Selection persion without invite
+                  // Selection person without invite
                   _unInvitedGroupMembersContainer(),
                   _unInvitedContactsContainer(),
 

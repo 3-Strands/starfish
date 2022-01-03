@@ -63,15 +63,18 @@ class _UnInvitedGroupMemberListItemState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.groupUser.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'OpenSans',
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF434141),
+                  Container(
+                    width: 180.w,
+                    child: Text(
+                      widget.groupUser.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF434141),
+                      ),
                     ),
                   ),
                   ElevatedButton(
