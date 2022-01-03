@@ -213,9 +213,10 @@ sending an invitation to use Starfish''';
       '''Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>''';
 
   static const String groupFilterPrefix = 'Groups';
-  static const String groupFilterAll = 'All of my groups';
-  static const String groupFilterLearner = 'Groups I\'m a learner in';
-  static const String groupFilterAdminCoLead = 'Groups I teach or co-lead';
+
+  // static const String groupFilterAll = 'All of my groups';
+  // static const String groupFilterLearner = 'Groups I\'m a learner in';
+  // static const String groupFilterAdminCoLead = 'Groups I teach or co-lead';
 
   static const String visibilityGroupView = 'Groups I teach or administer';
   static const String visibilityAllView = 'Anyone at all';
@@ -250,11 +251,11 @@ sending an invitation to use Starfish''';
   ];
 
   // Action Filter
-  static const String actionFilterThisMonth = "This Month";
-  static const String actionFilterNextMonth = "Next Month";
-  static const String actionFilterLastMonth = "Last Month";
-  static const String actionFilterLastThreeMonth = "Last Three Months";
-  static const String actionFilterAllTime = "All Time";
+  // static const String actionFilterThisMonth = "This Month";
+  // static const String actionFilterNextMonth = "Next Month";
+  // static const String actionFilterLastMonth = "Last Month";
+  // static const String actionFilterLastThreeMonth = "Last Three Months";
+  // static const String actionFilterAllTime = "All Time";
 
   // Menu Items
   static const String makeAdmin = 'Make Admin';

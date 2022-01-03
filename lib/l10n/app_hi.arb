@@ -207,6 +207,8 @@
   "updateActionFailed": "कार्रवाई नवीनीकरण करने में विफल.",
   "loading": "लोड हो रहा है...",
 
+  "selfAssigned": "स्वयं असाइन किया गया",
+
   "inviteSMS":
       "Hi <user first name>, कृपया प्ले स्टोर या एप्पल स्टोर  से स्टारफिश  ऐप इंस्टॉल करके मेरे स्टारफिश समूह में शामिल हों। धन्यवाद! <sender’s username>",
 
@@ -273,11 +275,20 @@
       "मुझे सौंपा गया है, लेकिन अभी तक पूरा नहीं हुआ है",
   "assignedToMeOverdue": "मुझे सौंपा और अतिदेय",
 
+  "assignedToMeInComplete": "मुझे सौंपा गया लेकिन अधूरा",
+  "assignedToGroupIamLead":"मेरे नेतृत्व वाले समूह को असाइन किया गया",
+  "noFilterApplied": "कोई फ़िल्टर लागू नहीं",
+
   "question": "प्रश्न",
   "questionTextEditHint": "प्रश्न का उत्तर यहाँ लिखें",
     
   "selectAction": "कार्रवाई चुनें",
-  "selectAction": "कार्रवाई चुनें",
+
+  "actionFilterThisMonth": "इस महीने",
+  "actionFilterNextMonth": "अगले महीने",
+  "actionFilterLastMonth": "पिछला महीना",
+  "actionFilterLastThreeMonth": "पिछले तीन महीने",
+  "actionFilterAllTime": "पूरे समय",
 
   "actionWasAssignedTo": "यह कार्य सौंपा गया था:",
 

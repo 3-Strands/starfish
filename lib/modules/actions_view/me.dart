@@ -87,7 +87,6 @@ class _MeState extends State<Me> {
                         alignedDropdown: true,
                         child: DropdownButton<ActionFilter>(
                           isExpanded: true,
-                          // icon: Icon(Icons.arrow_drop_down),
                           iconSize: 35,
                           style: TextStyle(
                             color: Color(0xFF434141),
@@ -108,6 +107,7 @@ class _MeState extends State<Me> {
                           onChanged: (ActionFilter? value) {
                             setState(() {
                               bloc.actionBloc.actionFilter = value!;
+                              _getActions(bloc);
                             });
                           },
                           items: ActionFilter.values
@@ -136,11 +136,13 @@ class _MeState extends State<Me> {
                   onValueChanged: (value) {
                     setState(() {
                       bloc.actionBloc.query = value;
+                      _getActions(bloc);
                     });
                   },
                   onDone: (value) {
                     setState(() {
                       bloc.actionBloc.query = value;
+                      _getActions(bloc);
                     });
                   },
                 ),
@@ -297,7 +299,6 @@ class _MeState extends State<Me> {
                   ),
                   // Record the response to the Question
                   SizedBox(
-                    // height: 110.h,
                     child: (action.type == Action_Type.TEXT_RESPONSE.value)
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -471,7 +472,6 @@ class _MeState extends State<Me> {
                         color: Color(0xFFEFEFEF),
                         child: ElevatedButton(
                           onPressed: () {
-                            //_closeSlidingUpPanelIfOpen();
                             Navigator.pop(context);
                           },
                           style: ButtonStyle(
@@ -538,7 +538,7 @@ class _MeState extends State<Me> {
                       ),
                       if (snapshot.data!.keys.toList()[section].id != null)
                         Text(
-                          'Teacher: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                          '${AppLocalizations.of(context)!.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,

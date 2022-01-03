@@ -207,6 +207,8 @@
   "updateActionFailed": "Failed to update action.",
   "loading": "loading...",
 
+  "selfAssigned": "Self Assigned",
+
   "inviteSMS":
       "Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>",
 
@@ -273,11 +275,20 @@
       "Assigned to me, but not completed yet",
   "assignedToMeOverdue": "Assigned to me and overdue",
 
+  "assignedToMeInComplete": "Assigned to me but incomplete",
+  "assignedToGroupIamLead":"Assigned to a group I lead",
+  "noFilterApplied": "No filter applied",
+
   "question": "Question",
   "questionTextEditHint": "Write an answer to the question here",
 
   "selectAction": "Select Action",
-  "selectAction": "Select Action",
+
+  "actionFilterThisMonth": "This Month",
+  "actionFilterNextMonth": "Next Month",
+  "actionFilterLastMonth": "Last Month",
+  "actionFilterLastThreeMonth": "Last Three Months",
+  "actionFilterAllTime": "All Time",
 
   "actionWasAssignedTo": "This Action was Assigned to:",
 

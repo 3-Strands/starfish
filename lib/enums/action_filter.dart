@@ -1,21 +1,32 @@
-import 'package:starfish/constants/strings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/navigation_service.dart';
 
 enum ActionFilter {
   THIS_MONTH,
   NEXT_MONTH,
   LAST_MONTH,
   LAST_THREE_MONTH,
-  ALL_TIME,
+  ALL_TIME
 }
 
 extension ActionFilterExt on ActionFilter {
-  static const values = {
-    ActionFilter.THIS_MONTH: Strings.actionFilterThisMonth,
-    ActionFilter.NEXT_MONTH: Strings.actionFilterNextMonth,
-    ActionFilter.LAST_MONTH: Strings.actionFilterLastMonth,
-    ActionFilter.LAST_THREE_MONTH: Strings.actionFilterLastThreeMonth,
-    ActionFilter.ALL_TIME: Strings.actionFilterAllTime,
-  };
+  Map<ActionFilter, String> get values => {
+        ActionFilter.THIS_MONTH:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .actionFilterThisMonth,
+        ActionFilter.NEXT_MONTH:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .actionFilterNextMonth,
+        ActionFilter.LAST_MONTH:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .actionFilterLastMonth,
+        ActionFilter.LAST_THREE_MONTH:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .actionFilterLastThreeMonth,
+        ActionFilter.ALL_TIME:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .actionFilterAllTime,
+      };
 
   //about property returns the custom message
   String get about => values[this]!;

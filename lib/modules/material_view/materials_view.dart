@@ -193,9 +193,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         SizedBox(height: 10.h),
                         Container(
                           height: 60.h,
-                          // width: 345.w,
                           margin: EdgeInsets.only(left: 15.w, right: 15.w),
-
                           decoration: BoxDecoration(
                             color: AppColors.txtFieldBackground,
                             borderRadius: BorderRadius.all(

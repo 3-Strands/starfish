@@ -97,6 +97,7 @@ class _MyGroupState extends State<MyGroup> {
                         onChanged: (ActionFilter? value) {
                           setState(() {
                             bloc.actionBloc.actionFilter = value!;
+                            _getActions(bloc);
                           });
                         },
                         items: ActionFilter.values
@@ -126,12 +127,14 @@ class _MyGroupState extends State<MyGroup> {
                   print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
+                    _getActions(bloc);
                   });
                 },
                 onDone: (value) {
                   print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
+                    _getActions(bloc);
                   });
                 },
               ),

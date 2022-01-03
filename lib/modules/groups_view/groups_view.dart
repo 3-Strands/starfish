@@ -62,7 +62,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   Widget _buildUsersList(List<HiveGroupUser> users) {
     return Expanded(
-      // height: MediaQuery.of(context).size.height * 0.70 - 200,
       child: ListView.builder(
         itemCount: users.length,
         itemBuilder: (context, index) {
@@ -178,9 +177,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
           Container(
             height: 75.0,
             width: MediaQuery.of(context).size.width,
-            // decoration: BoxDecoration(
-            //   color: Color(0xFFEFEFEF),
-            // ),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
@@ -189,7 +185,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 color: Color(0xFFEFEFEF),
                 child: ElevatedButton(
                   onPressed: () {
-                    //_closeSlidingUpPanelIfOpen();
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(
@@ -249,11 +244,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                           onValueChanged: (value) {
                             setState(() {
                               bloc.groupBloc.query = value;
+                              _fetchAllGroupsByRole(bloc);
                             });
                           },
                           onDone: (value) {
                             setState(() {
                               bloc.groupBloc.query = value;
+                              _fetchAllGroupsByRole(bloc);
                             });
                           },
                         ),
@@ -286,6 +283,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                   onChanged: (UserGroupRoleFilter? value) {
                                     setState(() {
                                       bloc.groupBloc.groupRoleFilter = value!;
+                                      _fetchAllGroupsByRole(bloc);
                                     });
                                   },
                                   items: UserGroupRoleFilter.values.map<

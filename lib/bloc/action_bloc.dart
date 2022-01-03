@@ -7,11 +7,13 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/enums/action_filter.dart';
+import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActionBloc extends Object {
   final ActionRepository actionRepository = ActionRepository();
@@ -115,7 +117,11 @@ class ActionBloc extends Object {
       _groupIdsWithMatchingRole.add(element.id!);
     });
 
-    HiveGroup _dummyGroupSelf = HiveGroup(id: null, name: "Self Assigned");
+    HiveGroup _dummyGroupSelf = HiveGroup(
+        id: null,
+        name:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .selfAssigned);
 
     actionRepository
         .fetchAllActionsForMeFromDB(_groupIdsWithMatchingRole)
