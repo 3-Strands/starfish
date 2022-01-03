@@ -9,13 +9,17 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
 // import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
-// import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
@@ -106,6 +110,36 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         });
       },
     );
+  }
+
+  bool hasLeaderRoleInGroupWhereCreater(String? creatorId) {
+    if (creatorId == null) {
+      return false;
+    }
+    HiveUser? _creator = UserProvider().getUserById(creatorId);
+    if (_creator == null || _creator.groups == null) {
+      return false;
+    }
+    // get Creator's grups
+    bool _hasLeaderRole = false;
+
+    List<HiveGroupUser> _currentUserGroupsWithLeaderRole = CurrentUserProvider()
+        .getUserSync()
+        .groups
+        .where((groupUser) =>
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN ||
+            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
+        .toList();
+
+    if (_currentUserGroupsWithLeaderRole.length == 0) {
+      return false;
+    }
+
+    _creator.groups!.forEach((element) {
+      _hasLeaderRole = _currentUserGroupsWithLeaderRole.contains(element);
+    });
+
+    return _hasLeaderRole;
   }
 
   @override

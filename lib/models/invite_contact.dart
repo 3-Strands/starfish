@@ -18,7 +18,9 @@ class InviteContact {
     return HiveUser(
       id: UuidGenerator.uuid(),
       name: this.contact.displayName,
-      phone: this.contact.phones!.first.value,
+      phone: this.contact.phones != null && this.contact.phones!.length > 0
+          ? this.contact.phones!.first.value!.replaceAll("[-() ]", "")
+          : '',
     );
   }
 }

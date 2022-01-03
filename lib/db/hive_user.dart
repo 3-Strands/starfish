@@ -151,7 +151,8 @@ class HiveUser extends HiveObject {
 
 extension HiveUserExt on HiveUser {
   String get diallingCodeWithPlus {
-    if (this.diallingCode != null || this.diallingCode!.isEmpty) {
+    if (this.diallingCode == null ||
+        (this.diallingCode != null && this.diallingCode!.isEmpty)) {
       return '';
     }
 
