@@ -31,7 +31,7 @@ class GroupsScreen extends StatefulWidget {
 class _GroupsScreenState extends State<GroupsScreen> {
   late AppBloc bloc;
 
-  final Key _focusDetectorKey = UniqueKey();
+  final Key _groupFocusDetectorKey = UniqueKey();
 
   @override
   void initState() {
@@ -218,21 +218,15 @@ class _GroupsScreenState extends State<GroupsScreen> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    // bloc.groupBloc.fetchAllGroupsByRole();
 
     return FocusDetector(
-      key: _focusDetectorKey,
+      key: _groupFocusDetectorKey,
       onFocusGained: () {
         print('Gained focus');
         _fetchAllGroupsByRole(bloc);
       },
       onFocusLost: () {
         print('Lost focus');
-        /*
-        bloc.materialBloc.selectedLanguages.clear();
-        _selectLanguage(bloc);
-        bloc.materialBloc.selectedTopics.clear();
-        */
       },
       child: Scaffold(
         backgroundColor: AppColors.groupScreenBG,

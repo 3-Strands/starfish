@@ -7,7 +7,6 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-// import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -20,7 +19,6 @@ import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -43,28 +41,24 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicList;
 
-  // late Box<HiveCurrentUser> _currentUserBox;
-
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
-
-  // late HiveCurrentUser _user;
 
   late String _choiceText = AppLocalizations.of(context)!.noFilterApplied;
 
   final Key _focusDetectorKey = UniqueKey();
   late AppBloc bloc;
+
+  bool _viewDidDisappear = false;
+
   @override
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _topicBox = Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
 
-    // _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-
     _getAllLanguages();
     _getAllTopics();
-    // _getCurrentUser();
   }
 
   @override
@@ -72,10 +66,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     bloc = Provider.of(context);
     super.didChangeDependencies();
   }
-
-  // void _getCurrentUser() {
-  //   _user = _currentUserBox.values.first;
-  // }
 
   _fetchMaterialData(AppBloc bloc) async {
     bloc.materialBloc.fetchMaterialsFromDB();
@@ -148,10 +138,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       key: _focusDetectorKey,
       onFocusGained: () {
         print('Gained focus');
+        setState(() {
+          _viewDidDisappear = false;
+        });
         _fetchMaterialData(bloc);
       },
       onFocusLost: () {
         print('Lost focus');
+        setState(() {
+          _viewDidDisappear = true;
+        });
         /*
         bloc.materialBloc.selectedLanguages.clear();
         _selectLanguage(bloc);
@@ -175,7 +171,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(height: 14.h),
-                        _buildLanguagesContainer(bloc),
+                        (_viewDidDisappear)
+                            ? Container()
+                            : _buildLanguagesContainer(bloc),
                         SizedBox(height: 10.h),
                         _buildTopicsContainer(bloc),
                         SizedBox(height: 10.h),
@@ -259,7 +257,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         SizedBox(
                           height: 20.h,
                         ),
-                        materialsList(bloc),
+                        _materialsList(bloc),
                         SizedBox(
                           height: 10.h,
                         ),
@@ -286,7 +284,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  Widget materialsList(AppBloc bloc) {
+  Widget _materialsList(AppBloc bloc) {
     return StreamBuilder<List<HiveMaterial>>(
       stream: bloc.materialBloc.materials,
       builder: (context, snapshot) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
@@ -26,6 +27,8 @@ class MyGroup extends StatefulWidget {
 }
 
 class _MyGroupState extends State<MyGroup> {
+  final Key _groupActionFocusDetectorKey = UniqueKey();
+
   @override
   void initState() {
     super.initState();
@@ -38,100 +41,109 @@ class _MyGroupState extends State<MyGroup> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    _getActions(bloc);
 
-    return Scrollbar(
-      thickness: 5.sp,
-      isAlwaysShown: false,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            Container(
-              height: 52.h,
-              width: 345.w,
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              decoration: BoxDecoration(
-                color: AppColors.txtFieldBackground,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+    return FocusDetector(
+      key: _groupActionFocusDetectorKey,
+      onFocusGained: () {
+        print('Gained focus');
+        _getActions(bloc);
+      },
+      onFocusLost: () {
+        print('Lost focus');
+      },
+      child: Scrollbar(
+        thickness: 5.sp,
+        isAlwaysShown: false,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
               ),
-              child: Center(
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<ActionFilter>(
-                      isExpanded: true,
-                      // icon: Icon(Icons.arrow_drop_down),
-                      iconSize: 35,
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 16.sp,
-                        fontFamily: 'OpenSans',
-                      ),
-                      hint: Text(
-                        bloc.actionBloc.actionFilter.about,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              Container(
+                height: 52.h,
+                width: 345.w,
+                margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                decoration: BoxDecoration(
+                  color: AppColors.txtFieldBackground,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                child: Center(
+                  child: DropdownButtonHideUnderline(
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: DropdownButton<ActionFilter>(
+                        isExpanded: true,
+                        // icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 35,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 16.sp,
                           fontFamily: 'OpenSans',
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                      onChanged: (ActionFilter? value) {
-                        setState(() {
-                          bloc.actionBloc.actionFilter = value!;
-                        });
-                      },
-                      items: ActionFilter.values
-                          .map<DropdownMenuItem<ActionFilter>>(
-                              (ActionFilter value) {
-                        return DropdownMenuItem<ActionFilter>(
-                          value: value,
-                          child: Text(
-                            value.about,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 14.sp,
-                              fontFamily: 'OpenSans',
-                            ),
+                        hint: Text(
+                          bloc.actionBloc.actionFilter.about,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 16.sp,
+                            fontFamily: 'OpenSans',
                           ),
-                        );
-                      }).toList(),
+                          textAlign: TextAlign.left,
+                        ),
+                        onChanged: (ActionFilter? value) {
+                          setState(() {
+                            bloc.actionBloc.actionFilter = value!;
+                          });
+                        },
+                        items: ActionFilter.values
+                            .map<DropdownMenuItem<ActionFilter>>(
+                                (ActionFilter value) {
+                          return DropdownMenuItem<ActionFilter>(
+                            value: value,
+                            child: Text(
+                              value.about,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 14.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            SearchBar(
-              initialValue: bloc.actionBloc.query,
-              onValueChanged: (value) {
-                print('searched value $value');
-                setState(() {
-                  bloc.actionBloc.query = value;
-                });
-              },
-              onDone: (value) {
-                print('searched value $value');
-                setState(() {
-                  bloc.actionBloc.query = value;
-                });
-              },
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            actionsList(bloc),
-            SizedBox(
-              height: 10.h,
-            ),
-          ],
+              SizedBox(height: 10.h),
+              SearchBar(
+                initialValue: bloc.actionBloc.query,
+                onValueChanged: (value) {
+                  print('searched value $value');
+                  setState(() {
+                    bloc.actionBloc.query = value;
+                  });
+                },
+                onDone: (value) {
+                  print('searched value $value');
+                  setState(() {
+                    bloc.actionBloc.query = value;
+                  });
+                },
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              actionsList(bloc),
+              SizedBox(
+                height: 10.h,
+              ),
+            ],
+          ),
         ),
       ),
     );
