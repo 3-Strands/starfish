@@ -7,7 +7,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/strings.dart';
-import 'package:starfish/db/hive_current_user.dart';
+// import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -19,11 +19,13 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
-import 'package:starfish/src/generated/starfish.pbenum.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -57,6 +59,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _topicBox = Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
+
     // _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getAllLanguages();
@@ -164,103 +167,112 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
-          child: Scrollbar(
-            thickness: 5.sp,
-            isAlwaysShown: false,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 14.h),
-                  _buildLanguagesContainer(bloc),
-                  SizedBox(height: 10.h),
-                  _buildTopicsContainer(bloc),
-                  SizedBox(height: 10.h),
-                  SearchBar(
-                    initialValue: bloc.materialBloc.query,
-                    onValueChanged: (value) {
-                      setState(() {
-                        bloc.materialBloc.setQuery(value);
-                      });
-                    },
-                    onDone: (value) {
-                      setState(() {
-                        bloc.materialBloc.setQuery(value);
-                      });
-                    },
-                  ),
-                  SizedBox(height: 10.h),
-                  Container(
-                    height: 60.h,
-                    // width: 345.w,
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+          child: Column(
+            children: [
+              Expanded(
+                child: Scrollbar(
+                  thickness: 5.sp,
+                  isAlwaysShown: false,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(height: 14.h),
+                        _buildLanguagesContainer(bloc),
+                        SizedBox(height: 10.h),
+                        _buildTopicsContainer(bloc),
+                        SizedBox(height: 10.h),
+                        SearchBar(
+                          initialValue: bloc.materialBloc.query,
+                          onValueChanged: (value) {
+                            setState(() {
+                              bloc.materialBloc.setQuery(value);
+                            });
+                          },
+                          onDone: (value) {
+                            setState(() {
+                              bloc.materialBloc.setQuery(value);
+                            });
+                          },
+                        ),
+                        SizedBox(height: 10.h),
+                        Container(
+                          height: 60.h,
+                          // width: 345.w,
+                          margin: EdgeInsets.only(left: 15.w, right: 15.w),
 
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: Center(
-                      child: DropdownButtonHideUnderline(
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            iconSize: 35,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 16.sp,
-                              fontFamily: 'OpenSans',
+                          decoration: BoxDecoration(
+                            color: AppColors.txtFieldBackground,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
                             ),
-                            hint: Text(
-                              AppLocalizations.of(context)!
-                                      .materialActionPrefix +
-                                  _choiceText,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 16.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            onChanged: (String? value) {
-                              setState(() {
-                                _choiceText = value!;
-                                bloc.materialBloc.setActionFilter(value);
-                                _fetchMaterialData(bloc);
-                              });
-                            },
-                            items: Strings.materialActionsList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
+                          ),
+                          child: Center(
+                            child: DropdownButtonHideUnderline(
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  iconSize: 35,
                                   style: TextStyle(
                                     color: Color(0xFF434141),
-                                    fontSize: 14.sp,
+                                    fontSize: 16.sp,
                                     fontFamily: 'OpenSans',
                                   ),
+                                  hint: Text(
+                                    AppLocalizations.of(context)!
+                                            .materialActionPrefix +
+                                        _choiceText,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 16.sp,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      _choiceText = value!;
+                                      bloc.materialBloc.setActionFilter(value);
+                                      _fetchMaterialData(bloc);
+                                    });
+                                  },
+                                  items: Strings.materialActionsList
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          color: Color(0xFF434141),
+                                          fontSize: 14.sp,
+                                          fontFamily: 'OpenSans',
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            }).toList(),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        materialsList(bloc),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  materialsList(bloc),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                ],
+                ),
               ),
-            ),
+              LastSyncBottomWidget()
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -571,14 +583,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             text: new TextSpan(
               children: [
                 new TextSpan(
-                  text: "If this material is inappropriate, ",
+                  text: AppLocalizations.of(context)!.inAppropriateMaterial,
                   style: TextStyle(
                       color: Color(0xFFF65A4A),
                       fontSize: 16.sp,
                       fontStyle: FontStyle.italic),
                 ),
                 new TextSpan(
-                  text: 'click here',
+                  text: AppLocalizations.of(context)!.clickHere,
                   style: TextStyle(
                       decoration: TextDecoration.underline,
                       decorationStyle: TextDecorationStyle.solid,
@@ -598,7 +610,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     },
                 ),
                 new TextSpan(
-                  text: ' to report it.',
+                  text: AppLocalizations.of(context)!.toReportIt,
                   style: new TextStyle(
                       color: Color(0xFFF65A4A),
                       fontSize: 16.sp,

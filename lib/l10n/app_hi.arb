@@ -57,6 +57,8 @@
 
   "lastSuccessfullSync": "अंतिम सफल समन्वयन",
 
+  "lastSync": "अंतिम समन्वयन",
+
   "forGroupAdmin": "ग्रुप व्यवस्थापक के लिए",
 
   "myGroups": "मेरे समूह",
@@ -145,6 +147,8 @@
   "assignActionTo": "इस क्रिया को सौंपना",
 
   "emptyFullName": "कृपया नाम दर्ज करें।",
+  "emptyEmail": "कृपया ईमेल दर्ज करें।",
+  "emptyConfirmEmail": "कृपया पुष्टि ईमेल दर्ज करें।",
   "invalidFullName": "कृपया मान्य नाम दर्ज करें।",
   "emptySelectCountry": "कृपया देश का चयन करें।",
   "emptySelectLanguage": "कृपया भाषाएं चुनें.",
@@ -279,9 +283,11 @@
 
   "userStatusInvited": "आमंत्रित",
 
-  "adminNameMe" : "मैं",
+  "inAppropriateMaterial": "यदि यह सामग्री अनुपयुक्त है, ",  
+  "clickHere": "यहां क्लिक करें ",
+  "toReportIt": "इसकी रिपोर्ट करने के लिए",
+  "adminNameMe": "मैं",
 
-  "unknownUser" : "अज्ञात",
-
+  "unknownUser": "अज्ञात",
   "maxFilesSelected": "अधिकतम पांच(5) फाइलें अपलोड की जा सकती हैं।"
 }

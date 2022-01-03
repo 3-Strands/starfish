@@ -8,6 +8,8 @@ import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/utils/sync_time.dart';
+import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 
 class ActionsScreen extends StatefulWidget {
   ActionsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -76,7 +78,8 @@ class _ActionsScreenState extends State<ActionsScreen>
                         _tabController.length == 2 ? [Me(), MyGroup()] : [Me()],
                     controller: _tabController,
                   ),
-                )
+                ),
+                LastSyncBottomWidget()
               ],
             ),
 

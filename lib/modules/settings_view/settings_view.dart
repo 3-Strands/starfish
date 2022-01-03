@@ -14,17 +14,16 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_last_sync_date_time.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
-import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
+import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
@@ -60,7 +59,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
-  late Box<HiveLastSyncDateTime> _lastSyncDataTimeBox;
 
   String _countyCode = '';
   String _mobileNumber = '';
@@ -76,6 +74,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Map _language;
   late List<DropdownMenuItem<Map>> _dropdownLanguagesItem;
 
+  // List<HiveGroupUser> _groups = [];
+  // List<Map> _groups = [];
+  List<Map<String, dynamic>> _groups =
+      []; //{'id': 0, 'email': '', 'confirm_email': '', , 'is_editing': false};
+
   @override
   void initState() {
     super.initState();
@@ -83,14 +86,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
-    _lastSyncDataTimeBox =
-        Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
 
     _populateAppLanguages(Strings.appLanguageList);
     _getCurrentUser();
     _getAllCountries();
     _getAllLanguages();
     _getGroups();
+    _isUserAdminAtleastInOneGroup();
   }
 
   _populateAppLanguages(List<Map> languages) async {
@@ -127,15 +129,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return items;
   }
 
-  String lastSyncDataTime() {
-    HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
-
-    return DateTimeUtils.formatDate(
-        _lastSyncDateTime.toDateTime(), "dd-MMM-yyyy HH:mm");
-  }
-
   void _getCurrentUser() {
     _user = _currentUserBox.values.first;
+
     setState(() {
       _nameController.text = _user.name;
       _phoneNumberController.text = _user.phone;
@@ -497,16 +493,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Column _myGroupsList() {
-    return Column(
-      children: <Widget>[
-        ..._user.groups.map((item) {
-          return _groupItem(item);
-        }).toList(),
-      ],
-    );
-  }
-
   String getGroupName(String groupId) {
     return _groupList.where((element) => element.id == groupId).first.name ??
         '';
@@ -535,143 +521,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }).whenComplete(() {
       // Broadcast to sync the local changes with the server
     });
-  }
-
-  Container _groupItem(HiveGroupUser group) {
-    final _emailController = TextEditingController();
-    final FocusNode _emailFocus = FocusNode();
-    _emailController.text = getGroupLinkedEmaill(group.groupId!);
-
-    final _confirmEmailController = TextEditingController();
-    final FocusNode _confirmEmailFocus = FocusNode();
-
-    return Container(
-      height: 240.h,
-      // color: Colors.green,
-      margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 25.h,
-            child: Align(
-              alignment: FractionalOffset.topLeft,
-              child: Text(getGroupName(group.groupId!), style: titleTextStyle),
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            height: 45.h,
-            child: Align(
-              alignment: FractionalOffset.topLeft,
-              child: Text(
-                  AppLocalizations.of(context)!.projectAdminEmailSectionTitle,
-                  style: titleTextStyle),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Container(
-            height: 52.h,
-            child: TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (input) => input!.isValidEmail()
-                  ? null
-                  : AppLocalizations.of(context)!.alertInvalidEmaill,
-              controller: _emailController,
-              focusNode: _emailFocus,
-              onFieldSubmitted: (term) {
-                if (term.isValidEmail()) {
-                  _emailController.text = term;
-                } else {
-                  Alerts.showMessageBox(
-                      context: context,
-                      title: AppLocalizations.of(context)!.dialogAlert,
-                      message: AppLocalizations.of(context)!.alertInvalidEmaill,
-                      positiveButtonText: AppLocalizations.of(context)!.ok,
-                      positiveActionCallback: () {});
-                }
-                _emailFocus.unfocus();
-              },
-              keyboardType: TextInputType.emailAddress,
-              style: textFormFieldText,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.emailHint,
-                contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppColors.txtFieldBackground,
-              ),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Container(
-            height: 52.h,
-            child: TextFormField(
-              controller: _confirmEmailController,
-              focusNode: _confirmEmailFocus,
-              onFieldSubmitted: (term) {
-                _confirmEmailController.text = term;
-                if (_emailController.text.isValidEmail() &&
-                    _emailController.text == _confirmEmailController.text) {
-                  Alerts.showMessageBox(
-                      context: context,
-                      title: AppLocalizations.of(context)!.dialogAlert,
-                      message:
-                          AppLocalizations.of(context)!.alertSaveAdminEmail,
-                      negativeButtonText: AppLocalizations.of(context)!.no,
-                      positiveButtonText: AppLocalizations.of(context)!.yes,
-                      negativeActionCallback: () {},
-                      positiveActionCallback: () {
-                        print('yes');
-                        _updateGroupLinkedEmaill(
-                            group.groupId!, _emailController.text);
-                      });
-
-                  _confirmEmailFocus.unfocus();
-                } else {
-                  Alerts.showMessageBox(
-                      context: context,
-                      title: AppLocalizations.of(context)!.dialogAlert,
-                      message:
-                          AppLocalizations.of(context)!.alertEmailDoNotMatch,
-                      positiveButtonText: AppLocalizations.of(context)!.ok,
-                      positiveActionCallback: () {});
-                }
-              },
-              keyboardType: TextInputType.emailAddress,
-              style: textFormFieldText,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.confirmEmailHint,
-                contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppColors.txtFieldBackground,
-              ),
-            ),
-          ),
-          SizedBox(height: 15.h),
-          SepratorLine(
-              hight: .5.h, edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
-        ],
-      ),
-    );
   }
 
   SizedBox _footer() {
@@ -962,7 +811,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               children: [
                                 TextSpan(
-                                  text: lastSyncDataTime(),
+                                  text: SyncTime().lastSyncDataTime(),
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'Roboto',
@@ -975,83 +824,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                       ),
-
                       //--------------------------
 
                       SizedBox(height: 50.h),
-
                       //--> Group admin section
-                      Align(
-                        alignment: FractionalOffset.topLeft,
-                        child: TitleLabel(
-                          title: AppLocalizations.of(context)!.forGroupAdmin,
-                          align: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      SepratorLine(
-                        hight: 1.h,
-                        edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                      ),
-                      SizedBox(height: 20.h),
-                      Container(
-                        height: 44.h,
-                        width: 345.w,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 300.w,
-                              height: 44.h,
-                              child: Text(
-                                AppLocalizations.of(context)!.linkMyGroups,
-                                textAlign: TextAlign.left,
-                                style: titleTextStyle,
-                              ),
-                            ),
-                            Container(
-                              width: 23.w,
-                              child: Center(
-                                child: IconButton(
-                                  icon: (_user.linkGroups == true)
-                                      ? Icon(Icons.check_box)
-                                      : Icon(Icons.check_box_outline_blank),
-                                  color: AppColors.selectedButtonBG,
-                                  onPressed: () {
-                                    setState(() => {
-                                          _user.linkGroups = !_user.linkGroups,
-                                          updateLinkGroupStatus()
-                                        });
-                                  },
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                      _getGroupAdminsSections(),
                       //--------------------------
-
-                      SizedBox(height: 50.h),
-
-                      //--> My groups section
-                      Align(
-                        alignment: FractionalOffset.topLeft,
-                        child: TitleLabel(
-                          title: AppLocalizations.of(context)!.myGroups,
-                          align: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      SepratorLine(
-                        hight: 1.h,
-                        edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                      ),
-
-                      SizedBox(height: 20.h),
-
-                      _myGroupsList(),
-                      //--------------------------
-
-                      SizedBox(height: 10.h),
+                      // SizedBox(height: 10.h),
                     ],
                   ),
                 ),
@@ -1066,6 +845,362 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       bottomNavigationBar: _footer(),
+    );
+  }
+
+  Widget _getGroupAdminsSections() {
+    return (_groups.length > 0) ? _getGroupAdminsListing() : Container();
+  }
+
+  Widget _getGroupAdminsListing() {
+    return Column(
+      children: [
+        Align(
+          alignment: FractionalOffset.topLeft,
+          child: TitleLabel(
+            title: AppLocalizations.of(context)!.forGroupAdmin,
+            align: TextAlign.left,
+          ),
+        ),
+        SizedBox(height: 5.h),
+        SepratorLine(
+          hight: 1.h,
+          edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+        ),
+        SizedBox(height: 20.h),
+        Container(
+          height: 44.h,
+          width: 345.w,
+          child: Row(
+            children: [
+              Container(
+                width: 300.w,
+                height: 44.h,
+                child: Text(
+                  AppLocalizations.of(context)!.linkMyGroups,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+              ),
+              Container(
+                width: 23.w,
+                child: Center(
+                  child: IconButton(
+                    icon: (_user.linkGroups == true)
+                        ? Icon(Icons.check_box)
+                        : Icon(Icons.check_box_outline_blank),
+                    color: AppColors.selectedButtonBG,
+                    onPressed: () {
+                      setState(() => {
+                            _user.linkGroups = !_user.linkGroups,
+                            updateLinkGroupStatus()
+                          });
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        //--------------------------
+
+        SizedBox(height: 50.h),
+
+        //--> My groups section
+        Align(
+          alignment: FractionalOffset.topLeft,
+          child: TitleLabel(
+            title: AppLocalizations.of(context)!.myGroups,
+            align: TextAlign.left,
+          ),
+        ),
+        SizedBox(height: 5.h),
+        SepratorLine(
+          hight: 1.h,
+          edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+        ),
+
+        SizedBox(height: 20.h),
+
+        _myGroupsList(),
+      ],
+    );
+  }
+
+  Column _myGroupsList() {
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: _groups.length,
+          itemBuilder: (context, index) {
+            final item = _groups[index];
+            final _emailController = TextEditingController();
+            final FocusNode _emailFocus = FocusNode();
+            _emailController.text = item['email'];
+
+            final _confirmEmailController = TextEditingController();
+            final FocusNode _confirmEmailFocus = FocusNode();
+            _confirmEmailController.text = item['confirm_email'];
+
+            return Container(
+              height: (item['is_editing'] == false) ? 200.h : 240.h,
+              margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 200.w,
+                        height: 25.h,
+                        child: Align(
+                          alignment: FractionalOffset.topLeft,
+                          child: Text(getGroupName(item['id']),
+                              style: titleTextStyle),
+                        ),
+                      ),
+                      Container(
+                        height: 25.h,
+                        child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _groups[index]['email'] = _emailController.text;
+                              });
+                              if (item['is_editing'] == false) {
+                                setState(() {
+                                  item['is_editing'] = !item['is_editing'];
+                                });
+                              } else {
+                                if (_emailController.text == '') {
+                                  Alerts.showMessageBox(
+                                      context: context,
+                                      title: AppLocalizations.of(context)!
+                                          .dialogAlert,
+                                      message: AppLocalizations.of(context)!
+                                          .emptyEmail,
+                                      positiveButtonText:
+                                          AppLocalizations.of(context)!.ok,
+                                      positiveActionCallback: () {});
+                                } else if (!_emailController.text
+                                    .isValidEmail()) {
+                                  Alerts.showMessageBox(
+                                      context: context,
+                                      title: AppLocalizations.of(context)!
+                                          .dialogAlert,
+                                      message: AppLocalizations.of(context)!
+                                          .alertInvalidEmaill,
+                                      positiveButtonText:
+                                          AppLocalizations.of(context)!.ok,
+                                      positiveActionCallback: () {});
+                                } else if (_emailController.text !=
+                                    _confirmEmailController.text) {
+                                  Alerts.showMessageBox(
+                                      context: context,
+                                      title: AppLocalizations.of(context)!
+                                          .dialogAlert,
+                                      message: AppLocalizations.of(context)!
+                                          .alertEmailDoNotMatch,
+                                      positiveButtonText:
+                                          AppLocalizations.of(context)!.ok,
+                                      positiveActionCallback: () {});
+                                } else {
+                                  if (item['is_editing'] == true) {
+                                    _updateGroupLinkedEmaill(
+                                        _groups[index]['id'],
+                                        _groups[index]['email']);
+                                  }
+                                  setState(() {
+                                    item['is_editing'] = !item['is_editing'];
+                                  });
+                                }
+                              }
+                            },
+                            child: (item['is_editing'] == false)
+                                ? editButton()
+                                : saveButton()),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Container(
+                    height: 45.h,
+                    child: Align(
+                      alignment: FractionalOffset.topLeft,
+                      child: Text(
+                          AppLocalizations.of(context)!
+                              .projectAdminEmailSectionTitle,
+                          style: titleTextStyle),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Container(
+                    height: 52.h,
+                    child: TextFormField(
+                      enabled: item['is_editing'],
+                      controller: _emailController,
+                      focusNode: _emailFocus,
+                      onFieldSubmitted: (term) {
+                        _groups[index]['email'] = term;
+                        _emailController.text = term;
+                        _emailFocus.unfocus();
+                      },
+                      keyboardType: TextInputType.emailAddress,
+                      style: textFormFieldText,
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)!.emailHint,
+                        contentPadding:
+                            EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: AppColors.txtFieldBackground,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Visibility(
+                    visible: item['is_editing'],
+                    child: Container(
+                      height: 52.h,
+                      child: TextFormField(
+                        controller: _confirmEmailController,
+                        focusNode: _confirmEmailFocus,
+                        onFieldSubmitted: (term) {
+                          _confirmEmailController.text = term;
+                          if (_emailController.text.isValidEmail() &&
+                              _emailController.text ==
+                                  _confirmEmailController.text) {
+                            Alerts.showMessageBox(
+                                context: context,
+                                title:
+                                    AppLocalizations.of(context)!.dialogAlert,
+                                message: AppLocalizations.of(context)!
+                                    .alertSaveAdminEmail,
+                                negativeButtonText:
+                                    AppLocalizations.of(context)!.no,
+                                positiveButtonText:
+                                    AppLocalizations.of(context)!.yes,
+                                negativeActionCallback: () {},
+                                positiveActionCallback: () {
+                                  _updateGroupLinkedEmaill(
+                                      item['id'], _emailController.text);
+                                });
+
+                            _confirmEmailFocus.unfocus();
+                          } else {
+                            Alerts.showMessageBox(
+                                context: context,
+                                title:
+                                    AppLocalizations.of(context)!.dialogAlert,
+                                message: AppLocalizations.of(context)!
+                                    .alertEmailDoNotMatch,
+                                positiveButtonText:
+                                    AppLocalizations.of(context)!.ok,
+                                positiveActionCallback: () {});
+                          }
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        style: textFormFieldText,
+                        decoration: InputDecoration(
+                          hintText:
+                              AppLocalizations.of(context)!.confirmEmailHint,
+                          contentPadding:
+                              EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: AppColors.txtFieldBackground,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15.h),
+                  SepratorLine(
+                      hight: .5.h,
+                      edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  _isUserAdminAtleastInOneGroup() {
+    _user.groups.forEach((group) {
+      if (GroupUser_Role.valueOf(group.role!) == GroupUser_Role.ADMIN) {
+        _groups.add({
+          'id': group.groupId!,
+          'email': getGroupLinkedEmaill(group.groupId!),
+          'confirm_email': '',
+          'is_editing': false
+        });
+      }
+    });
+  }
+
+  Container editButton() {
+    return Container(
+      width: 48.w,
+      height: 44.h,
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            Icons.edit,
+            color: Colors.blue,
+            size: 18.sp,
+          ),
+          Text(
+            AppLocalizations.of(context)!.edit,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.blue,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Container saveButton() {
+    return Container(
+      width: 53.w,
+      height: 44.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        color: Colors.blue,
+      ),
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context)!.save,
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
 }
