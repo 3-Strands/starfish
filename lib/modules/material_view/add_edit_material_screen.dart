@@ -756,7 +756,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     for (HiveEdit edit in material.editHistory ?? []) {
       _widgetList.add(HistoryItem(
         edit: edit,
-        type: 'Material',
+        type: AppLocalizations.of(context)!.material,
       ));
     }
 

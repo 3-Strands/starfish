@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/db/hive_edit.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HistoryItem extends StatelessWidget {
   final HiveEdit? edit;
@@ -28,8 +28,8 @@ class HistoryItem extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
-                    ? '$type added by: '
-                    : '$type edited by: ',
+                    ? '$type ${AppLocalizations.of(context)!.addedBy}: '
+                    : '$type ${AppLocalizations.of(context)!.editedBy}: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,
@@ -54,8 +54,8 @@ class HistoryItem extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
-                    ? '$type added on: '
-                    : '$type edited on: ',
+                    ? '$type ${AppLocalizations.of(context)!.addedOn}: '
+                    : '$type ${AppLocalizations.of(context)!.editedOn}: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,

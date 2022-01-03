@@ -568,7 +568,7 @@ class _AddEditActionState extends State<AddEditAction>
     for (HiveEdit edit in action.editHistory ?? []) {
       _widgetList.add(HistoryItem(
         edit: edit,
-        type: "Action",
+        type: AppLocalizations.of(context)!.action,
       ));
     }
 

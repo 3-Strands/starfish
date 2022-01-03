@@ -783,8 +783,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   if (widget.group?.editHistory != null)
                     _editHistoryContainer(widget.group),
-
-                  SizedBox(height: 59.h),
                 ],
               ),
             ),
@@ -855,7 +853,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _widgetList.add(header);
 
     for (HiveEdit edit in group.editHistory ?? []) {
-      _widgetList.add(HistoryItem(edit: edit, type: 'Group'));
+      _widgetList.add(
+          HistoryItem(edit: edit, type: AppLocalizations.of(context)!.group));
     }
 
     return _widgetList;

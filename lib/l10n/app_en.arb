@@ -63,12 +63,15 @@
   "forGroupAdmin": "For Group Admins",
 
   "myGroups": "My Groups",
+  "group": "Group",
+  "action": "Action",
 
   "nameHint": "Full Name",
   "enterName": "Enter Your Name",
   "enterNameDetail":
       "This name will be shown in groups. You can change this later.",
 
+  "material": "Material",
   "materialsTabItemText": "Materials",
   "groupsTabItemText": "Groups",
   "actionsTabItemText": "Actions",
@@ -99,6 +102,11 @@
 
   "addNewMaterial": "Add New Material",
   "addMaterials": "Add Materials",
+
+  "addedBy": "added by",
+  "addedOn": "added on",
+  "editedBy": "edited by",
+  "editedOn": "edited on",
 
   "editMaterial": "Edit Material",
   "dialogInfo": "Info",
