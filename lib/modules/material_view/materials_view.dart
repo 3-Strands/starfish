@@ -651,7 +651,12 @@ class MaterialListItem extends StatelessWidget {
         },
         child: Container(
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-          height: 99,
+          height: (material.isAssignedToGroupWithLeaderRole &&
+                  material.isAssignedToMe)
+              ? 115
+              : (material.isAssignedToMe)
+                  ? 85
+                  : 65,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
