@@ -21,7 +21,6 @@ import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/widgets/title_label_widget.dart';
 
 class Me extends StatefulWidget {
   const Me({Key? key}) : super(key: key);
