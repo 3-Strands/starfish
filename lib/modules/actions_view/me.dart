@@ -681,7 +681,7 @@ class MyActionListItem extends StatelessWidget {
                     width: 10.w,
                   ),
                   Text(
-                    'Due: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 16.sp,
