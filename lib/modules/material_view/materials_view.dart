@@ -101,11 +101,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Container(
-            height: MediaQuery.of(context).size.height * 0.70,
-            child: SingleChildScrollView(
-              child: _buildSlidingUpPanel(material),
-            ),
-          );
+              height: MediaQuery.of(context).size.height * 0.70,
+              child: _buildSlidingUpPanel(material));
         });
       },
     );
@@ -387,239 +384,214 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _buildSlidingUpPanel(HiveMaterial material) {
-    return Container(
-      margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 22.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: 240.w,
-                  child: Text(
-                    '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
-                    overflow: TextOverflow.ellipsis,
+    return Column(
+      children: [
+        Expanded(
+          // height: (MediaQuery.of(context).size.height * 0.75) - 160.h,
+          // margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+          child: Container(
+            margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: 22.h,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: 240.w,
+                          child: Text(
+                            '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: AppColors.txtFieldTextColor,
+                              fontFamily: 'OpenSans',
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        if (material.url != null && material.url!.isNotEmpty)
+                          CustomIconButton(
+                            icon: Icon(
+                              Icons.open_in_new,
+                              color: Colors.blue,
+                              size: 18.sp,
+                            ),
+                            text: AppLocalizations.of(context)!.open,
+                            onButtonTap: () {
+                              GeneralFunctions.openUrl(material.url!);
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  if (material.isAssignedToMe)
+                    TaskStatus(
+                      height: 30.h,
+                      color: getMyTaskStatusColor(material),
+                      label: getMyTaskLabel(context, material),
+                    ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  if (material.isAssignedToGroupWithLeaderRole)
+                    TaskStatus(
+                      height: 30.h,
+                      color: Color(0xFFCBE8FA),
+                      label: AppLocalizations.of(context)!.assignedToGroup,
+                    ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        AppLocalizations.of(context)!.lanugages,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Color(0xFF3475F0),
+                          fontFamily: 'OpenSans',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      CustomIconButton(
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.blue,
+                          size: 18.sp,
+                        ),
+                        text: AppLocalizations.of(context)!.edit,
+                        onButtonTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddEditMaterialScreen(
+                                material: material,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  _buildLanguageList(material),
+                  SizedBox(
+                    height: 47.h,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.topics,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: AppColors.txtFieldTextColor,
+                      color: Color(0xFF3475F0),
                       fontFamily: 'OpenSans',
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                Spacer(),
-                if (material.url != null && material.url!.isNotEmpty)
-                  CustomIconButton(
-                    icon: Icon(
-                      Icons.open_in_new,
-                      color: Colors.blue,
-                      size: 18.sp,
-                    ),
-                    text: AppLocalizations.of(context)!.open,
-                    onButtonTap: () {
-                      GeneralFunctions.openUrl(material.url!);
-                    },
+                  SizedBox(
+                    height: 30.h,
                   ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          /*TaskStatus(
-            height: 30.h,
-            color: AppColors.completeTaskBGColor,
-            label: 'complete',
-            textStyle: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'OpenSans',
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          TaskStatus(
-            height: 30.h,
-            color: AppColors.overdueTaskBGColor,
-            label: 'overdueTaskBGColor',
-          ),*/
-
-          if (material.isAssignedToMe)
-            TaskStatus(
-              height: 30.h,
-              color: getMyTaskStatusColor(material),
-              label: getMyTaskLabel(context, material),
-            ),
-          SizedBox(
-            height: 10.h,
-          ),
-
-          if (material.isAssignedToGroupWithLeaderRole)
-            TaskStatus(
-              height: 30.h,
-              color: Color(0xFFCBE8FA),
-              label: AppLocalizations.of(context)!.assignedToGroup,
-            ),
-          SizedBox(
-            height: 30.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                AppLocalizations.of(context)!.lanugages,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: Color(0xFF3475F0),
-                  fontFamily: 'OpenSans',
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacer(),
-              CustomIconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blue,
-                  size: 18.sp,
-                ),
-                text: AppLocalizations.of(context)!.edit,
-                onButtonTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddEditMaterialScreen(
-                        material: material,
-                      ),
+                  _buildTopicsList(material),
+                  SizedBox(
+                    height: 63.h,
+                  ),
+                  RichText(
+                    text: new TextSpan(
+                      children: [
+                        new TextSpan(
+                          text: AppLocalizations.of(context)!
+                              .inAppropriateMaterial,
+                          style: TextStyle(
+                              color: Color(0xFFF65A4A),
+                              fontSize: 16.sp,
+                              fontStyle: FontStyle.italic),
+                        ),
+                        new TextSpan(
+                          text: AppLocalizations.of(context)!.clickHere,
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationStyle: TextDecorationStyle.solid,
+                              color: Color(0xFFF65A4A),
+                              fontSize: 16.sp,
+                              fontStyle: FontStyle.italic),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ReportMaterialDialogBox(
+                                    material: material,
+                                  );
+                                },
+                              );
+                            },
+                        ),
+                        new TextSpan(
+                          text: AppLocalizations.of(context)!.toReportIt,
+                          style: new TextStyle(
+                              color: Color(0xFFF65A4A),
+                              fontSize: 16.sp,
+                              fontStyle: FontStyle.italic),
+                        ),
+                      ],
                     ),
-                  );
-                },
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                ],
               ),
-            ],
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          _buildLanguageList(material),
-          SizedBox(
-            height: 47.h,
-          ),
-          Text(
-            AppLocalizations.of(context)!.topics,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Color(0xFF3475F0),
-              fontFamily: 'OpenSans',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(
-            height: 30.h,
-          ),
-          _buildTopicsList(material),
-          SizedBox(
-            height: 63.h,
-          ),
-          // TextButton(
-          //   onPressed: () {
-          //     showDialog(
-          //       context: context,
-          //       builder: (BuildContext context) {
-          //         return ReportMaterialDialogBox(
-          //           material: material,
-          //         );
-          //       },
-          //     );
-          //   },
-          //   child:
-          RichText(
-            text: new TextSpan(
-              children: [
-                new TextSpan(
-                  text: AppLocalizations.of(context)!.inAppropriateMaterial,
-                  style: TextStyle(
-                      color: Color(0xFFF65A4A),
-                      fontSize: 16.sp,
-                      fontStyle: FontStyle.italic),
-                ),
-                new TextSpan(
-                  text: AppLocalizations.of(context)!.clickHere,
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationStyle: TextDecorationStyle.solid,
-                      color: Color(0xFFF65A4A),
-                      fontSize: 16.sp,
-                      fontStyle: FontStyle.italic),
-                  recognizer: new TapGestureRecognizer()
-                    ..onTap = () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return ReportMaterialDialogBox(
-                            material: material,
-                          );
-                        },
-                      );
-                    },
-                ),
-                new TextSpan(
-                  text: AppLocalizations.of(context)!.toReportIt,
-                  style: new TextStyle(
-                      color: Color(0xFFF65A4A),
-                      fontSize: 16.sp,
-                      fontStyle: FontStyle.italic),
-                ),
-              ],
-            ),
-          ),
-
-          //   Text(
-          //      AppLocalizations.of(context)!.reportInappropriateMaterial,
-          //     style: TextStyle(
-          //       color: Color(0xFFF65A4A),
-          //       fontFamily: 'OpenSans',
-          //       fontSize: 16.sp,
-          //       fontStyle: FontStyle.italic,
-          //     ),
-          //   ),
-          // ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 37.5.h,
+        ),
+        Container(
+          height: 75.0,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
             color: Color(0xFFEFEFEF),
-            child: ElevatedButton(
-              onPressed: () {
-                //_closeSlidingUpPanelIfOpen();
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.r),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+            child: Container(
+              height: 37.5.h,
+              color: Color(0xFFEFEFEF),
+              child: ElevatedButton(
+                onPressed: () {
+                  //_closeSlidingUpPanelIfOpen();
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40.r),
+                    ),
                   ),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
                 ),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                child: Text(AppLocalizations.of(context)!.close),
               ),
-              child: Text(AppLocalizations.of(context)!.close),
             ),
           ),
-          SizedBox(
-            height: 10.h,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
