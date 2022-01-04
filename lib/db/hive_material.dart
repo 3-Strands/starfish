@@ -129,7 +129,7 @@ class HiveMaterial extends HiveObject {
 extension HiveMaterialExt on HiveMaterial {
   bool get isAssignedToMe {
     bool isAssigned = false;
-    ActionProvider().getAllActions().forEach((action) {
+    ActionProvider().getAllActiveActions().forEach((action) {
       if ((action.materialId != null && action.materialId!.isNotEmpty) &&
           action.isIndividualAction &&
           action.materialId == this.id) {
@@ -142,7 +142,7 @@ extension HiveMaterialExt on HiveMaterial {
 
   bool get isAssignedToGroupWithLeaderRole {
     bool isAssigned = false;
-    ActionProvider().getAllActions().forEach((action) {
+    ActionProvider().getAllActiveActions().forEach((action) {
       if ((action.materialId != null && action.materialId!.isNotEmpty) &&
           !action.isIndividualAction &&
           (action.leaders != null && action.leaders!.length > 0) &&
@@ -158,7 +158,7 @@ extension HiveMaterialExt on HiveMaterial {
     bool statusOverdue = false;
     bool statusNotDone = false;
     bool statusDone = false;
-    ActionProvider().getAllActions().forEach((action) {
+    ActionProvider().getAllActiveActions().forEach((action) {
       if ((action.materialId != null || action.materialId!.isNotEmpty) &&
           action.isIndividualAction &&
           action.materialId == this.id) {

@@ -28,7 +28,7 @@ class ActionRepository {
       dbProvider.getAllActionsForGroup(groupIds);
 
   @Deprecated("Used for Debug")
-  List<HiveAction> fetchAllActions() => dbProvider.getAllActions();
+  List<HiveAction> fetchAllActions() => dbProvider.getAllActiveActions();
 
   List<HiveActionUser> getAllActionsUser() => dbProvider.getAllActionsUser();
 

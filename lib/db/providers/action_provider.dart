@@ -27,9 +27,9 @@ class ActionProvider {
     return _actionBox.values.where((element) => !element.isDirty).toList();
   }
 
-  List<HiveAction> getAllActions() {
+  /*List<HiveAction> getAllActions() {
     return _actionBox.values.toList();
-  }
+  }*/
 
   List<HiveActionUser> getAllActionsUser() {
     return _actionUserBox.values.toList();
