@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
@@ -20,7 +21,7 @@ class MaterialBloc extends Object {
   List<HiveLanguage> selectedLanguages = [];
   List<HiveMaterialTopic> selectedTopics = [];
   String query = '';
-  String actionFilter = '';
+  MaterialFilter actionFilter = MaterialFilter.NO_FILTER_APPLIED;
 
   late BehaviorSubject<List<HiveMaterial>> _materials;
   late BehaviorSubject<FileData> _fileData;
@@ -45,7 +46,7 @@ class MaterialBloc extends Object {
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
-  setActionFilter(String filter) {
+  setActionFilter(MaterialFilter filter) {
     actionFilter = filter;
   }
 
@@ -104,30 +105,36 @@ class MaterialBloc extends Object {
   }
 
   bool _applyMaterialFilter(HiveMaterial _material) {
-    if (actionFilter == '' || actionFilter == 'No filter applied') {
-      return true;
-    } else if (actionFilter == 'Assigned to me and completed') {
-      if (_material.isAssignedToMe &&
-          _material.myActionStatus == ActionStatus.DONE) {
+    /*
+    ASSIGNED_AND_COMPLETED,
+    ASSIGNED_AND_INCOMPLETED,
+    ASSIGNED_TO_GROUP_I_LEAD,
+    NO_FILTER_APPLIED
+    */
+
+    switch (actionFilter) {
+      case MaterialFilter.ASSIGNED_AND_COMPLETED:
+        if (_material.isAssignedToMe &&
+            _material.myActionStatus == ActionStatus.DONE) {
+          return true;
+        } else {
+          return false;
+        }
+      case MaterialFilter.ASSIGNED_AND_INCOMPLETED:
+        if (_material.isAssignedToMe &&
+            _material.myActionStatus == ActionStatus.NOT_DONE) {
+          return true;
+        } else {
+          return false;
+        }
+      case MaterialFilter.ASSIGNED_TO_GROUP_I_LEAD:
+        if (_material.isAssignedToGroupWithLeaderRole) {
+          return true;
+        } else {
+          return false;
+        }
+      default:
         return true;
-      } else {
-        return false;
-      }
-    } else if (actionFilter == 'Assigned to me but incomplete') {
-      if (_material.isAssignedToMe &&
-          _material.myActionStatus == ActionStatus.NOT_DONE) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if (actionFilter == 'Assigned to a group I lead') {
-      if (_material.isAssignedToGroupWithLeaderRole) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
     }
   }
 
