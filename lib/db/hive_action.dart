@@ -177,7 +177,7 @@ extension HiveActionExt on HiveAction {
 
   int memberCountByActionStatus(ActionStatus actionStatus) {
     int i = 0;
-    this.users?.forEach((element) {
+    this.learners?.forEach((element) {
       if (element.actionStatusbyId(this) == actionStatus) {
         i++;
       }
@@ -208,7 +208,7 @@ extension HiveActionExt on HiveAction {
 
     return this.mineAction != null
         ? ActionUser_Status.valueOf(mineAction!.status!)!.convertTo()
-        : ActionStatus.UNSPECIFIED_STATUS;
+        : ActionStatus.NOT_DONE;
   }
 
   HiveActionUser? get mineAction {

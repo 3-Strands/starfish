@@ -27,9 +27,9 @@ class ActionProvider {
     return _actionBox.values.where((element) => !element.isDirty).toList();
   }
 
-  List<HiveAction> getAllActions() {
+  /*List<HiveAction> getAllActions() {
     return _actionBox.values.toList();
-  }
+  }*/
 
   List<HiveActionUser> getAllActionsUser() {
     return _actionUserBox.values.toList();
@@ -58,11 +58,24 @@ class ActionProvider {
     }
   }
 
+  Future<void> deleteAction(HiveAction action) async {
+    int _currentIndex = -1;
+    _actionBox.values.toList().asMap().forEach((key, hiveAction) {
+      if (hiveAction.id == action.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _actionBox.deleteAt(_currentIndex);
+    }
+  }
+
   HiveActionUser? getActionUser(String userId, String actionId) {
     // First check in HiveActionUser box, to check for local changes
     // If not found then check in HiveUser's actions attibute
     HiveActionUser? actionUser = _actionUserBox.values
-        .firstWhereOrNull((element) => element.userId! == userId);
+        .firstWhereOrNull((element) => element.userId! == userId && element.actionId == actionId);
 
     if (actionUser != null) {
       return actionUser;

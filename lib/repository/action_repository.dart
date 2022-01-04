@@ -28,7 +28,7 @@ class ActionRepository {
       dbProvider.getAllActionsForGroup(groupIds);
 
   @Deprecated("Used for Debug")
-  List<HiveAction> fetchAllActions() => dbProvider.getAllActions();
+  List<HiveAction> fetchAllActions() => dbProvider.getAllActiveActions();
 
   List<HiveActionUser> getAllActionsUser() => dbProvider.getAllActionsUser();
 
@@ -37,6 +37,9 @@ class ActionRepository {
 
   Future<void> createUpdateActionInDB(HiveAction action) =>
       dbProvider.createUpdateAction(action);
+
+  Future<void> deleteActionInDB(HiveAction action) =>
+      dbProvider.deleteAction(action);
 
   Future<void> createUpdateActionUserInDB(HiveActionUser actionUser) =>
       dbProvider.createUpdateActionUser(actionUser);

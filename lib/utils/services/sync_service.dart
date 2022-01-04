@@ -733,7 +733,7 @@ class SyncService {
         ActionRepository().deleteAction(_hiveAction.toAction()).then((value) {
           _hiveAction.isDirty = false;
 
-          ActionRepository().createUpdateActionInDB(_hiveAction);
+          ActionRepository().deleteActionInDB(_hiveAction);
         }).onError((error, stackTrace) {
           print('============= Error: ${error.toString()} ===============');
         }).whenComplete(() {

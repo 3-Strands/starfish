@@ -31,8 +31,7 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
         }
         if (widget.actionStatus == ActionStatus.DONE) {
           widget.onTap(ActionStatus.NOT_DONE);
-        } else if (widget.actionStatus == ActionStatus.NOT_DONE ||
-            widget.actionStatus == ActionStatus.UNSPECIFIED_STATUS) {
+        } else if (widget.actionStatus == ActionStatus.NOT_DONE) {
           widget.onTap(ActionStatus.DONE);
         }
       },
@@ -77,7 +76,6 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
         return Color(0xFFFFBE4A);
       case ActionStatus.OVERDUE:
         return Color(0xFFFF5E4D);
-      case ActionStatus.UNSPECIFIED_STATUS:
       default:
         return Colors.white;
     }

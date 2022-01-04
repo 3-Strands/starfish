@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/navigation_service.dart';
 
 enum ActionStatus {
-  UNSPECIFIED_STATUS,
+  //UNSPECIFIED_STATUS,
   DONE,
   NOT_DONE,
   OVERDUE,
@@ -11,9 +11,9 @@ enum ActionStatus {
 
 extension ActionStatusExt on ActionStatus {
   Map<ActionStatus, String> get selfValues => {
-        ActionStatus.UNSPECIFIED_STATUS:
-            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
-                .na,
+        // ActionStatus.UNSPECIFIED_STATUS:
+        //     AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+        //         .na,
         ActionStatus.DONE:
             AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
                 .actionStatusDone,
@@ -33,9 +33,9 @@ extension ActionStatusExt on ActionStatus {
   // };
 
   Map<ActionStatus, String> get groupValues => {
-        ActionStatus.UNSPECIFIED_STATUS:
-            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
-                .na,
+        // ActionStatus.UNSPECIFIED_STATUS:
+        //     AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+        //         .na,
         ActionStatus.DONE:
             AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
                 .groupActionStatusDone,
@@ -66,7 +66,7 @@ extension ActionStatusExt on ActionStatus {
       case ActionStatus.NOT_DONE:
       case ActionStatus.OVERDUE:
         return ActionUser_Status.INCOMPLETE;
-      case ActionStatus.UNSPECIFIED_STATUS:
+      //case ActionStatus.UNSPECIFIED_STATUS:
       default:
         return ActionUser_Status.UNSPECIFIED_STATUS;
     }
