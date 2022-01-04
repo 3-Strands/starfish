@@ -177,7 +177,7 @@ extension HiveActionExt on HiveAction {
 
   int memberCountByActionStatus(ActionStatus actionStatus) {
     int i = 0;
-    this.users?.forEach((element) {
+    this.learners?.forEach((element) {
       if (element.actionStatusbyId(this) == actionStatus) {
         i++;
       }
