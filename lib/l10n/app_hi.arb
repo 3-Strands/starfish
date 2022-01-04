@@ -251,9 +251,13 @@
 
   "reuseActionText": "क्रिया का पुन: उपयोग करें (वैकल्पिक)",
 
+  "na": "प्रयोग नहीं किया",
   "actionStatusDone": "मैंने यह किया है",
   "actionStatusNotDone": "मैंने अभी तक नहीं किया",
   "actionStatusOverdue": "अतिदेय",
+
+  "groupActionStatusDone": "इसे करें",
+  "groupActionStatusNotDone": "नहीं हुआ",
 
   "actionsCompleted": "कार्य पूर्ण",
   "actionsIncompleted": "कार्य अपूर्ण",

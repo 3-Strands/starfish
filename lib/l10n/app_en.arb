@@ -251,9 +251,13 @@
 
   "reuseActionText": "Re-use an Action (optional)",
 
+  "na": "NA",
   "actionStatusDone": "I did it",
   "actionStatusNotDone": "I didn't do it yet",
   "actionStatusOverdue": "Overdue",
+
+  "groupActionStatusDone": "Did it",
+  "groupActionStatusNotDone": "Not done",
 
   "actionsCompleted": "Actions Completed",
   "actionsIncompleted": "Actions incompleted",

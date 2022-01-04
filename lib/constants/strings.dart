@@ -227,23 +227,23 @@ sending an invitation to use Starfish''';
   static const String adminNamePrifix = 'Admin';
 
   /// actions
-  static const String editActionText = 'Edit Action';
-  static const String deleteActionText = 'Delete Action';
-  static const String notSoGoodText = 'Not so Good';
-  static const String goodText = 'Good';
-  static const String howWasThisActionText = 'How was this action?';
-  static const String addActionText = 'Add Action';
-  static const String materialActionPrefix = 'Action: ';
-  static const String materialTitlePrefix = 'Title: ';
-  static const String forMeTabText = 'For Me';
-  static const String forGroupITeachTabText = 'For Groups I Teach';
+  // static const String editActionText = 'Edit Action';
+  // static const String deleteActionText = 'Delete Action';
+  // static const String notSoGoodText = 'Not so Good';
+  // static const String goodText = 'Good';
+  // static const String howWasThisActionText = 'How was this action?';
+  // static const String addActionText = 'Add Action';
+  // static const String materialActionPrefix = 'Action: ';
+  // static const String materialTitlePrefix = 'Title: ';
+  // static const String forMeTabText = 'For Me';
+  // static const String forGroupITeachTabText = 'For Groups I Teach';
 
-  static const List<String> materialActionsList = <String>[
-    'Assigned to me and completed',
-    'Assigned to me but incomplete',
-    'Assigned to a group I lead',
-    'No filter applied',
-  ];
+  // static const List<String> materialActionsList = <String>[
+  //   'Assigned to me and completed',
+  //   'Assigned to me but incomplete',
+  //   'Assigned to a group I lead',
+  //   'No filter applied',
+  // ];
 
   static const List<Map<String, String>> appLanguageList = [
     {'name': 'English', 'code': 'en'},
@@ -258,40 +258,40 @@ sending an invitation to use Starfish''';
   // static const String actionFilterAllTime = "All Time";
 
   // Menu Items
-  static const String makeAdmin = 'Make Admin';
-  static const String makeTeacher = 'Make Teacher';
-  static const String makeRemove = 'Remove';
+  // static const String makeAdmin = 'Make Admin';
+  // static const String makeTeacher = 'Make Teacher';
+  // static const String makeRemove = 'Remove';
 
-  static const String actionTypeTextInstruction =
-      'Follow a set of instructions';
-  static const String actionTypeTextResponse = 'Answer a question';
-  static const String actionTypeMaterialInstruction =
-      'Use a Material (no response)';
-  static const String actionTypeMaterialResponse =
-      'Use and respond to a Material';
-  static const String actionType = 'Fill in some numbers';
+  // static const String actionTypeTextInstruction =
+  //     'Follow a set of instructions';
+  // static const String actionTypeTextResponse = 'Answer a question';
+  // static const String actionTypeMaterialInstruction =
+  //     'Use a Material (no response)';
+  // static const String actionTypeMaterialResponse =
+  //     'Use and respond to a Material';
+  // static const String actionType = 'Fill in some numbers';
 
-  static const String reuseActionText = 'Re-use an Action (optional)';
+  // static const String reuseActionText = 'Re-use an Action (optional)';
 
   // Action Status
-  static const String actionStatusDone = "I did it";
-  static const String actionStatusNotDone = "I didn't do it yet";
-  static const String actionStatusOverdue = "Overdue";
+  // static const String actionStatusDone = "I did it";
+  // static const String actionStatusNotDone = "I didn't do it yet";
+  // static const String actionStatusOverdue = "Overdue";
 
   // Action Status for Group User
-  static const String groupActionStatusDone = "Did it";
-  static const String groupActionStatusNotDone = "Not done";
+  // static const String groupActionStatusDone = "Did it";
+  // static const String groupActionStatusNotDone = "Not done";
 
-  static const String memberDidNotDoItYet = "Members\ndidn't do it yet";
-  static const String memberIsOverdue = "Member is overdue";
-  static const String membersDidIt = "Members\ndid it";
+  // static const String memberDidNotDoItYet = "Members\ndidn't do it yet";
+  // static const String memberIsOverdue = "Member is overdue";
+  // static const String membersDidIt = "Members\ndid it";
 
-  static const String assignedToGroup =
-      "Assigned to group that I teach/co-lead";
-  static const String assignedToMeDone = "Assigned to me and completed";
-  static const String assignedToMeNotDone =
-      "Assigned to me, but not complete yet";
-  static const String assignedToMeOverdue = "Assigned to me and overdue";
+  // static const String assignedToGroup =
+  //     "Assigned to group that I teach/co-lead";
+  // static const String assignedToMeDone = "Assigned to me and completed";
+  // static const String assignedToMeNotDone =
+  //     "Assigned to me, but not complete yet";
+  // static const String assignedToMeOverdue = "Assigned to me and overdue";
 }
 
 extension EmailValidator on String {

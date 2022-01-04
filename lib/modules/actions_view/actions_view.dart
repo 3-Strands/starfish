@@ -82,6 +82,11 @@ class _ActionsScreenState extends State<ActionsScreen>
                 LastSyncBottomWidget()
               ],
             ),
+
+            // TitleLabel(
+            //   title: '',
+            //   align: TextAlign.center,
+            // ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
