@@ -217,9 +217,12 @@
   "groupFilterLearner": "Groups I'm a learner in",
   "groupFilterAdminCoLead": "Groups I teach or co-lead",
 
+  "unspecifiedVisibility": "UNSPECIFIED_VISIBILITY",
+  "creatorView": "CREATOR_VIEW",
   "visibilityGroupView": "Groups I teach or administer",
   "visibilityAllView": "Anyone at all",
 
+  "unspecifiedEditability": "UNSPECIFIED_EDITABILITY",
   "editabilityCreatorEdit": "Only me",
   "editabilityGroupEdit": "Other Teacher of my Groups",
 

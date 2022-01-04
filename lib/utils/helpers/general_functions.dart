@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:starfish/constants/strings.dart';
+// import 'package:starfish/constants/strings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/navigation_service.dart';
 
 class GeneralFunctions {
   static void configLoading() {
@@ -43,9 +44,13 @@ class GeneralFunctions {
     String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = new RegExp(pattern);
     if (value.length == 0) {
-      return Strings.emptyMobileNumbers;
+      return AppLocalizations.of(
+              NavigationService.navigatorKey.currentContext!)!
+          .emptyMobileNumbers;
     } else if (!regExp.hasMatch(value)) {
-      return Strings.invalidMobileNumbers;
+      return AppLocalizations.of(
+              NavigationService.navigatorKey.currentContext!)!
+          .invalidMobileNumbers;
     }
     return '';
   }
@@ -55,9 +60,13 @@ class GeneralFunctions {
     RegExp regExp =
         new RegExp(pattern, caseSensitive: false, unicode: true, dotAll: true);
     if (value.length == 0) {
-      return Strings.emptyFullName;
+      return AppLocalizations.of(
+              NavigationService.navigatorKey.currentContext!)!
+          .emptyFullName;
     } else if (!regExp.hasMatch(value)) {
-      return Strings.invalidFullName;
+      return AppLocalizations.of(
+              NavigationService.navigatorKey.currentContext!)!
+          .invalidFullName;
     }
     return '';
   }

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
+// import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
@@ -16,6 +16,7 @@ import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/navigation_service.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -40,8 +41,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   late Box<HiveCountry> _countryBox;
   late List<HiveCountry> _countryList;
 
-  HiveCountry _selectedCountry =
-      HiveCountry(id: '', name: Strings.selectCountry, diallingCode: '');
+  HiveCountry _selectedCountry = HiveCountry(
+      id: '',
+      name: AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+          .selectCountry,
+      diallingCode: '');
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
