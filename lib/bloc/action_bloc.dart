@@ -159,7 +159,7 @@ class ActionBloc extends Object {
 
   fetchActions() async {
     _actionsToReuse.sink.add(actionRepository.dbProvider
-        .getAllActions()
+        .getAllActiveActions()
         .where((element) => reuseActionQuery.isEmpty
             ? true
             : element.name!
