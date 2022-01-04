@@ -50,7 +50,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   final Key _focusDetectorKey = UniqueKey();
   late AppBloc bloc;
 
-  bool _viewDidDisappear = false;
+  // bool _viewDidDisappear = false;
 
   @override
   void initState() {
@@ -139,16 +139,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       key: _focusDetectorKey,
       onFocusGained: () {
         print('Gained focus');
-        setState(() {
-          _viewDidDisappear = false;
-        });
+        // setState(() {
+        //   _viewDidDisappear = false;
+        // });
         _fetchMaterialData(bloc);
       },
       onFocusLost: () {
         print('Lost focus');
-        setState(() {
-          _viewDidDisappear = true;
-        });
+        // setState(() {
+        //   _viewDidDisappear = true;
+        // });
         /*
         bloc.materialBloc.selectedLanguages.clear();
         _selectLanguage(bloc);
@@ -172,9 +172,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(height: 14.h),
-                        (_viewDidDisappear)
-                            ? Container()
-                            : _buildLanguagesContainer(bloc),
+                        _buildLanguagesContainer(bloc),
                         SizedBox(height: 10.h),
                         _buildTopicsContainer(bloc),
                         SizedBox(height: 10.h),
