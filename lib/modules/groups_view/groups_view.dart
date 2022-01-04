@@ -546,7 +546,7 @@ class GroupListItem extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Text(
-                    "${group.actionsCompleted} Actions Completed",
+                    "${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -565,7 +565,7 @@ class GroupListItem extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Text(
-                    "${group.actionsNotDoneYet} Actions Incomplete",
+                    "${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -584,7 +584,7 @@ class GroupListItem extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Text(
-                    "${group.actionsOverdue} Actions Overdue",
+                    "${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",

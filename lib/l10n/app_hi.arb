@@ -255,6 +255,10 @@
   "actionStatusNotDone": "मैंने अभी तक नहीं किया",
   "actionStatusOverdue": "अतिदेय",
 
+  "actionsCompleted": "कार्य पूर्ण",
+  "actionsIncompleted": "कार्य अपूर्ण",
+  "actionsOverdue": "कार्रवाई अतिदेय",
+
   "delete": "हटाएं",     
   "deleteActionTitle": "कार्रवाई हटाएं?",     
   "deleteActionMessage": "क्या आप वाकई इस समूह के लिए इस कार्रवाई और इसके डेटा को हटाना चाहते हैं?",

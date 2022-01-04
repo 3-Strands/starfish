@@ -254,7 +254,11 @@
   "actionStatusDone": "I did it",
   "actionStatusNotDone": "I didn't do it yet",
   "actionStatusOverdue": "Overdue",
-  
+
+  "actionsCompleted": "Actions Completed",
+  "actionsIncompleted": "Actions incompleted",
+  "actionsOverdue": "Actions Overdue",
+
   "delete": "Delete",
   "deleteActionTitle": "Delete Action?",
   "deleteActionMessage": "Are you sure you want to delete this action and its data for this group?",
