@@ -170,7 +170,7 @@ extension HiveUserExt on HiveUser {
 
   ActionStatus actionStatusbyId(HiveAction action) {
     if (this.actions == null || this.actions?.length == 0) {
-      return ActionStatus.UNSPECIFIED_STATUS;
+      return ActionStatus.NOT_DONE;
     }
     /*HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
         element.actionId! == action.id! && element.userId! == this.id);*/
@@ -181,7 +181,7 @@ extension HiveUserExt on HiveUser {
     if (actionUser != null) {
       ActionStatus? actionStatus = actionUser.status != null
           ? ActionUser_Status.valueOf(actionUser.status!)!.convertTo()
-          : ActionStatus.UNSPECIFIED_STATUS;
+          : ActionStatus.NOT_DONE;
 
       //
       if (actionStatus == ActionStatus.DONE) {

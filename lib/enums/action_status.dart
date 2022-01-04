@@ -2,7 +2,7 @@ import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 enum ActionStatus {
-  UNSPECIFIED_STATUS,
+  //UNSPECIFIED_STATUS,
   DONE,
   NOT_DONE,
   OVERDUE,
@@ -10,14 +10,14 @@ enum ActionStatus {
 
 extension ActionStatusExt on ActionStatus {
   static const selfValues = {
-    ActionStatus.UNSPECIFIED_STATUS: "NA",
+    //ActionStatus.UNSPECIFIED_STATUS: "NA",
     ActionStatus.DONE: Strings.actionStatusDone,
     ActionStatus.NOT_DONE: Strings.actionStatusNotDone,
     ActionStatus.OVERDUE: Strings.actionStatusOverdue,
   };
 
   static const groupValues = {
-    ActionStatus.UNSPECIFIED_STATUS: "NA",
+    //ActionStatus.UNSPECIFIED_STATUS: "NA",
     ActionStatus.DONE: Strings.groupActionStatusDone,
     ActionStatus.NOT_DONE: Strings.groupActionStatusNotDone,
     ActionStatus.OVERDUE: Strings.actionStatusOverdue,
@@ -35,7 +35,7 @@ extension ActionStatusExt on ActionStatus {
       case ActionStatus.NOT_DONE:
       case ActionStatus.OVERDUE:
         return ActionUser_Status.INCOMPLETE;
-      case ActionStatus.UNSPECIFIED_STATUS:
+      //case ActionStatus.UNSPECIFIED_STATUS:
       default:
         return ActionUser_Status.UNSPECIFIED_STATUS;
     }

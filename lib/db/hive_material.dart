@@ -185,7 +185,7 @@ extension HiveMaterialExt on HiveMaterial {
     if (statusOverdue) {
       return ActionStatus.OVERDUE;
     }
-    return ActionStatus.UNSPECIFIED_STATUS;
+    return ActionStatus.NOT_DONE;
   }
 
   List<File>? get localFiles {

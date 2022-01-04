@@ -57,7 +57,6 @@ class UserActionStatusWidget extends StatelessWidget {
         return Color(0xFFFFBE4A);
       case ActionStatus.OVERDUE:
         return Color(0xFFFF5E4D);
-      case ActionStatus.UNSPECIFIED_STATUS:
       default:
         return Colors.white;
     }

@@ -208,7 +208,7 @@ extension HiveActionExt on HiveAction {
 
     return this.mineAction != null
         ? ActionUser_Status.valueOf(mineAction!.status!)!.convertTo()
-        : ActionStatus.UNSPECIFIED_STATUS;
+        : ActionStatus.NOT_DONE;
   }
 
   HiveActionUser? get mineAction {
