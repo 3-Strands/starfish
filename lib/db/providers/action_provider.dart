@@ -23,6 +23,10 @@ class ActionProvider {
     }).toList();
   }
 
+  List<HiveAction> getAllActiveActions() {
+    return _actionBox.values.where((element) => !element.isDirty).toList();
+  }
+
   List<HiveAction> getAllActions() {
     return _actionBox.values.toList();
   }
