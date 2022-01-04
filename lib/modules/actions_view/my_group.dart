@@ -323,13 +323,15 @@ class _MyGroupState extends State<MyGroup> {
           return ListTile(
             title: Row(
               children: [
-                Text(
-                  hiveUser.name ?? '',
-                  style: TextStyle(
-                    color: AppColors.txtFieldTextColor,
-                    fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    hiveUser.name ?? '',
+                    style: TextStyle(
+                      color: AppColors.txtFieldTextColor,
+                      fontFamily: 'OpenSans',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SizedBox(width: 10.w),
