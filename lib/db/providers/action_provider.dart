@@ -75,7 +75,7 @@ class ActionProvider {
     // First check in HiveActionUser box, to check for local changes
     // If not found then check in HiveUser's actions attibute
     HiveActionUser? actionUser = _actionUserBox.values
-        .firstWhereOrNull((element) => element.userId! == userId);
+        .firstWhereOrNull((element) => element.userId! == userId && element.actionId == actionId);
 
     if (actionUser != null) {
       return actionUser;
