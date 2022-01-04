@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/config/app_config.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -21,6 +22,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -396,6 +398,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     List<HiveUser> _newUsers = [];
     _selectedContacts.forEach((element) {
       HiveUser _hiveUser = element.createHiveUser();
+      // set dialing code of the current User
+      _hiveUser.diallingCode = CurrentUserProvider().getUserSync().diallingCode;
       _hiveUser.linkGroups = true;
       _hiveUser.isNew = true;
 
