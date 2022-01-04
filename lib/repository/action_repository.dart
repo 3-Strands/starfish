@@ -38,6 +38,9 @@ class ActionRepository {
   Future<void> createUpdateActionInDB(HiveAction action) =>
       dbProvider.createUpdateAction(action);
 
+  Future<void> deleteActionInDB(HiveAction action) =>
+      dbProvider.deleteAction(action);
+
   Future<void> createUpdateActionUserInDB(HiveActionUser actionUser) =>
       dbProvider.createUpdateActionUser(actionUser);
 

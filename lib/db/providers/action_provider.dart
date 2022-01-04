@@ -58,6 +58,19 @@ class ActionProvider {
     }
   }
 
+  Future<void> deleteAction(HiveAction action) async {
+    int _currentIndex = -1;
+    _actionBox.values.toList().asMap().forEach((key, hiveAction) {
+      if (hiveAction.id == action.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _actionBox.deleteAt(_currentIndex);
+    }
+  }
+
   HiveActionUser? getActionUser(String userId, String actionId) {
     // First check in HiveActionUser box, to check for local changes
     // If not found then check in HiveUser's actions attibute
