@@ -1,5 +1,6 @@
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/navigation_service.dart';
 
 class MaterialEditability {
   final Material_Editability value;
@@ -42,11 +43,23 @@ class MaterialEditability {
 }
 
 extension Material_EditabilityExt on Material_Editability {
-  static const editabilities = {
-    Material_Editability.UNSPECIFIED_EDITABILITY: 'UNSPECIFIED_EDITABILITY',
-    Material_Editability.CREATOR_EDIT: Strings.editabilityCreatorEdit,
-    Material_Editability.GROUP_EDIT: Strings.editabilityGroupEdit,
-  };
+  Map<Material_Editability, String> get editabilities => {
+        Material_Editability.UNSPECIFIED_EDITABILITY:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .unspecifiedEditability,
+        Material_Editability.CREATOR_EDIT:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .editabilityCreatorEdit,
+        Material_Editability.GROUP_EDIT:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .editabilityGroupEdit,
+      };
+
+  // static const editabilities = {
+  //   Material_Editability.UNSPECIFIED_EDITABILITY: 'UNSPECIFIED_EDITABILITY',
+  //   Material_Editability.CREATOR_EDIT: Strings.editabilityCreatorEdit,
+  //   Material_Editability.GROUP_EDIT: Strings.editabilityGroupEdit,
+  // };
 
   //about property returns the custom message
   String get about => editabilities[this]!;

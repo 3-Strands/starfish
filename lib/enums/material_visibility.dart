@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/navigation_service.dart';
 
 class MaterialVisibility {
   final Material_Visibility value;
@@ -47,12 +49,27 @@ class MaterialVisibility {
 }
 
 extension Material_VisibilityExt on Material_Visibility {
-  static const visibilities = {
-    Material_Visibility.UNSPECIFIED_VISIBILITY: 'UNSPECIFIED_VISIBILITY',
-    Material_Visibility.CREATOR_VIEW: 'CREATOR_VIEW',
-    Material_Visibility.GROUP_VIEW: Strings.visibilityGroupView,
-    Material_Visibility.ALL_VIEW: Strings.visibilityAllView,
-  };
+  Map<Material_Visibility, String> get visibilities => {
+        Material_Visibility.UNSPECIFIED_VISIBILITY:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .unspecifiedVisibility,
+        Material_Visibility.CREATOR_VIEW:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .creatorView,
+        Material_Visibility.GROUP_VIEW:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .visibilityGroupView,
+        Material_Visibility.ALL_VIEW:
+            AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+                .visibilityAllView,
+      };
+
+  // static const visibilities = {
+  //   Material_Visibility.UNSPECIFIED_VISIBILITY: 'UNSPECIFIED_VISIBILITY',
+  //   Material_Visibility.CREATOR_VIEW: 'CREATOR_VIEW',
+  //   Material_Visibility.GROUP_VIEW: Strings.visibilityGroupView,
+  //   Material_Visibility.ALL_VIEW: Strings.visibilityAllView,
+  // };
 
   //about property returns the custom message
   String get about => visibilities[this]!;

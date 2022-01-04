@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:starfish/constants/strings.dart';
 
 class Alerts {
   static showMessageBox({
     required BuildContext context,
     String? title,
     String? message,
-    String? negativeButtonText = Strings.no,
-    String? positiveButtonText = Strings.yes,
-    String? neutralButtonText = Strings.ok,
+    String? negativeButtonText,
+    String? positiveButtonText,
+    String? neutralButtonText,
     VoidCallback? negativeActionCallback,
     VoidCallback? positiveActionCallback,
     VoidCallback? callback,

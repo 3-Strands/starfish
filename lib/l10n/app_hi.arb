@@ -217,9 +217,12 @@
   "groupFilterLearner": "समूह मैं एक शिक्षार्थी हूँ",
   "groupFilterAdminCoLead": "जिन समूहों को मैं पढ़ाता हूं या सह-नेतृत्व करता हूं",
 
+  "unspecifiedVisibility": "अनिर्दिष्ट दृश्यता",
+  "creatorView": "निर्माता देखें",
   "visibilityGroupView": "वे समूह जिन्हें मैं पढ़ाता हूं या प्रशासन करता हूं",
   "visibilityAllView": "कोई भी",
 
+  "unspecifiedEditability": "अनिर्दिष्ट संपादन क्षमता",
   "editabilityCreatorEdit": "केवल मैं",
   "editabilityGroupEdit": "मेरे समूह के अन्य शिक्षक",
 
