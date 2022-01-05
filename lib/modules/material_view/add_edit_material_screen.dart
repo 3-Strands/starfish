@@ -126,6 +126,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           ? MaterialEditability.valueOf(widget.material!.editability!)
               .displayName!
           : AppLocalizations.of(context)!.editedBy;
+
+      _visibleTo = MaterialVisibility.valueOf(widget.material!.visibility!);
+      _editableBy = MaterialEditability.valueOf(widget.material!.editability!);
     }
   }
 

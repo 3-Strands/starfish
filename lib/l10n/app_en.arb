@@ -103,10 +103,10 @@
   "addNewMaterial": "Add New Material",
   "addMaterials": "Add Materials",
 
-  "addedBy": "added by",
-  "addedOn": "added on",
-  "editedBy": "edited by",
-  "editedOn": "edited on",
+  "historyAddedBy": "added by",
+  "historyAddedOn": "added on",
+  "historyEditedBy": "edited by",
+  "historyEditedOn": "edited on",
 
   "editMaterial": "Edit Material",
   "dialogInfo": "Info",
