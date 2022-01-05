@@ -228,6 +228,11 @@
 
   "adminNamePrifix": "Admin",
 
+  "unspecifiedRole": "UNSPECIFIED ROLE",
+  "adminRole": "ADMIM",
+  "learnerRole": "LEARNER",
+  "teacherRole": "TEACHER",
+
   "editActionText": "Edit Action",
   "deleteActionText": "Delete Action",
   "notSoGoodText": "Not so Good",

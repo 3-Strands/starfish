@@ -228,6 +228,11 @@
 
   "adminNamePrifix": "व्यवस्थापक",
 
+  "unspecifiedRole": "अनिर्दिष्ट भूमिका",
+  "adminRole": "व्यवस्थापक",
+  "learnerRole": "सिखाने वाला",
+  "teacherRole": "शिक्षक",
+
   "editActionText": "क्रिया संपादित करें",
   "deleteActionText": "कार्रवाई हटाएं",
   "notSoGoodText": "उतना अच्छा नहीं हैं",
