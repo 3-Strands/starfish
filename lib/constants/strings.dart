@@ -4,12 +4,12 @@ class Strings {
     {'name': 'हिन्दी', 'code': 'hi'}
   ];
 
-  // static const String ok = 'OK';
-  // static const String no = 'No';
-  // static const String yes = 'Yes';
+  static const String ok = 'OK';
+  static const String no = 'No';
+  static const String yes = 'Yes';
 
-  // static const String countryCodeHint = '+1';
-  // static const String phoneNumberHint = 'Phone Number';
+// static const String countryCodeHint = '+1';
+// static const String phoneNumberHint = 'Phone Number';
 //   static const String phoneAuthenticationTitle =
 //       'Select Country and enter Phone Number to get One Time Password';
 //   static const String searchLanguagesPlaceholder = 'Search languages';
