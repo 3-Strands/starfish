@@ -31,15 +31,6 @@ class Me extends StatefulWidget {
 }
 
 class _MeState extends State<Me> {
-  /*var _dropdownTitleList = <String>[
-    'This month',
-    'Next month',
-    'Last month',
-    'Last 3 month',
-    'All time'
-  ];
-  late String _choiceText = 'This month';*/
-
   final Key _meFocusDetectorKey = UniqueKey();
 
   Dashboard obj = new Dashboard();
@@ -55,12 +46,9 @@ class _MeState extends State<Me> {
     return FocusDetector(
       key: _meFocusDetectorKey,
       onFocusGained: () {
-        print('Gained focus');
         _getActions(bloc);
       },
-      onFocusLost: () {
-        print('Lost focus');
-      },
+      onFocusLost: () {},
       child: Scrollbar(
         thickness: 5.sp,
         isAlwaysShown: false,
@@ -162,13 +150,6 @@ class _MeState extends State<Me> {
   }
 
   void _onActionSelection(HiveAction action) async {
-    /*HiveActionUser hiveActionUser = new HiveActionUser();
-    hiveActionUser.actionId = action.id!;
-    hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
-
-    final dbProvider = CurrentUserProvider();
-    dbProvider.getUser().then((user) => {hiveActionUser.userId = user.id});*/
-
     HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
 
     HiveActionUser? hiveActionUser = action.mineAction;

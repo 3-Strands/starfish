@@ -13,20 +13,10 @@ import 'grpc_client.dart';
 class ApiProvider {
   StarfishClient? client;
 
-  // ApiProvider() {
-  //   client = GrpcClient().client!;
-  // }
-
   Future getGrpcClient() async {
-    // print("getting client ==>>");
     await Singleton.instance
         .initGprcClient()
         .then((value) => {client = Singleton.instance.client});
-    /*
-    var grpc = GrpcClient();
-    await grpc.init().then((value) => {client = grpc.client});
-    */
-    // print("received client ==>> $client");
   }
 
   Future<AuthenticateResponse> authenticate(
@@ -63,25 +53,9 @@ class ApiProvider {
   }
 
   Future<User> updateCurrentUser(User user, List<String> fieldMaskPaths) async {
-    ActionTab actionTab = ActionTab.ACTIONS_UNSPECIFIED;
-    ResultsTab resultsTab = ResultsTab.RESULTS_UNSPECIFIED;
-
-    /*User user = User(
-        id: id,
-        name: name ?? '',
-        phone: phone ?? '',
-        countryIds: List.from(countryIds!),
-        languageIds: List.from(languageIds!),
-        //linkGroups: linkGroups ?? false,
-        selectedActionsTab: actionTab,
-        selectedResultsTab: resultsTab,
-        phoneCountryId: '',
-        diallingCode: '');*/
-
     var request = UpdateCurrentUserRequest.create();
     request.user = user;
 
-    // var paths = ['name', 'phone', 'countryIds', 'languageIds', 'linkGroups'];
     FieldMask mask = FieldMask(paths: fieldMaskPaths);
 
     request.updateMask = mask;

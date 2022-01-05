@@ -9,7 +9,6 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
-import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -217,12 +216,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
     return FocusDetector(
       key: _groupFocusDetectorKey,
       onFocusGained: () {
-        print('Gained focus');
         _fetchAllGroupsByRole(bloc);
       },
-      onFocusLost: () {
-        print('Lost focus');
-      },
+      onFocusLost: () {},
       child: Scaffold(
         backgroundColor: AppColors.groupScreenBG,
         body: GestureDetector(

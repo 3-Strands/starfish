@@ -45,12 +45,9 @@ class _MyGroupState extends State<MyGroup> {
     return FocusDetector(
       key: _groupActionFocusDetectorKey,
       onFocusGained: () {
-        print('Gained focus');
         _getActions(bloc);
       },
-      onFocusLost: () {
-        print('Lost focus');
-      },
+      onFocusLost: () {},
       child: Scrollbar(
         thickness: 5.sp,
         isAlwaysShown: false,
@@ -124,14 +121,12 @@ class _MyGroupState extends State<MyGroup> {
               SearchBar(
                 initialValue: bloc.actionBloc.query,
                 onValueChanged: (value) {
-                  print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
                     _getActions(bloc);
                   });
                 },
                 onDone: (value) {
-                  print('searched value $value');
                   setState(() {
                     bloc.actionBloc.query = value;
                     _getActions(bloc);
@@ -361,10 +356,6 @@ class _MyGroupState extends State<MyGroup> {
   }
 
   void _onActionSelection(HiveAction action, HiveUser user) {
-    /*HiveActionUser hiveActionUser = new HiveActionUser();
-    hiveActionUser.actionId = action.id!;
-    hiveActionUser.userId = user.id!;*/
-
     HiveActionUser? hiveActionUser = user.actionUser(action);
     if (hiveActionUser == null) {
       hiveActionUser = new HiveActionUser();
@@ -898,7 +889,6 @@ class MyGroupActionListItem extends StatelessWidget {
         positiveButtonText: AppLocalizations.of(context)!.delete,
         negativeButtonText: AppLocalizations.of(context)!.cancel,
         positiveActionCallback: () {
-          print('delete aaction');
           // Mark this action for deletion
           action.isDirty = true;
           bloc.actionBloc.createUpdateAction(action);

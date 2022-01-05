@@ -6,7 +6,6 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -49,8 +48,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   final Key _focusDetectorKey = UniqueKey();
   late AppBloc bloc;
-
-  // bool _viewDidDisappear = false;
 
   @override
   void initState() {
@@ -138,17 +135,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     return FocusDetector(
       key: _focusDetectorKey,
       onFocusGained: () {
-        print('Gained focus');
-        // setState(() {
-        //   _viewDidDisappear = false;
-        // });
         _fetchMaterialData(bloc);
       },
       onFocusLost: () {
-        print('Lost focus');
-        // setState(() {
-        //   _viewDidDisappear = true;
-        // });
+        // clear filters on view disappear
         /*
         bloc.materialBloc.selectedLanguages.clear();
         _selectLanguage(bloc);
@@ -252,67 +242,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             ),
                           ),
                         ),
-                        // Container(
-                        //   height: 60.h,
-                        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                        //   decoration: BoxDecoration(
-                        //     color: AppColors.txtFieldBackground,
-                        //     borderRadius: BorderRadius.all(
-                        //       Radius.circular(10),
-                        //     ),
-                        //   ),
-                        //   child: Center(
-                        //     child: DropdownButtonHideUnderline(
-                        //       child: ButtonTheme(
-                        //         alignedDropdown: true,
-                        //         child: DropdownButton<String>(
-                        //           isExpanded: true,
-                        //           iconSize: 35,
-                        //           style: TextStyle(
-                        //             color: Color(0xFF434141),
-                        //             fontSize: 16.sp,
-                        //             fontFamily: 'OpenSans',
-                        //           ),
-                        //           hint: Text(
-                        //             AppLocalizations.of(context)!
-                        //                     .materialActionPrefix +
-                        //                 _choiceText,
-                        //             maxLines: 2,
-                        //             overflow: TextOverflow.ellipsis,
-                        //             style: TextStyle(
-                        //               color: Color(0xFF434141),
-                        //               fontSize: 16.sp,
-                        //               fontFamily: 'OpenSans',
-                        //             ),
-                        //             textAlign: TextAlign.left,
-                        //           ),
-                        //           onChanged: (String? value) {
-                        //             setState(() {
-                        //               _choiceText = value!;
-                        //               bloc.materialBloc.setActionFilter(value);
-                        //               _fetchMaterialData(bloc);
-                        //             });
-                        //           },
-                        //           items: Strings.materialActionsList
-                        //               .map<DropdownMenuItem<String>>(
-                        //                   (String value) {
-                        //             return DropdownMenuItem<String>(
-                        //               value: value,
-                        //               child: Text(
-                        //                 value,
-                        //                 style: TextStyle(
-                        //                   color: Color(0xFF434141),
-                        //                   fontSize: 14.sp,
-                        //                   fontFamily: 'OpenSans',
-                        //                 ),
-                        //               ),
-                        //             );
-                        //           }).toList(),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                         SizedBox(
                           height: 20.h,
                         ),
@@ -388,7 +317,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
 /*
   _selectLanguage(AppBloc bloc) {
-    print('select language');
     for (var languageId in _user.languageIds) {
       _languageList
           .where((item) => item.id == languageId)
@@ -478,8 +406,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     return Column(
       children: [
         Expanded(
-          // height: (MediaQuery.of(context).size.height * 0.75) - 160.h,
-          // margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
           child: Container(
             margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
             child: SingleChildScrollView(

@@ -36,8 +36,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   bool _isLoading = false;
 
-  late Box<HiveCountry> _countryBox;
-  late Box<HiveLanguage> _languageBox;
   late Box<HiveCurrentUser> _currentUserBox;
 
   late HiveCurrentUser _user;
@@ -45,20 +43,13 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
 
-  late List<HiveCountry> _countryList = [];
-  late List<HiveLanguage> _languageList = [];
-
   @override
   void initState() {
     super.initState();
 
-    _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _getCurrentUser();
-    //_getAllCountries();
-    //_getAllLanguages();
   }
 
   void _getCurrentUser() {
@@ -67,32 +58,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       _nameController.text = _user.name;
     });
   }
-
-/*
-  void _getAllCountries() {
-    _countryList = _countryBox.values.toList();
-    for (HiveCountry _country in _countryList) {
-      print("Country: ${_country.name}");
-    }
-
-    for (var countryId in _user.countryIds) {
-      _countryList
-          .where((item) => item.id == countryId)
-          .forEach((item) => {_selectedCountries.add(item)});
-    }
-
-    //_getAllLanguages();
-  }
-
-  void _getAllLanguages() {
-    _languageList = _languageBox.values.toList();
-    for (var languageId in _user.languageIds) {
-      _languageList
-          .where((item) => item.id == languageId)
-          .forEach((item) => {_selectedLanguages.add(item)});
-    }
-  }
-*/
 
   _updateUserCountries() async {
     setState(() {
@@ -113,7 +78,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then((value) async => {
               await SyncService().syncLanguages(),
-              //_getAllLanguages(),
               setState(() => _isLoading = false),
               _user.countryIds = value.countryIds,
               _currentUserBox.putAt(0, _user),
@@ -161,12 +125,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               _user.name = value.name,
               _user.languageIds = value.languageIds,
               _currentUserBox.putAt(0, _user),
-              // StarfishSharedPreference().setLoginStatus(true),
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
             })
         .whenComplete(() => {
-              // StarfishSharedPreference().setLoginStatus(true),
               Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.dashboard, (Route<dynamic> route) => false)
             });
@@ -241,7 +203,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                                 dataSourceType: DataSourceType.countries,
                                 onDoneClicked: <T>(countries) {
                                   setState(() {
-                                    // _selectedCountries = countries as List<HiveCountry>;
                                     _selectedCountries = List<HiveCountry>.from(
                                         countries as List<dynamic>);
                                     _updateUserCountries();
@@ -287,10 +248,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                                 type: SelectType.multiple,
                                 dataSourceType: DataSourceType.languages,
                                 onDoneClicked: <T>(languages) {
-                                  // setState(() {
-                                  //   _selectedLanguages =
-                                  //       languages as List<HiveLanguage>;
-                                  // });
                                   setState(() {
                                     _selectedLanguages =
                                         List<HiveLanguage>.from(

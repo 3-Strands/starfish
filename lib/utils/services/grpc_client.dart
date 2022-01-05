@@ -12,7 +12,6 @@ class Singleton {
 
   Future initGprcClient() async {
     String token = await StarfishSharedPreference().getAccessToken();
-    print('token ==>> $token');
 
     Map<String, String>? metadata;
     if (token.isEmpty) {
@@ -32,12 +31,7 @@ class Singleton {
         transportSecure: true);
     client = StarfishClient(
       channel,
-      options: CallOptions(
-          // metadata: {
-          //   'authorization': '9873572747',
-          //   'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
-          // },
-          metadata: metadata),
+      options: CallOptions(metadata: metadata),
     );
   }
 }

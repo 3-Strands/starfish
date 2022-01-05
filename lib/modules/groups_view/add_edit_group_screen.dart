@@ -3,6 +3,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgets;
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,7 +11,6 @@ import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
-import 'package:starfish/config/app_config.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -70,11 +70,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<HiveEvaluationCategory> _selectedEvaluationCategories = [];
   List<InviteContact> _selectedContacts = [];
   List<String> _unInvitedPersonNames = [];
-  //List<InviteContact> _contactList = [];
-  List<InviteContact> _filteredContactList = [];
 
   late Box<HiveLanguage> _languageBox;
-  //late Box<HiveGroup> _groupBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
   late Box<HiveUser> _userBox;
 
@@ -87,7 +84,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   void initState() {
     super.initState();
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    //_groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
 
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
@@ -194,9 +190,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   sendSms(String message, List<String> phoneNumbers) async {
     String _result = await sendSMS(message: message, recipients: phoneNumbers)
         .catchError((onError) {
-      print('Send SMS Error');
+      debugPrint('Send SMS Error');
     });
-    print('Send SMS Result: $_result');
   }
 
   Widget _buildSlidingUpPanel() {
@@ -256,13 +251,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         // Add only contacts having atleast one phone numbers added
         if (contact.phones != null && contact.phones!.length > 0) {
           _contactList.add(InviteContact(contact: contact));
-          // _filteredContactList.add(InviteContact(contact: contact));
         }
       });
       _contactsNotifier.value = _contactList;
     });
-
-    //return _filteredContactList ?;
   }
 
   _showContactList() {
@@ -335,8 +327,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            // _filteredContactList.clear();
-                            // _loadContacts();
                             Navigator.pop(context);
                           },
                           child: Text(AppLocalizations.of(context)!.cancel),
@@ -346,7 +336,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            //_createUserAndSendInvite(_selectedContacts);
                             _query = '';
                             Navigator.of(context).pop();
                           },
@@ -365,7 +354,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         });
       },
     ).whenComplete(() {
-      print('Hey there, I\'m calling after hide bottomSheet');
       _query = '';
       FocusScope.of(context).requestFocus(new FocusNode());
     });
@@ -432,7 +420,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _currentUser.groups.add(_hiveGroupUser);
       CurrentUserRepository().dbProvider.updateUser(_currentUser);
     }
-    //_newUsers.forEach((HiveUser user) async {
     await Future.forEach(_newUsers, (HiveUser user) async {
       try {
         await UserRepository().createUpdateUserInDB(user);
@@ -473,17 +460,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         .map((HiveEvaluationCategory category) => category.id!)
         .toList();
 
-    bloc.groupBloc
-        .addEditGroup(_hiveGroup)
-        .then((value) => print('record(s) saved.'))
-        .onError((error, stackTrace) {
-      print('Error: ${error.toString()}.');
-      StarfishSnackbar.showErrorMessage(
-          context,
-          _isEditMode
-              ? AppLocalizations.of(context)!.updateGroupFailed
-              : AppLocalizations.of(context)!.createGroupSuccess);
-    }).whenComplete(() {
+    bloc.groupBloc.addEditGroup(_hiveGroup).then((value) {
       // Broadcast to sync the local changes with the server
       FBroadcast.instance().broadcast(
         SyncService.kUpdateUsers,
@@ -493,6 +470,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         SyncService.kUpdateGroup,
         value: _hiveGroup,
       );
+
       Alerts.showMessageBox(
           context: context,
           title: AppLocalizations.of(context)!.dialogInfo,
@@ -502,7 +480,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           callback: () {
             Navigator.of(context).pop();
           });
-    });
+    }).onError((error, stackTrace) {
+      StarfishSnackbar.showErrorMessage(
+          context,
+          _isEditMode
+              ? AppLocalizations.of(context)!.updateGroupFailed
+              : AppLocalizations.of(context)!.createGroupSuccess);
+    }).whenComplete(() {});
   }
 
   @override
@@ -628,9 +612,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         setState(() {
                           _selectedLanguages = List<HiveLanguage>.from(
                               languages as List<dynamic>);
-
-                          // _selectedLanguages = languages as List<HiveLanguage>;
-                          // print("Selected languages ==>> $_selectedLanguages");
                         });
                       },
                     ),
@@ -659,10 +640,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             _selectedEvaluationCategories =
                                 List<HiveEvaluationCategory>.from(
                                     categories as List<dynamic>);
-
-                            // _selectedEvaluationCategories =
-                            //     categories as List<HiveEvaluationCategory>;
-                            // print("Selected types ==>> $types");
                           });
                         },
                         maxSelectItemLimit: 3),
@@ -692,7 +669,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       height: 50.h,
                       child: ElevatedButton(
                         onPressed: () {
-                          print('Show Contact List');
                           _checkPermissionsAndShowContact();
                         },
                         child: Text(

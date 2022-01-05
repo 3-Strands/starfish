@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
-// import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
@@ -54,8 +53,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     super.initState();
 
     _isPhoneNumberEmpty = false;
-    // _countryCodeController.text = '+91';
-    // _phoneNumberController.text = '7123123456';
 
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
 
@@ -92,7 +89,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       SizedBox(height: 50.h),
                       TitleLabel(
                         title: AppLocalizations.of(context)!
-                            .phoneAuthenticationTitle, // Strings.selectCountry
+                            .phoneAuthenticationTitle,
                         align: TextAlign.center,
                       ),
                       SizedBox(height: 30.h),
@@ -302,13 +299,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   _authenticateOnDevice(String dialingCode, String phoneNumber) async {
     final String phoneNumberWithDialingCode = dialingCode + phoneNumber;
     await auth.verifyPhoneNumber(
-      phoneNumber: phoneNumberWithDialingCode, // '+91 712 312 3456',
+      phoneNumber: phoneNumberWithDialingCode,
       verificationCompleted: (PhoneAuthCredential credential) {
         setState(() {
           _isLoading = false;
         });
-
-        debugPrint('credential ==>> $credential');
       },
       verificationFailed: (FirebaseAuthException e) {
         setState(() {
@@ -338,7 +333,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       timeout: Duration(seconds: 60),
       codeAutoRetrievalTimeout: (String verificationId) {
         // Auto-resolution timed out...
-        print('codeAutoRetrievalTimeout ==>> $verificationId');
       },
     );
   }
@@ -347,7 +341,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     await auth
         .signInWithPhoneNumber(dialingCode + phoneNumber)
         .then((confirmationResult) => {
-              print('confirmationResult'),
               setState(() {
                 _isLoading = false;
               }),

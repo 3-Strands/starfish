@@ -8,12 +8,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/material_bloc.dart';
-import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -31,7 +27,6 @@ import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
@@ -40,7 +35,6 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
@@ -708,14 +702,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     }
     bloc.materialBloc
         .createUpdateMaterial(_hiveMaterial, files: _files)
-        .then((value) => debugPrint('record(s) saved.'))
-        .onError((error, stackTrace) {
-      StarfishSnackbar.showErrorMessage(
-          context,
-          _isEditMode
-              ? AppLocalizations.of(context)!.updateMaterialFailed
-              : AppLocalizations.of(context)!.addMaterialFailed);
-    }).whenComplete(() {
+        .then((value) {
       // Broadcast to sync the local changes with the server
       FBroadcast.instance().broadcast(
         SyncService.kUpdateMaterial,
@@ -730,7 +717,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           callback: () {
             Navigator.of(context).pop();
           });
-    });
+    }).onError((error, stackTrace) {
+      StarfishSnackbar.showErrorMessage(
+          context,
+          _isEditMode
+              ? AppLocalizations.of(context)!.updateMaterialFailed
+              : AppLocalizations.of(context)!.addMaterialFailed);
+    }).whenComplete(() {});
   }
 
   Widget _editHistoryContainer(HiveMaterial? material) {
@@ -873,12 +866,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     );
   }
 
-  Future<File> _copyFileToDownloads(File _sourceFile) async {
+  /*Future<File> _copyFileToDownloads(File _sourceFile) async {
     Directory? _destination = await getDownloadsDirectory();
     String _destinationPath =
         _destination!.path + _sourceFile.path.split("/").last;
     return _sourceFile.copy(_destinationPath);
-  }
+  }*/
 
   _dismissFieldFocus() {
     FocusScopeNode currentFocus = FocusScope.of(context);

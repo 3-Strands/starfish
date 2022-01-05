@@ -1,4 +1,5 @@
 import 'package:cron/cron.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,7 +8,6 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -50,22 +50,22 @@ class _DashboardState extends State<Dashboard> {
     // Sync every 15 mins
     // TODO: Check Connectivity before starting sync
     cron.schedule(Schedule.parse('*/15 * * * *'), () async {
-      print('================ START SYNC =====================');
+      debugPrint('================ START SYNC =====================');
       SyncService().syncAll();
     });
     FBroadcast.instance().register(SyncService.kUpdateMaterial,
         (hiveMaterial, __) {
-      print('Boradcast Receiver: kUpdateMaterial');
+      debugPrint('Boradcast Receiver: kUpdateMaterial');
       MaterialRepository().createUpdateMaterial(
           material: hiveMaterial, fieldMaskPaths: kMaterialFieldMask);
     }, more: {
       SyncService.kUpdateGroup: (hiveGroup, __) {
-        print('Boradcast Receiver: kUpdateGroup');
+        debugPrint('Boradcast Receiver: kUpdateGroup');
         GroupRepository().createUpdateGroup(
             group: hiveGroup, fieldMaskPaths: kGroupFieldMask);
       },
       SyncService.kUpdateUsers: (hiveUsers, __) {
-        print('Boradcast Receiver: kUpdateUsers');
+        debugPrint('Boradcast Receiver: kUpdateUsers');
 
         (hiveUsers as List<User>).forEach(
             (user) => UserRepository().createUpdateUsers(user, kUserFieldMask));
@@ -113,7 +113,6 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // decoration: BoxDecoration(color: const Color(0xff000000)),
       child: Stack(
         children: <Widget>[
           Scaffold(
@@ -154,7 +153,6 @@ class _DashboardState extends State<Dashboard> {
                       : AppColors.actionScreenBG,
               elevation: 0.0,
             ),
-            // body: _widgetOptions[_selectedIndex],
             body: PageView(
               children: _widgetOptions,
               onPageChanged: onPageChanged,
@@ -209,7 +207,7 @@ class _DashboardState extends State<Dashboard> {
           title = AppLocalizations.of(context)!.actionsTabItemText;
           break;
         default:
-        // title = "Results";
+          title = '';
       }
     });
   }

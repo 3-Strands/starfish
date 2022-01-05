@@ -62,8 +62,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   void initState() {
-    // _smsCode = '+91';
-
     _title = widget.title;
     _dialingCode = widget.dialingCode;
     _phoneNumber = widget.phoneNumber;
@@ -170,7 +168,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   Container _pinCodeContiner() {
     return Container(
       height: 48.h,
-      padding: EdgeInsets.only(left: 15.0.w, right: 15.w), //all(19.0),
+      padding: EdgeInsets.only(left: 15.0.w, right: 15.w),
       child: PinCodeTextField(
         appContext: context,
         pastedTextStyle: TextStyle(
@@ -213,9 +211,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   _resentOTPOnPhone() async {
     await auth.verifyPhoneNumber(
       phoneNumber: _dialingCode + _phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) {
-        debugPrint('credential ==>> $credential');
-      },
+      verificationCompleted: (PhoneAuthCredential credential) {},
       verificationFailed: (FirebaseAuthException e) {},
       codeSent: (String verificationId, int? resendToken) async {
         _verificationId = verificationId;
@@ -226,9 +222,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       },
       forceResendingToken: _resendToken,
       timeout: Duration(seconds: 60),
-      codeAutoRetrievalTimeout: (String verificationId) {
-        print('codeAutoRetrievalTimeout ==>> $verificationId');
-      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
     );
   }
 
@@ -379,26 +373,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   void _getUserInfo(UserCredential credential) {
-    // debugPrint('user =>>, ${credential.user}');
-    // debugPrint('uid =>>, ${credential.user!.uid}');
-    // debugPrint('user name =>>, ${credential.user!.displayName}');
-
     credential.user!.getIdToken(true).then((jwtToken) =>
         {_sendDataAtServer(jwtToken, credential.user!.phoneNumber)});
   }
 
   Future<void> _sendDataAtServer(String jwtToken, String? userName) async {
-    debugPrint('user token=>>, $jwtToken');
-
     final CurrentUserRepository _currentUserRepository =
         CurrentUserRepository();
-    /*AuthenticateResponse _currentUser = await _currentUserRepository.apiProvider
-        .authenticate(jwtToken, userName ?? '');
-    if (_currentUser.userToken.isNotEmpty) {
-      StarfishSharedPreference().setLoginStatus(true);
-      StarfishSharedPreference().setAccessToken(_phoneNumber);
-      Navigator.of(context).pushNamed(Routes.showProfile);
-    }*/
     _currentUserRepository.apiProvider
         .authenticate(jwtToken, userName ?? '')
         .then((AuthenticateResponse _currentUser) async {

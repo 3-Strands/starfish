@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/constants/text_styles.dart';
 
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class TitleLabel extends StatelessWidget {
   final String title;
   final TextAlign align;

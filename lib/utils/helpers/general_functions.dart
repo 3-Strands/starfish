@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-// import 'package:starfish/constants/strings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/navigation_service.dart';
@@ -36,7 +36,7 @@ class GeneralFunctions {
     if (urlLaunchable) {
       await launch(url); //launch is from url_launcher package to launch URL
     } else {
-      print("URL can't be launched.");
+      debugPrint("URL can't be launched.");
     }
   }
 

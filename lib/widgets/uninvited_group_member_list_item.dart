@@ -7,8 +7,6 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -131,9 +129,7 @@ class _UnInvitedGroupMemberListItemState
                       child: TextFormField(
                         controller: _dialingCodeController,
                         keyboardType: TextInputType.phone,
-                        //style: textFormFieldText,
                         decoration: InputDecoration(
-                          //hintText: '', // AppLocalizations.of(context)!.countryCodeHint,
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                           border: OutlineInputBorder(
@@ -167,7 +163,6 @@ class _UnInvitedGroupMemberListItemState
                       child: TextFormField(
                         controller: _phoneNumberController,
                         keyboardType: TextInputType.phone,
-                        //style: textFormFieldText,
                         decoration: InputDecoration(
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),

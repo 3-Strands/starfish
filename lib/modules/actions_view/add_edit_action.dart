@@ -1,5 +1,6 @@
 import 'dart:async';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -324,7 +325,6 @@ class _AddEditActionState extends State<AddEditAction>
 
   _receivedReuseActionBtnResponse(HiveAction action) {
     setState(() {
-      print("_actionToBeReused ==>> $_actionToBeReused");
       _actionToBeReused = action;
       _instructions = _actionToBeReused!.instructions;
       _question = _actionToBeReused!.question;
@@ -464,25 +464,21 @@ class _AddEditActionState extends State<AddEditAction>
     } else {
       return ActionTypeSelector(
         onActionTypeChange: (Action_Type? value) {
-          debugPrint('ActionTypeSelector[ActionType]: $value');
           setState(() {
             _selectedActionType = value;
           });
         },
         onInstructionsChange: (String? value) {
-          debugPrint('ActionTypeSelector[Instructions]: $value');
           setState(() {
             _instructions = value;
           });
         },
         onQuestionChange: (String? value) {
-          debugPrint('ActionTypeSelector[Question]: $value');
           setState(() {
             _question = value;
           });
         },
         onMaterialChange: (HiveMaterial? material) {
-          debugPrint('ActionTypeSelector[material]: $material');
           setState(() {
             _selectedMaterial = material;
           });
@@ -645,22 +641,18 @@ class _AddEditActionState extends State<AddEditAction>
     _hiveAction.dateDue =
         _dueDate != null ? DateTimeUtils.toHiveDate(_dueDate!) : null;
 
-    bloc.actionBloc
-        .createUpdateAction(_hiveAction)
-        .then((value) => print('record(s) saved.'))
-        .onError((error, stackTrace) {
-      print('Error: ${error.toString()}.');
-      StarfishSnackbar.showErrorMessage(
-          context,
-          _isEditMode
-              ? AppLocalizations.of(context)!.updateActionFailed
-              : AppLocalizations.of(context)!.createActionSuccess);
-    }).whenComplete(() {
+    bloc.actionBloc.createUpdateAction(_hiveAction).then((value) {
       // Broadcast to sync the local changes with the server
       FBroadcast.instance().broadcast(
         SyncService.kUpdateActions,
         value: _hiveAction,
       );
-    });
+    }).onError((error, stackTrace) {
+      StarfishSnackbar.showErrorMessage(
+          context,
+          _isEditMode
+              ? AppLocalizations.of(context)!.updateActionFailed
+              : AppLocalizations.of(context)!.createActionSuccess);
+    }).whenComplete(() {});
   }
 }

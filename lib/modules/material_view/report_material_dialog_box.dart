@@ -175,24 +175,19 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       _materialFeedback.reporterId = _user.id;
                       _materialFeedback.report = _reportTextController.text;
                       _materialFeedback.materialId = widget.material.id!;
-                      _materialFeedbackBox
-                          .add(_materialFeedback)
-                          .then(
-                              (value) => debugPrint('$value record(s) saved.'))
-                          .onError((error, stackTrace) =>
-                              debugPrint('$error record(s) saved.'))
-                          .whenComplete(() => {
-                                Alerts.showMessageBox(
-                                  context: context,
-                                  title:
-                                      AppLocalizations.of(context)!.dialogInfo,
-                                  message: AppLocalizations.of(context)!
-                                      .addMaterialFeedbackSuccess,
-                                  callback: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              });
+                      _materialFeedbackBox.add(_materialFeedback).then((value) {
+                        Alerts.showMessageBox(
+                          context: context,
+                          title: AppLocalizations.of(context)!.dialogInfo,
+                          message: AppLocalizations.of(context)!
+                              .addMaterialFeedbackSuccess,
+                          callback: () {
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      }).onError((error, stackTrace) {
+                        debugPrint('$error record(s) saved.');
+                      }).whenComplete((() {}));
                     },
                     child: Text(
                       AppLocalizations.of(context)!.sendFeedback,

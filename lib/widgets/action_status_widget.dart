@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 
 class ActionStatusWidget extends StatefulWidget {
   final ActionStatus actionStatus;

@@ -74,10 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Map _language;
   late List<DropdownMenuItem<Map>> _dropdownLanguagesItem;
 
-  // List<HiveGroupUser> _groups = [];
-  // List<Map> _groups = [];
-  List<Map<String, dynamic>> _groups =
-      []; //{'id': 0, 'email': '', 'confirm_email': '', , 'is_editing': false};
+  List<Map<String, dynamic>> _groups = [];
 
   @override
   void initState() {
@@ -170,7 +167,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return StarfishSnackbar.showErrorMessage(context, validationMsg);
     }
 
-    // true
     if (_nameController.text.isEmpty) {
       setState(() => {_nameController.text = _userName});
       return StarfishSnackbar.showErrorMessage(
@@ -758,10 +754,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 type: SelectType.multiple,
                                 dataSourceType: DataSourceType.languages,
                                 onDoneClicked: <T>(languages) {
-                                  // setState(() {
-                                  //   _selectedLanguages =
-                                  //       languages as List<HiveLanguage>;
-                                  // });
                                   setState(() {
                                     _selectedLanguages =
                                         List<HiveLanguage>.from(

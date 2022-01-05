@@ -72,7 +72,6 @@ class _SelectActionsState extends State<SelectActions>
                             Navigator.pop(context);
                           },
                           child: Card(
-                            // color: Colors.lightBlue,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
