@@ -154,11 +154,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   void _handleInvalidPermissions(PermissionStatus permissionStatus) {
     if (permissionStatus == PermissionStatus.denied) {
-      final snackBar = SnackBar(content: Text('Access to contact data denied'));
+      final snackBar = SnackBar(
+          content: Text(AppLocalizations.of(context)!.contactAccessDenied));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
-      final snackBar =
-          SnackBar(content: Text('Contact data not available on device'));
+      final snackBar = SnackBar(
+          content: Text(AppLocalizations.of(context)!.contactDataNotAvailable));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

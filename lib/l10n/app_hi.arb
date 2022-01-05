@@ -233,6 +233,9 @@
   "learnerRole": "सिखाने वाला",
   "teacherRole": "शिक्षक",
 
+  "contactAccessDenied": "संपर्क डेटा तक पहुंच अस्वीकृत",
+  "contactDataNotAvailable": "संपर्क डेटा डिवाइस पर उपलब्ध नहीं है",
+
   "editActionText": "क्रिया संपादित करें",
   "deleteActionText": "कार्रवाई हटाएं",
   "notSoGoodText": "उतना अच्छा नहीं हैं",

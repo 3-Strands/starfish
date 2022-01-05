@@ -233,6 +233,9 @@
   "learnerRole": "LEARNER",
   "teacherRole": "TEACHER",
 
+  "contactAccessDenied": "Access to contact data denied",
+  "contactDataNotAvailable": "Contact data not available on device",
+
   "editActionText": "Edit Action",
   "deleteActionText": "Delete Action",
   "notSoGoodText": "Not so Good",
