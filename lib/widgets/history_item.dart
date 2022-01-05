@@ -28,8 +28,8 @@ class HistoryItem extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
-                    ? '$type ${AppLocalizations.of(context)!.addedBy}: '
-                    : '$type ${AppLocalizations.of(context)!.editedBy}: ',
+                    ? '$type ${AppLocalizations.of(context)!.historyAddedBy}: '
+                    : '$type ${AppLocalizations.of(context)!.historyEditedBy}: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,
@@ -54,8 +54,8 @@ class HistoryItem extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
-                    ? '$type ${AppLocalizations.of(context)!.addedOn}: '
-                    : '$type ${AppLocalizations.of(context)!.editedOn}: ',
+                    ? '$type ${AppLocalizations.of(context)!.historyAddedOn}: '
+                    : '$type ${AppLocalizations.of(context)!.historyEditedOn}: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 18.sp,

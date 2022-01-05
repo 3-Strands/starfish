@@ -102,10 +102,10 @@
   "addNewMaterial": "नई सामग्री जोड़ें",
   "addMaterials": "सामग्री जोड़ें",
 
-  "addedBy": "द्वारा जोड़ा",
-  "addedOn": "पर जोड़ा",
-  "editedBy": "द्वारा संपादित",
-  "editedOn": "पर संपादित",
+  "historyAddedBy": "द्वारा जोड़ा",
+  "historyAddedOn": "पर जोड़ा",
+  "historyEditedBy": "द्वारा संपादित",
+  "historyEditedOn": "पर संपादित",
 
   "editMaterial": "सामग्री संपादित करें",
   "dialogInfo": "जानकारी",
@@ -227,6 +227,14 @@
   "editabilityGroupEdit": "मेरे समूह के अन्य शिक्षक",
 
   "adminNamePrifix": "व्यवस्थापक",
+
+  "unspecifiedRole": "अनिर्दिष्ट भूमिका",
+  "adminRole": "व्यवस्थापक",
+  "learnerRole": "सिखाने वाला",
+  "teacherRole": "शिक्षक",
+
+  "contactAccessDenied": "संपर्क डेटा तक पहुंच अस्वीकृत",
+  "contactDataNotAvailable": "संपर्क डेटा डिवाइस पर उपलब्ध नहीं है",
 
   "editActionText": "क्रिया संपादित करें",
   "deleteActionText": "कार्रवाई हटाएं",

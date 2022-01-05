@@ -6,6 +6,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/enums/group_user_role.dart';
 
 class GroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
@@ -77,7 +78,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                     borderRadius: BorderRadius.circular(12.sp),
                   ),
                   child: Text(
-                    '${GroupUser_Role.valueOf(widget.groupUser.role!)!.name}',
+                    // 'yes',
+                    '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
                       fontSize: 16.sp,

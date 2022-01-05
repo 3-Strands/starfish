@@ -103,10 +103,10 @@
   "addNewMaterial": "Add New Material",
   "addMaterials": "Add Materials",
 
-  "addedBy": "added by",
-  "addedOn": "added on",
-  "editedBy": "edited by",
-  "editedOn": "edited on",
+  "historyAddedBy": "added by",
+  "historyAddedOn": "added on",
+  "historyEditedBy": "edited by",
+  "historyEditedOn": "edited on",
 
   "editMaterial": "Edit Material",
   "dialogInfo": "Info",
@@ -227,6 +227,14 @@
   "editabilityGroupEdit": "Other Teacher of my Groups",
 
   "adminNamePrifix": "Admin",
+
+  "unspecifiedRole": "UNSPECIFIED ROLE",
+  "adminRole": "ADMIM",
+  "learnerRole": "LEARNER",
+  "teacherRole": "TEACHER",
+
+  "contactAccessDenied": "Access to contact data denied",
+  "contactDataNotAvailable": "Contact data not available on device",
 
   "editActionText": "Edit Action",
   "deleteActionText": "Delete Action",
