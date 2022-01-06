@@ -175,7 +175,6 @@ class SyncService {
 
   void updateLastSyncDateTime() {
     DateTime now = DateTime.now();
-    //print(DateFormat('HH:mm:ss').format(now));
     HiveLastSyncDateTime _lastSyncDateTime = new HiveLastSyncDateTime(
         year: now.year,
         month: now.month,
@@ -183,7 +182,9 @@ class SyncService {
         hour: now.hour,
         minute: now.minute,
         second: now.second);
-    lastSyncBox.add(_lastSyncDateTime);
+    lastSyncBox.clear().then((value) {
+      lastSyncBox.add(_lastSyncDateTime);
+    });
   }
 
   void clearAll() async {
