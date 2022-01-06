@@ -264,7 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             });
   }
 
-  void updateLanguages() async {
+  void updateLanguages(AppBloc bloc) async {
     setState(() => _isLoading = true);
 
     var fieldMaskPaths = ['language_ids'];
@@ -279,6 +279,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .then(
           (value) => {
             setState(() => _isLoading = false),
+            bloc.materialBloc.selectedLanguages = _selectedLanguages,
             _user.languageIds = value.languageIds,
             _currentUserBox.putAt(0, _user),
           },
@@ -758,8 +759,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     _selectedLanguages =
                                         List<HiveLanguage>.from(
                                             languages as List<dynamic>);
-
-                                    updateLanguages();
+                                    updateLanguages(bloc);
                                   });
                                 },
                               );
