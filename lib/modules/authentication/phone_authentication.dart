@@ -60,6 +60,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     obj.syncAll();
 
     _getAllCountries();
+
+    // _countryCodeController.text = '+91';
+    // _phoneNumberController.text = '7123123456';
   }
 
   void _getAllCountries() {
