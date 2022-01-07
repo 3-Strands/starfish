@@ -22,6 +22,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -44,10 +45,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
 
-  late String _choiceText = AppLocalizations.of(context)!.noFilterApplied;
-
   final Key _focusDetectorKey = UniqueKey();
   late AppBloc bloc;
+
+  bool _viewDidDisappear = false;
+  bool _isSelectingLanguage = false;
 
   @override
   void initState() {
@@ -131,13 +133,29 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    setState(() {
+      _viewDidDisappear = true;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FocusDetector(
       key: _focusDetectorKey,
       onFocusGained: () {
+        print('onFocusGained');
+        setState(() {
+          _viewDidDisappear = false;
+        });
+
+        _getAllLanguages();
         _fetchMaterialData(bloc);
       },
       onFocusLost: () {
+        print('onFocusLost');
         // clear filters on view disappear
         /*
         bloc.materialBloc.selectedLanguages.clear();
@@ -162,7 +180,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(height: 14.h),
-                        _buildLanguagesContainer(bloc),
+                        (_viewDidDisappear && (_isSelectingLanguage == false))
+                            ? Container()
+                            : _buildLanguagesContainer(bloc),
                         SizedBox(height: 10.h),
                         _buildTopicsContainer(bloc),
                         SizedBox(height: 10.h),
@@ -336,8 +356,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         dataSource: _languageList,
         type: SelectType.multiple,
         dataSourceType: DataSourceType.languages,
+        isMovingNext: () {
+          setState(() {
+            _isSelectingLanguage = true;
+          });
+        },
         onDoneClicked: <T>(languages) {
           setState(() {
+            _isSelectingLanguage = false;
             List<HiveLanguage> _selectedLanguages =
                 List<HiveLanguage>.from(languages as List<dynamic>);
             bloc.materialBloc.selectedLanguages = _selectedLanguages;

@@ -22,6 +22,7 @@ enum DataSourceType {
   groups,
 }
 
+// ignore: must_be_immutable
 class SelectDropDown extends StatefulWidget {
   final String navTitle;
   final int maxSelectItemLimit;
@@ -32,8 +33,8 @@ class SelectDropDown extends StatefulWidget {
   final dataSource;
   final SelectType type;
   final DataSourceType dataSourceType;
-
   final Function<T>(T) onDoneClicked;
+  VoidCallback? isMovingNext;
 
   SelectDropDown({
     Key? key,
@@ -46,6 +47,7 @@ class SelectDropDown extends StatefulWidget {
     required this.type,
     required this.dataSourceType,
     required this.onDoneClicked,
+    this.isMovingNext,
     this.maxSelectItemLimit = 0,
   }) : super(key: key);
 
@@ -159,6 +161,9 @@ class _SelectDropDownState extends State<SelectDropDown> {
       child: InkWell(
         onTap: () {
           if (widget.enabled) {
+            if (widget.isMovingNext != null) {
+              widget.isMovingNext!();
+            }
             Navigator.push(
               context,
               MaterialPageRoute(
