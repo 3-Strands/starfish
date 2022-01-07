@@ -323,7 +323,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                                     .maxFilesSelected,
                                 neutralButtonText:
                                     AppLocalizations.of(context)!.ok,
-                                callback: () {});
+                                callback: () {
+                                  Navigator.of(context).pop();
+                                });
                             return;
                           } else {
                             FilePickerResult? result = await FilePicker.platform

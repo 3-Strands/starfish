@@ -899,7 +899,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 title: AppLocalizations.of(context)!.dialogAlert,
                 message: AppLocalizations.of(context)!
                     .alertGroupCanNotBeWithoutAdmin,
-                callback: () {},
+                callback: () {
+                  Navigator.of(context).pop();
+                },
               );
             } else {
               _groupUser.isDirty = true;
