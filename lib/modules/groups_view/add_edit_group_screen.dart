@@ -388,7 +388,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _selectedContacts.forEach((element) {
       HiveUser _hiveUser = element.createHiveUser();
       // set dialing code of the current User
-      _hiveUser.diallingCode = CurrentUserProvider().getUserSync().diallingCode;
+      //_hiveUser.diallingCode = CurrentUserProvider().getUserSync().diallingCode;
       _hiveUser.linkGroups = true;
       _hiveUser.isNew = true;
 
