@@ -66,11 +66,7 @@ class _ContactListItemState extends State<ContactListItem> {
               height: 10.h,
             ),
             Text(
-              widget.contact.contact.phones != null
-                  ? widget.contact.contact.phones!.length > 0
-                      ? widget.contact.contact.phones!.first.value!
-                      : ''
-                  : '',
+              '${widget.contact.createHiveUser().diallingCode ?? ''} ${widget.contact.createHiveUser().phone ?? ''} ',
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 18.sp,
