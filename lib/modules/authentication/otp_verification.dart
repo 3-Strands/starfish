@@ -429,17 +429,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   _setAccessToken(String dialingCode, String phoneNumnber,
       AuthenticateResponse authenticateResponse) {
-    /*
     if (FlavorConfig.isDevelopment()) {
       //SANDBOX
-      StarfishSharedPreference().setAccessToken(
-          _dialingCode.substring(1, _dialingCode.length) + _phoneNumber);
+      StarfishSharedPreference().setAccessToken(_phoneNumber);
     } else if (FlavorConfig.isProduction()) {
       // LIVE
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     }
-    */
-    StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
+
+    // StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
   }
 
   _handleError(dynamic e) {
