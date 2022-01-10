@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InvitedContactListItem extends StatefulWidget {
   final InviteContact contact;
@@ -41,14 +42,14 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                     color: Color(0xFF434141),
                   ),
                 ),
-                /*Text(
+                Text(
                   AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
                   style: TextStyle(
                     fontFamily: 'OpenSans',
                     fontSize: 16.sp,
                     color: Color(0xFF3475F0),
                   ),
-                ),*/
+                ),
               ],
             ),
             SizedBox(

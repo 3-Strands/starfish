@@ -22,7 +22,6 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -881,11 +880,28 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         GroupMemberListItem(
           groupUser: groupUser,
           onChangeUserRole: (HiveGroupUser _groupUser, _groupUserRole) {
-            _groupUser.isUpdated = true;
-            _groupUser.role = _groupUserRole.value;
+            // Check if the removed user is the only ADMIN in the group, if so, display alert else delete it
+            if (GroupUser_Role.valueOf(_groupUser.role!) ==
+                    GroupUser_Role.ADMIN &&
+                widget.group!.admins != null &&
+                widget.group!.admins!.length == 1) {
+              //show warning
+              Alerts.showMessageBox(
+                context: context,
+                title: AppLocalizations.of(context)!.dialogAlert,
+                message: AppLocalizations.of(context)!
+                    .alertGroupCanNotBeWithoutAdmin,
+                callback: () {
+                  Navigator.of(context).pop();
+                },
+              );
+            } else {
+              _groupUser.isUpdated = true;
+              _groupUser.role = _groupUserRole.value;
 
-            bloc.groupBloc.createUpdateGroupUser(_groupUser);
-            setState(() {});
+              bloc.groupBloc.createUpdateGroupUser(_groupUser);
+              setState(() {});
+            }
           },
           onRemoveUser: (_groupUser) {
             // Check if the removed user is the only ADMIN in the group, if so, display alert else delete it
@@ -899,7 +915,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 title: AppLocalizations.of(context)!.dialogAlert,
                 message: AppLocalizations.of(context)!
                     .alertGroupCanNotBeWithoutAdmin,
-                callback: () {},
+                callback: () {
+                  Navigator.of(context).pop();
+                },
               );
             } else {
               _groupUser.isDirty = true;
