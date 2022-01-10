@@ -164,7 +164,6 @@ class SyncService {
   void syncAll() async {
     showAlertFirstTime();
 
-    // showAlert(NavigationService.navigatorKey.currentContext!);
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
 
