@@ -155,7 +155,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             height: 10.h,
           ),
           Text(
-            widget.groupUser.phone,
+            '${widget.groupUser.phoneWithDialingCode}',
+            // widget.groupUser.phone,
             style: TextStyle(
               fontFamily: 'OpenSans',
               fontSize: 18.sp,
