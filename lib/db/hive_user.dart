@@ -164,7 +164,7 @@ extension HiveUserExt on HiveUser {
 
   String get phoneWithDialingCode {
     return this.phone != null && this.phone!.isNotEmpty
-        ? '+${this.diallingCodeWithPlus} ${this.phone}'
+        ? '${this.diallingCodeWithPlus} ${this.phone}'
         : '';
   }
 
