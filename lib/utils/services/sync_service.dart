@@ -151,17 +151,20 @@ class SyncService {
     await lock.synchronized(() => syncLocalFiles()); // Upload local files
     await lock.synchronized(() => syncFiles()); // Download remote files
 
-    syncCurrentUser();
-    syncUsers();
-    syncCountries();
-    syncLanguages();
-    syncActions();
-    syncMaterialTopics();
-    syncMaterialTypes();
-    syncMaterial();
-
-    syncEvaluationCategories();
-    syncGroup();
+    Future.wait([
+      syncCurrentUser(),
+      syncUsers(),
+      syncCountries(),
+      syncLanguages(),
+      syncActions(),
+      syncMaterialTopics(),
+      syncMaterialTypes(),
+      syncMaterial(),
+      syncEvaluationCategories(),
+      syncGroup()
+    ]).then((value) {
+      updateLastSyncDateTime();
+    });
 
     /*if (_isDialogShowing) {
       Future.delayed(Duration(seconds: 1), () {
@@ -169,8 +172,6 @@ class SyncService {
         Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
       });
     }*/
-
-    updateLastSyncDateTime();
   }
 
   void updateLastSyncDateTime() {

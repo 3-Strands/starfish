@@ -19,7 +19,7 @@ class _LastSyncBottomWidgetState extends State<LastSyncBottomWidget> {
       height: 40.h,
       child: Center(
         child: Text(
-          '${AppLocalizations.of(context)!.lastSync}: ${SyncTime().lastSyncDataTime()}',
+          '${AppLocalizations.of(context)!.lastSync}: ${SyncTime().lastSyncDateTimeString()}',
           style: TextStyle(
             color: Color(0xFF434141),
             fontSize: 14.sp,

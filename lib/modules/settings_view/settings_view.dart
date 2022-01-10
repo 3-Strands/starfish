@@ -803,7 +803,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               children: [
                                 TextSpan(
-                                  text: SyncTime().lastSyncDataTime(),
+                                  text: SyncTime().lastSyncDateTimeString(),
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'Roboto',
