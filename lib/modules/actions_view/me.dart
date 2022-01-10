@@ -18,6 +18,8 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,6 +41,15 @@ class _MeState extends State<Me> {
     bloc.actionBloc.fetchMyActionsFromDB();
   }
 
+  void _isSyncingFirstTime() async {
+    StarfishSharedPreference().isSyncingFirstTimeDone().then((status) => {
+          if (!status)
+            {
+              SyncService().syncAll(),
+            }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
@@ -46,6 +57,7 @@ class _MeState extends State<Me> {
     return FocusDetector(
       key: _meFocusDetectorKey,
       onFocusGained: () {
+        _isSyncingFirstTime();
         _getActions(bloc);
       },
       onFocusLost: () {},
