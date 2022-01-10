@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
@@ -267,7 +268,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() => _isLoading = false),
               _user.countryIds = value.countryIds,
               _currentUserBox.putAt(0, _user),
-            });
+            })
+        .onError((GrpcError error, stackTrace) => {handleGrpcError(error)});
   }
 
   void updateLanguages(AppBloc bloc) async {
@@ -290,6 +292,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _currentUserBox.putAt(0, _user),
           },
         );
+  }
+
+  void handleGrpcError(GrpcError grpcError) {
+    if (grpcError.code == StatusCode.unauthenticated) {
+      // StatusCode 16
+      StarfishSnackbar.showErrorMessage(context, grpcError.message!);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.phoneAuthentication, (Route<dynamic> route) => false);
+    }
   }
 
   Container _getNameSection() {
