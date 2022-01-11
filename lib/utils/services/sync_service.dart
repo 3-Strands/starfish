@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
 import 'package:flutter/widgets.dart';
@@ -10,7 +9,6 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -28,6 +26,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/app_data_repository.dart';
@@ -94,6 +93,7 @@ class SyncService {
     fileBox = Hive.box<HiveFile>(HiveDatabase.FILE_BOX);
     actionUserBox = Hive.box<HiveActionUser>(HiveDatabase.ACTION_USER_BOX);
   }
+
   void showAlert(BuildContext context) async {
     _isDialogShowing = true;
     await app
@@ -134,7 +134,36 @@ class SyncService {
         .then((value) => _isDialogShowing = false);
   }
 
+  void hideAlert() {
+    if (_isDialogShowing) {
+      Future.delayed(Duration(seconds: 2), () {
+        _isDialogShowing = false;
+        Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
+      });
+    }
+  }
+
+  void showAlertFirstTime() {
+    StarfishSharedPreference().isUserLoggedIn().then((status) => {
+          if (status)
+            {
+              StarfishSharedPreference()
+                  .isSyncingFirstTimeDone()
+                  .then((value) => {
+                        StarfishSharedPreference().setIsSyncingFirstTime(true),
+                        if (!value)
+                          {
+                            showAlert(
+                                NavigationService.navigatorKey.currentContext!)
+                          }
+                      })
+            }
+        });
+  }
+
   void syncAll() async {
+    showAlertFirstTime();
+
     await syncLocalCurrentUser(kCurrentUserFieldMask);
     await syncLocalMaterialsToRemote();
 
@@ -164,14 +193,9 @@ class SyncService {
       syncGroup()
     ]).then((value) {
       updateLastSyncDateTime();
+    }).whenComplete(() {
+      hideAlert();
     });
-
-    /*if (_isDialogShowing) {
-      Future.delayed(Duration(seconds: 1), () {
-        _isDialogShowing = false; // set it `false` since dialog is closed
-        Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
-      });
-    }*/
   }
 
   void updateLastSyncDateTime() {

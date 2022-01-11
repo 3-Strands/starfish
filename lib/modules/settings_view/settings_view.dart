@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
@@ -50,7 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   late HiveCurrentUser _user;
 
-  late List<HiveCountry> _countryList = [];
+  // late List<HiveCountry> _countryList = [];
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
   late List<HiveGroup> _groupList = [];
@@ -182,8 +183,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _validatePhoneNumber() {
     /* validate entered dialling code in the country list if it exist or not */
+    /*
+    _countryBox.values.forEach((element) {
+      print('element.diallingCode ==>> ${element.diallingCode}');
+    });
+    */
+
     String dialingCode = _countryCodeController.text;
-    bool isDialingCodeExist = _countryList
+    bool isDialingCodeExist = _countryBox.values
         .where((item) => item.diallingCode == dialingCode)
         .isNotEmpty;
 
@@ -210,7 +217,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _countyCode = _countryCodeController.text
         });
 
-    var _phoneCountryId = _countryList
+    var _phoneCountryId = _countryBox.values
         .where((item) => item.diallingCode == _countryCodeController.text)
         .first
         .id;
@@ -261,7 +268,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() => _isLoading = false),
               _user.countryIds = value.countryIds,
               _currentUserBox.putAt(0, _user),
-            });
+            })
+        .onError((GrpcError error, stackTrace) => {handleGrpcError(error)});
   }
 
   void updateLanguages(AppBloc bloc) async {
@@ -284,6 +292,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _currentUserBox.putAt(0, _user),
           },
         );
+  }
+
+  void handleGrpcError(GrpcError grpcError) {
+    if (grpcError.code == StatusCode.unauthenticated) {
+      // StatusCode 16
+      StarfishSnackbar.showErrorMessage(context, grpcError.message!);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.phoneAuthentication, (Route<dynamic> route) => false);
+    }
   }
 
   Container _getNameSection() {

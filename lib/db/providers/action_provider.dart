@@ -52,7 +52,7 @@ class ActionProvider {
     });
 
     if (_currentIndex > -1) {
-      return _actionBox.put(_currentIndex, action);
+      return _actionBox.putAt(_currentIndex, action);
     } else {
       _actionBox.add(action);
     }
@@ -74,8 +74,8 @@ class ActionProvider {
   HiveActionUser? getActionUser(String userId, String actionId) {
     // First check in HiveActionUser box, to check for local changes
     // If not found then check in HiveUser's actions attibute
-    HiveActionUser? actionUser = _actionUserBox.values
-        .firstWhereOrNull((element) => element.userId! == userId && element.actionId == actionId);
+    HiveActionUser? actionUser = _actionUserBox.values.firstWhereOrNull(
+        (element) => element.userId! == userId && element.actionId == actionId);
 
     if (actionUser != null) {
       return actionUser;
@@ -102,7 +102,7 @@ class ActionProvider {
 
     if (_currentIndex > -1) {
       actionUser.isUpdated = true;
-      return _actionUserBox.put(_currentIndex, actionUser);
+      return _actionUserBox.putAt(_currentIndex, actionUser);
     } else {
       actionUser.isNew = true;
       _actionUserBox.add(actionUser);

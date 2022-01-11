@@ -311,22 +311,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       height: 50.h,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if ((!_isEditMode && _selectedFiles.length == 5) ||
+                          if ((!_isEditMode && _selectedFiles.length >= 5) ||
                               (_isEditMode &&
                                   (_selectedFiles.length +
-                                          widget.material!.files!.length) ==
+                                          widget.material!.files!.length) >=
                                       5)) {
-                            Alerts.showMessageBox(
-                                context: context,
-                                title: AppLocalizations.of(context)!.title,
-                                message: AppLocalizations.of(context)!
-                                    .maxFilesSelected,
-                                neutralButtonText:
-                                    AppLocalizations.of(context)!.ok,
-                                callback: () {
-                                  Navigator.of(context).pop();
-                                });
-                            return;
+                            StarfishSnackbar.showErrorMessage(context,
+                                AppLocalizations.of(context)!.maxFilesSelected);
                           } else {
                             FilePickerResult? result = await FilePicker.platform
                                 .pickFiles(allowMultiple: false);

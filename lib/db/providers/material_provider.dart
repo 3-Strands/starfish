@@ -40,7 +40,7 @@ class MaterialProvider {
     });
 
     if (_currentIndex > -1) {
-      return _materialBox.put(_currentIndex, material);
+      return _materialBox.putAt(_currentIndex, material);
     } else {
       _materialBox.add(material);
     }
@@ -61,7 +61,7 @@ class MaterialProvider {
       });
 
       if (_currentIndex > -1) {
-        _fileBox.put(_currentIndex, file);
+        _fileBox.putAt(_currentIndex, file);
       } else {
         _fileBox.add(file);
       }

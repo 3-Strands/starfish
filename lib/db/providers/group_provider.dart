@@ -27,7 +27,7 @@ class GroupProvider {
     });
 
     if (_currentIndex > -1) {
-      return _groupBox.put(_currentIndex, group);
+      return _groupBox.putAt(_currentIndex, group);
     } else {
       _groupBox.add(group);
     }
@@ -54,7 +54,7 @@ class GroupProvider {
     });
 
     if (_groupIndex > -1) {
-      return _groupBox.put(_groupIndex, group);
+      return _groupBox.putAt(_groupIndex, group);
     } else {
       _groupBox.add(group);
     }

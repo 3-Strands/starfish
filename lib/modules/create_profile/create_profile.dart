@@ -125,8 +125,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               _user.name = value.name,
               _user.languageIds = value.languageIds,
               _currentUserBox.putAt(0, _user),
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  Routes.dashboard, (Route<dynamic> route) => false)
+              // Navigator.of(context).pushNamedAndRemoveUntil(
+              //     Routes.dashboard, (Route<dynamic> route) => false)
             })
         .whenComplete(() => {
               Navigator.of(context).pushNamedAndRemoveUntil(

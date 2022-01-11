@@ -257,7 +257,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   _verfiyPhoneNumberWithOTPOnWeb() async {
     UserCredential userCredential =
         await _confirmationResult!.confirm(_smsCode);
-    print(userCredential);
     setState(() {
       _isLoading = false;
     });
@@ -432,12 +431,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       AuthenticateResponse authenticateResponse) {
     if (FlavorConfig.isDevelopment()) {
       //SANDBOX
-      StarfishSharedPreference().setAccessToken(
-          _dialingCode.substring(1, _dialingCode.length) + _phoneNumber);
+      StarfishSharedPreference().setAccessToken(_phoneNumber);
     } else if (FlavorConfig.isProduction()) {
       // LIVE
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     }
+
+    // StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
   }
 
   _handleError(dynamic e) {
