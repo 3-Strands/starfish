@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
 class SyncTime {
@@ -16,5 +16,17 @@ class SyncTime {
     HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
     return DateTimeUtils.formatDate(
         _lastSyncDateTime.toDateTime(), "dd-MMM-yyyy HH:mm");
+  }
+
+  Date? lastSyncDateTime() {
+    if (_lastSyncDataTimeBox.values.length == 0) {
+      return null;
+    }
+    HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
+
+    return Date(
+        year: _lastSyncDateTime.year,
+        month: _lastSyncDateTime.month,
+        day: _lastSyncDateTime.day);
   }
 }

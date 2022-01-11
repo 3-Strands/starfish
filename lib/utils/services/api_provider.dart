@@ -7,16 +7,22 @@ import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/utils/sync_time.dart';
 import 'grpc_client.dart';
 
 class ApiProvider {
   StarfishClient? client;
+  FileTransferClient? fileTransferClient;
 
   Future getGrpcClient() async {
     await Singleton.instance
         .initGprcClient()
         .then((value) => {client = Singleton.instance.client});
+  }
+
+  Future getFileTransferClient() async {
+    await Singleton.instance.initFileTransferClient().then((value) =>
+        {fileTransferClient = Singleton.instance.fileTransferClient});
   }
 
   Future<AuthenticateResponse> authenticate(
@@ -68,8 +74,10 @@ class ApiProvider {
 
   Future<ResponseStream<Material>> getMateials() async {
     var request = ListMaterialsRequest.create();
-    Date date = Date(year: 2020, month: 1, day: 1);
-    request.updatedSince = date;
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
 
     if (client == null) {
       await getGrpcClient();
@@ -79,8 +87,10 @@ class ApiProvider {
 
   Future<ResponseStream<MaterialTopic>> getMateialTopics() async {
     var request = ListMaterialTopicsRequest.create();
-    Date date = Date(year: 2020, month: 1, day: 1);
-    request.updatedSince = date;
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
     if (client == null) {
       await getGrpcClient();
     }
@@ -89,8 +99,10 @@ class ApiProvider {
 
   Future<ResponseStream<MaterialType>> getMateialTypes() async {
     var request = ListMaterialTypesRequest.create();
-    Date date = Date(year: 2020, month: 1, day: 1);
-    request.updatedSince = date;
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
 
     if (client == null) {
       await getGrpcClient();
@@ -118,8 +130,10 @@ class ApiProvider {
 
   Future<ResponseStream<Group>> getGroups() async {
     var request = ListGroupsRequest.create();
-    Date date = Date(year: 2020, month: 1, day: 1);
-    //request.updatedSince = date;
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
 
     if (client == null) {
       await getGrpcClient();
@@ -129,8 +143,10 @@ class ApiProvider {
 
   Future<ResponseStream<Action>> getActions() async {
     var request = ListActionsRequest.create();
-    Date date = Date(year: 2020, month: 1, day: 1);
-    //request.updatedSince = date;
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
 
     if (client == null) {
       await getGrpcClient();
@@ -140,8 +156,10 @@ class ApiProvider {
 
   Future<ResponseStream<EvaluationCategory>> getEvaluationCategories() async {
     var request = ListEvaluationCategoriesRequest.create();
-    Date date = Date(year: 2020, month: 1, day: 1);
-    //request.updatedSince = date;
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
 
     if (client == null) {
       await getGrpcClient();
@@ -191,6 +209,10 @@ class ApiProvider {
 
   Future<ResponseStream<User>> getUsers() async {
     var request = ListUsersRequest();
+    Date? date = SyncTime().lastSyncDateTime();
+    if (date != null) {
+      request.updatedSince = date;
+    }
 
     if (client == null) {
       await getGrpcClient();
@@ -263,39 +285,19 @@ class ApiProvider {
 
   Future<ResponseStream<UploadStatus>> uploadFile(
       Stream<FileData> request) async {
-    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-        host: "sandbox-api.everylanguage.app",
-        port: 443,
-        transportSecure: true);
+    if (fileTransferClient == null) {
+      await getFileTransferClient();
+    }
 
-    Map<String, String>? metadata = {
-      'authorization': await StarfishSharedPreference().getAccessToken(),
-      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0',
-    };
-    FileTransferClient fileTransferClient = FileTransferClient(
-      channel,
-      options: CallOptions(metadata: metadata),
-    );
-
-    return fileTransferClient.upload(request);
+    return fileTransferClient!.upload(request);
   }
 
   Future<ResponseStream<FileData>> downloadFile(
       Stream<DownloadRequest> request) async {
-    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-        host: "sandbox-api.everylanguage.app",
-        port: 443,
-        transportSecure: true);
+    if (fileTransferClient == null) {
+      await getFileTransferClient();
+    }
 
-    Map<String, String>? metadata = {
-      'authorization': await StarfishSharedPreference().getAccessToken(),
-      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0',
-    };
-    FileTransferClient fileTransferClient = FileTransferClient(
-      channel,
-      options: CallOptions(metadata: metadata),
-    );
-
-    return fileTransferClient.download(request);
+    return fileTransferClient!.download(request);
   }
 }
