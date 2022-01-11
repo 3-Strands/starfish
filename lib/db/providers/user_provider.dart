@@ -27,7 +27,7 @@ class UserProvider {
     });
 
     if (_currentIndex > -1) {
-      return _userBox.put(_currentIndex, user);
+      return _userBox.putAt(_currentIndex, user);
     } else {
       _userBox.add(user);
     }
