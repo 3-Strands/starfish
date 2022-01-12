@@ -21,4 +21,7 @@ class UserRepository {
 
   Future<void> createUpdateUserInDB(HiveUser user) =>
       dbProvider.createUpdateUser(user);
+
+  Future<void> deleteUserFromDB(HiveUser user) =>
+      dbProvider.deleteUserFromDB(user);
 }

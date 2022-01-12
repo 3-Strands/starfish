@@ -62,6 +62,23 @@ class GroupProvider {
     //debugPrint('FINAL: $group');
   }
 
+  Future<void> updateGroupUserId(
+      String? localUserId, String? remoteUserId) async {
+    _groupBox.values.forEach((hiveGroup) {
+      if (hiveGroup.users != null) {
+        HiveGroupUser? _hiveGroupUser = hiveGroup.users!
+            .where((groupUser) => groupUser.userId == localUserId)
+            .firstOrNull;
+
+        if (_hiveGroupUser != null) {
+          _hiveGroupUser.userId = remoteUserId;
+
+          hiveGroup.save();
+        }
+      }
+    });
+  }
+
   @Deprecated(
       "Use 'createUpdateGroupUser' instead by setting 'isDirty' as true")
   Future<int> deleteGroupUser(HiveGroupUser groupUser) async {

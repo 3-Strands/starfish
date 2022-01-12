@@ -26,6 +26,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
@@ -618,11 +619,13 @@ class SyncService {
   Future<CreateUpdateUserResponse> addUserToSyncQueue(
       HiveUser _hiveUser) async {
     CreateUpdateUserResponse _response = await UserRepository()
-        .createUpdateUsers(_hiveUser.toUser(), kUserFieldMask);
+        .createUpdateUsers(_hiveUser.createRequestUser(), kUserFieldMask);
     if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
-      _hiveUser.isNew = false;
-      _hiveUser.isUpdated = false;
-
+      if (_hiveUser.id != _response.user.id) {
+        await GroupProvider()
+            .updateGroupUserId(_hiveUser.id, _response.user.id);
+        await UserRepository().deleteUserFromDB(_hiveUser);
+      }
       await UserRepository().createUpdateUserInDB(_hiveUser);
     }
 

@@ -33,6 +33,19 @@ class UserProvider {
     }
   }
 
+  Future<void> deleteUserFromDB(HiveUser user) async {
+    int _currentIndex = -1;
+    _userBox.values.toList().asMap().forEach((key, hiveUser) {
+      if (hiveUser.id == user.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _userBox.deleteAt(_currentIndex);
+    }
+  }
+
   String getName(String userId) {
     HiveUser? _user =
         _userBox.values.firstWhereOrNull((element) => element.id == userId);
