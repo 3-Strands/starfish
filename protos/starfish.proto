@@ -653,6 +653,10 @@ message Group {
 
     // The email address of the EveryLanguage user responsible for linking this group to a project.
     string link_email = 9;
+
+    // IDs mapped to names of languages connected to this group.
+    // Output only. To edit the connected languages use the language_ids field.
+    map<string, string> languages = 10;
 }
 
 // An evaluation of a literacy group by a user
@@ -881,6 +885,10 @@ message Material {
 
     // Output only. A history of edits made to this material object
     repeated Edit edit_history = 17;
+
+    // IDs mapped to names of languages connected to this material.
+    // Output only. To edit the connected languages use the language_ids field.
+    map<string, string> languages = 18;
 
 }
 
