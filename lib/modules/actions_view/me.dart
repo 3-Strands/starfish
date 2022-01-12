@@ -311,6 +311,12 @@ class _MeState extends State<Me> {
                               ),
                               TextField(
                                 decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14.sp,
+                                      color: Color(0xFF797979),
+                                    ),
                                     border: InputBorder.none,
                                     hintText: AppLocalizations.of(context)!
                                         .questionTextEditHint),

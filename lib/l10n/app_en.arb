@@ -229,7 +229,7 @@
   "adminNamePrifix": "Admin",
 
   "unspecifiedRole": "UNSPECIFIED ROLE",
-  "adminRole": "ADMIM",
+  "adminRole": "ADMIN",
   "learnerRole": "LEARNER",
   "teacherRole": "TEACHER",
 

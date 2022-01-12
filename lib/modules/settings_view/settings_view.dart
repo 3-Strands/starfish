@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
@@ -60,6 +62,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
+
+  late List<HiveLanguage> _tempSelectedLanguages = [];
 
   String _countyCode = '';
   String _mobileNumber = '';
@@ -694,6 +698,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     Starfish.of(context)!.setLocale(
                                         Locale.fromSubtags(
                                             languageCode: value.values.last));
+
+                                    reinitLanguageFilter();
                                   });
                                 },
                                 value: _language,
@@ -855,6 +861,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       bottomNavigationBar: _footer(),
     );
+  }
+
+  reinitLanguageFilter() async {
+    var _duration = Duration(seconds: 1);
+    return Timer(_duration, _update);
+  }
+
+  void _update() {
+    setState(() {
+      bloc.materialBloc.selectedLanguages = _selectedLanguages;
+    });
   }
 
   Widget _getGroupAdminsSections() {
