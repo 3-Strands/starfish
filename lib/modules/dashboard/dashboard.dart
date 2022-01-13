@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -19,7 +20,9 @@ import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/field_mask.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import '../material_view/materials_view.dart';
@@ -69,6 +72,10 @@ class _DashboardState extends State<Dashboard> {
 
         (hiveUsers as List<User>).forEach(
             (user) => UserRepository().createUpdateUsers(user, kUserFieldMask));
+      },
+      SyncService.kUnauthenticated: (value, callback) {
+        debugPrint('Boradcast Receiver: kUnauthenticated');
+        handleUnauthentication();
       }
     }, context: this);
 
@@ -242,5 +249,15 @@ class _DashboardState extends State<Dashboard> {
     this._pageController.animateToPage(index,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     _changeNaviagtionTitle(index);
+  }
+
+  void handleUnauthentication() {
+    StarfishSnackbar.showErrorMessage(
+        context, AppLocalizations.of(context)!.unauthenticated);
+    StarfishSharedPreference().setLoginStatus(false);
+    StarfishSharedPreference().setAccessToken('');
+
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        Routes.phoneAuthentication, (Route<dynamic> route) => false);
   }
 }

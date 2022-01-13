@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
 import 'package:flutter/widgets.dart';
@@ -52,6 +53,7 @@ class SyncService {
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
   static final String kUpdateActions = 'updateActions';
+  static final String kUnauthenticated = 'unauthenticated';
 
   // Use this object to prevent concurrent access to data
   var lock = new Lock(reentrant: true);
@@ -229,7 +231,6 @@ class SyncService {
 
   Future syncCurrentUser() async {
     await CurrentUserRepository().getUser().then((User user) {
-      print("get current user");
       List<HiveGroupUser> groups = (user.groups
           .map((e) => HiveGroupUser(
               groupId: e.groupId, userId: e.userId, role: e.role.value))
@@ -264,7 +265,9 @@ class SyncService {
       }
 
       //StarfishSharedPreference().setAccessToken(user.phone);
-    });
+    }, onError: ((err) {
+      handleGrpcError(err);
+    }));
   }
 
   Future syncUsers() async {
@@ -294,7 +297,7 @@ class SyncService {
           userBox.add(_hiveUser);
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('Users Sync Done.');
       });
@@ -324,7 +327,7 @@ class SyncService {
           countryBox.add(_hiveCountry);
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('Country Sync Done.');
       });
@@ -360,7 +363,7 @@ class SyncService {
           //update record
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('Language Sync Done.');
       });
@@ -423,7 +426,7 @@ class SyncService {
           materialBox.add(_hiveMaterial);
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('Material Sync Done.');
       });
@@ -462,7 +465,7 @@ class SyncService {
           materialTopicBox.add(_materialTopic);
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('MaterialTopic Sync Done.');
       });
@@ -501,7 +504,7 @@ class SyncService {
           materialTypeBox.add(_materialType);
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('MaterialType Sync Done.');
       });
@@ -549,7 +552,7 @@ class SyncService {
       stream.listen((group) {
         GroupRepository().addEditGroup(HiveGroup.from(group));
       }, onError: ((err) {
-        print('Group Sync Error: ${err.toString()}');
+        handleGrpcError(err);
       }), onDone: () {
         print('Group Sync Done.');
       });
@@ -586,7 +589,7 @@ class SyncService {
           evaluationCategoryBox.add(_category);
         }
       }, onError: ((err) {
-        print('EvaluationCategory Sync Error: ${err.toString()}');
+        handleGrpcError(err);
       }), onDone: () {
         print('EvaluationCategory Sync Done.');
       });
@@ -726,7 +729,7 @@ class SyncService {
           actionBox.add(_hiveAction);
         }
       }, onError: ((err) {
-        print(err);
+        handleGrpcError(err);
       }), onDone: () {
         print('Action Sync Done.');
       });
@@ -959,5 +962,15 @@ class SyncService {
         });
       }
     });
+  }
+
+  void handleGrpcError(GrpcError error) {
+    debugPrint('grpcError: $error');
+    if (error.code == StatusCode.unauthenticated) {
+      // StatusCode 16
+      FBroadcast.instance().broadcast(
+        SyncService.kUnauthenticated,
+      );
+    }
   }
 }

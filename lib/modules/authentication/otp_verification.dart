@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:starfish/config/app_config.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -429,15 +428,15 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   _setAccessToken(String dialingCode, String phoneNumnber,
       AuthenticateResponse authenticateResponse) {
-    if (FlavorConfig.isDevelopment()) {
+    /*if (FlavorConfig.isDevelopment()) {
       //SANDBOX
       StarfishSharedPreference().setAccessToken(_phoneNumber);
     } else if (FlavorConfig.isProduction()) {
       // LIVE
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
-    }
+    }*/
 
-    // StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
+    StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
   }
 
   _handleError(dynamic e) {
