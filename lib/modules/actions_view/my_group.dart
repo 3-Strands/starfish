@@ -365,321 +365,322 @@ class _MyGroupState extends State<MyGroup> {
     }
 
     showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(34.r),
-            topRight: Radius.circular(34.r),
-          ),
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(34.r),
+          topRight: Radius.circular(34.r),
         ),
-        isScrollControlled: true,
-        isDismissible: true,
-        enableDrag: true,
-        builder: (context) {
-          final bloc = Provider.of(context);
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setModalState) {
-            return Padding(
-              padding: MediaQuery.of(context).viewInsets,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40.sp,
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (context) {
+        final bloc = Provider.of(context);
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 40.sp,
+                ),
+                Center(
+                  child: Text(
+                    '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                    style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Color(0xFF3475F0),
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
-                  Center(
+                ),
+                SizedBox(
+                  height: 40.sp,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: 44.h,
+                        width: 169.w,
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .actionFollowInstructions,
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/hand_right.png',
+                            height: 14.sp,
+                            width: 14.sp,
+                          ),
+                          SizedBox(
+                            width: 4.sp,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              setModalState(() {
+                                if (user.actionStatusbyId(action) ==
+                                    ActionStatus.NOT_DONE) {
+                                  hiveActionUser!.status =
+                                      ActionUser_Status.COMPLETE.value;
+                                } else if (user.actionStatusbyId(action) ==
+                                    ActionStatus.DONE) {
+                                  hiveActionUser!.status =
+                                      ActionUser_Status.INCOMPLETE.value;
+                                } else {
+                                  hiveActionUser!.status = ActionUser_Status
+                                      .UNSPECIFIED_STATUS.value;
+                                }
+                              });
+                              setState(
+                                  () {}); // To trigger the main view to redraw.
+                              bloc.actionBloc
+                                  .createUpdateActionUser(hiveActionUser!);
+
+                              // TODO: should we update the status of this action on HiveUser also????
+                            },
+                            child: UserActionStatusWidget(
+                              title: user.actionStatusbyId(action),
+                              height: 36.h,
+                              width: 130.w,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                  child: Text(
+                    '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
+                    maxLines: 5,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Color(0xFF797979),
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Align(
+                    alignment: Alignment.centerRight,
                     child: Text(
-                      '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                      '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
+                      maxLines: 1,
                       style: TextStyle(
                           fontSize: 16.sp,
-                          color: Color(0xFF3475F0),
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.right,
                     ),
                   ),
-                  SizedBox(
-                    height: 40.sp,
-                  ),
-                  Padding(
+                ),
+                // Record the response to the question
+                SizedBox(
+                  height: 110.h,
+                  child: Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          height: 44.h,
-                          width: 169.w,
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .actionFollowInstructions,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/hand_right.png',
-                              height: 14.sp,
-                              width: 14.sp,
-                            ),
-                            SizedBox(
-                              width: 4.sp,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                setModalState(() {
-                                  if (user.actionStatusbyId(action) ==
-                                      ActionStatus.NOT_DONE) {
-                                    hiveActionUser!.status =
-                                        ActionUser_Status.COMPLETE.value;
-                                  } else if (user.actionStatusbyId(action) ==
-                                      ActionStatus.DONE) {
-                                    hiveActionUser!.status =
-                                        ActionUser_Status.INCOMPLETE.value;
-                                  } else {
-                                    hiveActionUser!.status = ActionUser_Status
-                                        .UNSPECIFIED_STATUS.value;
-                                  }
-                                });
-                                setState(
-                                    () {}); // To trigger the main view to redraw.
-                                bloc.actionBloc
-                                    .createUpdateActionUser(hiveActionUser!);
-
-                                // TODO: should we update the status of this action on HiveUser also????
-                              },
-                              child: UserActionStatusWidget(
-                                title: user.actionStatusbyId(action),
-                                height: 36.h,
-                                width: 130.w,
+                    child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                        ? Column(
+                            children: [
+                              Align(
+                                alignment: FractionalOffset.topLeft,
+                                child: Text(
+                                  AppLocalizations.of(context)!.question +
+                                      ': ${action.question}',
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                              TextField(
+                                decoration: InputDecoration(
+                                    border: UnderlineInputBorder(),
+                                    hintText: AppLocalizations.of(context)!
+                                        .questionTextEditHint),
+                                onSubmitted: (value) {
+                                  setModalState(() {
+                                    hiveActionUser!.teacherResponse = value;
+                                  });
+                                  bloc.actionBloc
+                                      .createUpdateActionUser(hiveActionUser!);
+                                },
+                              ),
+                            ],
+                          )
+                        : Container(),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
                     child: Text(
-                      '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
-                      maxLines: 5,
+                      AppLocalizations.of(context)!.howWasThisActionText,
+                      maxLines: 1,
                       style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Color(0xFF797979),
-                        fontStyle: FontStyle.italic,
-                      ),
+                          fontSize: 16.sp,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w500),
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                  ),
-                  // Record the response to the question
-                  SizedBox(
-                    height: 110.h,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: (action.type == Action_Type.TEXT_RESPONSE.value)
-                          ? Column(
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setModalState(() {
+                            hiveActionUser!.evaluation =
+                                ActionUser_Evaluation.GOOD.value;
+                          });
+
+                          bloc.actionBloc
+                              .createUpdateActionUser(hiveActionUser!);
+                        },
+                        child: Container(
+                          height: 36.sp,
+                          width: 160.sp,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.sp),
+                            color: ActionUser_Evaluation.valueOf(
+                                        hiveActionUser!.evaluation!) ==
+                                    ActionUser_Evaluation.GOOD
+                                ? Color(0xFF6DE26B)
+                                : Color(0xFFC9C9C9),
+                          ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Align(
-                                  alignment: FractionalOffset.topLeft,
-                                  child: Text(
-                                    AppLocalizations.of(context)!.question +
-                                        ': ${action.question}',
+                                Image.asset(
+                                  'assets/images/thumbs_up.png',
+                                  height: 14.sp,
+                                  width: 14.sp,
+                                ),
+                                SizedBox(
+                                  width: 4.sp,
+                                ),
+                                Text(
+                                  AppLocalizations.of(context)!.goodText,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: 'Rubik',
+                                    fontSize: 14.sp,
+                                    color: Color(0xFF777777),
                                   ),
                                 ),
-                                TextField(
-                                  decoration: InputDecoration(
-                                      border: UnderlineInputBorder(),
-                                      hintText: AppLocalizations.of(context)!
-                                          .questionTextEditHint),
-                                  onSubmitted: (value) {
-                                    setModalState(() {
-                                      hiveActionUser!.teacherResponse = value;
-                                    });
-                                    bloc.actionBloc.createUpdateActionUser(
-                                        hiveActionUser!);
-                                  },
-                                ),
-                              ],
-                            )
-                          : Container(),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        AppLocalizations.of(context)!.howWasThisActionText,
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.left,
+                              ]),
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            setModalState(() {
-                              hiveActionUser!.evaluation =
-                                  ActionUser_Evaluation.GOOD.value;
-                            });
+                      InkWell(
+                        onTap: () {
+                          setModalState(() {
+                            hiveActionUser!.evaluation =
+                                ActionUser_Evaluation.BAD.value;
+                          });
 
-                            bloc.actionBloc
-                                .createUpdateActionUser(hiveActionUser!);
-                          },
-                          child: Container(
-                            height: 36.sp,
-                            width: 160.sp,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.sp),
-                              color: ActionUser_Evaluation.valueOf(
-                                          hiveActionUser!.evaluation!) ==
-                                      ActionUser_Evaluation.GOOD
-                                  ? Color(0xFF6DE26B)
-                                  : Color(0xFFC9C9C9),
-                            ),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/thumbs_up.png',
-                                    height: 14.sp,
-                                    width: 14.sp,
-                                  ),
-                                  SizedBox(
-                                    width: 4.sp,
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)!.goodText,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontSize: 14.sp,
-                                      color: Color(0xFF777777),
-                                    ),
-                                  ),
-                                ]),
+                          bloc.actionBloc
+                              .createUpdateActionUser(hiveActionUser!);
+                        },
+                        child: Container(
+                          height: 36.sp,
+                          width: 160.sp,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.sp),
+                            color: ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation.BAD
+                                ? Color(0xFFFFBE4A)
+                                : Color(0xFFC9C9C9),
                           ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/thumbs_down.png',
+                                  height: 14.sp,
+                                  width: 14.sp,
+                                ),
+                                SizedBox(
+                                  width: 4.sp,
+                                ),
+                                Text(
+                                  AppLocalizations.of(context)!.notSoGoodText,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: 'Rubik',
+                                    fontSize: 14.sp,
+                                    color: Color(0xFF777777),
+                                  ),
+                                ),
+                              ]),
                         ),
-                        InkWell(
-                          onTap: () {
-                            setModalState(() {
-                              hiveActionUser!.evaluation =
-                                  ActionUser_Evaluation.BAD.value;
-                            });
-
-                            bloc.actionBloc
-                                .createUpdateActionUser(hiveActionUser!);
-                          },
-                          child: Container(
-                            height: 36.sp,
-                            width: 160.sp,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.sp),
-                              color: ActionUser_Evaluation.valueOf(
-                                          hiveActionUser.evaluation!) ==
-                                      ActionUser_Evaluation.BAD
-                                  ? Color(0xFFFFBE4A)
-                                  : Color(0xFFC9C9C9),
-                            ),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/thumbs_down.png',
-                                    height: 14.sp,
-                                    width: 14.sp,
-                                  ),
-                                  SizedBox(
-                                    width: 4.sp,
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)!.notSoGoodText,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontSize: 14.sp,
-                                      color: Color(0xFF777777),
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 39.h,
+                ),
+                SizedBox(
+                  height: 39.h,
+                ),
+                Container(
+                  height:
+                      (WidgetsBinding.instance!.window.viewInsets.bottom > 0.0)
+                          ? 0.h
+                          : 75.0,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEFEFEF),
                   ),
-                  Container(
-                    height: (WidgetsBinding.instance!.window.viewInsets.bottom >
-                            0.0)
-                        ? 0.h
-                        : 75.0,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                    child: Container(
+                      height: 37.5.h,
                       color: Color(0xFFEFEFEF),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-                      child: Container(
-                        height: 37.5.h,
-                        color: Color(0xFFEFEFEF),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40.r),
-                              ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.r),
                             ),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Color(0xFFADADAD)),
                           ),
-                          child: Text(AppLocalizations.of(context)!.close),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color(0xFFADADAD)),
                         ),
+                        child: Text(AppLocalizations.of(context)!.close),
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          });
+                ),
+              ],
+            ),
+          );
         });
+      },
+    );
   }
 }
 
