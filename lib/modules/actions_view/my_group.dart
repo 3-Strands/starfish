@@ -694,7 +694,7 @@ class MyGroupActionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 10.h),
+      margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(15),
@@ -799,7 +799,7 @@ class MyGroupActionListItem extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 10.h,
+                height: 5.h,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

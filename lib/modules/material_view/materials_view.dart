@@ -662,7 +662,7 @@ class MaterialListItem extends StatelessWidget {
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
           height: (material.isAssignedToGroupWithLeaderRole &&
                   material.isAssignedToMe)
-              ? 115
+              ? 110
               : (material.isAssignedToMe)
                   ? 85
                   : 65,
