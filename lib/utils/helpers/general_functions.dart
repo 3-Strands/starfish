@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:grpc/grpc_connection_interface.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
+import 'package:starfish/config/routes/routes.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/navigation_service.dart';
@@ -69,5 +74,22 @@ class GeneralFunctions {
           .invalidFullName;
     }
     return '';
+  }
+
+  static void handleGrpcError(GrpcError grpcError) {
+    if (grpcError.code == StatusCode.unauthenticated) {
+      StarfishSharedPreference().isUserLoggedIn().then((value) {
+        if (value == true) {
+          StarfishSharedPreference().setLoginStatus(false);
+          StarfishSharedPreference().setAccessToken('');
+          StarfishSnackbar.showErrorMessage(
+              NavigationService.navigatorKey.currentContext!,
+              grpcError.message!);
+          Navigator.of(NavigationService.navigatorKey.currentContext!)
+              .pushNamedAndRemoveUntil(
+                  Routes.phoneAuthentication, (Route<dynamic> route) => false);
+        }
+      });
+    }
   }
 }
