@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -18,6 +20,13 @@ class UserProvider {
     return _userBox.values.firstWhereOrNull((element) => element.id == userId);
   }
 
+  HiveUser? getLocalUserByPhone(String diallingCode, String phone) {
+    return _userBox.values.firstWhereOrNull((element) =>
+        element.diallingCode == diallingCode &&
+        element.phone == phone &&
+        element.isNew);
+  }
+
   Future<void> createUpdateUser(HiveUser user) async {
     int _currentIndex = -1;
     _userBox.values.toList().asMap().forEach((key, hiveUser) {
@@ -27,23 +36,20 @@ class UserProvider {
     });
 
     if (_currentIndex > -1) {
-      return _userBox.putAt(_currentIndex, user);
+      return _userBox.put(_currentIndex, user);
     } else {
       _userBox.add(user);
     }
   }
 
-  Future<void> deleteUserFromDB(HiveUser user) async {
-    int _currentIndex = -1;
-    _userBox.values.toList().asMap().forEach((key, hiveUser) {
-      if (hiveUser.id == user.id) {
-        _currentIndex = key;
-      }
+  void deleteUser(HiveUser user) {
+    _userBox.values
+        .where((element) =>
+            element.diallingCode == user.diallingCode &&
+            element.phone == user.phone)
+        .forEach((_hiveUser) {
+      _hiveUser.delete();
     });
-
-    if (_currentIndex > -1) {
-      return _userBox.deleteAt(_currentIndex);
-    }
   }
 
   String getName(String userId) {
@@ -68,5 +74,20 @@ class UserProvider {
     HiveUser? _user =
         _userBox.values.firstWhereOrNull((element) => element.id == userId);
     return _user != null ? _user.phoneWithDialingCode : '';
+  }
+
+  Future<void> updateLocalUser(HiveUser localUser, HiveUser _remoteUser) async {
+    int _currentIndex = -1;
+    _userBox.values.toList().asMap().forEach((key, hiveUser) {
+      if (hiveUser.id == localUser.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      _userBox
+          .deleteAt(_currentIndex)
+          .then((value) => _userBox.add(_remoteUser));
+    }
   }
 }

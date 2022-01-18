@@ -141,7 +141,7 @@ class HiveUser extends HiveObject {
     return User(
       id: this.id,
       name: this.name,
-      phone: '${this.diallingCodeWithPlus} + ${this.phone}',
+      phone: '${this.diallingCodeWithPlus}${this.phone}',
       linkGroups: this.linkGroups,
       countryIds: this.countryIds,
       languageIds: this.languageIds,

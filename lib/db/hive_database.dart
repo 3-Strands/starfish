@@ -25,7 +25,7 @@ class HiveDatabase {
   static const String COUNTRY_BOX = 'countryBox'; //0
   static const String LANGUAGE_BOX = 'languageBox'; //1
   static const String CURRENT_USER_BOX = 'currentUserBox'; //2
-  //static const String GROUPS_BOX = 'groupUserBox'; //3
+  static const String GROUP_USER_BOX = 'groupUserBox'; //3
   static const String ACTIONS_BOX = 'actionBox'; //4
   static const String MATERIAL_BOX = 'materialBox'; //5
   static const String MATERIAL_FEEDBACK_BOX = 'materialFeedbackBox'; //6
@@ -83,7 +83,7 @@ class HiveDatabase {
     await Hive.openBox<HiveCountry>(COUNTRY_BOX);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX);
     await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX);
-    //await Hive.openBox<HiveGroupUser>(GROUPS_BOX);
+    await Hive.openBox<HiveGroupUser>(GROUP_USER_BOX);
     await Hive.openBox<HiveAction>(ACTIONS_BOX);
     await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
     await Hive.openBox<HiveMaterialFeedback>(MATERIAL_FEEDBACK_BOX);

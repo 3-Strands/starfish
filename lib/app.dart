@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
-import 'package:starfish/utils/services/sync_service.dart';
 import 'config/routes/routes.dart';
 import 'constants/app_styles.dart';
 import 'l10n/l10n.dart';
@@ -28,7 +27,6 @@ class _StarfishState extends State<Starfish> {
   void initState() {
     // _locale = Locale('en');
     initDeviceLanguage();
-    SyncService().syncAll();
     super.initState();
   }
 

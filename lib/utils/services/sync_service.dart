@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -28,6 +29,7 @@ import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
@@ -37,7 +39,9 @@ import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:synchronized/synchronized.dart';
@@ -63,7 +67,7 @@ class SyncService {
   late Box<HiveCountry> countryBox;
   late Box<HiveLanguage> languageBox;
   late Box<HiveCurrentUser> currentUserBox;
-  //late Box<HiveGroupUser> groupUserBox;
+  late Box<HiveGroupUser> groupUserBox;
   late Box<HiveAction> actionBox;
   late Box<HiveMaterial> materialBox;
   late Box<HiveMaterialFeedback> materialFeedbackBox;
@@ -80,7 +84,7 @@ class SyncService {
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-    //groupBox = Hive.box<HiveGroupUser>(HiveDatabase.GROUPS_BOX);
+    groupUserBox = Hive.box<HiveGroupUser>(HiveDatabase.GROUP_USER_BOX);
     actionBox = Hive.box<HiveAction>(HiveDatabase.ACTIONS_BOX);
     materialBox = Hive.box<HiveMaterial>(HiveDatabase.MATERIAL_BOX);
     materialFeedbackBox =
@@ -539,6 +543,7 @@ class SyncService {
   }
 
   Future syncGroup() async {
+    print('==>> START syncGroup');
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -550,12 +555,16 @@ class SyncService {
 
     await GroupRepository().getGroups().then((ResponseStream<Group> stream) {
       stream.listen((group) {
+        print('==>>syncGroup: ${group}');
         GroupRepository().addEditGroup(HiveGroup.from(group));
       }, onError: ((err) {
-        handleGrpcError(err);
+        print('syncGroup ERROR: $err');
+        //handleGrpcError(err);
       }), onDone: () {
         print('Group Sync Done.');
       });
+    }).whenComplete(() {
+      print('==>> END SyncGroup');
     });
   }
 
@@ -611,93 +620,106 @@ class SyncService {
 
   Future syncLocalUsersToRemote() async {
     print('============= START: Sync Local User to Remote =============');
+    StreamController<CreateUpdateUserRequest> _controller = StreamController();
 
-    return Future.wait([
-      for (HiveUser _hiveUser
-          in userBox.values.where((HiveUser user) => (user.isNew == true)))
-        addUserToSyncQueue(_hiveUser),
-    ]);
-  }
+    ResponseStream<CreateUpdateUserResponse> responseStream =
+        await UserRepository().createUpdateUsers(_controller.stream);
 
-  Future<CreateUpdateUserResponse> addUserToSyncQueue(
-      HiveUser _hiveUser) async {
-    CreateUpdateUserResponse _response = await UserRepository()
-        .createUpdateUsers(_hiveUser.createRequestUser(), kUserFieldMask);
-    if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
-      if (_hiveUser.id != _response.user.id) {
-        await GroupProvider()
-            .updateGroupUserId(_hiveUser.id, _response.user.id);
-        await UserRepository().deleteUserFromDB(_hiveUser);
+    userBox.values
+        .where((element) => element.isNew || element.isUpdated)
+        .forEach((_hiveUser) {
+      var request = CreateUpdateUserRequest.create();
+      request.user = _hiveUser.createRequestUser();
+
+      if (_hiveUser.isUpdated) {
+        FieldMask mask = FieldMask(paths: kUserFieldMask);
+        request.updateMask = mask;
       }
-      await UserRepository().createUpdateUserInDB(_hiveUser);
-    }
+      _controller.add(request);
+    });
+    _controller.close();
 
-    return _response;
+    return await responseStream.forEach((_response) {
+      print('Remote User: ${_response}');
+      if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
+        // get local Id of this user/ and replace in all the groupUser
+        HiveUser? _hiveLocalUser = UserProvider().getLocalUserByPhone(
+            _response.user.diallingCode, _response.user.phone);
+        if (_hiveLocalUser != null) {
+          //Delete all local entry local entry with matching user i.e. dialling code and phone
+          UserProvider().deleteUser(_hiveLocalUser);
+
+          UserProvider().createUpdateUser(HiveUser.from(_response.user));
+
+          GroupProvider()
+              .updateGroupUserId(_hiveLocalUser.id, _response.user.id);
+        }
+      } else {
+        print('============= ERROR: syncLocalUsersToRemote =============');
+      }
+    });
   }
 
   Future syncLocalGroupsToRemote() async {
     print('============= START: Sync Local Groups to Remote =============');
-    return Future.wait([
-      for (HiveGroup group in groupBox.values
-          .where((HiveGroup group) => (group.isNew || group.isUpdated)))
-        addGroupToSyncQueue(group),
-    ]);
-  }
+    StreamController<CreateUpdateGroupsRequest> _controller =
+        StreamController();
 
-  Future<CreateUpdateGroupsResponse> addGroupToSyncQueue(
-      HiveGroup _hiveGroup) async {
-    CreateUpdateGroupsResponse _response = await GroupRepository()
-        .createUpdateGroup(
-            group: _hiveGroup.toGroup(), fieldMaskPaths: kGroupFieldMask);
+    ResponseStream<CreateUpdateGroupsResponse> responseStream =
+        await GroupRepository().createUpdateGroup(_controller.stream);
 
-    // update flag(s) isNew and/or isUpdated to false
-    _hiveGroup.isNew = false;
-    _hiveGroup.isUpdated = false;
+    groupBox.values
+        .where((element) => element.isNew || element.isUpdated)
+        .forEach((_hiveGroup) {
+      var request = CreateUpdateGroupsRequest.create();
+      request.group = _hiveGroup.toGroup();
 
-    GroupRepository().addEditGroup(_hiveGroup);
-    return _response;
+      if (_hiveGroup.isUpdated) {
+        FieldMask mask = FieldMask(paths: kGroupFieldMask);
+        request.updateMask = mask;
+      }
+
+      _controller.add(request);
+    });
+    _controller.close();
+
+    return await responseStream.forEach((value) {
+      print('Remote Group: ${value.group}');
+      if (value.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
+        // update flag(s) isNew and/or isUpdated to false
+
+        print('============= END: syncLocalGroupsToRemote =============');
+        GroupRepository().addEditGroup(HiveGroup.from(value.group));
+      } else {
+        print("ERROR: syncLocalGroupsToRemote STATUS.FAILED");
+      }
+    });
   }
 
   Future syncLocalGroupUsersToRemote() async {
-    print('============= START: Sync Local GroupUsers to Remote =============');
+    StreamController<CreateUpdateGroupUsersRequest> _controller =
+        StreamController();
 
-    final List<HiveGroupUser> _groupUsers = [];
+    ResponseStream<CreateUpdateGroupUsersResponse> responseStream =
+        await GroupRepository().createUpdateGroupUser(_controller.stream);
 
-    groupBox.values.forEach((HiveGroup _hiveGroup) async {
-      _groupUsers.addAll(_hiveGroup.users!
-          .where((element) =>
-              element.isNew || element.isUpdated || element.isDirty)
-          .toList());
+    groupUserBox.values.forEach((HiveGroupUser _hiveGroupUser) {
+      print('LOCAL GroupUSer: $_hiveGroupUser');
+      var request = CreateUpdateGroupUsersRequest.create();
+      request.groupUser = _hiveGroupUser.toGroupUser();
+
+      _controller.add(request);
     });
+    _controller.close();
 
-    return Future.wait([
-      for (HiveGroupUser groupUser in _groupUsers)
-        addGroupUserToSyncQueue(groupUser),
-    ]);
-  }
-
-  Future addGroupUserToSyncQueue(HiveGroupUser groupUser) async {
-    print('LOCAL GroupUser: ${groupUser.name}, ${groupUser.userId}');
-    if (groupUser.isDirty) {
-      return GroupRepository().deleteGroupUsers(groupUser.toGroupUser());
-    } else {
-      CreateUpdateGroupUsersResponse _response = await GroupRepository()
-          .createUpdateGroupUser(
-              groupUser: groupUser.toGroupUser(),
-              fieldMaskPaths: kGroupUserFieldMask);
-
-      print('REMOTE GroupUser[${_response.status}]: ${_response.message} ');
+    return await responseStream.forEach((_response) {
+      print('Remote GroupUser: ${_response}');
       if (_response.status == CreateUpdateGroupUsersResponse_Status.SUCCESS) {
-        groupUser.isNew = false;
-        groupUser.isUpdated = false;
+        // this entry should be removed from the box
+        GroupProvider()
+            .deleteGroupUser(HiveGroupUser.from(_response.groupUser));
       }
-      /*groupUser.isNew = false;
-      groupUser.isUpdated = false;
-
-      GroupRepository()
-        .createUpdateGroupUserInDB(group: _hiveGroup, groupUser: groupUser);*/
-      return _response;
-    }
+    });
   }
 
   Future syncActions() async {
@@ -739,22 +761,33 @@ class SyncService {
   syncLocalActionsToRemote() async {
     print('============= START: Sync Local Actions to Remote =============');
 
+    StreamController<CreateUpdateActionsRequest> _controller =
+        StreamController();
     actionBox.values
         .where((element) =>
             (element.isNew || element.isUpdated || element.isDirty))
         .forEach((HiveAction _hiveAction) {
       if (_hiveAction.isNew || _hiveAction.isUpdated) {
-        ActionRepository()
-            .createUpdateAction(
-          action: _hiveAction.toAction(),
-          fieldMaskPaths: kActionFieldMask,
-        )
-            .then((value) {
-          // update flag(s) isNew and/or isUpdated to false
-          _hiveAction.isNew = false;
-          _hiveAction.isUpdated = false;
+        var request = CreateUpdateActionsRequest.create();
+        request.action = _hiveAction.toAction();
 
-          ActionRepository().createUpdateActionInDB(_hiveAction);
+        if (_hiveAction.isUpdated) {
+          FieldMask mask = FieldMask(paths: kActionFieldMask);
+          request.updateMask = mask;
+        }
+
+        _controller.add(request);
+
+        ActionRepository()
+            .createUpdateAction(_controller.stream)
+            .then((onValue) {
+          onValue.listen((value) {
+            // update flag(s) isNew and/or isUpdated to false
+            _hiveAction.isNew = false;
+            _hiveAction.isUpdated = false;
+
+            ActionRepository().createUpdateActionInDB(_hiveAction);
+          });
         }).onError((error, stackTrace) {
           print('============= Error: ${error.toString()} ===============');
         }).whenComplete(() {
@@ -768,12 +801,11 @@ class SyncService {
           ActionRepository().deleteActionInDB(_hiveAction);
         }).onError((error, stackTrace) {
           print('============= Error: ${error.toString()} ===============');
-        }).whenComplete(() {
-          print(
-              '============= END: Sync Local Actions to Remote ===============');
-        });
+        }).whenComplete(() {});
       }
     });
+    _controller.close();
+    print('============= END: Sync Local Actions to Remote ===============');
   }
 
   syncLocalFiles() async {
@@ -941,31 +973,41 @@ class SyncService {
 
   Future syncLocalHiveActionUserToRemote() async {
     print('============= START: Sync Local ActionUser to Remote =============');
+    StreamController<CreateUpdateActionUserRequest> _controller =
+        StreamController();
     actionUserBox.values
         .where((element) => (element.isNew || element.isUpdated))
         .forEach((HiveActionUser _hiveActionUser) {
       if (_hiveActionUser.isNew || _hiveActionUser.isUpdated) {
-        ActionRepository()
-            .createUpdateActionUsers(
-          actionUser: _hiveActionUser.toActionUser(),
-          fieldMaskPaths: kActionUserFieldMask,
-        )
-            .then((value) {
-          // delete this actionuser form `ACTION_USER_BOX`
+        var request = CreateUpdateActionUserRequest.create();
+        request.actionUser = _hiveActionUser.toActionUser();
 
-          ActionProvider().deleteActionUser(_hiveActionUser);
+        FieldMask mask = FieldMask(paths: kActionUserFieldMask);
+        request.updateMask = mask;
+
+        ActionRepository()
+            .createUpdateActionUsers(_controller.stream)
+            .then((response) {
+          response.listen((value) {
+            // delete this actionuser form `ACTION_USER_BOX`
+
+            ActionProvider().deleteActionUser(_hiveActionUser);
+          });
         }).onError((error, stackTrace) {
           print('============= Error: ${error.toString()} ===============');
-        }).whenComplete(() {
-          print(
-              '============= END: Sync Local ActionUser to Remote ===============');
-        });
+        }).whenComplete(() {});
       }
     });
+    _controller.close();
+    print('============= END: Sync Local ActionUser to Remote ===============');
   }
 
   void handleGrpcError(GrpcError error) {
     debugPrint('grpcError: $error');
+    StarfishSnackbar.showErrorMessage(
+        NavigationService.navigatorKey.currentContext!,
+        '${error.codeName}: ${error.message}');
+
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
       FBroadcast.instance().broadcast(

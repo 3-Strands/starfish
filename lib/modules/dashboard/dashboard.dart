@@ -59,25 +59,22 @@ class _DashboardState extends State<Dashboard> {
     FBroadcast.instance().register(SyncService.kUpdateMaterial,
         (hiveMaterial, __) {
       debugPrint('Boradcast Receiver: kUpdateMaterial');
-      MaterialRepository().createUpdateMaterial(
-          material: hiveMaterial, fieldMaskPaths: kMaterialFieldMask);
+      SyncService().syncLocalMaterialsToRemote();
     }, more: {
       SyncService.kUpdateGroup: (hiveGroup, __) {
-        debugPrint('Boradcast Receiver: kUpdateGroup');
-        GroupRepository().createUpdateGroup(
-            group: hiveGroup, fieldMaskPaths: kGroupFieldMask);
+        SyncService().syncLocalGroupsToRemote();
       },
       SyncService.kUpdateUsers: (hiveUsers, __) {
         debugPrint('Boradcast Receiver: kUpdateUsers');
-
-        (hiveUsers as List<User>).forEach(
-            (user) => UserRepository().createUpdateUsers(user, kUserFieldMask));
+        SyncService().syncLocalUsersToRemote();
       },
       SyncService.kUnauthenticated: (value, callback) {
         debugPrint('Boradcast Receiver: kUnauthenticated');
         handleUnauthentication();
       }
     }, context: this);
+
+    SyncService().syncAll();
 
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);

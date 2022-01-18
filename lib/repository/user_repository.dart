@@ -13,15 +13,19 @@ class UserRepository {
 
   Future<ResponseStream<User>> getUsers() => apiProvider.getUsers();
 
-  Future<CreateUpdateUserResponse> createUpdateUsers(
+  /*Future<CreateUpdateUserResponse> createUpdateUsers(
           User user, List<String> fieldMaskPaths) =>
-      apiProvider.createUpdateUsers(user, fieldMaskPaths);
+      apiProvider.createUpdateUsers(user, fieldMaskPaths);*/
+
+  Future<ResponseStream<CreateUpdateUserResponse>> createUpdateUsers(
+          Stream<CreateUpdateUserRequest> request) =>
+      apiProvider.createUpdateUsersWithStream(request);
 
   Future<List<HiveUser>> getUsersFromDB() => dbProvider.getUsers();
 
   Future<void> createUpdateUserInDB(HiveUser user) =>
       dbProvider.createUpdateUser(user);
 
-  Future<void> deleteUserFromDB(HiveUser user) =>
-      dbProvider.deleteUserFromDB(user);
+  /*Future<void> deleteUserFromDB(HiveUser user) =>
+      dbProvider.deleteUserFromDB(user);*/
 }

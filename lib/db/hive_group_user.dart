@@ -11,7 +11,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 part 'hive_group_user.g.dart';
 
 @HiveType(typeId: 3)
-class HiveGroupUser {
+class HiveGroupUser extends HiveObject {
   @HiveField(0)
   String? groupId;
   @HiveField(1)
@@ -51,7 +51,7 @@ class HiveGroupUser {
   String toString() {
     return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
     user: ${this.user},  
-    isNew: ${this.isNew}, , isUpdated: ${this.isUpdated}, , isDirty: ${this.isDirty}}''';
+    isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDirty: ${this.isDirty}}''';
   }
 }
 

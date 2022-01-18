@@ -11,14 +11,9 @@ class ActionRepository {
 
   Future<ResponseStream<Action>> getActions() => apiProvider.getActions();
 
-  Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction({
-    required Action action,
-    required List<String> fieldMaskPaths,
-  }) =>
-      apiProvider.createUpdateAction(
-        action,
-        fieldMaskPaths,
-      );
+  Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction(
+          Stream<CreateUpdateActionsRequest> request) =>
+      apiProvider.createUpdateActionWithStream(request);
 
   Future<ResponseStream<DeleteActionResponse>> deleteAction(Action action) =>
       apiProvider.deleteAction(action);
@@ -45,12 +40,6 @@ class ActionRepository {
       dbProvider.createUpdateActionUser(actionUser);
 
   Future<ResponseStream<CreateUpdateActionUserResponse>>
-      createUpdateActionUsers({
-    required ActionUser actionUser,
-    required List<String> fieldMaskPaths,
-  }) =>
-          apiProvider.createUpdateActionUsers(
-            actionUser,
-            fieldMaskPaths,
-          );
+      createUpdateActionUsers(Stream<CreateUpdateActionUserRequest> request) =>
+          apiProvider.createUpdateActionUsers(request);
 }

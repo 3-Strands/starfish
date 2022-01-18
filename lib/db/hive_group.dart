@@ -80,7 +80,7 @@ class HiveGroup extends HiveObject {
       description: this.description,
       linkEmail: this.linkEmail,
       languageIds: this.languageIds,
-      users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
+      //users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
       evaluationCategoryIds: this.evaluationCategoryIds,
       // actions:
       //     this.actions?.map((HiveGroupAction action) => action.toGroupAction()),

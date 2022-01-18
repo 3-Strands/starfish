@@ -1,5 +1,6 @@
 import 'dart:async';
-
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
@@ -301,9 +302,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void handleGrpcError(GrpcError grpcError) {
     if (grpcError.code == StatusCode.unauthenticated) {
       // StatusCode 16
-      StarfishSnackbar.showErrorMessage(context, grpcError.message!);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.phoneAuthentication, (Route<dynamic> route) => false);
+      // Broadcast to sync the local changes with the server
+      FBroadcast.instance().broadcast(
+        SyncService.kUnauthenticated,
+      );
     }
   }
 

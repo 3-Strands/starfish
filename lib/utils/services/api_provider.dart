@@ -167,36 +167,20 @@ class ApiProvider {
     return client!.listEvaluationCategories(request);
   }
 
-  Future<CreateUpdateGroupsResponse> createUpdateGroup(
-    Group group,
-    List<String> fieldMaskPaths,
-  ) async {
-    var request = CreateUpdateGroupsRequest.create();
-    request.group = group;
-
-    FieldMask mask = FieldMask(paths: fieldMaskPaths);
-    request.updateMask = mask;
-
-    Stream<CreateUpdateGroupsRequest> streamRequest = Stream.value(request);
-
+  Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup(
+      Stream<CreateUpdateGroupsRequest> request) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateGroups(streamRequest).first;
+    return client!.createUpdateGroups(request);
   }
 
-  Future<CreateUpdateGroupUsersResponse> createUpdateGroupUser(
-      GroupUser groupUser, List<String> fieldMaskPaths) async {
-    var request = CreateUpdateGroupUsersRequest();
-    request.groupUser = groupUser;
-
-    FieldMask mask = FieldMask(paths: fieldMaskPaths);
-    request.updateMask = mask;
-
+  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
+      Stream<CreateUpdateGroupUsersRequest> request) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateGroupUsers(Stream.value(request)).first;
+    return client!.createUpdateGroupUsers(request);
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
@@ -220,36 +204,21 @@ class ApiProvider {
     return client!.listUsers(request);
   }
 
-  Future<CreateUpdateUserResponse> createUpdateUsers(
-      User user, List<String> fieldMaskPaths) async {
-    var request = CreateUpdateUserRequest.create();
-    request.user = user;
-
-    FieldMask mask = FieldMask(paths: fieldMaskPaths);
-    request.updateMask = mask;
-
+  Future<ResponseStream<CreateUpdateUserResponse>> createUpdateUsersWithStream(
+      Stream<CreateUpdateUserRequest> request) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateUsers(Stream.value(request)).first;
+    return client!.createUpdateUsers(request);
   }
 
-  Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction(
-    Action action,
-    List<String> fieldMaskPaths,
-  ) async {
-    var request = CreateUpdateActionsRequest.create();
-    request.action = action;
-
-    FieldMask mask = FieldMask(paths: fieldMaskPaths);
-    request.updateMask = mask;
-
-    Stream<CreateUpdateActionsRequest> streamRequest = Stream.value(request);
-
+  Future<ResponseStream<CreateUpdateActionsResponse>>
+      createUpdateActionWithStream(
+          Stream<CreateUpdateActionsRequest> request) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateActions(streamRequest);
+    return client!.createUpdateActions(request);
   }
 
   Future<ResponseStream<DeleteActionResponse>> deleteAction(
@@ -266,21 +235,11 @@ class ApiProvider {
 
   Future<ResponseStream<CreateUpdateActionUserResponse>>
       createUpdateActionUsers(
-    ActionUser actionUser,
-    List<String> fieldMaskPaths,
-  ) async {
-    var request = CreateUpdateActionUserRequest.create();
-    request.actionUser = actionUser;
-
-    FieldMask mask = FieldMask(paths: fieldMaskPaths);
-    request.updateMask = mask;
-
-    Stream<CreateUpdateActionUserRequest> streamRequest = Stream.value(request);
-
+          Stream<CreateUpdateActionUserRequest> request) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateActionUsers(streamRequest);
+    return client!.createUpdateActionUsers(request);
   }
 
   Future<ResponseStream<UploadStatus>> uploadFile(

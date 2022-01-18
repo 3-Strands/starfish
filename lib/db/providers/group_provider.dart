@@ -9,9 +9,11 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 
 class GroupProvider {
   late Box<HiveGroup> _groupBox;
+  late Box<HiveGroupUser> _groupUserBox;
 
   GroupProvider() {
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
+    _groupUserBox = Hive.box<HiveGroupUser>(HiveDatabase.GROUP_USER_BOX);
   }
 
   Future<List<HiveGroup>> getGroups() async {
@@ -62,70 +64,25 @@ class GroupProvider {
     //debugPrint('FINAL: $group');
   }
 
-  Future<void> updateGroupUserId(
-      String? localUserId, String? remoteUserId) async {
-    _groupBox.values.forEach((hiveGroup) {
-      if (hiveGroup.users != null) {
-        HiveGroupUser? _hiveGroupUser = hiveGroup.users!
-            .where((groupUser) => groupUser.userId == localUserId)
-            .firstOrNull;
+  void updateGroupUserId(String? localUserId, String? remoteUserId) {
+    _groupUserBox.values
+        .where((element) => element.userId == localUserId)
+        .forEach((_hiveGroupUser) {
+      print('Update GroupUSEr $_hiveGroupUser');
+      _hiveGroupUser.userId = remoteUserId;
 
-        if (_hiveGroupUser != null) {
-          _hiveGroupUser.userId = remoteUserId;
-
-          hiveGroup.save();
-        }
-      }
+      _hiveGroupUser.save();
     });
   }
 
-  @Deprecated(
-      "Use 'createUpdateGroupUser' instead by setting 'isDirty' as true")
-  Future<int> deleteGroupUser(HiveGroupUser groupUser) async {
-    int _groupIndex = -1;
-    int _groupUserIndex = -1;
-    HiveGroup? _group;
-    HiveGroupUser? _groupUser;
-
-    _groupBox.values.toList().asMap().forEach((key, HiveGroup group) {
-      if (group.id == groupUser.groupId) {
-        _groupIndex = key;
-        _group = group;
-      }
+  void deleteGroupUser(HiveGroupUser groupUser) {
+    _groupUserBox.values
+        .where((element) =>
+            element.userId == groupUser.userId &&
+            element.groupId == groupUser.groupId)
+        .forEach((element) {
+      element.delete();
     });
-
-    if (_group == null || _groupIndex == -1 || _group?.users?.length == 0) {
-      return -1;
-    }
-    _group?.users?.asMap().forEach((key, HiveGroupUser user) {
-      if (user.groupId == groupUser.groupId) {
-        _groupUserIndex = key;
-        _groupUser = user;
-      }
-    });
-
-    // Mark the matching GroupUser as dirty to to sync with remote
-    if (_groupUser == null || _groupUserIndex == -1) {
-      _groupUser!.isDirty = true;
-    }
-    // Also Mark the matching Group as updated to sync with remote
-    _group!.isUpdated = true;
-
-    // Update the group in local hive table
-    _groupBox.putAt(_groupIndex, _group!);
-
-    print('Groups After Delte: ');
-    _groupBox.values.forEach((element) {
-      print('==>> Group: $element ');
-    });
-
-    return 1;
-    /*HiveGroup? _group = _groupBox.values.firstWhereOrNull((element) => element.id == groupUser.userId);
-    if (_group == null) {
-      return 0;
-    }
-    _group.users.whe
-    _groupBox.deleteAt(index)*/
   }
 
   HiveGroup? getGroupById(String groupId) {
@@ -142,5 +99,9 @@ class GroupProvider {
     return _groupList.where((element) {
       return groupUserRoleList.contains(element.getMyRole(userId));
     }).toList();
+  }
+
+  Future addGroupUsers(List<HiveGroupUser> groupUsers) async {
+    return _groupUserBox.addAll(groupUsers);
   }
 }

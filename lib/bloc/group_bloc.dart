@@ -104,4 +104,8 @@ class GroupBloc extends Object {
   void dispose() {
     _groups.close();
   }
+
+  Future addGroupUsers(List<HiveGroupUser> groupUsers) async {
+    return repository.dbProvider.addGroupUsers(groupUsers);
+  }
 }
