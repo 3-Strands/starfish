@@ -19,6 +19,8 @@ class SyncTime {
   }
 
   Date? lastSyncDateTime() {
+    return null;
+    /*
     if (_lastSyncDataTimeBox.values.length == 0) {
       return null;
     }
@@ -28,5 +30,6 @@ class SyncTime {
         year: _lastSyncDateTime.year,
         month: _lastSyncDateTime.month,
         day: _lastSyncDateTime.day);
+        */
   }
 }

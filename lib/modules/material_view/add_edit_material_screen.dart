@@ -278,23 +278,25 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                        ),
-                      ),
-                      filled: true,
-                      fillColor: AppColors.txtFieldBackground,
-                    ),
-                  ),
+                  (_selectedFiles.length == 0)
+                      ? TextFormField(
+                          decoration: InputDecoration(
+                            contentPadding:
+                                EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: AppColors.txtFieldBackground,
+                          ),
+                        )
+                      : Container(),
                   if (_isEditMode) _previewFiles(widget.material!),
                   SizedBox(height: 10.h),
 
