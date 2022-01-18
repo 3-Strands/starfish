@@ -278,25 +278,26 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
-                  (_selectedFiles.length == 0)
-                      ? TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding:
-                                EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: AppColors.txtFieldBackground,
-                          ),
-                        )
-                      : Container(),
+
+                  // (widget.material?.localFiles == null)
+                  //     ? TextFormField(
+                  //         decoration: InputDecoration(
+                  //           contentPadding:
+                  //               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                  //           border: OutlineInputBorder(
+                  //             borderRadius: BorderRadius.circular(10.0),
+                  //           ),
+                  //           enabledBorder: OutlineInputBorder(
+                  //             borderRadius: BorderRadius.circular(10.0),
+                  //             borderSide: BorderSide(
+                  //               color: Colors.transparent,
+                  //             ),
+                  //           ),
+                  //           filled: true,
+                  //           fillColor: AppColors.txtFieldBackground,
+                  //         ),
+                  //       )
+                  //     : Container(),
                   if (_isEditMode) _previewFiles(widget.material!),
                   SizedBox(height: 10.h),
 
@@ -758,8 +759,42 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     if (_hiveMaterial.localFiles == null) {
       return Container();
     }
+
     final List<Widget> _widgetList = [];
 
+    for (File file in _hiveMaterial.localFiles!) {
+      _widgetList.add(Container(
+        height: 30.h,
+        child: RichText(
+          textAlign: TextAlign.start,
+          text: TextSpan(
+            text: file.path.split("/").last,
+            style: TextStyle(
+              color: AppColors.appTitle,
+              fontFamily: 'OpenSans',
+              fontSize: 16.sp,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                if (Platform.isIOS) {
+                  return;
+                } else if (Platform.isAndroid) {
+                  OpenFile.open(file.path);
+                }
+                /*_copyFileToDownloads(file).then((value) {
+                  StarfishSnackbar.showSuccessMessage(
+                      context, 'File downloaded successfully.');
+                }, onError: (error) {
+                  print('Download Error $error');
+                  StarfishSnackbar.showErrorMessage(
+                      context, 'File downloaded failed.');
+                });*/
+              },
+          ),
+        ),
+      ));
+    }
     if (_hiveMaterial.localImageFile != null) {
       final imagePreview = Card(
         margin: EdgeInsets.only(top: 10.h),
@@ -781,40 +816,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _widgetList.add(imagePreview);
       _widgetList.add(SizedBox(
         height: 10.h,
-      ));
-    }
-
-    for (File file in _hiveMaterial.localFiles!) {
-      _widgetList.add(Container(
-        height: 30.h,
-        child: RichText(
-          textAlign: TextAlign.start,
-          text: TextSpan(
-            text: file.path.split("/").last,
-            style: TextStyle(
-              color: Color(0xFF3475F0),
-              fontFamily: 'OpenSans',
-              fontSize: 14.sp,
-              decoration: TextDecoration.underline,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                if (Platform.isIOS) {
-                  return;
-                } else if (Platform.isAndroid) {
-                  OpenFile.open(file.path);
-                }
-                /*_copyFileToDownloads(file).then((value) {
-                  StarfishSnackbar.showSuccessMessage(
-                      context, 'File downloaded successfully.');
-                }, onError: (error) {
-                  print('Download Error $error');
-                  StarfishSnackbar.showErrorMessage(
-                      context, 'File downloaded failed.');
-                });*/
-              },
-          ),
-        ),
       ));
     }
 
