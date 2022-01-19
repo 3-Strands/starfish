@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
@@ -33,6 +32,17 @@ class HiveGroupUser extends HiveObject {
     this.isUpdated = false,
     this.isDirty = false,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveGroupUser &&
+          runtimeType == other.runtimeType &&
+          userId == other.userId &&
+          groupId == other.groupId;
+
+  @override
+  int get hashCode => userId.hashCode ^ groupId.hashCode;
 
   HiveGroupUser.from(GroupUser group) {
     this.groupId = group.groupId;

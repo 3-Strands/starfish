@@ -22,6 +22,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -865,7 +866,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   // Widget for the group members invited with phone numbers
   Widget _invitedGroupMembersContainer() {
-    List<HiveGroupUser>? _groupUsers = widget.group?.users
+    List<HiveGroupUser>? _groupUsers = widget.group?.activeUsers
         ?.where((element) =>
             (element.isInvited || element.isActive) && element.phone.isNotEmpty)
         .toList();
@@ -924,7 +925,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               );
             } else {
               _groupUser.isDirty = true;
-              bloc.groupBloc.createUpdateGroupUser(_groupUser);
+              bloc.groupBloc.createUpdateGroupUser(_groupUser).then((value) {
+                setState(() {});
+              });
             }
           },
         ),

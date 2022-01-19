@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class GroupProvider {
@@ -18,6 +16,10 @@ class GroupProvider {
 
   Future<List<HiveGroup>> getGroups() async {
     return _groupBox.values.toList();
+  }
+
+  List<HiveGroupUser> getGroupUsersSync() {
+    return _groupUserBox.values.toList();
   }
 
   Future<void> addEditGroup(HiveGroup group) async {
@@ -37,38 +39,25 @@ class GroupProvider {
 
   Future<void> createUpdateGroupUser(
       HiveGroup group, HiveGroupUser groupUser) async {
-    int _groupIndex = -1;
-    int _groupUserIndex = -1;
-
-    //debugPrint('INITIAL: $group');
-    group.users!.asMap().forEach((key, _user) {
-      if (_user.userId == groupUser.userId) {
-        _groupUserIndex = key;
-        _user = groupUser;
-        //_user.isNew = false;
-        //_user.isUpdated = false;
-      }
-    });
-    _groupBox.values.toList().asMap().forEach((key, hiveGroup) {
-      if (hiveGroup.id == group.id) {
-        _groupIndex = key;
+    int _currentIndex = -1;
+    _groupUserBox.values.toList().asMap().forEach((key, element) {
+      if (element.userId == groupUser.userId &&
+          element.groupId == groupUser.groupId) {
+        _currentIndex = key;
       }
     });
 
-    if (_groupIndex > -1) {
-      return _groupBox.putAt(_groupIndex, group);
+    if (_currentIndex > -1) {
+      return _groupUserBox.putAt(_currentIndex, groupUser);
     } else {
-      _groupBox.add(group);
+      _groupUserBox.add(groupUser);
     }
-
-    //debugPrint('FINAL: $group');
   }
 
   void updateGroupUserId(String? localUserId, String? remoteUserId) {
     _groupUserBox.values
         .where((element) => element.userId == localUserId)
         .forEach((_hiveGroupUser) {
-      print('Update GroupUSEr $_hiveGroupUser');
       _hiveGroupUser.userId = remoteUserId;
 
       _hiveGroupUser.save();

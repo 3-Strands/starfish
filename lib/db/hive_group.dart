@@ -7,6 +7,7 @@ import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -139,10 +140,17 @@ class HiveGroup extends HiveObject {
 
   /// Returns all 'HiveGroupUser' where 'isDirty' is false
   List<HiveGroupUser>? get activeUsers {
-    return this
-        .users
-        ?.where((groupUser) => groupUser.isDirty == false)
-        .toList();
+    return this.users
+        //?.where((groupUser) => groupUser.isDirty == false)
+        ?.where((groupUser) {
+      HiveGroupUser? exists = GroupProvider()
+          .getGroupUsersSync()
+          .firstWhereOrNull((element) =>
+              element.userId == groupUser.userId &&
+              element.groupId == groupUser.groupId);
+
+      return exists == null || (exists != null && !exists.isDirty);
+    }).toList();
   }
 
   String toString() {

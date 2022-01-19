@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -8,7 +7,6 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
-import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -170,7 +168,7 @@ class HiveUser extends HiveObject {
     return '''{id: ${this.id}, name: ${this.name}, phone: ${this.phone}, 
         linkGroups: ${this.linkGroups}, diallingCode: ${this.diallingCode}, 
         countryIds: ${this.countryIds?.toString()}, languageIds: ${this.languageIds?.toString()},
-        creatorId: ${this.creatorId}, status: ${this.status}}, isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDeleted: ${this.isDeleted} ''';
+        creatorId: ${this.creatorId}, status: ${this.status}}, isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDeleted: ${this.isDeleted} }''';
   }
 }
 
