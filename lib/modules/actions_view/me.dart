@@ -174,6 +174,9 @@ class _MeState extends State<Me> {
       hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
     }
 
+    final _questionController = TextEditingController();
+    _questionController.text = hiveActionUser.userResponse ?? '';
+
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -315,6 +318,7 @@ class _MeState extends State<Me> {
                                 ),
                               ),
                               TextField(
+                                controller: _questionController,
                                 decoration: InputDecoration(
                                     hintStyle: TextStyle(
                                       fontStyle: FontStyle.italic,
