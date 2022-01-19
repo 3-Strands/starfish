@@ -74,6 +74,7 @@ class _ActionsScreenState extends State<ActionsScreen>
                     : Container(),
                 Expanded(
                   child: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
                     children:
                         _tabController.length == 2 ? [Me(), MyGroup()] : [Me()],
                     controller: _tabController,

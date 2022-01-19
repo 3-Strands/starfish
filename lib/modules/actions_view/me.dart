@@ -11,6 +11,7 @@ import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/action_type.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
@@ -220,14 +221,18 @@ class _MeState extends State<Me> {
                         SizedBox(
                           height: 44.h,
                           width: 169.w,
-                          child: Text(
-                            action.name ?? '',
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.left,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              // action.name ?? '',
+                              'Action ${Action_Type.valueOf(action.type!)!.about}',
+                              maxLines: 2,
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.left,
+                            ),
                           ),
                         ),
                         Row(

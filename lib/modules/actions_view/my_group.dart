@@ -401,67 +401,73 @@ class _MyGroupState extends State<MyGroup> {
                 SizedBox(
                   height: 40.sp,
                 ),
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(15.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        height: 44.h,
+                      Container(
+                        height: 40.h,
                         width: 169.w,
-                        child: Text(
-                          AppLocalizations.of(context)!
-                              .actionFollowInstructions,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                          textAlign: TextAlign.left,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            user.name ?? '',
+                            maxLines: 2,
+                            style: TextStyle(
+                                fontSize: 20.sp,
+                                color: AppColors.appTitle,
+                                fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/images/hand_right.png',
-                            height: 14.sp,
-                            width: 14.sp,
-                          ),
-                          SizedBox(
-                            width: 4.sp,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              setModalState(() {
-                                if (user.actionStatusbyId(action) ==
-                                    ActionStatus.NOT_DONE) {
-                                  hiveActionUser!.status =
-                                      ActionUser_Status.COMPLETE.value;
-                                } else if (user.actionStatusbyId(action) ==
-                                    ActionStatus.DONE) {
-                                  hiveActionUser!.status =
-                                      ActionUser_Status.INCOMPLETE.value;
-                                } else {
-                                  hiveActionUser!.status = ActionUser_Status
-                                      .UNSPECIFIED_STATUS.value;
-                                }
-                              });
-                              setState(
-                                  () {}); // To trigger the main view to redraw.
-                              bloc.actionBloc
-                                  .createUpdateActionUser(hiveActionUser!);
-
-                              // TODO: should we update the status of this action on HiveUser also????
-                            },
-                            child: UserActionStatusWidget(
-                              title: user.actionStatusbyId(action),
-                              height: 36.h,
-                              width: 130.w,
+                      Container(
+                        height: 44.h,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/hand_right.png',
+                              height: 14.sp,
+                              width: 14.sp,
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              width: 4.sp,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setModalState(() {
+                                  if (user.actionStatusbyId(action) ==
+                                      ActionStatus.NOT_DONE) {
+                                    hiveActionUser!.status =
+                                        ActionUser_Status.COMPLETE.value;
+                                  } else if (user.actionStatusbyId(action) ==
+                                      ActionStatus.DONE) {
+                                    hiveActionUser!.status =
+                                        ActionUser_Status.INCOMPLETE.value;
+                                  } else {
+                                    hiveActionUser!.status = ActionUser_Status
+                                        .UNSPECIFIED_STATUS.value;
+                                  }
+                                });
+                                setState(
+                                    () {}); // To trigger the main view to redraw.
+                                bloc.actionBloc
+                                    .createUpdateActionUser(hiveActionUser!);
+
+                                // TODO: should we update the status of this action on HiveUser also????
+                              },
+                              child: UserActionStatusWidget(
+                                title: user.actionStatusbyId(action),
+                                height: 36.h,
+                                width: 130.w,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
