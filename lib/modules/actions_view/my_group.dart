@@ -364,6 +364,9 @@ class _MyGroupState extends State<MyGroup> {
       hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
     }
 
+    final _questionController = TextEditingController();
+    _questionController.text = hiveActionUser.teacherResponse ?? '';
+
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -516,6 +519,7 @@ class _MyGroupState extends State<MyGroup> {
                                 ),
                               ),
                               TextField(
+                                controller: _questionController,
                                 decoration: InputDecoration(
                                     border: UnderlineInputBorder(),
                                     hintText: AppLocalizations.of(context)!
