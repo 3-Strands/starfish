@@ -18,14 +18,9 @@ class MaterialRepository {
   Future<ResponseStream<MaterialType>> getMaterialTypes() =>
       apiProvider.getMateialTypes();
 
-  Future<ResponseStream<CreateUpdateMaterialsResponse>> createUpdateMaterial({
-    required Material material,
-    required List<String> fieldMaskPaths,
-  }) =>
-      apiProvider.createUpdateMaterial(
-        material,
-        fieldMaskPaths,
-      );
+  Future<ResponseStream<CreateUpdateMaterialsResponse>> createUpdateMaterial(
+          Stream<CreateUpdateMaterialsRequest> request) =>
+      apiProvider.createUpdateMaterial(request);
 
   Future<List<HiveMaterial>> fetchMaterialsFromDB() =>
       materialProvider.getMateials();

@@ -177,6 +177,7 @@ class SyncService {
     // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
     await lock.synchronized(() => syncLocalUsersToRemote());
     await lock.synchronized(() => syncLocalGroupsToRemote());
+    await lock.synchronized(() => syncLocalDeletedGroupUsersToRemote());
     await lock.synchronized(() => syncLocalGroupUsersToRemote());
     await lock.synchronized(() => syncLocalActionsToRemote());
 
@@ -515,30 +516,38 @@ class SyncService {
     });
   }
 
-  syncLocalMaterialsToRemote() async {
+  Future syncLocalMaterialsToRemote() async {
     print('============= START: Sync Local Materials to Remote =============');
+
+    StreamController<CreateUpdateMaterialsRequest> _controller =
+        StreamController();
+
+    ResponseStream<CreateUpdateMaterialsResponse> responseStram =
+        await MaterialRepository().createUpdateMaterial(_controller.stream);
 
     materialBox.values
         .where(
             (element) => (element.isNew == true || element.isUpdated == true))
         .forEach((HiveMaterial _hiveMaterial) {
-      MaterialRepository()
-          .createUpdateMaterial(
-        material: _hiveMaterial.toMaterial(),
-        fieldMaskPaths: kMaterialFieldMask,
-      )
-          .then((value) {
-        // update flag(s) isNew and/or isUpdated to false
-        _hiveMaterial.isNew = false;
-        _hiveMaterial.isUpdated = false;
+      var request = CreateUpdateMaterialsRequest.create();
+      request.material = _hiveMaterial.toMaterial();
 
-        MaterialRepository().createUpdateMaterialInDB(_hiveMaterial);
-      }).onError((error, stackTrace) {
-        print('============= Error: ${error.toString()} ===============');
-      }).whenComplete(() {
-        print(
-            '============= END: Sync Local Materials to Remote ===============');
-      });
+      if (_hiveMaterial.isUpdated) {
+        FieldMask mask = FieldMask(paths: kGroupFieldMask);
+        request.updateMask = mask;
+      }
+
+      _controller.add(request);
+    });
+    _controller.close();
+
+    await responseStram.forEach((response) {
+      print('Remote Material: ${response.material}');
+      if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
+        // update flag(s) isNew and/or isUpdated to false
+        MaterialRepository()
+            .createUpdateMaterialInDB(HiveMaterial.from(response.material));
+      }
     });
   }
 
@@ -703,7 +712,9 @@ class SyncService {
     ResponseStream<CreateUpdateGroupUsersResponse> responseStream =
         await GroupRepository().createUpdateGroupUser(_controller.stream);
 
-    groupUserBox.values.forEach((HiveGroupUser _hiveGroupUser) {
+    groupUserBox.values
+        .where((element) => element.isNew || element.isUpdated)
+        .forEach((HiveGroupUser _hiveGroupUser) {
       print('LOCAL GroupUSer: $_hiveGroupUser');
       var request = CreateUpdateGroupUsersRequest.create();
       request.groupUser = _hiveGroupUser.toGroupUser();
@@ -718,6 +729,32 @@ class SyncService {
         // this entry should be removed from the box
         GroupProvider()
             .deleteGroupUser(HiveGroupUser.from(_response.groupUser));
+      }
+    });
+  }
+
+  // DELETE GROUP USERS
+  Future syncLocalDeletedGroupUsersToRemote() async {
+    StreamController<GroupUser> _controller = StreamController();
+
+    ResponseStream<DeleteGroupUsersResponse> responseStream =
+        await GroupRepository().deleteGroupUsers(_controller.stream);
+
+    groupUserBox.values
+        .where((element) => element.isDirty)
+        .forEach((HiveGroupUser _hiveGroupUser) {
+      print('DELETE LOCAL GroupUSer: $_hiveGroupUser');
+
+      _controller.add(_hiveGroupUser.toGroupUser());
+    });
+    _controller.close();
+
+    return await responseStream.forEach((_response) {
+      print('DELETEED Remote GroupUser: ${_response}');
+      if (_response.status == DeleteGroupUsersResponse_Status.SUCCESS) {
+        // this entry should be removed from the box
+        GroupProvider().deleteGroupUser(HiveGroupUser(
+            groupId: _response.groupId, userId: _response.userId));
       }
     });
   }

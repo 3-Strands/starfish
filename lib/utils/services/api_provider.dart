@@ -111,21 +111,11 @@ class ApiProvider {
   }
 
   Future<ResponseStream<CreateUpdateMaterialsResponse>> createUpdateMaterial(
-    Material material,
-    List<String> fieldMaskPaths,
-  ) async {
-    var request = CreateUpdateMaterialsRequest.create();
-    request.material = material;
-
-    FieldMask mask = FieldMask(paths: fieldMaskPaths);
-    request.updateMask = mask;
-
-    Stream<CreateUpdateMaterialsRequest> streamRequest = Stream.value(request);
-
+      Stream<CreateUpdateMaterialsRequest> request) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.createUpdateMaterials(streamRequest);
+    return client!.createUpdateMaterials(request);
   }
 
   Future<ResponseStream<Group>> getGroups() async {
@@ -184,11 +174,11 @@ class ApiProvider {
   }
 
   Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
-      GroupUser groupUser) async {
+      Stream<GroupUser> groupUser) async {
     if (client == null) {
       await getGrpcClient();
     }
-    return client!.deleteGroupUsers(Stream.value(groupUser));
+    return client!.deleteGroupUsers(groupUser);
   }
 
   Future<ResponseStream<User>> getUsers() async {
