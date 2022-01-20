@@ -526,6 +526,9 @@ class _MeState extends State<Me> {
                   index: indexPath.index,
                   action: snapshot.data!.values.toList()[indexPath.section]
                       [indexPath.index],
+                  displayActions:
+                      snapshot.data!.keys.elementAt(indexPath.section).id ==
+                          null, // Dummy Group i.e. self actions
                   onActionTap: _onActionSelection,
                 );
               },
@@ -573,10 +576,14 @@ class _MeState extends State<Me> {
 class MyActionListItem extends StatelessWidget {
   final int index;
   final HiveAction action;
+  final bool displayActions;
   final Function(HiveAction action) onActionTap;
 
   MyActionListItem(
-      {required this.action, required this.onActionTap, required this.index});
+      {required this.action,
+      required this.onActionTap,
+      required this.index,
+      this.displayActions = false});
 
   @override
   Widget build(BuildContext context) {
@@ -626,61 +633,66 @@ class MyActionListItem extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: 30.sp,
-                      child: PopupMenuButton(
-                        icon: Icon(
-                          Icons.more_vert,
-                          color: Color(0xFF3475F0),
-                        ),
-                        color: Colors.white,
-                        elevation: 20,
-                        shape: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.white, width: 2),
-                            borderRadius: BorderRadius.circular(12.sp)),
-                        enabled: true,
-                        onSelected: (value) {
-                          switch (value) {
-                            case 0:
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddEditAction(
-                                    action: action,
-                                  ),
-                                ),
-                              ).then((value) => FocusScope.of(context)
-                                  .requestFocus(new FocusNode()));
-                              break;
-                            case 1:
-                              _deleteAction(context, action);
+                      width: 30.w,
+                      height: 40.h,
+                      child: displayActions
+                          ? PopupMenuButton(
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Color(0xFF3475F0),
+                              ),
+                              color: Colors.white,
+                              elevation: 20,
+                              shape: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.white, width: 2),
+                                  borderRadius: BorderRadius.circular(12.sp)),
+                              enabled: true,
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 0:
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddEditAction(
+                                          action: action,
+                                        ),
+                                      ),
+                                    ).then((value) => FocusScope.of(context)
+                                        .requestFocus(new FocusNode()));
+                                    break;
+                                  case 1:
+                                    _deleteAction(context, action);
 
-                              break;
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            child: Text(
-                              AppLocalizations.of(context)!.editActionText,
-                              style: TextStyle(
-                                  color: Color(0xFF3475F0),
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            value: 0,
-                          ),
-                          PopupMenuItem(
-                            child: Text(
-                              AppLocalizations.of(context)!.deleteActionText,
-                              style: TextStyle(
-                                  color: Color(0xFF3475F0),
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            value: 1,
-                          ),
-                        ],
-                      ),
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .editActionText,
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: 0,
+                                ),
+                                PopupMenuItem(
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .deleteActionText,
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: 1,
+                                ),
+                              ],
+                            )
+                          : Container(),
                     ),
                   ],
                 ),
