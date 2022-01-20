@@ -93,11 +93,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                       width: 90.w,
                       margin: EdgeInsets.only(right: 0.w),
                       child: Text(
-                        user.isInvited && user.phone.isEmpty
-                            ? AppLocalizations.of(context)!
-                                .userStatusInvited
-                                .toUpperCase()
-                            : GroupUser_Role.valueOf(user.role!).toString(),
+                        user.isActive
+                            ? GroupUser_Role.valueOf(user.role!).toString()
+                            : user.isInvited
+                                ? AppLocalizations.of(context)!
+                                    .userStatusInvited
+                                    .toUpperCase()
+                                : '',
                         textAlign: TextAlign.right,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -169,7 +171,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
           SizedBox(
             height: 36.h,
           ),
-          _buildUsersList(group.users!),
+          _buildUsersList(group.activeUsers!),
           SizedBox(
             height: 20.h,
           ),

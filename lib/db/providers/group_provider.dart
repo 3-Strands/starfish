@@ -22,6 +22,12 @@ class GroupProvider {
     return _groupUserBox.values.toList();
   }
 
+  List<HiveGroupUser> getGroupUsersByGroupIdSync(String? groupId) {
+    return _groupUserBox.values
+        .where((element) => element.groupId == groupId)
+        .toList();
+  }
+
   Future<void> addEditGroup(HiveGroup group) async {
     int _currentIndex = -1;
     _groupBox.values.toList().asMap().forEach((key, hiveGroup) {
