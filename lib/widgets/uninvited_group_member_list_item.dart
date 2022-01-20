@@ -75,30 +75,33 @@ class _UnInvitedGroupMemberListItemState
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      /// Display phonenumber input fields
-                      setState(() {
-                        isEditMode = !isEditMode;
-                      });
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.inviteGroupUser,
-                      style: TextStyle(
-                        fontFamily: 'OpenSans',
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                  Visibility(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        /// Display phonenumber input fields
+                        setState(() {
+                          isEditMode = !isEditMode;
+                        });
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.inviteGroupUser,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFADADAD),
-                      fixedSize: Size(115.w, 18.h),
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(3.0),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFADADAD),
+                        fixedSize: Size(115.w, 18.h),
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(3.0),
+                        ),
                       ),
                     ),
+                    visible: !isEditMode,
                   ),
                   IconButton(
                     onPressed: () {
