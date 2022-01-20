@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 enum Flavor { DEV, PROD }
 
 class FlavorValues {
-  FlavorValues({required this.baseUrl});
+  FlavorValues({required this.baseUrl, required this.apiKey});
   final String baseUrl;
+  final String apiKey;
+
   //Add other flavor specific values, e.g database name
 }
 

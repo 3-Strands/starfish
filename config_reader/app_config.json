@@ -1,4 +1,7 @@
 {
-    "dev_url": "sandbox-api.everylanguage.app",
-    "prod_url": "sandbox-api.everylanguage.app"
+    "dev_url": "sandbox-api.everylanguage.app",    
+    "dev_api_key": "AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0",
+
+    "prod_url": "api.everylanguage.app",
+    "prod_api_key": "AIzaSyDP37WRLYgosFQV9f33W2zGZr1grLQHjzY"
 }

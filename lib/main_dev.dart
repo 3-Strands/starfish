@@ -25,6 +25,7 @@ void main() async {
       flavor: Flavor.DEV,
       values: FlavorValues(
         baseUrl: ConfigReader.getDevURL(),
+        apiKey: ConfigReader.getDevAPIKey(),
       ),
     );
     return runApp(Starfish());

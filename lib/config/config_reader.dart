@@ -17,4 +17,12 @@ abstract class ConfigReader {
   static String getProdURL() {
     return _config['prod_url'] as String;
   }
+
+  static String getDevAPIKey() {
+    return _config['dev_api_key'] as String;
+  }
+
+  static String getProdAPIKey() {
+    return _config['prod_api_key'] as String;
+  }
 }
