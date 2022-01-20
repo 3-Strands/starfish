@@ -306,7 +306,8 @@ class SyncService {
       }), onDone: () {
         print('Users Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   Future syncCountries() async {
@@ -336,7 +337,8 @@ class SyncService {
       }), onDone: () {
         print('Country Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   Future syncLanguages() async {
@@ -372,7 +374,8 @@ class SyncService {
       }), onDone: () {
         print('Language Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   Future syncMaterialFiles(HiveMaterial _hiveMaterial) async {
@@ -435,7 +438,8 @@ class SyncService {
       }), onDone: () {
         print('Material Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   Future syncMaterialTopics() async {
@@ -474,7 +478,8 @@ class SyncService {
       }), onDone: () {
         print('MaterialTopic Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   Future syncMaterialTypes() async {
@@ -513,7 +518,8 @@ class SyncService {
       }), onDone: () {
         print('MaterialType Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   Future syncLocalMaterialsToRemote() async {
@@ -523,7 +529,10 @@ class SyncService {
         StreamController();
 
     ResponseStream<CreateUpdateMaterialsResponse> responseStram =
-        await MaterialRepository().createUpdateMaterial(_controller.stream);
+        await MaterialRepository()
+            .createUpdateMaterial(_controller.stream)
+            // ignore: invalid_return_type_for_catch_error
+            .catchError(handleError);
 
     materialBox.values
         .where(
@@ -562,19 +571,24 @@ class SyncService {
       });
     }
 
-    await GroupRepository().getGroups().then((ResponseStream<Group> stream) {
-      stream.listen((group) {
-        print('==>>syncGroup: ${group}');
-        GroupRepository().addEditGroup(HiveGroup.from(group));
-      }, onError: ((err) {
-        print('syncGroup ERROR: $err');
-        //handleGrpcError(err);
-      }), onDone: () {
-        print('Group Sync Done.');
-      });
-    }).whenComplete(() {
-      print('==>> END SyncGroup');
-    });
+    await GroupRepository()
+        .getGroups()
+        .then((ResponseStream<Group> stream) {
+          stream.listen((group) {
+            print('==>>syncGroup: ${group}');
+            GroupRepository().addEditGroup(HiveGroup.from(group));
+          }, onError: ((err) {
+            print('syncGroup ERROR: $err');
+            //handleGrpcError(err);
+          }), onDone: () {
+            print('Group Sync Done.');
+          });
+        })
+        // ignore: invalid_return_type_for_catch_error
+        .catchError(handleError)
+        .whenComplete(() {
+          print('==>> END SyncGroup');
+        });
   }
 
   Future syncEvaluationCategories() async {
@@ -611,7 +625,8 @@ class SyncService {
       }), onDone: () {
         print('EvaluationCategory Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   // Upward Sync Task
@@ -623,7 +638,10 @@ class SyncService {
 
     if (_currentUser != null) {
       await CurrentUserRepository()
-          .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths);
+          .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths)
+          // ignore: invalid_return_type_for_catch_error
+          .catchError(handleError);
+      ;
     }
   }
 
@@ -632,7 +650,11 @@ class SyncService {
     StreamController<CreateUpdateUserRequest> _controller = StreamController();
 
     ResponseStream<CreateUpdateUserResponse> responseStream =
-        await UserRepository().createUpdateUsers(_controller.stream);
+        await UserRepository()
+            .createUpdateUsers(_controller.stream)
+            // ignore: invalid_return_type_for_catch_error
+            .catchError(handleError);
+    ;
 
     userBox.values
         .where((element) => element.isNew || element.isUpdated)
@@ -675,7 +697,11 @@ class SyncService {
         StreamController();
 
     ResponseStream<CreateUpdateGroupsResponse> responseStream =
-        await GroupRepository().createUpdateGroup(_controller.stream);
+        await GroupRepository()
+            .createUpdateGroup(_controller.stream)
+            // ignore: invalid_return_type_for_catch_error
+            .catchError(handleError);
+    ;
 
     groupBox.values
         .where((element) => element.isNew || element.isUpdated)
@@ -710,7 +736,11 @@ class SyncService {
         StreamController();
 
     ResponseStream<CreateUpdateGroupUsersResponse> responseStream =
-        await GroupRepository().createUpdateGroupUser(_controller.stream);
+        await GroupRepository()
+            .createUpdateGroupUser(_controller.stream)
+            // ignore: invalid_return_type_for_catch_error
+            .catchError(handleError);
+    ;
 
     groupUserBox.values
         .where((element) => element.isNew || element.isUpdated)
@@ -738,7 +768,11 @@ class SyncService {
     StreamController<GroupUser> _controller = StreamController();
 
     ResponseStream<DeleteGroupUsersResponse> responseStream =
-        await GroupRepository().deleteGroupUsers(_controller.stream);
+        await GroupRepository()
+            .deleteGroupUsers(_controller.stream)
+            // ignore: invalid_return_type_for_catch_error
+            .catchError(handleError);
+    ;
 
     groupUserBox.values
         .where((element) => element.isDirty)
@@ -792,7 +826,8 @@ class SyncService {
       }), onDone: () {
         print('Action Sync Done.');
       });
-    });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   syncLocalActionsToRemote() async {
@@ -826,6 +861,8 @@ class SyncService {
             ActionRepository().createUpdateActionInDB(_hiveAction);
           });
         }).onError((error, stackTrace) {
+          // ignore: invalid_return_type_for_catch_error
+          handleError(error);
           print('============= Error: ${error.toString()} ===============');
         }).whenComplete(() {
           print(
@@ -884,6 +921,8 @@ class SyncService {
           _controller.done;
         }
       });
+    }).onError((error, stackTrace) {
+      handleError(error);
     });
 
     _controller.add(fileMetaData);
@@ -984,6 +1023,8 @@ class SyncService {
       }, onError: (error, stackTrace) {
         print("FILE Transfer ERROR:: $error");
       }, cancelOnError: true);
+    }).onError((error, stackTrace) {
+      handleError(error);
     });
   }
 
@@ -1037,6 +1078,14 @@ class SyncService {
     });
     _controller.close();
     print('============= END: Sync Local ActionUser to Remote ===============');
+  }
+
+  void handleError(error) {
+    if (error.runtimeType == GrpcError) {
+      handleGrpcError(error);
+    } else {
+      debugPrint('Error: $error');
+    }
   }
 
   void handleGrpcError(GrpcError error) {
