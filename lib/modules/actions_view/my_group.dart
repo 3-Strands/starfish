@@ -735,7 +735,7 @@ class MyGroupActionListItem extends StatelessWidget {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.only(left: 8.0, right: 8.sp),
+                        padding: EdgeInsets.only(left: 8.0, right: 8),
                         child: Text(
                           action.name ?? '',
                           maxLines: 1,
@@ -749,7 +749,8 @@ class MyGroupActionListItem extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: 30.sp,
+                      width: 30.w,
+                      height: 40.h,
                       child: PopupMenuButton(
                           icon: Icon(
                             Icons.more_vert,

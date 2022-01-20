@@ -123,6 +123,9 @@ class ActionBloc extends Object {
             AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
                 .selfAssigned);
 
+    // Add dummy group to put always in the first place
+    _groupActionListMap[_dummyGroupSelf] = [];
+
     actionRepository
         .fetchAllActionsForMeFromDB(_groupIdsWithMatchingRole)
         .then((value) {
