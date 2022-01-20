@@ -975,8 +975,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   }
 
   Widget _unInvitedGroupMembersContainer() {
-    List<HiveGroupUser>? _groupUsers =
-        widget.group?.users?.where((element) => element.phone.isEmpty).toList();
+    List<HiveGroupUser>? _groupUsers = widget.group?.activeUsers
+        ?.where((element) => element.phone.isEmpty)
+        .toList();
 
     if (_groupUsers == null) {
       return Container();

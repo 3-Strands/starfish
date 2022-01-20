@@ -140,17 +140,18 @@ class HiveGroup extends HiveObject {
 
   /// Returns all 'HiveGroupUser' where 'isDirty' is false
   List<HiveGroupUser>? get activeUsers {
-    return this.users
-        //?.where((groupUser) => groupUser.isDirty == false)
-        ?.where((groupUser) {
-      HiveGroupUser? exists = GroupProvider()
-          .getGroupUsersSync()
-          .firstWhereOrNull((element) =>
-              element.userId == groupUser.userId &&
-              element.groupId == groupUser.groupId);
+    return this
+        .allGroupUsers
+        ?.where((groupUser) => groupUser.isDirty == false)
+        .toList();
+  }
 
-      return exists == null || (exists != null && !exists.isDirty);
-    }).toList();
+  // Gives all groupUser i.e. remote user + local users from
+  List<HiveGroupUser>? get allGroupUsers {
+    if (this.users != null) {
+      return this.users! + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+    }
+    return this.users;
   }
 
   String toString() {

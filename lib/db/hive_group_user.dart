@@ -98,6 +98,7 @@ extension HiveGroupUserExt on HiveGroupUser {
 
   bool get isInvited {
     return user != null &&
+        user!.phone != null &&
         User_Status.valueOf(user!.status!)! != User_Status.ACTIVE;
   }
 
