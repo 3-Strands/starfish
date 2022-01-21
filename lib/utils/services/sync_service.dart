@@ -7,10 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -30,7 +28,6 @@ import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/user_provider.dart';
-import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/app_data_repository.dart';
@@ -169,41 +166,44 @@ class SyncService {
   }
 
   void syncAll() async {
-    showAlertFirstTime();
+    try {
+      showAlertFirstTime();
+      await syncLocalCurrentUser(kCurrentUserFieldMask);
+      await syncLocalMaterialsToRemote();
 
-    await syncLocalCurrentUser(kCurrentUserFieldMask);
-    await syncLocalMaterialsToRemote();
+      // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
+      await lock.synchronized(() => syncLocalUsersToRemote());
+      await lock.synchronized(() => syncLocalGroupsToRemote());
+      await lock.synchronized(() => syncLocalDeletedGroupUsersToRemote());
+      await lock.synchronized(() => syncLocalGroupUsersToRemote());
+      await lock.synchronized(() => syncLocalActionsToRemote());
 
-    // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
-    await lock.synchronized(() => syncLocalUsersToRemote());
-    await lock.synchronized(() => syncLocalGroupsToRemote());
-    await lock.synchronized(() => syncLocalDeletedGroupUsersToRemote());
-    await lock.synchronized(() => syncLocalGroupUsersToRemote());
-    await lock.synchronized(() => syncLocalActionsToRemote());
+      await lock.synchronized(() => syncLocalHiveActionUserToRemote());
+      // navigatorKey: Application.navKey, // GlobalKey()
+      //showAlert(NavigationService.navigatorKey.currentContext!);
 
-    await lock.synchronized(() => syncLocalHiveActionUserToRemote());
-    // navigatorKey: Application.navKey, // GlobalKey()
-    //showAlert(NavigationService.navigatorKey.currentContext!);
+      await lock.synchronized(() => syncLocalFiles()); // Upload local files
+      await lock.synchronized(() => syncFiles()); // Download remote files
 
-    await lock.synchronized(() => syncLocalFiles()); // Upload local files
-    await lock.synchronized(() => syncFiles()); // Download remote files
-
-    Future.wait([
-      syncCurrentUser(),
-      syncUsers(),
-      syncCountries(),
-      syncLanguages(),
-      syncActions(),
-      syncMaterialTopics(),
-      syncMaterialTypes(),
-      syncMaterial(),
-      syncEvaluationCategories(),
-      syncGroup()
-    ]).then((value) {
-      updateLastSyncDateTime();
-    }).whenComplete(() {
-      hideAlert();
-    });
+      Future.wait([
+        syncCurrentUser(),
+        syncUsers(),
+        syncCountries(),
+        syncLanguages(),
+        syncActions(),
+        syncMaterialTopics(),
+        syncMaterialTypes(),
+        syncMaterial(),
+        syncEvaluationCategories(),
+        syncGroup()
+      ]).then((value) {
+        updateLastSyncDateTime();
+      }).whenComplete(() {
+        hideAlert();
+      });
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   void updateLastSyncDateTime() {
@@ -531,7 +531,6 @@ class SyncService {
     ResponseStream<CreateUpdateMaterialsResponse> responseStram =
         await MaterialRepository()
             .createUpdateMaterial(_controller.stream)
-            // ignore: invalid_return_type_for_catch_error
             .catchError(handleError);
 
     materialBox.values
@@ -1081,6 +1080,7 @@ class SyncService {
   }
 
   void handleError(error) {
+    print('handleError: error');
     if (error.runtimeType == GrpcError) {
       handleGrpcError(error);
     } else {
