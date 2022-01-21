@@ -41,7 +41,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.sil.starfish"
+        applicationId "app.starfishonline"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
@@ -66,6 +66,24 @@ android {
             minifyEnabled true
         }
     }
+
+    flavorDimensions "flavor-type"
+
+    productFlavors {
+        dev {
+            dimension "flavor-type"
+            applicationId "com.sil.starfish"
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
+        }
+        prod {
+            dimension "flavor-type"
+            applicationId "app.starfishonline"
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
+        }
+    }
+
 }
 
 flutter {

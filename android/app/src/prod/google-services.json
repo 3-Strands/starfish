@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820888418969",
+    "project_id": "starfish-live",
+    "storage_bucket": "starfish-live.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820888418969:android:730b4d1a96800132f05608",
+        "android_client_info": {
+          "package_name": "app.starfishonline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820888418969-rsa60g1d4ko9vvm92hbsinsodeq1k514.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoo2X5m-AvdLrV9OTYBasEcuSIHVFOrC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820888418969-rsa60g1d4ko9vvm92hbsinsodeq1k514.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
