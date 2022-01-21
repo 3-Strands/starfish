@@ -137,7 +137,7 @@ extension HiveActionExt on HiveAction {
     }
     return this
         .group!
-        .users
+        .activeUsers
         ?.map((HiveGroupUser groupUser) => groupUser.user!)
         .toList();
   }
@@ -148,7 +148,7 @@ extension HiveActionExt on HiveAction {
     }
     return this
         .group!
-        .users
+        .activeUsers
         ?.where((element) =>
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER)
         .map((HiveGroupUser groupUser) => groupUser.user!)
@@ -162,7 +162,7 @@ extension HiveActionExt on HiveAction {
     }
     return this
         .group!
-        .users
+        .activeUsers
         ?.where((element) =>
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.ADMIN ||
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER)
@@ -193,7 +193,7 @@ extension HiveActionExt on HiveAction {
     } else {
       return this
           .group!
-          .users
+          .activeUsers
           ?.firstWhereOrNull((element) =>
               element.groupId == groupId && element.userId == creatorId)
           //?.map((HiveGroupUser groupUser) => groupUser.user!)
