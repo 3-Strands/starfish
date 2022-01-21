@@ -210,7 +210,7 @@
   "selfAssigned": "Self Assigned",
 
   "inviteSMS":
-      "Hi <user first name>, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! <sender’s username>",
+      "Hi {{receiver_first_name}}, please join my Starfish group by installing Starfish app from the Play Store or Apple Store. Thanks! {{sender_name}}",
 
   "groupFilterPrefix": "Groups",
   "groupFilterAll": "All of my groups",

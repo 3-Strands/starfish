@@ -22,6 +22,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
@@ -43,6 +44,8 @@ import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
 import 'package:starfish/widgets/uninvited_person_list_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:telephony/telephony.dart';
+import 'package:template_string/template_string.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
   final HiveGroup? group;
@@ -62,6 +65,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _personNameController = TextEditingController();
+
+  final _telephony = Telephony.instance;
 
   bool _isEditMode = false;
   String _query = '';
@@ -83,6 +88,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   @override
   void initState() {
     super.initState();
+
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
 
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
@@ -160,38 +166,35 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
   }
 
-  _createUserAndSendInvite(List<InviteContact> _contacts) {
-    List<HiveUser> _users = [];
-    _contacts.forEach((element) {
-      _users.add(HiveUser(
-          id: UuidGenerator.uuid(),
-          name: element.contact.displayName,
-          phone: element.contact.phones!.first.value!));
-    });
-    _userBox.addAll(_users).then((value) {
-      // TODO: add these users to the group being created.
-      _sendInviteSMS(AppLocalizations.of(context)!.inviteSMS, _contacts);
-    });
-  }
-
   void _sendInviteSMS(String message, List<InviteContact> recipents) async {
-    List<String> _recipentsList = [];
-    recipents.forEach((element) {
-      if (element.contact.phones != null) {
-        _recipentsList.add(element.contact.phones!.first.value!);
-      }
-    });
-    if (_recipentsList.length == 0) {
+    bool _permissionsGranted = await _telephony.requestSmsPermissions ?? false;
+    if (!_permissionsGranted) {
       return;
     }
-    sendSms(message, _recipentsList);
+
+    recipents.forEach((element) {
+      if (element.contact.phones != null) {
+        sendSms(
+            message.insertTemplateValues({
+              'receiver_first_name': element.contact.displayName ??
+                  element.contact.givenName ??
+                  '',
+              'sender_name': CurrentUserProvider().user.name!
+            }),
+            element.contact.phones!.first.value!);
+      }
+    });
   }
 
-  sendSms(String message, List<String> phoneNumbers) async {
-    String _result = await sendSMS(message: message, recipients: phoneNumbers)
-        .catchError((onError) {
-      debugPrint('Send SMS Error');
-    });
+  sendSms(String message, String phoneNumber) async {
+    _telephony.sendSms(
+        to: phoneNumber,
+        message: message,
+        statusListener: (sendStatus) {
+          debugPrint(
+              'Status of Invitation Send to [$phoneNumber]: $sendStatus');
+        },
+        isMultipart: true);
   }
 
   Widget _buildSlidingUpPanel() {
@@ -999,8 +1002,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             }
           },
           onInvite: (HiveUser _user) {
-            sendSms(AppLocalizations.of(context)!.inviteSMS,
-                [_user.phoneWithDialingCode]);
+            sendSms(
+                AppLocalizations.of(context)!.inviteSMS.insertTemplateValues({
+                  'receiver_first_name': _user.name ?? '',
+                  'sender_name': CurrentUserProvider().user.name!
+                }),
+                _user.phoneWithDialingCode);
           },
         ),
       );
