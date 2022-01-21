@@ -539,25 +539,35 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         ),
                       ),
                       Spacer(),
-                      CustomIconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.blue,
-                          size: 18.sp,
-                        ),
-                        text: AppLocalizations.of(context)!.edit,
-                        onButtonTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddEditMaterialScreen(
-                                material: material,
+                      // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
+                      if ((Material_Editability.valueOf(
+                                      material.editability!) ==
+                                  Material_Editability.CREATOR_EDIT &&
+                              material.creatorId ==
+                                  CurrentUserProvider().user.id) ||
+                          (Material_Editability.valueOf(
+                                      material.editability!) ==
+                                  Material_Editability.GROUP_EDIT) &&
+                              material.isAssignedToGroupWithLeaderRole)
+                        CustomIconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.blue,
+                            size: 18.sp,
+                          ),
+                          text: AppLocalizations.of(context)!.edit,
+                          onButtonTap: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddEditMaterialScreen(
+                                  material: material,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
                     ],
                   ),
                   SizedBox(
