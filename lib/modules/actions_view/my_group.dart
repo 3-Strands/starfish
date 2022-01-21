@@ -444,7 +444,9 @@ class _MyGroupState extends State<MyGroup> {
                               onTap: () {
                                 setModalState(() {
                                   if (user.actionStatusbyId(action) ==
-                                      ActionStatus.NOT_DONE) {
+                                          ActionStatus.NOT_DONE ||
+                                      user.actionStatusbyId(action) ==
+                                          ActionStatus.OVERDUE) {
                                     hiveActionUser!.status =
                                         ActionUser_Status.COMPLETE.value;
                                   } else if (user.actionStatusbyId(action) ==
