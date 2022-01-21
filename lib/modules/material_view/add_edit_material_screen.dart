@@ -21,6 +21,7 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
@@ -669,6 +670,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _hiveMaterial = HiveMaterial(
         id: UuidGenerator.uuid(),
         isNew: true,
+        creatorId: CurrentUserProvider().user.id,
       );
     }
     _hiveMaterial.title = _titleController.text;
