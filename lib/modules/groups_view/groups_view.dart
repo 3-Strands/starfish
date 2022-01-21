@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -223,6 +228,38 @@ class _GroupsScreenState extends State<GroupsScreen> {
       onFocusLost: () {},
       child: Scaffold(
         backgroundColor: AppColors.groupScreenBG,
+        appBar: AppBar(
+          title: Container(
+            height: 64.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                AppLogo(hight: 36.h, width: 37.w),
+                Text(
+                  AppLocalizations.of(context)!.groupsTabItemText,
+                  style: dashboardNavigationTitle,
+                ),
+                IconButton(
+                  icon: SvgPicture.asset(AssetsPath.settings),
+                  onPressed: () {
+                    setState(
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: AppColors.groupScreenBG,
+          elevation: 0.0,
+        ),
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/utils/sync_time.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 
 class ActionsScreen extends StatefulWidget {
@@ -42,6 +47,38 @@ class _ActionsScreenState extends State<ActionsScreen>
     return DefaultTabController(
       length: _tabController.length,
       child: Scaffold(
+        appBar: AppBar(
+          title: Container(
+            height: 64.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                AppLogo(hight: 36.h, width: 37.w),
+                Text(
+                  AppLocalizations.of(context)!.actionsTabItemText,
+                  style: dashboardNavigationTitle,
+                ),
+                IconButton(
+                  icon: SvgPicture.asset(AssetsPath.settings),
+                  onPressed: () {
+                    setState(
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: AppColors.actionScreenBG,
+          elevation: 0.0,
+        ),
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());

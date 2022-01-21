@@ -121,42 +121,6 @@ class _DashboardState extends State<Dashboard> {
         children: <Widget>[
           Scaffold(
             backgroundColor: AppColors.background,
-            appBar: AppBar(
-              title: Container(
-                height: 64.h,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    AppLogo(hight: 36.h, width: 37.w),
-                    Text(
-                      title,
-                      style: dashboardNavigationTitle,
-                    ),
-                    IconButton(
-                      icon: SvgPicture.asset(AssetsPath.settings),
-                      onPressed: () {
-                        setState(
-                          () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SettingsScreen(),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              backgroundColor: (_selectedIndex == 0)
-                  ? AppColors.materialSceenBG
-                  : (_selectedIndex == 1)
-                      ? AppColors.groupScreenBG
-                      : AppColors.actionScreenBG,
-              elevation: 0.0,
-            ),
             body: PageView(
               children: _widgetOptions,
               onPageChanged: onPageChanged,
@@ -197,25 +161,6 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void _changeNaviagtionTitle(int index) {
-    setState(() {
-      _selectedIndex = index;
-      switch (index) {
-        case 0:
-          title = AppLocalizations.of(context)!.materialsTabItemText;
-          break;
-        case 1:
-          title = AppLocalizations.of(context)!.groupsTabItemText;
-          break;
-        case 2:
-          title = AppLocalizations.of(context)!.actionsTabItemText;
-          break;
-        default:
-          title = '';
-      }
-    });
-  }
-
   _cleanMaterialFilterValues() {
     bloc.materialBloc.selectedLanguages.clear();
     _selectLanguage(bloc);
@@ -239,13 +184,11 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       this._selectedIndex = index;
     });
-    _changeNaviagtionTitle(index);
   }
 
   void onTabTapped(int index) {
     this._pageController.animateToPage(index,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-    _changeNaviagtionTitle(index);
   }
 
   void handleUnauthentication() {
