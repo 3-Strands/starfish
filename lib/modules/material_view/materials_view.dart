@@ -1,11 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -18,11 +21,12 @@ import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -156,15 +160,41 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       },
       onFocusLost: () {
         print('onFocusLost');
-        // clear filters on view disappear
-        /*
-        bloc.materialBloc.selectedLanguages.clear();
-        _selectLanguage(bloc);
-        bloc.materialBloc.selectedTopics.clear();
-        */
       },
       child: Scaffold(
         backgroundColor: AppColors.materialSceenBG,
+        appBar: AppBar(
+          title: Container(
+            height: 64.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                AppLogo(hight: 36.h, width: 37.w),
+                Text(
+                  AppLocalizations.of(context)!.materialsTabItemText,
+                  style: dashboardNavigationTitle,
+                ),
+                IconButton(
+                  icon: SvgPicture.asset(AssetsPath.settings),
+                  onPressed: () {
+                    setState(
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: AppColors.materialSceenBG,
+          elevation: 0.0,
+        ),
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
@@ -347,7 +377,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 */
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
-    return Container(
+    return new Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
         navTitle: AppLocalizations.of(context)!.selectLanugages,
@@ -375,7 +405,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Container _buildTopicsContainer(AppBloc bloc) {
-    return Container(
+    return new Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: SelectDropDown(
         navTitle: AppLocalizations.of(context)!.selectTopics,
