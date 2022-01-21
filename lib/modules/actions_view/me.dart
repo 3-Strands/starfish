@@ -704,7 +704,9 @@ class MyActionListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ActionStatusWidget(
-                    onTap: (_) {},
+                    onTap: (_) {
+                      onActionTap(action);
+                    },
                     actionStatus: action.actionStatus,
                     height: 30.h,
                     width: 130.w,

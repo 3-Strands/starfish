@@ -149,7 +149,10 @@ class HiveGroup extends HiveObject {
   // Gives all groupUser i.e. remote user + local users from
   List<HiveGroupUser>? get allGroupUsers {
     if (this.users != null) {
-      return this.users! + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+      // TODO -- filter out the duplicate record.
+      List<HiveGroupUser> _users =
+          this.users! + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+      return _users;
     }
     return this.users;
   }
