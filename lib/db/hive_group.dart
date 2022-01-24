@@ -6,6 +6,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/enums/action_status.dart';
@@ -149,9 +150,18 @@ class HiveGroup extends HiveObject {
   // Gives all groupUser i.e. remote user + local users from
   List<HiveGroupUser>? get allGroupUsers {
     if (this.users != null) {
-      // TODO -- filter out the duplicate record.
+      // filter out the duplicate record.
       List<HiveGroupUser> _users =
-          this.users! + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+          this.users!; // + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+
+      GroupProvider().getGroupUsersByGroupIdSync(this.id).forEach((element) {
+        if (this.users!.contains(element) && (element.isUpdated)) {
+          _users.firstWhere((hiveUser) => hiveUser == element).role =
+              element.role;
+        } else if (this.users!.contains(element) && element.isDirty) {
+          _users.remove(element);
+        }
+      });
       return _users;
     }
     return this.users;
