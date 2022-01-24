@@ -34,6 +34,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    print('widget.groupUser: ${widget.groupUser}');
     return Container(
       decoration: BoxDecoration(color: Colors.transparent),
       margin: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
@@ -57,8 +58,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 ),
               ),
               if (widget.groupUser.user != null &&
-                  User_Status.valueOf(widget.groupUser.user!.status!) ==
-                      User_Status.ACCOUNT_PENDING)
+                  User_Status.valueOf(widget.groupUser.user!.status!) !=
+                      User_Status.ACTIVE)
                 Text(
                   AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
                   style: TextStyle(
