@@ -160,6 +160,8 @@ class HiveGroup extends HiveObject {
               element.role;
         } else if (this.users!.contains(element) && element.isDirty) {
           _users.remove(element);
+        } else if (!this.users!.contains(element)) {
+          _users.add(element);
         }
       });
       return _users;
