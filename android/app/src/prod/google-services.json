@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "820888418969-14bdp1kgugefkbq9g61ft3k7e5irnocl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.starfishonline",
+            "certificate_hash": "deef91379772d7365027b096a2dfd8382c3fcaa4"
+          }
+        },
+        {
           "client_id": "820888418969-rsa60g1d4ko9vvm92hbsinsodeq1k514.apps.googleusercontent.com",
           "client_type": 3
         }
