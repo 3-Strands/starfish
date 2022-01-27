@@ -16,6 +16,7 @@ import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_action.g.dart';
 
@@ -206,9 +207,35 @@ extension HiveActionExt on HiveAction {
 
     return currentUser.actionStatusbyId(this);*/
 
-    return this.mineAction != null
+    /*return this.mineAction != null
         ? ActionUser_Status.valueOf(mineAction!.status!)!.convertTo()
-        : ActionStatus.NOT_DONE;
+        : ActionStatus.NOT_DONE;*/
+
+    HiveActionUser? actionUser = this.mineAction;
+
+    if (actionUser != null) {
+      ActionStatus? actionStatus = actionUser.status != null
+          ? ActionUser_Status.valueOf(actionUser.status!)!.convertTo()
+          : ActionStatus.NOT_DONE;
+
+      //
+      if (actionStatus == ActionStatus.DONE) {
+        return ActionStatus.DONE;
+      }
+    }
+
+    // We need to check if the action is not done yet, if it's overdue or not
+    if (this.dateDue == null || !this.hasValidDueDate) {
+      return ActionStatus.NOT_DONE;
+    } else if (this.dateDue != null &&
+        this
+            .dateDue!
+            .toDateTime()
+            .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+      return ActionStatus.OVERDUE;
+    } else {
+      return ActionStatus.NOT_DONE;
+    }
   }
 
   HiveActionUser? get mineAction {
