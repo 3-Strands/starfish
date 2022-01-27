@@ -200,7 +200,16 @@ class ActionBloc extends Object {
                         currentDate.day)
                     .month;
       case ActionFilter.LAST_THREE_MONTH:
+        // TODO: to be optimized, need to update package.
         return hiveAction.dateDue != null &&
+                hiveAction.dateDue!.toDateTime().month ==
+                    DateTime(currentDate.year, currentDate.month - 1,
+                            currentDate.day)
+                        .month ||
+            hiveAction.dateDue!.toDateTime().month ==
+                DateTime(currentDate.year, currentDate.month - 2,
+                        currentDate.day)
+                    .month ||
             hiveAction.dateDue!.toDateTime().month ==
                 DateTime(currentDate.year, currentDate.month - 3,
                         currentDate.day)
