@@ -26,7 +26,8 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
     return InkWell(
       onTap: () {
         if (widget.actionStatus == ActionStatus.OVERDUE) {
-          return;
+          //return;
+          widget.onTap(ActionStatus.DONE);
         }
         if (widget.actionStatus == ActionStatus.DONE) {
           widget.onTap(ActionStatus.NOT_DONE);

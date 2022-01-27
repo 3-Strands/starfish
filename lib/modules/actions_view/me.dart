@@ -171,7 +171,7 @@ class _MeState extends State<Me> {
       hiveActionUser = new HiveActionUser();
       hiveActionUser.actionId = action.id!;
       hiveActionUser.userId = _currentUser.id;
-      hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
+      hiveActionUser.status = action.actionStatus.toActionUserStatus().value;
     }
 
     final _questionController = TextEditingController();
@@ -259,9 +259,7 @@ class _MeState extends State<Me> {
                                 bloc.actionBloc
                                     .createUpdateActionUser(hiveActionUser!);
                               },
-                              actionStatus: ActionUser_Status.valueOf(
-                                      hiveActionUser!.status!)!
-                                  .convertTo(),
+                              actionStatus: action.actionStatus,
                               height: 36.h,
                               width: 130.w,
                             ),
@@ -382,7 +380,7 @@ class _MeState extends State<Me> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.sp),
                               color: ActionUser_Evaluation.valueOf(
-                                          hiveActionUser.evaluation!) ==
+                                          hiveActionUser!.evaluation!) ==
                                       ActionUser_Evaluation.GOOD
                                   ? Color(0xFF6DE26B)
                                   : Color(0xFFC9C9C9),
@@ -708,6 +706,8 @@ class MyActionListItem extends StatelessWidget {
                       onActionTap(action);
                     },
                     actionStatus: action.actionStatus,
+
+                    ///
                     height: 30.h,
                     width: 130.w,
                   ),
