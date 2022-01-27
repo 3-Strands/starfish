@@ -478,7 +478,13 @@ class _MeState extends State<Me> {
                         color: Color(0xFFEFEFEF),
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            hiveActionUser!.userResponse =
+                                _questionController.text;
+                            bloc.actionBloc
+                                .createUpdateActionUser(hiveActionUser)
+                                .whenComplete(() {
+                              Navigator.pop(context);
+                            });
                           },
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all<

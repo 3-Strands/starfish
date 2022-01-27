@@ -670,7 +670,13 @@ class _MyGroupState extends State<MyGroup> {
                       color: Color(0xFFEFEFEF),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          hiveActionUser!.teacherResponse =
+                              _questionController.text;
+                          bloc.actionBloc
+                              .createUpdateActionUser(hiveActionUser)
+                              .whenComplete(() {
+                            Navigator.pop(context);
+                          });
                         },
                         style: ButtonStyle(
                           shape:
