@@ -622,8 +622,21 @@ class _MyGroupState extends State<MyGroup> {
                       InkWell(
                         onTap: () {
                           setModalState(() {
-                            hiveActionUser!.evaluation =
-                                ActionUser_Evaluation.GOOD.value;
+                            if (ActionUser_Evaluation.valueOf(
+                                    hiveActionUser!.evaluation!) ==
+                                ActionUser_Evaluation.GOOD) {
+                              hiveActionUser.evaluation = ActionUser_Evaluation
+                                  .UNSPECIFIED_EVALUATION.value;
+                            } else if (ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation
+                                        .UNSPECIFIED_EVALUATION ||
+                                ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation.BAD) {
+                              hiveActionUser.evaluation =
+                                  ActionUser_Evaluation.GOOD.value;
+                            }
                           });
 
                           bloc.actionBloc
@@ -666,8 +679,21 @@ class _MyGroupState extends State<MyGroup> {
                       InkWell(
                         onTap: () {
                           setModalState(() {
-                            hiveActionUser!.evaluation =
-                                ActionUser_Evaluation.BAD.value;
+                            if (ActionUser_Evaluation.valueOf(
+                                    hiveActionUser!.evaluation!) ==
+                                ActionUser_Evaluation.BAD) {
+                              hiveActionUser.evaluation = ActionUser_Evaluation
+                                  .UNSPECIFIED_EVALUATION.value;
+                            } else if (ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation
+                                        .UNSPECIFIED_EVALUATION ||
+                                ActionUser_Evaluation.valueOf(
+                                        hiveActionUser.evaluation!) ==
+                                    ActionUser_Evaluation.GOOD) {
+                              hiveActionUser.evaluation =
+                                  ActionUser_Evaluation.BAD.value;
+                            }
                           });
 
                           bloc.actionBloc
