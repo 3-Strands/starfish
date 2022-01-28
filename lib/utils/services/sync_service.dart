@@ -1052,6 +1052,22 @@ class SyncService {
     print('============= START: Sync Local ActionUser to Remote =============');
     StreamController<CreateUpdateActionUserRequest> _controller =
         StreamController();
+
+    ActionRepository()
+        .createUpdateActionUsers(_controller.stream)
+        .then((response) {
+      response.listen((value) {
+        // delete this actionuser form `ACTION_USER_BOX`
+        HiveActionUser _hiveActionUser = HiveActionUser.from(value.actionUser);
+
+        ActionProvider().deleteActionUser(_hiveActionUser);
+      });
+    }).onError((error, stackTrace) {
+      print('============= Error: ${error.toString()} ===============');
+    }).whenComplete(() {
+      _controller.close();
+    });
+
     actionUserBox.values
         .where((element) => (element.isNew || element.isUpdated))
         .forEach((HiveActionUser _hiveActionUser) {
@@ -1062,20 +1078,9 @@ class SyncService {
         FieldMask mask = FieldMask(paths: kActionUserFieldMask);
         request.updateMask = mask;
 
-        ActionRepository()
-            .createUpdateActionUsers(_controller.stream)
-            .then((response) {
-          response.listen((value) {
-            // delete this actionuser form `ACTION_USER_BOX`
-
-            ActionProvider().deleteActionUser(_hiveActionUser);
-          });
-        }).onError((error, stackTrace) {
-          print('============= Error: ${error.toString()} ===============');
-        }).whenComplete(() {});
+        _controller.add(request);
       }
     });
-    _controller.close();
     print('============= END: Sync Local ActionUser to Remote ===============');
   }
 
