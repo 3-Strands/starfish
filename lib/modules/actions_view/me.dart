@@ -234,8 +234,7 @@ class _MeState extends State<Me> {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              // action.name ?? '',
-                              '${AppLocalizations.of(context)!.action} ${Action_Type.valueOf(action.type!)!.about}',
+                              action.name ?? '',
                               maxLines: 2,
                               style: TextStyle(
                                   fontSize: 16.sp,
