@@ -370,13 +370,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     } else if (_descriptionController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptyDescription);
-    } else if (_selectedLanguages.length == 0) {
+    } /* else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectLanguage);
     } else if (_selectedEvaluationCategories.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptyEvaluateProgress);
-    } else {
+    }*/
+    else {
       _createUpdateGroup();
     }
   }

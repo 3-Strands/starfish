@@ -48,7 +48,7 @@
   "myLanugages": "My Language(s)",
   "lanugages": "Language(s)",
   "selectLanugages": "Select Language(s)",
-  "lanugagesUsed": "Language(s) used",
+  "lanugagesUsed": "Language(s) used (optional)",
 
   "selectAll": "Select all",
 
@@ -126,7 +126,7 @@
   "descripton": "Description",
   "addWebLink": "Add web link",
   "uploadAMaterial": "Upload a material",
-  "evaluateProgress": "Evaluate Progress",
+  "evaluateProgress": "Evaluate Progress (optional)",
   "invitePeopleFromContactsList": "Option 1. Invite people from your contacts list to join your group in Starfish",
   "addWithoutInvite": "Option 2. Add a person's name, without sending an invitation to use Starfish",
   "history": "History",
