@@ -728,6 +728,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         builder: (BuildContext context,
                             AsyncSnapshot<List<HiveCountry>?> snapshot) {
                           if (snapshot.hasData) {
+                            snapshot.data!
+                                .sort((a, b) => a.name.compareTo(b.name));
                             return SelectDropDown(
                               navTitle:
                                   AppLocalizations.of(context)!.selectCountry,
@@ -770,6 +772,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           builder: (BuildContext context,
                               AsyncSnapshot<List<HiveLanguage>?> snapshot) {
                             if (snapshot.hasData) {
+                              snapshot.data!
+                                  .sort((a, b) => a.name.compareTo(b.name));
                               return SelectDropDown(
                                 navTitle: AppLocalizations.of(context)!
                                     .selectLanugages,

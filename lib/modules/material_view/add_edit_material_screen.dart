@@ -129,6 +129,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
+    _languageList.sort((a, b) => a.name.compareTo(b.name));
   }
 
   void _getAllMaterialTypes() {

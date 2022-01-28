@@ -77,6 +77,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
+    _languageList.sort((a, b) => a.name.compareTo(b.name));
   }
 
   void _getAllTopics() {

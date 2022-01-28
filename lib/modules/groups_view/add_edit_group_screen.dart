@@ -125,6 +125,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
+    _languageList.sort((a, b) => a.name.compareTo(b.name));
   }
 
   void _getAllEvaluationCategories() {
