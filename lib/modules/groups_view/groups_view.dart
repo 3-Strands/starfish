@@ -9,6 +9,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/enums/group_user_role.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
@@ -99,7 +100,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                       margin: EdgeInsets.only(right: 0.w),
                       child: Text(
                         user.isActive
-                            ? GroupUser_Role.valueOf(user.role!).toString()
+                            ? GroupUser_Role.valueOf(user.role!)!.about
                             : user.isInvited
                                 ? AppLocalizations.of(context)!
                                     .userStatusInvited
