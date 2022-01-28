@@ -208,10 +208,13 @@ class _UnInvitedGroupMemberListItemState
                                 AppLocalizations.of(context)!
                                     .emptyMobileNumbers);
                           } else {
-                            ///TODO: invite this user by sending SMS
+                            //invite this user by sending SMS
                             if (widget.groupUser.user != null) {
                               widget.groupUser.user!.diallingCode =
-                                  _dialingCode;
+                                  _dialingCode.startsWith("+")
+                                      ? _dialingCode.substring(
+                                          1) // Remove '+' from dialing code
+                                      : _dialingCode;
                               widget.groupUser.user!.phone = _phoneNumber;
                               widget.groupUser.user!.isUpdated = true;
                               bloc.userBloc
