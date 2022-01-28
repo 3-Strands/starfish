@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
+import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -9,6 +12,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_type.dart';
@@ -19,12 +23,15 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
+import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:template_string/src/extension.dart';
 
 class Me extends StatefulWidget {
   const Me({Key? key}) : super(key: key);
@@ -281,18 +288,56 @@ class _MeState extends State<Me> {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.right,
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15.w, vertical: 15.h),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (action.material != null &&
+                                    action.material!.url != null &&
+                                    action.material!.url!.isNotEmpty)
+                                  CustomIconButton(
+                                    icon: Icon(
+                                      Icons.open_in_new,
+                                      color: Colors.blue,
+                                      size: 18.sp,
+                                    ),
+                                    text: AppLocalizations.of(context)!
+                                        .clickThisLinkToStart,
+                                    onButtonTap: () {
+                                      GeneralFunctions.openUrl(
+                                          action.material!.url!);
+                                    },
+                                    width: 255.w,
+                                  ),
+                                materialList(action)
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                              child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 10.h,
+                            ),
+                            child: Text(
+                              '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: Color(0xFF4F4F4F),
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.right,
+                            ),
+                          )),
+                        ],
                       ),
                     ),
                   ),
@@ -506,6 +551,42 @@ class _MeState extends State<Me> {
             );
           });
         });
+  }
+
+  Widget materialList(HiveAction hiveAction) {
+    if (hiveAction.material == null ||
+        (hiveAction.material != null &&
+            hiveAction.material!.files != null &&
+            hiveAction.material!.files!.length == 0)) {
+      return Container();
+    }
+    List<CustomIconButton> fileLinks = [];
+    hiveAction.material!.localFiles!.forEach((file) {
+      fileLinks.add(
+        CustomIconButton(
+          icon: Icon(
+            Icons.download,
+            color: Colors.blue,
+            size: 18.sp,
+          ),
+          text: AppLocalizations.of(context)!
+              .clickToDownload
+              .insertTemplateValues({'file_name': file.path.split("/").last}),
+          onButtonTap: () {
+            if (Platform.isIOS) {
+              return;
+            } else if (Platform.isAndroid) {
+              OpenFile.open(file.path);
+            }
+          },
+          width: 255.w,
+        ),
+      );
+    });
+
+    return Column(
+      children: fileLinks,
+    );
   }
 
   Widget actionsList(AppBloc bloc) {

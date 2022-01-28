@@ -328,5 +328,8 @@
 
   "unknownUser": "Unknown",
   "maxFilesSelected": "Maximum five(5) files can be uploaded.",
-  "unauthenticated": "User not authenticated. Token is expired."
+  "unauthenticated": "User not authenticated. Token is expired.",
+
+  "clickThisLinkToStart": "Click this link to start",
+  "clickToDownload": "Click to download: [{{file_name}}]"
 }
