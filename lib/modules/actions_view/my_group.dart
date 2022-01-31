@@ -419,7 +419,6 @@ class _MyGroupState extends State<MyGroup> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        height: 40.h,
                         width: 169.w,
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -427,9 +426,11 @@ class _MyGroupState extends State<MyGroup> {
                             user.name ?? '',
                             maxLines: 2,
                             style: TextStyle(
-                                fontSize: 20.sp,
-                                color: AppColors.appTitle,
-                                fontWeight: FontWeight.w500),
+                              fontSize: 20.sp,
+                              color: AppColors.appTitle,
+                              fontWeight: FontWeight.w500,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             textAlign: TextAlign.left,
                           ),
                         ),
