@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
@@ -835,6 +836,12 @@ class MyGroupActionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int countActionStatusDone =
+        action.memberCountByActionStatus(ActionStatus.DONE);
+    int countActionStatusNotDone =
+        action.memberCountByActionStatus(ActionStatus.NOT_DONE);
+    int countActionStatusOverdue =
+        action.memberCountByActionStatus(ActionStatus.OVERDUE);
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
@@ -944,48 +951,19 @@ class MyGroupActionListItem extends StatelessWidget {
               SizedBox(
                 height: 5.h,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  Opacity(
-                    child: Container(
-                      height: 51.h,
-                      width: 99.w,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF6DE26B),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.5.r),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10.h, horizontal: 6.w),
-                      child: Text(
-                        "${action.memberCountByActionStatus(ActionStatus.DONE)} ${AppLocalizations.of(context)!.membersDidIt}",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFF000000),
-                          fontFamily: "Rubik",
-                          fontSize: 14.sp,
-                        ),
-                      ),
+              IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      width: 8.w,
                     ),
-                    opacity:
-                        action.memberCountByActionStatus(ActionStatus.DONE) > 0
-                            ? 1
-                            : 0,
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Opacity(
+                    Opacity(
                       child: Container(
-                        height: 51.h,
                         width: 99.w,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFBE4A),
+                          color: Color(0xFF6DE26B),
                           borderRadius: BorderRadius.all(
                             Radius.circular(8.5.r),
                           ),
@@ -993,7 +971,12 @@ class MyGroupActionListItem extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: 10.h, horizontal: 6.w),
                         child: Text(
-                          "${action.memberCountByActionStatus(ActionStatus.NOT_DONE)} ${AppLocalizations.of(context)!.memberDidNotDoItYet}",
+                          Intl.plural(countActionStatusDone,
+                              zero:
+                                  "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
+                              one: "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
+                              other: "$countActionStatusDone ${AppLocalizations.of(context)!.moreThenOneMembersDidIt}",
+                              args: [countActionStatusDone]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Color(0xFF000000),
@@ -1002,47 +985,75 @@ class MyGroupActionListItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      opacity: action.memberCountByActionStatus(
-                                  ActionStatus.NOT_DONE) >
-                              0
-                          ? 1
-                          : 0),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Opacity(
-                    child: Container(
-                      height: 51.h,
-                      width: 99.w,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFFF5E4D),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.5.r),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10.h, horizontal: 6.w),
-                      child: Text(
-                        "${action.memberCountByActionStatus(ActionStatus.OVERDUE)} ${AppLocalizations.of(context)!.memberIsOverdue}",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFF000000),
-                          fontFamily: "Rubik",
-                          fontSize: 14.sp,
-                        ),
-                      ),
+                      opacity: countActionStatusDone > 0 ? 1 : 0,
                     ),
-                    opacity:
-                        action.memberCountByActionStatus(ActionStatus.OVERDUE) >
-                                0
-                            ? 1
-                            : 0,
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                ],
-              )
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Opacity(
+                        child: Container(
+                          width: 99.w,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFFBE4A),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8.5.r),
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.h, horizontal: 6.w),
+                          child: Text(
+                            Intl.plural(countActionStatusNotDone,
+                                zero:
+                                    "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
+                                one: "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
+                                other: "$countActionStatusNotDone ${AppLocalizations.of(context)!.moreThenOneMembersDidNotDoItYet}",
+                                args: [countActionStatusNotDone]),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF000000),
+                              fontFamily: "Rubik",
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ),
+                        opacity: countActionStatusNotDone > 0 ? 1 : 0),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Opacity(
+                      child: Container(
+                        width: 99.w,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFF5E4D),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.5.r),
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 6.w),
+                        child: Text(
+                          Intl.plural(countActionStatusOverdue,
+                              zero:
+                                  "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
+                              one: "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
+                              other: "$countActionStatusOverdue ${AppLocalizations.of(context)!.moreThenOneMembersIsOverdue}",
+                              args: [countActionStatusOverdue]),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF000000),
+                            fontFamily: "Rubik",
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                      opacity: countActionStatusOverdue > 0 ? 1 : 0,
+                    ),
+                    SizedBox(
+                      width: 8.w,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
