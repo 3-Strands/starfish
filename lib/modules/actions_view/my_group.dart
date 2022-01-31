@@ -171,7 +171,7 @@ class _MyGroupState extends State<MyGroup> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             SizedBox(
-              height: 40.sp,
+              height: 40.h,
             ),
             Container(
               margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -188,7 +188,7 @@ class _MyGroupState extends State<MyGroup> {
               ),
             ),
             SizedBox(
-              height: 20.sp,
+              height: 20.h,
             ),
             Container(
               margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -205,11 +205,11 @@ class _MyGroupState extends State<MyGroup> {
               ),
             ),
             SizedBox(
-              height: 20.sp,
+              height: 20.h,
             ),
             _buildUserList(action),
             SizedBox(
-              height: 20.sp,
+              height: 20.h,
             ),
             Container(
               height: 75.h,
@@ -396,7 +396,7 @@ class _MyGroupState extends State<MyGroup> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
-                  height: 40.sp,
+                  height: 40.h,
                 ),
                 Center(
                   child: Text(
@@ -409,7 +409,7 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                 ),
                 SizedBox(
-                  height: 40.sp,
+                  height: 40.h,
                 ),
                 Container(
                   padding: const EdgeInsets.all(15.0),
@@ -441,11 +441,11 @@ class _MyGroupState extends State<MyGroup> {
                           children: [
                             Image.asset(
                               'assets/images/hand_right.png',
-                              height: 14.sp,
-                              width: 14.sp,
+                              height: 14.h,
+                              width: 14.w,
                             ),
                             SizedBox(
-                              width: 4.sp,
+                              width: 4.w,
                             ),
                             InkWell(
                               onTap: () {
@@ -532,7 +532,7 @@ class _MyGroupState extends State<MyGroup> {
                                   icon: Icon(
                                     Icons.open_in_new,
                                     color: Colors.blue,
-                                    size: 18.sp,
+                                    size: 18.r,
                                   ),
                                   text: AppLocalizations.of(context)!
                                       .clickThisLinkToStart,
@@ -643,10 +643,10 @@ class _MyGroupState extends State<MyGroup> {
                               .createUpdateActionUser(hiveActionUser!);
                         },
                         child: Container(
-                          height: 36.sp,
-                          width: 160.sp,
+                          height: 36.h,
+                          width: 160.w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.sp),
+                            borderRadius: BorderRadius.circular(4.r),
                             color: ActionUser_Evaluation.valueOf(
                                         hiveActionUser!.evaluation!) ==
                                     ActionUser_Evaluation.GOOD
@@ -658,11 +658,11 @@ class _MyGroupState extends State<MyGroup> {
                               children: [
                                 Image.asset(
                                   'assets/images/thumbs_up.png',
-                                  height: 14.sp,
-                                  width: 14.sp,
+                                  height: 14.h,
+                                  width: 14.w,
                                 ),
                                 SizedBox(
-                                  width: 4.sp,
+                                  width: 4.w,
                                 ),
                                 Text(
                                   AppLocalizations.of(context)!.goodText,
@@ -700,10 +700,10 @@ class _MyGroupState extends State<MyGroup> {
                               .createUpdateActionUser(hiveActionUser!);
                         },
                         child: Container(
-                          height: 36.sp,
-                          width: 160.sp,
+                          height: 36.h,
+                          width: 160.w,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.sp),
+                            borderRadius: BorderRadius.circular(4.r),
                             color: ActionUser_Evaluation.valueOf(
                                         hiveActionUser.evaluation!) ==
                                     ActionUser_Evaluation.BAD
@@ -715,11 +715,11 @@ class _MyGroupState extends State<MyGroup> {
                               children: [
                                 Image.asset(
                                   'assets/images/thumbs_down.png',
-                                  height: 14.sp,
-                                  width: 14.sp,
+                                  height: 14.h,
+                                  width: 14.w,
                                 ),
                                 SizedBox(
-                                  width: 4.sp,
+                                  width: 4.w,
                                 ),
                                 Text(
                                   AppLocalizations.of(context)!.notSoGoodText,
@@ -801,7 +801,7 @@ class _MyGroupState extends State<MyGroup> {
           icon: Icon(
             Icons.download,
             color: Colors.blue,
-            size: 18.sp,
+            size: 18.r,
           ),
           text: AppLocalizations.of(context)!
               .clickToDownload
@@ -852,7 +852,7 @@ class MyGroupActionListItem extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 10.sp),
+                padding: EdgeInsets.only(left: 10.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -891,7 +891,7 @@ class MyGroupActionListItem extends StatelessWidget {
                           shape: OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(12.sp)),
+                              borderRadius: BorderRadius.circular(12.r)),
                           enabled: true,
                           onSelected: (value) {
                             switch (value) {
@@ -946,73 +946,100 @@ class MyGroupActionListItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Spacer(),
-                  Container(
-                    height: 51.sp,
-                    width: 99.sp,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF6DE26B),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.5.sp),
-                      ),
-                    ),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
-                    child: Text(
-                      "${action.memberCountByActionStatus(ActionStatus.DONE)} ${AppLocalizations.of(context)!.membersDidIt}",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF000000),
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                      ),
-                    ),
+                  SizedBox(
+                    width: 8.w,
                   ),
-                  Spacer(),
-                  Container(
-                    height: 51.sp,
-                    width: 99.sp,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFBE4A),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.5.sp),
+                  Opacity(
+                    child: Container(
+                      height: 51.h,
+                      width: 99.w,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF6DE26B),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.5.r),
+                        ),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10.h, horizontal: 6.w),
+                      child: Text(
+                        "${action.memberCountByActionStatus(ActionStatus.DONE)} ${AppLocalizations.of(context)!.membersDidIt}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF000000),
+                          fontFamily: "Rubik",
+                          fontSize: 14.sp,
+                        ),
                       ),
                     ),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
-                    child: Text(
-                      "${action.memberCountByActionStatus(ActionStatus.NOT_DONE)} ${AppLocalizations.of(context)!.memberDidNotDoItYet}",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF000000),
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                      ),
-                    ),
+                    opacity:
+                        action.memberCountByActionStatus(ActionStatus.DONE) > 0
+                            ? 1
+                            : 0,
                   ),
-                  Spacer(),
-                  Container(
-                    height: 51.sp,
-                    width: 99.sp,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFF5E4D),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.5.sp),
-                      ),
-                    ),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
-                    child: Text(
-                      "${action.memberCountByActionStatus(ActionStatus.OVERDUE)} ${AppLocalizations.of(context)!.memberIsOverdue}",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF000000),
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                      ),
-                    ),
+                  SizedBox(
+                    width: 10.w,
                   ),
-                  Spacer(),
+                  Opacity(
+                      child: Container(
+                        height: 51.h,
+                        width: 99.w,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFBE4A),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.5.r),
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 6.w),
+                        child: Text(
+                          "${action.memberCountByActionStatus(ActionStatus.NOT_DONE)} ${AppLocalizations.of(context)!.memberDidNotDoItYet}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF000000),
+                            fontFamily: "Rubik",
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                      opacity: action.memberCountByActionStatus(
+                                  ActionStatus.NOT_DONE) >
+                              0
+                          ? 1
+                          : 0),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Opacity(
+                    child: Container(
+                      height: 51.h,
+                      width: 99.w,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFF5E4D),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.5.r),
+                        ),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10.h, horizontal: 6.w),
+                      child: Text(
+                        "${action.memberCountByActionStatus(ActionStatus.OVERDUE)} ${AppLocalizations.of(context)!.memberIsOverdue}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF000000),
+                          fontFamily: "Rubik",
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                    opacity:
+                        action.memberCountByActionStatus(ActionStatus.OVERDUE) >
+                                0
+                            ? 1
+                            : 0,
+                  ),
+                  SizedBox(
+                    width: 8.w,
+                  ),
                 ],
               )
             ],
