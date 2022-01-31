@@ -566,7 +566,7 @@ class _MeState extends State<Me> {
                               ),
                             ),
                             backgroundColor: MaterialStateProperty.all<Color>(
-                                Color(0xFFADADAD)),
+                                AppColors.selectedButtonBG),
                           ),
                           child: Text(AppLocalizations.of(context)!.close),
                         ),

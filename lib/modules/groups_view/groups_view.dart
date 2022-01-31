@@ -200,8 +200,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         borderRadius: BorderRadius.circular(40.r),
                       ),
                     ),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppColors.selectedButtonBG),
                   ),
                   child: Text(AppLocalizations.of(context)!.close),
                 ),
@@ -539,7 +539,7 @@ class GroupListItem extends StatelessWidget {
                 fontFamily: 'OpenSans',
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w500,
-                color: AppColors.hintTextColor,
+                color: Color(0xFF797979),
               ),
             ),
             SizedBox(height: 20.sp),

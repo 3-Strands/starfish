@@ -135,6 +135,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.hintInstructions,
+              hintStyle: formTitleHintStyle,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),

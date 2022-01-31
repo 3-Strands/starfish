@@ -1,6 +1,6 @@
 {
   "language": "Hindi",
-  "phoneNumberHint": "फ़ोन नंबर",
+  "phoneNumberHint": "मोबाइल नंबर (10 अंक)",
   "phoneAuthenticationTitle":
       "वन टाइम पासवर्ड पाने के लिए देश चुनें और फोन नंबर दर्ज करें",
   "searchLanguagesPlaceholder": "भाषा खोजें",
@@ -13,7 +13,7 @@
   "exit": "बाहर जाएं",
   "next": "अगला",
   "back": "पीछे",
-  "finish": "समाप्ति",
+  "finish": "शुरू हो जाओ",
   "edit": "संपादित करें",
   "save": "सहेजें",
   "open": "खोलना",
@@ -113,15 +113,22 @@
   "createGroup": "समूह बनाना",
   "editGroup": "समूह संपादित करें",
 
-  "hintMaterialName": "सामग्री का नाम",
+  "hintMaterialName": "सामग्री के लिए एक नाम दर्ज करें",
   "searchBarHint": "खोज",
   "hintGroupName": "समूह का नाम",
   "hintEvaluateProgress":
       "सूचीबद्ध श्रेणियों में से 3 तक चुनें। फिर आप इन श्रेणियों का उपयोग प्रत्येक समूह शिक्षार्थी द्वारा महीने दर महीने प्रगति का मूल्यांकन करने के लिए करेंगे।",
   "hintPersonName": "व्यक्ति का नाम यहां दर्ज करें",
-  "hintInstructions": "निर्देश",
+  "hintInstructions": "शिक्षार्थियों के लिए निर्देश दर्ज करें",
   "hintDueDate": "नियत तारीख का चयन करें",
+  "hintActionName": "कार्रवाई के लिए एक नाम दर्ज करें",
 
+  "hintMaterialDescription": "सामग्री के लिए विवरण दर्ज करें",
+  "hintGroupDescription": "समूह के लिए विवरण दर्ज करें",
+  "hintGroupName": "समूह के लिए एक नाम दर्ज करें",
+
+  "materialName": "सामग्री का नाम",
+  "groupName": "समूह का नाम",
   "descripton": "विवरण",
   "addWebLink": "वेब लिंक जोड़ें",
   "uploadAMaterial": "एक सामग्री अपलोड करें",
@@ -137,7 +144,7 @@
   "actionFollowInstructions":
       "कार्रवाई निर्देशों के एक सेट का पालन करें",
   "statusOfActionForLearner":
-      "शिक्षार्थी के लिए इस कार्रवाई की स्थिति",
+      "प्रत्येक शिक्षार्थी के लिए इस क्रिया की स्थिति",
 
   "appLanguage": "ऐप भाषा",
 

@@ -667,8 +667,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       borderRadius: BorderRadius.circular(40.r),
                     ),
                   ),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      AppColors.selectedButtonBG),
                 ),
                 child: Text(AppLocalizations.of(context)!.close),
               ),

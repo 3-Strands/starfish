@@ -189,6 +189,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    AppLocalizations.of(context)!.materialName,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
                   Container(
                     child: TextFormField(
                       keyboardType: TextInputType.multiline,
@@ -229,6 +235,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       controller: _descriptionController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)!
+                            .hintMaterialDescription,
+                        hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

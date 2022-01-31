@@ -233,8 +233,8 @@ class _MyGroupState extends State<MyGroup> {
                           borderRadius: BorderRadius.circular(40.r),
                         ),
                       ),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFADADAD)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.selectedButtonBG),
                     ),
                     child: Text(AppLocalizations.of(context)!.close),
                   ),
@@ -772,7 +772,7 @@ class _MyGroupState extends State<MyGroup> {
                             ),
                           ),
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              Color(0xFFADADAD)),
+                              AppColors.selectedButtonBG),
                         ),
                         child: Text(AppLocalizations.of(context)!.close),
                       ),

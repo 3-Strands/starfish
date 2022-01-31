@@ -108,7 +108,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                           setState(() {
                             _selectedCountry = country as HiveCountry;
                             _countryCodeController.text =
-                                _selectedCountry.diallingCode;
+                                _selectedCountry.diallingCode.startsWith("+")
+                                    ? _selectedCountry.diallingCode
+                                    : "+${_selectedCountry.diallingCode}";
                           });
                         },
                       ),

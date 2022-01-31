@@ -192,6 +192,8 @@ class _AddEditActionState extends State<AddEditAction>
                     controller: _actionNameController,
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.hintActionName,
+                      hintStyle: formTitleHintStyle,
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                       border: OutlineInputBorder(
@@ -352,7 +354,7 @@ class _AddEditActionState extends State<AddEditAction>
             style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF434141)),
+                color: AppColors.optionalFieldColor),
           ),
         ),
         SizedBox(height: 13.h),
@@ -396,12 +398,12 @@ class _AddEditActionState extends State<AddEditAction>
                           : AppLocalizations.of(context)!.selectAnAction,
                       textAlign: TextAlign.left,
                       style:
-                          TextStyle(fontSize: 16.sp, color: Color(0xFF434141)),
+                          TextStyle(fontSize: 16.sp, color: AppColors.optionalFieldColor),
                     ),
                     Spacer(),
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: Color(0xFF434141),
+                      color: AppColors.optionalFieldColor,
                       size: 20.sp,
                     )
                   ],

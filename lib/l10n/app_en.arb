@@ -1,7 +1,7 @@
 {
   "language": "English",
   "countryCodeHint": "+1",
-  "phoneNumberHint": "Phone Number",
+  "phoneNumberHint": "Mobile Number (10 digits)",
   "phoneAuthenticationTitle":
       "Select Country and enter Phone Number to get One Time Password",
   "searchLanguagesPlaceholder": "Search languages",
@@ -14,7 +14,7 @@
   "exit": "Exit",
   "next": "Next",
   "back": "Back",
-  "finish": "Finish",
+  "finish": "Get started",
   "edit": "Edit",
   "save": "Save",
   "open": "Open",
@@ -114,15 +114,22 @@
   "createGroup": "Create Group",
   "editGroup": "Edit Group",
 
-  "hintMaterialName": "Name of the Material",
+  "hintMaterialName": "Enter a name for the Material",
   "searchBarHint": "Search",
   "hintGroupName": "Name of the Group",
   "hintEvaluateProgress":
       "Choose up to 3 of the categories listed. You will then use these categories to evaluate progress by each Group learner, month to month.",
   "hintPersonName": "Enter the person's name here",
-  "hintInstructions": "Instructions",
+  "hintInstructions": "Enter instructions for the learners",
   "hintDueDate": "Select due date",
+  "hintActionName": "Enter a name for the action",
 
+  "hintMaterialDescription": "Enter a description for the material",
+  "hintGroupDescription": "Enter a description for the group",
+  "hintGroupName": "Enter a name for the group",
+
+  "materialName": "Name of the material",
+  "groupName": "Name of the group",
   "descripton": "Description",
   "addWebLink": "Add web link",
   "uploadAMaterial": "Upload a material",
@@ -137,7 +144,7 @@
   "actionFollowInstructions":
       "Action Follow a set of instructions",
   "statusOfActionForLearner":
-      "Status of this action for learner",
+      "Status of this action for each learner",
 
   "appLanguage": "App Language",
 
@@ -271,14 +278,14 @@
   "groupActionStatusNotDone": "Not done",
 
   "actionsCompleted": "Actions Completed",
-  "actionsIncompleted": "Actions incompleted",
+  "actionsIncompleted": "Actions Incompleted",
   "actionsOverdue": "Actions Overdue",
 
   "delete": "Delete",
   "deleteActionTitle": "Delete Action?",
   "deleteActionMessage": "Are you sure you want to delete this action and its data for this group?",
-  "memberIsOverdue": "Member is overdue",
-  "memberDidNotDoItYet": "Members\ndidn't do it yet",
+  "memberIsOverdue": "Learner(s) is overdue",
+  "memberDidNotDoItYet": "Learner(s)\ndidn't do it yet",
   "emptyActionName": "Please enter action name.",
   "emptyActionInstructions": "Please enter instructions.",
   "emptyActionQuestion": "Please enter question.",
@@ -286,7 +293,7 @@
   "selectActionGroup": "Please assign action to.",
   "emptyActionDueDate": "Please select due date.",
 
-  "membersDidIt": "Members\ndid it",
+  "membersDidIt": "Learner(s)\ndid it",
   "assignedToGroup": "Assigned to group that I teach/co-lead",
 
   "assignedToMeDone": "Assigned to me and completed",

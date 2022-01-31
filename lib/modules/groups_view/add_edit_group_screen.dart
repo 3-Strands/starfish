@@ -545,6 +545,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    AppLocalizations.of(context)!.groupName,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
                   Container(
                     child: TextFormField(
                       keyboardType: TextInputType.multiline,
@@ -584,6 +590,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       controller: _descriptionController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
+                        hintText:
+                            AppLocalizations.of(context)!.hintGroupDescription,
+                        hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

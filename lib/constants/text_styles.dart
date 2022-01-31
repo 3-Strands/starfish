@@ -62,14 +62,14 @@ var textFormFieldText = TextStyle(
 
 var formTitleTextStyle = TextStyle(
   fontFamily: 'OpenSans',
-  fontSize: 26.sp,
-  fontWeight: FontWeight.bold,
+  fontSize: 16.sp,
+  fontWeight: FontWeight.normal,
   color: Colors.black,
 );
 
 var formTitleHintStyle = TextStyle(
   fontFamily: 'OpenSans',
-  fontSize: 26.sp,
-  fontWeight: FontWeight.bold,
+  fontSize: 16.sp,
+  fontWeight: FontWeight.normal,
   color: AppColors.hintTextColor,
 );
