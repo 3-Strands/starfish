@@ -281,6 +281,13 @@
   "actionsIncompleted": "कार्य अपूर्ण",
   "actionsOverdue": "कार्रवाई अतिदेय",
 
+  "zeroOrOneActionCompleted": "कार्य पूर्ण",
+  "moreThenOneActionCompleted": "कार्य पूर्ण",
+  "zeroOrOneActionsIncompleted": "कार्य अपूर्ण",
+  "moreThenOneActionsIncompleted": "कार्य अपूर्ण",
+  "zeroOrOneActionsOverdue": "कार्य अतिदेय",
+  "moreThenOneActionsOverdue": "कार्य अतिदेय",
+
   "delete": "हटाएं",     
   "deleteActionTitle": "कार्रवाई हटाएं?",     
   "deleteActionMessage": "क्या आप वाकई इस समूह के लिए इस कार्रवाई और इसके डेटा को हटाना चाहते हैं?",

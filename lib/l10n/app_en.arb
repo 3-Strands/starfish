@@ -277,9 +277,12 @@
   "groupActionStatusDone": "Did it",
   "groupActionStatusNotDone": "Not done",
 
-  "actionsCompleted": "Actions Completed",
-  "actionsIncompleted": "Actions Incompleted",
-  "actionsOverdue": "Actions Overdue",
+  "zeroOrOneActionCompleted": "Action Completed",
+  "moreThenOneActionCompleted": "Actions Completed",
+  "zeroOrOneActionsIncompleted": "Action Incomplete",
+  "moreThenOneActionsIncompleted": "Actions Incomplete",
+  "zeroOrOneActionsOverdue": "Action Overdue",
+  "moreThenOneActionsOverdue": "Actions Overdue",
 
   "delete": "Delete",
   "deleteActionTitle": "Delete Action?",

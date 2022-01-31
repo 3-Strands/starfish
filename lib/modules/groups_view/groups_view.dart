@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -399,7 +400,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     (BuildContext context, int section) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 10.sp, vertical: 8.sp),
+                                        horizontal: 10.w, vertical: 8.h),
                                     child: Text(
                                       '${snapshot.data!.keys.toList()[section].about}',
                                       style: TextStyle(
@@ -455,6 +456,9 @@ class GroupListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int countActionsCompleted = group.actionsCompleted;
+    int countActionsNotDoneYet = group.actionsNotDoneYet;
+    int countActionsOverdue = group.actionsOverdue;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
@@ -469,7 +473,7 @@ class GroupListItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
-              height: 20.sp,
+              height: 20.h,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,7 +499,7 @@ class GroupListItem extends StatelessWidget {
                       icon: Icon(
                         Icons.edit,
                         color: Colors.blue,
-                        size: 18.sp,
+                        size: 18.r,
                       ),
                       text: AppLocalizations.of(context)!.edit,
                       onButtonTap: () {
@@ -531,7 +535,7 @@ class GroupListItem extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10.sp),
+            SizedBox(height: 10.h),
             Text(
               '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
               textAlign: TextAlign.left,
@@ -542,7 +546,7 @@ class GroupListItem extends StatelessWidget {
                 color: Color(0xFF797979),
               ),
             ),
-            SizedBox(height: 20.sp),
+            SizedBox(height: 20.h),
             if (group.currentUserRole == GroupUser_Role.ADMIN ||
                 group.currentUserRole == GroupUser_Role.TEACHER)
               InkWell(
@@ -554,7 +558,7 @@ class GroupListItem extends StatelessWidget {
                   width: 326.w,
                   decoration: BoxDecoration(
                       color: Color(0xFFDDDDDD),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                   child: Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
@@ -569,20 +573,26 @@ class GroupListItem extends StatelessWidget {
                   ),
                 ),
               ),
-            SizedBox(height: 10.sp),
+            SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                  height: 51.sp,
-                  width: 99.sp,
+                  height: 51.h,
+                  width: 99.w,
                   decoration: BoxDecoration(
                       color: Color(0xFF6DE26B),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                   padding:
                       EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Text(
-                    "${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
+                    //"${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
+                    Intl.plural(countActionsCompleted,
+                        zero:
+                            "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
+                        one: "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
+                        other: "$countActionsCompleted ${AppLocalizations.of(context)!.moreThenOneActionCompleted}",
+                        args: [countActionsCompleted]),
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -593,15 +603,21 @@ class GroupListItem extends StatelessWidget {
                 ),
                 Spacer(),
                 Container(
-                  height: 51.sp,
-                  width: 99.sp,
+                  height: 51.h,
+                  width: 99.w,
                   decoration: BoxDecoration(
                       color: Color(0xFFFFBE4A),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                   padding:
                       EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Text(
-                    "${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
+                    //"${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
+                    Intl.plural(countActionsNotDoneYet,
+                        zero:
+                            "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
+                        one: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
+                        other: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.moreThenOneActionsIncompleted}",
+                        args: [countActionsNotDoneYet]),
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -612,15 +628,21 @@ class GroupListItem extends StatelessWidget {
                 ),
                 Spacer(),
                 Container(
-                  height: 51.sp,
-                  width: 99.sp,
+                  height: 51.h,
+                  width: 99.w,
                   decoration: BoxDecoration(
                       color: Color(0xFFFF5E4D),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.sp))),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                   padding:
                       EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                   child: Text(
-                    "${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                    //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                    Intl.plural(countActionsOverdue,
+                        zero:
+                            "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                        one: "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                        other: "$countActionsOverdue ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                        args: [countActionsOverdue]),
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
