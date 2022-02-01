@@ -348,5 +348,6 @@
 
   "phoneNumberComplete": "Number complete",
   "oneNumberMissing": "number missing",
-  "moreNumbersMissing": "numbers missing"
+  "moreNumbersMissing": "numbers missing",
+  "tooManyNumbers": "Too many numbers, remove"
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,6 +17,7 @@ class CustomPhoneNumber extends StatefulWidget {
 }
 
 class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
+  final int MAX_LENGTH = 10;
   int _phoneNumberRemainingDigits = 10;
   @override
   void initState() {
@@ -30,10 +30,9 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
       TextFormField(
         controller: widget.controller,
         //focusNode: _phoneNumberFocus,
-        maxLength: 10,
         onChanged: (text) {
           setState(() {
-            _phoneNumberRemainingDigits = 10 - text.length;
+            _phoneNumberRemainingDigits = MAX_LENGTH - text.length;
 
             //_isPhoneNumberEmpty = text.isEmpty;
           });
@@ -66,12 +65,7 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
       Padding(
         padding: EdgeInsets.only(left: 8.w),
         child: Text(
-          Intl.plural(_phoneNumberRemainingDigits,
-              zero: "${AppLocalizations.of(context)!.phoneNumberComplete}",
-              one:
-                  "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.oneNumberMissing}",
-              other: "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.moreNumbersMissing}",
-              args: [_phoneNumberRemainingDigits]),
+          _phoneNumberStatus(_phoneNumberRemainingDigits),
           style: TextStyle(
             fontFamily: "Rubik",
             fontSize: 16.sp,
@@ -82,5 +76,20 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
         ),
       ),
     ]);
+  }
+
+  String _phoneNumberStatus(int _phoneNumberRemainingDigits) {
+    if (_phoneNumberRemainingDigits == 0) {
+      return "${AppLocalizations.of(context)!.phoneNumberComplete}";
+    } else if (_phoneNumberRemainingDigits == 1) {
+      return "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.oneNumberMissing}";
+    } else if (_phoneNumberRemainingDigits > 0 &&
+        _phoneNumberRemainingDigits <= MAX_LENGTH) {
+      return "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.moreNumbersMissing}";
+    } else if (_phoneNumberRemainingDigits < 0) {
+      return "${AppLocalizations.of(context)!.tooManyNumbers} ${_phoneNumberRemainingDigits.abs()}";
+    } else {
+      return '';
+    }
   }
 }
