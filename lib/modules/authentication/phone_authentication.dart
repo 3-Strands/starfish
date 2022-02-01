@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'package:phone_number/phone_number.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -11,6 +13,7 @@ import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/widgets/custom_phone_number.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -133,21 +136,29 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  Container _phoneNumberContainer() {
-    return Container(
-      height: 52.h,
+  Widget _phoneNumberContainer() {
+    return IntrinsicHeight(
+      //height: 52.h,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 52.h,
             width: 87.w,
             child: _countryCodeField(),
           ),
           SizedBox(width: 15.w),
           Container(
-            height: 52.h,
+            //height: 52.h,
             width: 243.w,
-            child: _phoneNumberField(),
+            //child: _phoneNumberField(),
+            child: CustomPhoneNumber(
+              controller: _phoneNumberController,
+              onChanged: (text) {
+                setState(() {
+                  _isPhoneNumberEmpty = text.isEmpty;
+                });
+              },
+            ),
           )
         ],
       ),
@@ -184,6 +195,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
+/*
   TextFormField _phoneNumberField() {
     return TextFormField(
       controller: _phoneNumberController,
@@ -215,7 +227,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       ),
     );
   }
-
+*/
   SizedBox _footer() {
     return SizedBox(
       height: 75.h,

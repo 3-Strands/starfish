@@ -344,5 +344,9 @@
   "unauthenticated": "User not authenticated. Token is expired.",
 
   "clickThisLinkToStart": "Click this link to start",
-  "clickToDownload": "Click to download: [{{file_name}}]"
+  "clickToDownload": "Click to download: [{{file_name}}]",
+
+  "phoneNumberComplete": "Number complete",
+  "oneNumberMissing": "number missing",
+  "moreNumbersMissing": "numbers missing"
 }

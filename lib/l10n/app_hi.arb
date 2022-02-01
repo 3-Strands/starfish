@@ -348,5 +348,10 @@
   "unauthenticated": "उपयोगकर्ता प्रमाणित नहीं है। टोकन की समय सीमा समाप्त हो गई है।",
 
   "clickThisLinkToStart": "शुरू करने के लिए इस लिंक पर क्लिक करें",
-  "clickToDownload": "डाउनलोड करने के लिए क्लिक करें: [{{file_name}}]"
+  "clickToDownload": "डाउनलोड करने के लिए क्लिक करें: [{{file_name}}]",
+
+  "phoneNumberComplete": "Number complete",
+  "oneNumberMissing": "number missing",
+  "moreNumbersMissing": "numbers missing"
+
 }
