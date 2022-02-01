@@ -30,6 +30,7 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
       TextFormField(
         controller: widget.controller,
         //focusNode: _phoneNumberFocus,
+        maxLength: 10,
         onChanged: (text) {
           setState(() {
             _phoneNumberRemainingDigits = 10 - text.length;
@@ -59,15 +60,26 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
           ),
           filled: true,
           fillColor: AppColors.txtFieldBackground,
+          counterText: '',
         ),
       ),
-      Text(
-        Intl.plural(_phoneNumberRemainingDigits,
-            zero: "${AppLocalizations.of(context)!.phoneNumberComplete}",
-            one:
-                "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.oneNumberMissing}",
-            other: "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.moreNumbersMissing}",
-            args: [_phoneNumberRemainingDigits]),
+      Padding(
+        padding: EdgeInsets.only(left: 8.w),
+        child: Text(
+          Intl.plural(_phoneNumberRemainingDigits,
+              zero: "${AppLocalizations.of(context)!.phoneNumberComplete}",
+              one:
+                  "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.oneNumberMissing}",
+              other: "$_phoneNumberRemainingDigits ${AppLocalizations.of(context)!.moreNumbersMissing}",
+              args: [_phoneNumberRemainingDigits]),
+          style: TextStyle(
+            fontFamily: "Rubik",
+            fontSize: 16.sp,
+            color: _phoneNumberRemainingDigits == 0
+                ? Color(0xFF6DE26B)
+                : Color(0xFF434141),
+          ),
+        ),
       ),
     ]);
   }
