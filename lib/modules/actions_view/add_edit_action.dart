@@ -336,8 +336,7 @@ class _AddEditActionState extends State<AddEditAction>
       _actionNameController.text = _actionToBeReused!.name!;
       _selectedMaterial = _actionToBeReused!.material;
 
-      _selectedGroups =
-          _actionToBeReused!.group != null ? [_actionToBeReused!.group!] : [];
+      _selectedGroups = [];
 
       _dueDate = _actionToBeReused!.dateDue?.toDateTime();
     });
@@ -397,8 +396,8 @@ class _AddEditActionState extends State<AddEditAction>
                           ? _actionToBeReused!.name!
                           : AppLocalizations.of(context)!.selectAnAction,
                       textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontSize: 16.sp, color: AppColors.optionalFieldColor),
+                      style: TextStyle(
+                          fontSize: 16.sp, color: AppColors.optionalFieldColor),
                     ),
                     Spacer(),
                     Icon(

@@ -579,85 +579,84 @@ class GroupListItem extends StatelessWidget {
                 ),
               ),
             SizedBox(height: 10.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  height: 51.h,
-                  width: 99.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF6DE26B),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Text(
-                    //"${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
-                    Intl.plural(countActionsCompleted,
-                        zero:
-                            "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
-                        one: "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
-                        other: "$countActionsCompleted ${AppLocalizations.of(context)!.moreThenOneActionCompleted}",
-                        args: [countActionsCompleted]),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Rubik",
-                      fontSize: 12.sp,
+            IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 99.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFF6DE26B),
+                        borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                    child: Text(
+                      //"${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
+                      Intl.plural(countActionsCompleted,
+                          zero:
+                              "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
+                          one: "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
+                          other: "$countActionsCompleted ${AppLocalizations.of(context)!.moreThenOneActionCompleted}",
+                          args: [countActionsCompleted]),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Rubik",
+                        fontSize: 12.sp,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-                Spacer(),
-                Container(
-                  height: 51.h,
-                  width: 99.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFFFBE4A),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Text(
-                    //"${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
-                    Intl.plural(countActionsNotDoneYet,
-                        zero:
-                            "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
-                        one: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
-                        other: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.moreThenOneActionsIncompleted}",
-                        args: [countActionsNotDoneYet]),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Rubik",
-                      fontSize: 12.sp,
+                  Spacer(),
+                  Container(
+                    width: 99.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFFBE4A),
+                        borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                    child: Text(
+                      //"${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
+                      Intl.plural(countActionsNotDoneYet,
+                          zero:
+                              "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
+                          one: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
+                          other: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.moreThenOneActionsIncompleted}",
+                          args: [countActionsNotDoneYet]),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Rubik",
+                        fontSize: 12.sp,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-                Spacer(),
-                Container(
-                  height: 51.h,
-                  width: 99.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFFF5E4D),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Text(
-                    //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                    Intl.plural(countActionsOverdue,
-                        zero:
-                            "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                        one: "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                        other: "$countActionsOverdue ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                        args: [countActionsOverdue]),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Rubik",
-                      fontSize: 12.sp,
+                  Spacer(),
+                  Container(
+                    width: 99.w,
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFF5E4D),
+                        borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                    child: Text(
+                      //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                      Intl.plural(countActionsOverdue,
+                          zero:
+                              "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                          one: "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                          other: "$countActionsOverdue ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                          args: [countActionsOverdue]),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Rubik",
+                        fontSize: 12.sp,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-            )
+                ],
+              ),
+            ),
           ],
         ),
       ),
