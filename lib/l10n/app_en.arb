@@ -84,7 +84,7 @@
   "linkMyGroups":
       "Link my groups to a project in everylanguage.app",
 
-  "topics": "Topic(s)",
+  "topics": "Topic(s) (Optional)",
   "selectTopics": "Select topic(s)",
   "reportInappropriateMaterial":
       "If this material is inappropriate, click here to report it.",
