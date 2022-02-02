@@ -654,10 +654,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     } else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectLanguage);
-    } else if (_selectedTypes.length == 0) {
+    }/* else if (_selectedTypes.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectType);
-    } else if (_selectedTopics.length == 0) {
+    }*/ else if (_selectedTopics.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectTopic);
     } else {
