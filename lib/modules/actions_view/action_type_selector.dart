@@ -206,9 +206,9 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
         ),
         SizedBox(height: 13.h),
         TextFormField(
-          maxLines: 1,
+          maxLines: null,
           controller: _questionController,
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
