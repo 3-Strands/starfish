@@ -710,8 +710,8 @@ class MaterialListItem extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Container(
-                height: 22.h,
+              IntrinsicHeight(
+                //height: 22.h,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

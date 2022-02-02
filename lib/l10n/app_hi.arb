@@ -350,8 +350,9 @@
   "clickThisLinkToStart": "शुरू करने के लिए इस लिंक पर क्लिक करें",
   "clickToDownload": "डाउनलोड करने के लिए क्लिक करें: [{{file_name}}]",
 
-  "phoneNumberComplete": "Number complete",
-  "oneNumberMissing": "number missing",
-  "moreNumbersMissing": "numbers missing"
+  "phoneNumberComplete": "संख्या पूर्ण",
+  "oneNumberMissing": "नंबर गायब",
+  "moreNumbersMissing": "नंबर गायब",
+  "tooManyNumbers": "बहुत अधिक संख्याएं, हटाएं"
 
 }

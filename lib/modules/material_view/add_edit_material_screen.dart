@@ -328,7 +328,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           if ((!_isEditMode && _selectedFiles.length >= 5) ||
                               (_isEditMode &&
                                   (_selectedFiles.length +
-                                          widget.material!.files!.length) >=
+                                          (widget.material!.files != null
+                                              ? widget.material!.files!.length
+                                              : 0)) >=
                                       5)) {
                             StarfishSnackbar.showErrorMessage(context,
                                 AppLocalizations.of(context)!.maxFilesSelected);
