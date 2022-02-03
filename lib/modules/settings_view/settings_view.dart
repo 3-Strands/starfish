@@ -633,9 +633,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 AppLocalizations.of(context)!.settings,
                 style: dashboardNavigationTitle,
               ),
-              IconButton(
-                icon: SvgPicture.asset(AssetsPath.settings),
-                onPressed: () {},
+              Visibility(
+                child: IconButton(
+                  icon: SvgPicture.asset(AssetsPath.settings),
+                  onPressed: () {},
+                ),
+                visible: false,
               ),
             ],
           ),
