@@ -301,6 +301,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         style: textFormFieldText,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.nameHint,
+          hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
