@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
-import 'package:phone_number/phone_number.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -70,6 +68,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   void _getAllCountries() {
     _countryList = _countryBox.values.toList();
+    _countryList.sort((a, b) => a.name.compareTo(b.name));
   }
 
   @override
@@ -176,6 +175,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: AppLocalizations.of(context)!.countryCodeHint,
+        hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),

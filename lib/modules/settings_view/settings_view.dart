@@ -369,6 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         style: textFormFieldText,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.nameHint,
+          hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -467,6 +468,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: '', // AppLocalizations.of(context)!.countryCodeHint,
+        hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -497,6 +499,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         hintText: AppLocalizations.of(context)!.phoneNumberHint,
+        hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),

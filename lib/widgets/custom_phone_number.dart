@@ -47,6 +47,7 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
         style: textFormFieldText,
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.phoneNumberHint,
+          hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
