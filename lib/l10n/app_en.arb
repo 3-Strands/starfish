@@ -1,7 +1,7 @@
 {
   "language": "English",
   "countryCodeHint": "+1",
-  "phoneNumberHint": "Mobile Number (10 digits)",
+  "phoneNumberHint": "Mobile Number",
   "phoneAuthenticationTitle":
       "Select Country and enter Phone Number to get One Time Password",
   "searchLanguagesPlaceholder": "Search languages",

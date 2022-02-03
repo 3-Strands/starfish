@@ -1,6 +1,6 @@
 {
   "language": "Hindi",
-  "phoneNumberHint": "मोबाइल नंबर (10 अंक)",
+  "phoneNumberHint": "मोबाइल नंबर",
   "phoneAuthenticationTitle":
       "वन टाइम पासवर्ड पाने के लिए देश चुनें और फोन नंबर दर्ज करें",
   "searchLanguagesPlaceholder": "भाषा खोजें",
