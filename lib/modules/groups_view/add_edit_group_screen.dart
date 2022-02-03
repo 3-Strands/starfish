@@ -557,9 +557,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       maxLines: null,
                       controller: _titleController,
                       style: formTitleTextStyle,
-                      decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.hintGroupName,
-                        hintStyle: formTitleHintStyle,
+                      decoration: InputDecoration(floatingLabelBehavior: FloatingLabelBehavior.never,
+                      labelText: AppLocalizations.of(context)!.hintGroupName,
+                      labelStyle: formTitleHintStyle,
+                      alignLabelWithHint: true,
+                        // hintText: AppLocalizations.of(context)!.hintGroupName,
+                        // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -590,9 +593,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       controller: _descriptionController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        hintText:
-                            AppLocalizations.of(context)!.hintGroupDescription,
-                        hintStyle: formTitleHintStyle,
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        labelText:AppLocalizations.of(context)!.hintGroupDescription, 
+                        labelStyle: formTitleHintStyle,
+                        alignLabelWithHint: true,
+                        // hintText:
+                        //     AppLocalizations.of(context)!.hintGroupDescription,
+                        // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -731,9 +738,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             keyboardType: TextInputType.text,
                             style: textFormFieldText,
                             decoration: InputDecoration(
-                              hintText:
-                                  AppLocalizations.of(context)!.hintPersonName,
-                              hintStyle: textFormFieldText,
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
+                              labelText: AppLocalizations.of(context)!.hintPersonName,
+                              labelStyle: formTitleHintStyle,
+                              alignLabelWithHint: true,
+                              // hintText:
+                              //     AppLocalizations.of(context)!.hintPersonName,
+                              // hintStyle: textFormFieldText,
                               contentPadding:
                                   EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
                               border: OutlineInputBorder(

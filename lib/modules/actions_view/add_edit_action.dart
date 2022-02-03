@@ -189,11 +189,15 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 13.h),
                   TextFormField(
+                    
                     controller: _actionNameController,
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.hintActionName,
-                      hintStyle: formTitleHintStyle,
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      labelText:  AppLocalizations.of(context)!.hintActionName,
+                      labelStyle: formTitleHintStyle,
+                      // hintText: AppLocalizations.of(context)!.hintActionName,
+                      //  hintStyle: formTitleHintStyle,
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                       border: OutlineInputBorder(
