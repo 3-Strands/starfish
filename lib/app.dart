@@ -56,20 +56,29 @@ class _StarfishState extends State<Starfish> {
       designSize: Size(375, 812),
       builder: () => Provider(
         child: MaterialApp(
-            locale: _locale,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: L10n.all,
-            navigatorKey: NavigationService.navigatorKey, // set property
-            debugShowCheckedModeBanner: false,
-            title: '',
-            theme: AppStyles.defaultTheme(),
-            home: SplashScreen(),
-            routes: Routes.routes),
+          locale: _locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: L10n.all,
+          navigatorKey: NavigationService.navigatorKey, // set property
+          debugShowCheckedModeBanner: false,
+          title: '',
+          theme: AppStyles.defaultTheme(),
+          home: SplashScreen(),
+          routes: Routes.routes,
+          builder: (context, widget) {
+            ScreenUtil.setContext(context);
+            return MediaQuery(
+              //Setting font does not change with system font size
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: widget!,
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppStyles {
   static ThemeData defaultTheme() {
@@ -16,13 +15,13 @@ class AppStyles {
       // primaryColorDark: AppColors.selectedButtonBG,
       accentColor: AppColors.selectedButtonBG,
       inputDecorationTheme: InputDecorationTheme(
-        contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         hintStyle: TextStyle(
             fontWeight: FontWeight.normal,
             fontFamily: "OpenSans",
             fontStyle: FontStyle.normal,
             color: AppColors.txtFieldTextColor,
-            fontSize: 16.0.sp),
+            fontSize: 16.0),
         errorStyle: TextStyle(
           color: Colors.red,
           fontFamily: "OpenSans",
@@ -57,7 +56,7 @@ class AppStyles {
           textStyle: TextStyle(
             inherit: true,
             fontFamily: 'OpenSans',
-            fontSize: ScreenUtil().setSp(21),
+            fontSize: 21,
             color: Colors.white,
           ),
         ),
