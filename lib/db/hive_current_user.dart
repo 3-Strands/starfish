@@ -1,8 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:collection/collection.dart';
-import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/config/app_config.dart';
-import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -10,7 +7,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 part 'hive_current_user.g.dart';
 
 @HiveType(typeId: 2)
-class HiveCurrentUser {
+class HiveCurrentUser extends HiveObject {
   @HiveField(0)
   final String id;
 

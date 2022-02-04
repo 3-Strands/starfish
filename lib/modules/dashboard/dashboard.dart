@@ -68,6 +68,10 @@ class _DashboardState extends State<Dashboard> {
         debugPrint('Boradcast Receiver: kUpdateUsers');
         SyncService().syncLocalUsersToRemote();
       },
+      SyncService.kUpdateCurrentUser: (HiveCurrentUser, __) {
+        debugPrint('Boradcast Receiver: kUpdateCurrentUser');
+        SyncService().syncCurrentUser();
+      },
       SyncService.kUnauthenticated: (value, callback) {
         debugPrint('Boradcast Receiver: kUnauthenticated');
         handleUnauthentication();

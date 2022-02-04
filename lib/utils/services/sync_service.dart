@@ -50,10 +50,12 @@ class SyncService {
   final DEBUG = false;
   bool _isDialogShowing = false;
 
+  static final String kUpdateCurrentUser = 'updateCurrentUser';
   static final String kUpdateMaterial = 'updateMaterial';
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
   static final String kUpdateActions = 'updateActions';
+
   static final String kUnauthenticated = 'unauthenticated';
 
   // Use this object to prevent concurrent access to data

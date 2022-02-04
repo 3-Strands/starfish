@@ -14,6 +14,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -206,7 +207,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         // hintText:
                         //     AppLocalizations.of(context)!.hintMaterialName,
                         // hintStyle: formTitleHintStyle,
-                        labelText: AppLocalizations.of(context)!.hintMaterialName,
+                        labelText:
+                            AppLocalizations.of(context)!.hintMaterialName,
                         labelStyle: formTitleHintStyle,
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         alignLabelWithHint: true,
@@ -241,10 +243,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText:AppLocalizations.of(context)!
+                        labelText: AppLocalizations.of(context)!
                             .hintMaterialDescription,
-                        labelStyle:formTitleHintStyle, 
-                        alignLabelWithHint:true,
+                        labelStyle: formTitleHintStyle,
+                        alignLabelWithHint: true,
                         // hintText: AppLocalizations.of(context)!
                         //     .hintMaterialDescription,
                         // hintStyle: formTitleHintStyle,
@@ -705,9 +707,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         _selectedTypes.map((HiveMaterialType type) => type.id).toList();
     _hiveMaterial.topics =
         _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList();
-    _hiveMaterial.visibility = _visibleTo != null ? _visibleTo!.value.value : Material_Visibility.CREATOR_VIEW.value;
-    _hiveMaterial.editability =
-        _editableBy != null ? _editableBy!.value.value : Material_Editability.CREATOR_EDIT.value;
+    _hiveMaterial.visibility = _visibleTo != null
+        ? _visibleTo!.value.value
+        : Material_Visibility.CREATOR_VIEW.value;
+    _hiveMaterial.editability = _editableBy != null
+        ? _editableBy!.value.value
+        : Material_Editability.CREATOR_EDIT.value;
 
     // check if there is any file is added, if yes, store them in HiveFile box
     List<HiveFile>? _files;
@@ -729,6 +734,28 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         SyncService.kUpdateMaterial,
         value: _hiveMaterial,
       );
+
+      // update the material language(s) as user language(s), if not already
+      List<String>? _newLanguages = _hiveMaterial?.languageIds
+          ?.where((element) => !CurrentUserProvider()
+              .getUserSync()
+              .languageIds
+              .contains(element))
+          .toList();
+
+      if (_newLanguages != null && _newLanguages.length > 0) {
+        HiveCurrentUser _hiveCurrentUser = CurrentUserProvider().getUserSync();
+        _hiveCurrentUser.languageIds.addAll(_newLanguages);
+        _hiveCurrentUser.isUpdated = true;
+
+        _hiveCurrentUser.save().then((value) {
+          // Broadcast to sync the local changes with the server
+          FBroadcast.instance().broadcast(
+            SyncService.kUpdateCurrentUser,
+            value: _hiveCurrentUser,
+          );
+        });
+      }
       Alerts.showMessageBox(
           context: context,
           title: AppLocalizations.of(context)!.dialogInfo,
