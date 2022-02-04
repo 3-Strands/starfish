@@ -24,7 +24,8 @@ class ActionTypeSelector extends StatefulWidget {
     required this.onInstructionsChange,
     required this.onQuestionChange,
     required this.onMaterialChange,
-    this.selectedActionType = Action_Type.TEXT_INSTRUCTION,
+    this.selectedActionType,
+    // = Action_Type.TEXT_INSTRUCTION,
     this.selectedMaterial,
     this.instructions = '',
     this.question = '',
@@ -39,6 +40,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
   final TextEditingController _questionController = TextEditingController();
 
   Action_Type _selectedActionType = Action_Type.TEXT_INSTRUCTION;
+
   HiveMaterial? _selectedMaterial;
 
   @override
@@ -83,14 +85,18 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                     fontFamily: 'OpenSans',
                   ),
                   hint: Text(
-                    widget.selectedActionType!.about,
+                    widget.selectedActionType != null
+                        ? widget.selectedActionType!.about
+                        : AppLocalizations.of(context)!.selectTheTypeOfAction,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 16.sp,
-                      fontFamily: 'OpenSans',
-                    ),
+                    style: widget.selectedActionType != null
+                        ? TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 16.sp,
+                            fontFamily: 'OpenSans',
+                          )
+                        : formTitleHintStyle,
                     textAlign: TextAlign.left,
                   ),
                   onChanged: (Action_Type? value) {
@@ -138,7 +144,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
               labelText: AppLocalizations.of(context)!.hintInstructions,
               labelStyle: formTitleHintStyle,
               alignLabelWithHint: true,
-              
+
               // hintText: AppLocalizations.of(context)!.hintInstructions,
               // hintStyle: formTitleHintStyle,
               border: OutlineInputBorder(
