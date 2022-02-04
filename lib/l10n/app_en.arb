@@ -282,8 +282,8 @@
 
   "zeroOrOneActionCompleted": "Action Completed",
   "moreThenOneActionCompleted": "Actions Completed",
-  "zeroOrOneActionsIncompleted": "Action Incomplete",
-  "moreThenOneActionsIncompleted": "Actions Incomplete",
+  "zeroOrOneActionsIncompleted": "Action Due",
+  "moreThenOneActionsIncompleted": "Actions Due",
   "zeroOrOneActionsOverdue": "Action Overdue",
   "moreThenOneActionsOverdue": "Actions Overdue",
 

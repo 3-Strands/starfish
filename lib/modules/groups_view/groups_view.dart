@@ -581,6 +581,7 @@ class GroupListItem extends StatelessWidget {
             SizedBox(height: 10.h),
             IntrinsicHeight(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(

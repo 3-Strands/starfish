@@ -286,8 +286,8 @@
 
   "zeroOrOneActionCompleted": "कार्य पूर्ण",
   "moreThenOneActionCompleted": "कार्य पूर्ण",
-  "zeroOrOneActionsIncompleted": "कार्य अपूर्ण",
-  "moreThenOneActionsIncompleted": "कार्य अपूर्ण",
+  "zeroOrOneActionsIncompleted": "कार्य देय",
+  "moreThenOneActionsIncompleted": "कार्य देय",
   "zeroOrOneActionsOverdue": "कार्य अतिदेय",
   "moreThenOneActionsOverdue": "कार्य अतिदेय",
 
