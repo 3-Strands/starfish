@@ -2,6 +2,7 @@ import 'dart:async';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
@@ -74,7 +75,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isNameEditable = false;
 
   late AppBloc bloc;
-  bool _isLoading = false;
 
   late List<Map> _languages;
   late Map _language;
@@ -255,10 +255,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currentUserBox.putAt(0, _user);
   }
 
-  void updateCountries() async {
-    setState(() {
-      _isLoading = true;
-    });
+  void updateCountries() {
     var fieldMaskPaths = ['country_ids'];
     List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
@@ -266,20 +263,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.countryIds = _selectedCountryIds;
 
-    await CurrentUserRepository()
+    EasyLoading.show();
+
+    CurrentUserRepository()
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
-        .then((value) async => {
-              await SyncService().syncLanguages(),
-              setState(() => _isLoading = false),
-              _user.countryIds = value.countryIds,
-              _currentUserBox.putAt(0, _user),
-            })
-        .onError((GrpcError error, stackTrace) => {handleGrpcError(error)});
+        .then((value) async {
+      await SyncService().syncLanguages();
+      _user.countryIds = value.countryIds;
+      _currentUserBox.putAt(0, _user);
+    }).onError((GrpcError error, stackTrace) {
+      handleGrpcError(error);
+    }).whenComplete(() {
+      EasyLoading.dismiss();
+    });
   }
 
-  void updateLanguages(AppBloc bloc) async {
-    setState(() => _isLoading = true);
-
+  void updateLanguages(AppBloc bloc) {
     var fieldMaskPaths = ['language_ids'];
     List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
@@ -287,16 +286,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.languageIds = _selectedLanguageIds;
 
-    await CurrentUserRepository()
+    EasyLoading.show();
+
+    CurrentUserRepository()
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
-            setState(() => _isLoading = false),
             bloc.materialBloc.selectedLanguages = _selectedLanguages,
             _user.languageIds = value.languageIds,
             _currentUserBox.putAt(0, _user),
           },
-        );
+        )
+        .whenComplete(() {
+      EasyLoading.dismiss();
+    });
   }
 
   void handleGrpcError(GrpcError grpcError) {
@@ -871,11 +874,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            (_isLoading == true)
+            /*(_isLoading == true)
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                : Container()
+                : Container()*/
           ],
         ),
       ),

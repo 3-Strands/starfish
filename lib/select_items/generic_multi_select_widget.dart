@@ -260,6 +260,7 @@ class _MultiSelectState extends State<MultiSelect> {
               this.appBarTitle = TextField(
                 controller: _searchTextController,
                 cursorColor: Colors.white,
+                autofocus: true,
                 style: TextStyle(
                   color: Colors.white,
                 ),
