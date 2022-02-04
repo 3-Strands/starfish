@@ -528,7 +528,8 @@ class _AddEditActionState extends State<AddEditAction>
   Widget _selectDropDown() {
     return new SelectDropDown(
       navTitle: AppLocalizations.of(context)!.assignActionTo,
-      placeholder: AppLocalizations.of(context)!.assignActionTo,
+      placeholder: AppLocalizations.of(context)!.selectOneOrMoreGroups,
+    
       selectedValues: _selectedGroups,
       dataSource: _groupList,
       enableSelectAllOption: false,
