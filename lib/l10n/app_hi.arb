@@ -356,6 +356,8 @@
   "phoneNumberComplete": "संख्या पूर्ण",
   "oneNumberMissing": "नंबर गायब",
   "moreNumbersMissing": "नंबर गायब",
-  "tooManyNumbers": "बहुत अधिक संख्याएं, हटाएं"
+  "tooManyNumbers": "बहुत अधिक संख्याएं, हटाएं",
+  "selectTheTypeOfAction": "कार्रवाई के प्रकार का चयन करें"
+
 
 }

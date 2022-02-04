@@ -352,5 +352,7 @@
   "phoneNumberComplete": "Number complete",
   "oneNumberMissing": "number missing",
   "moreNumbersMissing": "numbers missing",
-  "tooManyNumbers": "Too many numbers, remove"
+  "tooManyNumbers": "Too many numbers, remove",
+  "selectTheTypeOfAction": "Select the type of action"
+
 }

@@ -52,7 +52,8 @@ class _AddEditActionState extends State<AddEditAction>
   late HiveAction? _actionToBeReused;
 
   final TextEditingController _actionNameController = TextEditingController();
-  Action_Type? _selectedActionType = Action_Type.TEXT_INSTRUCTION;
+  //Action_Type? _selectedActionType = Action_Type.TEXT_INSTRUCTION;
+  Action_Type? _selectedActionType;
 
   bool _isEditMode = false;
 
@@ -491,7 +492,7 @@ class _AddEditActionState extends State<AddEditAction>
         selectedActionType: _selectedActionType,
         instructions: _instructions ?? '',
         question: _question ?? '',
-        selectedMaterial: _selectedMaterial,
+         selectedMaterial: _selectedMaterial,
       );
     }
   }
