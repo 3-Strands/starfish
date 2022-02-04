@@ -134,8 +134,13 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
             controller: _instructionController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.hintInstructions,
-              hintStyle: formTitleHintStyle,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelText: AppLocalizations.of(context)!.hintInstructions,
+              labelStyle: formTitleHintStyle,
+              alignLabelWithHint: true,
+              
+              // hintText: AppLocalizations.of(context)!.hintInstructions,
+              // hintStyle: formTitleHintStyle,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),

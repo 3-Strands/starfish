@@ -371,8 +371,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         keyboardType: TextInputType.text,
         style: textFormFieldText,
         decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.nameHint,
-          hintStyle: formTitleHintStyle,
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          labelText: AppLocalizations.of(context)!.nameHint,
+          labelStyle:formTitleHintStyle,
+          alignLabelWithHint: true,
+          // hintText: AppLocalizations.of(context)!.nameHint,
+          // hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -501,8 +505,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.phoneNumberHint,
-        hintStyle: formTitleHintStyle,
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        labelText: AppLocalizations.of(context)!.phoneNumberHint,
+        labelStyle: formTitleHintStyle,
+        alignLabelWithHint: true,
+        // hintText: AppLocalizations.of(context)!.phoneNumberHint,
+        // hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -1092,7 +1100,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       keyboardType: TextInputType.emailAddress,
                       style: textFormFieldText,
                       decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.emailHint,
+                        labelText:AppLocalizations.of(context)!.emailHint,
+                        labelStyle:formTitleHintStyle ,
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+
+                       // hintText: AppLocalizations.of(context)!.emailHint,
                         contentPadding:
                             EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                         border: OutlineInputBorder(
@@ -1154,8 +1166,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         keyboardType: TextInputType.emailAddress,
                         style: textFormFieldText,
                         decoration: InputDecoration(
-                          hintText:
-                              AppLocalizations.of(context)!.confirmEmailHint,
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          labelText:  AppLocalizations.of(context)!.confirmEmailHint,
+                          labelStyle:formTitleHintStyle,
+                          // hintText:
+                          //     AppLocalizations.of(context)!.confirmEmailHint,
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                           border: OutlineInputBorder(

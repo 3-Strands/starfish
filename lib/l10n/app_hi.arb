@@ -33,7 +33,7 @@
   "create": "बनाएं",
   "invite": "आमंत्रण",
   "leaveThisGroup": "इस समूह को छोड़ दें",
-  "inviteGroupUser": "स्टारफिश को आमंत्रित करें",
+  "inviteGroupUser": "आमंत्रित",
 
   "resentOTP": "ओटीपी पुनः भेजें",
   "enterOneTimePassword": "वन टाइम पासवर्ड डालें",
@@ -160,6 +160,7 @@
   "nameOfAction": "कार्रवाई का नाम",
   "typeOfAction": "कार्रवाई के प्रकार",
   "assignActionTo": "इस क्रिया को सौंपना",
+  "selectOneOrMoreGroups" : "एक या अधिक समूह चुनें",
 
   "emptyFullName": "कृपया नाम दर्ज करें।",
   "emptyEmail": "कृपया ईमेल दर्ज करें।",

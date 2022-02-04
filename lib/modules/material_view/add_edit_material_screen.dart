@@ -202,9 +202,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       controller: _titleController,
                       style: formTitleTextStyle,
                       decoration: InputDecoration(
-                        hintText:
-                            AppLocalizations.of(context)!.hintMaterialName,
-                        hintStyle: formTitleHintStyle,
+                        // hintText:
+                        //     AppLocalizations.of(context)!.hintMaterialName,
+                        // hintStyle: formTitleHintStyle,
+                        labelText: AppLocalizations.of(context)!.hintMaterialName,
+                        labelStyle: formTitleHintStyle,
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        alignLabelWithHint: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -235,9 +239,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       controller: _descriptionController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        labelText:AppLocalizations.of(context)!
                             .hintMaterialDescription,
-                        hintStyle: formTitleHintStyle,
+                        labelStyle:formTitleHintStyle, 
+                        alignLabelWithHint:true,
+                        // hintText: AppLocalizations.of(context)!
+                        //     .hintMaterialDescription,
+                        // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

@@ -34,7 +34,7 @@
   "create": "Create",
   "invite": "Invite",
   "leaveThisGroup": "Leave this group",
-  "inviteGroupUser": "Invite to Starfish",
+  "inviteGroupUser": "Invite",
 
   "resentOTP": "Resend OTP",
   "enterOneTimePassword": "Enter One Time Password",
@@ -160,6 +160,7 @@
   "nameOfAction": "Name of the Action",
   "typeOfAction": "Type of Action",
   "assignActionTo": "Assign this Action to",
+  "selectOneOrMoreGroups" : "Select one or more groups",
 
   "emptyFullName": "Please enter name.",
   "emptyEmail": "Please enter email.",

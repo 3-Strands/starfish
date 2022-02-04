@@ -200,7 +200,7 @@ class _SelectDropDownState extends State<SelectDropDown> {
                       : _selectedValue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: textFormFieldText,
+                  style: _selectedValue == widget.placeholder ? formTitleHintStyle :  textFormFieldText,
                 ),
               ),
               Spacer(),

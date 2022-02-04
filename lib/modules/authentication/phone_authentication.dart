@@ -174,8 +174,12 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.countryCodeHint,
-        hintStyle: formTitleHintStyle,
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        labelText: AppLocalizations.of(context)!.countryCodeHint,
+        labelStyle: formTitleHintStyle,
+        alignLabelWithHint: true,
+        // hintText: AppLocalizations.of(context)!.countryCodeHint,
+        // hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
