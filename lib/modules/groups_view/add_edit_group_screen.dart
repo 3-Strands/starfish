@@ -618,7 +618,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Language(s) used
                   Text(
-                    AppLocalizations.of(context)!.lanugagesUsed,
+                _isEditMode ? AppLocalizations.of(context)!.lanugagesUsed:   AppLocalizations.of(context)!.lanugagesUsedOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -644,7 +644,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Evaluate Progress
                   Text(
-                    AppLocalizations.of(context)!.evaluateProgress,
+              _isEditMode ?     AppLocalizations.of(context)!.evaluateProgress :  AppLocalizations.of(context)!.evaluateProgressOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
