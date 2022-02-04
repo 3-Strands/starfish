@@ -541,7 +541,7 @@ class SyncService {
       request.material = _hiveMaterial.toMaterial();
 
       if (_hiveMaterial.isUpdated) {
-        FieldMask mask = FieldMask(paths: kGroupFieldMask);
+        FieldMask mask = FieldMask(paths: kMaterialFieldMask);
         request.updateMask = mask;
       }
 
@@ -653,7 +653,6 @@ class SyncService {
             .createUpdateUsers(_controller.stream)
             // ignore: invalid_return_type_for_catch_error
             .catchError(handleError);
-    ;
 
     userBox.values
         .where((element) => element.isNew || element.isUpdated)
@@ -731,6 +730,8 @@ class SyncService {
   }
 
   Future syncLocalGroupUsersToRemote() async {
+    print(
+        '============= START: Sync Local Group Users to Remote =============');
     StreamController<CreateUpdateGroupUsersRequest> _controller =
         StreamController();
 
@@ -739,7 +740,6 @@ class SyncService {
             .createUpdateGroupUser(_controller.stream)
             // ignore: invalid_return_type_for_catch_error
             .catchError(handleError);
-    ;
 
     groupUserBox.values
         .where((element) => element.isNew || element.isUpdated)

@@ -28,6 +28,7 @@ import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
@@ -704,9 +705,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         _selectedTypes.map((HiveMaterialType type) => type.id).toList();
     _hiveMaterial.topics =
         _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList();
-    _hiveMaterial.visibility = _visibleTo != null ? _visibleTo!.value.value : 0;
+    _hiveMaterial.visibility = _visibleTo != null ? _visibleTo!.value.value : Material_Visibility.CREATOR_VIEW.value;
     _hiveMaterial.editability =
-        _editableBy != null ? _editableBy!.value.value : 0;
+        _editableBy != null ? _editableBy!.value.value : Material_Editability.CREATOR_EDIT.value;
 
     // check if there is any file is added, if yes, store them in HiveFile box
     List<HiveFile>? _files;
