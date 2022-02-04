@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
@@ -28,6 +29,15 @@ class _StarfishState extends State<Starfish> {
     // _locale = Locale('en');
     initDeviceLanguage();
     super.initState();
+
+    EasyLoading.instance
+      ..loadingStyle = EasyLoadingStyle.custom
+      ..userInteractions = false
+      ..dismissOnTap = false
+      ..backgroundColor = Colors.blue.shade300
+      ..indicatorColor = Colors.grey.shade200
+      ..textColor = Colors.black45
+      ..maskColor = Colors.blue.withOpacity(0.5);
   }
 
   initDeviceLanguage() async {
@@ -70,14 +80,16 @@ class _StarfishState extends State<Starfish> {
           theme: AppStyles.defaultTheme(),
           home: SplashScreen(),
           routes: Routes.routes,
-          builder: (context, widget) {
-            ScreenUtil.setContext(context);
-            return MediaQuery(
-              //Setting font does not change with system font size
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-              child: widget!,
-            );
-          },
+          builder: EasyLoading.init(
+            builder: (context, widget) {
+              ScreenUtil.setContext(context);
+              return MediaQuery(
+                //Setting font does not change with system font size
+                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                child: widget!,
+              );
+            },
+          ),
         ),
       ),
     );

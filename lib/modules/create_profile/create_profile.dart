@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -34,8 +35,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   final FocusNode _nameFocus = FocusNode();
 
-  bool _isLoading = false;
-
   late Box<HiveCurrentUser> _currentUserBox;
 
   late HiveCurrentUser _user;
@@ -59,11 +58,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     });
   }
 
-  _updateUserCountries() async {
-    setState(() {
-      _isLoading = true;
-    });
-
+  void _updateUserCountries() {
     List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
     List<String> _selectedLanguageIds =
@@ -74,17 +69,19 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _user.countryIds = _selectedCountryIds;
     _user.languageIds = _selectedLanguageIds;
 
-    await CurrentUserRepository()
+    EasyLoading.show();
+    CurrentUserRepository()
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
-        .then((value) async => {
-              await SyncService().syncLanguages(),
-              setState(() => _isLoading = false),
-              _user.countryIds = value.countryIds,
-              _currentUserBox.putAt(0, _user),
-            });
+        .then((value) async {
+      await SyncService().syncLanguages();
+      _user.countryIds = value.countryIds;
+      _currentUserBox.putAt(0, _user);
+    }).whenComplete(() {
+      EasyLoading.dismiss();
+    });
   }
 
-  _validateInfo() {
+  void _validateInfo() {
     String validationMsg =
         GeneralFunctions.validateFullName(_nameController.text);
     if (validationMsg.isNotEmpty) {
@@ -100,11 +97,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     }
   }
 
-  _updateUserProfile() async {
-    setState(() {
-      _isLoading = true;
-    });
-
+  void _updateUserProfile() {
     List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
     List<String> _selectedLanguageIds =
@@ -118,20 +111,20 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _user.countryIds = _selectedCountryIds;
     _user.languageIds = _selectedLanguageIds;
 
-    await CurrentUserRepository()
+    EasyLoading.show();
+    CurrentUserRepository()
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
-        .then((value) => {
-              setState(() => _isLoading = false),
-              _user.name = value.name,
-              _user.languageIds = value.languageIds,
-              _currentUserBox.putAt(0, _user),
-              // Navigator.of(context).pushNamedAndRemoveUntil(
-              //     Routes.dashboard, (Route<dynamic> route) => false)
-            })
-        .whenComplete(() => {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  Routes.dashboard, (Route<dynamic> route) => false)
-            });
+        .then((value) {
+      _user.name = value.name;
+      _user.languageIds = value.languageIds;
+      _currentUserBox.putAt(0, _user);
+      // Navigator.of(context).pushNamedAndRemoveUntil(
+      //     Routes.dashboard, (Route<dynamic> route) => false)
+    }).whenComplete(() {
+      EasyLoading.dismiss();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.dashboard, (Route<dynamic> route) => false);
+    });
   }
 
   @override
@@ -275,11 +268,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 ),
               ),
-              (_isLoading == true)
+              /*(_isLoading == true)
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : Container()
+                  : Container()*/
             ],
           ),
         ),
