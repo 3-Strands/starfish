@@ -101,6 +101,8 @@ service Starfish {
     // List users that the current user has access to
     rpc ListUsers (ListUsersRequest) returns (stream User) {}
 
+    rpc RefreshSession (RefreshSessionRequest) returns (AuthenticateResponse) {}
+
     // Update the current user.
     // Group or action connections cannot be updated through this procedure.
     rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
@@ -207,6 +209,12 @@ message AuthenticateResponse {
 
     // The time the token expires
     google.protobuf.Timestamp expires_at = 2;
+
+    // The ID of the user
+    string user_id = 3;
+
+    // The refresh token that can be used to refresh this user's session
+    string refresh_token = 4;
 
 }
 
@@ -932,6 +940,15 @@ message MaterialType {
     string id = 1;
 
     string name = 2;
+
+}
+
+// Send a refresh token to refresh a session get a fresh user token
+message RefreshSessionRequest {
+
+    string user_id = 1;
+
+    string refresh_token = 2;
 
 }
 
