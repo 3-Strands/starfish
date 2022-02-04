@@ -64,12 +64,12 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
 
   contentBox(context) {
     return Container(
-      height: 264.h,
+      //height: 264.h,
       width: 315.w,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: AppColors.popDialogBGColor,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -78,7 +78,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 15.h,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 61.sp),
+            padding: EdgeInsets.symmetric(horizontal: 61.w),
             child: Text(
               widget.material.title ?? '',
               maxLines: 1,
@@ -98,10 +98,10 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 10.h,
           ),
           Container(
-            height: 110.h,
+            //height: 110.h,
             width: 280.w,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
               child: TextFormField(
                 controller: _reportTextController,
                 focusNode: _reportTextFocus,
@@ -136,11 +136,11 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             ),
           ),
           SizedBox(
-            height: 25.h,
+            height: 20.h,
           ),
           SepratorLine(hight: 1.0, edgeInsets: EdgeInsets.zero),
           Container(
-            height: 44.h,
+            //height: 44.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
