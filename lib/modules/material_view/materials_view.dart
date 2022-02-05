@@ -471,15 +471,15 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: 22.h,
+                    //height: 22.h,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Container(
-                          width: 240.w,
+                        Expanded(
                           child: Text(
                             '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
-                            overflow: TextOverflow.ellipsis,
+                            //overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               color: AppColors.txtFieldTextColor,
@@ -489,7 +489,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             ),
                           ),
                         ),
-                        Spacer(),
+                        //Spacer(),
                         if (material.url != null && material.url!.isNotEmpty)
                           CustomIconButton(
                             icon: Icon(
@@ -713,13 +713,13 @@ class MaterialListItem extends StatelessWidget {
               IntrinsicHeight(
                 //height: 22.h,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Container(
-                      width: 240.w,
+                    Expanded(
+                      //width: 240.w,
                       child: Text(
                         '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
-                        overflow: TextOverflow.ellipsis,
+                        //overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             color: AppColors.txtFieldTextColor,
@@ -727,7 +727,7 @@ class MaterialListItem extends StatelessWidget {
                             fontSize: 14.sp),
                       ),
                     ),
-                    Spacer(),
+                    //Spacer(),
                     if (material.url != null && material.url!.isNotEmpty)
                       CustomIconButton(
                         icon: Icon(

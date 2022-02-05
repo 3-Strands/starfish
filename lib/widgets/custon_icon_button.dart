@@ -33,8 +33,8 @@ class _CustomIconButtonState extends State<CustomIconButton> {
         widget.onButtonTap();
       },
       child: Container(
-        width: widget.width ?? widget.minWidth,
-        height: widget.height ?? widget.minHeight,
+        //width: widget.width ?? widget.minWidth,
+        //height: widget.height ?? widget.minHeight,
         color: Colors.transparent,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
