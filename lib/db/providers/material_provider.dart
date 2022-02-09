@@ -23,6 +23,10 @@ class MaterialProvider {
     return _materialBox.values.toList();
   }
 
+  List<HiveMaterial> getMateialsSync() {
+    return _materialBox.values.toList();
+  }
+
   Future<List<HiveMaterialTopic>> getMateialTypes() async {
     return _materialTopicBox.values.toList();
   }
