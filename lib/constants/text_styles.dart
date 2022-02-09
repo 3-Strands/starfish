@@ -49,14 +49,14 @@ var buttonTextStyle = TextStyle(
 var dashboardNavigationTitle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.bold,
-  fontSize: 18.sp,
+  fontSize: 21.5.sp,
   color: AppColors.selectedButtonBG,
 );
 
 var textFormFieldText = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.normal,
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   color: AppColors.txtFieldTextColor,
 );
 
