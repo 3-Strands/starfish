@@ -313,11 +313,11 @@ class _MultiSelectState extends State<MultiSelect> {
           actions: [
             navigationSearchBar(),
           ],
-          leading: GestureDetector(
+          leading: InkWell(
             onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios_rounded, size: 32),
+            child: Icon(Icons.arrow_back_ios_rounded, size: 32.r),
           ),
         ),
         body: Column(
