@@ -339,6 +339,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                 setState(() {
                   _selectedMaterial = material;
                 });
+                widget.onMaterialChange(material);
               },
             ),
             fullscreenDialog: true,

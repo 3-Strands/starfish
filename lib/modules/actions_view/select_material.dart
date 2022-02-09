@@ -42,7 +42,7 @@ class _SelectMaterialState extends State<SelectMaterial>
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SearchBar(
-                initialValue: '',
+                initialValue: bloc.actionBloc.materialQuery,
                 onValueChanged: (value) {
                   onSearchTextChanged(bloc.actionBloc, value);
                 },
