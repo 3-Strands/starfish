@@ -209,6 +209,17 @@ class _MultiSelectState extends State<MultiSelect> {
       default:
     }
 
+    // TODO : Optimization is needed
+    List<Item<dynamic>> _itemSelected =
+        _items.where((element) => element.isSelected).toList();
+    List<Item<dynamic>> _itemUnSelected =
+        _items.where((element) => !element.isSelected).toList();
+
+    _itemSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
+    _itemUnSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
+
+    _items = _itemSelected + _itemUnSelected;
+
     _changeStatusOfSelectAllButton();
   }
 
