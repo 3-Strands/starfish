@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/modules/actions_view/select_material.dart';
 import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/enums/action_type.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -251,7 +253,8 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
           style: titleTextStyle,
         ),
         SizedBox(height: 13.h),
-        Container(
+        _createMaterialSelectorChildView(),
+        /*Container(
           height: 52.h,
           decoration: BoxDecoration(
             color: AppColors.txtFieldBackground,
@@ -270,7 +273,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
               }
             },
           ),
-        ),
+        ),*/
       ],
     );
   }
@@ -320,6 +323,62 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
               ),
             );
           }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _createMaterialSelectorChildView() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => SelectMaterial(
+              onSelect: (material) {
+                setState(() {
+                  _selectedMaterial = material;
+                });
+              },
+            ),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+      child: Container(
+        height: 52.h,
+        decoration: BoxDecoration(
+            color: Color(0xFFEFEFEF),
+            borderRadius: BorderRadius.all(Radius.circular(10.r))),
+        child: Padding(
+          padding: EdgeInsets.only(left: 15.w, right: 10.w),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedMaterial != null
+                        ? _selectedMaterial!.title!
+                        : AppLocalizations.of(context)!.selectAMaterial,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: AppColors.optionalFieldColor,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.optionalFieldColor,
+                  size: 20.r,
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
