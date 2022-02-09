@@ -90,7 +90,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         style: TextStyle(
                           color: AppColors.appTitle,
                           fontFamily: 'OpenSans',
-                          fontSize: 20.sp,
+                          fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -113,7 +113,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         style: TextStyle(
                           color: AppColors.appTitle,
                           fontFamily: 'OpenSans',
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontWeight: FontWeight.normal,
                         ),
                       ),
@@ -129,7 +129,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     style: TextStyle(
                       color: AppColors.appTitle,
                       fontFamily: 'OpenSans',
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
@@ -169,7 +169,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 style: TextStyle(
                   color: AppColors.selectedButtonBG,
                   fontFamily: 'OpenSans',
-                  fontSize: 18.sp,
+                  fontSize: 21.5.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -313,7 +313,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                   iconSize: 35,
                                   style: TextStyle(
                                     color: Color(0xFF434141),
-                                    fontSize: 16.sp,
+                                    fontSize: 19.sp,
                                     fontFamily: 'OpenSans',
                                   ),
                                   value: bloc.groupBloc.groupRoleFilter,
@@ -334,7 +334,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                         value.filterLabel,
                                         style: TextStyle(
                                           color: Color(0xFF434141),
-                                          fontSize: 14.sp,
+                                          fontSize: 17.sp,
                                           fontFamily: 'OpenSans',
                                         ),
                                       ),
@@ -404,7 +404,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     child: Text(
                                       '${snapshot.data!.keys.toList()[section].about}',
                                       style: TextStyle(
-                                          fontSize: 16.sp,
+                                          fontSize: 19.sp,
                                           fontWeight: FontWeight.w600,
                                           color: Color(0xFF434141)),
                                     ),
@@ -490,7 +490,7 @@ class GroupListItem extends StatelessWidget {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
-                            fontSize: 14.sp,
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColors.txtFieldTextColor,
                           ),
@@ -529,7 +529,7 @@ class GroupListItem extends StatelessWidget {
                         AppLocalizations.of(context)!.leaveThisGroup,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
-                          fontSize: 12.sp,
+                          fontSize: 14.5.sp,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -546,7 +546,7 @@ class GroupListItem extends StatelessWidget {
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontFamily: 'OpenSans',
-                fontSize: 12.sp,
+                fontSize: 14.5.sp,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF797979),
               ),
@@ -572,7 +572,7 @@ class GroupListItem extends StatelessWidget {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontFamily: 'Rubic',
-                        fontSize: 12.sp,
+                        fontSize: 14.5.sp,
                       ),
                     ),
                   ),
@@ -602,7 +602,7 @@ class GroupListItem extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Rubik",
-                        fontSize: 12.sp,
+                        fontSize: 14.5.sp,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -626,7 +626,7 @@ class GroupListItem extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Rubik",
-                        fontSize: 12.sp,
+                        fontSize: 14.5.sp,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -650,7 +650,7 @@ class GroupListItem extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Rubik",
-                        fontSize: 12.sp,
+                        fontSize: 14.5.sp,
                       ),
                       textAlign: TextAlign.center,
                     ),
