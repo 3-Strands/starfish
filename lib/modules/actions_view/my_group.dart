@@ -20,11 +20,12 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/user_action_status_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// ignore: implementation_imports
 import 'package:template_string/src/extension.dart';
 
 class MyGroup extends StatefulWidget {
@@ -528,7 +529,7 @@ class _MyGroupState extends State<MyGroup> {
                               if (action.material != null &&
                                   action.material!.url != null &&
                                   action.material!.url!.isNotEmpty)
-                                CustomIconButton(
+                                MaterialLinkButton(
                                   icon: Icon(
                                     Icons.open_in_new,
                                     color: Colors.blue,
@@ -540,27 +541,20 @@ class _MyGroupState extends State<MyGroup> {
                                     GeneralFunctions.openUrl(
                                         action.material!.url!);
                                   },
-                                  width: 255.w,
                                 ),
                               materialList(action)
                             ],
                           ),
                         ),
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.h,
-                          ),
-                          child: Text(
-                            '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontSize: 16.sp,
-                                color: Color(0xFF4F4F4F),
-                                fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.right,
-                          ),
-                        )),
+                        Text(
+                          '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Color(0xFF4F4F4F),
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.right,
+                        ),
                       ],
                     ),
                   ),
@@ -794,10 +788,10 @@ class _MyGroupState extends State<MyGroup> {
             hiveAction.material!.files!.length == 0)) {
       return Container();
     }
-    List<CustomIconButton> fileLinks = [];
+    List<Widget> fileLinks = [];
     hiveAction.material!.localFiles!.forEach((file) {
       fileLinks.add(
-        CustomIconButton(
+        MaterialLinkButton(
           icon: Icon(
             Icons.download,
             color: Colors.blue,
@@ -813,9 +807,9 @@ class _MyGroupState extends State<MyGroup> {
               OpenFile.open(file.path);
             }
           },
-          width: 255.w,
         ),
       );
+      fileLinks.add(SizedBox(height: 4.h));
     });
 
     return Column(
