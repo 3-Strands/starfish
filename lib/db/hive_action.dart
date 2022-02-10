@@ -151,7 +151,8 @@ extension HiveActionExt on HiveAction {
         .group!
         .activeUsers
         ?.where((element) =>
-            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER)
+            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER &&
+            element.user != null)
         .map((HiveGroupUser groupUser) => groupUser.user!)
         .toList();
   }
@@ -165,8 +166,10 @@ extension HiveActionExt on HiveAction {
         .group!
         .activeUsers
         ?.where((element) =>
-            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.ADMIN ||
-            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER)
+            (GroupUser_Role.valueOf(element.role!) == GroupUser_Role.ADMIN ||
+                GroupUser_Role.valueOf(element.role!) ==
+                    GroupUser_Role.TEACHER) &&
+            element.user != null)
         .map((HiveGroupUser groupUser) => groupUser.user!)
         .toList();
   }
