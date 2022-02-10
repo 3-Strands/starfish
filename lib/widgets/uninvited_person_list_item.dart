@@ -39,7 +39,7 @@ class _UnInvitedPersonListItemState extends State<UnInvitedPersonListItem> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'OpenSans',
-                    fontSize: 18.sp,
+                    fontSize: 21.5.sp,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF434141),
                   ),

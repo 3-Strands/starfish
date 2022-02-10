@@ -69,7 +69,7 @@ class _UnInvitedGroupMemberListItemState
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'OpenSans',
-                        fontSize: 18.sp,
+                        fontSize: 21.5.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF434141),
                       ),
@@ -100,7 +100,7 @@ class _UnInvitedGroupMemberListItemState
                         AppLocalizations.of(context)!.inviteGroupUser,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
-                          fontSize: 12.sp,
+                          fontSize: 14.5.sp,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -242,7 +242,7 @@ class _UnInvitedGroupMemberListItemState
                           AppLocalizations.of(context)!.invite,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
-                            fontSize: 12.sp,
+                            fontSize: 14.5.sp,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),

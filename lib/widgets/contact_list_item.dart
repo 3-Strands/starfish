@@ -47,7 +47,7 @@ class _ContactListItemState extends State<ContactListItem> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'OpenSans',
-                      fontSize: 18.sp,
+                      fontSize: 21.5.sp,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF434141),
                     ),
@@ -69,7 +69,7 @@ class _ContactListItemState extends State<ContactListItem> {
               '${widget.contact.createHiveUser().diallingCode ?? ''} ${widget.contact.createHiveUser().phone ?? ''} ',
               style: TextStyle(
                 fontFamily: 'OpenSans',
-                fontSize: 18.sp,
+                fontSize: 21.5.sp,
                 color: Color(0xFF434141),
               ),
             ),

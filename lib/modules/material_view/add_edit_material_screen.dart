@@ -183,7 +183,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Scrollbar(
-          thickness: 5.sp,
+          thickness: 5.w,
           isAlwaysShown: false,
           child: SingleChildScrollView(
             child: Container(
@@ -393,7 +393,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           AppLocalizations.of(context)!.addMaterials,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
-                            fontSize: 14.sp,
+                            fontSize: 17.sp,
                             color: Color(0xFF3475F0),
                           ),
                         ),
@@ -508,14 +508,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       child: DropdownButton<MaterialVisibility>(
                         style: TextStyle(
                           color: Color(0xFF434141),
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontFamily: 'OpenSans',
                         ),
                         hint: Text(
                           _choiceSeenByText,
                           style: TextStyle(
                             color: Color(0xFF434141),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'OpenSans',
                           ),
                         ),
@@ -536,7 +536,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               visibility.displayName ?? visibility.value.name,
                               style: TextStyle(
                                 color: Color(0xFF434141),
-                                fontSize: 14.sp,
+                                fontSize: 17.sp,
                                 fontFamily: 'OpenSans',
                               ),
                             ),
@@ -568,14 +568,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       child: DropdownButton<MaterialEditability>(
                         style: TextStyle(
                           color: Color(0xFF434141),
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontFamily: 'OpenSans',
                         ),
                         hint: Text(
                           _choiceEditedByText,
                           style: TextStyle(
                             color: Color(0xFF434141),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'OpenSans',
                           ),
                         ),
@@ -597,7 +597,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                               editability.displayName ?? editability.value.name,
                               style: TextStyle(
                                 color: Color(0xFF434141),
-                                fontSize: 14.sp,
+                                fontSize: 17.sp,
                                 fontFamily: 'OpenSans',
                               ),
                             ),
@@ -791,7 +791,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
-        fontSize: 18.sp,
+        fontSize: 21.5.sp,
         color: Color(0xFF3475F0),
       ),
     );
@@ -824,7 +824,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             style: TextStyle(
               color: AppColors.appTitle,
               fontFamily: 'OpenSans',
-              fontSize: 16.sp,
+              fontSize: 19.sp,
               decoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
@@ -891,7 +891,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             style: TextStyle(
               color: Color(0xFF3475F0),
               fontFamily: 'OpenSans',
-              fontSize: 14.sp,
+              fontSize: 17.sp,
               decoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()

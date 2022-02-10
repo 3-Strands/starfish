@@ -83,7 +83,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
               widget.material.title ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 20.5.sp, fontWeight: FontWeight.w600),
             ),
           ),
           SizedBox(
@@ -91,7 +91,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
           ),
           Text(
             AppLocalizations.of(context)!.reportDialogDetailText,
-            style: TextStyle(fontSize: 13.sp),
+            style: TextStyle(fontSize: 15.5.sp),
             textAlign: TextAlign.center,
           ),
           SizedBox(
@@ -117,12 +117,12 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                 keyboardType: TextInputType.text,
                 style: textFormFieldText,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(10.w, 10.0, 0.0, 10.0),
+                  contentPadding: EdgeInsets.fromLTRB(10.w, 10.h, 0.0, 10.h),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10.r),
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
@@ -194,7 +194,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       style: TextStyle(
                         fontFamily: 'OpenSans',
                         fontWeight: FontWeight.normal,
-                        fontSize: 16.sp,
+                        fontSize: 19.sp,
                         color: (isDetailEmpty)
                             ? Color(0xFF797979)
                             : AppColors.selectedButtonBG,

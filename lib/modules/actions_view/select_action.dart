@@ -80,7 +80,7 @@ class _SelectActionsState extends State<SelectActions>
                                   Text(
                                     action.name!,
                                     style: TextStyle(
-                                        fontSize: 14.sp,
+                                        fontSize: 17.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
@@ -88,14 +88,14 @@ class _SelectActionsState extends State<SelectActions>
                                           ': ' +
                                           "${Action_Type.valueOf(action.type!)!.about}",
                                       style: TextStyle(
-                                          fontSize: 14.sp,
+                                          fontSize: 17.sp,
                                           color: Color(0xFF797979))),
                                   Text(
                                       AppLocalizations.of(context)!.usedBy +
                                           ': ' +
                                           "${action.group != null ? action.group!.name : 'None'}",
                                       style: TextStyle(
-                                          fontSize: 14.sp,
+                                          fontSize: 17.sp,
                                           color: Color(0xFF797979))),
                                   Text(
                                       AppLocalizations.of(context)!
@@ -103,7 +103,7 @@ class _SelectActionsState extends State<SelectActions>
                                           ': ' +
                                           "${_getCreatedDate(action)}",
                                       style: TextStyle(
-                                          fontSize: 14.sp,
+                                          fontSize: 17.sp,
                                           color: Color(0xFF797979))),
                                 ],
                               ),

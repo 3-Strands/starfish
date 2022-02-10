@@ -39,12 +39,12 @@ class _EditButtonState extends State<EditButton> {
             Icon(
               Icons.edit,
               color: Colors.blue,
-              size: 18.sp,
+              size: 18.r,
             ),
             Text(
               AppLocalizations.of(context)!.edit,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 17.sp,
                 color: Colors.blue,
               ),
             )
@@ -73,7 +73,7 @@ class _EditButtonState extends State<EditButton> {
           child: Text(
             AppLocalizations.of(context)!.save,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 17.sp,
               color: Colors.white,
             ),
           ),

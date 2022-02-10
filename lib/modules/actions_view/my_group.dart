@@ -58,7 +58,7 @@ class _MyGroupState extends State<MyGroup> {
       },
       onFocusLost: () {},
       child: Scrollbar(
-        thickness: 5.sp,
+        thickness: 5.w,
         isAlwaysShown: false,
         child: SingleChildScrollView(
           child: Column(
@@ -86,7 +86,7 @@ class _MyGroupState extends State<MyGroup> {
                         iconSize: 35,
                         style: TextStyle(
                           color: Color(0xFF434141),
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontFamily: 'OpenSans',
                         ),
                         hint: Text(
@@ -95,7 +95,7 @@ class _MyGroupState extends State<MyGroup> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Color(0xFF434141),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'OpenSans',
                           ),
                           textAlign: TextAlign.left,
@@ -115,7 +115,7 @@ class _MyGroupState extends State<MyGroup> {
                               value.about,
                               style: TextStyle(
                                 color: Color(0xFF434141),
-                                fontSize: 14.sp,
+                                fontSize: 17.sp,
                                 fontFamily: 'OpenSans',
                               ),
                             ),
@@ -182,7 +182,7 @@ class _MyGroupState extends State<MyGroup> {
                 child: Text(
                   action.name ?? '',
                   style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       color: Color(0xFF3475F0),
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -199,7 +199,7 @@ class _MyGroupState extends State<MyGroup> {
                 child: Text(
                   AppLocalizations.of(context)!.statusOfActionForLearner,
                   style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       color: Color(0xFF4F4F4F),
                       fontWeight: FontWeight.normal),
                   textAlign: TextAlign.center,
@@ -282,7 +282,7 @@ class _MyGroupState extends State<MyGroup> {
                       Text(
                         '${snapshot.data!.keys.toList()[section].name}',
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF434141),
                         ),
@@ -290,7 +290,7 @@ class _MyGroupState extends State<MyGroup> {
                       Text(
                         '${AppLocalizations.of(context)!.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 17.sp,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF797979),
                         ),
@@ -331,7 +331,7 @@ class _MyGroupState extends State<MyGroup> {
                     style: TextStyle(
                       color: AppColors.txtFieldTextColor,
                       fontFamily: 'OpenSans',
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -402,7 +402,7 @@ class _MyGroupState extends State<MyGroup> {
                   child: Text(
                     '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
                     style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 19.sp,
                         color: Color(0xFF3475F0),
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
@@ -412,7 +412,7 @@ class _MyGroupState extends State<MyGroup> {
                   height: 40.h,
                 ),
                 Container(
-                  padding: const EdgeInsets.all(15.0),
+                  padding:  EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -426,7 +426,7 @@ class _MyGroupState extends State<MyGroup> {
                             user.name ?? '',
                             maxLines: 2,
                             style: TextStyle(
-                              fontSize: 20.sp,
+                              fontSize: 24.sp,
                               color: AppColors.appTitle,
                               fontWeight: FontWeight.w500,
                               overflow: TextOverflow.ellipsis,
@@ -491,7 +491,7 @@ class _MyGroupState extends State<MyGroup> {
                     '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
                     maxLines: 5,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 17.sp,
                       color: Color(0xFF797979),
                       fontStyle: FontStyle.italic,
                     ),
@@ -506,7 +506,7 @@ class _MyGroupState extends State<MyGroup> {
                       '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
                       maxLines: 1,
                       style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w500),
                       textAlign: TextAlign.right,
@@ -550,7 +550,7 @@ class _MyGroupState extends State<MyGroup> {
                           '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
                           maxLines: 1,
                           style: TextStyle(
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               color: Color(0xFF4F4F4F),
                               fontWeight: FontWeight.w500),
                           textAlign: TextAlign.right,
@@ -601,7 +601,7 @@ class _MyGroupState extends State<MyGroup> {
                       AppLocalizations.of(context)!.howWasThisActionText,
                       maxLines: 1,
                       style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w500),
                       textAlign: TextAlign.left,
@@ -663,7 +663,7 @@ class _MyGroupState extends State<MyGroup> {
                                   maxLines: 1,
                                   style: TextStyle(
                                     fontFamily: 'Rubik',
-                                    fontSize: 14.sp,
+                                    fontSize: 17.sp,
                                     color: Color(0xFF777777),
                                   ),
                                 ),
@@ -720,7 +720,7 @@ class _MyGroupState extends State<MyGroup> {
                                   maxLines: 1,
                                   style: TextStyle(
                                     fontFamily: 'Rubik',
-                                    fontSize: 14.sp,
+                                    fontSize: 17.sp,
                                     color: Color(0xFF777777),
                                   ),
                                 ),
@@ -866,7 +866,7 @@ class MyGroupActionListItem extends StatelessWidget {
                       "#${index + 1}",
                       style: TextStyle(
                           color: Color(0xFF797979),
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontWeight: FontWeight.bold),
                     ),
                     Expanded(
@@ -879,7 +879,7 @@ class MyGroupActionListItem extends StatelessWidget {
                           softWrap: false,
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -925,7 +925,7 @@ class MyGroupActionListItem extends StatelessWidget {
                                         .editActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
-                                        fontSize: 16.sp,
+                                        fontSize: 19.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   value: 0,
@@ -936,7 +936,7 @@ class MyGroupActionListItem extends StatelessWidget {
                                         .deleteActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
-                                        fontSize: 16.sp,
+                                        fontSize: 19.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   value: 1,
@@ -979,7 +979,7 @@ class MyGroupActionListItem extends StatelessWidget {
                           style: TextStyle(
                             color: Color(0xFF000000),
                             fontFamily: "Rubik",
-                            fontSize: 14.sp,
+                            fontSize: 17.sp,
                           ),
                         ),
                       ),
@@ -1013,7 +1013,7 @@ class MyGroupActionListItem extends StatelessWidget {
                             style: TextStyle(
                               color: Color(0xFF000000),
                               fontFamily: "Rubik",
-                              fontSize: 14.sp,
+                              fontSize: 17.sp,
                             ),
                           ),
                         ),
@@ -1046,7 +1046,7 @@ class MyGroupActionListItem extends StatelessWidget {
                           style: TextStyle(
                             color: Color(0xFF000000),
                             fontFamily: "Rubik",
-                            fontSize: 14.sp,
+                            fontSize: 17.sp,
                           ),
                         ),
                       ),

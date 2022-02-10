@@ -4,8 +4,6 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/modules/actions_view/select_material.dart';
-import 'package:starfish/repository/materials_repository.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/enums/action_type.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -83,7 +81,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                   iconSize: 35,
                   style: TextStyle(
                     color: Color(0xFF434141),
-                    fontSize: 16.sp,
+                    fontSize: 19.sp,
                     fontFamily: 'OpenSans',
                   ),
                   hint: Text(
@@ -95,7 +93,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                     style: widget.selectedActionType != null
                         ? TextStyle(
                             color: Color(0xFF434141),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'OpenSans',
                           )
                         : formTitleHintStyle,
@@ -115,7 +113,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                         value.about,
                         style: TextStyle(
                           color: Color(0xFF434141),
-                          fontSize: 14.sp,
+                          fontSize: 17.sp,
                           fontFamily: 'OpenSans',
                         ),
                       ),
@@ -287,7 +285,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
           iconSize: 35,
           style: TextStyle(
             color: Color(0xFF434141),
-            fontSize: 16.sp,
+            fontSize: 19.sp,
             fontFamily: 'OpenSans',
           ),
           hint: Text(
@@ -298,7 +296,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Color(0xFF434141),
-              fontSize: 16.sp,
+              fontSize: 19.sp,
               fontFamily: 'OpenSans',
             ),
             textAlign: TextAlign.left,
@@ -317,7 +315,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                 value.title!,
                 style: TextStyle(
                   color: Color(0xFF434141),
-                  fontSize: 14.sp,
+                  fontSize: 17.sp,
                   fontFamily: 'OpenSans',
                 ),
               ),
@@ -366,7 +364,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                         : AppLocalizations.of(context)!.selectAMaterial,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       color: AppColors.optionalFieldColor,
                       overflow: TextOverflow.ellipsis,
                     ),

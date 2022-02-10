@@ -168,7 +168,7 @@ class _AddEditActionState extends State<AddEditAction>
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Scrollbar(
-          thickness: 5.sp,
+          thickness: 5.w,
           isAlwaysShown: false,
           child: SingleChildScrollView(
             child: Container(
@@ -184,7 +184,7 @@ class _AddEditActionState extends State<AddEditAction>
                     AppLocalizations.of(context)!.nameOfAction,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 19.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF434141)),
                   ),
@@ -219,7 +219,7 @@ class _AddEditActionState extends State<AddEditAction>
                     AppLocalizations.of(context)!.typeOfAction,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 19.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF434141)),
                   ),
@@ -237,7 +237,7 @@ class _AddEditActionState extends State<AddEditAction>
                     AppLocalizations.of(context)!.dueDate,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 19.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF434141)),
                   ),
@@ -252,9 +252,9 @@ class _AddEditActionState extends State<AddEditAction>
                       decoration: BoxDecoration(
                           color: Color(0xFFEFEFEF),
                           borderRadius:
-                              BorderRadius.all(Radius.circular(10.sp))),
+                              BorderRadius.all(Radius.circular(10.r))),
                       child: Padding(
-                        padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+                        padding: EdgeInsets.only(left: 15.w, right: 10.w),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Row(
@@ -266,13 +266,13 @@ class _AddEditActionState extends State<AddEditAction>
                                     : AppLocalizations.of(context)!.hintDueDate,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                    fontSize: 16.sp, color: Color(0xFF434141)),
+                                    fontSize: 19.sp, color: Color(0xFF434141)),
                               ),
                               Spacer(),
                               Icon(
                                 Icons.arrow_forward_ios,
                                 color: Color(0xFF434141),
-                                size: 20.sp,
+                                size: 20.r,
                               )
                             ],
                           ),
@@ -356,7 +356,7 @@ class _AddEditActionState extends State<AddEditAction>
             AppLocalizations.of(context)!.reuseActionText,
             textAlign: TextAlign.left,
             style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 19.sp,
                 fontWeight: FontWeight.bold,
                 color: AppColors.optionalFieldColor),
           ),
@@ -388,9 +388,9 @@ class _AddEditActionState extends State<AddEditAction>
             width: 345.w,
             decoration: BoxDecoration(
                 color: Color(0xFFEFEFEF),
-                borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+                borderRadius: BorderRadius.all(Radius.circular(10.r))),
             child: Padding(
-              padding: EdgeInsets.only(left: 15.sp, right: 10.sp),
+              padding: EdgeInsets.only(left: 15.w, right: 10.w),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Row(
@@ -402,13 +402,13 @@ class _AddEditActionState extends State<AddEditAction>
                           : AppLocalizations.of(context)!.selectAnAction,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontSize: 16.sp, color: AppColors.optionalFieldColor),
+                          fontSize: 19.sp, color: AppColors.optionalFieldColor),
                     ),
                     Spacer(),
                     Icon(
                       Icons.arrow_forward_ios,
                       color: AppColors.optionalFieldColor,
-                      size: 20.sp,
+                      size: 20.r,
                     )
                   ],
                 ),
@@ -431,7 +431,7 @@ class _AddEditActionState extends State<AddEditAction>
               text: TextSpan(
                 text: AppLocalizations.of(context)!.actionWasAssignedTo + ' ',
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 19.sp,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF434141),
                 ),
@@ -441,7 +441,7 @@ class _AddEditActionState extends State<AddEditAction>
                     style: TextStyle(
                       fontFamily: 'OpenSans',
                       fontWeight: FontWeight.normal,
-                      fontSize: 18.sp,
+                      fontSize: 21.5.sp,
                       color: Color(0xFF3475F0),
                     ),
                   ),
@@ -562,7 +562,7 @@ class _AddEditActionState extends State<AddEditAction>
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
-        fontSize: 18.sp,
+        fontSize: 21.5.sp,
         color: Color(0xFF3475F0),
       ),
     );

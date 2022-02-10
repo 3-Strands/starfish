@@ -38,7 +38,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'OpenSans',
-                    fontSize: 18.sp,
+                    fontSize: 21.5.sp,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF434141),
                   ),
@@ -47,7 +47,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                   AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
                   style: TextStyle(
                     fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
+                    fontSize: 19.sp,
                     color: Color(0xFF3475F0),
                   ),
                 ),
@@ -60,7 +60,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
               '${widget.contact.createHiveUser().phoneWithDialingCode} ',
               style: TextStyle(
                 fontFamily: 'OpenSans',
-                fontSize: 18.sp,
+                fontSize: 21.5.sp,
                 color: Color(0xFF434141),
               ),
             ),

@@ -40,7 +40,7 @@ class _MaterialLinkButtonState extends State<MaterialLinkButton> {
                 widget.text,
                 style: widget.textStyle ??
                     TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 17.sp,
                       color: Colors.blue,
                     ),
               ),

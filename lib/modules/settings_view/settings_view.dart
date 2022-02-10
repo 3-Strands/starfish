@@ -665,7 +665,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Stack(
           children: [
             Scrollbar(
-              thickness: 5.sp,
+              thickness: 5.w,
               isAlwaysShown: false,
               child: SingleChildScrollView(
                 child: Container(
@@ -706,7 +706,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 iconSize: 35,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
-                                  fontSize: 16.sp,
+                                  fontSize: 19.sp,
                                   fontFamily: 'OpenSans',
                                 ),
                                 onChanged: (Map? value) {
@@ -845,7 +845,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: TextStyle(
                                 color: AppColors.appTitle,
                                 fontWeight: FontWeight.normal,
-                                fontSize: 18.sp,
+                                fontSize: 21.5.sp,
                               ),
                               children: [
                                 TextSpan(
@@ -853,7 +853,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'Roboto',
-                                    fontSize: 18.sp,
+                                    fontSize: 21.5.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -1226,12 +1226,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Icon(
             Icons.edit,
             color: Colors.blue,
-            size: 18.sp,
+            size: 18.r,
           ),
           Text(
             AppLocalizations.of(context)!.edit,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 17.sp,
               color: Colors.blue,
             ),
           )
@@ -1252,7 +1252,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Text(
           AppLocalizations.of(context)!.save,
           style: TextStyle(
-            fontSize: 14.sp,
+            fontSize: 17.sp,
             color: Colors.white,
           ),
         ),

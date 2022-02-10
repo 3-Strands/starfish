@@ -60,7 +60,7 @@ class _SearchBarState extends State<SearchBar> {
                           ? Icons.close
                           : Icons.search,
                       color: Colors.blue),
-                  iconSize: 25.sp,
+                  iconSize: 25.r,
                   color: Colors.green,
                   splashColor: Colors.purple,
                   onPressed: () {

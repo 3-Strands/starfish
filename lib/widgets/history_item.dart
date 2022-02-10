@@ -32,7 +32,7 @@ class HistoryItem extends StatelessWidget {
                     : '$type ${AppLocalizations.of(context)!.historyEditedBy}: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
-                  fontSize: 18.sp,
+                  fontSize: 21.5.sp,
                   color: Color(0xFF434141),
                 ),
                 children: [
@@ -40,7 +40,7 @@ class HistoryItem extends StatelessWidget {
                     text: edit?.username ?? 'Unknown',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
-                      fontSize: 18.sp,
+                      fontSize: 21.5.sp,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF434141),
                     ),
@@ -58,7 +58,7 @@ class HistoryItem extends StatelessWidget {
                     : '$type ${AppLocalizations.of(context)!.historyEditedOn}: ',
                 style: TextStyle(
                   fontFamily: 'OpenSans',
-                  fontSize: 18.sp,
+                  fontSize: 21.5.sp,
                   color: Color(0xFF434141),
                 ),
                 children: [
@@ -68,7 +68,7 @@ class HistoryItem extends StatelessWidget {
                         : 'NA',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
-                      fontSize: 18.sp,
+                      fontSize: 21.5.sp,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF434141),
                     ),

@@ -22,7 +22,7 @@ class UserActionStatusWidget extends StatelessWidget {
       width: this.width, //100.w,
       decoration: BoxDecoration(
           color: _statusColor(title),
-          borderRadius: BorderRadius.all(Radius.circular(10.sp))),
+          borderRadius: BorderRadius.all(Radius.circular(10.r))),
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -30,15 +30,15 @@ class UserActionStatusWidget extends StatelessWidget {
           children: [
             Spacer(),
             if (title == ActionStatus.DONE)
-              Icon(Icons.check, size: 16.sp, color: Color(0xFF393939)),
-            SizedBox(width: 2.sp),
+              Icon(Icons.check, size: 16.r, color: Color(0xFF393939)),
+            SizedBox(width: 2.w),
             Text(
               title.aboutGroup,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: AppColors.txtFieldTextColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
+                  fontSize: 17.sp,
                   fontFamily: 'Rubik'),
             ),
             Spacer()

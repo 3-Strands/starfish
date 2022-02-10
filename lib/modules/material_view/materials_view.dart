@@ -691,7 +691,7 @@ class MaterialListItem extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(15),
+          Radius.circular(15.r),
         ),
       ),
       color: AppColors.txtFieldBackground,
@@ -701,17 +701,19 @@ class MaterialListItem extends StatelessWidget {
         },
         child: Container(
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-          height: (material.isAssignedToGroupWithLeaderRole &&
+          /*height: (material.isAssignedToGroupWithLeaderRole &&
                   material.isAssignedToMe)
               ? 110
               : (material.isAssignedToMe)
                   ? 85
-                  : 65,
+                  : 65,*/
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
+              SizedBox(
+                height: 10.h,
+              ),
               IntrinsicHeight(
-                //height: 22.h,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -743,18 +745,31 @@ class MaterialListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              if (material.isAssignedToMe)
-                TaskStatus(
-                  height: 17.h,
-                  color: getMyTaskStatusColor(material),
-                  label: getMyTaskLabel(context, material),
+              if (material.isAssignedToMe ||
+                  material.isAssignedToGroupWithLeaderRole) ...[
+                SizedBox(
+                  height: 16.h,
                 ),
-              if (material.isAssignedToGroupWithLeaderRole)
-                TaskStatus(
-                  height: 17.h,
-                  color: Color(0xFFCBE8FA),
-                  label: AppLocalizations.of(context)!.assignedToGroup,
-                ),
+                if (material.isAssignedToMe) ...[
+                  TaskStatus(
+                    height: 17.h,
+                    color: getMyTaskStatusColor(material),
+                    label: getMyTaskLabel(context, material),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                ],
+                if (material.isAssignedToGroupWithLeaderRole)
+                  TaskStatus(
+                    height: 17.h,
+                    color: Color(0xFFCBE8FA),
+                    label: AppLocalizations.of(context)!.assignedToGroup,
+                  ),
+              ],
+              SizedBox(
+                height: 10.h,
+              ),
             ],
           ),
         ),

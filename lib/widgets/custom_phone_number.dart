@@ -72,7 +72,7 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
           _phoneNumberStatus(_phoneNumberRemainingDigits),
           style: TextStyle(
             fontFamily: "Rubik",
-            fontSize: 19.sp,
+            fontSize: 23.sp,
             color: _phoneNumberRemainingDigits == 0
                 ? Color(0xFF6DE26B)
                 : Color(0xFF434141),

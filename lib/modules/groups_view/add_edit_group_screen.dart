@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/basic.dart' as widgets;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
-import 'package:flutter_sms/flutter_sms.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,7 +22,6 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -225,7 +223,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               _listToShow = snapshot;
             }
             return Scrollbar(
-              thickness: 5.sp,
+              thickness: 5.w,
               isAlwaysShown: false,
               child: ListView.builder(
                   itemCount: _listToShow.length,
@@ -537,7 +535,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Scrollbar(
-          thickness: 5.sp,
+          thickness: 5.w,
           isAlwaysShown: false,
           child: SingleChildScrollView(
             child: Container(
@@ -699,7 +697,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                           AppLocalizations.of(context)!.inviteFromContactsList,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
-                            fontSize: 14.sp,
+                            fontSize: 17.sp,
                             color: Color(0xFF3475F0),
                           ),
                         ),
@@ -855,7 +853,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
-        fontSize: 18.sp,
+        fontSize: 21.5.sp,
         color: Color(0xFF3475F0),
       ),
     );

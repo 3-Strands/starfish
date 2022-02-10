@@ -78,7 +78,7 @@ class _SelectMaterialState extends State<SelectMaterial>
                                   Text(
                                     material.title!,
                                     style: TextStyle(
-                                        fontSize: 14.sp,
+                                        fontSize: 17.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ],

@@ -52,7 +52,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'OpenSans',
-                  fontSize: 18.sp,
+                  fontSize: 21.5.sp,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF434141),
                 ),
@@ -64,7 +64,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
                   style: TextStyle(
                     fontFamily: 'OpenSans',
-                    fontSize: 16.sp,
+                    fontSize: 19.sp,
                     color: Color(0xFF3475F0),
                   ),
                 ),
@@ -76,14 +76,14 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   elevation: 20,
                   shape: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 2),
-                    borderRadius: BorderRadius.circular(12.sp),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Text(
                     // 'yes',
                     '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       color: Color(0xFF3475F0),
                     ),
                   ),
@@ -93,7 +93,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         AppLocalizations.of(context)!.makeAdmin,
                         style: TextStyle(
                             color: Color(0xFF3475F0),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontWeight: FontWeight.bold),
                       ),
                       value: 0,
@@ -103,7 +103,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         AppLocalizations.of(context)!.makeTeacher,
                         style: TextStyle(
                             color: Color(0xFF3475F0),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontWeight: FontWeight.bold),
                       ),
                       value: 1,
@@ -113,7 +113,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         AppLocalizations.of(context)!.makeRemove,
                         style: TextStyle(
                             color: Color(0xFF3475F0),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontWeight: FontWeight.bold),
                       ),
                       value: 2,
@@ -160,7 +160,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             // widget.groupUser.phone,
             style: TextStyle(
               fontFamily: 'OpenSans',
-              fontSize: 18.sp,
+              fontSize: 21.5.sp,
               color: Color(0xFF434141),
             ),
           ),

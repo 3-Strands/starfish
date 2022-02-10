@@ -22,7 +22,7 @@ class _LastSyncBottomWidgetState extends State<LastSyncBottomWidget> {
           '${AppLocalizations.of(context)!.lastSync}: ${SyncTime().lastSyncDateTimeString()}',
           style: TextStyle(
             color: Color(0xFF434141),
-            fontSize: 14.sp,
+            fontSize: 17.sp,
             fontFamily: 'OpenSans',
           ),
         ),

@@ -40,10 +40,10 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
         width: widget.width, //130.w,
         decoration: BoxDecoration(
             color: _statusColor(widget.actionStatus),
-            borderRadius: BorderRadius.all(Radius.circular(4.sp))),
+            borderRadius: BorderRadius.all(Radius.circular(4.r))),
         child: Padding(
           padding:
-              EdgeInsets.only(left: 8.sp, right: 8.sp, top: 2.sp, bottom: 2.sp),
+              EdgeInsets.only(left: 8.w, right: 8.w, top: 2.h, bottom: 2.h),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -51,13 +51,13 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
               children: [
                 Spacer(),
                 if (widget.actionStatus == ActionStatus.DONE)
-                  Icon(Icons.check, size: 16.sp, color: Color(0xFF393939)),
-                SizedBox(width: 2.sp),
+                  Icon(Icons.check, size: 19.sp, color: Color(0xFF393939)),
+                SizedBox(width: 2.w),
                 Text(widget.actionStatus.about,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                        fontSize: 17.sp,
                         fontFamily: 'Rubik')),
                 Spacer()
               ],

@@ -34,7 +34,7 @@ class TaskStatus extends StatelessWidget {
         label,
         style: textStyle ??
             TextStyle(
-              fontSize: 11.sp,
+              fontSize: 13.sp,
               fontFamily: "Rubik",
               color: Colors.black,
             ),
