@@ -204,7 +204,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             children: [
               Expanded(
                 child: Scrollbar(
-                  thickness: 5.sp,
+                  thickness: 5.w,
                   isAlwaysShown: false,
                   child: SingleChildScrollView(
                     child: Column(
@@ -250,7 +250,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                                   iconSize: 35,
                                   style: TextStyle(
                                     color: Color(0xFF434141),
-                                    fontSize: 16.sp,
+                                    fontSize: 19.sp,
                                     fontFamily: 'OpenSans',
                                   ),
                                   hint: Text(
@@ -262,7 +262,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: Color(0xFF434141),
-                                      fontSize: 16.sp,
+                                      fontSize: 19.sp,
                                       fontFamily: 'OpenSans',
                                     ),
                                     textAlign: TextAlign.left,
@@ -282,7 +282,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                                         value.about,
                                         style: TextStyle(
                                           color: Color(0xFF434141),
-                                          fontSize: 14.sp,
+                                          fontSize: 17.sp,
                                           fontFamily: 'OpenSans',
                                         ),
                                       ),
@@ -484,7 +484,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             style: TextStyle(
                               color: AppColors.txtFieldTextColor,
                               fontFamily: 'OpenSans',
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -495,7 +495,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             icon: Icon(
                               Icons.open_in_new,
                               color: Colors.blue,
-                              size: 18.sp,
+                              size: 21.5.sp,
                             ),
                             text: AppLocalizations.of(context)!.open,
                             onButtonTap: () {
@@ -535,7 +535,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         style: TextStyle(
                           color: Color(0xFF3475F0),
                           fontFamily: 'OpenSans',
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -554,7 +554,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           icon: Icon(
                             Icons.edit,
                             color: Colors.blue,
-                            size: 18.sp,
+                            size: 21.5.sp,
                           ),
                           text: AppLocalizations.of(context)!.edit,
                           onButtonTap: () {
@@ -584,7 +584,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     style: TextStyle(
                       color: Color(0xFF3475F0),
                       fontFamily: 'OpenSans',
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -603,7 +603,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                               .inAppropriateMaterial,
                           style: TextStyle(
                               color: Color(0xFFF65A4A),
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontStyle: FontStyle.italic),
                         ),
                         new TextSpan(
@@ -612,7 +612,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                               decoration: TextDecoration.underline,
                               decorationStyle: TextDecorationStyle.solid,
                               color: Color(0xFFF65A4A),
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontStyle: FontStyle.italic),
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
@@ -630,7 +630,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           text: AppLocalizations.of(context)!.toReportIt,
                           style: new TextStyle(
                               color: Color(0xFFF65A4A),
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontStyle: FontStyle.italic),
                         ),
                       ],
@@ -724,7 +724,7 @@ class MaterialListItem extends StatelessWidget {
                         style: TextStyle(
                             color: AppColors.txtFieldTextColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14.sp),
+                            fontSize: 17.sp),
                       ),
                     ),
                     //Spacer(),
@@ -733,7 +733,7 @@ class MaterialListItem extends StatelessWidget {
                         icon: Icon(
                           Icons.open_in_new,
                           color: Colors.blue,
-                          size: 18.sp,
+                          size: 21.5.sp,
                         ),
                         text: AppLocalizations.of(context)!.open,
                         onButtonTap: () {

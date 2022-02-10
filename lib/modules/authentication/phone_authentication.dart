@@ -182,13 +182,13 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         // hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(10.r),
           borderSide: BorderSide(
             color: Colors.blue,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(10.r),
           borderSide: BorderSide(
             color: Colors.white,
           ),
@@ -246,7 +246,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   Container(
                     color: AppColors.txtFieldBackground,
                     child: Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15.w, vertical: 15.h),
                       child: Align(
                         alignment: FractionalOffset.bottomCenter,
                         child: _nextButton(),
@@ -268,7 +269,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       height: 37.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
-          Radius.circular(20),
+          Radius.circular(20.r),
         ),
         color: AppColors.selectedButtonBG,
       ),
@@ -308,7 +309,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   ? Colors.grey
                   : AppColors.selectedButtonBG,
               shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(20.0),
+                borderRadius: new BorderRadius.circular(20.r),
               ),
             ),
           ),

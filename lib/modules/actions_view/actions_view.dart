@@ -96,7 +96,7 @@ class _ActionsScreenState extends State<ActionsScreen>
                         indicatorColor: Color(0xFF3475F0),
                         labelColor: Color(0xFF3475F0),
                         labelStyle: TextStyle(
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontWeight: FontWeight.w600), //For Selected tab
                         unselectedLabelColor: Color(0xFF797979),
                         tabs: List.generate(

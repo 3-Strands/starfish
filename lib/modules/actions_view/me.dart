@@ -69,7 +69,7 @@ class _MeState extends State<Me> {
       },
       onFocusLost: () {},
       child: Scrollbar(
-        thickness: 5.sp,
+        thickness: 5.w,
         isAlwaysShown: false,
         child: SingleChildScrollView(
           child: Center(
@@ -85,7 +85,7 @@ class _MeState extends State<Me> {
                   decoration: BoxDecoration(
                     color: AppColors.txtFieldBackground,
                     borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+                      Radius.circular(10.r),
                     ),
                   ),
                   child: Center(
@@ -97,7 +97,7 @@ class _MeState extends State<Me> {
                           iconSize: 35,
                           style: TextStyle(
                             color: Color(0xFF434141),
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'OpenSans',
                           ),
                           hint: Text(
@@ -106,7 +106,7 @@ class _MeState extends State<Me> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Color(0xFF434141),
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontFamily: 'OpenSans',
                             ),
                             textAlign: TextAlign.left,
@@ -126,7 +126,7 @@ class _MeState extends State<Me> {
                                 value.about,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
-                                  fontSize: 14.sp,
+                                  fontSize: 17.sp,
                                   fontFamily: 'OpenSans',
                                 ),
                               ),
@@ -205,20 +205,20 @@ class _MeState extends State<Me> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
-                    height: 40.sp,
+                    height: 40.h,
                   ),
                   Center(
                     child: Text(
                       '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
                       style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           color: Color(0xFF3475F0),
                           fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   SizedBox(
-                    height: 40.sp,
+                    height: 40.h,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
@@ -236,7 +236,7 @@ class _MeState extends State<Me> {
                               action.name ?? '',
                               maxLines: 2,
                               style: TextStyle(
-                                  fontSize: 16.sp,
+                                  fontSize: 19.sp,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500),
                               textAlign: TextAlign.left,
@@ -247,11 +247,11 @@ class _MeState extends State<Me> {
                           children: [
                             Image.asset(
                               'assets/images/hand_right.png',
-                              height: 14.sp,
-                              width: 14.sp,
+                              height: 14.r,
+                              width: 14.r,
                             ),
                             SizedBox(
-                              width: 6.sp,
+                              width: 6.w,
                             ),
                             ActionStatusWidget(
                               onTap: (ActionStatus newStatus) {
@@ -274,12 +274,12 @@ class _MeState extends State<Me> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
                     child: Text(
                       '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
                       maxLines: 5,
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 17.sp,
                         color: Color(0xFF797979),
                         fontStyle: FontStyle.italic,
                       ),
@@ -306,7 +306,7 @@ class _MeState extends State<Me> {
                                     icon: Icon(
                                       Icons.open_in_new,
                                       color: Colors.blue,
-                                      size: 18.sp,
+                                      size: 18.r,
                                     ),
                                     text: AppLocalizations.of(context)!
                                         .clickThisLinkToStart,
@@ -326,7 +326,7 @@ class _MeState extends State<Me> {
                             '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
                             maxLines: 1,
                             style: TextStyle(
-                                fontSize: 16.sp,
+                                fontSize: 19.sp,
                                 color: Color(0xFF4F4F4F),
                                 fontWeight: FontWeight.w500),
                             textAlign: TextAlign.right,
@@ -349,7 +349,7 @@ class _MeState extends State<Me> {
                                       AppLocalizations.of(context)!.question +
                                           ': ${action.question}',
                                       style: TextStyle(
-                                          fontSize: 16.sp,
+                                          fontSize: 19.sp,
                                           color: Color(0xFF4F4F4F),
                                           fontWeight: FontWeight.w500)),
                                 ),
@@ -360,7 +360,7 @@ class _MeState extends State<Me> {
                                     hintStyle: TextStyle(
                                       fontStyle: FontStyle.italic,
                                       fontWeight: FontWeight.normal,
-                                      fontSize: 14.sp,
+                                      fontSize: 17.sp,
                                       color: Color(0xFF797979),
                                     ),
                                     border: InputBorder.none,
@@ -374,7 +374,7 @@ class _MeState extends State<Me> {
                               ),
                               Container(
                                 margin:
-                                    EdgeInsets.only(left: 15.0, right: 15.0),
+                                    EdgeInsets.only(left: 15.w, right: 15.w),
                                 height: 1.0,
                                 color: Color(0xFF3475F0),
                               ),
@@ -383,14 +383,14 @@ class _MeState extends State<Me> {
                         : Container(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: EdgeInsets.all(15.r),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         AppLocalizations.of(context)!.howWasThisActionText,
                         maxLines: 1,
                         style: TextStyle(
-                            fontSize: 16.sp,
+                            fontSize: 19.sp,
                             color: Color(0xFF4F4F4F),
                             fontWeight: FontWeight.w500),
                         textAlign: TextAlign.left,
@@ -398,7 +398,7 @@ class _MeState extends State<Me> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -428,10 +428,10 @@ class _MeState extends State<Me> {
                                 .createUpdateActionUser(hiveActionUser!);
                           },
                           child: Container(
-                            height: 36.sp,
-                            width: 160.sp,
+                            height: 36.h,
+                            width: 160.w,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.sp),
+                              borderRadius: BorderRadius.circular(4.r),
                               color: ActionUser_Evaluation.valueOf(
                                           hiveActionUser!.evaluation!) ==
                                       ActionUser_Evaluation.GOOD
@@ -444,18 +444,18 @@ class _MeState extends State<Me> {
                                   //Icon(Icons.thumb_up_outlined, size: 14.sp),
                                   Image.asset(
                                     'assets/images/thumbs_up.png',
-                                    height: 14.sp,
-                                    width: 14.sp,
+                                    height: 14.r,
+                                    width: 14.r,
                                   ),
                                   SizedBox(
-                                    width: 4.sp,
+                                    width: 4.w,
                                   ),
                                   Text(
                                     AppLocalizations.of(context)!.goodText,
                                     maxLines: 1,
                                     style: TextStyle(
                                       fontFamily: 'Rubik',
-                                      fontSize: 14.sp,
+                                      fontSize: 17.sp,
                                       color: Color(0xFF777777),
                                     ),
                                   ),
@@ -488,10 +488,10 @@ class _MeState extends State<Me> {
                                 .createUpdateActionUser(hiveActionUser!);
                           },
                           child: Container(
-                            height: 36.sp,
-                            width: 160.sp,
+                            height: 36.h,
+                            width: 160.w,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.sp),
+                              borderRadius: BorderRadius.circular(4.r),
                               color: ActionUser_Evaluation.valueOf(
                                           hiveActionUser.evaluation!) ==
                                       ActionUser_Evaluation.BAD
@@ -504,18 +504,18 @@ class _MeState extends State<Me> {
                                   //Icon(Icons.thumb_down_outlined, size: 14.sp),
                                   Image.asset(
                                     'assets/images/thumbs_down.png',
-                                    height: 14.sp,
-                                    width: 14.sp,
+                                    height: 14.r,
+                                    width: 14.r,
                                   ),
                                   SizedBox(
-                                    width: 4.sp,
+                                    width: 4.w,
                                   ),
                                   Text(
                                     AppLocalizations.of(context)!.notSoGoodText,
                                     maxLines: 1,
                                     style: TextStyle(
                                       fontFamily: 'Rubik',
-                                      fontSize: 14.sp,
+                                      fontSize: 17.sp,
                                       color: Color(0xFF777777),
                                     ),
                                   ),
@@ -532,14 +532,14 @@ class _MeState extends State<Me> {
                     height: (WidgetsBinding.instance!.window.viewInsets.bottom >
                             0.0)
                         ? 0.h
-                        : 75.0,
+                        : 75.h,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: Color(0xFFEFEFEF),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                      padding:  EdgeInsets.only(
+                          left: 30.w, right: 30.w, top: 19.h, bottom: 19.h),
                       child: Container(
                         height: 37.5.h,
                         color: Color(0xFFEFEFEF),
@@ -589,7 +589,7 @@ class _MeState extends State<Me> {
           icon: Icon(
             Icons.download,
             color: Colors.blue,
-            size: 18.sp,
+            size: 18.r,
           ),
           text: AppLocalizations.of(context)!
               .clickToDownload
@@ -649,7 +649,7 @@ class _MeState extends State<Me> {
                       Text(
                         '${snapshot.data!.keys.toList()[section].name}',
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF434141),
                         ),
@@ -658,7 +658,7 @@ class _MeState extends State<Me> {
                         Text(
                           '${AppLocalizations.of(context)!.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF797979),
                           ),
@@ -667,9 +667,9 @@ class _MeState extends State<Me> {
                   ),
                 );
               },
-              separatorBuilder: (context, index) => SizedBox(height: 10),
+              separatorBuilder: (context, index) => SizedBox(height: 10.h),
               sectionSeparatorBuilder: (context, section) =>
-                  SizedBox(height: 10),
+                  SizedBox(height: 10.h),
             );
           } else {
             return Container(
@@ -713,7 +713,7 @@ class MyActionListItem extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 10.sp),
+                padding: EdgeInsets.only(left: 10.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -721,12 +721,12 @@ class MyActionListItem extends StatelessWidget {
                       "#${index + 1}",
                       style: TextStyle(
                           color: Color(0xFF797979),
-                          fontSize: 16.sp,
+                          fontSize: 19.sp,
                           fontWeight: FontWeight.bold),
                     ),
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.only(left: 8.0, right: 8.sp),
+                        padding: EdgeInsets.only(left: 8.w, right: 8.w),
                         child: Text(
                           action.name!,
                           maxLines: 1,
@@ -734,7 +734,7 @@ class MyActionListItem extends StatelessWidget {
                           softWrap: false,
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16.sp,
+                              fontSize: 19.sp,
                               fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -753,7 +753,7 @@ class MyActionListItem extends StatelessWidget {
                               shape: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(12.sp)),
+                                  borderRadius: BorderRadius.circular(12.r)),
                               enabled: true,
                               onSelected: (value) {
                                 switch (value) {
@@ -781,7 +781,7 @@ class MyActionListItem extends StatelessWidget {
                                         .editActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
-                                        fontSize: 16.sp,
+                                        fontSize: 19.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   value: 0,
@@ -792,7 +792,7 @@ class MyActionListItem extends StatelessWidget {
                                         .deleteActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
-                                        fontSize: 16.sp,
+                                        fontSize: 19.sp,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   value: 1,
@@ -827,7 +827,7 @@ class MyActionListItem extends StatelessWidget {
                     '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
-                      fontSize: 16.sp,
+                      fontSize: 19.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

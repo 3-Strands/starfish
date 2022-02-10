@@ -53,10 +53,10 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
           // hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(10.r),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(10.r),
             borderSide: BorderSide(
               color: Colors.white,
             ),
@@ -72,7 +72,7 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
           _phoneNumberStatus(_phoneNumberRemainingDigits),
           style: TextStyle(
             fontFamily: "Rubik",
-            fontSize: 16.sp,
+            fontSize: 19.sp,
             color: _phoneNumberRemainingDigits == 0
                 ? Color(0xFF6DE26B)
                 : Color(0xFF434141),

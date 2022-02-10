@@ -275,6 +275,7 @@ class _MultiSelectState extends State<MultiSelect> {
                 autofocus: true,
                 style: TextStyle(
                   color: Colors.white,
+                  fontSize: 19.sp,
                 ),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search, color: Colors.white),
@@ -289,7 +290,13 @@ class _MultiSelectState extends State<MultiSelect> {
               _handleSearchStart();
             } else {
               this.actionIcon = Icon(Icons.search);
-              this.appBarTitle = Text(widget.navTitle);
+              this.appBarTitle = Text(
+                widget.navTitle,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 19.sp,
+                ),
+              );
               _handleSearchEnd();
             }
           },
@@ -349,7 +356,7 @@ class _MultiSelectState extends State<MultiSelect> {
                                       style: TextStyle(
                                         fontFamily: 'OpenSans',
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18.sp,
+                                        fontSize: 21.5.sp,
                                       ),
                                     ),
                                   ],
@@ -430,7 +437,7 @@ class _MultiSelectState extends State<MultiSelect> {
   Widget _listBuilder() {
     return Container(
       child: Scrollbar(
-        thickness: 5.sp,
+        thickness: 5.w,
         isAlwaysShown: false,
         child: ListView.builder(
           itemCount: _items.length,
@@ -557,7 +564,7 @@ class ItemList extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'OpenSans',
                                   fontWeight: FontWeight.normal,
-                                  fontSize: 14.sp,
+                                  fontSize: 17.sp,
                                 ),
                               ),
                             ],

@@ -6,14 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 var nameTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.bold,
-  fontSize: 22.sp,
+  fontSize: 26.5.sp,
   color: Colors.black,
 );
 
 var titleTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.bold,
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   color: AppColors.appTitle,
 );
 
@@ -21,28 +21,28 @@ var italicDetailTextTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontStyle: FontStyle.italic,
   fontWeight: FontWeight.normal,
-  fontSize: 14.sp,
+  fontSize: 17.sp,
   color: AppColors.appTitle,
 );
 
 var resentOTPTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.bold,
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   color: AppColors.selectedButtonBG,
 );
 
 var cancelButtonTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.normal,
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   color: Color(0xFF797979),
 );
 
 var buttonTextStyle = TextStyle(
   fontFamily: 'OpenSans',
   fontWeight: FontWeight.normal,
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   color: AppColors.background,
 );
 
@@ -62,14 +62,14 @@ var textFormFieldText = TextStyle(
 
 var formTitleTextStyle = TextStyle(
   fontFamily: 'OpenSans',
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   fontWeight: FontWeight.normal,
   color: Colors.black,
 );
 
 var formTitleHintStyle = TextStyle(
   fontFamily: 'OpenSans',
-  fontSize: 16.sp,
+  fontSize: 19.sp,
   fontWeight: FontWeight.normal,
   color: AppColors.hintTextColor,
 );

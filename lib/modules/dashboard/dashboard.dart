@@ -157,6 +157,8 @@ class _DashboardState extends State<Dashboard> {
                       : AppColors.actionTabBarTextColor,
               backgroundColor: AppColors.txtFieldBackground,
               unselectedItemColor: AppColors.unselectedButtonBG,
+              unselectedFontSize: 14.sp,
+              selectedFontSize: 14.sp,
               onTap: onTabTapped,
             ),
           ),

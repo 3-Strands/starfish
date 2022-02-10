@@ -21,12 +21,12 @@ class AppStyles {
             fontFamily: "OpenSans",
             fontStyle: FontStyle.normal,
             color: AppColors.txtFieldTextColor,
-            fontSize: 16.0),
+            fontSize: 19.0),
         errorStyle: TextStyle(
           color: Colors.red,
           fontFamily: "OpenSans",
           fontWeight: FontWeight.bold,
-          fontSize: 12.0,
+          fontSize: 14.5,
         ),
         enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
