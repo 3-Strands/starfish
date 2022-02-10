@@ -170,6 +170,7 @@ class SyncService {
   void syncAll() async {
     try {
       showAlertFirstTime();
+      syncCountries();
       await syncLocalCurrentUser(kCurrentUserFieldMask);
       await syncLocalMaterialsToRemote();
 
@@ -190,7 +191,7 @@ class SyncService {
       Future.wait([
         syncCurrentUser(),
         syncUsers(),
-        syncCountries(),
+        //syncCountries(),
         syncLanguages(),
         syncActions(),
         syncMaterialTopics(),
