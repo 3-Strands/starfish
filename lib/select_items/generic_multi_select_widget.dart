@@ -3,6 +3,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -209,6 +210,17 @@ class _MultiSelectState extends State<MultiSelect> {
       default:
     }
 
+    // TODO : Optimization is needed
+    List<Item<dynamic>> _itemSelected =
+        _items.where((element) => element.isSelected).toList();
+    List<Item<dynamic>> _itemUnSelected =
+        _items.where((element) => !element.isSelected).toList();
+
+    _itemSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
+    _itemUnSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
+
+    _items = _itemSelected + _itemUnSelected;
+
     _changeStatusOfSelectAllButton();
   }
 
@@ -302,11 +314,11 @@ class _MultiSelectState extends State<MultiSelect> {
           actions: [
             navigationSearchBar(),
           ],
-          leading: GestureDetector(
+          leading: InkWell(
             onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios_rounded, size: 32),
+            child: Icon(Icons.arrow_back_ios_rounded, size: 32.r),
           ),
         ),
         body: Column(
@@ -373,6 +385,27 @@ class _MultiSelectState extends State<MultiSelect> {
               child: _isSearching ? _searchListBuilder() : _listBuilder(),
             ),
           ],
+        ),
+        bottomNavigationBar: Container(
+          height: 75.h,
+          padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+          color: AppColors.txtFieldBackground,
+          child: ElevatedButton(
+            child: Text(
+              AppLocalizations.of(context)!.back,
+              textAlign: TextAlign.start,
+              style: buttonTextStyle,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              primary: AppColors.unselectedButtonBG,
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(20.0),
+              ),
+            ),
+          ),
         ),
       ),
     );

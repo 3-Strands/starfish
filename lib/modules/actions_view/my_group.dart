@@ -20,11 +20,12 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/widgets/custon_icon_button.dart';
+import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/user_action_status_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// ignore: implementation_imports
 import 'package:template_string/src/extension.dart';
 
 class MyGroup extends StatefulWidget {
@@ -528,7 +529,7 @@ class _MyGroupState extends State<MyGroup> {
                               if (action.material != null &&
                                   action.material!.url != null &&
                                   action.material!.url!.isNotEmpty)
-                                CustomIconButton(
+                                MaterialLinkButton(
                                   icon: Icon(
                                     Icons.open_in_new,
                                     color: Colors.blue,
@@ -540,27 +541,20 @@ class _MyGroupState extends State<MyGroup> {
                                     GeneralFunctions.openUrl(
                                         action.material!.url!);
                                   },
-                                  width: 255.w,
                                 ),
                               materialList(action)
                             ],
                           ),
                         ),
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.h,
-                          ),
-                          child: Text(
-                            '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontSize: 16.sp,
-                                color: Color(0xFF4F4F4F),
-                                fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.right,
-                          ),
-                        )),
+                        Text(
+                          '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Color(0xFF4F4F4F),
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.right,
+                        ),
                       ],
                     ),
                   ),
@@ -794,10 +788,10 @@ class _MyGroupState extends State<MyGroup> {
             hiveAction.material!.files!.length == 0)) {
       return Container();
     }
-    List<CustomIconButton> fileLinks = [];
+    List<Widget> fileLinks = [];
     hiveAction.material!.localFiles!.forEach((file) {
       fileLinks.add(
-        CustomIconButton(
+        MaterialLinkButton(
           icon: Icon(
             Icons.download,
             color: Colors.blue,
@@ -813,9 +807,9 @@ class _MyGroupState extends State<MyGroup> {
               OpenFile.open(file.path);
             }
           },
-          width: 255.w,
         ),
       );
+      fileLinks.add(SizedBox(height: 4.h));
     });
 
     return Column(
@@ -840,6 +834,12 @@ class MyGroupActionListItem extends StatelessWidget {
         action.memberCountByActionStatus(ActionStatus.NOT_DONE);
     int countActionStatusOverdue =
         action.memberCountByActionStatus(ActionStatus.OVERDUE);
+
+    bool maintainSize = (countActionStatusDone +
+            countActionStatusNotDone +
+            countActionStatusOverdue) >
+        0;
+
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
@@ -957,12 +957,45 @@ class MyGroupActionListItem extends StatelessWidget {
                     SizedBox(
                       width: 8.w,
                     ),
-                    if (countActionStatusDone > 0)
-                      Opacity(
+                    Visibility(
+                      child: Container(
+                        width: 99.w,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF6DE26B),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.5.r),
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 6.w),
+                        child: Text(
+                          Intl.plural(countActionStatusDone,
+                              zero:
+                                  "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
+                              one: "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
+                              other: "$countActionStatusDone ${AppLocalizations.of(context)!.moreThenOneMembersDidIt}",
+                              args: [countActionStatusDone]),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF000000),
+                            fontFamily: "Rubik",
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                      maintainAnimation: maintainSize,
+                      maintainState: maintainSize,
+                      maintainSize: maintainSize,
+                      visible: countActionStatusDone > 0,
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Visibility(
                         child: Container(
                           width: 99.w,
                           decoration: BoxDecoration(
-                            color: Color(0xFF6DE26B),
+                            color: Color(0xFFFFBE4A),
                             borderRadius: BorderRadius.all(
                               Radius.circular(8.5.r),
                             ),
@@ -970,12 +1003,12 @@ class MyGroupActionListItem extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: 10.h, horizontal: 6.w),
                           child: Text(
-                            Intl.plural(countActionStatusDone,
+                            Intl.plural(countActionStatusNotDone,
                                 zero:
-                                    "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
-                                one: "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
-                                other: "$countActionStatusDone ${AppLocalizations.of(context)!.moreThenOneMembersDidIt}",
-                                args: [countActionStatusDone]),
+                                    "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
+                                one: "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
+                                other: "$countActionStatusNotDone ${AppLocalizations.of(context)!.moreThenOneMembersDidNotDoItYet}",
+                                args: [countActionStatusNotDone]),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Color(0xFF000000),
@@ -984,71 +1017,44 @@ class MyGroupActionListItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        opacity: countActionStatusDone > 0 ? 1 : 0,
-                      ),
+                        maintainAnimation: maintainSize,
+                        maintainState: maintainSize,
+                        maintainSize: maintainSize,
+                        visible: countActionStatusNotDone > 0),
                     SizedBox(
                       width: 10.w,
                     ),
-                    if (countActionStatusNotDone > 0)
-                      Opacity(
-                          child: Container(
-                            width: 99.w,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFFBE4A),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(8.5.r),
-                              ),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10.h, horizontal: 6.w),
-                            child: Text(
-                              Intl.plural(countActionStatusNotDone,
-                                  zero:
-                                      "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
-                                  one: "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
-                                  other: "$countActionStatusNotDone ${AppLocalizations.of(context)!.moreThenOneMembersDidNotDoItYet}",
-                                  args: [countActionStatusNotDone]),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF000000),
-                                fontFamily: "Rubik",
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                          ),
-                          opacity: countActionStatusNotDone > 0 ? 1 : 0),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    if (countActionStatusOverdue > 0)
-                      Opacity(
-                        child: Container(
-                          width: 99.w,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFFF5E4D),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8.5.r),
-                            ),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10.h, horizontal: 6.w),
-                          child: Text(
-                            Intl.plural(countActionStatusOverdue,
-                                zero:
-                                    "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
-                                one: "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
-                                other: "$countActionStatusOverdue ${AppLocalizations.of(context)!.moreThenOneMembersIsOverdue}",
-                                args: [countActionStatusOverdue]),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF000000),
-                              fontFamily: "Rubik",
-                              fontSize: 14.sp,
-                            ),
+                    Visibility(
+                      child: Container(
+                        width: 99.w,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFF5E4D),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.5.r),
                           ),
                         ),
-                        opacity: countActionStatusOverdue > 0 ? 1 : 0,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 6.w),
+                        child: Text(
+                          Intl.plural(countActionStatusOverdue,
+                              zero:
+                                  "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
+                              one: "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
+                              other: "$countActionStatusOverdue ${AppLocalizations.of(context)!.moreThenOneMembersIsOverdue}",
+                              args: [countActionStatusOverdue]),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF000000),
+                            fontFamily: "Rubik",
+                            fontSize: 14.sp,
+                          ),
+                        ),
                       ),
+                      maintainAnimation: maintainSize,
+                      maintainState: maintainSize,
+                      maintainSize: maintainSize,
+                      visible: countActionStatusOverdue > 0,
+                    ),
                     SizedBox(
                       width: 8.w,
                     ),
