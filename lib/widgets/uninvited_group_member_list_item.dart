@@ -82,6 +82,19 @@ class _UnInvitedGroupMemberListItemState
                         setState(() {
                           isEditMode = !isEditMode;
                         });
+                        if (widget.groupUser.user != null) {
+                          widget.groupUser.user!.phone =
+                              _phoneNumberController.text;
+                          widget.groupUser.user!.diallingCode =
+                              _dialingCodeController.text.isNotEmpty &&
+                                      _dialingCodeController.text
+                                          .startsWith("+")
+                                  ? _dialingCodeController.text.substring(1)
+                                  : _dialingCodeController.text;
+
+                          widget.groupUser.user!.save();
+                          widget.onInvite(widget.groupUser.user!);
+                        }
                       },
                       child: Text(
                         AppLocalizations.of(context)!.inviteGroupUser,
@@ -108,6 +121,7 @@ class _UnInvitedGroupMemberListItemState
                       /// Mark this groupuser for deletion
                       widget.groupUser.isDirty = true;
                       bloc.groupBloc.createUpdateGroupUser(widget.groupUser);
+                      widget.onRemove(widget.groupUser.name);
                     },
                     icon: Icon(
                       Icons.close,

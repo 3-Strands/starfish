@@ -85,7 +85,7 @@ class _MultiSelectState extends State<MultiSelect> {
             _items.add(country);
           }
         });
-
+        _sortSelectedItems();
         break;
       case DataSourceType.countries:
         List<HiveCountry> _countries = widget.dataSource as List<HiveCountry>;
@@ -103,6 +103,7 @@ class _MultiSelectState extends State<MultiSelect> {
           _items[index].isSelected = true;
         });
 
+        _sortSelectedItems();
         break;
       case DataSourceType.languages:
         List<HiveLanguage> _languages = widget.dataSource as List<HiveLanguage>;
@@ -122,6 +123,7 @@ class _MultiSelectState extends State<MultiSelect> {
           }
         });
 
+        _sortSelectedItems();
         break;
       case DataSourceType.topics:
         List<HiveMaterialTopic> _topics =
@@ -140,6 +142,7 @@ class _MultiSelectState extends State<MultiSelect> {
           _items[index].isSelected = true;
         });
 
+        _sortSelectedItems();
         break;
       case DataSourceType.types:
         List<HiveMaterialType> _types =
@@ -158,6 +161,7 @@ class _MultiSelectState extends State<MultiSelect> {
           _items[index].isSelected = true;
         });
 
+        _sortSelectedItems();
         break;
       case DataSourceType.evaluationCategory:
         List<HiveEvaluationCategory> _types =
@@ -176,6 +180,7 @@ class _MultiSelectState extends State<MultiSelect> {
           _items[index].isSelected = true;
         });
 
+        _sortSelectedItems();
         break;
       case DataSourceType.groups:
         List<HiveGroup> _groups = widget.dataSource as List<HiveGroup>;
@@ -205,11 +210,32 @@ class _MultiSelectState extends State<MultiSelect> {
           _items[index].isSelected = true;
         });
 
+        Item<dynamic> _me =
+            _items.firstWhere((element) => (element.data as HiveGroup).isMe);
+        List<Item<dynamic>> _itemSelected = _items
+            .where((element) =>
+                element.isSelected && !(element.data as HiveGroup).isMe)
+            .toList();
+        List<Item<dynamic>> _itemUnSelected = _items
+            .where((element) =>
+                !element.isSelected && !(element.data as HiveGroup).isMe)
+            .toList();
+
+        _itemSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
+        _itemUnSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
+
+        _items = _itemSelected + _itemUnSelected;
+
+        _items.insert(0, _me);
         break;
 
       default:
     }
 
+    _changeStatusOfSelectAllButton();
+  }
+
+  void _sortSelectedItems() {
     // TODO : Optimization is needed
     List<Item<dynamic>> _itemSelected =
         _items.where((element) => element.isSelected).toList();
@@ -220,8 +246,6 @@ class _MultiSelectState extends State<MultiSelect> {
     _itemUnSelected.sort((a, b) => a.data.name.compareTo(b.data.name));
 
     _items = _itemSelected + _itemUnSelected;
-
-    _changeStatusOfSelectAllButton();
   }
 
   _MultiSelectState() {
