@@ -150,64 +150,73 @@ class _GroupsScreenState extends State<GroupsScreen> {
   }
 
   Widget _buildSlidingUpPanel(HiveGroup group) {
-    return Container(
-      margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 26.h,
-            child: Align(
-              alignment: FractionalOffset.topLeft,
-              child: Text(
-                '${group.name}',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: AppColors.selectedButtonBG,
-                  fontFamily: 'OpenSans',
-                  fontSize: 21.5.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 36.h,
-          ),
-          _buildUsersList(group.activeUsers!),
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            height: 75.0,
-            width: MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-              child: Container(
-                height: 37.5.h,
-                color: Color(0xFFEFEFEF),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40.r),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+            child: Column(
+              children: [
+                Container(
+                  height: 26.h,
+                  child: Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Text(
+                      '${group.name}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: AppColors.selectedButtonBG,
+                        fontFamily: 'OpenSans',
+                        fontSize: 21.5.sp,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        AppColors.selectedButtonBG),
                   ),
-                  child: Text(AppLocalizations.of(context)!.close),
                 ),
+                SizedBox(
+                  height: 36.h,
+                ),
+                _buildUsersList(group.activeUsers!),
+                SizedBox(
+                  height: 20.h,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          height: 75.0,
+          decoration: BoxDecoration(
+            color: Color(0xFFEFEFEF),
+          ),
+          width: MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+            child: Container(
+              height: 37.5.h,
+              color: Color(0xFFEFEFEF),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40.r),
+                    ),
+                  ),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      AppColors.selectedButtonBG),
+                ),
+                child: Text(AppLocalizations.of(context)!.close),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -477,7 +486,9 @@ class GroupListItem extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(right: 8.w,),
+                      padding: EdgeInsets.only(
+                        right: 8.w,
+                      ),
                       child: Text(
                         '${group.name}',
                         //overflow: TextOverflow.ellipsis,

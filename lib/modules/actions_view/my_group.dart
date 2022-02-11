@@ -215,8 +215,11 @@ class _MyGroupState extends State<MyGroup> {
             ),
             Container(
               height: 75.0,
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
               width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color(0xFFEFEFEF),
+              ),
+              //margin: EdgeInsets.only(left: 15.w, right: 15.w),
               child: Padding(
                 padding: const EdgeInsets.only(
                     left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
