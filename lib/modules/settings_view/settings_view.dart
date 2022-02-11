@@ -373,7 +373,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelText: AppLocalizations.of(context)!.nameHint,
-          labelStyle:formTitleHintStyle,
+          labelStyle: formTitleHintStyle,
           alignLabelWithHint: true,
           // hintText: AppLocalizations.of(context)!.nameHint,
           // hintStyle: formTitleHintStyle,
@@ -918,36 +918,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(height: 20.h),
         Container(
-          height: 44.h,
-          width: 345.w,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                width: 300.w,
-                height: 44.h,
+              Expanded(
                 child: Text(
                   AppLocalizations.of(context)!.linkMyGroups,
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
               ),
-              Container(
-                width: 23.w,
-                child: Center(
-                  child: IconButton(
-                    icon: (_user.linkGroups == true)
-                        ? Icon(Icons.check_box)
-                        : Icon(Icons.check_box_outline_blank),
-                    color: AppColors.selectedButtonBG,
-                    onPressed: () {
-                      setState(() => {
-                            _user.linkGroups = !_user.linkGroups,
-                            updateLinkGroupStatus()
-                          });
-                    },
-                  ),
+              Center(
+                child: IconButton(
+                  icon: (_user.linkGroups == true)
+                      ? Icon(Icons.check_box)
+                      : Icon(Icons.check_box_outline_blank),
+                  color: AppColors.selectedButtonBG,
+                  onPressed: () {
+                    setState(() => {
+                          _user.linkGroups = !_user.linkGroups,
+                          updateLinkGroupStatus()
+                        });
+                  },
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -994,81 +988,77 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _confirmEmailController.text = item['confirm_email'];
 
             return Container(
-              height: (item['is_editing'] == false) ? 200.h : 240.h,
+              //height: (item['is_editing'] == false) ? 200.h : 240.h,
               margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
               child: Column(
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 200.w,
-                        height: 25.h,
+                      Expanded(
+                        //width: 200.w,
+                        //height: 25.h,
                         child: Align(
                           alignment: FractionalOffset.topLeft,
                           child: Text(getGroupName(item['id']),
                               style: titleTextStyle),
                         ),
                       ),
-                      Container(
-                        height: 25.h,
-                        child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _groups[index]['email'] = _emailController.text;
-                              });
-                              if (item['is_editing'] == false) {
-                                setState(() {
-                                  item['is_editing'] = !item['is_editing'];
-                                });
-                              } else {
-                                if (_emailController.text == '') {
-                                  Alerts.showMessageBox(
-                                      context: context,
-                                      title: AppLocalizations.of(context)!
-                                          .dialogAlert,
-                                      message: AppLocalizations.of(context)!
-                                          .emptyEmail,
-                                      positiveButtonText:
-                                          AppLocalizations.of(context)!.ok,
-                                      positiveActionCallback: () {});
-                                } else if (!_emailController.text
-                                    .isValidEmail()) {
-                                  Alerts.showMessageBox(
-                                      context: context,
-                                      title: AppLocalizations.of(context)!
-                                          .dialogAlert,
-                                      message: AppLocalizations.of(context)!
-                                          .alertInvalidEmaill,
-                                      positiveButtonText:
-                                          AppLocalizations.of(context)!.ok,
-                                      positiveActionCallback: () {});
-                                } else if (_emailController.text !=
-                                    _confirmEmailController.text) {
-                                  Alerts.showMessageBox(
-                                      context: context,
-                                      title: AppLocalizations.of(context)!
-                                          .dialogAlert,
-                                      message: AppLocalizations.of(context)!
-                                          .alertEmailDoNotMatch,
-                                      positiveButtonText:
-                                          AppLocalizations.of(context)!.ok,
-                                      positiveActionCallback: () {});
-                                } else {
-                                  if (item['is_editing'] == true) {
-                                    _updateGroupLinkedEmaill(
-                                        _groups[index]['id'],
-                                        _groups[index]['email']);
-                                  }
-                                  setState(() {
-                                    item['is_editing'] = !item['is_editing'];
-                                  });
-                                }
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _groups[index]['email'] = _emailController.text;
+                          });
+                          if (item['is_editing'] == false) {
+                            setState(() {
+                              item['is_editing'] = !item['is_editing'];
+                            });
+                          } else {
+                            if (_emailController.text == '') {
+                              Alerts.showMessageBox(
+                                  context: context,
+                                  title:
+                                      AppLocalizations.of(context)!.dialogAlert,
+                                  message:
+                                      AppLocalizations.of(context)!.emptyEmail,
+                                  positiveButtonText:
+                                      AppLocalizations.of(context)!.ok,
+                                  positiveActionCallback: () {});
+                            } else if (!_emailController.text.isValidEmail()) {
+                              Alerts.showMessageBox(
+                                  context: context,
+                                  title:
+                                      AppLocalizations.of(context)!.dialogAlert,
+                                  message: AppLocalizations.of(context)!
+                                      .alertInvalidEmaill,
+                                  positiveButtonText:
+                                      AppLocalizations.of(context)!.ok,
+                                  positiveActionCallback: () {});
+                            } else if (_emailController.text !=
+                                _confirmEmailController.text) {
+                              Alerts.showMessageBox(
+                                  context: context,
+                                  title:
+                                      AppLocalizations.of(context)!.dialogAlert,
+                                  message: AppLocalizations.of(context)!
+                                      .alertEmailDoNotMatch,
+                                  positiveButtonText:
+                                      AppLocalizations.of(context)!.ok,
+                                  positiveActionCallback: () {});
+                            } else {
+                              if (item['is_editing'] == true) {
+                                _updateGroupLinkedEmaill(_groups[index]['id'],
+                                    _groups[index]['email']);
                               }
-                            },
-                            child: (item['is_editing'] == false)
-                                ? editButton()
-                                : saveButton()),
+                              setState(() {
+                                item['is_editing'] = !item['is_editing'];
+                              });
+                            }
+                          }
+                        },
+                        child: (item['is_editing'] == false)
+                            ? editButton()
+                            : saveButton(),
                       ),
                     ],
                   ),
@@ -1076,7 +1066,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     height: 20.h,
                   ),
                   Container(
-                    height: 45.h,
+                    //height: 45.h,
                     child: Align(
                       alignment: FractionalOffset.topLeft,
                       child: Text(
@@ -1087,7 +1077,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   SizedBox(height: 10.h),
                   Container(
-                    height: 52.h,
+                    //height: 52.h,
                     child: TextFormField(
                       enabled: item['is_editing'],
                       controller: _emailController,
@@ -1100,11 +1090,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       keyboardType: TextInputType.emailAddress,
                       style: textFormFieldText,
                       decoration: InputDecoration(
-                        labelText:AppLocalizations.of(context)!.emailHint,
-                        labelStyle:formTitleHintStyle ,
+                        labelText: AppLocalizations.of(context)!.emailHint,
+                        labelStyle: formTitleHintStyle,
                         floatingLabelBehavior: FloatingLabelBehavior.never,
 
-                       // hintText: AppLocalizations.of(context)!.emailHint,
+                        // hintText: AppLocalizations.of(context)!.emailHint,
                         contentPadding:
                             EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                         border: OutlineInputBorder(
@@ -1125,7 +1115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Visibility(
                     visible: item['is_editing'],
                     child: Container(
-                      height: 52.h,
+                      //height: 52.h,
                       child: TextFormField(
                         controller: _confirmEmailController,
                         focusNode: _confirmEmailFocus,
@@ -1167,8 +1157,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: textFormFieldText,
                         decoration: InputDecoration(
                           floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText:  AppLocalizations.of(context)!.confirmEmailHint,
-                          labelStyle:formTitleHintStyle,
+                          labelText:
+                              AppLocalizations.of(context)!.confirmEmailHint,
+                          labelStyle: formTitleHintStyle,
                           // hintText:
                           //     AppLocalizations.of(context)!.confirmEmailHint,
                           contentPadding:
@@ -1216,8 +1207,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container editButton() {
     return Container(
-      width: 48.w,
-      height: 44.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1242,8 +1232,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container saveButton() {
     return Container(
-      width: 53.w,
-      height: 44.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
         color: Colors.blue,

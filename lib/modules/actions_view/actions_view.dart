@@ -12,7 +12,6 @@ import 'package:starfish/modules/actions_view/me.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 
@@ -99,6 +98,7 @@ class _ActionsScreenState extends State<ActionsScreen>
                             fontSize: 19.sp,
                             fontWeight: FontWeight.w600), //For Selected tab
                         unselectedLabelColor: Color(0xFF797979),
+                        isScrollable: true,
                         tabs: List.generate(
                           _tabController.length,
                           (index) => Tab(

@@ -73,15 +73,14 @@ class _GroupsScreenState extends State<GroupsScreen> {
         itemBuilder: (context, index) {
           final user = users[index];
           return Container(
-            height: 80.h,
+            height: 96.h,
             width: MediaQuery.of(context).size.width - 10.0,
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      height: 27.h,
-                      width: MediaQuery.of(context).size.width - 160.0,
+                    Expanded(
                       child: Text(
                         user.name,
                         textAlign: TextAlign.left,
@@ -95,10 +94,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         ),
                       ),
                     ),
-                    Spacer(),
                     Container(
-                      width: 90.w,
-                      margin: EdgeInsets.only(right: 0.w),
+                      margin: EdgeInsets.only(right: 10.w),
                       child: Text(
                         user.isActive
                             ? GroupUser_Role.valueOf(user.role!)!.about
@@ -467,7 +464,7 @@ class GroupListItem extends StatelessWidget {
       ),
       color: AppColors.txtFieldBackground,
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,

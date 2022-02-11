@@ -51,13 +51,13 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
               children: [
                 Spacer(),
                 if (widget.actionStatus == ActionStatus.DONE)
-                  Icon(Icons.check, size: 19.sp, color: Color(0xFF393939)),
+                  Icon(Icons.check, size: 19.r, color: Color(0xFF393939)),
                 SizedBox(width: 2.w),
                 Text(widget.actionStatus.about,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 17.sp,
+                        fontSize: 14.sp,
                         fontFamily: 'Rubik')),
                 Spacer()
               ],
