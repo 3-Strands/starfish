@@ -412,7 +412,8 @@ class _MyGroupState extends State<MyGroup> {
                   height: 40.h,
                 ),
                 Container(
-                  padding:  EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -564,7 +565,8 @@ class _MyGroupState extends State<MyGroup> {
                   height: 110.h,
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                    child: (action.type == Action_Type.TEXT_RESPONSE.value ||
+                            action.type == Action_Type.MATERIAL_RESPONSE.value)
                         ? Column(
                             children: [
                               Align(

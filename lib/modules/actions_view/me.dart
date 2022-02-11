@@ -337,7 +337,8 @@ class _MeState extends State<Me> {
                   ),
                   // Record the response to the Question
                   SizedBox(
-                    child: (action.type == Action_Type.TEXT_RESPONSE.value)
+                    child: (action.type == Action_Type.TEXT_RESPONSE.value ||
+                            action.type == Action_Type.MATERIAL_RESPONSE.value)
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -538,7 +539,7 @@ class _MeState extends State<Me> {
                       color: Color(0xFFEFEFEF),
                     ),
                     child: Padding(
-                      padding:  EdgeInsets.only(
+                      padding: EdgeInsets.only(
                           left: 30.w, right: 30.w, top: 19.h, bottom: 19.h),
                       child: Container(
                         height: 37.5.h,
