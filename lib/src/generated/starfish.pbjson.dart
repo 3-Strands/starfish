@@ -8,6 +8,11 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
+import 'google/protobuf/timestamp.pbjson.dart' as $1;
+import 'google/type/date.pbjson.dart' as $0;
+import 'google/protobuf/field_mask.pbjson.dart' as $2;
+import 'google/protobuf/empty.pbjson.dart' as $3;
+
 @$core.Deprecated('Use actionTabDescriptor instead')
 const ActionTab$json = const {
   '1': 'ActionTab',
@@ -116,11 +121,13 @@ const AuthenticateResponse$json = const {
   '2': const [
     const {'1': 'user_token', '3': 1, '4': 1, '5': 9, '10': 'userToken'},
     const {'1': 'expires_at', '3': 2, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'expiresAt'},
+    const {'1': 'user_id', '3': 3, '4': 1, '5': 9, '10': 'userId'},
+    const {'1': 'refresh_token', '3': 4, '4': 1, '5': 9, '10': 'refreshToken'},
   ],
 };
 
 /// Descriptor for `AuthenticateResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List authenticateResponseDescriptor = $convert.base64Decode('ChRBdXRoZW50aWNhdGVSZXNwb25zZRIdCgp1c2VyX3Rva2VuGAEgASgJUgl1c2VyVG9rZW4SOQoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWV4cGlyZXNBdA==');
+final $typed_data.Uint8List authenticateResponseDescriptor = $convert.base64Decode('ChRBdXRoZW50aWNhdGVSZXNwb25zZRIdCgp1c2VyX3Rva2VuGAEgASgJUgl1c2VyVG9rZW4SOQoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWV4cGlyZXNBdBIXCgd1c2VyX2lkGAMgASgJUgZ1c2VySWQSIwoNcmVmcmVzaF90b2tlbhgEIAEoCVIMcmVmcmVzaFRva2Vu');
 @$core.Deprecated('Use countryDescriptor instead')
 const Country$json = const {
   '1': 'Country',
@@ -561,11 +568,23 @@ const Group$json = const {
     const {'1': 'edit_history', '3': 7, '4': 3, '5': 11, '6': '.sil.starfish.Edit', '10': 'editHistory'},
     const {'1': 'description', '3': 8, '4': 1, '5': 9, '10': 'description'},
     const {'1': 'link_email', '3': 9, '4': 1, '5': 9, '10': 'linkEmail'},
+    const {'1': 'languages', '3': 10, '4': 3, '5': 11, '6': '.sil.starfish.Group.LanguagesEntry', '10': 'languages'},
   ],
+  '3': const [Group_LanguagesEntry$json],
+};
+
+@$core.Deprecated('Use groupDescriptor instead')
+const Group_LanguagesEntry$json = const {
+  '1': 'LanguagesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 9, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 /// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxI1CgxlZGl0X2hpc3RvcnkYByADKAsyEi5zaWwuc3RhcmZpc2guRWRpdFILZWRpdEhpc3RvcnkSIAoLZGVzY3JpcHRpb24YCCABKAlSC2Rlc2NyaXB0aW9uEh0KCmxpbmtfZW1haWwYCSABKAlSCWxpbmtFbWFpbA==');
+final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxI1CgxlZGl0X2hpc3RvcnkYByADKAsyEi5zaWwuc3RhcmZpc2guRWRpdFILZWRpdEhpc3RvcnkSIAoLZGVzY3JpcHRpb24YCCABKAlSC2Rlc2NyaXB0aW9uEh0KCmxpbmtfZW1haWwYCSABKAlSCWxpbmtFbWFpbBJACglsYW5ndWFnZXMYCiADKAsyIi5zaWwuc3RhcmZpc2guR3JvdXAuTGFuZ3VhZ2VzRW50cnlSCWxhbmd1YWdlcxo8Cg5MYW5ndWFnZXNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgB');
 @$core.Deprecated('Use groupEvaluationDescriptor instead')
 const GroupEvaluation$json = const {
   '1': 'GroupEvaluation',
@@ -783,8 +802,20 @@ const Material$json = const {
     const {'1': 'date_created', '3': 15, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'dateCreated'},
     const {'1': 'date_updated', '3': 16, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'dateUpdated'},
     const {'1': 'edit_history', '3': 17, '4': 3, '5': 11, '6': '.sil.starfish.Edit', '10': 'editHistory'},
+    const {'1': 'languages', '3': 18, '4': 3, '5': 11, '6': '.sil.starfish.Material.LanguagesEntry', '10': 'languages'},
   ],
+  '3': const [Material_LanguagesEntry$json],
   '4': const [Material_Status$json, Material_Visibility$json, Material_Editability$json],
+};
+
+@$core.Deprecated('Use materialDescriptor instead')
+const Material_LanguagesEntry$json = const {
+  '1': 'LanguagesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 9, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 @$core.Deprecated('Use materialDescriptor instead')
@@ -819,7 +850,7 @@ const Material_Editability$json = const {
 };
 
 /// Descriptor for `Material`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List materialDescriptor = $convert.base64Decode('CghNYXRlcmlhbBIOCgJpZBgBIAEoCVICaWQSHQoKY3JlYXRvcl9pZBgCIAEoCVIJY3JlYXRvcklkEjUKBnN0YXR1cxgDIAEoDjIdLnNpbC5zdGFyZmlzaC5NYXRlcmlhbC5TdGF0dXNSBnN0YXR1cxJBCgp2aXNpYmlsaXR5GAQgASgOMiEuc2lsLnN0YXJmaXNoLk1hdGVyaWFsLlZpc2liaWxpdHlSCnZpc2liaWxpdHkSRAoLZWRpdGFiaWxpdHkYBSABKA4yIi5zaWwuc3RhcmZpc2guTWF0ZXJpYWwuRWRpdGFiaWxpdHlSC2VkaXRhYmlsaXR5EhQKBXRpdGxlGAYgASgJUgV0aXRsZRIgCgtkZXNjcmlwdGlvbhgHIAEoCVILZGVzY3JpcHRpb24SJwoPdGFyZ2V0X2F1ZGllbmNlGAggASgJUg50YXJnZXRBdWRpZW5jZRIQCgN1cmwYCSABKAlSA3VybBIUCgVmaWxlcxgKIAMoCVIFZmlsZXMSIQoMbGFuZ3VhZ2VfaWRzGAsgAygJUgtsYW5ndWFnZUlkcxIZCgh0eXBlX2lkcxgMIAMoCVIHdHlwZUlkcxIWCgZ0b3BpY3MYDSADKAlSBnRvcGljcxI8CglmZWVkYmFja3MYDiADKAsyHi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxGZWVkYmFja1IJZmVlZGJhY2tzEjQKDGRhdGVfY3JlYXRlZBgPIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVDcmVhdGVkEjQKDGRhdGVfdXBkYXRlZBgQIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVVcGRhdGVkEjUKDGVkaXRfaGlzdG9yeRgRIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeSI6CgZTdGF0dXMSFgoSVU5TUEVDSUZJRURfU1RBVFVTEAASCgoGQUNUSVZFEAESDAoISU5BQ1RJVkUQAiJYCgpWaXNpYmlsaXR5EhoKFlVOU1BFQ0lGSUVEX1ZJU0lCSUxJVFkQABIQCgxDUkVBVE9SX1ZJRVcQARIOCgpHUk9VUF9WSUVXEAISDAoIQUxMX1ZJRVcQAyJMCgtFZGl0YWJpbGl0eRIbChdVTlNQRUNJRklFRF9FRElUQUJJTElUWRAAEhAKDENSRUFUT1JfRURJVBABEg4KCkdST1VQX0VESVQQAg==');
+final $typed_data.Uint8List materialDescriptor = $convert.base64Decode('CghNYXRlcmlhbBIOCgJpZBgBIAEoCVICaWQSHQoKY3JlYXRvcl9pZBgCIAEoCVIJY3JlYXRvcklkEjUKBnN0YXR1cxgDIAEoDjIdLnNpbC5zdGFyZmlzaC5NYXRlcmlhbC5TdGF0dXNSBnN0YXR1cxJBCgp2aXNpYmlsaXR5GAQgASgOMiEuc2lsLnN0YXJmaXNoLk1hdGVyaWFsLlZpc2liaWxpdHlSCnZpc2liaWxpdHkSRAoLZWRpdGFiaWxpdHkYBSABKA4yIi5zaWwuc3RhcmZpc2guTWF0ZXJpYWwuRWRpdGFiaWxpdHlSC2VkaXRhYmlsaXR5EhQKBXRpdGxlGAYgASgJUgV0aXRsZRIgCgtkZXNjcmlwdGlvbhgHIAEoCVILZGVzY3JpcHRpb24SJwoPdGFyZ2V0X2F1ZGllbmNlGAggASgJUg50YXJnZXRBdWRpZW5jZRIQCgN1cmwYCSABKAlSA3VybBIUCgVmaWxlcxgKIAMoCVIFZmlsZXMSIQoMbGFuZ3VhZ2VfaWRzGAsgAygJUgtsYW5ndWFnZUlkcxIZCgh0eXBlX2lkcxgMIAMoCVIHdHlwZUlkcxIWCgZ0b3BpY3MYDSADKAlSBnRvcGljcxI8CglmZWVkYmFja3MYDiADKAsyHi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxGZWVkYmFja1IJZmVlZGJhY2tzEjQKDGRhdGVfY3JlYXRlZBgPIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVDcmVhdGVkEjQKDGRhdGVfdXBkYXRlZBgQIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVVcGRhdGVkEjUKDGVkaXRfaGlzdG9yeRgRIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeRJDCglsYW5ndWFnZXMYEiADKAsyJS5zaWwuc3RhcmZpc2guTWF0ZXJpYWwuTGFuZ3VhZ2VzRW50cnlSCWxhbmd1YWdlcxo8Cg5MYW5ndWFnZXNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgBIjoKBlN0YXR1cxIWChJVTlNQRUNJRklFRF9TVEFUVVMQABIKCgZBQ1RJVkUQARIMCghJTkFDVElWRRACIlgKClZpc2liaWxpdHkSGgoWVU5TUEVDSUZJRURfVklTSUJJTElUWRAAEhAKDENSRUFUT1JfVklFVxABEg4KCkdST1VQX1ZJRVcQAhIMCghBTExfVklFVxADIkwKC0VkaXRhYmlsaXR5EhsKF1VOU1BFQ0lGSUVEX0VESVRBQklMSVRZEAASEAoMQ1JFQVRPUl9FRElUEAESDgoKR1JPVVBfRURJVBAC');
 @$core.Deprecated('Use materialFeedbackDescriptor instead')
 const MaterialFeedback$json = const {
   '1': 'MaterialFeedback',
@@ -867,6 +898,17 @@ const MaterialType$json = const {
 
 /// Descriptor for `MaterialType`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List materialTypeDescriptor = $convert.base64Decode('CgxNYXRlcmlhbFR5cGUSDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWU=');
+@$core.Deprecated('Use refreshSessionRequestDescriptor instead')
+const RefreshSessionRequest$json = const {
+  '1': 'RefreshSessionRequest',
+  '2': const [
+    const {'1': 'user_id', '3': 1, '4': 1, '5': 9, '10': 'userId'},
+    const {'1': 'refresh_token', '3': 2, '4': 1, '5': 9, '10': 'refreshToken'},
+  ],
+};
+
+/// Descriptor for `RefreshSessionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List refreshSessionRequestDescriptor = $convert.base64Decode('ChVSZWZyZXNoU2Vzc2lvblJlcXVlc3QSFwoHdXNlcl9pZBgBIAEoCVIGdXNlcklkEiMKDXJlZnJlc2hfdG9rZW4YAiABKAlSDHJlZnJlc2hUb2tlbg==');
 @$core.Deprecated('Use teacherResponseDescriptor instead')
 const TeacherResponse$json = const {
   '1': 'TeacherResponse',
@@ -927,3 +969,104 @@ const User_Status$json = const {
 
 /// Descriptor for `User`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userDescriptor = $convert.base64Decode('CgRVc2VyEg4KAmlkGAEgASgJUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEhQKBXBob25lGAMgASgJUgVwaG9uZRIfCgtjb3VudHJ5X2lkcxgEIAMoCVIKY291bnRyeUlkcxIhCgxsYW5ndWFnZV9pZHMYBSADKAlSC2xhbmd1YWdlSWRzEh8KC2xpbmtfZ3JvdXBzGAYgASgIUgpsaW5rR3JvdXBzEi8KBmdyb3VwcxgHIAMoCzIXLnNpbC5zdGFyZmlzaC5Hcm91cFVzZXJSBmdyb3VwcxIyCgdhY3Rpb25zGAggAygLMhguc2lsLnN0YXJmaXNoLkFjdGlvblVzZXJSB2FjdGlvbnMSSQoUc2VsZWN0ZWRfYWN0aW9uc190YWIYCSABKA4yFy5zaWwuc3RhcmZpc2guQWN0aW9uVGFiUhJzZWxlY3RlZEFjdGlvbnNUYWISSgoUc2VsZWN0ZWRfcmVzdWx0c190YWIYCiABKA4yGC5zaWwuc3RhcmZpc2guUmVzdWx0c1RhYlISc2VsZWN0ZWRSZXN1bHRzVGFiEigKEHBob25lX2NvdW50cnlfaWQYCyABKAlSDnBob25lQ291bnRyeUlkEiMKDWRpYWxsaW5nX2NvZGUYDCABKAlSDGRpYWxsaW5nQ29kZRIxCgZzdGF0dXMYDSABKA4yGS5zaWwuc3RhcmZpc2guVXNlci5TdGF0dXNSBnN0YXR1cxIdCgpjcmVhdG9yX2lkGA4gASgJUgljcmVhdG9ySWQiQQoGU3RhdHVzEhYKElNUQVRVU19VTlNQRUNJRklFRBAAEgoKBkFDVElWRRABEhMKD0FDQ09VTlRfUEVORElORxAC');
+const $core.Map<$core.String, $core.dynamic> StarfishServiceBase$json = const {
+  '1': 'Starfish',
+  '2': const [
+    const {'1': 'Authenticate', '2': '.sil.starfish.AuthenticateRequest', '3': '.sil.starfish.AuthenticateResponse', '4': const {}},
+    const {'1': 'CreateMaterialFeedbacks', '2': '.sil.starfish.CreateMaterialFeedbacksRequest', '3': '.sil.starfish.CreateMaterialFeedbacksResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateActions', '2': '.sil.starfish.CreateUpdateActionsRequest', '3': '.sil.starfish.CreateUpdateActionsResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateActionUsers', '2': '.sil.starfish.CreateUpdateActionUserRequest', '3': '.sil.starfish.CreateUpdateActionUserResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateGroupEvaluations', '2': '.sil.starfish.CreateUpdateGroupEvaluationRequest', '3': '.sil.starfish.CreateUpdateGroupEvaluationResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateGroups', '2': '.sil.starfish.CreateUpdateGroupsRequest', '3': '.sil.starfish.CreateUpdateGroupsResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateGroupUsers', '2': '.sil.starfish.CreateUpdateGroupUsersRequest', '3': '.sil.starfish.CreateUpdateGroupUsersResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateLearnerEvaluations', '2': '.sil.starfish.CreateUpdateLearnerEvaluationRequest', '3': '.sil.starfish.CreateUpdateLearnerEvaluationResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateMaterials', '2': '.sil.starfish.CreateUpdateMaterialsRequest', '3': '.sil.starfish.CreateUpdateMaterialsResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateTeacherResponses', '2': '.sil.starfish.CreateUpdateTeacherResponseRequest', '3': '.sil.starfish.CreateUpdateTeacherResponseResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'CreateUpdateUsers', '2': '.sil.starfish.CreateUpdateUserRequest', '3': '.sil.starfish.CreateUpdateUserResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'DeleteActions', '2': '.sil.starfish.DeleteActionRequest', '3': '.sil.starfish.DeleteActionResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'DeleteGroupUsers', '2': '.sil.starfish.GroupUser', '3': '.sil.starfish.DeleteGroupUsersResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'GetCurrentUser', '2': '.google.protobuf.Empty', '3': '.sil.starfish.User', '4': const {}},
+    const {'1': 'ListActions', '2': '.sil.starfish.ListActionsRequest', '3': '.sil.starfish.Action', '4': const {}, '6': true},
+    const {'1': 'ListAllCountries', '2': '.sil.starfish.ListAllCountriesRequest', '3': '.sil.starfish.Country', '4': const {}, '6': true},
+    const {'1': 'ListEvaluationCategories', '2': '.sil.starfish.ListEvaluationCategoriesRequest', '3': '.sil.starfish.EvaluationCategory', '4': const {}, '6': true},
+    const {'1': 'ListGroups', '2': '.sil.starfish.ListGroupsRequest', '3': '.sil.starfish.Group', '4': const {}, '6': true},
+    const {'1': 'ListGroupEvaluations', '2': '.sil.starfish.ListGroupEvaluationsRequest', '3': '.sil.starfish.GroupEvaluation', '4': const {}, '6': true},
+    const {'1': 'ListLanguages', '2': '.sil.starfish.ListLanguagesRequest', '3': '.sil.starfish.Language', '4': const {}, '6': true},
+    const {'1': 'ListLearnerEvaluations', '2': '.sil.starfish.ListLearnerEvaluationsRequest', '3': '.sil.starfish.LearnerEvaluation', '4': const {}, '6': true},
+    const {'1': 'ListMaterials', '2': '.sil.starfish.ListMaterialsRequest', '3': '.sil.starfish.Material', '4': const {}, '6': true},
+    const {'1': 'ListMaterialTopics', '2': '.sil.starfish.ListMaterialTopicsRequest', '3': '.sil.starfish.MaterialTopic', '4': const {}, '6': true},
+    const {'1': 'ListMaterialTypes', '2': '.sil.starfish.ListMaterialTypesRequest', '3': '.sil.starfish.MaterialType', '4': const {}, '6': true},
+    const {'1': 'ListTeacherResponses', '2': '.sil.starfish.ListTeacherResponsesRequest', '3': '.sil.starfish.TeacherResponse', '4': const {}, '6': true},
+    const {'1': 'ListUsers', '2': '.sil.starfish.ListUsersRequest', '3': '.sil.starfish.User', '4': const {}, '6': true},
+    const {'1': 'RefreshSession', '2': '.sil.starfish.RefreshSessionRequest', '3': '.sil.starfish.AuthenticateResponse', '4': const {}},
+    const {'1': 'UpdateCurrentUser', '2': '.sil.starfish.UpdateCurrentUserRequest', '3': '.sil.starfish.User', '4': const {}},
+  ],
+};
+
+@$core.Deprecated('Use starfishServiceDescriptor instead')
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> StarfishServiceBase$messageJson = const {
+  '.sil.starfish.AuthenticateRequest': AuthenticateRequest$json,
+  '.sil.starfish.AuthenticateResponse': AuthenticateResponse$json,
+  '.google.protobuf.Timestamp': $1.Timestamp$json,
+  '.sil.starfish.CreateMaterialFeedbacksRequest': CreateMaterialFeedbacksRequest$json,
+  '.sil.starfish.MaterialFeedback': MaterialFeedback$json,
+  '.sil.starfish.CreateMaterialFeedbacksResponse': CreateMaterialFeedbacksResponse$json,
+  '.sil.starfish.CreateUpdateActionsRequest': CreateUpdateActionsRequest$json,
+  '.sil.starfish.Action': Action$json,
+  '.google.type.Date': $0.Date$json,
+  '.sil.starfish.Edit': Edit$json,
+  '.google.protobuf.FieldMask': $2.FieldMask$json,
+  '.sil.starfish.CreateUpdateActionsResponse': CreateUpdateActionsResponse$json,
+  '.sil.starfish.CreateUpdateActionUserRequest': CreateUpdateActionUserRequest$json,
+  '.sil.starfish.ActionUser': ActionUser$json,
+  '.sil.starfish.CreateUpdateActionUserResponse': CreateUpdateActionUserResponse$json,
+  '.sil.starfish.CreateUpdateGroupEvaluationRequest': CreateUpdateGroupEvaluationRequest$json,
+  '.sil.starfish.GroupEvaluation': GroupEvaluation$json,
+  '.sil.starfish.CreateUpdateGroupEvaluationResponse': CreateUpdateGroupEvaluationResponse$json,
+  '.sil.starfish.CreateUpdateGroupsRequest': CreateUpdateGroupsRequest$json,
+  '.sil.starfish.Group': Group$json,
+  '.sil.starfish.GroupUser': GroupUser$json,
+  '.sil.starfish.Group.LanguagesEntry': Group_LanguagesEntry$json,
+  '.sil.starfish.CreateUpdateGroupsResponse': CreateUpdateGroupsResponse$json,
+  '.sil.starfish.CreateUpdateGroupUsersRequest': CreateUpdateGroupUsersRequest$json,
+  '.sil.starfish.CreateUpdateGroupUsersResponse': CreateUpdateGroupUsersResponse$json,
+  '.sil.starfish.CreateUpdateLearnerEvaluationRequest': CreateUpdateLearnerEvaluationRequest$json,
+  '.sil.starfish.LearnerEvaluation': LearnerEvaluation$json,
+  '.sil.starfish.CreateUpdateLearnerEvaluationResponse': CreateUpdateLearnerEvaluationResponse$json,
+  '.sil.starfish.CreateUpdateMaterialsRequest': CreateUpdateMaterialsRequest$json,
+  '.sil.starfish.Material': Material$json,
+  '.sil.starfish.Material.LanguagesEntry': Material_LanguagesEntry$json,
+  '.sil.starfish.CreateUpdateMaterialsResponse': CreateUpdateMaterialsResponse$json,
+  '.sil.starfish.CreateUpdateTeacherResponseRequest': CreateUpdateTeacherResponseRequest$json,
+  '.sil.starfish.TeacherResponse': TeacherResponse$json,
+  '.sil.starfish.CreateUpdateTeacherResponseResponse': CreateUpdateTeacherResponseResponse$json,
+  '.sil.starfish.CreateUpdateUserRequest': CreateUpdateUserRequest$json,
+  '.sil.starfish.User': User$json,
+  '.sil.starfish.CreateUpdateUserResponse': CreateUpdateUserResponse$json,
+  '.sil.starfish.DeleteActionRequest': DeleteActionRequest$json,
+  '.sil.starfish.DeleteActionResponse': DeleteActionResponse$json,
+  '.sil.starfish.DeleteGroupUsersResponse': DeleteGroupUsersResponse$json,
+  '.google.protobuf.Empty': $3.Empty$json,
+  '.sil.starfish.ListActionsRequest': ListActionsRequest$json,
+  '.sil.starfish.ListAllCountriesRequest': ListAllCountriesRequest$json,
+  '.sil.starfish.Country': Country$json,
+  '.sil.starfish.ListEvaluationCategoriesRequest': ListEvaluationCategoriesRequest$json,
+  '.sil.starfish.EvaluationCategory': EvaluationCategory$json,
+  '.sil.starfish.ListGroupsRequest': ListGroupsRequest$json,
+  '.sil.starfish.ListGroupEvaluationsRequest': ListGroupEvaluationsRequest$json,
+  '.sil.starfish.ListLanguagesRequest': ListLanguagesRequest$json,
+  '.sil.starfish.Language': Language$json,
+  '.sil.starfish.ListLearnerEvaluationsRequest': ListLearnerEvaluationsRequest$json,
+  '.sil.starfish.ListMaterialsRequest': ListMaterialsRequest$json,
+  '.sil.starfish.ListMaterialTopicsRequest': ListMaterialTopicsRequest$json,
+  '.sil.starfish.MaterialTopic': MaterialTopic$json,
+  '.sil.starfish.ListMaterialTypesRequest': ListMaterialTypesRequest$json,
+  '.sil.starfish.MaterialType': MaterialType$json,
+  '.sil.starfish.ListTeacherResponsesRequest': ListTeacherResponsesRequest$json,
+  '.sil.starfish.ListUsersRequest': ListUsersRequest$json,
+  '.sil.starfish.RefreshSessionRequest': RefreshSessionRequest$json,
+  '.sil.starfish.UpdateCurrentUserRequest': UpdateCurrentUserRequest$json,
+};
+
+/// Descriptor for `Starfish`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+final $typed_data.Uint8List starfishServiceDescriptor = $convert.base64Decode('CghTdGFyZmlzaBJXCgxBdXRoZW50aWNhdGUSIS5zaWwuc3RhcmZpc2guQXV0aGVudGljYXRlUmVxdWVzdBoiLnNpbC5zdGFyZmlzaC5BdXRoZW50aWNhdGVSZXNwb25zZSIAEnwKF0NyZWF0ZU1hdGVyaWFsRmVlZGJhY2tzEiwuc2lsLnN0YXJmaXNoLkNyZWF0ZU1hdGVyaWFsRmVlZGJhY2tzUmVxdWVzdBotLnNpbC5zdGFyZmlzaC5DcmVhdGVNYXRlcmlhbEZlZWRiYWNrc1Jlc3BvbnNlIgAoATABEnAKE0NyZWF0ZVVwZGF0ZUFjdGlvbnMSKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1JlcXVlc3QaKS5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1Jlc3BvbnNlIgAoATABEnoKF0NyZWF0ZVVwZGF0ZUFjdGlvblVzZXJzEisuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvblVzZXJSZXF1ZXN0Giwuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvblVzZXJSZXNwb25zZSIAKAEwARKJAQocQ3JlYXRlVXBkYXRlR3JvdXBFdmFsdWF0aW9ucxIwLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cEV2YWx1YXRpb25SZXF1ZXN0GjEuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3VwRXZhbHVhdGlvblJlc3BvbnNlIgAoATABEm0KEkNyZWF0ZVVwZGF0ZUdyb3VwcxInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cHNSZXF1ZXN0Giguc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3Vwc1Jlc3BvbnNlIgAoATABEnkKFkNyZWF0ZVVwZGF0ZUdyb3VwVXNlcnMSKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBVc2Vyc1JlcXVlc3QaLC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBVc2Vyc1Jlc3BvbnNlIgAoATABEo8BCh5DcmVhdGVVcGRhdGVMZWFybmVyRXZhbHVhdGlvbnMSMi5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTGVhcm5lckV2YWx1YXRpb25SZXF1ZXN0GjMuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUxlYXJuZXJFdmFsdWF0aW9uUmVzcG9uc2UiACgBMAESdgoVQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzEiouc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU1hdGVyaWFsc1JlcXVlc3QaKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzUmVzcG9uc2UiACgBMAESiQEKHENyZWF0ZVVwZGF0ZVRlYWNoZXJSZXNwb25zZXMSMC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlVGVhY2hlclJlc3BvbnNlUmVxdWVzdBoxLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVUZWFjaGVyUmVzcG9uc2VSZXNwb25zZSIAKAEwARJoChFDcmVhdGVVcGRhdGVVc2VycxIlLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVxdWVzdBomLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVzcG9uc2UiACgBMAESXAoNRGVsZXRlQWN0aW9ucxIhLnNpbC5zdGFyZmlzaC5EZWxldGVBY3Rpb25SZXF1ZXN0GiIuc2lsLnN0YXJmaXNoLkRlbGV0ZUFjdGlvblJlc3BvbnNlIgAoATABElkKEERlbGV0ZUdyb3VwVXNlcnMSFy5zaWwuc3RhcmZpc2guR3JvdXBVc2VyGiYuc2lsLnN0YXJmaXNoLkRlbGV0ZUdyb3VwVXNlcnNSZXNwb25zZSIAKAEwARI+Cg5HZXRDdXJyZW50VXNlchIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRoSLnNpbC5zdGFyZmlzaC5Vc2VyIgASSQoLTGlzdEFjdGlvbnMSIC5zaWwuc3RhcmZpc2guTGlzdEFjdGlvbnNSZXF1ZXN0GhQuc2lsLnN0YXJmaXNoLkFjdGlvbiIAMAESVAoQTGlzdEFsbENvdW50cmllcxIlLnNpbC5zdGFyZmlzaC5MaXN0QWxsQ291bnRyaWVzUmVxdWVzdBoVLnNpbC5zdGFyZmlzaC5Db3VudHJ5IgAwARJvChhMaXN0RXZhbHVhdGlvbkNhdGVnb3JpZXMSLS5zaWwuc3RhcmZpc2guTGlzdEV2YWx1YXRpb25DYXRlZ29yaWVzUmVxdWVzdBogLnNpbC5zdGFyZmlzaC5FdmFsdWF0aW9uQ2F0ZWdvcnkiADABEkYKCkxpc3RHcm91cHMSHy5zaWwuc3RhcmZpc2guTGlzdEdyb3Vwc1JlcXVlc3QaEy5zaWwuc3RhcmZpc2guR3JvdXAiADABEmQKFExpc3RHcm91cEV2YWx1YXRpb25zEikuc2lsLnN0YXJmaXNoLkxpc3RHcm91cEV2YWx1YXRpb25zUmVxdWVzdBodLnNpbC5zdGFyZmlzaC5Hcm91cEV2YWx1YXRpb24iADABEk8KDUxpc3RMYW5ndWFnZXMSIi5zaWwuc3RhcmZpc2guTGlzdExhbmd1YWdlc1JlcXVlc3QaFi5zaWwuc3RhcmZpc2guTGFuZ3VhZ2UiADABEmoKFkxpc3RMZWFybmVyRXZhbHVhdGlvbnMSKy5zaWwuc3RhcmZpc2guTGlzdExlYXJuZXJFdmFsdWF0aW9uc1JlcXVlc3QaHy5zaWwuc3RhcmZpc2guTGVhcm5lckV2YWx1YXRpb24iADABEk8KDUxpc3RNYXRlcmlhbHMSIi5zaWwuc3RhcmZpc2guTGlzdE1hdGVyaWFsc1JlcXVlc3QaFi5zaWwuc3RhcmZpc2guTWF0ZXJpYWwiADABEl4KEkxpc3RNYXRlcmlhbFRvcGljcxInLnNpbC5zdGFyZmlzaC5MaXN0TWF0ZXJpYWxUb3BpY3NSZXF1ZXN0Ghsuc2lsLnN0YXJmaXNoLk1hdGVyaWFsVG9waWMiADABElsKEUxpc3RNYXRlcmlhbFR5cGVzEiYuc2lsLnN0YXJmaXNoLkxpc3RNYXRlcmlhbFR5cGVzUmVxdWVzdBoaLnNpbC5zdGFyZmlzaC5NYXRlcmlhbFR5cGUiADABEmQKFExpc3RUZWFjaGVyUmVzcG9uc2VzEikuc2lsLnN0YXJmaXNoLkxpc3RUZWFjaGVyUmVzcG9uc2VzUmVxdWVzdBodLnNpbC5zdGFyZmlzaC5UZWFjaGVyUmVzcG9uc2UiADABEkMKCUxpc3RVc2VycxIeLnNpbC5zdGFyZmlzaC5MaXN0VXNlcnNSZXF1ZXN0GhIuc2lsLnN0YXJmaXNoLlVzZXIiADABElsKDlJlZnJlc2hTZXNzaW9uEiMuc2lsLnN0YXJmaXNoLlJlZnJlc2hTZXNzaW9uUmVxdWVzdBoiLnNpbC5zdGFyZmlzaC5BdXRoZW50aWNhdGVSZXNwb25zZSIAElEKEVVwZGF0ZUN1cnJlbnRVc2VyEiYuc2lsLnN0YXJmaXNoLlVwZGF0ZUN1cnJlbnRVc2VyUmVxdWVzdBoSLnNpbC5zdGFyZmlzaC5Vc2VyIgA=');
