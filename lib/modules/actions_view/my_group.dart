@@ -905,6 +905,7 @@ class MyGroupActionListItem extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(left: 10.w),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -919,9 +920,9 @@ class MyGroupActionListItem extends StatelessWidget {
                         padding: EdgeInsets.only(left: 8.0, right: 8),
                         child: Text(
                           action.name ?? '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: false,
+                          //maxLines: 1,
+                          //overflow: TextOverflow.ellipsis,
+                          //softWrap: false,
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 19.sp,

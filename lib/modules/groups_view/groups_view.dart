@@ -469,28 +469,24 @@ class GroupListItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              height: 20.h,
+            IntrinsicHeight(
+              //height: 20.h,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                      child: Container(
-                        width: 150.w,
-                        child: Text(
-                          '${group.name}',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.txtFieldTextColor,
-                          ),
+                      padding: EdgeInsets.only(right: 8.w,),
+                      child: Text(
+                        '${group.name}',
+                        //overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.txtFieldTextColor,
                         ),
                       ),
                     ),
