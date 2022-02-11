@@ -274,7 +274,7 @@
 
   "na": "प्रयोग नहीं किया",
   "actionStatusDone": "मैंने यह किया है",
-  "actionStatusNotDone": "मैंने अभी तक नहीं किया",
+  "actionStatusNotDone": "मैंने नहीं किया",
   "actionStatusOverdue": "अतिदेय",
 
   "groupActionStatusDone": "इसे करें",

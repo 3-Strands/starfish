@@ -274,7 +274,7 @@
 
   "na": "NA",
   "actionStatusDone": "I did it",
-  "actionStatusNotDone": "I didn't do it yet",
+  "actionStatusNotDone": "I didn't do it",
   "actionStatusOverdue": "Overdue",
 
   "groupActionStatusDone": "Did it",
