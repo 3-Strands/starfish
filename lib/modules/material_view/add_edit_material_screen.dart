@@ -709,7 +709,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList();
     _hiveMaterial.visibility = _visibleTo != null
         ? _visibleTo!.value.value
-        : Material_Visibility.CREATOR_VIEW.value;
+        : Material_Visibility.GROUP_VIEW.value;
     _hiveMaterial.editability = _editableBy != null
         ? _editableBy!.value.value
         : Material_Editability.CREATOR_EDIT.value;

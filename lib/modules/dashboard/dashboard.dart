@@ -15,6 +15,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import '../material_view/materials_view.dart';
@@ -62,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
       },
       SyncService.kUpdateCurrentUser: (HiveCurrentUser, __) {
         debugPrint('Boradcast Receiver: kUpdateCurrentUser');
-        SyncService().syncCurrentUser();
+        SyncService().syncLocalCurrentUser(kCurrentUserFieldMask);
       },
       SyncService.kUnauthenticated: (value, callback) {
         debugPrint('Boradcast Receiver: kUnauthenticated');
