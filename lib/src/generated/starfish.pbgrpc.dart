@@ -162,6 +162,12 @@ class StarfishClient extends $grpc.Client {
       '/sil.starfish.Starfish/ListUsers',
       ($0.ListUsersRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.User.fromBuffer(value));
+  static final _$refreshSession =
+      $grpc.ClientMethod<$0.RefreshSessionRequest, $0.AuthenticateResponse>(
+          '/sil.starfish.Starfish/RefreshSession',
+          ($0.RefreshSessionRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.AuthenticateResponse.fromBuffer(value));
   static final _$updateCurrentUser =
       $grpc.ClientMethod<$0.UpdateCurrentUserRequest, $0.User>(
           '/sil.starfish.Starfish/UpdateCurrentUser',
@@ -362,6 +368,12 @@ class StarfishClient extends $grpc.Client {
     return $createStreamingCall(
         _$listUsers, $async.Stream.fromIterable([request]),
         options: options);
+  }
+
+  $grpc.ResponseFuture<$0.AuthenticateResponse> refreshSession(
+      $0.RefreshSessionRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$refreshSession, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.User> updateCurrentUser(
@@ -600,6 +612,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.ListUsersRequest.fromBuffer(value),
         ($0.User value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.RefreshSessionRequest, $0.AuthenticateResponse>(
+            'RefreshSession',
+            refreshSession_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $0.RefreshSessionRequest.fromBuffer(value),
+            ($0.AuthenticateResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UpdateCurrentUserRequest, $0.User>(
         'UpdateCurrentUser',
         updateCurrentUser_Pre,
@@ -685,6 +706,12 @@ abstract class StarfishServiceBase extends $grpc.Service {
     yield* listUsers(call, await request);
   }
 
+  $async.Future<$0.AuthenticateResponse> refreshSession_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.RefreshSessionRequest> request) async {
+    return refreshSession(call, await request);
+  }
+
   $async.Future<$0.User> updateCurrentUser_Pre($grpc.ServiceCall call,
       $async.Future<$0.UpdateCurrentUserRequest> request) async {
     return updateCurrentUser(call, await request);
@@ -752,6 +779,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.ListTeacherResponsesRequest request);
   $async.Stream<$0.User> listUsers(
       $grpc.ServiceCall call, $0.ListUsersRequest request);
+  $async.Future<$0.AuthenticateResponse> refreshSession(
+      $grpc.ServiceCall call, $0.RefreshSessionRequest request);
   $async.Future<$0.User> updateCurrentUser(
       $grpc.ServiceCall call, $0.UpdateCurrentUserRequest request);
 }
