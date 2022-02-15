@@ -555,10 +555,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       maxLines: null,
                       controller: _titleController,
                       style: formTitleTextStyle,
-                      decoration: InputDecoration(floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: AppLocalizations.of(context)!.hintGroupName,
-                      labelStyle: formTitleHintStyle,
-                      alignLabelWithHint: true,
+                      decoration: InputDecoration(
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        labelText: AppLocalizations.of(context)!.hintGroupName,
+                        labelStyle: formTitleHintStyle,
+                        alignLabelWithHint: true,
                         // hintText: AppLocalizations.of(context)!.hintGroupName,
                         // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
@@ -592,7 +593,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText:AppLocalizations.of(context)!.hintGroupDescription, 
+                        labelText:
+                            AppLocalizations.of(context)!.hintGroupDescription,
                         labelStyle: formTitleHintStyle,
                         alignLabelWithHint: true,
                         // hintText:
@@ -616,7 +618,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Language(s) used
                   Text(
-                _isEditMode ? AppLocalizations.of(context)!.lanugagesUsed:   AppLocalizations.of(context)!.lanugagesUsedOptional,
+                    _isEditMode
+                        ? AppLocalizations.of(context)!.lanugagesUsed
+                        : AppLocalizations.of(context)!.lanugagesUsedOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -642,7 +646,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Evaluate Progress
                   Text(
-              _isEditMode ?     AppLocalizations.of(context)!.evaluateProgress :  AppLocalizations.of(context)!.evaluateProgressOptional,
+                    _isEditMode
+                        ? AppLocalizations.of(context)!.evaluateProgress
+                        : AppLocalizations.of(context)!
+                            .evaluateProgressOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -669,7 +676,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   SizedBox(height: 10.h),
                   Text(
                     AppLocalizations.of(context)!.hintEvaluateProgress,
-                    maxLines: 3,
                     textAlign: TextAlign.left,
                     style: italicDetailTextTextStyle,
                   ),
@@ -736,8 +742,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             keyboardType: TextInputType.text,
                             style: textFormFieldText,
                             decoration: InputDecoration(
-                              floatingLabelBehavior: FloatingLabelBehavior.never,
-                              labelText: AppLocalizations.of(context)!.hintPersonName,
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.never,
+                              labelText:
+                                  AppLocalizations.of(context)!.hintPersonName,
                               labelStyle: formTitleHintStyle,
                               alignLabelWithHint: true,
                               // hintText:
