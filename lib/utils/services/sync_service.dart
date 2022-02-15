@@ -39,6 +39,7 @@ import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/api_provider.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:synchronized/synchronized.dart';
@@ -168,9 +169,10 @@ class SyncService {
   }
 
   void syncAll() async {
+    syncCountries();
+
     try {
       showAlertFirstTime();
-      syncCountries();
       await syncLocalCurrentUser(kCurrentUserFieldMask);
       await syncLocalMaterialsToRemote();
 
@@ -702,7 +704,6 @@ class SyncService {
             .createUpdateGroup(_controller.stream)
             // ignore: invalid_return_type_for_catch_error
             .catchError(handleError);
-    ;
 
     groupBox.values
         .where((element) => element.isNew || element.isUpdated)
@@ -1096,7 +1097,7 @@ class SyncService {
     }
   }
 
-  void handleGrpcError(GrpcError error) {
+  void handleGrpcError(GrpcError error) async {
     debugPrint('grpcError: $error');
     StarfishSnackbar.showErrorMessage(
         NavigationService.navigatorKey.currentContext!,
@@ -1104,9 +1105,27 @@ class SyncService {
 
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
-      FBroadcast.instance().broadcast(
+      /*FBroadcast.instance().broadcast(
         SyncService.kUnauthenticated,
-      );
+      );*/
+      // Refresh Session
+      String _refreshToken = await StarfishSharedPreference().getRefreshToken();
+      String _userId = await StarfishSharedPreference().getSessionUserId();
+      ApiProvider()
+          .refreshSession(_refreshToken, _userId)
+          .then((AuthenticateResponse authenticateResponse) {
+        StarfishSharedPreference().setLoginStatus(true);
+        StarfishSharedPreference()
+            .setAccessToken(authenticateResponse.userToken);
+        StarfishSharedPreference()
+            .setRefreshToken(authenticateResponse.refreshToken);
+        StarfishSharedPreference()
+            .setSessionUserId(authenticateResponse.userId);
+
+        syncAll();
+      }).whenComplete(() {
+        debugPrint("Failed to refresh token");
+      });
     }
   }
 }

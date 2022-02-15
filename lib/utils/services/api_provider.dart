@@ -35,6 +35,16 @@ class ApiProvider {
     return client!.authenticate(request);
   }
 
+  Future<AuthenticateResponse> refreshSession(
+      String refreshToken, String userId) async {
+    var request =
+        RefreshSessionRequest(userId: userId, refreshToken: refreshToken);
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.refreshSession(request);
+  }
+
   Future<ResponseStream<Country>> listAllCountries() async {
     var request = ListAllCountriesRequest();
     if (client == null) {
