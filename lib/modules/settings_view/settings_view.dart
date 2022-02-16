@@ -1014,61 +1014,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {
-                          setState(() {
-                            _groups[index]['email'] = _emailController.text;
-                          });
-                          if (item['is_editing'] == false) {
+                          onTap: () {
                             setState(() {
-                              item['is_editing'] = !item['is_editing'];
+                              _groups[index]['email'] = _emailController.text;
                             });
-                          } else {
-                            if (_emailController.text == '') {
-                              Alerts.showMessageBox(
-                                  context: context,
-                                  title:
-                                      AppLocalizations.of(context)!.dialogAlert,
-                                  message:
-                                      AppLocalizations.of(context)!.emptyEmail,
-                                  positiveButtonText:
-                                      AppLocalizations.of(context)!.ok,
-                                  positiveActionCallback: () {});
-                            } else if (!_emailController.text.isValidEmail()) {
-                              Alerts.showMessageBox(
-                                  context: context,
-                                  title:
-                                      AppLocalizations.of(context)!.dialogAlert,
-                                  message: AppLocalizations.of(context)!
-                                      .alertInvalidEmaill,
-                                  positiveButtonText:
-                                      AppLocalizations.of(context)!.ok,
-                                  positiveActionCallback: () {});
-                            } else if (_emailController.text !=
-                                _confirmEmailController.text) {
-                              Alerts.showMessageBox(
-                                  context: context,
-                                  title:
-                                      AppLocalizations.of(context)!.dialogAlert,
-                                  message: AppLocalizations.of(context)!
-                                      .alertEmailDoNotMatch,
-                                  positiveButtonText:
-                                      AppLocalizations.of(context)!.ok,
-                                  positiveActionCallback: () {});
-                            } else {
-                              if (item['is_editing'] == true) {
-                                _updateGroupLinkedEmaill(_groups[index]['id'],
-                                    _groups[index]['email']);
-                              }
+                            if (item['is_editing'] == false) {
                               setState(() {
                                 item['is_editing'] = !item['is_editing'];
                               });
+                            } else {
+                              if (_emailController.text == '') {
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: AppLocalizations.of(context)!
+                                        .dialogAlert,
+                                    message: AppLocalizations.of(context)!
+                                        .emptyEmail,
+                                    positiveButtonText:
+                                        AppLocalizations.of(context)!.ok,
+                                    positiveActionCallback: () {});
+                              } else if (!_emailController.text
+                                  .isValidEmail()) {
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: AppLocalizations.of(context)!
+                                        .dialogAlert,
+                                    message: AppLocalizations.of(context)!
+                                        .alertInvalidEmaill,
+                                    positiveButtonText:
+                                        AppLocalizations.of(context)!.ok,
+                                    positiveActionCallback: () {});
+                              } else if (_emailController.text !=
+                                  _confirmEmailController.text) {
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: AppLocalizations.of(context)!
+                                        .dialogAlert,
+                                    message: AppLocalizations.of(context)!
+                                        .alertEmailDoNotMatch,
+                                    positiveButtonText:
+                                        AppLocalizations.of(context)!.ok,
+                                    positiveActionCallback: () {});
+                              } else {
+                                if (item['is_editing'] == true) {
+                                  _updateGroupLinkedEmaill(_groups[index]['id'],
+                                      _groups[index]['email']);
+                                }
+                                setState(() {
+                                  item['is_editing'] = !item['is_editing'];
+                                });
+                              }
                             }
-                          }
-                        },
-                        child: (item['is_editing'] == false)
-                            ? editButton()
-                            : saveButton(),
-                      ),
+                          },
+                          child: (item['is_editing'] == false)
+                              ? editButton()
+                              : saveButton()),
+                      SizedBox(width: 5),
+                      if (item["is_editing"] == true)
+                        InkWell(
+                          child: cancelButton(),
+                          onTap: () => setState(() {
+                            item["is_editing"] = false;
+                          }),
+                        ),
                     ],
                   ),
                   SizedBox(
@@ -1249,6 +1257,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Center(
         child: Text(
           AppLocalizations.of(context)!.save,
+          style: TextStyle(
+            fontSize: 17.sp,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container cancelButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        color: Colors.grey,
+      ),
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context)!.cancel,
           style: TextStyle(
             fontSize: 17.sp,
             color: Colors.white,
