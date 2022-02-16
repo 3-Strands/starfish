@@ -1097,7 +1097,7 @@ class SyncService {
     }
   }
 
-  void handleGrpcError(GrpcError error) async {
+  void handleGrpcError(GrpcError error, {Function()? callback}) async {
     debugPrint('grpcError: $error');
     StarfishSnackbar.showErrorMessage(
         NavigationService.navigatorKey.currentContext!,
@@ -1122,6 +1122,9 @@ class SyncService {
         StarfishSharedPreference()
             .setSessionUserId(authenticateResponse.userId);
 
+        if (callback != null) {
+          callback();
+        }
         syncAll();
       }).whenComplete(() {
         debugPrint("Failed to refresh token");
