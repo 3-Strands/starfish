@@ -272,7 +272,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _user.countryIds = value.countryIds;
       _currentUserBox.putAt(0, _user);
     }).onError((GrpcError error, stackTrace) {
-      handleGrpcError(error);
+      SyncService().handleGrpcError(error, callback: () {
+        print("Refresh Session Called");
+        updateCountries();
+      });
     }).whenComplete(() {
       EasyLoading.dismiss();
     });
@@ -291,18 +294,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     CurrentUserRepository()
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
-          (value) => {
-            bloc.materialBloc.selectedLanguages = _selectedLanguages,
-            _user.languageIds = value.languageIds,
-            _currentUserBox.putAt(0, _user),
-          },
-        )
-        .whenComplete(() {
+      (value) {
+        bloc.materialBloc.selectedLanguages = _selectedLanguages;
+        _user.languageIds = value.languageIds;
+        _currentUserBox.putAt(0, _user);
+      },
+    ).onError((GrpcError error, stackTrace) {
+      SyncService().handleGrpcError(error, callback: () {
+        print("Refresh Session Called");
+        updateLanguages(bloc);
+      });
+    }).whenComplete(() {
       EasyLoading.dismiss();
     });
   }
 
-  void handleGrpcError(GrpcError grpcError) {
+  /*void handleGrpcError(GrpcError grpcError) {
     if (grpcError.code == StatusCode.unauthenticated) {
       // StatusCode 16
       // Broadcast to sync the local changes with the server
@@ -310,7 +317,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SyncService.kUnauthenticated,
       );
     }
-  }
+  }*/
 
   Container _getNameSection() {
     return Container(

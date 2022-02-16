@@ -368,6 +368,8 @@ class AuthenticateResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AuthenticateResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userToken')
     ..aOM<$3.Timestamp>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expiresAt', subBuilder: $3.Timestamp.create)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'refreshToken')
     ..hasRequiredFields = false
   ;
 
@@ -375,6 +377,8 @@ class AuthenticateResponse extends $pb.GeneratedMessage {
   factory AuthenticateResponse({
     $core.String? userToken,
     $3.Timestamp? expiresAt,
+    $core.String? userId,
+    $core.String? refreshToken,
   }) {
     final _result = create();
     if (userToken != null) {
@@ -382,6 +386,12 @@ class AuthenticateResponse extends $pb.GeneratedMessage {
     }
     if (expiresAt != null) {
       _result.expiresAt = expiresAt;
+    }
+    if (userId != null) {
+      _result.userId = userId;
+    }
+    if (refreshToken != null) {
+      _result.refreshToken = refreshToken;
     }
     return _result;
   }
@@ -425,6 +435,24 @@ class AuthenticateResponse extends $pb.GeneratedMessage {
   void clearExpiresAt() => clearField(2);
   @$pb.TagNumber(2)
   $3.Timestamp ensureExpiresAt() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.String get userId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set userId($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasUserId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearUserId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get refreshToken => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set refreshToken($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasRefreshToken() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearRefreshToken() => clearField(4);
 }
 
 class Country extends $pb.GeneratedMessage {
@@ -2217,6 +2245,7 @@ class Group extends $pb.GeneratedMessage {
     ..pc<Edit>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'editHistory', $pb.PbFieldType.PM, subBuilder: Edit.create)
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'linkEmail')
+    ..m<$core.String, $core.String>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'languages', entryClassName: 'Group.LanguagesEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('sil.starfish'))
     ..hasRequiredFields = false
   ;
 
@@ -2230,6 +2259,7 @@ class Group extends $pb.GeneratedMessage {
     $core.Iterable<Edit>? editHistory,
     $core.String? description,
     $core.String? linkEmail,
+    $core.Map<$core.String, $core.String>? languages,
   }) {
     final _result = create();
     if (id != null) {
@@ -2255,6 +2285,9 @@ class Group extends $pb.GeneratedMessage {
     }
     if (linkEmail != null) {
       _result.linkEmail = linkEmail;
+    }
+    if (languages != null) {
+      _result.languages.addAll(languages);
     }
     return _result;
   }
@@ -2326,6 +2359,9 @@ class Group extends $pb.GeneratedMessage {
   $core.bool hasLinkEmail() => $_has(7);
   @$pb.TagNumber(9)
   void clearLinkEmail() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.Map<$core.String, $core.String> get languages => $_getMap(8);
 }
 
 class GroupEvaluation extends $pb.GeneratedMessage {
@@ -3309,6 +3345,7 @@ class Material extends $pb.GeneratedMessage {
     ..aOM<$2.Date>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateCreated', subBuilder: $2.Date.create)
     ..aOM<$2.Date>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dateUpdated', subBuilder: $2.Date.create)
     ..pc<Edit>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'editHistory', $pb.PbFieldType.PM, subBuilder: Edit.create)
+    ..m<$core.String, $core.String>(18, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'languages', entryClassName: 'Material.LanguagesEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('sil.starfish'))
     ..hasRequiredFields = false
   ;
 
@@ -3331,6 +3368,7 @@ class Material extends $pb.GeneratedMessage {
     $2.Date? dateCreated,
     $2.Date? dateUpdated,
     $core.Iterable<Edit>? editHistory,
+    $core.Map<$core.String, $core.String>? languages,
   }) {
     final _result = create();
     if (id != null) {
@@ -3383,6 +3421,9 @@ class Material extends $pb.GeneratedMessage {
     }
     if (editHistory != null) {
       _result.editHistory.addAll(editHistory);
+    }
+    if (languages != null) {
+      _result.languages.addAll(languages);
     }
     return _result;
   }
@@ -3527,6 +3568,9 @@ class Material extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(17)
   $core.List<Edit> get editHistory => $_getList(16);
+
+  @$pb.TagNumber(18)
+  $core.Map<$core.String, $core.String> get languages => $_getMap(17);
 }
 
 class MaterialFeedback extends $pb.GeneratedMessage {
@@ -3766,6 +3810,67 @@ class MaterialType extends $pb.GeneratedMessage {
   $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
   void clearName() => clearField(2);
+}
+
+class RefreshSessionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RefreshSessionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'refreshToken')
+    ..hasRequiredFields = false
+  ;
+
+  RefreshSessionRequest._() : super();
+  factory RefreshSessionRequest({
+    $core.String? userId,
+    $core.String? refreshToken,
+  }) {
+    final _result = create();
+    if (userId != null) {
+      _result.userId = userId;
+    }
+    if (refreshToken != null) {
+      _result.refreshToken = refreshToken;
+    }
+    return _result;
+  }
+  factory RefreshSessionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RefreshSessionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RefreshSessionRequest clone() => RefreshSessionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RefreshSessionRequest copyWith(void Function(RefreshSessionRequest) updates) => super.copyWith((message) => updates(message as RefreshSessionRequest)) as RefreshSessionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static RefreshSessionRequest create() => RefreshSessionRequest._();
+  RefreshSessionRequest createEmptyInstance() => create();
+  static $pb.PbList<RefreshSessionRequest> createRepeated() => $pb.PbList<RefreshSessionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static RefreshSessionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RefreshSessionRequest>(create);
+  static RefreshSessionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get refreshToken => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set refreshToken($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRefreshToken() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRefreshToken() => clearField(2);
 }
 
 class TeacherResponse extends $pb.GeneratedMessage {

@@ -437,6 +437,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     }*/
 
     StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
+    StarfishSharedPreference()
+        .setRefreshToken(authenticateResponse.refreshToken);
+    StarfishSharedPreference().setSessionUserId(authenticateResponse.userId);
   }
 
   _handleError(dynamic e) {

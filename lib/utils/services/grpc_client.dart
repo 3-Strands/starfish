@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:starfish/config/app_config.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';

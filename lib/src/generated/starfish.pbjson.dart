@@ -116,11 +116,13 @@ const AuthenticateResponse$json = const {
   '2': const [
     const {'1': 'user_token', '3': 1, '4': 1, '5': 9, '10': 'userToken'},
     const {'1': 'expires_at', '3': 2, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'expiresAt'},
+    const {'1': 'user_id', '3': 3, '4': 1, '5': 9, '10': 'userId'},
+    const {'1': 'refresh_token', '3': 4, '4': 1, '5': 9, '10': 'refreshToken'},
   ],
 };
 
 /// Descriptor for `AuthenticateResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List authenticateResponseDescriptor = $convert.base64Decode('ChRBdXRoZW50aWNhdGVSZXNwb25zZRIdCgp1c2VyX3Rva2VuGAEgASgJUgl1c2VyVG9rZW4SOQoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWV4cGlyZXNBdA==');
+final $typed_data.Uint8List authenticateResponseDescriptor = $convert.base64Decode('ChRBdXRoZW50aWNhdGVSZXNwb25zZRIdCgp1c2VyX3Rva2VuGAEgASgJUgl1c2VyVG9rZW4SOQoKZXhwaXJlc19hdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWV4cGlyZXNBdBIXCgd1c2VyX2lkGAMgASgJUgZ1c2VySWQSIwoNcmVmcmVzaF90b2tlbhgEIAEoCVIMcmVmcmVzaFRva2Vu');
 @$core.Deprecated('Use countryDescriptor instead')
 const Country$json = const {
   '1': 'Country',
@@ -561,11 +563,23 @@ const Group$json = const {
     const {'1': 'edit_history', '3': 7, '4': 3, '5': 11, '6': '.sil.starfish.Edit', '10': 'editHistory'},
     const {'1': 'description', '3': 8, '4': 1, '5': 9, '10': 'description'},
     const {'1': 'link_email', '3': 9, '4': 1, '5': 9, '10': 'linkEmail'},
+    const {'1': 'languages', '3': 10, '4': 3, '5': 11, '6': '.sil.starfish.Group.LanguagesEntry', '10': 'languages'},
   ],
+  '3': const [Group_LanguagesEntry$json],
+};
+
+@$core.Deprecated('Use groupDescriptor instead')
+const Group_LanguagesEntry$json = const {
+  '1': 'LanguagesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 9, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 /// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxI1CgxlZGl0X2hpc3RvcnkYByADKAsyEi5zaWwuc3RhcmZpc2guRWRpdFILZWRpdEhpc3RvcnkSIAoLZGVzY3JpcHRpb24YCCABKAlSC2Rlc2NyaXB0aW9uEh0KCmxpbmtfZW1haWwYCSABKAlSCWxpbmtFbWFpbA==');
+final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxI1CgxlZGl0X2hpc3RvcnkYByADKAsyEi5zaWwuc3RhcmZpc2guRWRpdFILZWRpdEhpc3RvcnkSIAoLZGVzY3JpcHRpb24YCCABKAlSC2Rlc2NyaXB0aW9uEh0KCmxpbmtfZW1haWwYCSABKAlSCWxpbmtFbWFpbBJACglsYW5ndWFnZXMYCiADKAsyIi5zaWwuc3RhcmZpc2guR3JvdXAuTGFuZ3VhZ2VzRW50cnlSCWxhbmd1YWdlcxo8Cg5MYW5ndWFnZXNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgB');
 @$core.Deprecated('Use groupEvaluationDescriptor instead')
 const GroupEvaluation$json = const {
   '1': 'GroupEvaluation',
@@ -783,8 +797,20 @@ const Material$json = const {
     const {'1': 'date_created', '3': 15, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'dateCreated'},
     const {'1': 'date_updated', '3': 16, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'dateUpdated'},
     const {'1': 'edit_history', '3': 17, '4': 3, '5': 11, '6': '.sil.starfish.Edit', '10': 'editHistory'},
+    const {'1': 'languages', '3': 18, '4': 3, '5': 11, '6': '.sil.starfish.Material.LanguagesEntry', '10': 'languages'},
   ],
+  '3': const [Material_LanguagesEntry$json],
   '4': const [Material_Status$json, Material_Visibility$json, Material_Editability$json],
+};
+
+@$core.Deprecated('Use materialDescriptor instead')
+const Material_LanguagesEntry$json = const {
+  '1': 'LanguagesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 9, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 @$core.Deprecated('Use materialDescriptor instead')
@@ -819,7 +845,7 @@ const Material_Editability$json = const {
 };
 
 /// Descriptor for `Material`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List materialDescriptor = $convert.base64Decode('CghNYXRlcmlhbBIOCgJpZBgBIAEoCVICaWQSHQoKY3JlYXRvcl9pZBgCIAEoCVIJY3JlYXRvcklkEjUKBnN0YXR1cxgDIAEoDjIdLnNpbC5zdGFyZmlzaC5NYXRlcmlhbC5TdGF0dXNSBnN0YXR1cxJBCgp2aXNpYmlsaXR5GAQgASgOMiEuc2lsLnN0YXJmaXNoLk1hdGVyaWFsLlZpc2liaWxpdHlSCnZpc2liaWxpdHkSRAoLZWRpdGFiaWxpdHkYBSABKA4yIi5zaWwuc3RhcmZpc2guTWF0ZXJpYWwuRWRpdGFiaWxpdHlSC2VkaXRhYmlsaXR5EhQKBXRpdGxlGAYgASgJUgV0aXRsZRIgCgtkZXNjcmlwdGlvbhgHIAEoCVILZGVzY3JpcHRpb24SJwoPdGFyZ2V0X2F1ZGllbmNlGAggASgJUg50YXJnZXRBdWRpZW5jZRIQCgN1cmwYCSABKAlSA3VybBIUCgVmaWxlcxgKIAMoCVIFZmlsZXMSIQoMbGFuZ3VhZ2VfaWRzGAsgAygJUgtsYW5ndWFnZUlkcxIZCgh0eXBlX2lkcxgMIAMoCVIHdHlwZUlkcxIWCgZ0b3BpY3MYDSADKAlSBnRvcGljcxI8CglmZWVkYmFja3MYDiADKAsyHi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxGZWVkYmFja1IJZmVlZGJhY2tzEjQKDGRhdGVfY3JlYXRlZBgPIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVDcmVhdGVkEjQKDGRhdGVfdXBkYXRlZBgQIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVVcGRhdGVkEjUKDGVkaXRfaGlzdG9yeRgRIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeSI6CgZTdGF0dXMSFgoSVU5TUEVDSUZJRURfU1RBVFVTEAASCgoGQUNUSVZFEAESDAoISU5BQ1RJVkUQAiJYCgpWaXNpYmlsaXR5EhoKFlVOU1BFQ0lGSUVEX1ZJU0lCSUxJVFkQABIQCgxDUkVBVE9SX1ZJRVcQARIOCgpHUk9VUF9WSUVXEAISDAoIQUxMX1ZJRVcQAyJMCgtFZGl0YWJpbGl0eRIbChdVTlNQRUNJRklFRF9FRElUQUJJTElUWRAAEhAKDENSRUFUT1JfRURJVBABEg4KCkdST1VQX0VESVQQAg==');
+final $typed_data.Uint8List materialDescriptor = $convert.base64Decode('CghNYXRlcmlhbBIOCgJpZBgBIAEoCVICaWQSHQoKY3JlYXRvcl9pZBgCIAEoCVIJY3JlYXRvcklkEjUKBnN0YXR1cxgDIAEoDjIdLnNpbC5zdGFyZmlzaC5NYXRlcmlhbC5TdGF0dXNSBnN0YXR1cxJBCgp2aXNpYmlsaXR5GAQgASgOMiEuc2lsLnN0YXJmaXNoLk1hdGVyaWFsLlZpc2liaWxpdHlSCnZpc2liaWxpdHkSRAoLZWRpdGFiaWxpdHkYBSABKA4yIi5zaWwuc3RhcmZpc2guTWF0ZXJpYWwuRWRpdGFiaWxpdHlSC2VkaXRhYmlsaXR5EhQKBXRpdGxlGAYgASgJUgV0aXRsZRIgCgtkZXNjcmlwdGlvbhgHIAEoCVILZGVzY3JpcHRpb24SJwoPdGFyZ2V0X2F1ZGllbmNlGAggASgJUg50YXJnZXRBdWRpZW5jZRIQCgN1cmwYCSABKAlSA3VybBIUCgVmaWxlcxgKIAMoCVIFZmlsZXMSIQoMbGFuZ3VhZ2VfaWRzGAsgAygJUgtsYW5ndWFnZUlkcxIZCgh0eXBlX2lkcxgMIAMoCVIHdHlwZUlkcxIWCgZ0b3BpY3MYDSADKAlSBnRvcGljcxI8CglmZWVkYmFja3MYDiADKAsyHi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxGZWVkYmFja1IJZmVlZGJhY2tzEjQKDGRhdGVfY3JlYXRlZBgPIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVDcmVhdGVkEjQKDGRhdGVfdXBkYXRlZBgQIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSC2RhdGVVcGRhdGVkEjUKDGVkaXRfaGlzdG9yeRgRIAMoCzISLnNpbC5zdGFyZmlzaC5FZGl0UgtlZGl0SGlzdG9yeRJDCglsYW5ndWFnZXMYEiADKAsyJS5zaWwuc3RhcmZpc2guTWF0ZXJpYWwuTGFuZ3VhZ2VzRW50cnlSCWxhbmd1YWdlcxo8Cg5MYW5ndWFnZXNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoCVIFdmFsdWU6AjgBIjoKBlN0YXR1cxIWChJVTlNQRUNJRklFRF9TVEFUVVMQABIKCgZBQ1RJVkUQARIMCghJTkFDVElWRRACIlgKClZpc2liaWxpdHkSGgoWVU5TUEVDSUZJRURfVklTSUJJTElUWRAAEhAKDENSRUFUT1JfVklFVxABEg4KCkdST1VQX1ZJRVcQAhIMCghBTExfVklFVxADIkwKC0VkaXRhYmlsaXR5EhsKF1VOU1BFQ0lGSUVEX0VESVRBQklMSVRZEAASEAoMQ1JFQVRPUl9FRElUEAESDgoKR1JPVVBfRURJVBAC');
 @$core.Deprecated('Use materialFeedbackDescriptor instead')
 const MaterialFeedback$json = const {
   '1': 'MaterialFeedback',
@@ -867,6 +893,17 @@ const MaterialType$json = const {
 
 /// Descriptor for `MaterialType`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List materialTypeDescriptor = $convert.base64Decode('CgxNYXRlcmlhbFR5cGUSDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWU=');
+@$core.Deprecated('Use refreshSessionRequestDescriptor instead')
+const RefreshSessionRequest$json = const {
+  '1': 'RefreshSessionRequest',
+  '2': const [
+    const {'1': 'user_id', '3': 1, '4': 1, '5': 9, '10': 'userId'},
+    const {'1': 'refresh_token', '3': 2, '4': 1, '5': 9, '10': 'refreshToken'},
+  ],
+};
+
+/// Descriptor for `RefreshSessionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List refreshSessionRequestDescriptor = $convert.base64Decode('ChVSZWZyZXNoU2Vzc2lvblJlcXVlc3QSFwoHdXNlcl9pZBgBIAEoCVIGdXNlcklkEiMKDXJlZnJlc2hfdG9rZW4YAiABKAlSDHJlZnJlc2hUb2tlbg==');
 @$core.Deprecated('Use teacherResponseDescriptor instead')
 const TeacherResponse$json = const {
   '1': 'TeacherResponse',

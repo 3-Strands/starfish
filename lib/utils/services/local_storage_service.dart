@@ -5,6 +5,8 @@ class StarfishSharedPreference {
   final String _kIsSyncingFirstTime = "isSyncingFirstTime";
   final String _kAccessToken = "accessToken";
   final String _kDeviceLanguage = "deviceLanguage";
+  final String _kRefreshToken = "refreshToken";
+  final String _kSessionUserId = "sessionUserId";
 
   setLoginStatus(bool value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -44,5 +46,25 @@ class StarfishSharedPreference {
   Future<String> getDeviceLanguage() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_kDeviceLanguage) ?? '';
+  }
+
+  setRefreshToken(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kRefreshToken, value);
+  }
+
+  Future<String> getRefreshToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kRefreshToken) ?? '';
+  }
+
+  setSessionUserId(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kSessionUserId, value);
+  }
+
+  Future<String> getSessionUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kSessionUserId) ?? '';
   }
 }
