@@ -402,7 +402,7 @@ class _MyGroupState extends State<MyGroup> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   SizedBox(
-                    height: 40.h,
+                    height: 20.h,
                   ),
                   Center(
                     child: Text(
@@ -415,7 +415,24 @@ class _MyGroupState extends State<MyGroup> {
                     ),
                   ),
                   SizedBox(
-                    height: 40.h,
+                    height: 10.h,
+                  ),
+                  Flexible(
+                    child: Container(
+                       padding:
+                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                      child: Text(
+                        action.name  ??"",
+                        style: TextStyle(
+                            fontSize: 19.sp,
+                            color: Color(0xFF3475F0),
+                            fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
                   ),
                   Container(
                     padding:
