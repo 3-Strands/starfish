@@ -957,22 +957,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SizedBox(height: 50.h),
 
         //--> My groups section
-        Align(
-          alignment: FractionalOffset.topLeft,
-          child: TitleLabel(
-            title: AppLocalizations.of(context)!.myGroups,
-            align: TextAlign.left,
+        if (_user.linkGroups)
+          Align(
+            alignment: FractionalOffset.topLeft,
+            child: TitleLabel(
+              title: AppLocalizations.of(context)!.myGroups,
+              align: TextAlign.left,
+            ),
           ),
-        ),
         SizedBox(height: 5.h),
-        SepratorLine(
-          hight: 1.h,
-          edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-        ),
+        if (_user.linkGroups)
+          SepratorLine(
+            hight: 1.h,
+            edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+          ),
 
         SizedBox(height: 20.h),
 
-        _myGroupsList(),
+        if (_user.linkGroups) _myGroupsList(),
       ],
     );
   }
