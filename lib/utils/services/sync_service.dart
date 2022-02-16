@@ -1099,9 +1099,6 @@ class SyncService {
 
   void handleGrpcError(GrpcError error, {Function()? callback}) async {
     debugPrint('grpcError: $error');
-    StarfishSnackbar.showErrorMessage(
-        NavigationService.navigatorKey.currentContext!,
-        '${error.codeName}: ${error.message}');
 
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
@@ -1129,6 +1126,10 @@ class SyncService {
       }).whenComplete(() {
         debugPrint("Failed to refresh token");
       });
+    } else {
+      StarfishSnackbar.showErrorMessage(
+          NavigationService.navigatorKey.currentContext!,
+          '${error.codeName}: ${error.message}');
     }
   }
 }
