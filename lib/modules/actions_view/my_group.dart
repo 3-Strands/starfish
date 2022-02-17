@@ -1127,6 +1127,22 @@ class MyGroupActionListItem extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(height: 5,),
+              Align(alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  child: Text(
+                        '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                        style: TextStyle(
+                          color: Color(0xFF797979),
+                          fontSize: 19.sp,
+                          fontWeight: FontWeight.bold,
+                        
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                ),
+              ),
             ],
           ),
         ),
