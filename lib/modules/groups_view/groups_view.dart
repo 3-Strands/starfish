@@ -611,7 +611,7 @@ class GroupListItem extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Rubik",
-                          fontSize: 14.5.sp,
+                          fontSize: 17.sp,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -641,7 +641,7 @@ class GroupListItem extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Rubik",
-                          fontSize: 14.5.sp,
+                          fontSize: 17.sp,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -672,7 +672,7 @@ class GroupListItem extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Rubik",
-                          fontSize: 14.5.sp,
+                          fontSize: 17.sp,
                         ),
                         textAlign: TextAlign.center,
                       ),

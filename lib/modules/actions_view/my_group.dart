@@ -1043,7 +1043,7 @@ class MyGroupActionListItem extends StatelessWidget {
                               args: [countActionStatusDone]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color(0xFF000000),
+                            color: Colors.black,
                             fontFamily: "Rubik",
                             fontSize: 17.sp,
                           ),
@@ -1077,7 +1077,7 @@ class MyGroupActionListItem extends StatelessWidget {
                                 args: [countActionStatusNotDone]),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Color(0xFF000000),
+                              color: Colors.black,
                               fontFamily: "Rubik",
                               fontSize: 17.sp,
                             ),
@@ -1110,7 +1110,7 @@ class MyGroupActionListItem extends StatelessWidget {
                               args: [countActionStatusOverdue]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color(0xFF000000),
+                            color: Colors.black,
                             fontFamily: "Rubik",
                             fontSize: 17.sp,
                           ),
