@@ -1045,7 +1045,7 @@ class MyGroupActionListItem extends StatelessWidget {
                               args: [countActionStatusDone]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color(0xFF000000),
+                            color: Colors.black,
                             fontFamily: "Rubik",
                             fontSize: 17.sp,
                           ),
@@ -1079,7 +1079,7 @@ class MyGroupActionListItem extends StatelessWidget {
                                 args: [countActionStatusNotDone]),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Color(0xFF000000),
+                              color: Colors.black,
                               fontFamily: "Rubik",
                               fontSize: 17.sp,
                             ),
@@ -1112,7 +1112,7 @@ class MyGroupActionListItem extends StatelessWidget {
                               args: [countActionStatusOverdue]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color(0xFF000000),
+                            color: Colors.black,
                             fontFamily: "Rubik",
                             fontSize: 17.sp,
                           ),
@@ -1127,6 +1127,22 @@ class MyGroupActionListItem extends StatelessWidget {
                       width: 8.w,
                     ),
                   ],
+                ),
+              ),
+              SizedBox(height: 5,),
+              Align(alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  child: Text(
+                        '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                        style: TextStyle(
+                          color: Color(0xFF797979),
+                          fontSize: 19.sp,
+                          fontWeight: FontWeight.bold,
+                        
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
                 ),
               ),
             ],

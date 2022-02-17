@@ -56,8 +56,9 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
                 Text(widget.actionStatus.about,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                      color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 17.sp,
                         fontFamily: 'Rubik')),
                 Spacer()
               ],
