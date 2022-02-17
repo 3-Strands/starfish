@@ -340,9 +340,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           if ((!_isEditMode && _selectedFiles.length >= 5) ||
                               (_isEditMode &&
                                   (_selectedFiles.length +
-                                          (widget.material!.files != null
-                                              ? widget.material!.files!.length
-                                              : 0)) >=
+                                          (widget
+                                              .material!.localFiles.length)) >=
                                       5)) {
                             StarfishSnackbar.showErrorMessage(context,
                                 AppLocalizations.of(context)!.maxFilesSelected);
@@ -808,33 +807,50 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   }
 
   Widget _previewFiles(HiveMaterial _hiveMaterial) {
-    if (_hiveMaterial.localFiles == null) {
+    if (_hiveMaterial.localFiles.length == 0) {
       return Container();
     }
 
     final List<Widget> _widgetList = [];
 
-    for (File file in _hiveMaterial.localFiles!) {
+    for (HiveFile hiveFile in _hiveMaterial.localFiles) {
       _widgetList.add(Container(
         height: 30.h,
-        child: RichText(
-          textAlign: TextAlign.start,
-          text: TextSpan(
-            text: file.path.split("/").last,
-            style: TextStyle(
-              color: AppColors.appTitle,
-              fontFamily: 'OpenSans',
-              fontSize: 19.sp,
-              decoration: TextDecoration.underline,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                if (Platform.isIOS) {
-                  return;
-                } else if (Platform.isAndroid) {
-                  OpenFile.open(file.path);
-                }
-                /*_copyFileToDownloads(file).then((value) {
+        child: (hiveFile.filepath != null)
+            ? RichText(
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  //text: file.path.split("/").last,
+                  text: hiveFile.filename!,
+                  style: TextStyle(
+                    color: AppColors.appTitle,
+                    fontFamily: 'OpenSans',
+                    fontSize: 19.sp,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              )
+            : RichText(
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  //text: file.path.split("/").last,
+                  text: hiveFile.filename!,
+                  style: TextStyle(
+                    color: AppColors.appTitle,
+                    fontFamily: 'OpenSans',
+                    fontSize: 19.sp,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      if (Platform.isIOS) {
+                        return;
+                      } else if (Platform.isAndroid) {
+                        if (hiveFile.filepath != null) {
+                          OpenFile.open(hiveFile.filepath);
+                        }
+                      }
+                      /*_copyFileToDownloads(file).then((value) {
                   StarfishSnackbar.showSuccessMessage(
                       context, 'File downloaded successfully.');
                 }, onError: (error) {
@@ -842,9 +858,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   StarfishSnackbar.showErrorMessage(
                       context, 'File downloaded failed.');
                 });*/
-              },
-          ),
-        ),
+                    },
+                ),
+              ),
       ));
     }
     if (_hiveMaterial.localImageFile != null) {

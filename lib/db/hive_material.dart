@@ -122,7 +122,7 @@ class HiveMaterial extends HiveObject {
 
   @override
   String toString() {
-    return '{id: ${this.id}, creatorId: ${this.creatorId}, status: ${this.status}, visibility: ${this.visibility}, editability: ${this.editability}, title: ${this.title}, description: ${this.description}, targetAudience: ${this.targetAudience},}';
+    return '{id: ${this.id}, creatorId: ${this.creatorId}, status: ${this.status}, visibility: ${this.visibility}, editability: ${this.editability}, title: ${this.title}, description: ${this.description}, targetAudience: ${this.targetAudience}, files: ${this.files}, }';
   }
 }
 
@@ -188,37 +188,20 @@ extension HiveMaterialExt on HiveMaterial {
     return ActionStatus.NOT_DONE;
   }
 
-  List<File>? get localFiles {
-    List<File> _files = [];
-
-    // if files are not synced with remote yet, files will be null or empty, so real local filepaths
-    if (this.files == null) {
-      return MaterialProvider()
-          .getFiles()
-          .where((element) => element.entityId == this.id)
-          .map((e) => File(e.filepath!))
-          .toList();
-      //return _files;
-    }
-
-    this.files!.forEach((filename) {
-      HiveFile? _hiveFile = MaterialProvider().getFiles().firstWhereOrNull(
-          (hiveFile) =>
-              hiveFile.entityId == this.id && hiveFile.filename == filename);
-
-      if (_hiveFile != null &&
-          _hiveFile.filepath != null &&
-          File(_hiveFile.filepath!).existsSync()) {
-        _files.add(File(_hiveFile.filepath!));
-      }
-    });
-
-    return _files;
+  List<HiveFile> get localFiles {
+    return MaterialProvider()
+        .getFiles()
+        .where((element) => element.entityId == this.id)
+        .toList();
   }
 
   File? get localImageFile {
-    return this.localFiles?.firstWhereOrNull((_file) => ['jpg', 'png']
-        .toList()
-        .contains(_file.path.split("/").last.split(".").last));
+    HiveFile? _hiveFile = this.localFiles.firstWhereOrNull((_file) =>
+        _file.filepath != null &&
+        ['jpg', 'png']
+            .toList()
+            .contains(_file.filepath!.split("/").last.split(".").last));
+
+    return _hiveFile != null ? File(_hiveFile.filepath!) : null;
   }
 }

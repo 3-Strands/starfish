@@ -618,7 +618,7 @@ class _MeState extends State<Me> {
       return Container();
     }
     List<Widget> fileLinks = [];
-    hiveAction.material!.localFiles!.forEach((file) {
+    hiveAction.material!.localFiles.forEach((hiveFile) {
       fileLinks.add(
         MaterialLinkButton(
           icon: Icon(
@@ -628,12 +628,14 @@ class _MeState extends State<Me> {
           ),
           text: AppLocalizations.of(context)!
               .clickToDownload
-              .insertTemplateValues({'file_name': file.path.split("/").last}),
+              .insertTemplateValues({'file_name': hiveFile.filename!}),
           onButtonTap: () {
             if (Platform.isIOS) {
               return;
             } else if (Platform.isAndroid) {
-              OpenFile.open(file.path);
+              if (hiveFile.filepath != null) {
+                OpenFile.open(hiveFile.filepath!);
+              }
             }
           },
         ),

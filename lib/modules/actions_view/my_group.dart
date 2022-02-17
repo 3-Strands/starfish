@@ -419,10 +419,10 @@ class _MyGroupState extends State<MyGroup> {
                   ),
                   Flexible(
                     child: Container(
-                       padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15.w, vertical: 15.h),
                       child: Text(
-                        action.name  ??"",
+                        action.name ?? "",
                         style: TextStyle(
                             fontSize: 19.sp,
                             color: Color(0xFF3475F0),
@@ -854,7 +854,7 @@ class _MyGroupState extends State<MyGroup> {
       return Container();
     }
     List<Widget> fileLinks = [];
-    hiveAction.material!.localFiles!.forEach((file) {
+    hiveAction.material!.localFiles.forEach((hiveFile) {
       fileLinks.add(
         MaterialLinkButton(
           icon: Icon(
@@ -864,12 +864,14 @@ class _MyGroupState extends State<MyGroup> {
           ),
           text: AppLocalizations.of(context)!
               .clickToDownload
-              .insertTemplateValues({'file_name': file.path.split("/").last}),
+              .insertTemplateValues({'file_name': hiveFile.filename!}),
           onButtonTap: () {
             if (Platform.isIOS) {
               return;
             } else if (Platform.isAndroid) {
-              OpenFile.open(file.path);
+              if (hiveFile.filepath != null) {
+                OpenFile.open(hiveFile.filepath!);
+              }
             }
           },
         ),

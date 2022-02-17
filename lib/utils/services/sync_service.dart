@@ -174,7 +174,6 @@ class SyncService {
     try {
       showAlertFirstTime();
       await syncLocalCurrentUser(kCurrentUserFieldMask);
-      await syncLocalMaterialsToRemote();
 
       // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
       await lock.synchronized(() => syncLocalUsersToRemote());
@@ -187,7 +186,10 @@ class SyncService {
       // navigatorKey: Application.navKey, // GlobalKey()
       //showAlert(NavigationService.navigatorKey.currentContext!);
 
-      await lock.synchronized(() => syncLocalFiles()); // Upload local files
+      // Synchronize the syncing of material(s), sequentily to avoid failure.
+      await lock.synchronized(() => syncLocalMaterialsToRemote());
+      await lock.synchronized(() => syncLocalFiles());
+      await lock.synchronized(() => syncMaterial()); // Upload local files
       await lock.synchronized(() => syncFiles()); // Download remote files
 
       Future.wait([
@@ -198,7 +200,7 @@ class SyncService {
         syncActions(),
         syncMaterialTopics(),
         syncMaterialTypes(),
-        syncMaterial(),
+        //syncMaterial(),
         syncEvaluationCategories(),
         syncGroup()
       ]).then((value) {
@@ -383,12 +385,12 @@ class SyncService {
     }).catchError(handleError);
   }
 
-  Future syncMaterialFiles(HiveMaterial _hiveMaterial) async {
+  void syncMaterialFiles(HiveMaterial _hiveMaterial) {
     if (_hiveMaterial.files == null || _hiveMaterial.files!.length == 0) {
       return;
     }
 
-    _hiveMaterial.files?.forEach((String filename) {
+    _hiveMaterial.files?.forEach((String filename) async {
       HiveFile? _hiveFile = fileBox.values.firstWhereOrNull(
           (HiveFile element) =>
               element.entityId == _hiveMaterial.id &&
@@ -404,7 +406,7 @@ class SyncService {
           entityType: EntityType.MATERIAL.value,
           isSynced: false);
 
-      fileBox.add(_hiveFile);
+      await fileBox.add(_hiveFile);
     });
   }
 
@@ -421,7 +423,7 @@ class SyncService {
     await MaterialRepository()
         .getMaterials()
         .then((ResponseStream<Material> stream) {
-      stream.listen((material) {
+      stream.listen((material) async {
         HiveMaterial _hiveMaterial = HiveMaterial.from(material);
 
         syncMaterialFiles(_hiveMaterial);
@@ -434,7 +436,7 @@ class SyncService {
         });
 
         if (_currentIndex > -1) {
-          materialBox.put(_currentIndex, _hiveMaterial);
+          materialBox.putAt(_currentIndex, _hiveMaterial);
         } else {
           materialBox.add(_hiveMaterial);
         }
@@ -1021,7 +1023,7 @@ class SyncService {
           hiveFile.filepath = file.path;
           hiveFile.isSynced = true;
 
-          fileBox.put(_currentIndex, hiveFile);
+          fileBox.putAt(_currentIndex, hiveFile);
         }
       }, onError: (error, stackTrace) {
         print("FILE Transfer ERROR:: $error");
