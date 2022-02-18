@@ -891,7 +891,8 @@ class SyncService {
     print('============= START: Sync Local Files to Remote =============');
     // upload files form `File Box` excluding those which are added from remote i.e. `filepath == null`
     fileBox.values
-        .where((element) => element.filepath != null)
+        .where(
+            (element) => element.filepath != null && false == element.isSynced)
         .forEach((hiveFile) {
       // TODO: Check existance of the the file before upload
       uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!));
