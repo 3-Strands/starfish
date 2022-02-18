@@ -445,7 +445,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     if (_isEditMode) {
       _hiveGroup = widget.group!;
-      _hiveGroup.users?.addAll(_newGroupUsers);
+      //_hiveGroup.users?.addAll(_newGroupUsers);
 
       _hiveGroup.isUpdated = true;
     } else {
@@ -468,10 +468,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     bloc.groupBloc.addEditGroup(_hiveGroup).then((value) {
       // Broadcast to sync the local changes with the server
-      FBroadcast.instance().broadcast(
+      /*FBroadcast.instance().broadcast(
         SyncService.kUpdateUsers,
         value: _newUsers,
-      );
+      );*/
       FBroadcast.instance().broadcast(
         SyncService.kUpdateGroup,
         value: _hiveGroup,

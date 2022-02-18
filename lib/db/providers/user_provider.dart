@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
@@ -36,7 +34,7 @@ class UserProvider {
     });
 
     if (_currentIndex > -1) {
-      return _userBox.put(_currentIndex, user);
+      return _userBox.putAt(_currentIndex, user);
     } else {
       _userBox.add(user);
     }

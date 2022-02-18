@@ -1,4 +1,5 @@
 import 'package:cron/cron.dart';
+import 'package:collection/collection.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
@@ -55,11 +56,11 @@ class _DashboardState extends State<Dashboard> {
       SyncService().syncLocalMaterialsToRemote();
     }, more: {
       SyncService.kUpdateGroup: (hiveGroup, __) {
-        SyncService().syncLocalGroupsToRemote();
+        SyncService().syncLocalUsersAndGroups();
       },
       SyncService.kUpdateUsers: (hiveUsers, __) {
         debugPrint('Boradcast Receiver: kUpdateUsers');
-        SyncService().syncLocalUsersToRemote();
+        SyncService().syncLocalUsersAndGroups();
       },
       SyncService.kUpdateCurrentUser: (HiveCurrentUser, __) {
         debugPrint('Boradcast Receiver: kUpdateCurrentUser');

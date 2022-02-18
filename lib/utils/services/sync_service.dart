@@ -176,10 +176,8 @@ class SyncService {
       await syncLocalCurrentUser(kCurrentUserFieldMask);
 
       // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
-      await lock.synchronized(() => syncLocalUsersToRemote());
-      await lock.synchronized(() => syncLocalGroupsToRemote());
-      await lock.synchronized(() => syncLocalDeletedGroupUsersToRemote());
-      await lock.synchronized(() => syncLocalGroupUsersToRemote());
+      await syncLocalUsersAndGroups();
+
       await lock.synchronized(() => syncLocalActionsToRemote());
 
       await lock.synchronized(() => syncLocalHiveActionUserToRemote());
@@ -211,6 +209,13 @@ class SyncService {
     } catch (error) {
       handleError(error);
     }
+  }
+
+  Future syncLocalUsersAndGroups() async {
+    await lock.synchronized(() => syncLocalUsersToRemote());
+    await lock.synchronized(() => syncLocalGroupsToRemote());
+    await lock.synchronized(() => syncLocalDeletedGroupUsersToRemote());
+    await lock.synchronized(() => syncLocalGroupUsersToRemote());
   }
 
   void updateLastSyncDateTime() {
@@ -891,7 +896,8 @@ class SyncService {
     print('============= START: Sync Local Files to Remote =============');
     // upload files form `File Box` excluding those which are added from remote i.e. `filepath == null`
     fileBox.values
-        .where((element) => element.filepath != null)
+        .where(
+            (element) => element.filepath != null && false == element.isSynced)
         .forEach((hiveFile) {
       // TODO: Check existance of the the file before upload
       uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!));
