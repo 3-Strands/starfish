@@ -662,6 +662,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     } else if (_descriptionController.text == '') {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptyDescription);
+    } else if (_webLinkController.text.isEmpty &&
+        ((!_isEditMode && _selectedFiles.length == 0) ||
+            (_isEditMode &&
+                (_selectedFiles.length + widget.material!.localFiles.length ==
+                    0)))) {
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.alertEmptyWebLinkWithNoFile);
     } else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectLanguage);

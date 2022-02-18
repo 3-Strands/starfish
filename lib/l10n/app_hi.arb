@@ -357,7 +357,8 @@
   "oneNumberMissing": "नंबर गायब",
   "moreNumbersMissing": "नंबर गायब",
   "tooManyNumbers": "बहुत अधिक संख्याएं, हटाएं",
-  "selectTheTypeOfAction": "कार्रवाई के प्रकार का चयन करें"
+  "selectTheTypeOfAction": "कार्रवाई के प्रकार का चयन करें",
+  "alertEmptyWebLinkWithNoFile": "Starfish में इस सामग्री को बनाने के लिए आपको या तो फ़ाइल में एक वेब लिंक जोड़ना होगा, या फ़ाइलें अपलोड करनी होंगी"
 
 
 }
