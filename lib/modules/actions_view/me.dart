@@ -785,6 +785,7 @@ class MyActionListItem extends StatelessWidget {
                               icon: Icon(
                                 Icons.more_vert,
                                 color: Color(0xFF3475F0),
+                                size:30,
                               ),
                               color: Colors.white,
                               elevation: 20,
