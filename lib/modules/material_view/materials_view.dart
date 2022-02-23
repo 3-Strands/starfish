@@ -25,6 +25,7 @@ import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -434,7 +435,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       try {
         HiveLanguage _language =
             _languageList.firstWhere((element) => languageId == element.id);
-        languages.add(Text(_language.name));
+        languages.add(
+          Text(
+            _language.name,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+            //  color: Color(0xFF3475F0),
+              fontFamily: 'OpenSans',
+              fontSize: 19.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
       } on StateError catch (e) {
         debugPrint('EXCEPTION: ${e.message}');
       }
@@ -450,7 +462,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     List<Widget> topics = [];
 
     material.topics?.forEach((String topic) {
-      topics.add(Text(topic));
+      topics.add(
+        Text(
+          topic,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+         //   color: Color(0xFF3475F0),
+            fontFamily: 'OpenSans',
+            fontSize: 19.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
     });
 
     return Column(
@@ -526,7 +549,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   SizedBox(
                     height: 30.h,
                   ),
-                  Row(
+                  Row(crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
@@ -540,6 +563,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         ),
                       ),
                       Spacer(),
+                      Column(
+                        children: <Widget>[
                       // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
                       if ((Material_Editability.valueOf(
                                       material.editability!) ==
@@ -569,6 +594,29 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             );
                           },
                         ),
+                        SizedBox(height: 5,),
+                        if ((Material_Editability.valueOf(
+                                      material.editability!) ==
+                                  Material_Editability.CREATOR_EDIT &&
+                              material.creatorId ==
+                                  CurrentUserProvider().user.id) ||
+                          (Material_Editability.valueOf(
+                                      material.editability!) ==
+                                  Material_Editability.GROUP_EDIT) &&
+                              material.isAssignedToGroupWithLeaderRole)
+                              CustomIconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.blue,
+                            size: 21.5.sp,
+                          ),
+                          text: AppLocalizations.of(context)!.delete,
+                          onButtonTap: () {
+                            _deleteMaterial(context);
+                         
+                          },
+                        ),
+                      ],),
                     ],
                   ),
                   SizedBox(
@@ -678,6 +726,21 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       ],
     );
   }
+  _deleteMaterial(BuildContext context,) {
+   // final bloc = Provider.of(context);
+    Alerts.showMessageBox(
+        context: context,
+        title: AppLocalizations.of(context)!.deleteMaterialTitle,
+        message: AppLocalizations.of(context)!.areYouSureWantToDeleteThis,
+        positiveButtonText: AppLocalizations.of(context)!.delete,
+        negativeButtonText: AppLocalizations.of(context)!.cancel,
+        positiveActionCallback: () {
+          // Mark this action for deletion
+       //   action.isDirty = true;
+       //   bloc.actionBloc.createUpdateAction(action);
+        },
+        negativeActionCallback: () {});
+  }
 }
 
 class MaterialListItem extends StatelessWidget {
@@ -778,6 +841,9 @@ class MaterialListItem extends StatelessWidget {
       elevation: 5,
     );
   }
+
+
+
 }
 
 Color getMyTaskStatusColor(HiveMaterial material) {

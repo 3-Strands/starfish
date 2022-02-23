@@ -297,6 +297,8 @@
   "deleteActionMessage": "क्या आप वाकई इस समूह के लिए इस कार्रवाई और इसके डेटा को हटाना चाहते हैं?",
   "deleteGroupMessage":"क्या आप वाकई इस समूह और इसकी सभी कार्रवाइयों को हटाना चाहते हैं?",
   "deleteGroup":"समूह हटाएं",
+  "deleteMaterialTitle": "सामग्री हटाएं",
+  "areYouSureWantToDeleteThis":"क्या आप वाकई इसे हटाना चाहते हैं",
   "zeroOrOneMemberIsOverdue": "शिक्षार्थी अतिदेय है",
   "moreThenOneMembersIsOverdue": "शिक्षार्थी अतिदेय हैं",
   "zeroOrOneMemberDidNotDoItYet": "शिक्षार्थी ने अभी तक ऐसा नहीं किया",
