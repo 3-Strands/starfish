@@ -507,25 +507,81 @@ class GroupListItem extends StatelessWidget {
                   ),
                   // Spacer(),
                   if (group.currentUserRole! == GroupUser_Role.ADMIN)
-                    CustomIconButton(
+                    PopupMenuButton(
                       icon: Icon(
-                        Icons.edit,
-                        color: Colors.blue,
-                        size: 18.r,
+                        
+                        Icons.more_vert,
+                        color: Color(0xFF3475F0),
+                        size:30,
                       ),
-                      text: AppLocalizations.of(context)!.edit,
-                      onButtonTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddEditGroupScreen(
-                              group: group,
-                            ),
-                          ),
-                        ).then((value) => FocusScope.of(context)
-                            .requestFocus(new FocusNode()));
+                      color: Colors.white,
+                      elevation: 20,
+                      shape: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                          borderRadius: BorderRadius.circular(12.r)),
+                      enabled: true,
+                      onSelected: (value) {
+                        switch (value) {
+                          case 0:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddEditGroupScreen(
+                                  group: group,
+                                ),
+                              ),
+                            ).then((value) => FocusScope.of(context)
+                                .requestFocus(new FocusNode()));
+                            break;
+                          case 1:
+                            _deleteGroup(context);
+
+                            break;
+                        }
                       },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          child: Text(
+                            AppLocalizations.of(context)!.editActionText,
+                            style: TextStyle(
+                                color: Color(0xFF3475F0),
+                                fontSize: 19.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          value: 0,
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            AppLocalizations.of(context)!.deleteActionText,
+                            style: TextStyle(
+                                color: Color(0xFF3475F0),
+                                fontSize: 19.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          value: 1,
+                        ),
+                      ],
                     ),
+
+                  // CustomIconButton(
+                  //   icon: Icon(
+                  //     Icons.edit,
+                  //     color: Colors.blue,
+                  //     size: 18.r,
+                  //   ),
+                  //   text: AppLocalizations.of(context)!.edit,
+                  //   onButtonTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => AddEditGroupScreen(
+                  //           group: group,
+                  //         ),
+                  //       ),
+                  //     ).then((value) => FocusScope.of(context)
+                  //         .requestFocus(new FocusNode()));
+                  //   },
+                  // ),
                   if (group.currentUserRole! == GroupUser_Role.LEARNER ||
                       group.currentUserRole! == GroupUser_Role.TEACHER)
                     ElevatedButton(
@@ -691,5 +747,21 @@ class GroupListItem extends StatelessWidget {
       ),
       elevation: 5,
     );
+  }
+
+   _deleteGroup(BuildContext context,) {
+   // final bloc = Provider.of(context);
+    Alerts.showMessageBox(
+        context: context,
+        title: AppLocalizations.of(context)!.deleteGroup,
+        message: AppLocalizations.of(context)!.deleteGroupMessage,
+        positiveButtonText: AppLocalizations.of(context)!.delete,
+        negativeButtonText: AppLocalizations.of(context)!.cancel,
+        positiveActionCallback: () {
+          // Mark this action for deletion
+       //   action.isDirty = true;
+       //   bloc.actionBloc.createUpdateAction(action);
+        },
+        negativeActionCallback: () {});
   }
 }
