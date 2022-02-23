@@ -96,6 +96,7 @@
   "selectType": "Select a type",
 
   "editedBy": "Can be edited by",
+  "editedOrDeletedBy": "Can be edited or deleted by",
   "seenBy": "Can be seen by",
   "selectCategories": "Select Categories",
 
