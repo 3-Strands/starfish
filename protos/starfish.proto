@@ -62,6 +62,9 @@ service Starfish {
     // The role on GroupUser message is ignored in this procedure
     rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUsersResponse) {}
 
+    // Delete Materials.
+    rpc DeleteMaterials (stream DeleteMaterialRequest) returns (stream DeleteMaterialResponse) {}
+
     // Get the current user.
     rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
 
@@ -601,6 +604,32 @@ message DeleteGroupUsersResponse {
     Status status = 3;
 
     // Error message or any other message related to the removal
+    string message = 4;
+
+}
+
+
+message DeleteMaterialRequest {
+
+    // The ID of the material to delete
+    string material_id = 1;
+
+}
+
+message DeleteMaterialResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The ID of the material that was requested to be deleted
+    string material_id = 1;
+
+    // The status of the deletion
+    Status status = 3;
+
+    // Error message or any other message related to the deletion
     string message = 4;
 
 }
