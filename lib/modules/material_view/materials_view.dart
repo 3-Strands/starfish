@@ -52,9 +52,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   final Key _focusDetectorKey = UniqueKey();
   late AppBloc bloc;
+  late ScrollController _scrollController;
 
   bool _viewDidDisappear = false;
   bool _isSelectingLanguage = false;
+
+  bool _isFirstLoad = false;
+  bool _isLoading = false;
+  bool _hasMore = true;
+
+  List<HiveMaterial> _materials = [];
 
   @override
   void initState() {
@@ -64,6 +71,17 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
     _getAllLanguages();
     _getAllTopics();
+
+    _scrollController = new ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.offset >=
+              _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange) {
+        _loadMore();
+      } else if (_scrollController.offset <=
+              _scrollController.position.minScrollExtent &&
+          !_scrollController.position.outOfRange) {}
+    });
   }
 
   @override
@@ -72,8 +90,47 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     super.didChangeDependencies();
   }
 
-  _fetchMaterialData(AppBloc bloc) async {
-    bloc.materialBloc.fetchMaterialsFromDB();
+  void _firstLoad() {
+    setState(() {
+      _isFirstLoad = true;
+    });
+
+    // Reset current paage
+    bloc.materialBloc.currentPage = 1;
+
+    List<HiveMaterial> fetchedList = bloc.materialBloc.fetchMaterialsFromDB();
+
+    setState(() {
+      _materials = fetchedList;
+      _isFirstLoad = false;
+      if (fetchedList.length > 0) {
+        _hasMore = true;
+      }
+    });
+  }
+
+  void _loadMore() {
+    if (_hasMore == true && _isFirstLoad == false && _isLoading == false) {
+      setState(() {
+        _isLoading = true; // Display a progress indicator at the bottom
+      });
+
+      List<HiveMaterial> fetchedList = bloc.materialBloc.fetchMaterialsFromDB();
+
+      if (fetchedList.length > 0) {
+        setState(() {
+          _materials.addAll(fetchedList);
+        });
+      } else {
+        setState(() {
+          _hasMore = false;
+        });
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _getAllLanguages() {
@@ -140,29 +197,29 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    setState(() {
+    /*setState(() {
       _viewDidDisappear = true;
-    });
+    });*/
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
+
     return FocusDetector(
       key: _focusDetectorKey,
       onFocusGained: () {
-        print('onFocusGained');
         setState(() {
           _viewDidDisappear = false;
         });
 
         _getAllLanguages();
-        _fetchMaterialData(bloc);
+        if (!_isFirstLoad) {
+          _firstLoad();
+        }
       },
-      onFocusLost: () {
-        print('onFocusLost');
-      },
+      onFocusLost: () {},
       child: Scaffold(
         backgroundColor: AppColors.materialSceenBG,
         appBar: AppBar(
@@ -208,6 +265,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   thickness: 5.w,
                   isAlwaysShown: false,
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -223,11 +281,13 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           onValueChanged: (value) {
                             setState(() {
                               bloc.materialBloc.setQuery(value);
+                              _firstLoad();
                             });
                           },
                           onDone: (value) {
                             setState(() {
                               bloc.materialBloc.setQuery(value);
+                              _firstLoad();
                             });
                           },
                         ),
@@ -271,7 +331,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                                   onChanged: (MaterialFilter? value) {
                                     setState(() {
                                       bloc.materialBloc.actionFilter = value!;
-                                      _fetchMaterialData(bloc);
+                                      _firstLoad();
                                     });
                                   },
                                   items: MaterialFilter.values
@@ -325,44 +385,43 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _materialsList(AppBloc bloc) {
-    return StreamBuilder<List<HiveMaterial>>(
-      stream: bloc.materialBloc.materials,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<HiveMaterial> _listToShow;
-
-          if (bloc.materialBloc.query.isNotEmpty) {
-            String _query = bloc.materialBloc.query;
-            _listToShow = snapshot.data!
-                .where((item) =>
-                    item.title!.toLowerCase().contains(_query.toLowerCase()) ||
-                    item.title!
-                        .toLowerCase()
-                        .startsWith(_query.toLowerCase()) ||
-                    item.description!
-                        .toLowerCase()
-                        .contains(_query.toLowerCase()) ||
-                    item.description!
-                        .toLowerCase()
-                        .startsWith(_query.toLowerCase()))
-                .toList();
-          } else {
-            _listToShow = snapshot.data!;
-          }
-          return ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: _listToShow.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return MaterialListItem(
-                  material: _listToShow[index],
-                  onMaterialTap: _onMaterialSelection,
-                );
-              });
-        } else {
-          return Container();
+    if (_materials.isEmpty) {
+      return Container(
+        margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: Text(
+          '${AppLocalizations.of(context)!.noRecordFound}',
+          style: TextStyle(
+            color: Color(0xFF434141),
+            fontSize: 17.sp,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: _hasMore ? _materials.length + 1 : _materials.length,
+      itemBuilder: (BuildContext ctxt, int index) {
+        if (index >= _materials.length) {
+          return Container(
+            margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            child: Center(
+              child: SizedBox(
+                child: CircularProgressIndicator(),
+                height: 24,
+                width: 24,
+              ),
+            ),
+          );
         }
+        return MaterialListItem(
+          material: _materials[index],
+          onMaterialTap: _onMaterialSelection,
+        );
       },
     );
   }
@@ -399,7 +458,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             List<HiveLanguage> _selectedLanguages =
                 List<HiveLanguage>.from(languages as List<dynamic>);
             bloc.materialBloc.selectedLanguages = _selectedLanguages;
-            _fetchMaterialData(bloc);
+            _firstLoad();
           });
         },
       ),
@@ -422,7 +481,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             List<HiveMaterialTopic> _selectedTopics =
                 List<HiveMaterialTopic>.from(topics as List<dynamic>);
             bloc.materialBloc.selectedTopics = _selectedTopics;
-            _fetchMaterialData(bloc);
+            _firstLoad();
           });
         },
       ),

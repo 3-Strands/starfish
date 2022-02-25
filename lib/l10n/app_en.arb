@@ -361,6 +361,7 @@
   "moreNumbersMissing": "numbers missing",
   "tooManyNumbers": "Too many numbers, remove",
   "selectTheTypeOfAction": "Select the type of action",
-  "alertEmptyWebLinkWithNoFile": "You must either add a web link to the file, or upload the files, in order to create this Material in Starfish"
+  "alertEmptyWebLinkWithNoFile": "You must either add a web link to the file, or upload the files, in order to create this Material in Starfish",
+  "noRecordFound": "No Record Found"
 
 }
