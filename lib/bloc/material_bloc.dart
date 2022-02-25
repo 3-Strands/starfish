@@ -1,20 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
-import 'package:grpc/grpc_or_grpcweb.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
-import 'package:starfish/src/generated/starfish.pbgrpc.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
 
 class MaterialBloc extends Object {
   MaterialRepository materialRepository = MaterialRepository();
@@ -26,6 +24,8 @@ class MaterialBloc extends Object {
   late BehaviorSubject<List<HiveMaterial>> _materials;
   late BehaviorSubject<FileData> _fileData;
 
+  int count = 0;
+
   MaterialBloc() {
     _materials = new BehaviorSubject<List<HiveMaterial>>();
     _fileData = new BehaviorSubject<FileData>();
@@ -34,8 +34,10 @@ class MaterialBloc extends Object {
       if (event.hasChunk()) {
         return;
       }
-      print("File UploadRequest: $event");
     });
+
+    _allMaterials = MaterialProvider().getMateialsSync();
+    count = _allMaterials.length;
   }
 
   // Add data to Stream
@@ -46,6 +48,9 @@ class MaterialBloc extends Object {
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
+  final _itemsPerPage = 20;
+  int currentPage = 0;
+
   setActionFilter(MaterialFilter filter) {
     actionFilter = filter;
   }
@@ -54,8 +59,8 @@ class MaterialBloc extends Object {
     query = qury;
   }
 
-  fetchMaterialsFromDB() async {
-    materialRepository
+  List<HiveMaterial> fetchMaterialsFromDB() {
+    /*materialRepository
         .fetchMaterialsFromDB()
         .then(
           (value) => {_allMaterials = value},
@@ -65,7 +70,29 @@ class MaterialBloc extends Object {
             _filteredMaterialsList = _filterMaterials(),
             _materials.sink.add(_filteredMaterialsList)
           },
-        );
+        );*/
+
+    List<HiveMaterial> list = [];
+    int n = min(_itemsPerPage, count - (currentPage * _itemsPerPage));
+
+    if (_isFiltersSet()) {
+      list = _filterMaterials(_allMaterials)
+          .skip(currentPage * _itemsPerPage)
+          .take(n)
+          .toList();
+    } else {
+      list = _allMaterials.skip(currentPage * _itemsPerPage).take(n).toList();
+    }
+
+    currentPage++;
+    return list;
+  }
+
+  bool _isFiltersSet() {
+    return selectedLanguages.length > 0 ||
+        selectedTopics.length > 0 ||
+        actionFilter != MaterialFilter.NO_FILTER_APPLIED ||
+        query.isNotEmpty;
   }
 
   bool _ifMaterialSupportsLanguage(
@@ -138,16 +165,27 @@ class MaterialBloc extends Object {
     }
   }
 
-  List<HiveMaterial> _filterMaterials() {
+  List<HiveMaterial> _filterMaterials(List<HiveMaterial> materials) {
     List<HiveMaterial> _results = [];
-    _allMaterials.forEach((element) {
+    materials.forEach((element) {
       if (_ifMaterialSupportsLanguage(element, selectedLanguages) &&
           _ifMaterialSupportsTopic(element, selectedTopics) &&
-          _applyMaterialFilter(element)) {
+          _applyMaterialFilter(element) &&
+          containsQueryString(element)) {
         _results.add(element);
       }
     });
     return _results;
+  }
+
+  bool containsQueryString(HiveMaterial material) {
+    if (query.isEmpty) {
+      return true;
+    }
+    return material.title!.toLowerCase().contains(query.toLowerCase()) ||
+        material.title!.toLowerCase().startsWith(query.toLowerCase()) ||
+        material.description!.toLowerCase().contains(query.toLowerCase()) ||
+        material.description!.toLowerCase().startsWith(query.toLowerCase());
   }
 
   Future<void> createUpdateMaterial(HiveMaterial material,
