@@ -542,7 +542,7 @@ class GroupListItem extends StatelessWidget {
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           child: Text(
-                            AppLocalizations.of(context)!.editActionText,
+                            AppLocalizations.of(context)!.editGroup,
                             style: TextStyle(
                                 color: Color(0xFF3475F0),
                                 fontSize: 19.sp,
@@ -552,7 +552,7 @@ class GroupListItem extends StatelessWidget {
                         ),
                         PopupMenuItem(
                           child: Text(
-                            AppLocalizations.of(context)!.deleteActionText,
+                            AppLocalizations.of(context)!.deleteGroup,
                             style: TextStyle(
                                 color: Color(0xFF3475F0),
                                 fontSize: 19.sp,
@@ -753,7 +753,7 @@ class GroupListItem extends StatelessWidget {
    // final bloc = Provider.of(context);
     Alerts.showMessageBox(
         context: context,
-        title: AppLocalizations.of(context)!.deleteGroup,
+        title: AppLocalizations.of(context)!.deleteGroupTitle,
         message: AppLocalizations.of(context)!.deleteGroupMessage,
         positiveButtonText: AppLocalizations.of(context)!.delete,
         negativeButtonText: AppLocalizations.of(context)!.cancel,
