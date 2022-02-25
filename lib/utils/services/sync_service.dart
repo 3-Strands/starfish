@@ -1131,9 +1131,18 @@ class SyncService {
           callback();
         }
         syncAll();
-      }).whenComplete(() {
+      }).onError((error, stackTrace) {
         debugPrint("Failed to refresh token");
-      });
+        if (error.runtimeType == GrpcError) {
+          StarfishSnackbar.showErrorMessage(
+              NavigationService.navigatorKey.currentContext!,
+              '${(error as GrpcError).codeName}: ${error.message}');
+
+          FBroadcast.instance().broadcast(
+            SyncService.kUnauthenticated,
+          );
+        }
+      }).whenComplete(() {});
     } else {
       StarfishSnackbar.showErrorMessage(
           NavigationService.navigatorKey.currentContext!,
