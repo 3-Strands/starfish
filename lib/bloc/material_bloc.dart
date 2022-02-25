@@ -60,6 +60,7 @@ class MaterialBloc extends Object {
   }
 
   List<HiveMaterial> fetchMaterialsFromDB() {
+    _allMaterials = MaterialProvider().getMateialsSync();
     /*materialRepository
         .fetchMaterialsFromDB()
         .then(
@@ -71,19 +72,16 @@ class MaterialBloc extends Object {
             _materials.sink.add(_filteredMaterialsList)
           },
         );*/
-
     List<HiveMaterial> list = [];
-    int n = min(_itemsPerPage, count - (currentPage * _itemsPerPage));
-
+    List<HiveMaterial> _filteredList = [];
     if (_isFiltersSet()) {
-      list = _filterMaterials(_allMaterials)
-          .skip(currentPage * _itemsPerPage)
-          .take(n)
-          .toList();
+      _filteredList = _filterMaterials(_allMaterials);
     } else {
-      list = _allMaterials.skip(currentPage * _itemsPerPage).take(n).toList();
+      _filteredList = _allMaterials;
     }
-
+    count = _filteredList.length;
+    int n = min(_itemsPerPage, count - (currentPage * _itemsPerPage));
+    list = _filteredList.skip(currentPage * _itemsPerPage).take(n).toList();
     currentPage++;
     return list;
   }
