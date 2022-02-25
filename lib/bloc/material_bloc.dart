@@ -60,7 +60,10 @@ class MaterialBloc extends Object {
   }
 
   List<HiveMaterial> fetchMaterialsFromDB() {
-    _allMaterials = MaterialProvider().getMateialsSync();
+    _allMaterials = MaterialProvider()
+        .getMateialsSync()
+        .where((element) => !element.isDirty)
+        .toList();
     /*materialRepository
         .fetchMaterialsFromDB()
         .then(

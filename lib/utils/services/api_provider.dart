@@ -128,6 +128,14 @@ class ApiProvider {
     return client!.createUpdateMaterials(request);
   }
 
+  Future<ResponseStream<DeleteMaterialResponse>> deleteMaterials(
+      Stream<DeleteMaterialRequest> request) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.deleteMaterials(request);
+  }
+
   Future<ResponseStream<Group>> getGroups() async {
     var request = ListGroupsRequest.create();
     Date? date = SyncTime().lastSyncDateTime();

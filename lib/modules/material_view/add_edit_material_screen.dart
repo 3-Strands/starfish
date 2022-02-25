@@ -73,7 +73,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   late List<HiveMaterialTopic> _topicList;
 
   late String _choiceSeenByText = AppLocalizations.of(context)!.seenBy;
-  late String _choiceEditedByText = AppLocalizations.of(context)!.editedOrDeletedBy;
+  late String _choiceEditedByText =
+      AppLocalizations.of(context)!.editedOrDeletedBy;
 
   late AppBloc bloc;
 
@@ -680,11 +681,11 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
            context, AppLocalizations.of(context)!.emptySelectTopic);
      } */
     else {
-      _addUpdateUserProfile();
+      _addUpdateMaterial();
     }
   }
 
-  _addUpdateUserProfile() {
+  _addUpdateMaterial() {
     final bloc = Provider.of(context);
 
     HiveMaterial? _hiveMaterial;

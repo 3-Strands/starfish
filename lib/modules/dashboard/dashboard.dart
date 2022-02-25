@@ -55,6 +55,10 @@ class _DashboardState extends State<Dashboard> {
       debugPrint('Boradcast Receiver: kUpdateMaterial');
       SyncService().syncLocalMaterialsToRemote();
     }, more: {
+      SyncService.kDeleteMaterial: (hiveGroup, __) {
+        debugPrint('Boradcast Receiver: kDeleteMaterial');
+        SyncService().syncLocalDeletedMaterialsToRemote();
+      },
       SyncService.kUpdateGroup: (hiveGroup, __) {
         SyncService().syncLocalUsersAndGroups();
       },

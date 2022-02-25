@@ -1,3 +1,7 @@
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:fbroadcast/fbroadcast.dart';
+// ignore: implementation_imports
+import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,6 +31,7 @@ import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
@@ -155,7 +160,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return StatefulBuilder(
+        return widgetsBasic.StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Container(
               height: MediaQuery.of(context).size.height * 0.70,
@@ -499,7 +504,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             _language.name,
             textAlign: TextAlign.left,
             style: TextStyle(
-            //  color: Color(0xFF3475F0),
+              //  color: Color(0xFF3475F0),
               fontFamily: 'OpenSans',
               fontSize: 19.sp,
               fontWeight: FontWeight.bold,
@@ -526,7 +531,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           topic,
           textAlign: TextAlign.left,
           style: TextStyle(
-         //   color: Color(0xFF3475F0),
+            //   color: Color(0xFF3475F0),
             fontFamily: 'OpenSans',
             fontSize: 19.sp,
             fontWeight: FontWeight.bold,
@@ -608,7 +613,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   SizedBox(
                     height: 30.h,
                   ),
-                  Row(crossAxisAlignment: CrossAxisAlignment.end,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
@@ -624,58 +630,60 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       Spacer(),
                       Column(
                         children: <Widget>[
-                      // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
-                      if ((Material_Editability.valueOf(
-                                      material.editability!) ==
-                                  Material_Editability.CREATOR_EDIT &&
-                              material.creatorId ==
-                                  CurrentUserProvider().user.id) ||
-                          (Material_Editability.valueOf(
-                                      material.editability!) ==
-                                  Material_Editability.GROUP_EDIT) &&
-                              material.isAssignedToGroupWithLeaderRole)
-                        CustomIconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.blue,
-                            size: 21.5.sp,
-                          ),
-                          text: AppLocalizations.of(context)!.edit,
-                          onButtonTap: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddEditMaterialScreen(
-                                  material: material,
-                                ),
+                          // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
+                          if ((Material_Editability.valueOf(
+                                          material.editability!) ==
+                                      Material_Editability.CREATOR_EDIT &&
+                                  material.creatorId ==
+                                      CurrentUserProvider().user.id) ||
+                              (Material_Editability.valueOf(
+                                          material.editability!) ==
+                                      Material_Editability.GROUP_EDIT) &&
+                                  material.isAssignedToGroupWithLeaderRole)
+                            CustomIconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.blue,
+                                size: 21.5.sp,
                               ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 5,),
-                        if ((Material_Editability.valueOf(
-                                      material.editability!) ==
-                                  Material_Editability.CREATOR_EDIT &&
-                              material.creatorId ==
-                                  CurrentUserProvider().user.id) ||
-                          (Material_Editability.valueOf(
-                                      material.editability!) ==
-                                  Material_Editability.GROUP_EDIT) &&
-                              material.isAssignedToGroupWithLeaderRole)
-                              CustomIconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.blue,
-                            size: 21.5.sp,
+                              text: AppLocalizations.of(context)!.edit,
+                              onButtonTap: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddEditMaterialScreen(
+                                      material: material,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          SizedBox(
+                            height: 5,
                           ),
-                          text: AppLocalizations.of(context)!.delete,
-                          onButtonTap: () {
-                            _deleteMaterial(context);
-                         
-                          },
-                        ),
-                      ],),
+                          if ((Material_Editability.valueOf(
+                                          material.editability!) ==
+                                      Material_Editability.CREATOR_EDIT &&
+                                  material.creatorId ==
+                                      CurrentUserProvider().user.id) ||
+                              (Material_Editability.valueOf(
+                                          material.editability!) ==
+                                      Material_Editability.GROUP_EDIT) &&
+                                  material.isAssignedToGroupWithLeaderRole)
+                            CustomIconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.blue,
+                                size: 21.5.sp,
+                              ),
+                              text: AppLocalizations.of(context)!.delete,
+                              onButtonTap: () {
+                                _deleteMaterial(context, material);
+                              },
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -785,8 +793,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       ],
     );
   }
-  _deleteMaterial(BuildContext context,) {
-   // final bloc = Provider.of(context);
+
+  _deleteMaterial(BuildContext context, HiveMaterial material) {
     Alerts.showMessageBox(
         context: context,
         title: AppLocalizations.of(context)!.deleteMaterialTitle,
@@ -794,11 +802,20 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         positiveButtonText: AppLocalizations.of(context)!.delete,
         negativeButtonText: AppLocalizations.of(context)!.cancel,
         positiveActionCallback: () {
-          // Mark this action for deletion
-       //   action.isDirty = true;
-       //   bloc.actionBloc.createUpdateAction(action);
+          // Mark this material for deletion
+          material.isDirty = true;
+          bloc.materialBloc.createUpdateMaterial(material);
+
+          // Broadcast to sync the delete Material with the server
+          FBroadcast.instance().broadcast(
+            SyncService.kDeleteMaterial,
+          );
+          Navigator.of(context).pop();
+          // TODO: delete asociated files(if any) for deletion
         },
-        negativeActionCallback: () {});
+        negativeActionCallback: () {
+          // donothing
+        });
   }
 }
 
@@ -900,9 +917,6 @@ class MaterialListItem extends StatelessWidget {
       elevation: 5,
     );
   }
-
-
-
 }
 
 Color getMyTaskStatusColor(HiveMaterial material) {

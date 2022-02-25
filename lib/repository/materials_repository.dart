@@ -22,6 +22,10 @@ class MaterialRepository {
           Stream<CreateUpdateMaterialsRequest> request) =>
       apiProvider.createUpdateMaterial(request);
 
+  Future<ResponseStream<DeleteMaterialResponse>> deleteMaterials(
+          Stream<DeleteMaterialRequest> request) =>
+      apiProvider.deleteMaterials(request);
+
   Future<List<HiveMaterial>> fetchMaterialsFromDB() =>
       materialProvider.getMateials();
 

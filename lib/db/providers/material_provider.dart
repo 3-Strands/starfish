@@ -50,6 +50,15 @@ class MaterialProvider {
     }
   }
 
+  Future<void> deleteMaterial({required String id}) async {
+    HiveMaterial? _hiveMaterial =
+        _materialBox.values.firstWhereOrNull((element) => element.id! == id);
+
+    if (_hiveMaterial != null) {
+      _hiveMaterial.delete();
+    }
+  }
+
   HiveMaterial? getMaterialById(String materialId) {
     return _materialBox.values
         .firstWhereOrNull((element) => element.id == materialId);

@@ -9,6 +9,7 @@ import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:starfish/config/app_config.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -27,6 +28,7 @@ import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
@@ -53,6 +55,7 @@ class SyncService {
 
   static final String kUpdateCurrentUser = 'updateCurrentUser';
   static final String kUpdateMaterial = 'updateMaterial';
+  static final String kDeleteMaterial = 'deleteMaterial';
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
   static final String kUpdateActions = 'updateActions';
@@ -185,6 +188,10 @@ class SyncService {
       //showAlert(NavigationService.navigatorKey.currentContext!);
 
       // Synchronize the syncing of material(s), sequentily to avoid failure.
+
+      if (FlavorConfig.isDevelopment()) {
+        await lock.synchronized(() => syncLocalDeletedMaterialsToRemote());
+      }
       await lock.synchronized(() => syncLocalMaterialsToRemote());
       await lock.synchronized(() => syncLocalFiles());
       await lock.synchronized(() => syncMaterial()); // Upload local files
@@ -534,6 +541,39 @@ class SyncService {
     }).catchError(handleError);
   }
 
+  Future syncLocalDeletedMaterialsToRemote() async {
+    print(
+        '============= START: Sync Local Deleted Materials to Remote =============');
+
+    StreamController<DeleteMaterialRequest> _controller = StreamController();
+
+    ResponseStream<DeleteMaterialResponse> responseStram =
+        await MaterialRepository().deleteMaterials(_controller.stream);
+
+    materialBox.values
+        .where((element) => (element.isDirty == true))
+        .forEach((HiveMaterial _hiveMaterial) {
+      // this is a local material not yet synced with remote, so just delete from local
+      if (_hiveMaterial.isNew) {
+        MaterialProvider().deleteMaterial(id: _hiveMaterial.id!);
+      } else {
+        var request = DeleteMaterialRequest.create();
+        request.materialId = _hiveMaterial.id!;
+
+        _controller.add(request);
+      }
+    });
+    _controller.close();
+
+    await responseStram.forEach((response) {
+      print('Delete Material: ${response.status}');
+      if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
+        // this entry should be removed from the box
+        MaterialProvider().deleteMaterial(id: response.materialId);
+      }
+    });
+  }
+
   Future syncLocalMaterialsToRemote() async {
     print('============= START: Sync Local Materials to Remote =============');
 
@@ -782,7 +822,6 @@ class SyncService {
             .deleteGroupUsers(_controller.stream)
             // ignore: invalid_return_type_for_catch_error
             .catchError(handleError);
-    ;
 
     groupUserBox.values
         .where((element) => element.isDirty)
