@@ -2097,6 +2097,128 @@ class DeleteGroupUsersResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(4);
 }
 
+class DeleteMaterialRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteMaterialRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'materialId')
+    ..hasRequiredFields = false
+  ;
+
+  DeleteMaterialRequest._() : super();
+  factory DeleteMaterialRequest({
+    $core.String? materialId,
+  }) {
+    final _result = create();
+    if (materialId != null) {
+      _result.materialId = materialId;
+    }
+    return _result;
+  }
+  factory DeleteMaterialRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteMaterialRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteMaterialRequest clone() => DeleteMaterialRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteMaterialRequest copyWith(void Function(DeleteMaterialRequest) updates) => super.copyWith((message) => updates(message as DeleteMaterialRequest)) as DeleteMaterialRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DeleteMaterialRequest create() => DeleteMaterialRequest._();
+  DeleteMaterialRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteMaterialRequest> createRepeated() => $pb.PbList<DeleteMaterialRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteMaterialRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteMaterialRequest>(create);
+  static DeleteMaterialRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get materialId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set materialId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMaterialId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMaterialId() => clearField(1);
+}
+
+class DeleteMaterialResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteMaterialResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'materialId')
+    ..e<DeleteMaterialResponse_Status>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: DeleteMaterialResponse_Status.SUCCESS, valueOf: DeleteMaterialResponse_Status.valueOf, enumValues: DeleteMaterialResponse_Status.values)
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..hasRequiredFields = false
+  ;
+
+  DeleteMaterialResponse._() : super();
+  factory DeleteMaterialResponse({
+    $core.String? materialId,
+    DeleteMaterialResponse_Status? status,
+    $core.String? message,
+  }) {
+    final _result = create();
+    if (materialId != null) {
+      _result.materialId = materialId;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    return _result;
+  }
+  factory DeleteMaterialResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteMaterialResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteMaterialResponse clone() => DeleteMaterialResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteMaterialResponse copyWith(void Function(DeleteMaterialResponse) updates) => super.copyWith((message) => updates(message as DeleteMaterialResponse)) as DeleteMaterialResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DeleteMaterialResponse create() => DeleteMaterialResponse._();
+  DeleteMaterialResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteMaterialResponse> createRepeated() => $pb.PbList<DeleteMaterialResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteMaterialResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteMaterialResponse>(create);
+  static DeleteMaterialResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get materialId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set materialId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMaterialId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMaterialId() => clearField(1);
+
+  @$pb.TagNumber(3)
+  DeleteMaterialResponse_Status get status => $_getN(1);
+  @$pb.TagNumber(3)
+  set status(DeleteMaterialResponse_Status v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasStatus() => $_has(1);
+  @$pb.TagNumber(3)
+  void clearStatus() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get message => $_getSZ(2);
+  @$pb.TagNumber(4)
+  set message($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasMessage() => $_has(2);
+  @$pb.TagNumber(4)
+  void clearMessage() => clearField(4);
+}
+
 class Edit extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Edit', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'username')

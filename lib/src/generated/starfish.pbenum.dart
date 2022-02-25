@@ -276,6 +276,21 @@ class DeleteGroupUsersResponse_Status extends $pb.ProtobufEnum {
   const DeleteGroupUsersResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
+class DeleteMaterialResponse_Status extends $pb.ProtobufEnum {
+  static const DeleteMaterialResponse_Status SUCCESS = DeleteMaterialResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const DeleteMaterialResponse_Status FAILURE = DeleteMaterialResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+
+  static const $core.List<DeleteMaterialResponse_Status> values = <DeleteMaterialResponse_Status> [
+    SUCCESS,
+    FAILURE,
+  ];
+
+  static final $core.Map<$core.int, DeleteMaterialResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static DeleteMaterialResponse_Status? valueOf($core.int value) => _byValue[value];
+
+  const DeleteMaterialResponse_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class Edit_Event extends $pb.ProtobufEnum {
   static const Edit_Event EVENT_UNSPECIFIED = Edit_Event._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'EVENT_UNSPECIFIED');
   static const Edit_Event CREATE = Edit_Event._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'CREATE');

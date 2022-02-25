@@ -516,6 +516,38 @@ const DeleteGroupUsersResponse_Status$json = const {
 
 /// Descriptor for `DeleteGroupUsersResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List deleteGroupUsersResponseDescriptor = $convert.base64Decode('ChhEZWxldGVHcm91cFVzZXJzUmVzcG9uc2USFwoHdXNlcl9pZBgBIAEoCVIGdXNlcklkEhkKCGdyb3VwX2lkGAIgASgJUgdncm91cElkEkUKBnN0YXR1cxgDIAEoDjItLnNpbC5zdGFyZmlzaC5EZWxldGVHcm91cFVzZXJzUmVzcG9uc2UuU3RhdHVzUgZzdGF0dXMSGAoHbWVzc2FnZRgEIAEoCVIHbWVzc2FnZSIiCgZTdGF0dXMSCwoHU1VDQ0VTUxAAEgsKB0ZBSUxVUkUQAQ==');
+@$core.Deprecated('Use deleteMaterialRequestDescriptor instead')
+const DeleteMaterialRequest$json = const {
+  '1': 'DeleteMaterialRequest',
+  '2': const [
+    const {'1': 'material_id', '3': 1, '4': 1, '5': 9, '10': 'materialId'},
+  ],
+};
+
+/// Descriptor for `DeleteMaterialRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteMaterialRequestDescriptor = $convert.base64Decode('ChVEZWxldGVNYXRlcmlhbFJlcXVlc3QSHwoLbWF0ZXJpYWxfaWQYASABKAlSCm1hdGVyaWFsSWQ=');
+@$core.Deprecated('Use deleteMaterialResponseDescriptor instead')
+const DeleteMaterialResponse$json = const {
+  '1': 'DeleteMaterialResponse',
+  '2': const [
+    const {'1': 'material_id', '3': 1, '4': 1, '5': 9, '10': 'materialId'},
+    const {'1': 'status', '3': 3, '4': 1, '5': 14, '6': '.sil.starfish.DeleteMaterialResponse.Status', '10': 'status'},
+    const {'1': 'message', '3': 4, '4': 1, '5': 9, '10': 'message'},
+  ],
+  '4': const [DeleteMaterialResponse_Status$json],
+};
+
+@$core.Deprecated('Use deleteMaterialResponseDescriptor instead')
+const DeleteMaterialResponse_Status$json = const {
+  '1': 'Status',
+  '2': const [
+    const {'1': 'SUCCESS', '2': 0},
+    const {'1': 'FAILURE', '2': 1},
+  ],
+};
+
+/// Descriptor for `DeleteMaterialResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteMaterialResponseDescriptor = $convert.base64Decode('ChZEZWxldGVNYXRlcmlhbFJlc3BvbnNlEh8KC21hdGVyaWFsX2lkGAEgASgJUgptYXRlcmlhbElkEkMKBnN0YXR1cxgDIAEoDjIrLnNpbC5zdGFyZmlzaC5EZWxldGVNYXRlcmlhbFJlc3BvbnNlLlN0YXR1c1IGc3RhdHVzEhgKB21lc3NhZ2UYBCABKAlSB21lc3NhZ2UiIgoGU3RhdHVzEgsKB1NVQ0NFU1MQABILCgdGQUlMVVJFEAE=');
 @$core.Deprecated('Use editDescriptor instead')
 const Edit$json = const {
   '1': 'Edit',

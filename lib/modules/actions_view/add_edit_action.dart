@@ -259,11 +259,12 @@ class _AddEditActionState extends State<AddEditAction>
                           alignment: Alignment.centerLeft,
                           child: Row(
                             children: [
-                              Text(
+                              Text(_isEditMode ?
                                 _dueDate != null
                                     //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
                                     ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
-                                    : AppLocalizations.of(context)!.hintDueDate,
+                                    : AppLocalizations.of(context)!.hintDueDate
+                                :AppLocalizations.of(context)!.hintDueDate,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: 19.sp, color: Color(0xFF434141)),

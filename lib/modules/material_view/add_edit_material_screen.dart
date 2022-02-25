@@ -73,7 +73,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   late List<HiveMaterialTopic> _topicList;
 
   late String _choiceSeenByText = AppLocalizations.of(context)!.seenBy;
-  late String _choiceEditedByText = AppLocalizations.of(context)!.editedBy;
+  late String _choiceEditedByText = AppLocalizations.of(context)!.editedOrDeletedBy;
 
   late AppBloc bloc;
 
@@ -548,7 +548,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Edited by
                   Text(
-                    AppLocalizations.of(context)!.editedBy,
+                    AppLocalizations.of(context)!.editedOrDeletedBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),

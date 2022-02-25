@@ -95,6 +95,7 @@
   "selectType": "एक प्रकार चुनें",
 
   "editedBy": "द्वारा संपादित किया जा सकता है",
+  "editedOrDeletedBy": "द्वारा संपादित या हटाया जा सकता है",
   "seenBy": "द्वारा देखा जा सकता है",
   "selectCategories": "श्रेणियों का चयन करें",
 
@@ -294,6 +295,10 @@
   "delete": "हटाएं",     
   "deleteActionTitle": "कार्रवाई हटाएं?",     
   "deleteActionMessage": "क्या आप वाकई इस समूह के लिए इस कार्रवाई और इसके डेटा को हटाना चाहते हैं?",
+  "deleteGroupMessage":"क्या आप वाकई इस समूह और इसकी सभी कार्रवाइयों को हटाना चाहते हैं?",
+  "deleteGroup":"समूह हटाएं",
+  "deleteMaterialTitle": "सामग्री हटाएं",
+  "areYouSureWantToDeleteThis":"क्या आप वाकई इसे हटाना चाहते हैं",
   "zeroOrOneMemberIsOverdue": "शिक्षार्थी अतिदेय है",
   "moreThenOneMembersIsOverdue": "शिक्षार्थी अतिदेय हैं",
   "zeroOrOneMemberDidNotDoItYet": "शिक्षार्थी ने अभी तक ऐसा नहीं किया",

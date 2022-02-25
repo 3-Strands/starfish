@@ -97,6 +97,12 @@ class StarfishClient extends $grpc.Client {
           ($0.GroupUser value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.DeleteGroupUsersResponse.fromBuffer(value));
+  static final _$deleteMaterials =
+      $grpc.ClientMethod<$0.DeleteMaterialRequest, $0.DeleteMaterialResponse>(
+          '/sil.starfish.Starfish/DeleteMaterials',
+          ($0.DeleteMaterialRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.DeleteMaterialResponse.fromBuffer(value));
   static final _$getCurrentUser = $grpc.ClientMethod<$1.Empty, $0.User>(
       '/sil.starfish.Starfish/GetCurrentUser',
       ($1.Empty value) => value.writeToBuffer(),
@@ -270,6 +276,12 @@ class StarfishClient extends $grpc.Client {
       $async.Stream<$0.GroupUser> request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$deleteGroupUsers, request, options: options);
+  }
+
+  $grpc.ResponseStream<$0.DeleteMaterialResponse> deleteMaterials(
+      $async.Stream<$0.DeleteMaterialRequest> request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$deleteMaterials, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.User> getCurrentUser($1.Empty request,
@@ -505,6 +517,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.GroupUser.fromBuffer(value),
         ($0.DeleteGroupUsersResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.DeleteMaterialRequest,
+            $0.DeleteMaterialResponse>(
+        'DeleteMaterials',
+        deleteMaterials,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.DeleteMaterialRequest.fromBuffer(value),
+        ($0.DeleteMaterialResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$1.Empty, $0.User>(
         'GetCurrentUser',
         getCurrentUser_Pre,
@@ -753,6 +774,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $async.Stream<$0.DeleteActionRequest> request);
   $async.Stream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
       $grpc.ServiceCall call, $async.Stream<$0.GroupUser> request);
+  $async.Stream<$0.DeleteMaterialResponse> deleteMaterials(
+      $grpc.ServiceCall call, $async.Stream<$0.DeleteMaterialRequest> request);
   $async.Future<$0.User> getCurrentUser(
       $grpc.ServiceCall call, $1.Empty request);
   $async.Stream<$0.Action> listActions(
