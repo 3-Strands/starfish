@@ -667,6 +667,11 @@ message EvaluationCategory {
 // A literacy group
 message Group {
 
+    enum Status {
+        ACTIVE = 0;
+        INACTIVE = 1;
+    }
+
     string id  = 1;
 
     string name = 2;
@@ -694,6 +699,9 @@ message Group {
     // IDs mapped to names of languages connected to this group.
     // Output only. To edit the connected languages use the language_ids field.
     map<string, string> languages = 10;
+
+    // Status of the group
+    Status status = 11;
 }
 
 // An evaluation of a literacy group by a user
