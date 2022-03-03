@@ -15,7 +15,10 @@ class GroupProvider {
   }
 
   Future<List<HiveGroup>> getGroups() async {
-    return _groupBox.values.toList();
+    return _groupBox.values
+        .where((element) =>
+            Group_Status.valueOf(element.status ?? 0) == Group_Status.ACTIVE)
+        .toList();
   }
 
   List<HiveGroupUser> getGroupUsersSync() {
@@ -87,7 +90,10 @@ class GroupProvider {
 
   List<HiveGroup>? userGroupsWithRole(
       String userId, List<GroupUser_Role> groupUserRoleList) {
-    List<HiveGroup> _groupList = _groupBox.values.toList();
+    List<HiveGroup> _groupList = _groupBox.values
+        .where((element) =>
+            Group_Status.valueOf(element.status ?? 0) == Group_Status.ACTIVE)
+        .toList();
     if (_groupList.length == 0) {
       return null;
     }

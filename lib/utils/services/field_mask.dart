@@ -26,6 +26,7 @@ final List<String> kGroupFieldMask = [
   'language_ids',
   'users',
   'evaluation_category_ids',
+  'status',
 ];
 
 final List<String> kGroupUserFieldMask = [

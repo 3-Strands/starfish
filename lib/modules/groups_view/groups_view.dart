@@ -1,3 +1,7 @@
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:fbroadcast/fbroadcast.dart';
+// ignore: implementation_imports
+import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
@@ -17,6 +21,7 @@ import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
@@ -55,7 +60,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return StatefulBuilder(
+        return widgetsBasic.StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.70,
@@ -509,10 +514,9 @@ class GroupListItem extends StatelessWidget {
                   if (group.currentUserRole! == GroupUser_Role.ADMIN)
                     PopupMenuButton(
                       icon: Icon(
-                        
                         Icons.more_vert,
                         color: Color(0xFF3475F0),
-                        size:30,
+                        size: 30,
                       ),
                       color: Colors.white,
                       elevation: 20,
@@ -534,7 +538,7 @@ class GroupListItem extends StatelessWidget {
                                 .requestFocus(new FocusNode()));
                             break;
                           case 1:
-                            _deleteGroup(context);
+                            _deleteGroup(context, group);
 
                             break;
                         }
@@ -749,8 +753,8 @@ class GroupListItem extends StatelessWidget {
     );
   }
 
-   _deleteGroup(BuildContext context,) {
-   // final bloc = Provider.of(context);
+  _deleteGroup(BuildContext context, HiveGroup group) {
+    final bloc = Provider.of(context);
     Alerts.showMessageBox(
         context: context,
         title: AppLocalizations.of(context)!.deleteGroupTitle,
@@ -758,9 +762,15 @@ class GroupListItem extends StatelessWidget {
         positiveButtonText: AppLocalizations.of(context)!.delete,
         negativeButtonText: AppLocalizations.of(context)!.cancel,
         positiveActionCallback: () {
-          // Mark this action for deletion
-       //   action.isDirty = true;
-       //   bloc.actionBloc.createUpdateAction(action);
+          // Mark this group for deletion
+          group.status = Group_Status.INACTIVE.value;
+          group.isUpdated = true;
+          bloc.groupBloc.addEditGroup(group).then((_) {
+            // Broadcast to sync the delete Group with the server
+            FBroadcast.instance().broadcast(
+              SyncService.kUpdateGroup,
+            );
+          });
         },
         negativeActionCallback: () {});
   }

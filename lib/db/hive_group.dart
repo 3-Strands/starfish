@@ -33,14 +33,16 @@ class HiveGroup extends HiveObject {
   @HiveField(7)
   List<HiveGroupAction>? actions;
   @HiveField(8)
-  List<HiveEdit>? editHistory;
+  int? status;
   @HiveField(9)
-  bool isNew = false;
+  List<HiveEdit>? editHistory;
   @HiveField(10)
-  bool isUpdated = false;
+  bool isNew = false;
   @HiveField(11)
-  bool isDirty = false;
+  bool isUpdated = false;
   @HiveField(12)
+  bool isDirty = false; //Deprecated
+  @HiveField(13)
   bool isMe = false;
 
   HiveGroup({
@@ -52,6 +54,7 @@ class HiveGroup extends HiveObject {
     this.users,
     this.evaluationCategoryIds,
     this.actions,
+    this.status,
     this.editHistory,
     this.isNew = false,
     this.isUpdated = false,
@@ -68,6 +71,7 @@ class HiveGroup extends HiveObject {
     this.users =
         group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
     this.evaluationCategoryIds = group.evaluationCategoryIds;
+    this.status = group.status.value;
     // this.actions = group.actions
     //     .map((GroupAction action) => HiveGroupAction.from(action))
     //     .toList();
@@ -77,16 +81,16 @@ class HiveGroup extends HiveObject {
 
   Group toGroup() {
     return Group(
-      id: this.id,
-      name: this.name,
-      description: this.description,
-      linkEmail: this.linkEmail,
-      languageIds: this.languageIds,
-      //users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
-      evaluationCategoryIds: this.evaluationCategoryIds,
-      // actions:
-      //     this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
-    );
+        id: this.id,
+        name: this.name,
+        description: this.description,
+        linkEmail: this.linkEmail,
+        languageIds: this.languageIds,
+        //users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
+        evaluationCategoryIds: this.evaluationCategoryIds,
+        // actions:
+        //     this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
+        status: Group_Status.valueOf(this.status ?? 0));
   }
 
   GroupUser_Role? currentUserRole;
@@ -171,7 +175,7 @@ class HiveGroup extends HiveObject {
 
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
-    languageIds: ${this.languageIds?.toString()}, users: ${this.users?.toString()}, 
+    languageIds: ${this.languageIds?.toString()}, status: ${this.status}, users: ${this.users?.toString()},
     editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
   }
 }
