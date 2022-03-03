@@ -189,9 +189,9 @@ class SyncService {
 
       // Synchronize the syncing of material(s), sequentily to avoid failure.
 
-      if (FlavorConfig.isDevelopment()) {
-        await lock.synchronized(() => syncLocalDeletedMaterialsToRemote());
-      }
+      
+      await lock.synchronized(() => syncLocalDeletedMaterialsToRemote());
+      
       await lock.synchronized(() => syncLocalMaterialsToRemote());
       await lock.synchronized(() => syncLocalFiles());
       await lock.synchronized(() => syncMaterial()); // Upload local files

@@ -322,11 +322,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _getNameSection() {
     return Container(
-      height: (isNameEditable) ? 84.h : 63.h,
+   //   height: (isNameEditable) ? 84.h : 63.h,
       child: Column(
         children: [
           Container(
-            height: 22.h,
+      //      height: 22.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -348,11 +348,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          SizedBox(height: 5.h),
+      //    SizedBox(height: 5.h),
           (isNameEditable)
               ? _getEditableNameField()
               : Container(
-                  height: 36.h,
+          //        height: 36.h,
                   child: Align(
                     alignment: FractionalOffset.topLeft,
                     child: Text(
@@ -369,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _getEditableNameField() {
     return Container(
-      height: 52.h,
+   //   height: 52.h,
       child: TextFormField(
         controller: _nameController,
         focusNode: _nameFocus,
@@ -404,11 +404,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _getPhoneNumberSection() {
     return Container(
-      height: (isMobileEditable) ? 84.h : 63.h,
+    //  height: (isMobileEditable) ? 84.h : 63.h,
       child: Column(
         children: [
           Container(
-            height: 22.h,
+      //      height: 22.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -432,11 +432,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          SizedBox(height: 5.h),
+       //   SizedBox(height: 5.h),
           (isMobileEditable)
               ? _phoneNumberContainer()
               : Container(
-                  height: 36.h,
+          //        height: 36.h,
                   child: Align(
                     alignment: FractionalOffset.topLeft,
                     child: Text(
@@ -453,17 +453,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _phoneNumberContainer() {
     return Container(
-      height: 52.h,
+   //   height: 52.h,
       child: Row(
         children: [
           Container(
-            height: 52.h,
+    //        height: 52.h,
             width: 87.w,
             child: _countryCodeField(),
           ),
           SizedBox(width: 15.w),
           Container(
-            height: 52.h,
+     ///       height: 52.h,
             width: 243.w,
             child: _phoneNumberField(),
           )
@@ -685,9 +685,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: <Widget>[
                       SizedBox(height: 20.h),
                       _getNameSection(),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 5.h),
                       _getPhoneNumberSection(),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 5.h),
 
                       //--> App language section
                       Align(
