@@ -2368,6 +2368,7 @@ class Group extends $pb.GeneratedMessage {
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'description')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'linkEmail')
     ..m<$core.String, $core.String>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'languages', entryClassName: 'Group.LanguagesEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('sil.starfish'))
+    ..e<Group_Status>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: Group_Status.ACTIVE, valueOf: Group_Status.valueOf, enumValues: Group_Status.values)
     ..hasRequiredFields = false
   ;
 
@@ -2382,6 +2383,7 @@ class Group extends $pb.GeneratedMessage {
     $core.String? description,
     $core.String? linkEmail,
     $core.Map<$core.String, $core.String>? languages,
+    Group_Status? status,
   }) {
     final _result = create();
     if (id != null) {
@@ -2410,6 +2412,9 @@ class Group extends $pb.GeneratedMessage {
     }
     if (languages != null) {
       _result.languages.addAll(languages);
+    }
+    if (status != null) {
+      _result.status = status;
     }
     return _result;
   }
@@ -2484,6 +2489,15 @@ class Group extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   $core.Map<$core.String, $core.String> get languages => $_getMap(8);
+
+  @$pb.TagNumber(11)
+  Group_Status get status => $_getN(9);
+  @$pb.TagNumber(11)
+  set status(Group_Status v) { setField(11, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasStatus() => $_has(9);
+  @$pb.TagNumber(11)
+  void clearStatus() => clearField(11);
 }
 
 class GroupEvaluation extends $pb.GeneratedMessage {

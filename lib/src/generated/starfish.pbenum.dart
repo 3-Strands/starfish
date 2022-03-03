@@ -310,6 +310,21 @@ class Edit_Event extends $pb.ProtobufEnum {
   const Edit_Event._($core.int v, $core.String n) : super(v, n);
 }
 
+class Group_Status extends $pb.ProtobufEnum {
+  static const Group_Status ACTIVE = Group_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ACTIVE');
+  static const Group_Status INACTIVE = Group_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'INACTIVE');
+
+  static const $core.List<Group_Status> values = <Group_Status> [
+    ACTIVE,
+    INACTIVE,
+  ];
+
+  static final $core.Map<$core.int, Group_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static Group_Status? valueOf($core.int value) => _byValue[value];
+
+  const Group_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class GroupEvaluation_Evaluation extends $pb.ProtobufEnum {
   static const GroupEvaluation_Evaluation EVAL_UNSPECIFIED = GroupEvaluation_Evaluation._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'EVAL_UNSPECIFIED');
   static const GroupEvaluation_Evaluation BAD = GroupEvaluation_Evaluation._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'BAD');
