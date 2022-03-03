@@ -2,6 +2,7 @@ import 'dart:async';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
@@ -472,7 +473,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   TextFormField _countryCodeField() {
-    return TextFormField(
+    return TextFormField(inputFormatters : [
+           new FilteringTextInputFormatter.allow(RegExp("[0-9]")),],
+
       controller: _countryCodeController,
       focusNode: _countryCodeFocus,
       onFieldSubmitted: (term) {
@@ -503,7 +506,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   TextFormField _phoneNumberField() {
-    return TextFormField(
+    return TextFormField(inputFormatters: [
+      new FilteringTextInputFormatter.allow(RegExp("[0-9]")),],
       controller: _phoneNumberController,
       focusNode: _phoneNumberFocus,
       onFieldSubmitted: (term) {
