@@ -159,10 +159,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
             margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
             child: Column(
               children: [
-                Container(
-                  height: 26.h,
-                  child: Align(
-                    alignment: FractionalOffset.topLeft,
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: Container(
                     child: Text(
                       '${group.name}',
                       textAlign: TextAlign.left,
