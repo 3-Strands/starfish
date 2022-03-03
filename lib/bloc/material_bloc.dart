@@ -84,6 +84,9 @@ class MaterialBloc extends Object {
     }
     count = _filteredList.length;
     int n = min(_itemsPerPage, count - (currentPage * _itemsPerPage));
+    if (n < 0) {
+      return list;
+    }
     list = _filteredList.skip(currentPage * _itemsPerPage).take(n).toList();
     currentPage++;
     return list;
