@@ -730,6 +730,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 entityType: EntityType.MATERIAL.value,
                 filepath: file.path,
                 filename: file.path.split("/").last,
+                isSynced: false,
               ))
           .toList();
     }
