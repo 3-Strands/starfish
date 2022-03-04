@@ -101,7 +101,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     });
 
     // Reset current paage
-    bloc.materialBloc.currentPage = 1;
+    bloc.materialBloc.currentPage = 0;
 
     List<HiveMaterial> fetchedList = bloc.materialBloc.fetchMaterialsFromDB();
 
@@ -110,6 +110,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       _isFirstLoad = false;
       if (fetchedList.length > 0) {
         _hasMore = true;
+
+        if (fetchedList.length <= bloc.materialBloc.itemsPerPage) {
+          _hasMore = false;
+          _isLoading = false;
+        }
       }
     });
   }
@@ -125,6 +130,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       if (fetchedList.length > 0) {
         setState(() {
           _materials.addAll(fetchedList);
+
+          if (fetchedList.length <= bloc.materialBloc.itemsPerPage) {
+            _hasMore = false;
+            _isLoading = false;
+          }
         });
       } else {
         setState(() {

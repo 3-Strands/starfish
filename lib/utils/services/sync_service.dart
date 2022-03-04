@@ -189,9 +189,7 @@ class SyncService {
 
       // Synchronize the syncing of material(s), sequentily to avoid failure.
 
-      
       await lock.synchronized(() => syncLocalDeletedMaterialsToRemote());
-      
       await lock.synchronized(() => syncLocalMaterialsToRemote());
       await lock.synchronized(() => syncLocalFiles());
       await lock.synchronized(() => syncMaterial()); // Upload local files
@@ -542,6 +540,12 @@ class SyncService {
   }
 
   Future syncLocalDeletedMaterialsToRemote() async {
+    if (materialBox.values
+        .where((element) => (element.isDirty == true))
+        .isEmpty) {
+      return;
+    }
+
     print(
         '============= START: Sync Local Deleted Materials to Remote =============');
 
@@ -575,6 +579,12 @@ class SyncService {
   }
 
   Future syncLocalMaterialsToRemote() async {
+    if (materialBox.values
+        .where(
+            (element) => (element.isNew == true || element.isUpdated == true))
+        .isEmpty) {
+      return;
+    }
     print('============= START: Sync Local Materials to Remote =============');
 
     StreamController<CreateUpdateMaterialsRequest> _controller =
@@ -697,6 +707,11 @@ class SyncService {
   }
 
   Future syncLocalUsersToRemote() async {
+    if (userBox.values
+        .where((element) => element.isNew || element.isUpdated)
+        .isNotEmpty) {
+      return;
+    }
     print('============= START: Sync Local User to Remote =============');
     StreamController<CreateUpdateUserRequest> _controller = StreamController();
 
@@ -742,6 +757,11 @@ class SyncService {
   }
 
   Future syncLocalGroupsToRemote() async {
+    if (groupBox.values
+        .where((element) => element.isNew || element.isUpdated)
+        .isEmpty) {
+      return;
+    }
     print('============= START: Sync Local Groups to Remote =============');
     StreamController<CreateUpdateGroupsRequest> _controller =
         StreamController();
@@ -781,6 +801,11 @@ class SyncService {
   }
 
   Future syncLocalGroupUsersToRemote() async {
+    if (groupUserBox.values
+        .where((element) => element.isNew || element.isUpdated)
+        .isEmpty) {
+      return;
+    }
     print(
         '============= START: Sync Local Group Users to Remote =============');
     StreamController<CreateUpdateGroupUsersRequest> _controller =
@@ -815,6 +840,9 @@ class SyncService {
 
   // DELETE GROUP USERS
   Future syncLocalDeletedGroupUsersToRemote() async {
+    if (groupUserBox.values.where((element) => element.isDirty).isEmpty) {
+      return;
+    }
     StreamController<GroupUser> _controller = StreamController();
 
     ResponseStream<DeleteGroupUsersResponse> responseStream =
@@ -880,6 +908,12 @@ class SyncService {
   }
 
   syncLocalActionsToRemote() async {
+    if (actionBox.values
+        .where((element) =>
+            (element.isNew || element.isUpdated || element.isDirty))
+        .isEmpty) {
+      return;
+    }
     print('============= START: Sync Local Actions to Remote =============');
 
     StreamController<CreateUpdateActionsRequest> _controller =
@@ -1100,6 +1134,11 @@ class SyncService {
   }
 
   Future syncLocalHiveActionUserToRemote() async {
+    if (actionUserBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
     print('============= START: Sync Local ActionUser to Remote =============');
     StreamController<CreateUpdateActionUserRequest> _controller =
         StreamController();

@@ -48,7 +48,7 @@ class MaterialBloc extends Object {
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
-  final _itemsPerPage = 20;
+  final itemsPerPage = 20;
   int currentPage = 0;
 
   setActionFilter(MaterialFilter filter) {
@@ -83,11 +83,11 @@ class MaterialBloc extends Object {
       _filteredList = _allMaterials;
     }
     count = _filteredList.length;
-    int n = min(_itemsPerPage, count - (currentPage * _itemsPerPage));
+    int n = min(itemsPerPage, count - (currentPage * itemsPerPage));
     if (n < 0) {
       return list;
     }
-    list = _filteredList.skip(currentPage * _itemsPerPage).take(n).toList();
+    list = _filteredList.skip(currentPage * itemsPerPage).take(n).toList();
     currentPage++;
     return list;
   }
