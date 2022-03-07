@@ -82,7 +82,7 @@ class _UnInvitedGroupMemberListItemState
                         setState(() {
                           isEditMode = !isEditMode;
                         });
-                        if (widget.groupUser.user != null) {
+                        /*if (widget.groupUser.user != null) {
                           widget.groupUser.user!.phone =
                               _phoneNumberController.text;
                           widget.groupUser.user!.diallingCode =
@@ -94,7 +94,7 @@ class _UnInvitedGroupMemberListItemState
 
                           widget.groupUser.user!.save();
                           widget.onInvite(widget.groupUser.user!);
-                        }
+                        }*/
                       },
                       child: Text(
                         AppLocalizations.of(context)!.inviteGroupUser,

@@ -464,7 +464,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         .toList();
 
     // Add groupUsers to 'GroupUserBox' to sync
-    bloc.groupBloc.addGroupUsers(_newGroupUsers);
+    await bloc.groupBloc.addGroupUsers(_newGroupUsers);
 
     bloc.groupBloc.addEditGroup(_hiveGroup).then((value) {
       // Broadcast to sync the local changes with the server
