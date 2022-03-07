@@ -709,7 +709,7 @@ class SyncService {
   Future syncLocalUsersToRemote() async {
     if (userBox.values
         .where((element) => element.isNew || element.isUpdated)
-        .isNotEmpty) {
+        .isEmpty) {
       return;
     }
     print('============= START: Sync Local User to Remote =============');
