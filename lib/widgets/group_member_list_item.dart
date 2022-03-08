@@ -57,37 +57,46 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   color: Color(0xFF434141),
                 ),
               ),
-              if (widget.groupUser.user != null &&
-                  User_Status.valueOf(widget.groupUser.user!.status!) !=
-                      User_Status.ACTIVE)
-                Text(
-                  AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
+              // if (widget.groupUser.user != null &&
+              //     User_Status.valueOf(widget.groupUser.user!.status!) !=
+              //         User_Status.ACTIVE)
+              //   Text(
+              //     AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
+              //     style: TextStyle(
+              //       fontFamily: 'OpenSans',
+              //       fontSize: 19.sp,
+              //       color: Color(0xFF3475F0),
+              //     ),
+              //   ),
+              // if (widget.groupUser.user != null &&
+              //     User_Status.valueOf(widget.groupUser.user!.status!) ==
+              //         User_Status.ACTIVE)
+              PopupMenuButton(
+                color: Colors.white,
+                elevation: 20,
+                shape: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Text(
+                  widget.groupUser.user != null &&
+                          User_Status.valueOf(widget.groupUser.user!.status!) !=
+                              User_Status.ACTIVE
+                      ? '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}'+" " +
+                          AppLocalizations.of(context)!
+                              .userStatusInvited
+                              .toUpperCase()
+                      : '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}',
                   style: TextStyle(
                     fontFamily: 'OpenSans',
                     fontSize: 19.sp,
                     color: Color(0xFF3475F0),
                   ),
                 ),
-              if (widget.groupUser.user != null &&
-                  User_Status.valueOf(widget.groupUser.user!.status!) ==
-                      User_Status.ACTIVE)
-                PopupMenuButton(
-                  color: Colors.white,
-                  elevation: 20,
-                  shape: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Text(
-                    // 'yes',
-                    '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}',
-                    style: TextStyle(
-                      fontFamily: 'OpenSans',
-                      fontSize: 19.sp,
-                      color: Color(0xFF3475F0),
-                    ),
-                  ),
-                  itemBuilder: (context) => [
+                itemBuilder: (context) => [
+                  if (widget.groupUser.user != null &&
+                      User_Status.valueOf(widget.groupUser.user!.status!) ==
+                          User_Status.ACTIVE)
                     PopupMenuItem(
                       child: Text(
                         AppLocalizations.of(context)!.makeAdmin,
@@ -98,42 +107,42 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       ),
                       value: 0,
                     ),
-                    PopupMenuItem(
-                      child: Text(
-                        AppLocalizations.of(context)!.makeTeacher,
-                        style: TextStyle(
-                            color: Color(0xFF3475F0),
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      value: 1,
+                  PopupMenuItem(
+                    child: Text(
+                      AppLocalizations.of(context)!.makeTeacher,
+                      style: TextStyle(
+                          color: Color(0xFF3475F0),
+                          fontSize: 19.sp,
+                          fontWeight: FontWeight.bold),
                     ),
-                    PopupMenuItem(
-                      child: Text(
-                        AppLocalizations.of(context)!.makeRemove,
-                        style: TextStyle(
-                            color: Color(0xFF3475F0),
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      value: 2,
+                    value: 1,
+                  ),
+                  PopupMenuItem(
+                    child: Text(
+                      AppLocalizations.of(context)!.makeRemove,
+                      style: TextStyle(
+                          color: Color(0xFF3475F0),
+                          fontSize: 19.sp,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ],
-                  onSelected: (int value) {
-                    switch (value) {
-                      case 0:
-                        widget.onChangeUserRole(
-                            widget.groupUser, GroupUser_Role.ADMIN);
-                        break;
-                      case 1:
-                        widget.onChangeUserRole(
-                            widget.groupUser, GroupUser_Role.TEACHER);
-                        break;
-                      case 2:
-                        widget.onRemoveUser(widget.groupUser);
-                        break;
-                    }
-                    /*switch (value) {
+                    value: 2,
+                  ),
+                ],
+                onSelected: (int value) {
+                  switch (value) {
+                    case 0:
+                      widget.onChangeUserRole(
+                          widget.groupUser, GroupUser_Role.ADMIN);
+                      break;
+                    case 1:
+                      widget.onChangeUserRole(
+                          widget.groupUser, GroupUser_Role.TEACHER);
+                      break;
+                    case 2:
+                      widget.onRemoveUser(widget.groupUser);
+                      break;
+                  }
+                  /*switch (value) {
                     case 0:
                       widget.groupUser.role = GroupUser_Role.ADMIN.value;
                       widget.groupUser.isUpdated = true;
@@ -148,8 +157,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                     default:
                   }
                   bloc.groupBloc.createUpdateGroupUser(widget.groupUser);*/
-                  },
-                ),
+                },
+              ),
             ],
           ),
           SizedBox(
