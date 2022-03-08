@@ -670,7 +670,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                               },
                             ),
                           SizedBox(
-                            height: 5,
+                            height: 10.h,
                           ),
                           if ((Material_Editability.valueOf(
                                           material.editability!) ==
