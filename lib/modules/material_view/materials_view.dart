@@ -111,7 +111,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       if (fetchedList.length > 0) {
         _hasMore = true;
 
-        if (fetchedList.length <= bloc.materialBloc.itemsPerPage) {
+        if (fetchedList.length <= bloc.materialBloc.itemsPerPage &&
+            bloc.materialBloc.count <= bloc.materialBloc.itemsPerPage) {
           _hasMore = false;
           _isLoading = false;
         }
@@ -129,9 +130,12 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
       if (fetchedList.length > 0) {
         setState(() {
+          _hasMore = true;
+
           _materials.addAll(fetchedList);
 
-          if (fetchedList.length <= bloc.materialBloc.itemsPerPage) {
+          if (fetchedList.length <= bloc.materialBloc.itemsPerPage &&
+              bloc.materialBloc.count <= bloc.materialBloc.itemsPerPage) {
             _hasMore = false;
             _isLoading = false;
           }

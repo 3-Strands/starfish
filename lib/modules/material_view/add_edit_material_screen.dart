@@ -856,7 +856,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                         return;
                       } else if (Platform.isAndroid) {
                         if (hiveFile.filepath != null) {
-                          OpenFile.open(hiveFile.filepath);
+                          OpenFile.open(hiveFile.filepath!);
                         }
                       }
                       /*_copyFileToDownloads(file).then((value) {
