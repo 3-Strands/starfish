@@ -18,11 +18,13 @@ class UserProvider {
     return _userBox.values.firstWhereOrNull((element) => element.id == userId);
   }
 
-  HiveUser? getLocalUserByPhone(String diallingCode, String phone) {
-    return _userBox.values.firstWhereOrNull((element) =>
-        element.diallingCode == diallingCode &&
-        element.phone == phone &&
-        element.isNew);
+  List<HiveUser> getLocalUserByPhone(String diallingCode, String phone) {
+    return _userBox.values
+        .where((element) =>
+            element.diallingCode == diallingCode &&
+            element.phone == phone &&
+            element.isNew)
+        .toList();
   }
 
   Future<void> createUpdateUser(HiveUser user) async {

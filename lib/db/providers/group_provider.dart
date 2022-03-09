@@ -83,6 +83,14 @@ class GroupProvider {
     });
   }
 
+  void deleteGroupUserByUserId(String userId) {
+    _groupUserBox.values
+        .where((groupUser) => groupUser.userId == userId)
+        .forEach((groupUser) async {
+      await groupUser.delete();
+    });
+  }
+
   HiveGroup? getGroupById(String groupId) {
     return _groupBox.values
         .firstWhereOrNull((element) => element.id == groupId);

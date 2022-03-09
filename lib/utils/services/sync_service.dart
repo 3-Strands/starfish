@@ -739,16 +739,32 @@ class SyncService {
       print('Remote User: ${_response}');
       if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
         // get local Id of this user/ and replace in all the groupUser
-        HiveUser? _hiveLocalUser = UserProvider().getLocalUserByPhone(
+        List<HiveUser> _hiveLocalUsers = UserProvider().getLocalUserByPhone(
             _response.user.diallingCode, _response.user.phone);
-        if (_hiveLocalUser != null) {
-          //Delete all local entry local entry with matching user i.e. dialling code and phone
-          UserProvider().deleteUser(_hiveLocalUser);
+        if (_hiveLocalUsers.length == 1) {
+          // Delete all local entry local entry with matching user i.e. dialling code and phone
+          UserProvider().deleteUser(_hiveLocalUsers.first);
 
           UserProvider().createUpdateUser(HiveUser.from(_response.user));
 
           GroupProvider()
-              .updateGroupUserId(_hiveLocalUser.id, _response.user.id);
+              .updateGroupUserId(_hiveLocalUsers.first.id, _response.user.id);
+        } else if (_hiveLocalUsers.length > 1) {
+          /**
+           * If there are multiple local (i.e. isNew = true) records with the same phonenumber and dilling code, 
+           * just keep once record, and delete rest ofthe records.
+           */
+          UserProvider().createUpdateUser(HiveUser.from(_response.user));
+          HiveUser _hiveUser = _hiveLocalUsers.first;
+          GroupProvider().updateGroupUserId(_hiveUser.id, _response.user.id);
+
+          _hiveLocalUsers.forEach((_user) async {
+            // Delete all local entry local entry with matching user i.e. dialling code and phone
+            await _user.delete();
+
+            // Delete this userId from GroupUserBox except one
+            GroupProvider().deleteGroupUserByUserId(_user.id!);
+          });
         }
       } else {
         print('============= ERROR: syncLocalUsersToRemote =============');
