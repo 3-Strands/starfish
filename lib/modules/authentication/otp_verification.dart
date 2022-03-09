@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -45,7 +46,7 @@ class OTPVerificationScreen extends StatefulWidget {
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   late String _smsCode;
   bool _otpEmpty = false;
-  bool _isLoading = false;
+  //bool _isLoading = false;
 
   late Timer _timer;
 
@@ -125,11 +126,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                   ],
                 ),
               ),
-              (_isLoading == true)
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Container()
             ]),
           ),
         ),
@@ -242,9 +238,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       auth
           .signInWithCredential(credential)
           .then((data) => {
-                setState(() {
+                /*setState(() {
                   _isLoading = false;
-                }),
+                })*/
+                EasyLoading.dismiss(),
                 _getUserInfo(data),
               })
           .onError((error, stackTrace) => _handleError(error));
@@ -256,9 +253,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   _verfiyPhoneNumberWithOTPOnWeb() async {
     UserCredential userCredential =
         await _confirmationResult!.confirm(_smsCode);
-    setState(() {
+    /*setState(() {
       _isLoading = false;
-    });
+    });*/
+    EasyLoading.dismiss();
     _getUserInfo(userCredential);
   }
 
@@ -345,9 +343,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     return;
                   }
 
-                  setState(() {
+                  /*setState(() {
                     _isLoading = true;
-                  });
+                  });*/
+                  EasyLoading.show();
 
                   if (kIsWeb) {
                     _verfiyPhoneNumberWithOTPOnWeb();
@@ -409,6 +408,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   _prepareAppAndNavigate() {
     SyncService().clearAll();
 
+    EasyLoading.show();
     Future.wait([
       SyncService().syncCurrentUser(),
       SyncService().syncCountries(),
@@ -423,6 +423,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     ]).then((value) {
       SyncService().updateLastSyncDateTime();
       Navigator.of(context).pushNamed(Routes.showProfile);
+    }).onError((error, stackTrace) {
+      _handleError(error);
+    }).whenComplete(() {
+      EasyLoading.dismiss();
     });
   }
 
@@ -436,6 +440,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     }*/
 
+    print("AuthenticationResponse: $authenticateResponse");
     StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     StarfishSharedPreference()
         .setRefreshToken(authenticateResponse.refreshToken);
@@ -444,9 +449,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   _handleError(dynamic e) {
     debugPrint(e.message);
-    setState(() {
+    /*setState(() {
       _isLoading = false;
-    });
+    });*/
+    EasyLoading.dismiss();
     StarfishSnackbar.showErrorMessage(context, '${e.message}');
   }
 }
