@@ -105,7 +105,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         user.isActive
                             ? GroupUser_Role.valueOf(user.role!)!.about
                             : user.isInvited
-                                ? AppLocalizations.of(context)!
+                                ? "${GroupUser_Role.valueOf(user.role!)!.about} "+AppLocalizations.of(context)!
                                     .userStatusInvited
                                     .toUpperCase()
                                 : '',
