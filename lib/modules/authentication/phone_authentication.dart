@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -35,7 +36,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
 
-  bool _isLoading = false;
+  //bool _isLoading = false;
   bool _isPhoneNumberEmpty = true;
 
   late Box<HiveCountry> _countryBox;
@@ -122,11 +123,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   ),
                 ),
               ),
-              (_isLoading == true)
+              /*(_isLoading == true)
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : Container()
+                  : Container()*/
             ],
           ),
         ),
@@ -291,9 +292,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 return StarfishSnackbar.showErrorMessage(
                     context, validationMsg);
               } else {
-                setState(() {
+                /*setState(() {
                   _isLoading = true;
-                });
+                });*/
+                EasyLoading.show();
 
                 if (kIsWeb) {
                   _authenticateOnWeb(
@@ -323,22 +325,25 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     await auth.verifyPhoneNumber(
       phoneNumber: phoneNumberWithDialingCode,
       verificationCompleted: (PhoneAuthCredential credential) {
-        setState(() {
+        /*setState(() {
           _isLoading = false;
-        });
+        });*/
+        EasyLoading.dismiss();
       },
       verificationFailed: (FirebaseAuthException e) {
-        setState(() {
+        /*setState(() {
           _isLoading = false;
-        });
+        });*/
+        EasyLoading.dismiss();
         if (e.code == 'invalid-phone-number') {
           return StarfishSnackbar.showErrorMessage(context, e.message ?? '');
         }
       },
       codeSent: (String verificationId, int? resendToken) async {
-        setState(() {
+        /*setState(() {
           _isLoading = false;
-        });
+        });*/
+        EasyLoading.dismiss();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -363,9 +368,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     await auth
         .signInWithPhoneNumber(dialingCode + phoneNumber)
         .then((confirmationResult) => {
-              setState(() {
+              /*setState(() {
                 _isLoading = false;
-              }),
+              }),*/
+              EasyLoading.dismiss(),
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -380,9 +386,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               ),
             })
         .onError((error, stackTrace) => {
-              setState(() {
+              /*setState(() {
                 _isLoading = false;
-              }),
+              }),*/
+              EasyLoading.dismiss(),
             });
   }
 

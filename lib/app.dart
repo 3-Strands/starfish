@@ -34,8 +34,8 @@ class _StarfishState extends State<Starfish> {
       ..loadingStyle = EasyLoadingStyle.custom
       ..userInteractions = false
       ..dismissOnTap = false
-      ..backgroundColor = Colors.blue.shade300
-      ..indicatorColor = Colors.grey.shade200
+      ..backgroundColor = Colors.transparent
+      ..indicatorColor = Colors.blue
       ..textColor = Colors.black45
       ..maskColor = Colors.blue.withOpacity(0.5);
   }
