@@ -5,6 +5,7 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 class ActionProvider {
   late Box<HiveUser> _userBox;
@@ -24,7 +25,22 @@ class ActionProvider {
   }
 
   List<HiveAction> getAllActiveActions() {
-    return _actionBox.values.where((element) => !element.isDirty).toList();
+    return _actionBox.values.where((element) {
+      if (element.isDirty) {
+        return false;
+      } else {
+        if (element.group == null) {
+          return true;
+        } else {
+          if (Group_Status.valueOf(element.group!.status!) ==
+              Group_Status.INACTIVE) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+    }).toList();
   }
 
   /*List<HiveAction> getAllActions() {
