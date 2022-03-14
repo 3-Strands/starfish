@@ -1228,9 +1228,11 @@ class SyncService {
       }).onError((error, stackTrace) {
         debugPrint("Failed to refresh token");
         if (error.runtimeType == GrpcError) {
-          StarfishSnackbar.showErrorMessage(
-              NavigationService.navigatorKey.currentContext!,
-              '${(error as GrpcError).codeName}: ${error.message}');
+          if (FlavorConfig.isDevelopment()) {
+            StarfishSnackbar.showErrorMessage(
+                NavigationService.navigatorKey.currentContext!,
+                '${(error as GrpcError).codeName}: ${error.message}');
+          }
 
           FBroadcast.instance().broadcast(
             SyncService.kUnauthenticated,
@@ -1238,9 +1240,12 @@ class SyncService {
         }
       }).whenComplete(() {});
     } else {
-      StarfishSnackbar.showErrorMessage(
-          NavigationService.navigatorKey.currentContext!,
-          '${error.codeName}: ${error.message}');
+      debugPrint('${error.codeName}: ${error.message}');
+      if (FlavorConfig.isDevelopment()) {
+        StarfishSnackbar.showErrorMessage(
+            NavigationService.navigatorKey.currentContext!,
+            '${error.codeName}: ${error.message}');
+      }
     }
   }
 }
