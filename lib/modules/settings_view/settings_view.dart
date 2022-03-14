@@ -1099,36 +1099,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SizedBox(height: 10.h),
                   Container(
                     //height: 52.h,
-                    child: TextFormField(
-                      enabled: item['is_editing'],
-                      controller: _emailController,
-                      focusNode: _emailFocus,
-                      onFieldSubmitted: (term) {
-                        _groups[index]['email'] = term;
-                        _emailController.text = term;
-                        _emailFocus.unfocus();
-                      },
-                      keyboardType: TextInputType.emailAddress,
-                      style: textFormFieldText,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.emailHint,
-                        labelStyle: formTitleHintStyle,
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                    child: InkWell(onTap: (){
+                      setState(() {
+                        item['is_editing'] = true;
+                      });
+                    },
+                      child: TextFormField(
+                        enabled: item['is_editing'],
+                        controller: _emailController,
+                        focusNode: _emailFocus,
+                        onFieldSubmitted: (term) {
+                          _groups[index]['email'] = term;
+                          _emailController.text = term;
+                          _emailFocus.unfocus();
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        style: textFormFieldText,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.emailHint,
+                          labelStyle: formTitleHintStyle,
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
 
-                        // hintText: AppLocalizations.of(context)!.emailHint,
-                        contentPadding:
-                            EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.white,
+                          // hintText: AppLocalizations.of(context)!.emailHint,
+                          contentPadding:
+                              EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: AppColors.txtFieldBackground,
                         ),
-                        filled: true,
-                        fillColor: AppColors.txtFieldBackground,
                       ),
                     ),
                   ),
