@@ -172,16 +172,22 @@ class _DashboardState extends State<Dashboard> {
   }
 
   _selectLanguage(AppBloc bloc) {
+    _getCurrentUser();
     for (var languageId in _user.languageIds) {
-      _languageList
-          .where((item) => item.id == languageId)
-          .forEach((item) => {bloc.materialBloc.selectedLanguages.add(item)});
+      _languageList.where((item) => item.id == languageId).forEach((item) {
+        bloc.materialBloc.selectedLanguages.add(item);
+      });
     }
   }
 
   void onPageChanged(int index) {
+    _getCurrentUser();
+
     if (index != 0) {
       _cleanMaterialFilterValues();
+    } else {
+      bloc.materialBloc.selectedLanguages.clear();
+      _selectLanguage(bloc);
     }
 
     FocusScope.of(context).requestFocus(new FocusNode());

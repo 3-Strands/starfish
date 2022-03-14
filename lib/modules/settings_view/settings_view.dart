@@ -78,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late AppBloc bloc;
 
   late List<Map> _languages;
-  late Map _language;
+  late Map _language = Map();
   late List<DropdownMenuItem<Map>> _dropdownLanguagesItem;
 
   List<Map<String, dynamic>> _groups = [];
@@ -287,13 +287,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
 
-    HiveCurrentUser _currentUser = _currentUserBox.values.first;
+    //HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.languageIds = _selectedLanguageIds;
 
     EasyLoading.show();
 
     CurrentUserRepository()
-        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
+        .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then(
       (value) {
         bloc.materialBloc.selectedLanguages = _selectedLanguages;
@@ -322,11 +322,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _getNameSection() {
     return Container(
-   //   height: (isNameEditable) ? 84.h : 63.h,
+      //   height: (isNameEditable) ? 84.h : 63.h,
       child: Column(
         children: [
           Container(
-      //      height: 22.h,
+            //      height: 22.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -348,11 +348,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-      //    SizedBox(height: 5.h),
+          //    SizedBox(height: 5.h),
           (isNameEditable)
               ? _getEditableNameField()
               : Container(
-          //        height: 36.h,
+                  //        height: 36.h,
                   child: Align(
                     alignment: FractionalOffset.topLeft,
                     child: Text(
@@ -369,7 +369,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _getEditableNameField() {
     return Container(
-   //   height: 52.h,
+      //   height: 52.h,
       child: TextFormField(
         controller: _nameController,
         focusNode: _nameFocus,
@@ -404,11 +404,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _getPhoneNumberSection() {
     return Container(
-    //  height: (isMobileEditable) ? 84.h : 63.h,
+      //  height: (isMobileEditable) ? 84.h : 63.h,
       child: Column(
         children: [
           Container(
-      //      height: 22.h,
+            //      height: 22.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -432,11 +432,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-       //   SizedBox(height: 5.h),
+          //   SizedBox(height: 5.h),
           (isMobileEditable)
               ? _phoneNumberContainer()
               : Container(
-          //        height: 36.h,
+                  //        height: 36.h,
                   child: Align(
                     alignment: FractionalOffset.topLeft,
                     child: Text(
@@ -453,17 +453,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Container _phoneNumberContainer() {
     return Container(
-   //   height: 52.h,
+      //   height: 52.h,
       child: Row(
         children: [
           Container(
-    //        height: 52.h,
+            //        height: 52.h,
             width: 87.w,
             child: _countryCodeField(),
           ),
           SizedBox(width: 15.w),
           Container(
-     ///       height: 52.h,
+            ///       height: 52.h,
             width: 243.w,
             child: _phoneNumberField(),
           )
@@ -473,9 +473,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   TextFormField _countryCodeField() {
-    return TextFormField(inputFormatters : [
-           new FilteringTextInputFormatter.allow(RegExp("[0-9]")),],
-
+    return TextFormField(
+      inputFormatters: [
+        new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+      ],
       controller: _countryCodeController,
       focusNode: _countryCodeFocus,
       onFieldSubmitted: (term) {
@@ -506,8 +507,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   TextFormField _phoneNumberField() {
-    return TextFormField(inputFormatters: [
-      new FilteringTextInputFormatter.allow(RegExp("[0-9]")),],
+    return TextFormField(
+      inputFormatters: [
+        new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+      ],
       controller: _phoneNumberController,
       focusNode: _phoneNumberFocus,
       onFieldSubmitted: (term) {

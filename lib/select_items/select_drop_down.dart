@@ -148,6 +148,11 @@ class _SelectDropDownState extends State<SelectDropDown> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.selectedValues == null) {
+      _selectedValue = widget.placeholder;
+    } else {
+      showSelectedValue(widget.selectedValues);
+    }
     return Container(
       height: 52.h,
       decoration: BoxDecoration(
@@ -200,7 +205,9 @@ class _SelectDropDownState extends State<SelectDropDown> {
                       : _selectedValue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: _selectedValue == widget.placeholder ? formTitleHintStyle :  textFormFieldText,
+                  style: _selectedValue == widget.placeholder
+                      ? formTitleHintStyle
+                      : textFormFieldText,
                 ),
               ),
               Spacer(),
