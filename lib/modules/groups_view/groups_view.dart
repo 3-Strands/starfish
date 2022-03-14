@@ -105,9 +105,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         user.isActive
                             ? GroupUser_Role.valueOf(user.role!)!.about
                             : user.isInvited
-                                ? "${GroupUser_Role.valueOf(user.role!)!.about} "+AppLocalizations.of(context)!
-                                    .userStatusInvited
-                                    .toUpperCase()
+                                ? "${GroupUser_Role.valueOf(user.role!)!.about} " +
+                                    AppLocalizations.of(context)!
+                                        .userStatusInvited
+                                        .toUpperCase()
                                 : '',
                         textAlign: TextAlign.right,
                         overflow: TextOverflow.ellipsis,
@@ -491,8 +492,9 @@ class GroupListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Center(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
@@ -510,18 +512,19 @@ class GroupListItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10.h,),
-
-                          Text(
-              '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontFamily: 'OpenSans',
-                fontSize: 14.5.sp,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF797979),
-              ),
-            ),
+                        SizedBox(
+                          height: 5.h,
+                        ),
+                        Text(
+                          '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 14.5.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF797979),
+                          ),
+                        ),
                       ],
                     ),
                   ),
