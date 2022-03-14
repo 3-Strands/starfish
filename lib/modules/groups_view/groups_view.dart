@@ -105,7 +105,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         user.isActive
                             ? GroupUser_Role.valueOf(user.role!)!.about
                             : user.isInvited
-                                ? AppLocalizations.of(context)!
+                                ? "${GroupUser_Role.valueOf(user.role!)!.about} "+AppLocalizations.of(context)!
                                     .userStatusInvited
                                     .toUpperCase()
                                 : '',
@@ -491,22 +491,38 @@ class GroupListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        right: 8.w,
-                      ),
-                      child: Text(
-                        '${group.name}',
-                        //overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.txtFieldTextColor,
+                  Center(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: 8.w,
+                          ),
+                          child: Text(
+                            '${group.name}',
+                            //overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontFamily: 'OpenSans',
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.txtFieldTextColor,
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 10.h,),
+
+                          Text(
+              '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 14.5.sp,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF797979),
+              ),
+            ),
+                      ],
                     ),
                   ),
                   // Spacer(),
@@ -607,16 +623,16 @@ class GroupListItem extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.h),
-            Text(
-              '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontFamily: 'OpenSans',
-                fontSize: 14.5.sp,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF797979),
-              ),
-            ),
+            // Text(
+            //   '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
+            //   textAlign: TextAlign.left,
+            //   style: TextStyle(
+            //     fontFamily: 'OpenSans',
+            //     fontSize: 14.5.sp,
+            //     fontWeight: FontWeight.w500,
+            //     color: Color(0xFF797979),
+            //   ),
+            // ),
             SizedBox(height: 20.h),
             if (group.currentUserRole == GroupUser_Role.ADMIN ||
                 group.currentUserRole == GroupUser_Role.TEACHER)
