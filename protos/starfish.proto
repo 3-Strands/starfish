@@ -45,6 +45,9 @@ service Starfish {
     // Create or update teacher responses
     rpc CreateUpdateTeacherResponses (stream CreateUpdateTeacherResponseRequest) returns (stream CreateUpdateTeacherResponseResponse) {}
 
+    // Update or create transformations as a stream
+    rpc CreateUpdateTransformations (stream CreateUpdateTransformationRequest) returns (stream CreateUpdateTransformationResponse) {}
+
     // Create or update starfish users
     // Created users start with pending status
     // When creating a user and another user already exists with the same phone country and phone number
@@ -98,8 +101,11 @@ service Starfish {
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
 
-    // List the groups this user is a member of
+    // List the teacher responses visible to this user
     rpc ListTeacherResponses (ListTeacherResponsesRequest) returns (stream TeacherResponse) {}
+
+    // List the transformation impact stories visible to this user
+    rpc ListTransformations (ListTransformationsRequest) returns (stream Transformation) {}
 
     // List users that the current user has access to
     rpc ListUsers (ListUsersRequest) returns (stream User) {}
@@ -524,6 +530,35 @@ message CreateUpdateTeacherResponseResponse {
 
 }
 
+message CreateUpdateTransformationRequest {
+
+    // The Transformation resource that will be created or replace the existing one on the server.
+    Transformation transformation = 1;
+
+    // The field mask specifying which fields of the GroupUser resource should be updated
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    google.protobuf.FieldMask update_mask = 2;
+
+}
+
+message CreateUpdateTransformationResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Transformation  after the update or create action.
+    Transformation transformation = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateUserRequest {
 
     // The User resource that will be created or replace the existing one on the server.
@@ -859,6 +894,13 @@ message ListTeacherResponsesRequest {
 
 }
 
+message ListTransformationsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
 message ListUsersRequest {
 
     // Only return results updated at this date or later
@@ -1011,6 +1053,30 @@ message TeacherResponse {
 
     // The response
     string response = 6;
+}
+
+// A transformation reported by a user in context of a group and a month.
+message Transformation {
+
+    string id  = 1;
+
+    // The ID of the user who reported this transformation
+    // (or it was reported on behalf of this user).
+    string user_id = 2;
+
+    // The ID of the group which is the context of this transformation.
+    string group_id = 3;
+
+    // The month to which this transformation applies (day is not relevant)
+    // In output the day value is set to 0, and ignored in input.
+    google.type.Date month = 4;
+
+    // The impact story.
+    string impact_story = 5;
+
+    // A list of filenames of photos uploaded to this transformation. Output only.
+    repeated string files = 6;
+
 }
 
 message UpdateCurrentUserRequest {
