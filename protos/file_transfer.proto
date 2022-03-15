@@ -28,10 +28,11 @@ service FileTransfer {
 
 }
 
-// These values represent entities that can uploaded files attached to them
+// These values represent entities that can have uploaded files attached to them.
 enum EntityType {
     ENTITY_UNSPECIFIED = 0;
     MATERIAL = 1;
+    TRANSFORMATION = 2;
 }
 
 // To transfer the contents of a file it should be broken into chunks.
