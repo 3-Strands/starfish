@@ -476,6 +476,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             _isSelectingLanguage = false;
             List<HiveLanguage> _selectedLanguages =
                 List<HiveLanguage>.from(languages as List<dynamic>);
+            bloc.materialBloc.checkAndUpdateUserfollowedLangguages(
+                _selectedLanguages
+                    .map((hiveLanguage) => hiveLanguage.id)
+                    .toList());
+
             bloc.materialBloc.selectedLanguages = _selectedLanguages;
             _firstLoad();
           });

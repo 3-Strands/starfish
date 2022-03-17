@@ -2,17 +2,21 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 
 class MaterialBloc extends Object {
   MaterialRepository materialRepository = MaterialRepository();
@@ -278,6 +282,28 @@ class MaterialBloc extends Object {
 
   void setSelectedFiles(List<File> selectedFiles) {
     _selectedFiles = selectedFiles;
+  }
+
+  void checkAndUpdateUserfollowedLangguages(List<String>? languageIds) {
+    // update the material language(s) as user language(s), if not already
+    List<String>? _newLanguages = languageIds
+        ?.where((element) =>
+            !CurrentUserProvider().getUserSync().languageIds.contains(element))
+        .toList();
+
+    if (_newLanguages != null && _newLanguages.length > 0) {
+      HiveCurrentUser _hiveCurrentUser = CurrentUserProvider().getUserSync();
+      _hiveCurrentUser.languageIds.addAll(_newLanguages);
+      _hiveCurrentUser.isUpdated = true;
+
+      _hiveCurrentUser.save().then((value) {
+        // Broadcast to sync the local changes with the server
+        FBroadcast.instance().broadcast(
+          SyncService.kUpdateCurrentUser,
+          value: _hiveCurrentUser,
+        );
+      });
+    }
   }
 
   void dispose() {
