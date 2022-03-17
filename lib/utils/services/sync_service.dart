@@ -64,6 +64,8 @@ class SyncService {
 
   // Use this object to prevent concurrent access to data
   var lock = new Lock(reentrant: true);
+  var _refreshSessionLock = new Lock();
+
   static syncNow() {}
 
   late Box<HiveLastSyncDateTime> lastSyncBox;
@@ -1204,41 +1206,10 @@ class SyncService {
 
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
-      /*FBroadcast.instance().broadcast(
-        SyncService.kUnauthenticated,
-      );*/
       // Refresh Session
-      String _refreshToken = await StarfishSharedPreference().getRefreshToken();
-      String _userId = await StarfishSharedPreference().getSessionUserId();
-      ApiProvider()
-          .refreshSession(_refreshToken, _userId)
-          .then((AuthenticateResponse authenticateResponse) {
-        StarfishSharedPreference().setLoginStatus(true);
-        StarfishSharedPreference()
-            .setAccessToken(authenticateResponse.userToken);
-        StarfishSharedPreference()
-            .setRefreshToken(authenticateResponse.refreshToken);
-        StarfishSharedPreference()
-            .setSessionUserId(authenticateResponse.userId);
-
-        if (callback != null) {
-          callback();
-        }
-        syncAll();
-      }).onError((error, stackTrace) {
-        debugPrint("Failed to refresh token");
-        if (error.runtimeType == GrpcError) {
-          if (FlavorConfig.isDevelopment()) {
-            StarfishSnackbar.showErrorMessage(
-                NavigationService.navigatorKey.currentContext!,
-                '${(error as GrpcError).codeName}: ${error.message}');
-          }
-
-          FBroadcast.instance().broadcast(
-            SyncService.kUnauthenticated,
-          );
-        }
-      }).whenComplete(() {});
+      await _refreshSessionLock.synchronized(() async {
+        _refreshSession(callback: callback);
+      });
     } else {
       debugPrint('${error.codeName}: ${error.message}');
       if (FlavorConfig.isDevelopment()) {
@@ -1247,5 +1218,38 @@ class SyncService {
             '${error.codeName}: ${error.message}');
       }
     }
+  }
+
+  void _refreshSession({Function()? callback}) async {
+    debugPrint("refreshSession called");
+    String _refreshToken = await StarfishSharedPreference().getRefreshToken();
+    String _userId = await StarfishSharedPreference().getSessionUserId();
+    ApiProvider()
+        .refreshSession(_refreshToken, _userId)
+        .then((AuthenticateResponse authenticateResponse) {
+      StarfishSharedPreference().setLoginStatus(true);
+      StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
+      StarfishSharedPreference()
+          .setRefreshToken(authenticateResponse.refreshToken);
+      StarfishSharedPreference().setSessionUserId(authenticateResponse.userId);
+
+      if (callback != null) {
+        callback();
+      }
+      syncAll();
+    }).onError((error, stackTrace) {
+      debugPrint("Failed to refresh token");
+      if (error.runtimeType == GrpcError) {
+        if (FlavorConfig.isDevelopment()) {
+          StarfishSnackbar.showErrorMessage(
+              NavigationService.navigatorKey.currentContext!,
+              '${(error as GrpcError).codeName}: ${error.message}');
+        }
+
+        FBroadcast.instance().broadcast(
+          SyncService.kUnauthenticated,
+        );
+      }
+    }).whenComplete(() {});
   }
 }
