@@ -181,7 +181,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               child: _buildSlidingUpPanel(material));
         });
       },
-    );
+    ).then((value) {
+      setState(_firstLoad);
+    });
   }
 
   bool hasLeaderRoleInGroupWhereCreater(String? creatorId) {
