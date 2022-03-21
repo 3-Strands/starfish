@@ -14,7 +14,6 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_language.dart';
@@ -743,27 +742,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         value: _hiveMaterial,
       );
 
-      // update the material language(s) as user language(s), if not already
-      List<String>? _newLanguages = _hiveMaterial?.languageIds
-          ?.where((element) => !CurrentUserProvider()
-              .getUserSync()
-              .languageIds
-              .contains(element))
-          .toList();
-
-      if (_newLanguages != null && _newLanguages.length > 0) {
-        HiveCurrentUser _hiveCurrentUser = CurrentUserProvider().getUserSync();
-        _hiveCurrentUser.languageIds.addAll(_newLanguages);
-        _hiveCurrentUser.isUpdated = true;
-
-        _hiveCurrentUser.save().then((value) {
-          // Broadcast to sync the local changes with the server
-          FBroadcast.instance().broadcast(
-            SyncService.kUpdateCurrentUser,
-            value: _hiveCurrentUser,
-          );
-        });
-      }
+      bloc.materialBloc
+          .checkAndUpdateUserfollowedLangguages(_hiveMaterial?.languageIds);
       Alerts.showMessageBox(
           context: context,
           title: AppLocalizations.of(context)!.dialogInfo,

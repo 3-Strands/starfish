@@ -1,3 +1,4 @@
+import 'package:jiffy/jiffy.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
@@ -195,40 +196,24 @@ class ActionBloc extends Object {
   }*/
 
   bool _filterAction(HiveAction hiveAction) {
-    var currentDate = DateTime.now();
+    Jiffy currentDate = Jiffy({
+      "year": Jiffy().year,
+      "month": Jiffy().month,
+    });
+    Jiffy actionDueDate = Jiffy({
+      "year": hiveAction.dateDue!.year,
+      "month": hiveAction.dateDue!.month,
+    });
 
-    print(DateTime.now().month + 1);
     switch (actionFilter) {
       case ActionFilter.THIS_MONTH:
-        return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month == currentDate.month;
+        return currentDate.diff(actionDueDate, Units.MONTH) == 0;
       case ActionFilter.NEXT_MONTH:
-        return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month ==
-                DateTime(currentDate.year, currentDate.month + 1,
-                        currentDate.day)
-                    .month;
+        return currentDate.diff(actionDueDate, Units.MONTH) == -1;
       case ActionFilter.LAST_MONTH:
-        return hiveAction.dateDue != null &&
-            hiveAction.dateDue!.toDateTime().month ==
-                DateTime(currentDate.year, currentDate.month - 1,
-                        currentDate.day)
-                    .month;
+        return currentDate.diff(actionDueDate, Units.MONTH) == 1;
       case ActionFilter.LAST_THREE_MONTH:
-        // TODO: to be optimized, need to update package.
-        return hiveAction.dateDue != null &&
-                hiveAction.dateDue!.toDateTime().month ==
-                    DateTime(currentDate.year, currentDate.month - 1,
-                            currentDate.day)
-                        .month ||
-            hiveAction.dateDue!.toDateTime().month ==
-                DateTime(currentDate.year, currentDate.month - 2,
-                        currentDate.day)
-                    .month ||
-            hiveAction.dateDue!.toDateTime().month ==
-                DateTime(currentDate.year, currentDate.month - 3,
-                        currentDate.day)
-                    .month;
+        return currentDate.diff(actionDueDate, Units.MONTH) <= 2;
       case ActionFilter.ALL_TIME:
       default:
         return true;
