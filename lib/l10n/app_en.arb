@@ -18,6 +18,7 @@
   "edit": "Edit",
   "save": "Save",
   "open": "Open",
+  "openExternalLink" : "Open external link",
   "cancel": "Cancel",
   "add": "Add",
   "update": "Update",
@@ -101,6 +102,8 @@
   "selectCategories": "Select Categories",
 
   "noFilterApplied": "No filter applied",
+  "thismaterialIsVisibleTo": "This material is visible to",
+  "openAttachment": "Open Attachment",
 
   "addNewMaterial": "Add New Material",
   "addMaterials": "Add Materials",
@@ -129,7 +132,8 @@
   "hintMaterialDescription": "Enter a description for the material",
   "hintGroupDescription": "Enter a description for the group",
   "hintGroupName": "Enter a name for the group",
-
+  "attachment" : "Attachment",
+   "attachments" : "Attachments",
   "materialName": "Name of the material",
   "groupName": "Name of the group",
   "descripton": "Description",

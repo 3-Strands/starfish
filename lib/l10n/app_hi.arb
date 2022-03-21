@@ -17,6 +17,8 @@
   "edit": "संपादित करें",
   "save": "सहेजें",
   "open": "खोलना",
+  "openExternalLink" : "बाहरी लिंक खोलें",
+
   "cancel": "रद्द करें",
   "add": "जोड़ें",
   "update": "अपडेट करें",
@@ -100,6 +102,8 @@
   "selectCategories": "श्रेणियों का चयन करें",
 
   "noFilterApplied": "कोई फ़िल्टर लागू नहीं",
+  "thismaterialIsVisibleTo": "यह सामग्री दिखाई देती है",
+  "openAttachment": "अटैचमेंट खोलें",
 
   "addNewMaterial": "नई सामग्री जोड़ें",
   "addMaterials": "सामग्री जोड़ें",
@@ -128,7 +132,8 @@
   "hintMaterialDescription": "सामग्री के लिए विवरण दर्ज करें",
   "hintGroupDescription": "समूह के लिए विवरण दर्ज करें",
   "hintGroupName": "समूह के लिए एक नाम दर्ज करें",
-
+  "attachment" : "अनुरक्ति",
+  "attachments" : "संलग्नक",
   "materialName": "सामग्री का नाम",
   "groupName": "समूह का नाम",
   "descripton": "विवरण",
