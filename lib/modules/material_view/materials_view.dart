@@ -235,6 +235,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
 
+
     return FocusDetector(
       key: _focusDetectorKey,
       onFocusGained: () {
@@ -736,7 +737,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     color: Color(0xFF979797),
                     thickness: 2,
                   ),
-                  if (material.files!.length != 0 && material.files!.isNotEmpty)
+                  if (material.localFiles.length != 0 && material.localFiles.isNotEmpty)
                     _buildAttachment(material),
                   SizedBox(
                     height: 20.h,
