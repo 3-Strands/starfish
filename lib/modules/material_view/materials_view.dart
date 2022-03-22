@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
@@ -576,56 +577,64 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Widget _buildAttachment(HiveMaterial material) {
     List<Widget> attachments = [];
 
-    material.localFiles.forEach((hiveFile ) {
+    material.localFiles.forEach((hiveFile) {
       attachments.add(
         widgetsBasic.Column(
           children: [
-            InkWell(onTap: (){
-              if (Platform.isIOS) {
-              return;
-            } else if (Platform.isAndroid) {
-              if (hiveFile.filepath != null) {
-                OpenFile.open(hiveFile.filepath!);
-              }
-            }
-            },
+            InkWell(
+              onTap: () {
+                if (Platform.isIOS) {
+                  return;
+                } else if (Platform.isAndroid) {
+                  if (hiveFile.filepath != null) {
+                    OpenFile.open(hiveFile.filepath!);
+                  }
+                }
+              },
               child: Row(
                 children: [
-                  Icon(Icons.file_present, color: Color(0xFF3475F0),),
-                  SizedBox(width: 5.w,),
+                  Icon(
+                    Icons.file_present,
+                    color: Color(0xFF3475F0),
+                  ),
+                  SizedBox(
+                    width: 5.w,
+                  ),
                   Text(
-                AppLocalizations.of(context)!.openAttachment +": " ,
+                    AppLocalizations.of(context)!.openAttachment + ": ",
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                       color: Color(0xFF3475F0),
+                      color: Color(0xFF3475F0),
                       fontFamily: 'OpenSans',
-                     // fontSize: 17.sp,
+                      // fontSize: 17.sp,
                       fontStyle: FontStyle.italic,
-                     // fontWeight: FontWeight.bold,
+                      // fontWeight: FontWeight.bold,
                     ),
                   ),
                   Expanded(
                     child: Container(
-                      child: Text(hiveFile.filename!,
-                      
+                      child: Text(
+                        hiveFile.filename!,
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                             color: Color(0xFF434141),
+                          color: Color(0xFF434141),
                           fontFamily: 'OpenSans',
-                       //   fontSize: 17.sp,
-                           fontStyle: FontStyle.italic,
-                        //  fontWeight: FontWeight.bold,
+                          //   fontSize: 17.sp,
+                          fontStyle: FontStyle.italic,
+                          //  fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
                     ),
                   ),
-                  
                 ],
               ),
             ),
-          Divider(color: Color(0xFF979797),thickness: 2,), 
+            Divider(
+              color: Color(0xFF979797),
+              thickness: 2,
+            ),
           ],
         ),
       );
@@ -704,33 +713,36 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   SizedBox(
                     height: 30.h,
                   ),
-                   if (material.url != null && material.url!.isNotEmpty)
-                          CustomIconButton(
-                            icon: Icon(
-                              Icons.open_in_new,
-                             color: Color(0xFF3475F0),
-                              size: 21.5.sp,
-                            ),
-                            text: AppLocalizations.of(context)!.openExternalLink,
-                            textStyle: TextStyle(
-                     color: Color(0xFF3475F0),
-                    fontFamily: 'OpenSans',
-                   // fontSize: 17.sp,
-                    fontStyle: FontStyle.italic,
-                   // fontWeight: FontWeight.bold,
+                  if (material.url != null && material.url!.isNotEmpty)
+                    CustomIconButton(
+                      icon: Icon(
+                        Icons.open_in_new,
+                        color: Color(0xFF3475F0),
+                        size: 21.5.sp,
+                      ),
+                      text: AppLocalizations.of(context)!.openExternalLink,
+                      textStyle: TextStyle(
+                        color: Color(0xFF3475F0),
+                        fontFamily: 'OpenSans',
+                        // fontSize: 17.sp,
+                        fontStyle: FontStyle.italic,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                      onButtonTap: () {
+                        GeneralFunctions.openUrl(material.url!);
+                      },
+                    ),
+                  Divider(
+                    color: Color(0xFF979797),
+                    thickness: 2,
                   ),
-                            onButtonTap: () {
-                              GeneralFunctions.openUrl(material.url!);
-                            },
-                          ),
-                         Divider(color: Color(0xFF979797),thickness: 2,), 
                   if (material.files!.length != 0 && material.files!.isNotEmpty)
                     _buildAttachment(material),
                   SizedBox(
                     height: 20.h,
                   ),
                   Text(
-                AppLocalizations.of(context)!.thismaterialIsVisibleTo,
+                    AppLocalizations.of(context)!.thismaterialIsVisibleTo,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Color(0xFF3475F0),
@@ -1064,24 +1076,19 @@ class MaterialListItem extends StatelessWidget {
               SizedBox(
                 height: 10.h,
               ),
-              material.files!.length > 0
-                  ? material.files!.length > 1
-                      ? Text(
-                          "${material.files!.length}"
-                          ' ${AppLocalizations.of(context)!.attachments}',
-                          style: TextStyle(
+              material.localFiles.length > 0
+                  ? Text(
+                      Intl.plural(material.localFiles.length,
+                          zero:
+                              "${material.localFiles.length} ${AppLocalizations.of(context)!.attachment}",
+                          one: "${material.localFiles.length} ${AppLocalizations.of(context)!.attachment}",
+                          other: "${material.localFiles.length} ${AppLocalizations.of(context)!.attachments}",
+                          args: [material.localFiles.length]),
+                   style: TextStyle(
                               color: Color(0xFF3475F0),
                               fontFamily: 'OpenSans',
                               fontSize: 19.sp,
-                              fontStyle: FontStyle.italic))
-                      : Text(
-                          "${material.localFiles.length}"
-                          ' ${AppLocalizations.of(context)!.attachment}',
-                          style: TextStyle(
-                              color: Color(0xFF3475F0),
-                              fontFamily: 'OpenSans',
-                              fontSize: 19.sp,
-                              fontStyle: FontStyle.italic))
+                              fontStyle: FontStyle.italic),)
                   : Container(),
             ],
           ),
