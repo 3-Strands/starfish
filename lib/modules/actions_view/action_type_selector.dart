@@ -50,11 +50,23 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
     _questionController.text = widget.question ?? '';
 
     if (widget.selectedActionType != null) {
+      if(widget.selectedActionType == Action_Type.MATERIAL_INSTRUCTION || widget.selectedActionType == Action_Type.MATERIAL_RESPONSE){
+          if(widget.selectedMaterial!.isDirty){
+            _selectedActionType  = Action_Type.TEXT_INSTRUCTION;
+          }
+          else{
+            _selectedActionType = widget.selectedActionType!;
+          }
+      }else{
       _selectedActionType = widget.selectedActionType!;
+      }
     }
 
     if (widget.selectedActionType != null) {
+      if(widget.selectedMaterial !=null){
+      if(!widget.selectedMaterial!.isDirty ) 
       _selectedMaterial = widget.selectedMaterial;
+      }
     }
   }
 
@@ -86,7 +98,7 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
                   ),
                   hint: Text(
                     widget.selectedActionType != null
-                        ? widget.selectedActionType!.about
+                        ? _selectedActionType.about
                         : AppLocalizations.of(context)!.selectTheTypeOfAction,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

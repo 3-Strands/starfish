@@ -595,7 +595,7 @@ class _MyGroupState extends State<MyGroup> {
                           // Record the response to the question
                           if (action.type == Action_Type.TEXT_RESPONSE.value ||
                               action.type ==
-                                  Action_Type.MATERIAL_RESPONSE.value)
+                                  Action_Type.MATERIAL_RESPONSE.value && !action.material!.isDirty)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -850,7 +850,7 @@ class _MyGroupState extends State<MyGroup> {
     if (hiveAction.material == null ||
         (hiveAction.material != null &&
             hiveAction.material!.files != null &&
-            hiveAction.material!.files!.length == 0)) {
+            hiveAction.material!.files!.length == 0 && hiveAction.material!.isDirty)) {
       return Container();
     }
     List<Widget> fileLinks = [];

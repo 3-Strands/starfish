@@ -168,6 +168,7 @@ class ActionBloc extends Object {
   fetchActions() async {
     _actionsToReuse.sink.add(actionRepository.dbProvider
         .getAllActiveActions()
+        .where((material) => !material.isDirty)
         .where((element) => reuseActionQuery.isEmpty
             ? true
             : element.name!
@@ -178,7 +179,7 @@ class ActionBloc extends Object {
 
   fetchMaterials() async {
     _materials.sink.add(MaterialProvider()
-        .getMateialsSync()
+        .getMateialsSync().where((materail) => !materail.isDirty)
         .where((element) => materialQuery.isEmpty
             ? true
             : element.title!
