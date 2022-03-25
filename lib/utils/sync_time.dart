@@ -19,14 +19,15 @@ class SyncTime {
   }
 
   Date? lastSyncDateTime() {
-    if (_lastSyncDataTimeBox.values.length == 0) {
-      return null;
-    }
-    HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
+    return null;
+  //   if (_lastSyncDataTimeBox.values.length == 0) {
+  //     return null;
+  //   }
+  //   HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
 
-    return Date(
-        year: _lastSyncDateTime.year,
-        month: _lastSyncDateTime.month,
-        day: _lastSyncDateTime.day);
-  }
+  //   return Date(
+  //       year: _lastSyncDateTime.year,
+  //       month: _lastSyncDateTime.month,
+  //       day: _lastSyncDateTime.day);
+   }
 }

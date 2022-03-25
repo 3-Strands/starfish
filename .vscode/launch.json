@@ -6,7 +6,10 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main_dev.dart",
+           
             "args": [
+                "--flavor",
+                "dev",
                 "--no-sound-null-safety"
             ]
         },
@@ -16,8 +19,10 @@
             "type": "dart",
             "program": "lib/main_prod.dart",
             "args": [
+                "--flavor",
+                "prod",
                 "--no-sound-null-safety"
             ]
         }
-    ]
+    ],
 }

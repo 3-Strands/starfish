@@ -284,43 +284,53 @@ class _AddEditActionState extends State<AddEditAction>
                   SizedBox(height: 20.h),
                   if (widget.action?.editHistory != null)
                     _editHistoryContainer(widget.action),
+                    SizedBox(height:75.h),
                 ],
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Container(
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked 
+      ,
+      floatingActionButton: Container(
         height: 75.h,
-        padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+        width: MediaQuery.of(context).size.width,
+      //  padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
         color: AppColors.txtFieldBackground,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(AppLocalizations.of(context)!.cancel),
+              child: Container(margin: EdgeInsets.only(left: 10.h ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
               ),
             ),
             SizedBox(width: 25.w),
             Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  _validateAndCreateUpdateAction();
-                },
-                child: Text(
-                  _isEditMode
-                      ? AppLocalizations.of(context)!.update
-                      : AppLocalizations.of(context)!.create,
-                ),
-                style: ElevatedButton.styleFrom(
-                  primary: AppColors.selectedButtonBG,
+              child: Container(
+                  child: Container(margin: EdgeInsets.only(right: 10.h ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _validateAndCreateUpdateAction();
+                  },
+                  child: Text(
+                    _isEditMode
+                        ? AppLocalizations.of(context)!.update
+                        : AppLocalizations.of(context)!.create,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.selectedButtonBG,
+                  ),
                 ),
               ),
             ),
+            )
           ],
         ),
       ),
