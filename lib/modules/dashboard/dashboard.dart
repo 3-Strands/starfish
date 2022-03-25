@@ -66,7 +66,7 @@ class _DashboardState extends State<Dashboard> {
         debugPrint('Boradcast Receiver: kUpdateUsers');
         SyncService().syncLocalUsersAndGroups();
       },
-      SyncService.kUpdateCurrentUser: (HiveCurrentUser, __) {
+      SyncService.kUpdateCurrentUser: (hiveCurrentUser, __) {
         debugPrint('Boradcast Receiver: kUpdateCurrentUser');
         SyncService().syncLocalCurrentUser(kCurrentUserFieldMask);
       },

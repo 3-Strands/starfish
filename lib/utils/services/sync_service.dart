@@ -9,6 +9,7 @@ import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:starfish/config/app_config.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
@@ -63,7 +64,7 @@ class SyncService {
   static final String kUnauthenticated = 'unauthenticated';
 
   // Use this object to prevent concurrent access to data
-  var lock = new Lock(reentrant: true);
+  var lock = new Lock(reentrant: false);
   var _refreshSessionLock = new Lock();
 
   static syncNow() {}
@@ -176,53 +177,50 @@ class SyncService {
   void syncAll() async {
     syncCountries();
 
-    try {
-      showAlertFirstTime();
-      await syncLocalCurrentUser(kCurrentUserFieldMask);
+    showAlertFirstTime();
+    await lock.synchronized(() => syncLocalCurrentUser(kCurrentUserFieldMask));
 
-      // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
-      await syncLocalUsersAndGroups();
+    // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
+    await lock.synchronized(() => syncLocalUsersAndGroups());
 
-      await lock.synchronized(() => syncLocalActionsToRemote());
+    await lock.synchronized(() => syncLocalActionsToRemote());
 
-      await lock.synchronized(() => syncLocalHiveActionUserToRemote());
-      // navigatorKey: Application.navKey, // GlobalKey()
-      //showAlert(NavigationService.navigatorKey.currentContext!);
+    await lock.synchronized(() => syncLocalHiveActionUserToRemote());
+    // navigatorKey: Application.navKey, // GlobalKey()
+    //showAlert(NavigationService.navigatorKey.currentContext!);
 
-      // Synchronize the syncing of material(s), sequentily to avoid failure.
+    // Synchronize the syncing of material(s), sequentily to avoid failure.
 
-      await lock.synchronized(() => syncLocalDeletedMaterialsToRemote());
-      await lock.synchronized(() => syncLocalMaterialsToRemote());
-      await lock.synchronized(() => syncLocalFiles());
-      await lock.synchronized(() => syncMaterial()); // Upload local files
-      await lock.synchronized(() => syncFiles()); // Download remote files
+    await lock.synchronized(() => syncLocalDeletedMaterialsToRemote());
+    await lock.synchronized(() => syncLocalMaterialsToRemote());
+    await lock.synchronized(() => syncLocalFiles());
+    await lock.synchronized(() => syncMaterial()); // Upload local files
+    await lock.synchronized(() => syncFiles()); // Download remote files
 
-      Future.wait([
-        syncCurrentUser(),
-        syncUsers(),
-        //syncCountries(),
-        syncLanguages(),
-        syncActions(),
-        syncMaterialTopics(),
-        syncMaterialTypes(),
-        //syncMaterial(),
-        syncEvaluationCategories(),
-        syncGroup()
-      ]).then((value) {
-        updateLastSyncDateTime();
-      }).whenComplete(() {
-        hideAlert();
-      });
-    } catch (error) {
-      handleError(error);
-    }
+    Future.wait([
+      syncCurrentUser(),
+      syncUsers(),
+      //syncCountries(),
+      syncLanguages(),
+      syncActions(),
+      syncMaterialTopics(),
+      syncMaterialTypes(),
+      //syncMaterial(),
+      syncEvaluationCategories(),
+      syncGroup()
+    ]).then((value) {
+      updateLastSyncDateTime();
+    }).whenComplete(() {
+      hideAlert();
+    });
   }
 
   Future syncLocalUsersAndGroups() async {
-    await lock.synchronized(() => syncLocalUsersToRemote());
-    await lock.synchronized(() => syncLocalGroupsToRemote());
-    await lock.synchronized(() => syncLocalDeletedGroupUsersToRemote());
-    await lock.synchronized(() => syncLocalGroupUsersToRemote());
+    var lock1 = new Lock();
+    await lock1.synchronized(() => syncLocalUsersToRemote());
+    await lock1.synchronized(() => syncLocalGroupsToRemote());
+    await lock1.synchronized(() => syncLocalDeletedGroupUsersToRemote());
+    await lock1.synchronized(() => syncLocalGroupUsersToRemote());
   }
 
   void updateLastSyncDateTime() {
@@ -356,8 +354,7 @@ class SyncService {
       }), onDone: () {
         print('Country Sync Done.');
       });
-      // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    });
   }
 
   Future syncLanguages() async {
@@ -393,8 +390,7 @@ class SyncService {
       }), onDone: () {
         print('Language Sync Done.');
       });
-      // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    });
   }
 
   void syncMaterialFiles(HiveMaterial _hiveMaterial) {
@@ -553,31 +549,39 @@ class SyncService {
 
     StreamController<DeleteMaterialRequest> _controller = StreamController();
 
-    ResponseStream<DeleteMaterialResponse> responseStram =
-        await MaterialRepository().deleteMaterials(_controller.stream);
+    try {
+      ResponseStream<DeleteMaterialResponse> responseStram =
+          await MaterialRepository().deleteMaterials(_controller.stream);
 
-    materialBox.values
-        .where((element) => (element.isDirty == true))
-        .forEach((HiveMaterial _hiveMaterial) {
-      // this is a local material not yet synced with remote, so just delete from local
-      if (_hiveMaterial.isNew) {
-        MaterialProvider().deleteMaterial(id: _hiveMaterial.id!);
-      } else {
-        var request = DeleteMaterialRequest.create();
-        request.materialId = _hiveMaterial.id!;
+      materialBox.values
+          .where((element) => (element.isDirty == true))
+          .forEach((HiveMaterial _hiveMaterial) {
+        // this is a local material not yet synced with remote, so just delete from local
+        if (_hiveMaterial.isNew) {
+          MaterialProvider().deleteMaterial(id: _hiveMaterial.id!);
+        } else {
+          var request = DeleteMaterialRequest.create();
+          request.materialId = _hiveMaterial.id!;
 
-        _controller.add(request);
-      }
-    });
-    _controller.close();
+          _controller.add(request);
+        }
+      });
+      _controller.close();
 
-    await responseStram.forEach((response) {
-      print('Delete Material: ${response.status}');
-      if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
-        // this entry should be removed from the box
-        MaterialProvider().deleteMaterial(id: response.materialId);
-      }
-    });
+      await responseStram.forEach((response) {
+        print('Delete Material: ${response.status}');
+        if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
+          // this entry should be removed from the box
+          MaterialProvider().deleteMaterial(id: response.materialId);
+        }
+      });
+    } catch (error, stackTrace) {
+      print('Delete Material: ${error}');
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
   }
 
   Future syncLocalMaterialsToRemote() async {
@@ -592,35 +596,40 @@ class SyncService {
     StreamController<CreateUpdateMaterialsRequest> _controller =
         StreamController();
 
-    ResponseStream<CreateUpdateMaterialsResponse> responseStram =
-        await MaterialRepository()
-            .createUpdateMaterial(_controller.stream)
-            .catchError(handleError);
+    try {
+      ResponseStream<CreateUpdateMaterialsResponse> responseStram =
+          await MaterialRepository().createUpdateMaterial(_controller.stream);
 
-    materialBox.values
-        .where(
-            (element) => (element.isNew == true || element.isUpdated == true))
-        .forEach((HiveMaterial _hiveMaterial) {
-      var request = CreateUpdateMaterialsRequest.create();
-      request.material = _hiveMaterial.toMaterial();
+      materialBox.values
+          .where(
+              (element) => (element.isNew == true || element.isUpdated == true))
+          .forEach((HiveMaterial _hiveMaterial) {
+        var request = CreateUpdateMaterialsRequest.create();
+        request.material = _hiveMaterial.toMaterial();
 
-      if (_hiveMaterial.isUpdated) {
-        FieldMask mask = FieldMask(paths: kMaterialFieldMask);
-        request.updateMask = mask;
-      }
+        if (_hiveMaterial.isUpdated) {
+          FieldMask mask = FieldMask(paths: kMaterialFieldMask);
+          request.updateMask = mask;
+        }
 
-      _controller.add(request);
-    });
-    _controller.close();
+        _controller.add(request);
+      });
+      _controller.close();
 
-    await responseStram.forEach((response) {
-      print('Remote Material: ${response.material}');
-      if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
-        // update flag(s) isNew and/or isUpdated to false
-        MaterialRepository()
-            .createUpdateMaterialInDB(HiveMaterial.from(response.material));
-      }
-    });
+      await responseStram.forEach((response) {
+        //print('Remote Material: ${response.material}');
+        if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+          MaterialRepository()
+              .createUpdateMaterialInDB(HiveMaterial.from(response.material));
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
   }
 
   Future syncGroup() async {
@@ -693,7 +702,7 @@ class SyncService {
   }
 
   // Upward Sync Task
-  syncLocalCurrentUser(List<String> _fieldMaskPaths) async {
+  Future syncLocalCurrentUser(List<String> _fieldMaskPaths) async {
     print(
         '============= START: Sync Local CurrentUser to Remote =============');
     HiveCurrentUser? _currentUser = currentUserBox.values
@@ -701,11 +710,9 @@ class SyncService {
 
     if (_currentUser != null) {
       await CurrentUserRepository()
-          .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths)
-          // ignore: invalid_return_type_for_catch_error
-          .catchError(handleError);
-      ;
+          .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths);
     }
+    print('============= END: Sync Local CurrentUser to Remote =============');
   }
 
   Future syncLocalUsersToRemote() async {
@@ -717,61 +724,65 @@ class SyncService {
     print('============= START: Sync Local User to Remote =============');
     StreamController<CreateUpdateUserRequest> _controller = StreamController();
 
-    ResponseStream<CreateUpdateUserResponse> responseStream =
-        await UserRepository()
-            .createUpdateUsers(_controller.stream)
-            // ignore: invalid_return_type_for_catch_error
-            .catchError(handleError);
+    try {
+      ResponseStream<CreateUpdateUserResponse> responseStream =
+          await UserRepository().createUpdateUsers(_controller.stream);
 
-    userBox.values
-        .where((element) => element.isNew || element.isUpdated)
-        .forEach((_hiveUser) {
-      var request = CreateUpdateUserRequest.create();
-      request.user = _hiveUser.createRequestUser();
+      userBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveUser) {
+        var request = CreateUpdateUserRequest.create();
+        request.user = _hiveUser.createRequestUser();
 
-      if (_hiveUser.isUpdated) {
-        FieldMask mask = FieldMask(paths: kUserFieldMask);
-        request.updateMask = mask;
-      }
-      _controller.add(request);
-    });
-    _controller.close();
+        if (_hiveUser.isUpdated) {
+          FieldMask mask = FieldMask(paths: kUserFieldMask);
+          request.updateMask = mask;
+        }
+        _controller.add(request);
+      });
+      _controller.close();
 
-    return await responseStream.forEach((_response) {
-      print('Remote User: ${_response}');
-      if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
-        // get local Id of this user/ and replace in all the groupUser
-        List<HiveUser> _hiveLocalUsers = UserProvider().getLocalUserByPhone(
-            _response.user.diallingCode, _response.user.phone);
-        if (_hiveLocalUsers.length == 1) {
-          // Delete all local entry local entry with matching user i.e. dialling code and phone
-          UserProvider().deleteUser(_hiveLocalUsers.first);
+      return await responseStream.forEach((_response) {
+        print('Remote User: ${_response}');
+        if (_response.status == CreateUpdateUserResponse_Status.SUCCESS) {
+          // get local Id of this user/ and replace in all the groupUser
+          List<HiveUser> _hiveLocalUsers = UserProvider().getLocalUserByPhone(
+              _response.user.diallingCode, _response.user.phone);
+          if (_hiveLocalUsers.length == 1) {
+            // Delete all local entry local entry with matching user i.e. dialling code and phone
+            UserProvider().deleteUser(_hiveLocalUsers.first);
 
-          UserProvider().createUpdateUser(HiveUser.from(_response.user));
+            UserProvider().createUpdateUser(HiveUser.from(_response.user));
 
-          GroupProvider()
-              .updateGroupUserId(_hiveLocalUsers.first.id, _response.user.id);
-        } else if (_hiveLocalUsers.length > 1) {
-          /**
+            GroupProvider()
+                .updateGroupUserId(_hiveLocalUsers.first.id, _response.user.id);
+          } else if (_hiveLocalUsers.length > 1) {
+            /**
            * If there are multiple local (i.e. isNew = true) records with the same phonenumber and dilling code, 
            * just keep once record, and delete rest ofthe records.
            */
-          UserProvider().createUpdateUser(HiveUser.from(_response.user));
-          HiveUser _hiveUser = _hiveLocalUsers.first;
-          GroupProvider().updateGroupUserId(_hiveUser.id, _response.user.id);
+            UserProvider().createUpdateUser(HiveUser.from(_response.user));
+            HiveUser _hiveUser = _hiveLocalUsers.first;
+            GroupProvider().updateGroupUserId(_hiveUser.id, _response.user.id);
 
-          _hiveLocalUsers.forEach((_user) async {
-            // Delete all local entry local entry with matching user i.e. dialling code and phone
-            await _user.delete();
+            _hiveLocalUsers.forEach((_user) async {
+              // Delete all local entry local entry with matching user i.e. dialling code and phone
+              await _user.delete();
 
-            // Delete this userId from GroupUserBox except one
-            GroupProvider().deleteGroupUserByUserId(_user.id!);
-          });
+              // Delete this userId from GroupUserBox except one
+              GroupProvider().deleteGroupUserByUserId(_user.id!);
+            });
+          }
+        } else {
+          print('============= ERROR: syncLocalUsersToRemote =============');
         }
-      } else {
-        print('============= ERROR: syncLocalUsersToRemote =============');
-      }
-    });
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
   }
 
   Future syncLocalGroupsToRemote() async {
@@ -784,38 +795,41 @@ class SyncService {
     StreamController<CreateUpdateGroupsRequest> _controller =
         StreamController();
 
-    ResponseStream<CreateUpdateGroupsResponse> responseStream =
-        await GroupRepository()
-            .createUpdateGroup(_controller.stream)
-            // ignore: invalid_return_type_for_catch_error
-            .catchError(handleError);
+    try {
+      ResponseStream<CreateUpdateGroupsResponse> responseStream =
+          await GroupRepository().createUpdateGroup(_controller.stream);
+      groupBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveGroup) {
+        var request = CreateUpdateGroupsRequest.create();
+        request.group = _hiveGroup.toGroup();
 
-    groupBox.values
-        .where((element) => element.isNew || element.isUpdated)
-        .forEach((_hiveGroup) {
-      var request = CreateUpdateGroupsRequest.create();
-      request.group = _hiveGroup.toGroup();
+        if (_hiveGroup.isUpdated) {
+          FieldMask mask = FieldMask(paths: kGroupFieldMask);
+          request.updateMask = mask;
+        }
 
-      if (_hiveGroup.isUpdated) {
-        FieldMask mask = FieldMask(paths: kGroupFieldMask);
-        request.updateMask = mask;
-      }
+        _controller.add(request);
+      });
+      _controller.close();
 
-      _controller.add(request);
-    });
-    _controller.close();
+      return await responseStream.forEach((value) {
+        ///print('Remote Group: ${value.group}');
+        if (value.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
 
-    return await responseStream.forEach((value) {
-      print('Remote Group: ${value.group}');
-      if (value.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
-        // update flag(s) isNew and/or isUpdated to false
-
-        print('============= END: syncLocalGroupsToRemote =============');
-        GroupRepository().addEditGroup(HiveGroup.from(value.group));
-      } else {
-        print("ERROR: syncLocalGroupsToRemote STATUS.FAILED");
-      }
-    });
+          print('============= END: syncLocalGroupsToRemote =============');
+          GroupRepository().addEditGroup(HiveGroup.from(value.group));
+        } else {
+          print("ERROR: syncLocalGroupsToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
   }
 
   Future syncLocalGroupUsersToRemote() async {
@@ -828,32 +842,37 @@ class SyncService {
         '============= START: Sync Local Group Users to Remote =============');
     StreamController<CreateUpdateGroupUsersRequest> _controller =
         StreamController();
+    try {
+      ResponseStream<CreateUpdateGroupUsersResponse> responseStream =
+          await GroupRepository()
+              .createUpdateGroupUser(_controller.stream)
+              // ignore: invalid_return_type_for_catch_error
+              .catchError(handleError);
+      groupUserBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((HiveGroupUser _hiveGroupUser) {
+        //print('LOCAL GroupUSer: $_hiveGroupUser');
+        var request = CreateUpdateGroupUsersRequest.create();
+        request.groupUser = _hiveGroupUser.toGroupUser();
 
-    ResponseStream<CreateUpdateGroupUsersResponse> responseStream =
-        await GroupRepository()
-            .createUpdateGroupUser(_controller.stream)
-            // ignore: invalid_return_type_for_catch_error
-            .catchError(handleError);
+        _controller.add(request);
+      });
+      _controller.close();
 
-    groupUserBox.values
-        .where((element) => element.isNew || element.isUpdated)
-        .forEach((HiveGroupUser _hiveGroupUser) {
-      print('LOCAL GroupUSer: $_hiveGroupUser');
-      var request = CreateUpdateGroupUsersRequest.create();
-      request.groupUser = _hiveGroupUser.toGroupUser();
-
-      _controller.add(request);
-    });
-    _controller.close();
-
-    return await responseStream.forEach((_response) {
-      print('Remote GroupUser: ${_response}');
-      if (_response.status == CreateUpdateGroupUsersResponse_Status.SUCCESS) {
-        // this entry should be removed from the box
-        GroupProvider()
-            .deleteGroupUser(HiveGroupUser.from(_response.groupUser));
-      }
-    });
+      return await responseStream.forEach((_response) {
+        //print('Remote GroupUser: ${_response}');
+        if (_response.status == CreateUpdateGroupUsersResponse_Status.SUCCESS) {
+          // this entry should be removed from the box
+          GroupProvider()
+              .deleteGroupUser(HiveGroupUser.from(_response.groupUser));
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
   }
 
   // DELETE GROUP USERS
@@ -863,29 +882,33 @@ class SyncService {
     }
     StreamController<GroupUser> _controller = StreamController();
 
-    ResponseStream<DeleteGroupUsersResponse> responseStream =
-        await GroupRepository()
-            .deleteGroupUsers(_controller.stream)
-            // ignore: invalid_return_type_for_catch_error
-            .catchError(handleError);
+    try {
+      ResponseStream<DeleteGroupUsersResponse> responseStream =
+          await GroupRepository().deleteGroupUsers(_controller.stream);
 
-    groupUserBox.values
-        .where((element) => element.isDirty)
-        .forEach((HiveGroupUser _hiveGroupUser) {
-      print('DELETE LOCAL GroupUSer: $_hiveGroupUser');
+      groupUserBox.values
+          .where((element) => element.isDirty)
+          .forEach((HiveGroupUser _hiveGroupUser) {
+        print('DELETE LOCAL GroupUSer: $_hiveGroupUser');
 
-      _controller.add(_hiveGroupUser.toGroupUser());
-    });
-    _controller.close();
+        _controller.add(_hiveGroupUser.toGroupUser());
+      });
+      _controller.close();
 
-    return await responseStream.forEach((_response) {
-      print('DELETEED Remote GroupUser: ${_response}');
-      if (_response.status == DeleteGroupUsersResponse_Status.SUCCESS) {
-        // this entry should be removed from the box
-        GroupProvider().deleteGroupUser(HiveGroupUser(
-            groupId: _response.groupId, userId: _response.userId));
-      }
-    });
+      return await responseStream.forEach((_response) {
+        print('DELETEED Remote GroupUser: ${_response}');
+        if (_response.status == DeleteGroupUsersResponse_Status.SUCCESS) {
+          // this entry should be removed from the box
+          GroupProvider().deleteGroupUser(HiveGroupUser(
+              groupId: _response.groupId, userId: _response.userId));
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
   }
 
   Future syncActions() async {
@@ -936,50 +959,58 @@ class SyncService {
 
     StreamController<CreateUpdateActionsRequest> _controller =
         StreamController();
-    actionBox.values
-        .where((element) =>
-            (element.isNew || element.isUpdated || element.isDirty))
-        .forEach((HiveAction _hiveAction) {
-      if (_hiveAction.isNew || _hiveAction.isUpdated) {
-        var request = CreateUpdateActionsRequest.create();
-        request.action = _hiveAction.toAction();
 
-        if (_hiveAction.isUpdated) {
-          FieldMask mask = FieldMask(paths: kActionFieldMask);
-          request.updateMask = mask;
-        }
+    try {
+      actionBox.values
+          .where((element) =>
+              (element.isNew || element.isUpdated || element.isDirty))
+          .forEach((HiveAction _hiveAction) {
+        if (_hiveAction.isNew || _hiveAction.isUpdated) {
+          var request = CreateUpdateActionsRequest.create();
+          request.action = _hiveAction.toAction();
 
-        _controller.add(request);
+          if (_hiveAction.isUpdated) {
+            FieldMask mask = FieldMask(paths: kActionFieldMask);
+            request.updateMask = mask;
+          }
 
-        ActionRepository()
-            .createUpdateAction(_controller.stream)
-            .then((onValue) {
-          onValue.listen((value) {
-            // update flag(s) isNew and/or isUpdated to false
-            _hiveAction.isNew = false;
-            _hiveAction.isUpdated = false;
+          _controller.add(request);
 
-            ActionRepository().createUpdateActionInDB(_hiveAction);
+          ActionRepository()
+              .createUpdateAction(_controller.stream)
+              .then((onValue) {
+            onValue.listen((value) {
+              // update flag(s) isNew and/or isUpdated to false
+              _hiveAction.isNew = false;
+              _hiveAction.isUpdated = false;
+
+              ActionRepository().createUpdateActionInDB(_hiveAction);
+            });
+          }).onError((error, stackTrace) {
+            // ignore: invalid_return_type_for_catch_error
+            handleError(error);
+            print('============= Error: ${error.toString()} ===============');
+          }).whenComplete(() {
+            print(
+                '============= END: Sync Local Actions to Remote ===============');
           });
-        }).onError((error, stackTrace) {
-          // ignore: invalid_return_type_for_catch_error
-          handleError(error);
-          print('============= Error: ${error.toString()} ===============');
-        }).whenComplete(() {
-          print(
-              '============= END: Sync Local Actions to Remote ===============');
-        });
-      } else if (_hiveAction.isDirty) {
-        ActionRepository().deleteAction(_hiveAction.toAction()).then((value) {
-          _hiveAction.isDirty = false;
+        } else if (_hiveAction.isDirty) {
+          ActionRepository().deleteAction(_hiveAction.toAction()).then((value) {
+            _hiveAction.isDirty = false;
 
-          ActionRepository().deleteActionInDB(_hiveAction);
-        }).onError((error, stackTrace) {
-          print('============= Error: ${error.toString()} ===============');
-        }).whenComplete(() {});
-      }
-    });
-    _controller.close();
+            ActionRepository().deleteActionInDB(_hiveAction);
+          }).onError((error, stackTrace) {
+            print('============= Error: ${error.toString()} ===============');
+          }).whenComplete(() {});
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+    //_controller.close();
     print('============= END: Sync Local Actions to Remote ===============');
   }
 
@@ -1016,7 +1047,7 @@ class SyncService {
         .uploadFile(_controller.stream)
         .then((responseStream) {
       responseStream.listen((UploadStatus uploadStatus) {
-        print("File UploadStatus: $uploadStatus");
+        //print("File UploadStatus: $uploadStatus");
 
         if (uploadStatus.status == UploadStatus_Status.OK ||
             uploadStatus.status == UploadStatus_Status.FAILED) {
@@ -1202,13 +1233,47 @@ class SyncService {
   }
 
   void handleGrpcError(GrpcError error, {Function()? callback}) async {
-    debugPrint('grpcError: $error');
+    debugPrint('handleGrpcError[grpcError]: $error');
+    Sentry.captureMessage("ERROR GrpcError");
 
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
+      Sentry.captureMessage("ERROR GrpcError[unauthenticated]");
       // Refresh Session
       await _refreshSessionLock.synchronized(() async {
-        _refreshSession(callback: callback);
+        try {
+          AuthenticateResponse authenticateResponse =
+              await _refreshSession(callback: callback);
+
+          print("AccessToken: ${authenticateResponse.userToken}");
+          StarfishSharedPreference().setLoginStatus(true);
+          StarfishSharedPreference()
+              .setAccessToken(authenticateResponse.userToken);
+          StarfishSharedPreference()
+              .setRefreshToken(authenticateResponse.refreshToken);
+          StarfishSharedPreference()
+              .setSessionUserId(authenticateResponse.userId);
+
+          if (callback != null) {
+            callback();
+          }
+          syncAll();
+        } catch (error, stackTrace) {
+          Sentry.captureMessage("ERROR Failed to refresh token");
+          Sentry.captureException(error, stackTrace: stackTrace);
+          debugPrint("Failed to refresh token");
+          if (error.runtimeType == GrpcError) {
+            if (FlavorConfig.isDevelopment()) {
+              StarfishSnackbar.showErrorMessage(
+                  NavigationService.navigatorKey.currentContext!,
+                  '${(error as GrpcError).codeName}: ${error.message}');
+            }
+
+            FBroadcast.instance().broadcast(
+              SyncService.kUnauthenticated,
+            );
+          }
+        } finally {}
       });
     } else {
       debugPrint('${error.codeName}: ${error.message}');
@@ -1220,36 +1285,11 @@ class SyncService {
     }
   }
 
-  void _refreshSession({Function()? callback}) async {
+  Future<AuthenticateResponse> _refreshSession({Function()? callback}) async {
     debugPrint("refreshSession called");
+    Sentry.captureMessage("Refresh Session");
     String _refreshToken = await StarfishSharedPreference().getRefreshToken();
     String _userId = await StarfishSharedPreference().getSessionUserId();
-    ApiProvider()
-        .refreshSession(_refreshToken, _userId)
-        .then((AuthenticateResponse authenticateResponse) {
-      StarfishSharedPreference().setLoginStatus(true);
-      StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
-      StarfishSharedPreference()
-          .setRefreshToken(authenticateResponse.refreshToken);
-      StarfishSharedPreference().setSessionUserId(authenticateResponse.userId);
-
-      if (callback != null) {
-        callback();
-      }
-      syncAll();
-    }).onError((error, stackTrace) {
-      debugPrint("Failed to refresh token");
-      if (error.runtimeType == GrpcError) {
-        if (FlavorConfig.isDevelopment()) {
-          StarfishSnackbar.showErrorMessage(
-              NavigationService.navigatorKey.currentContext!,
-              '${(error as GrpcError).codeName}: ${error.message}');
-        }
-
-        FBroadcast.instance().broadcast(
-          SyncService.kUnauthenticated,
-        );
-      }
-    }).whenComplete(() {});
+    return await ApiProvider().refreshSession(_refreshToken, _userId); //
   }
 }
