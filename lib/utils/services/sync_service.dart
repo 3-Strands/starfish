@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
@@ -175,6 +176,13 @@ class SyncService {
   }
 
   void syncAll() async {
+    ConnectivityResult _connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    if (_connectivityResult == ConnectivityResult.none) {
+      return;
+    }
+
     syncCountries();
 
     showAlertFirstTime();
