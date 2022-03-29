@@ -106,7 +106,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: SingleChildScrollView(
-            reverse: true,
+          //  reverse: true,
           child: Container(height: MediaQuery.of(context).size.height,child: Column(children: [
              Expanded(
                child: Container(
@@ -132,11 +132,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 ),
             ),
              ),
-             _footer(),
+           //  _footer(),
           ],)
           ),
         ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _footer(),
      //   bottomNavigationBar: _footer()
     );
   }

@@ -81,7 +81,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: SingleChildScrollView(
-          reverse: true,
+       //   reverse: true,
           child: Container(height: MediaQuery.of(context).size.height,
            
             child: Column(
@@ -130,12 +130,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                     ),
                   ),
                 ),
-                _footer(),
+               // _footer(),
               ],
             ),
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _footer(),
     //  bottomNavigationBar: _footer(),
     );
   }
