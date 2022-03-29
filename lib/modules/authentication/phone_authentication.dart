@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:hive/hive.dart';
+import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_country.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -36,11 +35,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
 
-  //bool _isLoading = false;
   bool _isPhoneNumberEmpty = true;
-
-  late Box<HiveCountry> _countryBox;
-  late List<HiveCountry> _countryList;
 
   HiveCountry _selectedCountry = HiveCountry(
       id: '',
@@ -56,24 +51,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
     _isPhoneNumberEmpty = false;
 
-    _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
-
     SyncService obj = SyncService();
     obj.syncAll();
-
-    _getAllCountries();
-
-    // _countryCodeController.text = '+91';
-    // _phoneNumberController.text = '7123123456';
-  }
-
-  void _getAllCountries() {
-    _countryList = _countryBox.values.toList();
-    _countryList.sort((a, b) => a.name.compareTo(b.name));
   }
 
   @override
   Widget build(BuildContext context) {
+    ProfileBloc _profileBloc = new ProfileBloc();
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -99,22 +84,36 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                         align: TextAlign.center,
                       ),
                       SizedBox(height: 30.h),
-                      SelectDropDown(
-                        navTitle: AppLocalizations.of(context)!.selectCountry,
-                        placeholder:
-                            AppLocalizations.of(context)!.selectCountry,
-                        selectedValues: _selectedCountry,
-                        dataSource: _countryList,
-                        type: SelectType.single,
-                        dataSourceType: DataSourceType.country,
-                        onDoneClicked: <T>(country) {
-                          setState(() {
-                            _selectedCountry = country as HiveCountry;
-                            _countryCodeController.text =
-                                _selectedCountry.diallingCode.startsWith("+")
-                                    ? _selectedCountry.diallingCode
-                                    : "+${_selectedCountry.diallingCode}";
-                          });
+                      StreamBuilder(
+                        stream: _profileBloc.countries,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<HiveCountry>?> snapshot) {
+                          if (snapshot.hasData) {
+                            snapshot.data!
+                                .sort((a, b) => a.name.compareTo(b.name));
+                            return SelectDropDown(
+                              navTitle:
+                                  AppLocalizations.of(context)!.selectCountry,
+                              placeholder:
+                                  AppLocalizations.of(context)!.selectCountry,
+                              selectedValues: _selectedCountry,
+                              dataSource: snapshot.data,
+                              type: SelectType.single,
+                              dataSourceType: DataSourceType.country,
+                              onDoneClicked: <T>(country) {
+                                setState(() {
+                                  _selectedCountry = country as HiveCountry;
+                                  _countryCodeController.text = _selectedCountry
+                                          .diallingCode
+                                          .startsWith("+")
+                                      ? _selectedCountry.diallingCode
+                                      : "+${_selectedCountry.diallingCode}";
+                                });
+                              },
+                            );
+                          } else {
+                            return Container();
+                          }
                         },
                       ),
                       SizedBox(height: 30.h),
@@ -123,11 +122,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   ),
                 ),
               ),
-              /*(_isLoading == true)
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Container()*/
             ],
           ),
         ),
@@ -138,7 +132,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   Widget _phoneNumberContainer() {
     return IntrinsicHeight(
-      //height: 52.h,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -148,9 +141,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           ),
           SizedBox(width: 15.w),
           Container(
-            //height: 52.h,
             width: 243.w,
-            //child: _phoneNumberField(),
             child: CustomPhoneNumber(
               controller: _phoneNumberController,
               onChanged: (text) {
@@ -200,39 +191,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-/*
-  TextFormField _phoneNumberField() {
-    return TextFormField(
-      controller: _phoneNumberController,
-      focusNode: _phoneNumberFocus,
-      onChanged: (text) {
-        setState(() {
-          _isPhoneNumberEmpty = text.isEmpty;
-        });
-      },
-      onFieldSubmitted: (term) {
-        _phoneNumberFocus.unfocus();
-      },
-      keyboardType: TextInputType.phone,
-      style: textFormFieldText,
-      decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.phoneNumberHint,
-        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
-      ),
-    );
-  }
-*/
   SizedBox _footer() {
     return SizedBox(
       height: 75.h,
@@ -292,9 +250,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                 return StarfishSnackbar.showErrorMessage(
                     context, validationMsg);
               } else {
-                /*setState(() {
-                  _isLoading = true;
-                });*/
                 EasyLoading.show();
 
                 if (kIsWeb) {
@@ -325,24 +280,15 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     await auth.verifyPhoneNumber(
       phoneNumber: phoneNumberWithDialingCode,
       verificationCompleted: (PhoneAuthCredential credential) {
-        /*setState(() {
-          _isLoading = false;
-        });*/
         EasyLoading.dismiss();
       },
       verificationFailed: (FirebaseAuthException e) {
-        /*setState(() {
-          _isLoading = false;
-        });*/
         EasyLoading.dismiss();
         if (e.code == 'invalid-phone-number') {
           return StarfishSnackbar.showErrorMessage(context, e.message ?? '');
         }
       },
       codeSent: (String verificationId, int? resendToken) async {
-        /*setState(() {
-          _isLoading = false;
-        });*/
         EasyLoading.dismiss();
         Navigator.push(
           context,
@@ -368,9 +314,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     await auth
         .signInWithPhoneNumber(dialingCode + phoneNumber)
         .then((confirmationResult) => {
-              /*setState(() {
-                _isLoading = false;
-              }),*/
               EasyLoading.dismiss(),
               Navigator.push(
                 context,
@@ -386,9 +329,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               ),
             })
         .onError((error, stackTrace) => {
-              /*setState(() {
-                _isLoading = false;
-              }),*/
               EasyLoading.dismiss(),
             });
   }
