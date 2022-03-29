@@ -235,7 +235,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
 
-
     return FocusDetector(
       key: _focusDetectorKey,
       onFocusGained: () {
@@ -737,7 +736,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     color: Color(0xFF979797),
                     thickness: 2,
                   ),
-                  if (material.localFiles.length != 0 && material.localFiles.isNotEmpty)
+                  if (material.localFiles.length != 0 &&
+                      material.localFiles.isNotEmpty)
                     _buildAttachment(material),
                   SizedBox(
                     height: 20.h,
@@ -798,9 +798,12 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                       Column(
                         children: <Widget>[
                           // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
-                          if ((Material_Editability.valueOf(
-                                          material.editability!) ==
-                                      Material_Editability.CREATOR_EDIT &&
+                          if (((Material_Editability.valueOf(
+                                              material.editability!) ==
+                                          Material_Editability.CREATOR_EDIT ||
+                                      Material_Editability.valueOf(
+                                              material.editability!) ==
+                                          Material_Editability.GROUP_EDIT) &&
                                   material.creatorId ==
                                       CurrentUserProvider().user.id) ||
                               (Material_Editability.valueOf(
@@ -829,9 +832,12 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           SizedBox(
                             height: 15.h,
                           ),
-                          if ((Material_Editability.valueOf(
-                                          material.editability!) ==
-                                      Material_Editability.CREATOR_EDIT &&
+                          if (((Material_Editability.valueOf(
+                                              material.editability!) ==
+                                          Material_Editability.CREATOR_EDIT ||
+                                      Material_Editability.valueOf(
+                                              material.editability!) ==
+                                          Material_Editability.GROUP_EDIT) &&
                                   material.creatorId ==
                                       CurrentUserProvider().user.id) ||
                               (Material_Editability.valueOf(
@@ -1085,11 +1091,12 @@ class MaterialListItem extends StatelessWidget {
                           one: "${material.localFiles.length} ${AppLocalizations.of(context)!.attachment}",
                           other: "${material.localFiles.length} ${AppLocalizations.of(context)!.attachments}",
                           args: [material.localFiles.length]),
-                   style: TextStyle(
-                              color: Color(0xFF3475F0),
-                              fontFamily: 'OpenSans',
-                              fontSize: 19.sp,
-                              fontStyle: FontStyle.italic),)
+                      style: TextStyle(
+                          color: Color(0xFF3475F0),
+                          fontFamily: 'OpenSans',
+                          fontSize: 19.sp,
+                          fontStyle: FontStyle.italic),
+                    )
                   : Container(),
             ],
           ),
