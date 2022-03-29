@@ -105,9 +105,14 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
-          child: Container(
-            child: Stack(children: [
-              SingleChildScrollView(
+          child: SingleChildScrollView(
+          //  reverse: true,
+          child: Container(height: MediaQuery.of(context).size.height,child: Column(children: [
+             Expanded(
+               child: Container(
+                   padding:
+                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                 
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -125,11 +130,17 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     _resendOTPContainer(),
                   ],
                 ),
-              ),
-            ]),
+            ),
+             ),
+           //  _footer(),
+          ],)
           ),
         ),
-        bottomNavigationBar: _footer());
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _footer(),
+     //   bottomNavigationBar: _footer()
+    );
   }
 
   SizedBox _footer() {
