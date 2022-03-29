@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:template_string/src/extension.dart';
 
 class MyGroup extends StatefulWidget {
-  const MyGroup({Key? key}) : super(key: key);
+  MyGroup({Key? key}) : super(key: key);
 
   @override
   _MyGroupState createState() => _MyGroupState();
@@ -37,10 +38,30 @@ class MyGroup extends StatefulWidget {
 
 class _MyGroupState extends State<MyGroup> {
   final Key _groupActionFocusDetectorKey = UniqueKey();
+  final Map<String, GlobalKey<State<StatefulWidget>>> _groupItemKeys = Map();
+
+  late AppBloc bloc;
 
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      Timer(Duration(milliseconds: 700), () {
+        if (bloc.actionBloc.focusedGroup != null) {
+          //debugPrint("MY Groups: ${bloc.actionBloc.focusedGroup?.id!}");
+          HiveGroup _hiveGroup = bloc.actionBloc.focusedGroup!;
+          //debugPrint("_groupItemKeys.containsKey(${_hiveGroup.id!}): ${_groupItemKeys.containsKey(_hiveGroup.id!)}");
+          Scrollable.ensureVisible(
+              _groupItemKeys[_hiveGroup.id!]!.currentContext!);
+
+          // Reset selected Tab Index
+          bloc.actionBloc.selectedTabIndex = 0;
+          // Reset focused Group
+          bloc.actionBloc.focusedGroup = null;
+        }
+      });
+    });
   }
 
   _getActions(AppBloc bloc) async {
@@ -49,7 +70,7 @@ class _MyGroupState extends State<MyGroup> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of(context);
+    bloc = Provider.of(context);
 
     return FocusDetector(
       key: _groupActionFocusDetectorKey,
@@ -276,7 +297,11 @@ class _MyGroupState extends State<MyGroup> {
                 );
               },
               groupHeaderBuilder: (BuildContext context, int section) {
+                final _globalKey = GlobalKey();
+                _groupItemKeys[snapshot.data!.keys.toList()[section].id!] =
+                    _globalKey;
                 return Padding(
+                  key: _globalKey,
                   padding:
                       EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
                   child: Column(
@@ -595,7 +620,8 @@ class _MyGroupState extends State<MyGroup> {
                           // Record the response to the question
                           if (action.type == Action_Type.TEXT_RESPONSE.value ||
                               action.type ==
-                                  Action_Type.MATERIAL_RESPONSE.value && !action.material!.isDirty)
+                                      Action_Type.MATERIAL_RESPONSE.value &&
+                                  !action.material!.isDirty)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -850,7 +876,8 @@ class _MyGroupState extends State<MyGroup> {
     if (hiveAction.material == null ||
         (hiveAction.material != null &&
             hiveAction.material!.files != null &&
-            hiveAction.material!.files!.length == 0 && hiveAction.material!.isDirty)) {
+            hiveAction.material!.files!.length == 0 &&
+            hiveAction.material!.isDirty)) {
       return Container();
     }
     List<Widget> fileLinks = [];
@@ -891,7 +918,7 @@ class MyGroupActionListItem extends StatelessWidget {
   final Function(HiveAction action) onActionTap;
 
   MyGroupActionListItem(
-      {required this.action, required this.onActionTap, this.index});
+      {Key? key, required this.action, required this.onActionTap, this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -1129,20 +1156,22 @@ class MyGroupActionListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
-              Align(alignment: Alignment.topRight,
+              SizedBox(
+                height: 5,
+              ),
+              Align(
+                alignment: Alignment.topRight,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                   child: Text(
-                        '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
-                        style: TextStyle(
-                          color: Color(0xFF797979),
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.bold,
-                        
-                        ),
-                        textAlign: TextAlign.right,
-                      ),
+                    '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    style: TextStyle(
+                      color: Color(0xFF797979),
+                      fontSize: 19.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
                 ),
               ),
             ],

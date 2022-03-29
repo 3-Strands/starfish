@@ -12,6 +12,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
@@ -73,6 +74,12 @@ class _DashboardState extends State<Dashboard> {
       SyncService.kUnauthenticated: (value, callback) {
         debugPrint('Boradcast Receiver: kUnauthenticated');
         handleUnauthentication();
+      },
+      "switchToActionTab": (value, callback) {
+        debugPrint('Boradcast Receiver: switchToActionTab');
+        onTabTapped(2);
+        bloc.actionBloc.selectedTabIndex = 1;
+        bloc.actionBloc.focusedGroup = value as HiveGroup;
       }
     }, context: this);
 

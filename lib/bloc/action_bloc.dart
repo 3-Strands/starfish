@@ -28,6 +28,9 @@ class ActionBloc extends Object {
   String reuseActionQuery = '';
   String materialQuery = '';
 
+  int selectedTabIndex = 0;
+  HiveGroup? focusedGroup;
+
   ActionBloc() {
     //initializes the subject with element already
     _actionsForMe = new BehaviorSubject<Map<HiveGroup, List<HiveAction>>>();
@@ -179,7 +182,8 @@ class ActionBloc extends Object {
 
   fetchMaterials() async {
     _materials.sink.add(MaterialProvider()
-        .getMateialsSync().where((materail) => !materail.isDirty)
+        .getMateialsSync()
+        .where((materail) => !materail.isDirty)
         .where((element) => materialQuery.isEmpty
             ? true
             : element.title!

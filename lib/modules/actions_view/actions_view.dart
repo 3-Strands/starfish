@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,6 +29,7 @@ class ActionsScreen extends StatefulWidget {
 
 class _ActionsScreenState extends State<ActionsScreen>
     with TickerProviderStateMixin {
+  late AppBloc bloc;
   late TabController _tabController;
   late HiveCurrentUser _user;
   late Box<HiveCurrentUser> _currentUserBox;
@@ -33,6 +37,14 @@ class _ActionsScreenState extends State<ActionsScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (bloc.actionBloc.selectedTabIndex == 1) {
+        _tabController.index = _tabController.length > 0 ? 1 : 0;
+
+        // set 'Month' filter to 'All Time'
+        bloc.actionBloc.actionFilter = ActionFilter.ALL_TIME;
+      }
+    });
     _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _user = _currentUserBox.values.first;
     _tabController = new TabController(
@@ -43,6 +55,8 @@ class _ActionsScreenState extends State<ActionsScreen>
 
   @override
   Widget build(BuildContext context) {
+    bloc = Provider.of(context);
+
     return DefaultTabController(
       length: _tabController.length,
       child: Scaffold(
