@@ -609,8 +609,8 @@ class SyncService {
           await MaterialRepository().createUpdateMaterial(_controller.stream);
 
       materialBox.values
-          .where(
-              (element) => (element.isNew == true || element.isUpdated == true))
+          .where((element) => (element.isNew == true ||
+              element.isUpdated == true && !element.isDirty))
           .forEach((HiveMaterial _hiveMaterial) {
         var request = CreateUpdateMaterialsRequest.create();
         request.material = _hiveMaterial.toMaterial();
@@ -973,7 +973,8 @@ class SyncService {
           .where((element) =>
               (element.isNew || element.isUpdated || element.isDirty))
           .forEach((HiveAction _hiveAction) {
-        if (_hiveAction.isNew || _hiveAction.isUpdated) {
+        if (_hiveAction.isNew ||
+            _hiveAction.isUpdated && !_hiveAction.isDirty) {
           var request = CreateUpdateActionsRequest.create();
           request.action = _hiveAction.toAction();
 
@@ -1242,18 +1243,15 @@ class SyncService {
 
   void handleGrpcError(GrpcError error, {Function()? callback}) async {
     debugPrint('handleGrpcError[grpcError]: $error');
-    Sentry.captureMessage("ERROR GrpcError");
 
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
-      Sentry.captureMessage("ERROR GrpcError[unauthenticated]");
       // Refresh Session
       await _refreshSessionLock.synchronized(() async {
         try {
           AuthenticateResponse authenticateResponse =
               await _refreshSession(callback: callback);
 
-          print("AccessToken: ${authenticateResponse.userToken}");
           StarfishSharedPreference().setLoginStatus(true);
           StarfishSharedPreference()
               .setAccessToken(authenticateResponse.userToken);
@@ -1298,6 +1296,6 @@ class SyncService {
     Sentry.captureMessage("Refresh Session");
     String _refreshToken = await StarfishSharedPreference().getRefreshToken();
     String _userId = await StarfishSharedPreference().getSessionUserId();
-    return await ApiProvider().refreshSession(_refreshToken, _userId); //
+    return ApiProvider().refreshSession(_refreshToken, _userId); //
   }
 }
