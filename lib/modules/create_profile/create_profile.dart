@@ -131,7 +131,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   Widget build(BuildContext context) {
     ProfileBloc profileBloc = new ProfileBloc();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+    //  resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -264,6 +264,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             title: AppLocalizations.of(context)!
                                 .selectLanugagesDetail),
                       ),
+                      SizedBox(height: 65.h,),
                     ],
                   ),
                 ),
@@ -277,7 +278,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _footer(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _footer(),
     );
   }
 

@@ -60,73 +60,82 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     ProfileBloc _profileBloc = new ProfileBloc();
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Container(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: 118.h),
-                      AppLogo(hight: 156.h, width: 163.w),
-                      SizedBox(height: 50.h),
-                      TitleLabel(
-                        title: AppLocalizations.of(context)!
-                            .phoneAuthenticationTitle,
-                        align: TextAlign.center,
-                      ),
-                      SizedBox(height: 30.h),
-                      StreamBuilder(
-                        stream: _profileBloc.countries,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<HiveCountry>?> snapshot) {
-                          if (snapshot.hasData) {
-                            snapshot.data!
-                                .sort((a, b) => a.name.compareTo(b.name));
-                            return SelectDropDown(
-                              navTitle:
-                                  AppLocalizations.of(context)!.selectCountry,
-                              placeholder:
-                                  AppLocalizations.of(context)!.selectCountry,
-                              selectedValues: _selectedCountry,
-                              dataSource: snapshot.data,
-                              type: SelectType.single,
-                              dataSourceType: DataSourceType.country,
-                              onDoneClicked: <T>(country) {
-                                setState(() {
-                                  _selectedCountry = country as HiveCountry;
-                                  _countryCodeController.text = _selectedCountry
-                                          .diallingCode
-                                          .startsWith("+")
-                                      ? _selectedCountry.diallingCode
-                                      : "+${_selectedCountry.diallingCode}";
-                                });
-                              },
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                      SizedBox(height: 30.h),
-                      _phoneNumberContainer(),
-                    ],
+        child: SingleChildScrollView(
+          //   reverse: true,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: 118.h),
+                        AppLogo(hight: 156.h, width: 163.w),
+                        SizedBox(height: 50.h),
+                        TitleLabel(
+                          title: AppLocalizations.of(context)!
+                              .phoneAuthenticationTitle,
+                          align: TextAlign.center,
+                        ),
+                        SizedBox(height: 30.h),
+                        StreamBuilder(
+                          stream: _profileBloc.countries,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<HiveCountry>?> snapshot) {
+                            if (snapshot.hasData) {
+                              snapshot.data!
+                                  .sort((a, b) => a.name.compareTo(b.name));
+                              return SelectDropDown(
+                                navTitle:
+                                    AppLocalizations.of(context)!.selectCountry,
+                                placeholder:
+                                    AppLocalizations.of(context)!.selectCountry,
+                                selectedValues: _selectedCountry,
+                                dataSource: snapshot.data,
+                                type: SelectType.single,
+                                dataSourceType: DataSourceType.country,
+                                onDoneClicked: <T>(country) {
+                                  setState(() {
+                                    _selectedCountry = country as HiveCountry;
+                                    _countryCodeController
+                                        .text = _selectedCountry.diallingCode
+                                            .startsWith("+")
+                                        ? _selectedCountry.diallingCode
+                                        : "+${_selectedCountry.diallingCode}";
+                                  });
+                                },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                        SizedBox(height: 30.h),
+                        _phoneNumberContainer(),
+                        SizedBox(height: 5.h),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+                // _footer(),
+              ],
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: _footer(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _footer(),
+      //  bottomNavigationBar: _footer(),
     );
   }
 
@@ -191,33 +200,18 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
-  SizedBox _footer() {
-    return SizedBox(
+  Container _footer() {
+    return Container(
       height: 75.h,
-      child: Stack(
-        children: [
-          Positioned(
-            child: new Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    color: AppColors.txtFieldBackground,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15.w, vertical: 15.h),
-                      child: Align(
-                        alignment: FractionalOffset.bottomCenter,
-                        child: _nextButton(),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+      child: Container(
+        color: AppColors.txtFieldBackground,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+          child: Align(
+            alignment: FractionalOffset.bottomCenter,
+            child: _nextButton(),
           ),
-        ],
+        ),
       ),
     );
   }
