@@ -312,7 +312,7 @@ class _MeState extends State<Me> {
                                         children: [
                                           if (action.material != null &&
                                               action.material!.url != null &&
-                                              action.material!.url!.isNotEmpty)
+                                              action.material!.url!.isNotEmpty && !action.material!.isDirty)
                                             MaterialLinkButton(
                                               icon: Icon(
                                                 Icons.open_in_new,
@@ -351,7 +351,7 @@ class _MeState extends State<Me> {
                             if (action.type ==
                                     Action_Type.TEXT_RESPONSE.value ||
                                 action.type ==
-                                    Action_Type.MATERIAL_RESPONSE.value && !action.material!.isDirty)
+                                    Action_Type.MATERIAL_RESPONSE.value && (action.material != null && !action.material!.isDirty))
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [

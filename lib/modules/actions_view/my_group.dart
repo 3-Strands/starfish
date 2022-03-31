@@ -586,7 +586,7 @@ class _MyGroupState extends State<MyGroup> {
                                       children: [
                                         if (action.material != null &&
                                             action.material!.url != null &&
-                                            action.material!.url!.isNotEmpty)
+                                            action.material!.url!.isNotEmpty && !action.material!.isDirty)
                                           MaterialLinkButton(
                                             icon: Icon(
                                               Icons.open_in_new,
@@ -621,7 +621,7 @@ class _MyGroupState extends State<MyGroup> {
                           if (action.type == Action_Type.TEXT_RESPONSE.value ||
                               action.type ==
                                       Action_Type.MATERIAL_RESPONSE.value &&
-                                  !action.material!.isDirty)
+                               (action.material != null &&   !action.material!.isDirty))
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -876,7 +876,7 @@ class _MyGroupState extends State<MyGroup> {
     if (hiveAction.material == null ||
         (hiveAction.material != null &&
             hiveAction.material!.files != null &&
-            hiveAction.material!.files!.length == 0 &&
+            hiveAction.material!.files!.length == 0 ||
             hiveAction.material!.isDirty)) {
       return Container();
     }

@@ -51,12 +51,15 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
 
     if (widget.selectedActionType != null) {
       if(widget.selectedActionType == Action_Type.MATERIAL_INSTRUCTION || widget.selectedActionType == Action_Type.MATERIAL_RESPONSE){
-          if(widget.selectedMaterial!.isDirty){
+          if(widget.selectedMaterial != null){
+
+          if( widget.selectedMaterial!.isDirty){
             _selectedActionType  = Action_Type.TEXT_INSTRUCTION;
           }
           else{
             _selectedActionType = widget.selectedActionType!;
           }
+        }
       }else{
       _selectedActionType = widget.selectedActionType!;
       }
