@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,15 +18,17 @@ class GeneralFunctions {
   }
 
   Future<bool> isNetworkAvailable() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-    } on SocketException catch (_) {
+    ConnectivityResult _connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    if (_connectivityResult == ConnectivityResult.mobile ||
+        _connectivityResult == ConnectivityResult.wifi ||
+        _connectivityResult == ConnectivityResult.ethernet) {
+      return true;
+    } else {
+      // _connectivityResult == ConnectivityResult.none
       return false;
     }
-    return false;
   }
 
   static openUrl(String url) async {

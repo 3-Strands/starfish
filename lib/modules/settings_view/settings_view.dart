@@ -1,5 +1,6 @@
 import 'dart:async';
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -228,7 +229,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .first
         .id;
 
-    var fieldMaskPaths = ['diallingCode', 'phoneCountryId', 'phone'];
+    var fieldMaskPaths = ['dialling_code', 'phone_country_id', 'phone'];
 
     HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.phone = _phoneNumberController.text;
@@ -274,7 +275,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _currentUserBox.putAt(0, _user);
     }).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {
-        print("Refresh Session Called");
         updateCountries();
       });
     }).whenComplete(() {
@@ -302,7 +302,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     ).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {
-        print("Refresh Session Called");
         updateLanguages(bloc);
       });
     }).whenComplete(() {
@@ -770,7 +769,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               dataSource: snapshot.data,
                               type: SelectType.multiple,
                               dataSourceType: DataSourceType.countries,
-                              onDoneClicked: <T>(countries) {
+                              onDoneClicked: <T>(countries) async {
+                                bool _isNetworkAvailable =
+                                    await GeneralFunctions()
+                                        .isNetworkAvailable();
+                                if (!_isNetworkAvailable) {
+                                  StarfishSnackbar.showErrorMessage(
+                                      context,
+                                      AppLocalizations.of(context)!
+                                          .internetRequiredToChangeCountriesOrLanguage);
+                                  return;
+                                }
+
                                 setState(() {
                                   _selectedCountries = List<HiveCountry>.from(
                                       countries as List<dynamic>);
@@ -814,7 +824,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 dataSource: snapshot.data,
                                 type: SelectType.multiple,
                                 dataSourceType: DataSourceType.languages,
-                                onDoneClicked: <T>(languages) {
+                                onDoneClicked: <T>(languages) async {
+                                  bool _isNetworkAvailable =
+                                      await GeneralFunctions()
+                                          .isNetworkAvailable();
+                                  if (!_isNetworkAvailable) {
+                                    StarfishSnackbar.showErrorMessage(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .internetRequiredToChangeCountriesOrLanguage);
+                                    return;
+                                  }
+
                                   setState(() {
                                     _selectedLanguages =
                                         List<HiveLanguage>.from(
@@ -1102,11 +1123,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SizedBox(height: 10.h),
                   Container(
                     //height: 52.h,
-                    child: InkWell(onTap: (){
-                      setState(() {
-                        item['is_editing'] = true;
-                      });
-                    },
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          item['is_editing'] = true;
+                        });
+                      },
                       child: TextFormField(
                         enabled: item['is_editing'],
                         controller: _emailController,
