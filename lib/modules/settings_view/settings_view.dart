@@ -1017,11 +1017,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           itemBuilder: (context, index) {
             final item = _groups[index];
             final _emailController = TextEditingController();
-            final FocusNode _emailFocus = FocusNode();
+         //   final FocusNode _emailFocus = FocusNode();
             _emailController.text = item['email'];
 
             final _confirmEmailController = TextEditingController();
-            final FocusNode _confirmEmailFocus = FocusNode();
+      //      final FocusNode _confirmEmailFocus = FocusNode();
             _confirmEmailController.text = item['confirm_email'];
 
             return Container(
@@ -1045,6 +1045,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           onTap: () {
                             setState(() {
                               _groups[index]['email'] = _emailController.text;
+                              _groups[index]['confirm_email'] = _confirmEmailController.text;
                             });
                             if (item['is_editing'] == false) {
                               setState(() {
@@ -1132,11 +1133,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: TextFormField(
                         enabled: item['is_editing'],
                         controller: _emailController,
-                        focusNode: _emailFocus,
+                       // focusNode: _emailFocus,
                         onFieldSubmitted: (term) {
                           _groups[index]['email'] = term;
                           _emailController.text = term;
-                          _emailFocus.unfocus();
+                        //  _emailFocus.unfocus();
                         },
                         keyboardType: TextInputType.emailAddress,
                         style: textFormFieldText,
@@ -1169,41 +1170,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Container(
                       //height: 52.h,
                       child: TextFormField(
+                          enabled: item['is_editing'],
                         controller: _confirmEmailController,
-                        focusNode: _confirmEmailFocus,
+                     //   focusNode: _confirmEmailFocus,
                         onFieldSubmitted: (term) {
-                          _confirmEmailController.text = term;
-                          if (_emailController.text.isValidEmail() &&
-                              _emailController.text ==
-                                  _confirmEmailController.text) {
-                            Alerts.showMessageBox(
-                                context: context,
-                                title:
-                                    AppLocalizations.of(context)!.dialogAlert,
-                                message: AppLocalizations.of(context)!
-                                    .alertSaveAdminEmail,
-                                negativeButtonText:
-                                    AppLocalizations.of(context)!.no,
-                                positiveButtonText:
-                                    AppLocalizations.of(context)!.yes,
-                                negativeActionCallback: () {},
-                                positiveActionCallback: () {
-                                  _updateGroupLinkedEmaill(
-                                      item['id'], _emailController.text);
-                                });
+                           _groups[index]['confirm_email'] = term;
+                           _confirmEmailController.text = term;
+                         // _confirmEmailController.text = term;
+                          // if (_emailController.text.isValidEmail() &&
+                          //     _emailController.text ==
+                          //         _confirmEmailController.text) {
+                        //     Alerts.showMessageBox(
+                        //         context: context,
+                        //         title:
+                        //             AppLocalizations.of(context)!.dialogAlert,
+                        //         message: AppLocalizations.of(context)!
+                        //             .alertSaveAdminEmail,
+                        //         negativeButtonText:
+                        //             AppLocalizations.of(context)!.no,
+                        //         positiveButtonText:
+                        //             AppLocalizations.of(context)!.yes,
+                        //         negativeActionCallback: () {},
+                        //         positiveActionCallback: () {
+                        //           _updateGroupLinkedEmaill(
+                        //               item['id'], _emailController.text);
+                        //         });
 
-                            _confirmEmailFocus.unfocus();
-                          } else {
-                            Alerts.showMessageBox(
-                                context: context,
-                                title:
-                                    AppLocalizations.of(context)!.dialogAlert,
-                                message: AppLocalizations.of(context)!
-                                    .alertEmailDoNotMatch,
-                                positiveButtonText:
-                                    AppLocalizations.of(context)!.ok,
-                                positiveActionCallback: () {});
-                          }
+                        //  //  _confirmEmailFocus.unfocus();
+                        //   } else {
+                        //     Alerts.showMessageBox(
+                        //         context: context,
+                        //         title:
+                        //             AppLocalizations.of(context)!.dialogAlert,
+                        //         message: AppLocalizations.of(context)!
+                        //             .alertEmailDoNotMatch,
+                        //         positiveButtonText:
+                        //             AppLocalizations.of(context)!.ok,
+                        //         positiveActionCallback: () {});
+                        //   }
                         },
                         keyboardType: TextInputType.emailAddress,
                         style: textFormFieldText,
