@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
@@ -42,6 +41,7 @@ import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/api_provider.dart';
 import 'package:starfish/utils/services/field_mask.dart';
@@ -176,14 +176,19 @@ class SyncService {
   }
 
   void syncAll() async {
-    ConnectivityResult _connectivityResult =
-        await (Connectivity().checkConnectivity());
-
-    if (_connectivityResult == ConnectivityResult.none) {
+    bool _isNetworkAvailable = await GeneralFunctions().isNetworkAvailable();
+    if (!_isNetworkAvailable) {
       return;
     }
 
     syncCountries();
+
+    // Check If already authenticated
+    final bool isAuthenticated =
+        await StarfishSharedPreference().isUserLoggedIn();
+    if (!isAuthenticated) {
+      return;
+    }
 
     showAlertFirstTime();
     await lock.synchronized(() => syncLocalCurrentUser(kCurrentUserFieldMask));
@@ -1293,7 +1298,6 @@ class SyncService {
 
   Future<AuthenticateResponse> _refreshSession({Function()? callback}) async {
     debugPrint("refreshSession called");
-    Sentry.captureMessage("Refresh Session");
     String _refreshToken = await StarfishSharedPreference().getRefreshToken();
     String _userId = await StarfishSharedPreference().getSessionUserId();
     return ApiProvider().refreshSession(_refreshToken, _userId); //

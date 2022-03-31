@@ -66,8 +66,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
 
-  late List<HiveLanguage> _tempSelectedLanguages = [];
-
   String _countyCode = '';
   String _mobileNumber = '';
   String _userName = '';
@@ -103,21 +101,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _languages = languages;
     _dropdownLanguagesItem = _buildDropDownLanguageItems(_languages);
 
-    await StarfishSharedPreference().getDeviceLanguage().then((value) => {
-          (value == '')
-              ? setState(() {
-                  _language = _dropdownLanguagesItem[0].value!;
-                })
-              : {
-                  _dropdownLanguagesItem.forEach((element) {
-                    if (element.value!.values.last == value) {
-                      setState(() {
-                        _language = element.value!;
-                      });
-                    }
-                  })
-                }
-        });
+    String _deviceLanguage =
+        await StarfishSharedPreference().getDeviceLanguage();
+    if (_deviceLanguage.isEmpty) {
+      setState(() {
+        _language = _dropdownLanguagesItem[0].value!;
+      });
+    } else {
+      _dropdownLanguagesItem.forEach((element) {
+        if (element.value!.values.last == _deviceLanguage) {
+          setState(() {
+            _language = element.value!;
+          });
+        }
+      });
+    }
   }
 
   List<DropdownMenuItem<Map>> _buildDropDownLanguageItems(List listLanguage) {
@@ -228,7 +226,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .first
         .id;
 
-    var fieldMaskPaths = ['diallingCode', 'phoneCountryId', 'phone'];
+    var fieldMaskPaths = ['dialling_code', 'phone_country_id', 'phone'];
 
     HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.phone = _phoneNumberController.text;
@@ -274,7 +272,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _currentUserBox.putAt(0, _user);
     }).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {
-        print("Refresh Session Called");
         updateCountries();
       });
     }).whenComplete(() {
@@ -302,7 +299,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     ).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {
-        print("Refresh Session Called");
         updateLanguages(bloc);
       });
     }).whenComplete(() {
@@ -770,7 +766,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               dataSource: snapshot.data,
                               type: SelectType.multiple,
                               dataSourceType: DataSourceType.countries,
-                              onDoneClicked: <T>(countries) {
+                              onDoneClicked: <T>(countries) async {
+                                bool _isNetworkAvailable =
+                                    await GeneralFunctions()
+                                        .isNetworkAvailable();
+                                if (!_isNetworkAvailable) {
+                                  StarfishSnackbar.showErrorMessage(
+                                      context,
+                                      AppLocalizations.of(context)!
+                                          .internetRequiredToChangeCountriesOrLanguage);
+                                  return;
+                                }
+
                                 setState(() {
                                   _selectedCountries = List<HiveCountry>.from(
                                       countries as List<dynamic>);
@@ -814,7 +821,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 dataSource: snapshot.data,
                                 type: SelectType.multiple,
                                 dataSourceType: DataSourceType.languages,
-                                onDoneClicked: <T>(languages) {
+                                onDoneClicked: <T>(languages) async {
+                                  bool _isNetworkAvailable =
+                                      await GeneralFunctions()
+                                          .isNetworkAvailable();
+                                  if (!_isNetworkAvailable) {
+                                    StarfishSnackbar.showErrorMessage(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .internetRequiredToChangeCountriesOrLanguage);
+                                    return;
+                                  }
+
                                   setState(() {
                                     _selectedLanguages =
                                         List<HiveLanguage>.from(
@@ -996,11 +1014,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           itemBuilder: (context, index) {
             final item = _groups[index];
             final _emailController = TextEditingController();
-         //   final FocusNode _emailFocus = FocusNode();
+            //   final FocusNode _emailFocus = FocusNode();
             _emailController.text = item['email'];
 
             final _confirmEmailController = TextEditingController();
-      //      final FocusNode _confirmEmailFocus = FocusNode();
+            //      final FocusNode _confirmEmailFocus = FocusNode();
             _confirmEmailController.text = item['confirm_email'];
 
             return Container(
@@ -1024,7 +1042,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           onTap: () {
                             setState(() {
                               _groups[index]['email'] = _emailController.text;
-                              _groups[index]['confirm_email'] = _confirmEmailController.text;
+                              _groups[index]['confirm_email'] =
+                                  _confirmEmailController.text;
                             });
                             if (item['is_editing'] == false) {
                               setState(() {
@@ -1103,19 +1122,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SizedBox(height: 10.h),
                   Container(
                     //height: 52.h,
-                    child: InkWell(onTap: (){
-                      setState(() {
-                        item['is_editing'] = true;
-                      });
-                    },
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          item['is_editing'] = true;
+                        });
+                      },
                       child: TextFormField(
                         enabled: item['is_editing'],
                         controller: _emailController,
-                       // focusNode: _emailFocus,
+                        // focusNode: _emailFocus,
                         onFieldSubmitted: (term) {
                           _groups[index]['email'] = term;
                           _emailController.text = term;
-                        //  _emailFocus.unfocus();
+                          //  _emailFocus.unfocus();
                         },
                         keyboardType: TextInputType.emailAddress,
                         style: textFormFieldText,
@@ -1148,44 +1168,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Container(
                       //height: 52.h,
                       child: TextFormField(
-                          enabled: item['is_editing'],
+                        enabled: item['is_editing'],
                         controller: _confirmEmailController,
-                     //   focusNode: _confirmEmailFocus,
+                        //   focusNode: _confirmEmailFocus,
                         onFieldSubmitted: (term) {
-                           _groups[index]['confirm_email'] = term;
-                           _confirmEmailController.text = term;
-                         // _confirmEmailController.text = term;
+                          _groups[index]['confirm_email'] = term;
+                          _confirmEmailController.text = term;
+                          // _confirmEmailController.text = term;
                           // if (_emailController.text.isValidEmail() &&
                           //     _emailController.text ==
                           //         _confirmEmailController.text) {
-                        //     Alerts.showMessageBox(
-                        //         context: context,
-                        //         title:
-                        //             AppLocalizations.of(context)!.dialogAlert,
-                        //         message: AppLocalizations.of(context)!
-                        //             .alertSaveAdminEmail,
-                        //         negativeButtonText:
-                        //             AppLocalizations.of(context)!.no,
-                        //         positiveButtonText:
-                        //             AppLocalizations.of(context)!.yes,
-                        //         negativeActionCallback: () {},
-                        //         positiveActionCallback: () {
-                        //           _updateGroupLinkedEmaill(
-                        //               item['id'], _emailController.text);
-                        //         });
+                          //     Alerts.showMessageBox(
+                          //         context: context,
+                          //         title:
+                          //             AppLocalizations.of(context)!.dialogAlert,
+                          //         message: AppLocalizations.of(context)!
+                          //             .alertSaveAdminEmail,
+                          //         negativeButtonText:
+                          //             AppLocalizations.of(context)!.no,
+                          //         positiveButtonText:
+                          //             AppLocalizations.of(context)!.yes,
+                          //         negativeActionCallback: () {},
+                          //         positiveActionCallback: () {
+                          //           _updateGroupLinkedEmaill(
+                          //               item['id'], _emailController.text);
+                          //         });
 
-                        //  //  _confirmEmailFocus.unfocus();
-                        //   } else {
-                        //     Alerts.showMessageBox(
-                        //         context: context,
-                        //         title:
-                        //             AppLocalizations.of(context)!.dialogAlert,
-                        //         message: AppLocalizations.of(context)!
-                        //             .alertEmailDoNotMatch,
-                        //         positiveButtonText:
-                        //             AppLocalizations.of(context)!.ok,
-                        //         positiveActionCallback: () {});
-                        //   }
+                          //  //  _confirmEmailFocus.unfocus();
+                          //   } else {
+                          //     Alerts.showMessageBox(
+                          //         context: context,
+                          //         title:
+                          //             AppLocalizations.of(context)!.dialogAlert,
+                          //         message: AppLocalizations.of(context)!
+                          //             .alertEmailDoNotMatch,
+                          //         positiveButtonText:
+                          //             AppLocalizations.of(context)!.ok,
+                          //         positiveActionCallback: () {});
+                          //   }
                         },
                         keyboardType: TextInputType.emailAddress,
                         style: textFormFieldText,
