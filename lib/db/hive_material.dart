@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
@@ -159,7 +160,7 @@ extension HiveMaterialExt on HiveMaterial {
     bool statusNotDone = false;
     bool statusDone = false;
     ActionProvider().getAllActiveActions().forEach((action) {
-      if ((action.materialId != null || action.materialId!.isNotEmpty) &&
+      if ((action.materialId != null && action.materialId!.isNotEmpty) &&
           action.isIndividualAction &&
           action.materialId == this.id) {
         if (action.actionStatus == ActionStatus.OVERDUE) {
