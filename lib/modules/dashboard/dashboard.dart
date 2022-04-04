@@ -14,6 +14,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -38,7 +39,6 @@ class _DashboardState extends State<Dashboard> {
   late AppBloc bloc;
   late List<HiveLanguage> _languageList;
   late Box<HiveLanguage> _languageBox;
-  late Box<HiveCurrentUser> _currentUserBox;
   late HiveCurrentUser _user;
 
   final cron = Cron();
@@ -86,7 +86,6 @@ class _DashboardState extends State<Dashboard> {
     SyncService().syncAll();
 
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _getAllLanguages();
     _getCurrentUser();
 
@@ -105,7 +104,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getCurrentUser() {
-    _user = _currentUserBox.values.first;
+    _user = CurrentUserProvider().getUserSync();
   }
 
   @override

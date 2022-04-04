@@ -21,6 +21,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -61,7 +62,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late List<HiveLanguage> _selectedLanguages = [];
   late List<HiveGroup> _groupList = [];
 
-  late Box<HiveCurrentUser> _currentUserBox;
   late Box<HiveCountry> _countryBox;
   late Box<HiveLanguage> _languageBox;
   late Box<HiveGroup> _groupBox;
@@ -84,7 +84,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
@@ -132,7 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _getCurrentUser() {
-    _user = _currentUserBox.values.first;
+    _user = CurrentUserProvider().getUserSync();
 
     setState(() {
       _nameController.text = _user.name;
@@ -182,7 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _user.name = _nameController.text;
     _user.isUpdated = true;
 
-    _currentUserBox.putAt(0, _user);
+    CurrentUserProvider().updateUser(_user);
   }
 
   void _validatePhoneNumber() {
@@ -228,7 +227,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     var fieldMaskPaths = ['dialling_code', 'phone_country_id', 'phone'];
 
-    HiveCurrentUser _currentUser = _currentUserBox.values.first;
+    HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
     _user.phone = _phoneNumberController.text;
     _user.diallingCode = _countryCodeController.text;
     _user.phoneCountryId = _phoneCountryId;
@@ -238,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then(
           (value) => {
-            _currentUserBox.putAt(0, _user),
+            CurrentUserProvider().updateUser(_user),
           },
         )
         .whenComplete(() {
@@ -251,7 +250,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void updateLinkGroupStatus() async {
     _user.linkGroups = _user.linkGroups;
     _user.isUpdated = true;
-    _currentUserBox.putAt(0, _user);
+    CurrentUserProvider().updateUser(_user);
   }
 
   void updateCountries() {
@@ -259,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<String> _selectedCountryIds =
         _selectedCountries.map((e) => e.id).toList();
 
-    HiveCurrentUser _currentUser = _currentUserBox.values.first;
+    HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
     _user.countryIds = _selectedCountryIds;
 
     EasyLoading.show();
@@ -269,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .then((value) async {
       await SyncService().syncLanguages();
       _user.countryIds = value.countryIds;
-      _currentUserBox.putAt(0, _user);
+      CurrentUserProvider().updateUser(_user);
     }).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {
         updateCountries();
@@ -284,7 +283,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
 
-    //HiveCurrentUser _currentUser = _currentUserBox.values.first;
     _user.languageIds = _selectedLanguageIds;
 
     EasyLoading.show();
@@ -295,7 +293,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       (value) {
         bloc.materialBloc.selectedLanguages = _selectedLanguages;
         _user.languageIds = value.languageIds;
-        _currentUserBox.putAt(0, _user);
+        CurrentUserProvider().updateUser(_user);
       },
     ).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {

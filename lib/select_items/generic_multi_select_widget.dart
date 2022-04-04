@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
-import 'package:starfish/db/hive_current_user.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/select_items/item.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -56,8 +54,6 @@ class _MultiSelectState extends State<MultiSelect> {
 
   final TextEditingController _searchTextController =
       new TextEditingController();
-
-  late Box<HiveCurrentUser> _currentUserBox;
 
   List<Item> _items = [];
 
@@ -185,9 +181,7 @@ class _MultiSelectState extends State<MultiSelect> {
       case DataSourceType.groups:
         List<HiveGroup> _groups = widget.dataSource as List<HiveGroup>;
 
-        _currentUserBox =
-            Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-        final currentUserId = _currentUserBox.values.first.id;
+        final currentUserId = CurrentUserProvider().getUserSync().id;
 
         _groups.forEach((element) {
           if (element.isMe == true) {
