@@ -12,12 +12,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_material.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/actions_view/select_action.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
@@ -61,7 +61,6 @@ class _AddEditActionState extends State<AddEditAction>
 
   late List<HiveGroup> _groupList;
   late Box<HiveGroup> _groupBox;
-  late Box<HiveCurrentUser> _currentUserBox;
 
   HiveMaterial? _selectedMaterial;
   String? _instructions;
@@ -72,8 +71,7 @@ class _AddEditActionState extends State<AddEditAction>
   void _getAllGroups() async {
     _groupList = _groupBox.values.toList();
 
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-    final currentUserId = _currentUserBox.values.first.id;
+    final currentUserId = CurrentUserProvider().getUserSync().id;
     _groupList.insert(0, HiveGroup(id: currentUserId, name: 'Me', isMe: true));
   }
 
@@ -190,12 +188,11 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 13.h),
                   TextFormField(
-                    
                     controller: _actionNameController,
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText:  AppLocalizations.of(context)!.hintActionName,
+                      labelText: AppLocalizations.of(context)!.hintActionName,
                       labelStyle: formTitleHintStyle,
                       // hintText: AppLocalizations.of(context)!.hintActionName,
                       //  hintStyle: formTitleHintStyle,
@@ -264,7 +261,6 @@ class _AddEditActionState extends State<AddEditAction>
                                     //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
                                     ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
                                     : AppLocalizations.of(context)!.hintDueDate,
-                                
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: 19.sp, color: Color(0xFF434141)),
@@ -284,25 +280,26 @@ class _AddEditActionState extends State<AddEditAction>
                   SizedBox(height: 20.h),
                   if (widget.action?.editHistory != null)
                     _editHistoryContainer(widget.action),
-                    SizedBox(height:75.h),
+                  SizedBox(height: 75.h),
                 ],
               ),
             ),
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked 
-      ,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
       floatingActionButton: Container(
         height: 75.h,
         width: MediaQuery.of(context).size.width,
-      //  padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+        //  padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
         color: AppColors.txtFieldBackground,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
-              child: Container(margin: EdgeInsets.only(left: 10.h ),
+              child: Container(
+                margin: EdgeInsets.only(left: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -314,22 +311,23 @@ class _AddEditActionState extends State<AddEditAction>
             SizedBox(width: 25.w),
             Expanded(
               child: Container(
-                  child: Container(margin: EdgeInsets.only(right: 10.h ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _validateAndCreateUpdateAction();
-                  },
-                  child: Text(
-                    _isEditMode
-                        ? AppLocalizations.of(context)!.update
-                        : AppLocalizations.of(context)!.create,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: AppColors.selectedButtonBG,
+                child: Container(
+                  margin: EdgeInsets.only(right: 10.h),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _validateAndCreateUpdateAction();
+                    },
+                    child: Text(
+                      _isEditMode
+                          ? AppLocalizations.of(context)!.update
+                          : AppLocalizations.of(context)!.create,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: AppColors.selectedButtonBG,
+                    ),
                   ),
                 ),
               ),
-            ),
             )
           ],
         ),
@@ -354,7 +352,7 @@ class _AddEditActionState extends State<AddEditAction>
 
       _selectedGroups = [];
 
-     // _dueDate = _actionToBeReused!.dateDue?.toDateTime();
+      // _dueDate = _actionToBeReused!.dateDue?.toDateTime();
     });
   }
 
@@ -503,7 +501,7 @@ class _AddEditActionState extends State<AddEditAction>
         selectedActionType: _selectedActionType,
         instructions: _instructions ?? '',
         question: _question ?? '',
-         selectedMaterial: _selectedMaterial,
+        selectedMaterial: _selectedMaterial,
       );
     }
   }
@@ -541,7 +539,6 @@ class _AddEditActionState extends State<AddEditAction>
     return new SelectDropDown(
       navTitle: AppLocalizations.of(context)!.assignActionTo,
       placeholder: AppLocalizations.of(context)!.selectOneOrMoreGroups,
-    
       selectedValues: _selectedGroups,
       dataSource: _groupList,
       enableSelectAllOption: false,
@@ -648,7 +645,7 @@ class _AddEditActionState extends State<AddEditAction>
 
     _hiveAction.type = _selectedActionType!.value;
     _hiveAction.name = _actionNameController.text;
-    _hiveAction.creatorId = _currentUserBox.values.first.id;
+    _hiveAction.creatorId = CurrentUserProvider().getUserSync().id;
     if (group.isMe == false) {
       _hiveAction.groupId = group.id;
     }

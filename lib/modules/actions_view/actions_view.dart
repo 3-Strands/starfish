@@ -9,6 +9,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
@@ -32,7 +33,6 @@ class _ActionsScreenState extends State<ActionsScreen>
   late AppBloc bloc;
   late TabController _tabController;
   late HiveCurrentUser _user;
-  late Box<HiveCurrentUser> _currentUserBox;
 
   @override
   void initState() {
@@ -45,8 +45,7 @@ class _ActionsScreenState extends State<ActionsScreen>
         bloc.actionBloc.actionFilter = ActionFilter.ALL_TIME;
       }
     });
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-    _user = _currentUserBox.values.first;
+    _user = CurrentUserProvider().getUserSync();
     _tabController = new TabController(
         length: _user.hasAdminOrTeacherRole ? 2 : 1,
         vsync: this,

@@ -1,14 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:hive/hive.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_language.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -35,8 +34,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   final FocusNode _nameFocus = FocusNode();
 
-  late Box<HiveCurrentUser> _currentUserBox;
-
   late HiveCurrentUser _user;
 
   late List<HiveCountry> _selectedCountries = [];
@@ -46,13 +43,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   void initState() {
     super.initState();
 
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
-
     _getCurrentUser();
   }
 
   void _getCurrentUser() {
-    _user = _currentUserBox.values.first;
+    _user = CurrentUserProvider().getUserSync();
     setState(() {
       _nameController.text = _user.name;
     });
@@ -75,7 +70,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         .then((value) async {
       await SyncService().syncLanguages();
       _user.countryIds = value.countryIds;
-      _currentUserBox.putAt(0, _user);
+
+      CurrentUserProvider().updateUser(_user);
     }).whenComplete(() {
       EasyLoading.dismiss();
     });
@@ -117,7 +113,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         .then((value) {
       _user.name = value.name;
       _user.languageIds = value.languageIds;
-      _currentUserBox.putAt(0, _user);
+      CurrentUserProvider().updateUser(_user);
       // Navigator.of(context).pushNamedAndRemoveUntil(
       //     Routes.dashboard, (Route<dynamic> route) => false)
     }).whenComplete(() {
@@ -131,7 +127,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   Widget build(BuildContext context) {
     ProfileBloc profileBloc = new ProfileBloc();
     return Scaffold(
-    //  resizeToAvoidBottomInset: false,
+      //  resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -264,7 +260,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             title: AppLocalizations.of(context)!
                                 .selectLanugagesDetail),
                       ),
-                      SizedBox(height: 65.h,),
+                      SizedBox(
+                        height: 65.h,
+                      ),
                     ],
                   ),
                 ),

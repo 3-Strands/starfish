@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,7 +30,6 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
   final FocusNode _reportTextFocus = FocusNode();
 
   late Box<HiveMaterialFeedback> _materialFeedbackBox;
-  late Box<HiveCurrentUser> _currentUserBox;
 
   late HiveCurrentUser _user;
 
@@ -38,7 +38,6 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
   @override
   void initState() {
     super.initState();
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
 
     _materialFeedbackBox =
         Hive.box<HiveMaterialFeedback>(HiveDatabase.MATERIAL_FEEDBACK_BOX);
@@ -47,7 +46,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
   }
 
   void _getCurrentUser() {
-    _user = _currentUserBox.values.first;
+    _user = CurrentUserProvider().getUserSync(); 
   }
 
   @override
