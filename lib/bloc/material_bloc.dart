@@ -4,11 +4,13 @@ import 'dart:math';
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
@@ -16,6 +18,7 @@ import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 
 class MaterialBloc extends Object {
@@ -201,8 +204,25 @@ class MaterialBloc extends Object {
     return materialRepository
         .createUpdateMaterialInDB(material, files: files)
         .then((_) {
+      _changeActionTypeIfHasMaterial(material);
       fetchMaterialsFromDB();
     });
+  }
+
+  _changeActionTypeIfHasMaterial(HiveMaterial hiveMaterial) {
+    ActionProvider()
+      .getAllActiveActions()
+      .where(
+        (HiveAction hiveAction) => hiveAction.materialId == hiveMaterial.id)
+        .forEach((HiveAction action) {
+          // As action type is output only value, so changing the action type is totally
+          // depends on value associated with respected action type, i.e. quesion and materialId
+
+          action.materialId = "";
+          action.question = "";
+          action.type = Action_Type.TEXT_INSTRUCTION.value;
+          action.isUpdated = true;
+        });
   }
 
   @Deprecated('upload is to be done using syncService')
