@@ -14,6 +14,6 @@ class AssetsPath {
   static const String actionsIcon = 'assets/images/actions.svg';
   static const String actionsActiveIcon = 'assets/images/actions_active.svg';
   static const String nextIcon = 'assets/images/icon_next.svg';
-
-
+  static const String resultsIcon = 'assets/images/results.svg';
+  static const String resultsActiveIcon = 'assets/images/results_active.svg';
 }

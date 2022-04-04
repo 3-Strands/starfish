@@ -14,10 +14,12 @@ class AppColors {
   static Color materialSceenBG = Color(0xFFD7E4FC);
   static Color groupScreenBG = Color(0xFFF7E8CC);
   static Color actionScreenBG = Color(0xFFE2CDE4);
+  static Color resultsScreenBG = Color(0xFFCDF2CC);
 
   static Color materialTabBarTextColor = Color(0xFF3475F0);
   static Color groupTabBarTextColor = Color(0xFFD78A00);
   static Color actionTabBarTextColor = Color(0xFF800080);
+  static Color resultsTabBarTextColor = Color(0xFF03BC00);
 
   static Color completeTaskBGColor = Color(0xFF6DE26B);
   static Color assignedTaskBGColor = Color(0xFFCBE8FA);

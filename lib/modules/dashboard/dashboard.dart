@@ -17,6 +17,7 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
+import 'package:starfish/modules/results/my_group_results.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
@@ -31,7 +32,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 3;
   late String title;
   List<Widget> _widgetOptions = [];
   late PageController _pageController;
@@ -92,8 +93,14 @@ class _DashboardState extends State<Dashboard> {
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
     var actionsWidget = ActionsScreen();
+    var resultsWidget = MyGroupResults();
 
-    _widgetOptions = <Widget>[materialsWidget, groupsWidget, actionsWidget];
+    _widgetOptions = <Widget>[
+      materialsWidget,
+      groupsWidget,
+      actionsWidget,
+      resultsWidget,
+    ];
     _pageController = PageController(initialPage: _selectedIndex);
 
     super.initState();
@@ -152,13 +159,14 @@ class _DashboardState extends State<Dashboard> {
                   icon: SvgPicture.asset(AssetsPath.actionsIcon),
                   label: AppLocalizations.of(context)!.actionsTabItemText,
                 ),
+                BottomNavigationBarItem(
+                  activeIcon: SvgPicture.asset(AssetsPath.resultsActiveIcon),
+                  icon: SvgPicture.asset(AssetsPath.resultsIcon),
+                  label: AppLocalizations.of(context)!.resultsTabItemText,
+                ),
               ],
               currentIndex: _selectedIndex,
-              selectedItemColor: (_selectedIndex == 0)
-                  ? AppColors.materialTabBarTextColor
-                  : (_selectedIndex == 1)
-                      ? AppColors.groupTabBarTextColor
-                      : AppColors.actionTabBarTextColor,
+              selectedItemColor: _selectedTabColor(_selectedIndex),
               backgroundColor: AppColors.txtFieldBackground,
               unselectedItemColor: AppColors.unselectedButtonBG,
               unselectedFontSize: 14.sp,
@@ -215,5 +223,19 @@ class _DashboardState extends State<Dashboard> {
 
     Navigator.of(context).pushNamedAndRemoveUntil(
         Routes.phoneAuthentication, (Route<dynamic> route) => false);
+  }
+
+  Color _selectedTabColor(int _selectedIndex) {
+    switch (_selectedIndex) {
+      case 3:
+        return AppColors.resultsTabBarTextColor;
+      case 2:
+        return AppColors.actionTabBarTextColor;
+      case 1:
+        return AppColors.groupTabBarTextColor;
+      case 0:
+      default:
+        return AppColors.materialTabBarTextColor;
+    }
   }
 }

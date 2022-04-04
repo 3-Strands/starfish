@@ -4,6 +4,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:starfish/bloc/action_bloc.dart';
 import 'package:starfish/bloc/group_bloc.dart';
 import 'package:starfish/bloc/material_bloc.dart';
+import 'package:starfish/bloc/results_bloc.dart';
 import 'package:starfish/bloc/user_bloc.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
@@ -13,6 +14,7 @@ class AppBloc {
   late MaterialBloc _materialBloc;
   late GroupBloc _groupBloc;
   late ActionBloc _actionBloc;
+  late ResultsBloc _resultsBloc;
   late UserBloc _userBloc;
 
   BehaviorSubject<String> _lastSyncTime = new BehaviorSubject<String>();
@@ -23,6 +25,7 @@ class AppBloc {
     _materialBloc = MaterialBloc();
     _groupBloc = GroupBloc();
     _actionBloc = ActionBloc();
+    _resultsBloc = ResultsBloc();
     _userBloc = UserBloc();
 
     Box<HiveLastSyncDateTime> _lastSyncBox =
@@ -47,6 +50,7 @@ class AppBloc {
   MaterialBloc get materialBloc => _materialBloc;
   GroupBloc get groupBloc => _groupBloc;
   ActionBloc get actionBloc => _actionBloc;
+  ResultsBloc get resultsBloc => _resultsBloc;
   UserBloc get userBloc => _userBloc;
 
   void dispose() {
