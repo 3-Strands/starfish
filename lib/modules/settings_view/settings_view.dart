@@ -1041,10 +1041,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       InkWell(
                           onTap: () {
                             setState(() {
-                              _groups[index]['email'] = _emailController.text;
-                              _groups[index]['confirm_email'] =
-                                  _confirmEmailController.text;
-                            });
+                             _groups[index]['email'] = _emailController.text;
+                             _groups[index]['confirm_email'] =
+                                 _confirmEmailController.text;
+                             });
                             if (item['is_editing'] == false) {
                               setState(() {
                                 item['is_editing'] = !item['is_editing'];
@@ -1071,7 +1071,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     positiveButtonText:
                                         AppLocalizations.of(context)!.ok,
                                     positiveActionCallback: () {});
-                              } else if (_emailController.text !=
+                              }else if (
+                                  _confirmEmailController.text.isEmpty) {
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: AppLocalizations.of(context)!
+                                        .dialogAlert,
+                                    message: AppLocalizations.of(context)!
+                                        .emptyEmail,
+                                    positiveButtonText:
+                                        AppLocalizations.of(context)!.ok,
+                                    positiveActionCallback: () {});
+                              } 
+                              else if (
+                                  !_confirmEmailController.text.isValidEmail()) {
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: AppLocalizations.of(context)!
+                                        .dialogAlert,
+                                    message: AppLocalizations.of(context)!
+                                        .alertInvalidEmaill,
+                                    positiveButtonText:
+                                        AppLocalizations.of(context)!.ok,
+                                    positiveActionCallback: () {});
+                              } 
+                               else if (_emailController.text !=
                                   _confirmEmailController.text) {
                                 Alerts.showMessageBox(
                                     context: context,
