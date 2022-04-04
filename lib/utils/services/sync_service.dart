@@ -1001,6 +1001,7 @@ class SyncService {
               ActionRepository().createUpdateActionInDB(_hiveAction);
             });
           }).onError((error, stackTrace) {
+            Sentry.captureException(error, stackTrace: stackTrace);
             // ignore: invalid_return_type_for_catch_error
             handleError(error);
             print('============= Error: ${error.toString()} ===============');
@@ -1031,21 +1032,27 @@ class SyncService {
   syncLocalFiles() async {
     print('============= START: Sync Local Files to Remote =============');
     // upload files form `File Box` excluding those which are added from remote i.e. `filepath == null`
-    fileBox.values
+    List<HiveFile> _localFiles = fileBox.values
         .where(
             (element) => element.filepath != null && false == element.isSynced)
-        .forEach((hiveFile) {
+        .toList();
+
+    if (_localFiles.isEmpty) {
+      return;
+    }
+
+    StreamController<FileData> _controller = StreamController();
+    _localFiles.forEach((hiveFile) {
       // TODO: Check existance of the the file before upload
-      uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!));
+      uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!), _controller);
     });
+    _controller.done;
+    _controller.close();
     //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
   }
 
-  uploadMaterial(String entityId, File file) async {
-    print(
-        '============= START: Sync Local File $entityId :: ${file.path} =============');
-    StreamController<FileData> _controller = StreamController();
-
+  uploadMaterial(String entityId, File file,
+      StreamController<FileData> _controller) async {
     FileMetaData metaData = FileMetaData(
       entityId: entityId,
       filename: file.path.split("/").last,
@@ -1062,13 +1069,21 @@ class SyncService {
         .then((responseStream) {
       responseStream.listen((UploadStatus uploadStatus) {
         //print("File UploadStatus: $uploadStatus");
-
-        if (uploadStatus.status == UploadStatus_Status.OK ||
-            uploadStatus.status == UploadStatus_Status.FAILED) {
-          _controller.done;
+        if (uploadStatus.status == UploadStatus_Status.OK) {
+          List<HiveFile> _files = fileBox.values
+              .where((element) =>
+                  element.entityId == uploadStatus.fileMetaData.entityId)
+              .toList();
+          _files.forEach((element) {
+            element.isSynced = true;
+            element.save();
+          });
+        } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
+          //_controller.done;
         }
       });
     }).onError((error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
       handleError(error);
     });
 
@@ -1171,6 +1186,7 @@ class SyncService {
         print("FILE Transfer ERROR:: $error");
       }, cancelOnError: true);
     }).onError((error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
       handleError(error);
     });
   }
@@ -1300,6 +1316,8 @@ class SyncService {
     debugPrint("refreshSession called");
     String _refreshToken = await StarfishSharedPreference().getRefreshToken();
     String _userId = await StarfishSharedPreference().getSessionUserId();
+    debugPrint("REfresh Session: $_refreshToken");
+    Sentry.captureMessage("REfresh Session: " + _refreshToken);
     return ApiProvider().refreshSession(_refreshToken, _userId); //
   }
 }
