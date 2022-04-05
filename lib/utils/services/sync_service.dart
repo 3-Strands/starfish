@@ -22,14 +22,17 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
+import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
+import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
@@ -37,6 +40,7 @@ import 'package:starfish/repository/app_data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/materials_repository.dart';
+import 'package:starfish/repository/results_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
@@ -85,6 +89,8 @@ class SyncService {
   late Box<HiveUser> userBox;
   late Box<HiveFile> fileBox;
   late Box<HiveActionUser> actionUserBox;
+  late Box<HiveLearnerEvaluation> learnerEvaluationBox;
+  late Box<HiveTeacherResponse> teacherResponseBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -106,6 +112,10 @@ class SyncService {
     userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
     fileBox = Hive.box<HiveFile>(HiveDatabase.FILE_BOX);
     actionUserBox = Hive.box<HiveActionUser>(HiveDatabase.ACTION_USER_BOX);
+    learnerEvaluationBox =
+        Hive.box<HiveLearnerEvaluation>(HiveDatabase.LEARNER_EVALUATION_BOX);
+    teacherResponseBox =
+        Hive.box<HiveTeacherResponse>(HiveDatabase.TEACHER_RESPONSE_BOX);
   }
 
   void showAlert(BuildContext context) async {
@@ -1251,6 +1261,157 @@ class SyncService {
       }
     });
     print('============= END: Sync Local ActionUser to Remote ===============');
+  }
+
+  Future syncLocalLearnerEvaluationsToRemote() async {
+    if (learnerEvaluationBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
+    print(
+        '============= START: Sync LocalLearnerEvaluationsToRemote =============');
+    StreamController<CreateUpdateLearnerEvaluationRequest> _controller =
+        StreamController();
+
+    try {
+      ResponseStream<CreateUpdateLearnerEvaluationResponse> responseStream =
+          await ResultsRepository()
+              .createUpdateLearnerEvaluations(_controller.stream);
+      learnerEvaluationBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveLearnerEvaluation) {
+        var request = CreateUpdateLearnerEvaluationRequest.create();
+
+        request.learnerEvaluation =
+            _hiveLearnerEvaluation.toLearnerEvaluation();
+
+        if (_hiveLearnerEvaluation.isUpdated) {
+          // TODO:
+        }
+
+        _controller.add(request);
+      });
+      _controller.close();
+
+      return await responseStream.forEach((value) {
+        print('Remote Learner Evaluation: ${value.learnerEvaluation}');
+        if (value.status ==
+            CreateUpdateLearnerEvaluationResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+
+          print(
+              '============= END: LocalLearnerEvaluationsToRemote =============');
+        } else {
+          print("ERROR: LocalLearnerEvaluationsToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+  }
+
+  Future syncLocalTeacherResponsesToRemote() async {
+    if (teacherResponseBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
+    print(
+        '============= START: Sync syncLocalTeacherResponsesToRemote =============');
+    StreamController<CreateUpdateTeacherResponseRequest> _controller =
+        StreamController();
+
+    try {
+      ResponseStream<CreateUpdateTeacherResponseResponse> responseStream =
+          await ResultsRepository()
+              .createUpdateTeacherResponses(_controller.stream);
+      teacherResponseBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveTeacherResponse) {
+        var request = CreateUpdateTeacherResponseRequest.create();
+
+        request.teacherResponse = _hiveTeacherResponse.toTeacherResponse();
+
+        if (_hiveTeacherResponse.isUpdated) {
+          // TODO:
+        }
+
+        _controller.add(request);
+      });
+      _controller.close();
+
+      return await responseStream.forEach((value) {
+        print('Remote Teacher Response: ${value.teacherResponse}');
+        if (value.status ==
+            CreateUpdateTeacherResponseResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+
+          print(
+              '============= END: syncLocalTeacherResponsesToRemote =============');
+        } else {
+          print("ERROR: syncLocalTeacherResponsesToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+  }
+
+  Future syncLearnerEvaluations() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      learnerEvaluationBox.values.forEach((element) {});
+    }
+
+    await ResultsRepository()
+        .listLearnerEvaluations()
+        .then((ResponseStream<LearnerEvaluation> stream) {
+      stream.listen((learnerEvaluation) {
+        HiveLearnerEvaluation _hiveLearnerEvaluation =
+            HiveLearnerEvaluation.from(learnerEvaluation);
+
+        ResultsProvider().createUpdateLearnerEvaluation(_hiveLearnerEvaluation);
+      }, onError: ((err) {
+        handleGrpcError(err);
+      }), onDone: () {
+        print('LearnerEvaluation Sync Done.');
+      });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
+  }
+
+  Future syncTeacherResponses() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      teacherResponseBox.values.forEach((element) {});
+    }
+
+    await ResultsRepository()
+        .listTeacherResponses()
+        .then((ResponseStream<TeacherResponse> stream) {
+      stream.listen((teacherResponse) {
+        HiveTeacherResponse _hiveTeacherResponse =
+            HiveTeacherResponse.from(teacherResponse);
+
+        ResultsProvider().createUpdateTeacherResponse(_hiveTeacherResponse);
+      }, onError: ((err) {
+        handleGrpcError(err);
+      }), onDone: () {
+        print('TeacherResponse Sync Done.');
+      });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
   }
 
   void handleError(error) {
