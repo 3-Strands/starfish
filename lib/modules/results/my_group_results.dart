@@ -145,13 +145,49 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10.h),
+                SizedBox(height: 20.h),
+
                 Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xFF424242),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
                   child: Column(
-                    children: [
-                      Text('Summary for all Learners'),
-                      Text('Actions'),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Summary for all Learners",
+                          style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                              fontFamily: "Rubik Medium",
+                              fontSize: 19.sp,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Center(
+                        child: Text(
+                          "Actions",
+                          style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                              fontFamily: "Rubik Medium",
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Container(
                             width: 99.w,
@@ -173,10 +209,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     bloc.resultsBloc.hiveGroup!.actionsCompleted
                                   ]),
                               style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Rubik",
-                                fontSize: 17.sp,
-                              ),
+                                  color: Colors.black,
+                                  fontFamily: "Rubik Medium",
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -201,10 +237,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                         .actionsNotDoneYet
                                   ]),
                               style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Rubik",
-                                fontSize: 17.sp,
-                              ),
+                                  color: Colors.black,
+                                  fontFamily: "Rubik Medium",
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -228,41 +264,721 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     bloc.resultsBloc.hiveGroup!.actionsOverdue
                                   ]),
                               style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Rubik",
-                                fontSize: 17.sp,
-                              ),
+                                  color: Colors.black,
+                                  fontFamily: "Rubik Medium",
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ],
                       ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 10.w),
+                        child: Divider(
+                          color: Color(0xFF5D5D5D),
+                          thickness: 1,
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: 10.h,
+                      // ),
+                      Center(
+                          child: Text(
+                        "Feeling about the Group",
+                        style: TextStyle(
+                            color: Color(0xFFFFFFFF),
+                            fontFamily: "Rubik Medium",
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 99.w,
+                            decoration: BoxDecoration(
+                                color: Color(0xFF6DE26B),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.5.r))),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.h, horizontal: 10.w),
+                            child: Text(
+                              "12 Good",
+                              //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                              // Intl.plural(
+                              //     bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
+                              //     zero:
+                              //         "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                              //     args: [
+                              //       bloc.resultsBloc.hiveGroup!
+                              //           .actionsNotDoneYet
+                              //     ]),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "Rubik Medium",
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20.w,
+                          ),
+                          Container(
+                            width: 99.w,
+                            decoration: BoxDecoration(
+                                color: Color(0xFFC6C6C6),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.5.r))),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.h, horizontal: 10.w),
+                            child: Flexible(
+                              child: Text(
+                                "9 Not so Good",
+                                //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                                // Intl.plural(
+                                //     bloc.resultsBloc.hiveGroup!.actionsOverdue,
+                                //     zero:
+                                //         "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                //     one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                //     other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                                //     args: [
+                                //       bloc.resultsBloc.hiveGroup!.actionsOverdue
+                                //     ]),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "Rubik Medium",
+                                    fontSize: 17.sp,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 10.w),
+                        child: Divider(
+                          color: Color(0xFF5D5D5D),
+                          thickness: 1,
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: 20.h,
+                      // ),
+                      Center(
+                        child: Text(
+                          "Averages",
+                          style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                              fontFamily: "Open Sans Bold",
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          _buildCategoryStatics(5,Color(0xFFFFFFFF),),
+                          _buildCategoryStatics(4,Color(0xFFFFFFFF),),
+                          _buildCategoryStatics(3,Color(0xFFFFFFFF),),
+                        ],
+                      ),
+                      SizedBox(height: 10.h),
                     ],
                   ),
                 ),
-                if (bloc.resultsBloc.hiveGroup?.learners != null)
-                  ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: bloc.resultsBloc.hiveGroup?.learners!.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          child: Column(
-                            children: [
-                              Text(
-                                  "${bloc.resultsBloc.hiveGroup?.learners!.elementAt(index).user?.name}"),
-                              Row(
-                                children: [],
-                              ),
-                            ],
+                SizedBox(
+                  height: 10.h,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xFF424242),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Text(
+                        "Project Report for Group Name 1",
+                        style: TextStyle(
+                            color: Color(0xFFFFFFFF),
+                            fontFamily: "Rubik Medium",
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Markers",
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontFamily: "Open Sans Semibold",
+                              color: Color(0xFFC6C6C6),
+                            ),
                           ),
-                        );
-                      })
+                          Text(
+                            "Actuals",
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontFamily: "Open Sans Semibold",
+                              color: Color(0xFFC6C6C6),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      _buildMarkerStatics(53, 43),
+                      Divider(
+                        color: Color(0xFF5D5D5D),
+                        thickness: 1,
+                      ),
+                      _buildMarkerStatics(53, 43),
+                      Divider(
+                        color: Color(0xFF5D5D5D),
+                        thickness: 1,
+                      ),
+                      _buildMarkerStatics(126, 22),
+                      Divider(
+                        color: Color(0xFF5D5D5D),
+                        thickness: 1,
+                      ),
+                      _buildMarkerStatics(143, 89),
+                      Divider(
+                        color: Color(0xFF5D5D5D),
+                        thickness: 1,
+                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(
+                      //       vertical: 10.h, horizontal: 10.w),
+                      //   child: Divider(
+                      //     color: Color(0xFF5D5D5D),
+                      //     thickness: 1,
+                      //   ),
+                      // ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                        color: Colors.transparent,
+                        width: MediaQuery.of(context).size.width - 20,
+                        //    width: 1000.w,
+                        height: 50.h,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: StadiumBorder(), primary: Colors.blue),
+                          onPressed: () {},
+                          child: Text(
+                            "Add Sign of Transformation",
+                            style: TextStyle(
+                                fontSize: 17.sp,
+                                fontFamily: "Open Sans Regular"),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: 3,
+                    itemBuilder: (BuildContext context, index) {
+                      return Column(
+                        children: [
+                          SizedBox(height: 10.h,),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Color(0xFFEFEFEF),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.5.r))),
+                            margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                            padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Text(
+                                  "Anish",
+                                  style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontFamily: "OpenSans Bold",
+                                      fontSize: 19.sp,
+                                      fontWeight: FontWeight.bold),
+                                ),
+
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                IntrinsicHeight(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      Center(
+                                        child: Text(
+                                          "Actions ",
+                                          style: TextStyle(
+                                              color: Color(
+                                                0xFF4F4F4F,
+                                              ),
+                                              fontFamily: "OpenSans Semibold",
+                                              fontSize: 17.sp),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          //   width: 99.w,
+                                          decoration: BoxDecoration(
+                                              color: Color(0xFF6DE26B),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.5.r))),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.h, horizontal: 10.w),
+                                          child: Text(
+                                            "4 Done",
+                                            //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                                            // Intl.plural(
+                                            //     bloc.resultsBloc.hiveGroup!
+                                            //         .actionsCompleted,
+                                            //     zero:
+                                            //         "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                            //     one: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                            //     other: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                                            //     args: [
+                                            //       bloc.resultsBloc.hiveGroup!
+                                            //           .actionsCompleted
+                                            //     ]),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "Rubik Medium",
+                                                fontSize: 17.sp,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          //    width: 99.w,
+                                          decoration: BoxDecoration(
+                                              color: Color(0xFFFFBE4A),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.5.r))),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.h, horizontal: 10.w),
+                                          child: Text(
+                                            "2 Pending",
+                                            //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                                            // Intl.plural(
+                                            //     bloc.resultsBloc.hiveGroup!
+                                            //         .actionsNotDoneYet,
+                                            //     zero:
+                                            //         "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                            //     one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                            //     other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                                            //     args: [
+                                            //       bloc.resultsBloc.hiveGroup!
+                                            //           .actionsNotDoneYet
+                                            //     ]),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "Rubik Medium",
+                                                fontSize: 17.sp,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          //     width: 99.w,
+                                          decoration: BoxDecoration(
+                                              color: Color(0xFFFF5E4D),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.5.r))),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.h, horizontal: 10.w),
+                                          child: Text(
+                                            "1 Overdue",
+                                            //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                                            // Intl.plural(
+                                            //     bloc.resultsBloc.hiveGroup!
+                                            //         .actionsOverdue,
+                                            //     zero:
+                                            //         "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                            //     one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                                            //     other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                                            //     args: [
+                                            //       bloc.resultsBloc.hiveGroup!
+                                            //           .actionsOverdue
+                                            //     ]),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "Rubik Medium",
+                                                fontSize: 17.sp,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(
+                                  height: 15.h,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Transformations: ",
+                                      style: TextStyle(
+                                        fontSize: 17.sp,
+                                        fontFamily: "Open Sans Semibold",
+                                        color: Color(0xFF4F4F4F),
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        child: Text(
+                                          "First few words entered jf jkasdf ksjd",
+                                          style: TextStyle(
+                                            fontFamily: "Open Sans Italic",
+                                            fontSize: 17.sp,
+                                            fontStyle: FontStyle.italic,
+                                            color: Color(0xFF4F4F4F),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 15.h,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Feeling about the Group: ",
+                                      style: TextStyle(
+                                        fontSize: 17.sp,
+                                        fontFamily: "Open Sans Semibold",
+                                        fontStyle: FontStyle.normal,
+                                        color: Color(0xFF4F4F4F),
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.thumb_up,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                            SizedBox(
+                                              width: 5.w,
+                                            ),
+                                            Text(
+                                              "Good",
+                                              style: TextStyle(
+                                                fontFamily: "Open Sans Italic",
+                                                fontSize: 17.sp,
+                                                fontStyle: FontStyle.italic,
+                                                color: Color(0xFF4F4F4F),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 15.h,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Feedback: ",
+                                      style: TextStyle(
+                                        fontSize: 17.sp,
+                                        fontFamily: "Open Sans Semibold",
+                                        color: Color(0xFF4F4F4F),
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        child: Text(
+                                          "First words of feedback written in",
+                                          style: TextStyle(
+                                            fontFamily: "Open Sans Italic",
+                                            fontSize: 17.sp,
+                                            fontStyle: FontStyle.italic,
+                                            color: Color(0xFF4F4F4F),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+
+                                // SizedBox(
+                                //   height: 10.h,
+                                // ),
+
+                                // SizedBox(
+                                //   height: 20.h,
+                                // ),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    _buildCategoryStatics(
+                                      5, Color(0xFF797979),
+                                    ),
+                                    _buildCategoryStatics(4,Color(0xFF797979),),
+                                    _buildCategoryStatics(3,Color(0xFF797979),),
+                                  ],
+                                ),
+                                SizedBox(height: 10.h),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                // Container(
+                //   child: Column(
+                //     children: [
+                //       Text('Summary for all Learners'),
+                //       Text('Actions'),
+                //       Row(
+                //         children: [
+                //           Container(
+                //             width: 99.w,
+                //             decoration: BoxDecoration(
+                //                 color: Color(0xFF6DE26B),
+                //                 borderRadius:
+                //                     BorderRadius.all(Radius.circular(8.5.r))),
+                //             padding: EdgeInsets.symmetric(
+                //                 vertical: 10.h, horizontal: 10.w),
+                //             child: Text(
+                //               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                //               Intl.plural(
+                //                   bloc.resultsBloc.hiveGroup!.actionsCompleted,
+                //                   zero:
+                //                       "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                //                   one: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                //                   other: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                //                   args: [
+                //                     bloc.resultsBloc.hiveGroup!.actionsCompleted
+                //                   ]),
+                //               style: TextStyle(
+                //                 color: Colors.black,
+                //                 fontFamily: "Rubik",
+                //                 fontSize: 17.sp,
+                //               ),
+                //               textAlign: TextAlign.center,
+                //             ),
+                //           ),
+                //           Container(
+                //             width: 99.w,
+                //             decoration: BoxDecoration(
+                //                 color: Color(0xFFFFBE4A),
+                //                 borderRadius:
+                //                     BorderRadius.all(Radius.circular(8.5.r))),
+                //             padding: EdgeInsets.symmetric(
+                //                 vertical: 10.h, horizontal: 10.w),
+                //             child: Text(
+                //               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                //               Intl.plural(
+                //                   bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
+                //                   zero:
+                //                       "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                //                   one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                //                   other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                //                   args: [
+                //                     bloc.resultsBloc.hiveGroup!
+                //                         .actionsNotDoneYet
+                //                   ]),
+                //               style: TextStyle(
+                //                 color: Colors.black,
+                //                 fontFamily: "Rubik",
+                //                 fontSize: 17.sp,
+                //               ),
+                //               textAlign: TextAlign.center,
+                //             ),
+                //           ),
+                //           Container(
+                //             width: 99.w,
+                //             decoration: BoxDecoration(
+                //                 color: Color(0xFFFF5E4D),
+                //                 borderRadius:
+                //                     BorderRadius.all(Radius.circular(8.5.r))),
+                //             padding: EdgeInsets.symmetric(
+                //                 vertical: 10.h, horizontal: 10.w),
+                //             child: Text(
+                //               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                //               Intl.plural(
+                //                   bloc.resultsBloc.hiveGroup!.actionsOverdue,
+                //                   zero:
+                //                       "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                //                   one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                //                   other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                //                   args: [
+                //                     bloc.resultsBloc.hiveGroup!.actionsOverdue
+                //                   ]),
+                //               style: TextStyle(
+                //                 color: Colors.black,
+                //                 fontFamily: "Rubik",
+                //                 fontSize: 17.sp,
+                //               ),
+                //               textAlign: TextAlign.center,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // if (bloc.resultsBloc.hiveGroup?.learners != null)
+                //   ListView.builder(
+                //       physics: NeverScrollableScrollPhysics(),
+                //       shrinkWrap: true,
+                //       itemCount: bloc.resultsBloc.hiveGroup?.learners!.length,
+                //       itemBuilder: (context, index) {
+                //         return Container(
+                //           child: Column(
+                //             children: [
+                //               Text(
+                //                   "${bloc.resultsBloc.hiveGroup?.learners!.elementAt(index).user?.name}"),
+                //               Row(
+                //                 children: [],
+                //               ),
+                //             ],
+                //           ),
+                //         );
+                //       })
+                SizedBox(height: 20.h,)
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Row _buildMarkerStatics(int marker, int actuals) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Markers $marker',
+          style: TextStyle(
+            fontSize: 17.sp,
+            fontFamily: "Open Sans Semibold",
+            color: Color(0xFFC6C6C6),
+          ),
+        ),
+        Container(
+          height: 40.h,
+          width: 50.w,
+          color: Color(0xFFFFFFFF),
+          child: Center(
+            child: Text(
+              "$actuals",
+              style: TextStyle(
+                fontSize: 17.sp,
+                fontFamily: "Open Sans Bold",
+                color: Color(0xFF000000),
+              ),
+            ),
+          ),
+        ),
+        // Padding(
+        //   padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+        //   child: Divider(
+        //     color: Color(0xFF5D5D5D),
+        //     thickness: 1,
+        //   ),
+        // ),
+      ],
+    );
+  }
+
+  _buildCategoryStatics(int categoryStatic,Color textColor) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              "5",
+              style: TextStyle(
+                  color: textColor,
+                  fontFamily: "Rubik Medium",
+                  fontSize: 30.sp,
+                  fontWeight: FontWeight.bold),
+            ),
+            Icon(
+              Icons.arrow_upward,
+              color: Color(0xFF6DE26B),
+            )
+          ],
+        ),
+        Text(
+          "Category 1",
+          style: TextStyle(
+            fontSize: 15.sp,
+           color: textColor,
+          ),
+        )
+      ],
     );
   }
 }
