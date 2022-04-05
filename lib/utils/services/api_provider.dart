@@ -267,4 +267,48 @@ class ApiProvider {
 
     return fileTransferClient!.download(request);
   }
+
+  Future<ResponseStream<CreateUpdateLearnerEvaluationResponse>>
+      createUpdateLearnerEvaluations(
+          Stream<CreateUpdateLearnerEvaluationRequest> request) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateLearnerEvaluations(request);
+  }
+
+  Future<ResponseStream<CreateUpdateTeacherResponseResponse>>
+      createUpdateTeacherResponses(
+          Stream<CreateUpdateTeacherResponseRequest> request) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateTeacherResponses(request);
+  }
+
+  Future<ResponseStream<LearnerEvaluation>> listLearnerEvaluations() async {
+    var request = ListLearnerEvaluationsRequest.create();
+    Date? date = SyncTime().lastSyncDateTime();
+
+    if (date != null) {
+      request.updatedSince = date;
+    }
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.listLearnerEvaluations(request);
+  }
+
+  Future<ResponseStream<TeacherResponse>> listTeacherResponses() async {
+    var request = ListTeacherResponsesRequest.create();
+    Date? date = SyncTime().lastSyncDateTime();
+
+    if (date != null) {
+      request.updatedSince = date;
+    }
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.listTeacherResponses(request);
+  }
 }
