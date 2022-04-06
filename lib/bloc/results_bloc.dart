@@ -10,7 +10,9 @@ class ResultsBloc extends Object {
   HiveGroup? hiveGroup;
   HiveDate? hiveDate; //
 
-  ResultsBloc() {}
+  ResultsBloc() {
+    hiveGroup = fetchGroupsWtihLeaderRole()?.first;
+  }
 
   List<HiveGroup>? fetchGroupsWtihLeaderRole() {
     final HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();

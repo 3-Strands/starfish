@@ -8,11 +8,8 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -34,8 +31,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    bloc.resultsBloc.hiveGroup =
-        bloc.resultsBloc.fetchGroupsWtihLeaderRole()?.first;
 
     return FocusDetector(
       onFocusGained: () {},
@@ -107,11 +102,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             fontFamily: 'OpenSans',
                           ),
                           hint: Text(
-                            bloc.resultsBloc
-                                    .fetchGroupsWtihLeaderRole()
-                                    ?.first
-                                    .name ??
-                                '',
+                            bloc.resultsBloc.hiveGroup?.name ?? 'Select Group',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -122,7 +113,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             textAlign: TextAlign.left,
                           ),
                           onChanged: (HiveGroup? value) {
-                            bloc.resultsBloc.hiveGroup = value;
+                            setState(() {
+                              bloc.resultsBloc.hiveGroup = value;
+                            });
                           },
                           items: bloc.resultsBloc
                               .fetchGroupsWtihLeaderRole()
@@ -198,16 +191,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
                             child: Text(
-                              //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              Intl.plural(
-                                  bloc.resultsBloc.hiveGroup!.actionsCompleted,
-                                  zero:
-                                      "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  one: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  other: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                  args: [
-                                    bloc.resultsBloc.hiveGroup!.actionsCompleted
-                                  ]),
+                              "${bloc.resultsBloc.hiveGroup!.actionsCompleted} Done",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
@@ -225,17 +209,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
                             child: Text(
-                              //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              Intl.plural(
-                                  bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
-                                  zero:
-                                      "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                  args: [
-                                    bloc.resultsBloc.hiveGroup!
-                                        .actionsNotDoneYet
-                                  ]),
+                              "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} Pending",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
@@ -253,16 +227,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
                             child: Text(
-                              //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              Intl.plural(
-                                  bloc.resultsBloc.hiveGroup!.actionsOverdue,
-                                  zero:
-                                      "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                  args: [
-                                    bloc.resultsBloc.hiveGroup!.actionsOverdue
-                                  ]),
+                              "${bloc.resultsBloc.hiveGroup!.actionsOverdue} Overdue",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
@@ -387,9 +352,18 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          _buildCategoryStatics(5,Color(0xFFFFFFFF),),
-                          _buildCategoryStatics(4,Color(0xFFFFFFFF),),
-                          _buildCategoryStatics(3,Color(0xFFFFFFFF),),
+                          _buildCategoryStatics(
+                            5,
+                            Color(0xFFFFFFFF),
+                          ),
+                          _buildCategoryStatics(
+                            4,
+                            Color(0xFFFFFFFF),
+                          ),
+                          _buildCategoryStatics(
+                            3,
+                            Color(0xFFFFFFFF),
+                          ),
                         ],
                       ),
                       SizedBox(height: 10.h),
@@ -515,7 +489,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     itemBuilder: (BuildContext context, index) {
                       return Column(
                         children: [
-                          SizedBox(height: 10.h,),
+                          SizedBox(
+                            height: 10.h,
+                          ),
                           Container(
                             decoration: BoxDecoration(
                                 color: Color(0xFFEFEFEF),
@@ -545,7 +521,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
                                       Center(
                                         child: Text(
@@ -666,11 +643,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     Text(
                                       "Transformations: ",
                                       style: TextStyle(
-                                        fontSize: 17.sp,
-                                        fontFamily: "Open Sans Semibold",
-                                        color: Color(0xFF4F4F4F),
-                                        fontWeight: FontWeight.w600
-                                      ),
+                                          fontSize: 17.sp,
+                                          fontFamily: "Open Sans Semibold",
+                                          color: Color(0xFF4F4F4F),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     Expanded(
                                       child: Container(
@@ -697,12 +673,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     Text(
                                       "Feeling about the Group: ",
                                       style: TextStyle(
-                                        fontSize: 17.sp,
-                                        fontFamily: "Open Sans Semibold",
-                                        fontStyle: FontStyle.normal,
-                                        color: Color(0xFF4F4F4F),
-                                        fontWeight: FontWeight.w600
-                                      ),
+                                          fontSize: 17.sp,
+                                          fontFamily: "Open Sans Semibold",
+                                          fontStyle: FontStyle.normal,
+                                          color: Color(0xFF4F4F4F),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     Expanded(
                                       child: Container(
@@ -740,11 +715,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     Text(
                                       "Feedback: ",
                                       style: TextStyle(
-                                        fontSize: 17.sp,
-                                        fontFamily: "Open Sans Semibold",
-                                        color: Color(0xFF4F4F4F),
-                                        fontWeight: FontWeight.w600
-                                      ),
+                                          fontSize: 17.sp,
+                                          fontFamily: "Open Sans Semibold",
+                                          color: Color(0xFF4F4F4F),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     Expanded(
                                       child: Container(
@@ -777,13 +751,21 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 // ),
 
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     _buildCategoryStatics(
-                                      5, Color(0xFF797979),
+                                      5,
+                                      Color(0xFF797979),
                                     ),
-                                    _buildCategoryStatics(4,Color(0xFF797979),),
-                                    _buildCategoryStatics(3,Color(0xFF797979),),
+                                    _buildCategoryStatics(
+                                      4,
+                                      Color(0xFF797979),
+                                    ),
+                                    _buildCategoryStatics(
+                                      3,
+                                      Color(0xFF797979),
+                                    ),
                                   ],
                                 ),
                                 SizedBox(height: 10.h),
@@ -905,7 +887,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 //           ),
                 //         );
                 //       })
-                SizedBox(height: 20.h,)
+                SizedBox(
+                  height: 20.h,
+                )
               ],
             ),
           ),
@@ -952,7 +936,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buildCategoryStatics(int categoryStatic,Color textColor) {
+  _buildCategoryStatics(int categoryStatic, Color textColor) {
     return Column(
       children: [
         Row(
@@ -975,7 +959,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           "Category 1",
           style: TextStyle(
             fontSize: 15.sp,
-           color: textColor,
+            color: textColor,
           ),
         )
       ],
