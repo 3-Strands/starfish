@@ -273,18 +273,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
                             child: Text(
-                              "12 Good",
-                              //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              // Intl.plural(
-                              //     bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
-                              //     zero:
-                              //         "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                              //     one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                              //     other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                              //     args: [
-                              //       bloc.resultsBloc.hiveGroup!
-                              //           .actionsNotDoneYet
-                              //     ]),
+                              "${bloc.resultsBloc.hiveGroup?.learnersEvaluationGood} Good",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
@@ -306,17 +295,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 vertical: 10.h, horizontal: 10.w),
                             child: Flexible(
                               child: Text(
-                                "9 Not so Good",
-                                //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                                // Intl.plural(
-                                //     bloc.resultsBloc.hiveGroup!.actionsOverdue,
-                                //     zero:
-                                //         "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                //     one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                //     other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                //     args: [
-                                //       bloc.resultsBloc.hiveGroup!.actionsOverdue
-                                //     ]),
+                                "${bloc.resultsBloc.hiveGroup?.learnersEvaluationNotGood} Not so Good",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: "Rubik Medium",

@@ -227,6 +227,20 @@ extension HiveUserExt on HiveUser {
     }
   }
 
+  ActionUser_Evaluation actionUserEvaluationById(HiveAction action) {
+    HiveActionUser? actionUser =
+        ActionProvider().getActionUser(this.id!, action.id!);
+
+    if (actionUser != null) {
+      ActionUser_Evaluation actionUserEvaluation = actionUser.evaluation != null
+          ? ActionUser_Evaluation.valueOf(actionUser.evaluation!)!
+          : ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
+
+      return actionUserEvaluation;
+    }
+    return ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
+  }
+
   HiveActionUser? actionUser(HiveAction action) {
     return ActionProvider().getActionUser(this.id!, action.id!);
   }

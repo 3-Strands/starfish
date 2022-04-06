@@ -240,4 +240,18 @@ extension HiveGroupExt on HiveGroup {
 
     return count;
   }
+
+  int get learnersEvaluationGood {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) => count +=
+        hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.GOOD));
+    return count;
+  }
+
+  int get learnersEvaluationNotGood {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) => count +=
+        hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.BAD));
+    return count;
+  }
 }

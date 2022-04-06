@@ -189,6 +189,16 @@ extension HiveActionExt on HiveAction {
     return i;
   }
 
+  int learnerCountByEvaluation(ActionUser_Evaluation actionUserEvaluation) {
+    int i = 0;
+    this.learners?.forEach((element) {
+      if (element.actionUserEvaluationById(this) == actionUserEvaluation) {
+        i++;
+      }
+    });
+    return i;
+  }
+
   HiveUser? get creator {
     // user created individual action i.e. for me
     HiveUser currentUser = CurrentUserProvider().user;
