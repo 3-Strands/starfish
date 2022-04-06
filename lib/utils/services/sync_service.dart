@@ -210,19 +210,25 @@ class SyncService {
     await lock.synchronized(() => syncMaterial()); // Upload local files
     await lock.synchronized(() => syncFiles()); // Download remote files
 
-    Future.wait([
-      syncCurrentUser(),
-      syncUsers(),
-      //syncCountries(),
-      syncLanguages(),
-      syncActions(),
-      syncMaterialTopics(),
-      syncMaterialTypes(),
-      //syncMaterial(),
-      syncEvaluationCategories(),
-      syncGroup()
-    ]).then((value) {
+    Future.wait(
+      [
+        syncCurrentUser(),
+        syncUsers(),
+        //syncCountries(),
+        syncLanguages(),
+        syncActions(),
+        syncMaterialTopics(),
+        syncMaterialTypes(),
+        //syncMaterial(),
+        syncEvaluationCategories(),
+        syncGroup()
+      ],
+      eagerError: true,
+    ).then((value) {
       updateLastSyncDateTime();
+    }).onError((error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
     }).whenComplete(() {
       hideAlert();
     });
