@@ -367,6 +367,21 @@
   "tooManyNumbers": "Too many numbers, remove",
   "selectTheTypeOfAction": "Select the type of action",
   "alertEmptyWebLinkWithNoFile": "You must either add a web link to the file, or upload the files, in order to create this Material in Starfish",
-  "noRecordFound": "No Record Found"
+  "noRecordFound": "No Record Found",
+  "done" : "Done",
+   "pending" : "Pending",
+  "overdue": "Overdue",
+  "summaryForAllLearners" : "Summary for all Learners",
+  "feelingAboutTheGroup" : "Feeling about the Group",
+  "averages" : "Averages",
+  "projectReportFor" : "Project Report for",
+  "markers" : "Markers",
+  "actuals" : "Actuals",
+  "addSignOfTransformation": "Add Sign Of Transformation",
+  "transformation":"Transformation",
+  "feedback" : "Feedback"
+
+
+
 
 }

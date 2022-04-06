@@ -371,6 +371,18 @@
   "tooManyNumbers": "बहुत अधिक संख्याएं, हटाएं",
   "selectTheTypeOfAction": "कार्रवाई के प्रकार का चयन करें",
   "alertEmptyWebLinkWithNoFile": "Starfish में इस सामग्री को बनाने के लिए आपको या तो फ़ाइल में एक वेब लिंक जोड़ना होगा, या फ़ाइलें अपलोड करनी होंगी",
-  "noRecordFound": "कोई रिकॉर्ड नहीं मिला"
+  "noRecordFound": "कोई रिकॉर्ड नहीं मिला",
+  "done" : "पूर्ण",
+  "pending" : "लंबित",
+  "overdue": "अतिदेय",
+  "summaryForAllLearners" : "सभी शिक्षार्थियों के लिए सारांश",
+  "feelingAboutTheGroup" : "Group के बारे में महसूस कर रहा है",
+  "averages" : "औसत",
+  "projectReportFor" : "के लिए परियोजना रिपोर्ट",
+  "markers" : "मार्करों",
+  "Actuals" : "वास्तविक",
+  "addSignOfTransformation": "परिवर्तन का संकेत जोड़ें",
+  "transformation":"परिवर्तन",
+  "feedback" : "प्रतिक्रिया"
 
 }
