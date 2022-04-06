@@ -277,6 +277,24 @@ class ApiProvider {
     return client!.createUpdateLearnerEvaluations(request);
   }
 
+  Future<ResponseStream<CreateUpdateGroupEvaluationResponse>>
+      createUpdateGroupEvaluations(
+          Stream<CreateUpdateGroupEvaluationRequest> request) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateGroupEvaluations(request);
+  }
+
+  Future<ResponseStream<CreateUpdateTransformationResponse>>
+      createUpdateTransformations(
+          Stream<CreateUpdateTransformationRequest> request) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateTransformations(request);
+  }
+
   Future<ResponseStream<CreateUpdateTeacherResponseResponse>>
       createUpdateTeacherResponses(
           Stream<CreateUpdateTeacherResponseRequest> request) async {
@@ -310,5 +328,31 @@ class ApiProvider {
       await getGrpcClient();
     }
     return client!.listTeacherResponses(request);
+  }
+
+  Future<ResponseStream<GroupEvaluation>> listGroupEvaluations() async {
+    var request = ListGroupEvaluationsRequest.create();
+    Date? date = SyncTime().lastSyncDateTime();
+
+    if (date != null) {
+      request.updatedSince = date;
+    }
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.listGroupEvaluations(request);
+  }
+
+  Future<ResponseStream<Transformation>> listTransformations() async {
+    var request = ListTransformationsRequest.create();
+    Date? date = SyncTime().lastSyncDateTime();
+
+    if (date != null) {
+      request.updatedSince = date;
+    }
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.listTransformations(request);
   }
 }

@@ -12,6 +12,16 @@ class ResultsRepository {
               Stream<CreateUpdateLearnerEvaluationRequest> request) =>
           apiProvider.createUpdateLearnerEvaluations(request);
 
+  Future<ResponseStream<CreateUpdateGroupEvaluationResponse>>
+      createUpdateGroupEvaluations(
+              Stream<CreateUpdateGroupEvaluationRequest> request) =>
+          apiProvider.createUpdateGroupEvaluations(request);
+
+  Future<ResponseStream<CreateUpdateTransformationResponse>>
+      createUpdateTransformations(
+              Stream<CreateUpdateTransformationRequest> request) =>
+          apiProvider.createUpdateTransformations(request);
+
   Future<ResponseStream<CreateUpdateTeacherResponseResponse>>
       createUpdateTeacherResponses(
               Stream<CreateUpdateTeacherResponseRequest> request) =>
@@ -22,4 +32,10 @@ class ResultsRepository {
 
   Future<ResponseStream<TeacherResponse>> listTeacherResponses() =>
       apiProvider.listTeacherResponses();
+
+  Future<ResponseStream<GroupEvaluation>> listGroupEvaluations() =>
+      apiProvider.listGroupEvaluations();
+
+  Future<ResponseStream<Transformation>> listTransformations() =>
+      apiProvider.listTransformations();
 }
