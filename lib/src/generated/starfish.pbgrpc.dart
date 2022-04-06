@@ -79,6 +79,13 @@ class StarfishClient extends $grpc.Client {
       ($0.CreateUpdateTeacherResponseRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.CreateUpdateTeacherResponseResponse.fromBuffer(value));
+  static final _$createUpdateTransformations = $grpc.ClientMethod<
+          $0.CreateUpdateTransformationRequest,
+          $0.CreateUpdateTransformationResponse>(
+      '/sil.starfish.Starfish/CreateUpdateTransformations',
+      ($0.CreateUpdateTransformationRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.CreateUpdateTransformationResponse.fromBuffer(value));
   static final _$createUpdateUsers = $grpc.ClientMethod<
           $0.CreateUpdateUserRequest, $0.CreateUpdateUserResponse>(
       '/sil.starfish.Starfish/CreateUpdateUsers',
@@ -164,6 +171,11 @@ class StarfishClient extends $grpc.Client {
           ($0.ListTeacherResponsesRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.TeacherResponse.fromBuffer(value));
+  static final _$listTransformations =
+      $grpc.ClientMethod<$0.ListTransformationsRequest, $0.Transformation>(
+          '/sil.starfish.Starfish/ListTransformations',
+          ($0.ListTransformationsRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $0.Transformation.fromBuffer(value));
   static final _$listUsers = $grpc.ClientMethod<$0.ListUsersRequest, $0.User>(
       '/sil.starfish.Starfish/ListUsers',
       ($0.ListUsersRequest value) => value.writeToBuffer(),
@@ -257,6 +269,14 @@ class StarfishClient extends $grpc.Client {
           $async.Stream<$0.CreateUpdateTeacherResponseRequest> request,
           {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$createUpdateTeacherResponses, request,
+        options: options);
+  }
+
+  $grpc.ResponseStream<$0.CreateUpdateTransformationResponse>
+      createUpdateTransformations(
+          $async.Stream<$0.CreateUpdateTransformationRequest> request,
+          {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$createUpdateTransformations, request,
         options: options);
   }
 
@@ -372,6 +392,14 @@ class StarfishClient extends $grpc.Client {
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(
         _$listTeacherResponses, $async.Stream.fromIterable([request]),
+        options: options);
+  }
+
+  $grpc.ResponseStream<$0.Transformation> listTransformations(
+      $0.ListTransformationsRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(
+        _$listTransformations, $async.Stream.fromIterable([request]),
         options: options);
   }
 
@@ -491,6 +519,16 @@ abstract class StarfishServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.CreateUpdateTeacherResponseRequest.fromBuffer(value),
         ($0.CreateUpdateTeacherResponseResponse value) =>
+            value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.CreateUpdateTransformationRequest,
+            $0.CreateUpdateTransformationResponse>(
+        'CreateUpdateTransformations',
+        createUpdateTransformations,
+        true,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.CreateUpdateTransformationRequest.fromBuffer(value),
+        ($0.CreateUpdateTransformationResponse value) =>
             value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateUpdateUserRequest,
             $0.CreateUpdateUserResponse>(
@@ -626,6 +664,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.ListTeacherResponsesRequest.fromBuffer(value),
             ($0.TeacherResponse value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.ListTransformationsRequest, $0.Transformation>(
+            'ListTransformations',
+            listTransformations_Pre,
+            false,
+            true,
+            ($core.List<$core.int> value) =>
+                $0.ListTransformationsRequest.fromBuffer(value),
+            ($0.Transformation value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.ListUsersRequest, $0.User>(
         'ListUsers',
         listUsers_Pre,
@@ -722,6 +769,12 @@ abstract class StarfishServiceBase extends $grpc.Service {
     yield* listTeacherResponses(call, await request);
   }
 
+  $async.Stream<$0.Transformation> listTransformations_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.ListTransformationsRequest> request) async* {
+    yield* listTransformations(call, await request);
+  }
+
   $async.Stream<$0.User> listUsers_Pre($grpc.ServiceCall call,
       $async.Future<$0.ListUsersRequest> request) async* {
     yield* listUsers(call, await request);
@@ -767,6 +820,9 @@ abstract class StarfishServiceBase extends $grpc.Service {
   $async.Stream<$0.CreateUpdateTeacherResponseResponse>
       createUpdateTeacherResponses($grpc.ServiceCall call,
           $async.Stream<$0.CreateUpdateTeacherResponseRequest> request);
+  $async.Stream<$0.CreateUpdateTransformationResponse>
+      createUpdateTransformations($grpc.ServiceCall call,
+          $async.Stream<$0.CreateUpdateTransformationRequest> request);
   $async.Stream<$0.CreateUpdateUserResponse> createUpdateUsers(
       $grpc.ServiceCall call,
       $async.Stream<$0.CreateUpdateUserRequest> request);
@@ -800,6 +856,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.ListMaterialTypesRequest request);
   $async.Stream<$0.TeacherResponse> listTeacherResponses(
       $grpc.ServiceCall call, $0.ListTeacherResponsesRequest request);
+  $async.Stream<$0.Transformation> listTransformations(
+      $grpc.ServiceCall call, $0.ListTransformationsRequest request);
   $async.Stream<$0.User> listUsers(
       $grpc.ServiceCall call, $0.ListUsersRequest request);
   $async.Future<$0.AuthenticateResponse> refreshSession(
