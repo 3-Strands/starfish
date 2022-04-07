@@ -7,7 +7,9 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -328,23 +330,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          _buildCategoryStatics(
-                            5,
-                            Color(0xFFFFFFFF),
-                          ),
-                          _buildCategoryStatics(
-                            4,
-                            Color(0xFFFFFFFF),
-                          ),
-                          _buildCategoryStatics(
-                            3,
-                            Color(0xFFFFFFFF),
-                          ),
-                        ],
-                      ),
+                      _buildCategoryAverageWidget(
+                          bloc.resultsBloc.getGroupLearnerEvaluations()!),
                       SizedBox(height: 10.h),
                     ],
                   ),
@@ -734,17 +721,16 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                       MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     _buildCategoryStatics(
-                                      5,
-                                      Color(0xFF797979),
-                                    ),
+                                        5,
+                                        bloc.resultsBloc.hiveGroup!
+                                            .groupEvaluationCategories!
+                                            .elementAt(0)
+                                            .name!,
+                                        Color(0xFF797979)),
                                     _buildCategoryStatics(
-                                      4,
-                                      Color(0xFF797979),
-                                    ),
+                                        4, "", Color(0xFF797979)),
                                     _buildCategoryStatics(
-                                      3,
-                                      Color(0xFF797979),
-                                    ),
+                                        3, "", Color(0xFF797979)),
                                   ],
                                 ),
                                 SizedBox(height: 10.h),
@@ -915,33 +901,52 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buildCategoryStatics(int categoryStatic, Color textColor) {
-    return Column(
-      children: [
-        Row(
+  Widget _buildCategoryStatics(
+      int count, String categoryName, Color textColor) {
+    return Expanded(
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              "5",
-              style: TextStyle(
-                  color: textColor,
-                  fontFamily: "Rubik Medium",
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.bold),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  "$count",
+                  style: TextStyle(
+                      color: textColor,
+                      fontFamily: "Rubik Medium",
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.bold),
+                ),
+                Icon(
+                  Icons.arrow_upward,
+                  color: Color(0xFF6DE26B),
+                )
+              ],
             ),
-            Icon(
-              Icons.arrow_upward,
-              color: Color(0xFF6DE26B),
+            Text(
+              "$categoryName",
+              style: TextStyle(
+                fontSize: 15.sp,
+                color: textColor,
+              ),
             )
           ],
         ),
-        Text(
-          "Category 1",
-          style: TextStyle(
-            fontSize: 15.sp,
-            color: textColor,
-          ),
-        )
-      ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryAverageWidget(
+      List<HiveLearnerEvaluation> _learnersEvaluationsList) {
+    List<Widget> _categoryWidgets = [];
+    _learnersEvaluationsList.forEach((HiveLearnerEvaluation learnerEvaluation) {
+      _categoryWidgets.add(_buildCategoryStatics(learnerEvaluation.evaluation!,
+          learnerEvaluation.name!, Color(0xFFFFFFFF)));
+    });
+    return Row(
+      children: _categoryWidgets,
     );
   }
 }

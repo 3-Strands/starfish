@@ -239,7 +239,11 @@ class SyncService {
         syncMaterialTypes(),
         //syncMaterial(),
         syncEvaluationCategories(),
-        syncGroup()
+        syncGroup(),
+        syncLearnerEvaluations(),
+        syncGroupEvaluations(),
+        syncTeacherResponses(),
+        syncTransformaitons(),
       ],
       eagerError: true,
     ).then((value) {

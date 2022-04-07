@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
@@ -96,5 +97,11 @@ class ResultsProvider {
     } else {
       _teacherResponseBox.add(teacherResponse);
     }
+  }
+
+  List<HiveLearnerEvaluation> getGroupLearnerEvaluations(String groupId) {
+    return _learnerEvaluationBox.values
+        .where((element) => element.groupId! == groupId)
+        .toList();
   }
 }

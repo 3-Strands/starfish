@@ -191,7 +191,7 @@ extension HiveUserExt on HiveUser {
         : '';
   }
 
-// TODO: improve
+// TODO: improve by havving a optional param HiveDate, for which the status can be retrieved
   ActionStatus actionStatusbyId(HiveAction action) {
     /*if (this.actions == null || this.actions?.length == 0) {
       print("Check Point 1");
