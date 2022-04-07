@@ -9,6 +9,7 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -451,8 +452,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: 3,
+                    itemCount: bloc.resultsBloc.hiveGroup!.learners!.length,
                     itemBuilder: (BuildContext context, index) {
+                      HiveGroupUser _hiveGroupUser = bloc
+                          .resultsBloc.hiveGroup!.learners!
+                          .elementAt(index);
                       return Column(
                         children: [
                           SizedBox(
@@ -472,7 +476,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                   height: 10.h,
                                 ),
                                 Text(
-                                  "Anish",
+                                  "${_hiveGroupUser.name}",
                                   style: TextStyle(
                                       color: Color(0xFF434141),
                                       fontFamily: "OpenSans Bold",
@@ -512,18 +516,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               vertical: 10.h, horizontal: 10.w),
                                           child: Text(
                                             "4 Done",
-                                            //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                                            // Intl.plural(
-                                            //     bloc.resultsBloc.hiveGroup!
-                                            //         .actionsCompleted,
-                                            //     zero:
-                                            //         "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                            //     one: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                            //     other: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                            //     args: [
-                                            //       bloc.resultsBloc.hiveGroup!
-                                            //           .actionsCompleted
-                                            //     ]),
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
@@ -544,18 +536,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               vertical: 10.h, horizontal: 10.w),
                                           child: Text(
                                             "2 Pending",
-                                            //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                                            // Intl.plural(
-                                            //     bloc.resultsBloc.hiveGroup!
-                                            //         .actionsNotDoneYet,
-                                            //     zero:
-                                            //         "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                            //     one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                            //     other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                            //     args: [
-                                            //       bloc.resultsBloc.hiveGroup!
-                                            //           .actionsNotDoneYet
-                                            //     ]),
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
@@ -576,18 +556,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               vertical: 10.h, horizontal: 10.w),
                                           child: Text(
                                             "1 Overdue",
-                                            //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                                            // Intl.plural(
-                                            //     bloc.resultsBloc.hiveGroup!
-                                            //         .actionsOverdue,
-                                            //     zero:
-                                            //         "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                            //     one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                            //     other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                            //     args: [
-                                            //       bloc.resultsBloc.hiveGroup!
-                                            //           .actionsOverdue
-                                            //     ]),
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
@@ -617,7 +585,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     Expanded(
                                       child: Container(
                                         child: Text(
-                                          "First few words entered jf jkasdf ksjd",
+                                          "${_hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)}",
                                           style: TextStyle(
                                             fontFamily: "Open Sans Italic",
                                             fontSize: 17.sp,
@@ -657,7 +625,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               width: 5.w,
                                             ),
                                             Text(
-                                              "Good",
+                                              "${_hiveGroupUser.getGroupEvaluationForMonth(bloc.resultsBloc.hiveDate!)}",
                                               style: TextStyle(
                                                 fontFamily: "Open Sans Italic",
                                                 fontSize: 17.sp,
@@ -689,7 +657,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     Expanded(
                                       child: Container(
                                         child: Text(
-                                          "First words of feedback written in",
+                                          "${_hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)}",
                                           style: TextStyle(
                                             fontFamily: "Open Sans Italic",
                                             fontSize: 17.sp,
@@ -721,12 +689,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                       MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     _buildCategoryStatics(
-                                        5,
-                                        bloc.resultsBloc.hiveGroup!
-                                            .groupEvaluationCategories!
-                                            .elementAt(0)
-                                            .name!,
-                                        Color(0xFF797979)),
+                                        5, "", Color(0xFF797979)),
                                     _buildCategoryStatics(
                                         4, "", Color(0xFF797979)),
                                     _buildCategoryStatics(

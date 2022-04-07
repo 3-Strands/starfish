@@ -13,7 +13,7 @@ class ResultsBloc extends Object {
 
   ResultsBloc() {
     hiveGroup = fetchGroupsWtihLeaderRole()?.first;
-    hiveDate = HiveDate.create(2021, 12,
+    hiveDate = HiveDate.create(2022, 3,
         0); // TODO: this will be set by view, default fo current month/year
   }
 
