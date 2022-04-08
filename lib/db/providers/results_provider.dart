@@ -98,10 +98,4 @@ class ResultsProvider {
       _teacherResponseBox.add(teacherResponse);
     }
   }
-
-  List<HiveLearnerEvaluation> getGroupLearnerEvaluations(String groupId) {
-    return _learnerEvaluationBox.values
-        .where((element) => element.groupId! == groupId)
-        .toList();
-  }
 }

@@ -17,4 +17,10 @@ class LearnerEvaluationProvider {
             element.learnerId! == userId && element.groupId! == groupId)
         .toList();
   }
+
+  List<HiveLearnerEvaluation> getGroupLearnerEvaluations(String groupId) {
+    return _learnerEvaluationBox.values
+        .where((element) => element.groupId! == groupId)
+        .toList();
+  }
 }

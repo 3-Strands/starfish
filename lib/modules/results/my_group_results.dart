@@ -483,7 +483,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                       fontSize: 19.sp,
                                       fontWeight: FontWeight.bold),
                                 ),
-
                                 SizedBox(
                                   height: 10.h,
                                 ),
@@ -515,7 +514,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 10.h, horizontal: 10.w),
                                           child: Text(
-                                            "4 Done",
+                                            "${_hiveGroupUser.actionsCompleted} Done",
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
@@ -535,7 +534,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 10.h, horizontal: 10.w),
                                           child: Text(
-                                            "2 Pending",
+                                            "${_hiveGroupUser.actionsNotCompleted} Pending",
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
@@ -555,7 +554,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 10.h, horizontal: 10.w),
                                           child: Text(
-                                            "1 Overdue",
+                                            "${_hiveGroupUser.actionsOverdue} Overdue",
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
@@ -568,7 +567,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     ],
                                   ),
                                 ),
-
                                 SizedBox(
                                   height: 15.h,
                                 ),
@@ -671,31 +669,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     )
                                   ],
                                 ),
-
                                 SizedBox(
                                   height: 20.h,
                                 ),
-
-                                // SizedBox(
-                                //   height: 10.h,
-                                // ),
-
-                                // SizedBox(
-                                //   height: 20.h,
-                                // ),
-
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    _buildCategoryStatics(
-                                        5, "", Color(0xFF797979)),
-                                    _buildCategoryStatics(
-                                        4, "", Color(0xFF797979)),
-                                    _buildCategoryStatics(
-                                        3, "", Color(0xFF797979)),
-                                  ],
-                                ),
+                                _buildCategoryAverageWidget(
+                                    _hiveGroupUser.getLearnerEvaluationForMonth(
+                                            bloc.resultsBloc.hiveDate!) ??
+                                        []),
                                 SizedBox(height: 10.h),
                               ],
                             ),

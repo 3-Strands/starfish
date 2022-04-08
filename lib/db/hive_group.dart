@@ -9,6 +9,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -225,7 +226,7 @@ extension HiveGroupExt on HiveGroup {
   }*/
 
   List<HiveLearnerEvaluation> get groupLearnerEvaluations {
-    return ResultsProvider().getGroupLearnerEvaluations(this.id!);
+    return LearnerEvaluationProvider().getGroupLearnerEvaluations(this.id!);
   }
 
   int get actionsCompleted {
