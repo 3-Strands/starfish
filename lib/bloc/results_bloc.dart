@@ -18,7 +18,7 @@ class ResultsBloc extends Object {
     hiveDate = HiveDate.create(2022, 3,
         0); // TODO: this will be set by view, default fo current month/year
 
-    hivePreviousDate = _calculatePreviousDate();
+    hivePreviousDate = hiveDate?.previousMonth;
   }
 
   List<HiveGroup>? fetchGroupsWtihLeaderRole() {
@@ -72,20 +72,6 @@ class ResultsBloc extends Object {
     });
 
     return count;
-  }
-
-  HiveDate? _calculatePreviousDate() {
-    if (hiveDate == null) {
-      return null;
-    }
-    int currentMonth = hiveDate!.month;
-    int currentYear = hiveDate!.year;
-
-    if (currentMonth > 1) {
-      return HiveDate.create(currentYear, currentMonth, 0);
-    } else {
-      return HiveDate.create(currentYear - 1, 12, 0);
-    }
   }
 
   void dispose() {}

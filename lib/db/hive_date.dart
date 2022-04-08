@@ -42,4 +42,16 @@ extension HiveDateExt on HiveDate {
     String dateString = '${this.day}-${this.month}-${this.year}';
     return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy');
   }
+
+  // to get previous month and year
+  HiveDate get previousMonth {
+    int currentMonth = this.month;
+    int currentYear = this.year;
+
+    if (currentMonth > 1) {
+      return HiveDate.create(currentYear, currentMonth, 0);
+    } else {
+      return HiveDate.create(currentYear - 1, 12, 0);
+    }
+  }
 }
