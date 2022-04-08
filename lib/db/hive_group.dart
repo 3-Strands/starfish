@@ -6,9 +6,11 @@ import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/learner_evaluation_provider.dart';
+import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -217,6 +219,16 @@ extension HiveGroupExt on HiveGroup {
     return ActionProvider().getGroupActions(this.id!);
   }
 
+  /*List<HiveEvaluationCategory>? get groupEvaluationCategories {
+    this.evaluationCategoryIds?.map((e) {
+      return EvaluationCategoryProvider().getCategoryById(e);
+    }).toList();
+  }*/
+
+  List<HiveLearnerEvaluation> get groupLearnerEvaluations {
+    return LearnerEvaluationProvider().getGroupLearnerEvaluations(this.id!);
+  }
+
   int get actionsCompleted {
     int count = 0;
     this.groupActionList?.forEach((hiveAction) =>
@@ -238,6 +250,20 @@ extension HiveGroupExt on HiveGroup {
     this.groupActionList?.forEach((hiveAction) =>
         count += hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
 
+    return count;
+  }
+
+  int get learnersEvaluationGood {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) => count +=
+        hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.GOOD));
+    return count;
+  }
+
+  int get learnersEvaluationNotGood {
+    int count = 0;
+    this.groupActionList?.forEach((hiveAction) => count +=
+        hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.BAD));
     return count;
   }
 }

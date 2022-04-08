@@ -191,7 +191,7 @@ extension HiveUserExt on HiveUser {
         : '';
   }
 
-// TODO: improve
+// TODO: improve by havving a optional param HiveDate, for which the status can be retrieved
   ActionStatus actionStatusbyId(HiveAction action) {
     /*if (this.actions == null || this.actions?.length == 0) {
       print("Check Point 1");
@@ -225,6 +225,20 @@ extension HiveUserExt on HiveUser {
     } else {
       return ActionStatus.NOT_DONE;
     }
+  }
+
+  ActionUser_Evaluation actionUserEvaluationById(HiveAction action) {
+    HiveActionUser? actionUser =
+        ActionProvider().getActionUser(this.id!, action.id!);
+
+    if (actionUser != null) {
+      ActionUser_Evaluation actionUserEvaluation = actionUser.evaluation != null
+          ? ActionUser_Evaluation.valueOf(actionUser.evaluation!)!
+          : ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
+
+      return actionUserEvaluation;
+    }
+    return ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
   }
 
   HiveActionUser? actionUser(HiveAction action) {

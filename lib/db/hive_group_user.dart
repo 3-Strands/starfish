@@ -1,7 +1,22 @@
 import 'package:hive/hive.dart';
+import 'package:collection/collection.dart';
+import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
+import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_group_evaluation.dart';
+import 'package:starfish/db/hive_learner_evaluation.dart';
+import 'package:starfish/db/hive_teacher_response.dart';
+import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/group_evaluation_provider.dart';
+import 'package:starfish/db/providers/learner_evaluation_provider.dart';
+import 'package:starfish/db/providers/teacher_response_provider.dart';
+import 'package:starfish/db/providers/transformation_provider.dart';
+import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
@@ -58,6 +73,34 @@ class HiveGroupUser extends HiveObject {
     );
   }
 
+  HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
+    this.transformations.firstWhereOrNull((element) {
+      return element.month!.year == hiveDate.year &&
+          element.month!.month == hiveDate.month;
+    });
+  }
+
+  List<HiveLearnerEvaluation>? getLearnerEvaluationForMonth(HiveDate hiveDate) {
+    this.learnerEvaluations.firstWhereOrNull((element) {
+      return element.month!.year == hiveDate.year &&
+          element.month!.month == hiveDate.month;
+    });
+  }
+
+  HiveGroupEvaluation? getGroupEvaluationForMonth(HiveDate hiveDate) {
+    this.groupEvaluations.firstWhereOrNull((element) {
+      return element.month!.year == hiveDate.year &&
+          element.month!.month == hiveDate.month;
+    });
+  }
+
+  HiveTeacherResponse? getTeacherResponseForMonth(HiveDate hiveDate) {
+    this.teacherResponses.firstWhereOrNull((element) {
+      return element.month!.year == hiveDate.year &&
+          element.month!.month == hiveDate.month;
+    });
+  }
+
   String toString() {
     return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
     user: ${this.user},  
@@ -109,5 +152,83 @@ extension HiveGroupUserExt on HiveGroupUser {
 
   String get phoneWithDialingCode {
     return user != null ? user!.phoneWithDialingCode : '';
+  }
+
+  List<HiveLearnerEvaluation> get learnerEvaluations {
+    return LearnerEvaluationProvider()
+        .getGroupUserLearnerEvaluations(this.userId!, this.groupId!);
+  }
+
+  // returns transformations for this 'GroupUser' for all the months
+  List<HiveTransformation> get transformations {
+    return TransformationProvider()
+        .getGroupUserTransformations(this.userId!, this.groupId!);
+  }
+
+  // returns groupEvaluations for this 'GroupUser' for all the months
+  List<HiveGroupEvaluation> get groupEvaluations {
+    return GroupEvaluationProvider()
+        .getGroupUserGroupEvaluation(this.userId!, this.groupId!);
+  }
+
+  // returns teacherResponses for this 'GroupUser' for all the months
+  List<HiveTeacherResponse> get teacherResponses {
+    return TeacherResponseProvider()
+        .getGroupUserTeacherResponse(this.userId!, this.groupId!);
+  }
+
+  List<HiveAction>? get actions {
+    ActionProvider().getGroupActions(this.groupId!);
+  }
+
+  int get actionsCompleted {
+    int count = 0;
+    this.actions?.forEach((hiveAction) {
+      HiveActionUser? _hiveActionUser =
+          ActionProvider().getActionUser(this.userId!, hiveAction.id!);
+
+      if (_hiveActionUser != null &&
+          ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
+              ActionStatus.DONE) {
+        count++;
+      }
+    });
+    /*this.actions?.where((hiveAction) {
+      return user?.actionStatusbyId(hiveAction) == ActionStatus.DONE;
+    }).length;*/
+
+    return count;
+  }
+
+  int get actionsNotCompleted {
+    int count = 0;
+    this.actions?.forEach((hiveAction) {
+      HiveActionUser? _hiveActionUser =
+          ActionProvider().getActionUser(this.userId!, hiveAction.id!);
+
+      if (_hiveActionUser != null &&
+          ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
+              ActionStatus.NOT_DONE) {
+        count++;
+      }
+    });
+
+    return count;
+  }
+
+  int get actionsOverdue {
+    int count = 0;
+    this.actions?.forEach((hiveAction) {
+      HiveActionUser? _hiveActionUser =
+          ActionProvider().getActionUser(this.userId!, hiveAction.id!);
+
+      if (_hiveActionUser != null &&
+          ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
+              ActionStatus.OVERDUE) {
+        count++;
+      }
+    });
+
+    return count;
   }
 }

@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
@@ -189,6 +190,16 @@ extension HiveActionExt on HiveAction {
     return i;
   }
 
+  int learnerCountByEvaluation(ActionUser_Evaluation actionUserEvaluation) {
+    int i = 0;
+    this.learners?.forEach((element) {
+      if (element.actionUserEvaluationById(this) == actionUserEvaluation) {
+        i++;
+      }
+    });
+    return i;
+  }
+
   HiveUser? get creator {
     // user created individual action i.e. for me
     HiveUser currentUser = CurrentUserProvider().user;
@@ -282,4 +293,8 @@ extension HiveActionExt on HiveAction {
         ? hiveUser.actionStatusbyId(this)
         : ActionStatus.UNSPECIFIED_STATUS;
   }*/
+
+  List<HiveActionUser>? get actionsUsers {
+    ActionProvider().getAllActionsUser();
+  }
 }

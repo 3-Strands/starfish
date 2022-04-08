@@ -19,6 +19,7 @@ import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
@@ -28,6 +29,7 @@ import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
+import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
@@ -91,6 +93,8 @@ class SyncService {
   late Box<HiveActionUser> actionUserBox;
   late Box<HiveLearnerEvaluation> learnerEvaluationBox;
   late Box<HiveTeacherResponse> teacherResponseBox;
+  late Box<HiveGroupEvaluation> groupEvaluationBox;
+  late Box<HiveTransformation> transformationBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -116,6 +120,10 @@ class SyncService {
         Hive.box<HiveLearnerEvaluation>(HiveDatabase.LEARNER_EVALUATION_BOX);
     teacherResponseBox =
         Hive.box<HiveTeacherResponse>(HiveDatabase.TEACHER_RESPONSE_BOX);
+    groupEvaluationBox =
+        Hive.box<HiveGroupEvaluation>(HiveDatabase.GROUP_EVALUATION_BOX);
+    transformationBox =
+        Hive.box<HiveTransformation>(HiveDatabase.TRANSFORMATION_BOX);
   }
 
   void showAlert(BuildContext context) async {
@@ -220,19 +228,29 @@ class SyncService {
     await lock.synchronized(() => syncMaterial()); // Upload local files
     await lock.synchronized(() => syncFiles()); // Download remote files
 
-    Future.wait([
-      syncCurrentUser(),
-      syncUsers(),
-      //syncCountries(),
-      syncLanguages(),
-      syncActions(),
-      syncMaterialTopics(),
-      syncMaterialTypes(),
-      //syncMaterial(),
-      syncEvaluationCategories(),
-      syncGroup()
-    ]).then((value) {
+    Future.wait(
+      [
+        syncCurrentUser(),
+        syncUsers(),
+        //syncCountries(),
+        syncLanguages(),
+        syncActions(),
+        syncMaterialTopics(),
+        syncMaterialTypes(),
+        //syncMaterial(),
+        syncEvaluationCategories(),
+        syncGroup(),
+        syncLearnerEvaluations(),
+        syncGroupEvaluations(),
+        syncTeacherResponses(),
+        syncTransformaitons(),
+      ],
+      eagerError: true,
+    ).then((value) {
       updateLastSyncDateTime();
+    }).onError((error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
     }).whenComplete(() {
       hideAlert();
     });
@@ -1314,6 +1332,105 @@ class SyncService {
     }
   }
 
+  Future syncLocalGroupEvaluationsToRemote() async {
+    if (groupEvaluationBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
+    print(
+        '============= START: Sync LocalGroupEvaluationsToRemote =============');
+    StreamController<CreateUpdateGroupEvaluationRequest> _controller =
+        StreamController();
+
+    try {
+      ResponseStream<CreateUpdateGroupEvaluationResponse> responseStream =
+          await ResultsRepository()
+              .createUpdateGroupEvaluations(_controller.stream);
+      groupEvaluationBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveGroupEvaluation) {
+        var request = CreateUpdateGroupEvaluationRequest.create();
+
+        request.groupEvaluation = _hiveGroupEvaluation.toGroupEvaluation();
+
+        if (_hiveGroupEvaluation.isUpdated) {
+          // TODO:
+        }
+
+        _controller.add(request);
+      });
+      _controller.close();
+
+      return await responseStream.forEach((value) {
+        print('Remote Group Evaluation: ${value.groupEvaluation}');
+        if (value.status ==
+            CreateUpdateLearnerEvaluationResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+
+          print(
+              '============= END: LocalGroupEvaluationsToRemote =============');
+        } else {
+          print("ERROR: LocalGroupEvaluationsToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+  }
+
+  Future syncLocalTransformationsToRemote() async {
+    if (transformationBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
+    print(
+        '============= START: Sync LocalTransformationsToRemote =============');
+    StreamController<CreateUpdateTransformationRequest> _controller =
+        StreamController();
+
+    try {
+      ResponseStream<CreateUpdateTransformationResponse> responseStream =
+          await ResultsRepository()
+              .createUpdateTransformations(_controller.stream);
+      transformationBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hivetransformation) {
+        var request = CreateUpdateTransformationRequest.create();
+
+        request.transformation = _hivetransformation.toTransformation();
+
+        if (_hivetransformation.isUpdated) {
+          // TODO:
+        }
+
+        _controller.add(request);
+      });
+      _controller.close();
+
+      return await responseStream.forEach((value) {
+        print('Remote Transformation: ${value.transformation}');
+        if (value.status == CreateUpdateTransformationResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+
+          print(
+              '============= END: LocalTransformationsToRemote =============');
+        } else {
+          print("ERROR: LocalTransformationsToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+  }
+
   Future syncLocalTeacherResponsesToRemote() async {
     if (teacherResponseBox.values
         .where((element) => (element.isNew || element.isUpdated))
@@ -1384,6 +1501,56 @@ class SyncService {
         handleGrpcError(err);
       }), onDone: () {
         print('LearnerEvaluation Sync Done.');
+      });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
+  }
+
+  Future syncGroupEvaluations() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      learnerEvaluationBox.values.forEach((element) {});
+    }
+
+    await ResultsRepository()
+        .listGroupEvaluations()
+        .then((ResponseStream<GroupEvaluation> stream) {
+      stream.listen((groupEvaluation) {
+        HiveGroupEvaluation _hiveGroupEvaluation =
+            HiveGroupEvaluation.from(groupEvaluation);
+
+        ResultsProvider().createUpdateGroupEvaluation(_hiveGroupEvaluation);
+      }, onError: ((err) {
+        handleGrpcError(err);
+      }), onDone: () {
+        print('GroupEvaluations Sync Done.');
+      });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
+  }
+
+  Future syncTransformaitons() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      transformationBox.values.forEach((element) {});
+    }
+
+    await ResultsRepository()
+        .listTransformations()
+        .then((ResponseStream<Transformation> stream) {
+      stream.listen((transformaiton) {
+        HiveTransformation _hiveTransformation =
+            HiveTransformation.from(transformaiton);
+
+        ResultsProvider().createUpdateTransformation(_hiveTransformation);
+      }, onError: ((err) {
+        handleGrpcError(err);
+      }), onDone: () {
+        print('Transformaitons Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
     }).catchError(handleError);
