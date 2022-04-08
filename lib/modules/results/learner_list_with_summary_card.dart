@@ -18,235 +18,234 @@ class LearnerSummary extends StatelessWidget {
         SizedBox(
           height: 10.h,
         ),
-        Container(
-          decoration: BoxDecoration(
-              //   color: Color(0xFFEFEFEF),
-              borderRadius: BorderRadius.all(Radius.circular(15.r))),
-          //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-          child: Card(
-            color: Color(0xFFEFEFEF),
-            elevation: 2,
-            margin: EdgeInsets.only(left: 15.w, right: 15.w),
-            child: Container(
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              // padding: EdgeInsets.only(left: 15.w, right: 15.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Text(
-                    "${hiveGroupUser.name}",
-                    style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontFamily: "OpenSans Bold",
-                        fontSize: 19.sp,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
+        Card(
+          margin: EdgeInsets.only(left: 15.w, right: 15.w),
+          color: Color(0xFFEFEFEF),
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+            Radius.circular(
+              10,
+            ),
+          )),
+          child: Container(
+            padding: EdgeInsets.only(left: 15.w, right: 15.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 10.h,
+                ),
+                Text(
+                  "${hiveGroupUser.name}",
+                  style: TextStyle(
+                      color: Color(0xFF434141),
+                      fontFamily: "OpenSans Bold",
+                      fontSize: 19.sp,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.actionsTabItemText}",
+                          style: TextStyle(
+                              color: Color(
+                                0xFF4F4F4F,
+                              ),
+                              fontFamily: "OpenSans Semibold",
+                              fontSize: 17.sp),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5.w,
+                      ),
+                      Expanded(
+                        child: Container(
+                          //   width: 99.w,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF6DE26B),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.5.r))),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.h, horizontal: 8.w),
                           child: Text(
-                            "${AppLocalizations.of(context)!.actionsTabItemText}",
+                            "${hiveGroupUser.actionsCompleted} ${AppLocalizations.of(context)!.done}",
                             style: TextStyle(
-                                color: Color(
-                                  0xFF4F4F4F,
-                                ),
-                                fontFamily: "OpenSans Semibold",
-                                fontSize: 17.sp),
+                                color: Colors.black,
+                                fontFamily: "Rubik Medium",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Expanded(
-                          child: Container(
-                            //   width: 99.w,
-                            decoration: BoxDecoration(
-                                color: Color(0xFF6DE26B),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.5.r))),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.h, horizontal: 8.w),
-                            child: Text(
-                              "${hiveGroupUser.actionsCompleted} ${AppLocalizations.of(context)!.done}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Rubik Medium",
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
+                      ),
+                      SizedBox(
+                        width: 5.w,
+                      ),
+                      Expanded(
+                        child: Container(
+                          //    width: 99.w,
+                          decoration: BoxDecoration(
+                              color: Color(0xFFFFBE4A),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.5.r))),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.h, horizontal: 8.w),
+                          child: Text(
+                            "${hiveGroupUser.actionsNotCompleted} ${AppLocalizations.of(context)!.pending}",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Rubik Medium",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Expanded(
-                          child: Container(
-                            //    width: 99.w,
-                            decoration: BoxDecoration(
-                                color: Color(0xFFFFBE4A),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.5.r))),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.h, horizontal: 8.w),
-                            child: Text(
-                              "${hiveGroupUser.actionsNotCompleted} ${AppLocalizations.of(context)!.pending}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Rubik Medium",
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
+                      ),
+                      SizedBox(
+                        width: 5.w,
+                      ),
+                      Expanded(
+                        child: Container(
+                          //     width: 99.w,
+                          decoration: BoxDecoration(
+                              color: Color(0xFFFF5E4D),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.5.r))),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.h, horizontal: 8.w),
+                          child: Text(
+                            "${hiveGroupUser.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Rubik Medium",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Expanded(
-                          child: Container(
-                            //     width: 99.w,
-                            decoration: BoxDecoration(
-                                color: Color(0xFFFF5E4D),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.5.r))),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.h, horizontal: 8.w),
-                            child: Text(
-                              "${hiveGroupUser.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Rubik Medium",
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "${AppLocalizations.of(context)!.transformation}: ",
+                      style: TextStyle(
+                          fontSize: 17.sp,
+                          fontFamily: "Open Sans Semibold",
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w600),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "${AppLocalizations.of(context)!.transformation}: ",
-                        style: TextStyle(
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          "${hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)}",
+                          style: TextStyle(
+                            fontFamily: "Open Sans Italic",
                             fontSize: 17.sp,
-                            fontFamily: "Open Sans Semibold",
+                            fontStyle: FontStyle.italic,
                             color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w600),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
-                      Expanded(
-                        child: Container(
-                          child: Text(
-                            "${hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)}",
-                            style: TextStyle(
-                              fontFamily: "Open Sans Italic",
-                              fontSize: 17.sp,
-                              fontStyle: FontStyle.italic,
-                              color: Color(0xFF4F4F4F),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
+                      style: TextStyle(
+                          fontSize: 17.sp,
+                          fontFamily: "Open Sans Semibold",
+                          fontStyle: FontStyle.normal,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.thumb_up,
+                              color: Color(0xFFFFFFFF),
                             ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
-                        style: TextStyle(
-                            fontSize: 17.sp,
-                            fontFamily: "Open Sans Semibold",
-                            fontStyle: FontStyle.normal,
-                            color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.thumb_up,
-                                color: Color(0xFFFFFFFF),
-                              ),
-                              SizedBox(
-                                width: 5.w,
-                              ),
-                              Text(
-                                "${hiveGroupUser.getGroupEvaluationForMonth(bloc.resultsBloc.hiveDate!)}",
-                                style: TextStyle(
-                                  fontFamily: "Open Sans Italic",
-                                  fontSize: 17.sp,
-                                  fontStyle: FontStyle.italic,
-                                  color: Color(0xFF4F4F4F),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "${AppLocalizations.of(context)!.feedback}: ",
-                        style: TextStyle(
-                            fontSize: 17.sp,
-                            fontFamily: "Open Sans Semibold",
-                            color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: Text(
-                            "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)}",
-                            style: TextStyle(
-                              fontFamily: "Open Sans Italic",
-                              fontSize: 17.sp,
-                              fontStyle: FontStyle.italic,
-                              color: Color(0xFF4F4F4F),
+                            SizedBox(
+                              width: 5.w,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
+                            Text(
+                              "${hiveGroupUser.getGroupEvaluationForMonth(bloc.resultsBloc.hiveDate!)}",
+                              style: TextStyle(
+                                fontFamily: "Open Sans Italic",
+                                fontSize: 17.sp,
+                                fontStyle: FontStyle.italic,
+                                color: Color(0xFF4F4F4F),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ],
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildCategoryAverageWidget(
-                      hiveGroupUser.getLearnerEvaluationForMonth(
-                              bloc.resultsBloc.hiveDate!) ??
-                          []),
-                  SizedBox(height: 10.h),
-                ],
-              ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "${AppLocalizations.of(context)!.feedback}: ",
+                      style: TextStyle(
+                          fontSize: 17.sp,
+                          fontFamily: "Open Sans Semibold",
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w600),
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Text(
+                          "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)}",
+                          style: TextStyle(
+                            fontFamily: "Open Sans Italic",
+                            fontSize: 17.sp,
+                            fontStyle: FontStyle.italic,
+                            color: Color(0xFF4F4F4F),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildCategoryAverageWidget(
+                    hiveGroupUser.getLearnerEvaluationForMonth(
+                            bloc.resultsBloc.hiveDate!) ??
+                        []),
+                SizedBox(height: 10.h),
+              ],
             ),
           ),
         ),
