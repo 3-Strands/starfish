@@ -10,7 +10,7 @@ class ProjectReporsForGroup extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
-          borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+          borderRadius: BorderRadius.all(Radius.circular(10.r))),
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       padding: EdgeInsets.only(left: 15.w, right: 15.w),
       child: Column(
