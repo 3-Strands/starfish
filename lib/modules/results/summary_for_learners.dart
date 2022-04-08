@@ -15,24 +15,22 @@ class SummaryForAllLearners extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
-          borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+          borderRadius: BorderRadius.all(Radius.circular(10.r))),
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
+      padding: EdgeInsets.only(left: 10.w, right: 10.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(
             height: 10.h,
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "${AppLocalizations.of(context)!.summaryForAllLearners}",
-              style: TextStyle(
-                  color: Color(0xFFFFFFFF),
-                  fontFamily: "Rubik Medium",
-                  fontSize: 19.sp,
-                  fontWeight: FontWeight.bold),
-            ),
+          Text(
+            "${AppLocalizations.of(context)!.summaryForAllLearners}",
+            style: TextStyle(
+                color: Color(0xFFFFFFFF),
+                fontFamily: "Rubik Medium",
+                fontSize: 19.sp,
+                fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 10.h,
@@ -209,23 +207,25 @@ class SummaryForAllLearners extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  "$count",
-                  style: TextStyle(
-                      color: textColor,
-                      fontFamily: "Rubik Medium",
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.bold),
-                ),
-                Icon(
-                  Icons.arrow_upward,
-                  color: Color(0xFF6DE26B),
-                )
-              ],
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    "$count",
+                    style: TextStyle(
+                        color: textColor,
+                        fontFamily: "Rubik Medium",
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Icon(
+                    Icons.arrow_upward,
+                    color: Color(0xFF6DE26B),
+                  )
+                ],
+              ),
             ),
             Text(
               "$categoryName",
