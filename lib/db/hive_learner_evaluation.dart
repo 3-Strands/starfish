@@ -62,7 +62,9 @@ class HiveLearnerEvaluation extends HiveObject {
 
   @override
   String toString() {
-    return super.toString();
+    return '''{id: ${this.id}, learnerId: ${this.learnerId}, evaluatorId: ${this.evaluatorId}, 
+        groupId: ${this.groupId}, month: ${this.month.toString()}, categoryId: ${this.categoryId}, 
+        evaluation: ${this.evaluation} }''';
   }
 }
 

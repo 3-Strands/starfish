@@ -4,14 +4,11 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
-
 class LearnerSummary extends StatelessWidget {
-HiveGroupUser hiveGroupUser;
-   LearnerSummary({Key? key,required this.hiveGroupUser }) : super(key: key);
+  HiveGroupUser hiveGroupUser;
+  LearnerSummary({Key? key, required this.hiveGroupUser}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +20,16 @@ HiveGroupUser hiveGroupUser;
         ),
         Container(
           decoration: BoxDecoration(
-               //   color: Color(0xFFEFEFEF),
-                  borderRadius: BorderRadius.all(Radius.circular(15.r))),
-           //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-          child: Card(color: Color(0xFFEFEFEF),
-         
-          elevation: 2,
-           margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              //   color: Color(0xFFEFEFEF),
+              borderRadius: BorderRadius.all(Radius.circular(15.r))),
+          //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+          child: Card(
+            color: Color(0xFFEFEFEF),
+            elevation: 2,
+            margin: EdgeInsets.only(left: 15.w, right: 15.w),
             child: Container(
-             
               margin: EdgeInsets.only(left: 15.w, right: 15.w),
-             // padding: EdgeInsets.only(left: 15.w, right: 15.w),
+              // padding: EdgeInsets.only(left: 15.w, right: 15.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -279,7 +275,8 @@ HiveGroupUser hiveGroupUser;
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(mainAxisAlignment: MainAxisAlignment.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
                 Text(

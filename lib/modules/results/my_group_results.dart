@@ -8,7 +8,6 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
@@ -168,56 +167,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildCategoryStatics(
-      int count, String categoryName, Color textColor) {
-    return Expanded(
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  "$count",
-                  style: TextStyle(
-                      color: textColor,
-                      fontFamily: "Rubik Medium",
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.bold),
-                ),
-                Icon(
-                  Icons.arrow_upward,
-                  color: Color(0xFF6DE26B),
-                )
-              ],
-            ),
-            Text(
-              "$categoryName",
-              style: TextStyle(
-                  fontSize: 15.sp, color: textColor, fontFamily: "Rubik"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryAverageWidget(
-      List<HiveLearnerEvaluation> _learnersEvaluationsList) {
-    List<Widget> _categoryWidgets = [];
-    _learnersEvaluationsList.forEach((HiveLearnerEvaluation learnerEvaluation) {
-      _categoryWidgets.add(
-        _buildCategoryStatics(learnerEvaluation.evaluation!,
-            learnerEvaluation.name!, Color(0xFFFFFFFF)),
-      );
-    });
-    return Row(
-      children: _categoryWidgets,
     );
   }
 }

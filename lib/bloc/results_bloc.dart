@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -33,6 +36,30 @@ class ResultsBloc extends Object {
             element.month!.month == hiveDate?.month &&
             element.month!.year == hiveDate?.year)
         .toList();
+  }
+
+  Map<HiveEvaluationCategory, int> getGroupLearnerEvaluationsByCategory() {
+    Map<HiveEvaluationCategory, int> _map = Map();
+    hiveGroup?.evaluationCategoryIds?.forEach((categoryId) {
+      HiveEvaluationCategory? _evaluationCategory =
+          EvaluationCategoryProvider().getCategoryById(categoryId);
+      if (_evaluationCategory != null) {
+        _map[_evaluationCategory] = _countGroupLearnerEvaluations(categoryId);
+      }
+    });
+
+    return _map;
+  }
+
+  int _countGroupLearnerEvaluations(String categoryId) {
+    int count = 0;
+    getGroupLearnerEvaluations()
+        ?.where((element) => element.categoryId == categoryId)
+        .forEach((element) {
+      count += element.evaluation!;
+    });
+
+    return count;
   }
 
   void dispose() {}

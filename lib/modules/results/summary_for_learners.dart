@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/db/hive_learner_evaluation.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
@@ -185,7 +183,7 @@ class SummaryForAllLearners extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
           _buildCategoryAverageWidget(
-              bloc.resultsBloc.getGroupLearnerEvaluations()!),
+              bloc.resultsBloc.getGroupLearnerEvaluationsByCategory()),
           SizedBox(height: 20.h),
         ],
       ),
@@ -193,13 +191,11 @@ class SummaryForAllLearners extends StatelessWidget {
   }
 
   Widget _buildCategoryAverageWidget(
-      List<HiveLearnerEvaluation> _learnersEvaluationsList) {
+      Map<HiveEvaluationCategory, int> _learnersEvaluations) {
     List<Widget> _categoryWidgets = [];
-    _learnersEvaluationsList.forEach((HiveLearnerEvaluation learnerEvaluation) {
-      _categoryWidgets.add(
-        _buildCategoryStatics(learnerEvaluation.evaluation!,
-            learnerEvaluation.name!, Color(0xFFFFFFFF)),
-      );
+    _learnersEvaluations.forEach((HiveEvaluationCategory category, int count) {
+      _categoryWidgets
+          .add(_buildCategoryStatics(count, category.name!, Color(0xFFFFFFFF)));
     });
     return Row(
       children: _categoryWidgets,
