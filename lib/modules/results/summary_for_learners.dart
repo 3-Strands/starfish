@@ -189,11 +189,16 @@ class SummaryForAllLearners extends StatelessWidget {
   }
 
   Widget _buildCategoryAverageWidget(
-      Map<HiveEvaluationCategory, int> _learnersEvaluations) {
+      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations) {
     List<Widget> _categoryWidgets = [];
-    _learnersEvaluations.forEach((HiveEvaluationCategory category, int count) {
-      _categoryWidgets
-          .add(_buildCategoryStatics(count, category.name!, Color(0xFFFFFFFF)));
+    _learnersEvaluations.forEach(
+        (HiveEvaluationCategory category, Map<String, int> countByMonth) {
+      _categoryWidgets.add(_buildCategoryStatics(
+          countByMonth["this-month"] ?? 0,
+          category.name!,
+          ((countByMonth["this-month"] ?? 0) -
+              (countByMonth["last-month"] ?? 0)),
+          Color(0xFFFFFFFF)));
     });
     return Row(
       children: _categoryWidgets,
@@ -201,7 +206,7 @@ class SummaryForAllLearners extends StatelessWidget {
   }
 
   Widget _buildCategoryStatics(
-      int count, String categoryName, Color textColor) {
+      int count, String categoryName, int changeInCount, Color textColor) {
     return Expanded(
       child: Container(
         child: Column(
@@ -215,22 +220,31 @@ class SummaryForAllLearners extends StatelessWidget {
                   Text(
                     "$count",
                     style: TextStyle(
-                        color: textColor,
-                        fontFamily: "Rubik Medium",
-                        fontSize: 30.sp,
-                        fontWeight: FontWeight.bold),
+                      color: textColor,
+                      fontFamily: "Rubik Medium",
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Icon(
-                    Icons.arrow_upward,
-                    color: Color(0xFF6DE26B),
-                  )
+                  if (changeInCount != 0)
+                    Icon(
+                      changeInCount > 0
+                          ? Icons.arrow_upward
+                          : Icons.arrow_downward,
+                      color: changeInCount > 0
+                          ? Color(0xFF6DE26B)
+                          : Color(0xFFFF5E4D),
+                    ),
                 ],
               ),
             ),
             Text(
               "$categoryName",
               style: TextStyle(
-                  fontSize: 15.sp, color: textColor, fontFamily: "Rubik"),
+                fontSize: 15.sp,
+                color: textColor,
+                fontFamily: "Rubik",
+              ),
             )
           ],
         ),
