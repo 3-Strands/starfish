@@ -161,7 +161,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Summary for all Learners",
+                         "${AppLocalizations.of(context)!.summaryForAllLearners}",
                           style: TextStyle(
                               color: Color(0xFFFFFFFF),
                               fontFamily: "Rubik Medium",
@@ -174,7 +174,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       ),
                       Center(
                         child: Text(
-                          "Actions",
+                         "${AppLocalizations.of(context)!.actionsTabItemText}",
                           style: TextStyle(
                               color: Color(0xFFFFFFFF),
                               fontFamily: "Rubik Medium",
@@ -197,21 +197,21 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     BorderRadius.all(Radius.circular(8.5.r))),
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
-                            child: Text(
+                            child: Text("12 ${AppLocalizations.of(context)!.done}",
                               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              Intl.plural(
-                                  bloc.resultsBloc.hiveGroup!.actionsCompleted,
-                                  zero:
-                                      "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  one: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  other: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                  args: [
-                                    bloc.resultsBloc.hiveGroup!.actionsCompleted
-                                  ]),
+                              // Intl.plural(
+                              //     bloc.resultsBloc.hiveGroup!.actionsCompleted,
+                              //     zero:
+                              //         "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     one: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     other: "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                              //     args: [
+                              //       bloc.resultsBloc.hiveGroup!.actionsCompleted
+                              //     ]),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
-                                  fontSize: 17.sp,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -224,22 +224,22 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     BorderRadius.all(Radius.circular(8.5.r))),
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
-                            child: Text(
+                            child: Text("6 ${AppLocalizations.of(context)!.pending}",
                               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              Intl.plural(
-                                  bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
-                                  zero:
-                                      "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                  args: [
-                                    bloc.resultsBloc.hiveGroup!
-                                        .actionsNotDoneYet
-                                  ]),
+                              // Intl.plural(
+                              //     bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
+                              //     zero:
+                              //         "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     one: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     other: "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                              //     args: [
+                              //       bloc.resultsBloc.hiveGroup!
+                              //           .actionsNotDoneYet
+                              //     ]),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
-                                  fontSize: 17.sp,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -252,21 +252,21 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     BorderRadius.all(Radius.circular(8.5.r))),
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
-                            child: Text(
+                            child: Text("3 ${AppLocalizations.of(context)!.overdue}",
                               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                              Intl.plural(
-                                  bloc.resultsBloc.hiveGroup!.actionsOverdue,
-                                  zero:
-                                      "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                                  other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                                  args: [
-                                    bloc.resultsBloc.hiveGroup!.actionsOverdue
-                                  ]),
+                              // Intl.plural(
+                              //     bloc.resultsBloc.hiveGroup!.actionsOverdue,
+                              //     zero:
+                              //         "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     one: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
+                              //     other: "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                              //     args: [
+                              //       bloc.resultsBloc.hiveGroup!.actionsOverdue
+                              //     ]),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
-                                  fontSize: 17.sp,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -286,7 +286,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       // ),
                       Center(
                           child: Text(
-                        "Feeling about the Group",
+                        "${AppLocalizations.of(context)!.feelingAboutTheGroup}",
                         style: TextStyle(
                             color: Color(0xFFFFFFFF),
                             fontFamily: "Rubik Medium",
@@ -308,7 +308,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10.h, horizontal: 10.w),
                             child: Text(
-                              "12 Good",
+                                "12 ${AppLocalizations.of(context)!.goodText}",
                               //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
                               // Intl.plural(
                               //     bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
@@ -323,7 +323,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "Rubik Medium",
-                                  fontSize: 17.sp,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -332,7 +332,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             width: 20.w,
                           ),
                           Container(
-                            width: 99.w,
+                         //   width: 99.w,
                             decoration: BoxDecoration(
                                 color: Color(0xFFC6C6C6),
                                 borderRadius:
@@ -341,7 +341,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 vertical: 10.h, horizontal: 10.w),
                             child: Flexible(
                               child: Text(
-                                "9 Not so Good",
+                               "9 ${AppLocalizations.of(context)!.notSoGoodText}",
                                 //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
                                 // Intl.plural(
                                 //     bloc.resultsBloc.hiveGroup!.actionsOverdue,
@@ -355,7 +355,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: "Rubik Medium",
-                                    fontSize: 17.sp,
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
@@ -376,7 +376,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       // ),
                       Center(
                         child: Text(
-                          "Averages",
+                          "${AppLocalizations.of(context)!.averages}",
                           style: TextStyle(
                               color: Color(0xFFFFFFFF),
                               fontFamily: "Open Sans Bold",
@@ -387,9 +387,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          _buildCategoryStatics(5,Color(0xFFFFFFFF),),
-                          _buildCategoryStatics(4,Color(0xFFFFFFFF),),
-                          _buildCategoryStatics(3,Color(0xFFFFFFFF),),
+                          _buildCategoryStatics(5,Color(0xFFFFFFFF),Color(0xFFFFFFFF),),
+                          _buildCategoryStatics(4,Color(0xFFFFFFFF),Color(0xFFFFFFFF),),
+                          _buildCategoryStatics(3,Color(0xFFFFFFFF),Color(0xFFFFFFFF),),
                         ],
                       ),
                       SizedBox(height: 10.h),
@@ -412,7 +412,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         height: 10.h,
                       ),
                       Text(
-                        "Project Report for Group Name 1",
+                       "${AppLocalizations.of(context)!.projectReportFor}",
                         style: TextStyle(
                             color: Color(0xFFFFFFFF),
                             fontFamily: "Rubik Medium",
@@ -427,7 +427,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Markers",
+                            "${AppLocalizations.of(context)!.markers}",
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontFamily: "Open Sans Semibold",
@@ -435,7 +435,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             ),
                           ),
                           Text(
-                            "Actuals",
+                            "${AppLocalizations.of(context)!.actuals}",
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontFamily: "Open Sans Semibold",
@@ -490,7 +490,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                               shape: StadiumBorder(), primary: Colors.blue),
                           onPressed: () {},
                           child: Text(
-                            "Add Sign of Transformation",
+                            "${AppLocalizations.of(context)!.addSignOfTransformation}",
                             style: TextStyle(
                                 fontSize: 17.sp,
                                 fontFamily: "Open Sans Regular"),
@@ -549,7 +549,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                     children: [
                                       Center(
                                         child: Text(
-                                          "Actions ",
+                                          "${AppLocalizations.of(context)!.actionsTabItemText}",
                                           style: TextStyle(
                                               color: Color(
                                                 0xFF4F4F4F,
@@ -558,6 +558,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               fontSize: 17.sp),
                                         ),
                                       ),
+                                       SizedBox(width: 5.w,),
                                       Expanded(
                                         child: Container(
                                           //   width: 99.w,
@@ -566,9 +567,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(8.5.r))),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: 10.h, horizontal: 10.w),
+                                              vertical: 8.h, horizontal: 8.w),
                                           child: Text(
-                                            "4 Done",
+                                            "4 ${AppLocalizations.of(context)!.done}",
                                             //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
                                             // Intl.plural(
                                             //     bloc.resultsBloc.hiveGroup!
@@ -584,12 +585,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
-                                                fontSize: 17.sp,
+                                                fontSize: 14.sp,
                                                 fontWeight: FontWeight.bold),
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
+                                       SizedBox(width: 5.w,),
                                       Expanded(
                                         child: Container(
                                           //    width: 99.w,
@@ -598,9 +600,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(8.5.r))),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: 10.h, horizontal: 10.w),
+                                              vertical: 8.h, horizontal: 8.w),
                                           child: Text(
-                                            "2 Pending",
+                                            "2 ${AppLocalizations.of(context)!.pending}",
                                             //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
                                             // Intl.plural(
                                             //     bloc.resultsBloc.hiveGroup!
@@ -616,12 +618,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
-                                                fontSize: 17.sp,
+                                                fontSize: 14.sp,
                                                 fontWeight: FontWeight.bold),
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
+                                      SizedBox(width: 5.w,),
                                       Expanded(
                                         child: Container(
                                           //     width: 99.w,
@@ -630,9 +633,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(8.5.r))),
                                           padding: EdgeInsets.symmetric(
-                                              vertical: 10.h, horizontal: 10.w),
+                                              vertical: 8.h, horizontal: 8.w),
                                           child: Text(
-                                            "1 Overdue",
+                                            "1 ${AppLocalizations.of(context)!.overdue}",
                                             //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
                                             // Intl.plural(
                                             //     bloc.resultsBloc.hiveGroup!
@@ -648,7 +651,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontFamily: "Rubik Medium",
-                                                fontSize: 17.sp,
+                                                fontSize: 14.sp,
                                                 fontWeight: FontWeight.bold),
                                             textAlign: TextAlign.center,
                                           ),
@@ -664,7 +667,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 Row(
                                   children: [
                                     Text(
-                                      "Transformations: ",
+                                      "${AppLocalizations.of(context)!.transformation}: ",
                                       style: TextStyle(
                                         fontSize: 17.sp,
                                         fontFamily: "Open Sans Semibold",
@@ -695,7 +698,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 Row(
                                   children: [
                                     Text(
-                                      "Feeling about the Group: ",
+                                        "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
                                       style: TextStyle(
                                         fontSize: 17.sp,
                                         fontFamily: "Open Sans Semibold",
@@ -738,7 +741,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 Row(
                                   children: [
                                     Text(
-                                      "Feedback: ",
+                                       "${AppLocalizations.of(context)!.feedback}: ",
                                       style: TextStyle(
                                         fontSize: 17.sp,
                                         fontFamily: "Open Sans Semibold",
@@ -780,10 +783,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     _buildCategoryStatics(
-                                      5, Color(0xFF797979),
+                                      5, Color(0xFF797979),Color(0xFF000000),
                                     ),
-                                    _buildCategoryStatics(4,Color(0xFF797979),),
-                                    _buildCategoryStatics(3,Color(0xFF797979),),
+                                    _buildCategoryStatics(4,Color(0xFF797979),Color(0xFF000000),),
+                                    _buildCategoryStatics(3,Color(0xFF797979),Color(0xFF000000),),
                                   ],
                                 ),
                                 SizedBox(height: 10.h),
@@ -924,6 +927,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             fontSize: 17.sp,
             fontFamily: "Open Sans Semibold",
             color: Color(0xFFC6C6C6),
+            fontWeight: FontWeight.bold
           ),
         ),
         Container(
@@ -952,7 +956,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buildCategoryStatics(int categoryStatic,Color textColor) {
+  _buildCategoryStatics(int categoryStatic,Color textColor, Color categoryColor) {
     return Column(
       children: [
         Row(
@@ -975,7 +979,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           "Category 1",
           style: TextStyle(
             fontSize: 15.sp,
-           color: textColor,
+           color: categoryColor,
+           fontFamily: "Rubik"
           ),
         )
       ],
