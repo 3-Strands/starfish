@@ -2,6 +2,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
@@ -14,6 +15,8 @@ class ResultsBloc extends Object {
   HiveDate? hiveDate;
   HiveDate? hivePreviousDate;
 
+  HiveGroupUser? hiveGroupUser;
+
   ResultsBloc() {
     hiveDate = DateTimeUtils.toHiveDate(DateTime.now());
     hivePreviousDate = hiveDate?.previousMonth;
@@ -21,6 +24,7 @@ class ResultsBloc extends Object {
 
   init() {
     hiveGroup = fetchGroupsWtihLeaderRole()?.first;
+    hiveGroupUser = hiveGroup?.learners?.first;
   }
 
   List<HiveGroup>? fetchGroupsWtihLeaderRole() {

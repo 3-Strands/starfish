@@ -247,197 +247,196 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return widgetsBasic.StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Container(
-              height: MediaQuery.of(context).size.height * 0.70,
-              child: _buildSlidingUpPanel(hiveGroupUser));
-        });
+        return _buildSlidingUpPanel(hiveGroupUser);
       },
     );
   }
 
   Widget _buildSlidingUpPanel(HiveGroupUser hiveGroupUser) {
-    return Column(
-      children: [
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    //height: 22.h,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              '${hiveGroupUser.group!.name}',
-                              //overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF3475F0),
-                                fontFamily: 'OpenSans',
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xFFEFEFEF),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(8.5.r))),
-                      child: DropdownButtonHideUnderline(
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButton<HiveGroup>(
-                            isExpanded: true,
-                            iconSize: 35,
-                            style: TextStyle(
-                              color: Color(0xFFEFEFEF),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            hint: Text(
-                              bloc.resultsBloc.hiveGroup?.name ??
-                                  'Select Group',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            onChanged: (HiveGroup? value) {
-                              setState(() {
-                                bloc.resultsBloc.hiveGroup = value;
-                              });
-                            },
-                            items: bloc.resultsBloc
-                                .fetchGroupsWtihLeaderRole()
-                                ?.map<DropdownMenuItem<HiveGroup>>(
-                                    (HiveGroup value) {
-                              return DropdownMenuItem<HiveGroup>(
-                                value: value,
+    return widgetsBasic.StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+      return Container(
+        height: MediaQuery.of(context).size.height * 0.70,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        //height: 22.h,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Expanded(
+                              child: Center(
                                 child: Text(
-                                  value.name!,
+                                  '${hiveGroupUser.group!.name}',
+                                  //overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 17.sp,
+                                    color: Color(0xFF3475F0),
                                     fontFamily: 'OpenSans',
+                                    fontSize: 19.sp,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              );
-                            }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xFFEFEFEF),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.5.r))),
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton<HiveGroupUser>(
+                                isExpanded: true,
+                                iconSize: 35,
+                                style: TextStyle(
+                                  color: Color(0xFFEFEFEF),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                hint: Text(
+                                  "Learner: ${bloc.resultsBloc.hiveGroupUser?.name}",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 19.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                onChanged: (HiveGroupUser? value) {
+                                  setModalState(() {
+                                    bloc.resultsBloc.hiveGroupUser = value;
+                                  });
+                                },
+                                items: bloc.resultsBloc.hiveGroup!.learners
+                                    ?.map<DropdownMenuItem<HiveGroupUser>>(
+                                        (HiveGroupUser value) {
+                                  return DropdownMenuItem<HiveGroupUser>(
+                                    value: value,
+                                    child: Text(
+                                      value.name,
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 17.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 19.sp,
-                          fontFamily: "OpenSans",
-                          color: Color(0xFF4F4F4F),
-                        ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 19.sp,
+                              fontFamily: "OpenSans",
+                              color: Color(0xFF4F4F4F),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Icon(
+                            Icons.thumb_up,
+                            color: Color(0xFF707070),
+                          ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Text(
+                            '${AppLocalizations.of(context)!.goodText}',
+                            style: TextStyle(
+                              //    fontWeight: FontWeight.w600,
+                              fontSize: 16.sp,
+                              fontFamily: "Rubik",
+                              color: Color(0xFF707070),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(
-                        width: 5.w,
+                        height: 30.h,
                       ),
-                      Icon(
-                        Icons.thumb_up,
-                        color: Color(0xFF707070),
+                      _buildActionCard(),
+                      SizedBox(
+                        height: 5.h,
                       ),
                       SizedBox(
-                        width: 5.w,
+                        height: 10.h,
                       ),
-                      Text(
-                        '${AppLocalizations.of(context)!.goodText}',
-                        style: TextStyle(
-                          //    fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
-                          fontFamily: "Rubik",
-                          color: Color(0xFF707070),
-                        ),
+                      _buildTrasnformatonsCard(),
+                      SizedBox(
+                        height: 10.h,
                       ),
+                      _buiildTeacherFeedBackCard(),
                     ],
                   ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  _buildActionCard(),
-                  SizedBox(
-                    height: 5.h,
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _buildTrasnformatonsCard(),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _buiildTeacherFeedBackCard(),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Container(
-          height: 75.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Color(0xFFEFEFEF),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-            child: Container(
-              height: 37.5.h,
-              color: Color(0xFFEFEFEF),
-              child: ElevatedButton(
-                onPressed: () {
-                  //_closeSlidingUpPanelIfOpen();
-                  Navigator.pop(context);
-                },
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40.r),
-                    ),
-                  ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      AppColors.selectedButtonBG),
                 ),
-                child: Text(AppLocalizations.of(context)!.close),
               ),
             ),
-          ),
+            Container(
+              height: 75.0,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color(0xFFEFEFEF),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                child: Container(
+                  height: 37.5.h,
+                  color: Color(0xFFEFEFEF),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      //_closeSlidingUpPanelIfOpen();
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40.r),
+                        ),
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.selectedButtonBG),
+                    ),
+                    child: Text(AppLocalizations.of(context)!.close),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
+      );
+    });
   }
 
   _buiildTeacherFeedBackCard() {
@@ -843,4 +842,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       });
     }
   }
+
+  void setModalState(Null Function() param0) {}
 }
