@@ -74,86 +74,88 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           backgroundColor: AppColors.resultsScreenBG,
           elevation: 0.0,
         ),
-        body: Scrollbar(
-          thickness: 5.w,
-          isAlwaysShown: false,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 20.h,
-                ),
-                Container(
-                  height: 52.h,
-                  width: 345.w,
-                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.txtFieldBackground,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
+        body: bloc.resultsBloc.hiveGroup != null
+            ? Scrollbar(
+                thickness: 5.w,
+                isAlwaysShown: false,
+                child: SingleChildScrollView(
+                    child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20.h,
                     ),
-                  ),
-                  child: Center(
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton<HiveGroup>(
-                          isExpanded: true,
-                          iconSize: 35,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 19.sp,
-                            fontFamily: 'OpenSans',
-                          ),
-                          hint: Text(
-                            bloc.resultsBloc.hiveGroup?.name ?? 'Select Group',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          onChanged: (HiveGroup? value) {
-                            setState(() {
-                              bloc.resultsBloc.hiveGroup = value;
-                            });
-                          },
-                          items: bloc.resultsBloc
-                              .fetchGroupsWtihLeaderRole()
-                              ?.map<DropdownMenuItem<HiveGroup>>(
-                                  (HiveGroup value) {
-                            return DropdownMenuItem<HiveGroup>(
-                              value: value,
-                              child: Text(
-                                value.name!,
+                    Container(
+                      height: 52.h,
+                      width: 345.w,
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: Center(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<HiveGroup>(
+                              isExpanded: true,
+                              iconSize: 35,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              hint: Text(
+                                bloc.resultsBloc.hiveGroup?.name ??
+                                    'Select Group',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
-                                  fontSize: 17.sp,
+                                  fontSize: 19.sp,
                                   fontFamily: 'OpenSans',
                                 ),
+                                textAlign: TextAlign.left,
                               ),
-                            );
-                          }).toList(),
+                              onChanged: (HiveGroup? value) {
+                                setState(() {
+                                  bloc.resultsBloc.hiveGroup = value;
+                                });
+                              },
+                              items: bloc.resultsBloc
+                                  .fetchGroupsWtihLeaderRole()
+                                  ?.map<DropdownMenuItem<HiveGroup>>(
+                                      (HiveGroup value) {
+                                return DropdownMenuItem<HiveGroup>(
+                                  value: value,
+                                  child: Text(
+                                    value.name!,
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 17.sp,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                SummaryForAllLearners(),
-                SizedBox(
-                  height: 10.h,
-                ),
-                ProjectReporsForGroup(),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    SizedBox(height: 20.h),
+                    SummaryForAllLearners(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    ProjectReporsForGroup(),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                     itemCount: bloc.resultsBloc.hiveGroup!.learners!.length,
                     itemBuilder: (BuildContext context, index) {
                       HiveGroupUser _hiveGroupUser = bloc
@@ -161,15 +163,33 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           .elementAt(index);
                       return InkWell(
                           onTap: _onLearnerSummarySelection,
-                          child: LearnerSummary(hiveGroupUser: _hiveGroupUser));
-                    }),
-                SizedBox(
-                  height: 20.h,
-                )
-              ],
-            ),
-          ),
-        ),
+                              child: LearnerSummary(
+                                  hiveGroupUser: _hiveGroupUser));
+                        }),
+                    SizedBox(
+                      height: 20.h,
+                    )
+                  ],
+                )),
+              )
+            : Container(
+                height: MediaQuery.of(context).size.height - 40.h,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      "Join a Group, or create a new Group, then you can monitor the results of the Group here.",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontFamily: "OpenSans",
+                        fontStyle: FontStyle.italic,
+                        color: Color(0xFF797979),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }
@@ -284,114 +304,118 @@ class _MyGroupResultsState extends State<MyGroupResults> {
 
   _buildActionCard() {
     return Card(
-        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-        color: Color(0xFFEFEFEF),
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-          Radius.circular(
-            10,
-          ),
-        )),
-        child: Container(
-          padding: EdgeInsets.only(left: 15.w, right: 15.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 10.h,
+      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+        Radius.circular(
+          10,
+        ),
+      )),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              "${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
+              style: TextStyle(
+                fontSize: 19.sp,
+                color: Color(0xFF4F4F4F),
+                fontWeight: FontWeight.w600,
+                fontFamily: "Open Sans",
               ),
-              Text(
-                "${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  width: 99.w,
+                  decoration: BoxDecoration(
+                      color: Color(0xFF6DE26B),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Text(
+                    "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.done}",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Rubik Medium",
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  width: 99.w,
+                  decoration: BoxDecoration(
+                      color: Color(0xFFFFBE4A),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Text(
+                    "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Rubik Medium",
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  width: 99.w,
+                  decoration: BoxDecoration(
+                      color: Color(0xFFFF5E4D),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                  child: Text(
+                    "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Rubik Medium",
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15.h,
+            ),
+            InkWell(
+              onTap: () {},
+              child: Text(
+                "View History",
                 style: TextStyle(
-                  fontSize: 19.sp,
-                  color: Color(0xFF4F4F4F),
-                  fontWeight: FontWeight.w600,
-                  fontFamily: "Open Sans",
+                  fontSize: 16.sp,
+                  fontFamily: "Open",
+                  color: Color(0xFF3475F0),
                 ),
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    width: 99.w,
-                    decoration: BoxDecoration(
-                        color: Color(0xFF6DE26B),
-                        borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    child: Text(
-                      "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.done}",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Rubik Medium",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Container(
-                    width: 99.w,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFFFBE4A),
-                        borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    child: Text(
-                      "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Rubik Medium",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Container(
-                    width: 99.w,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFFF5E4D),
-                        borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    child: Text(
-                      "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "Rubik Medium",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 15.h,
-              ),
-              InkWell(onTap: () {
-                
-              },
-                child: Text(
-                  "View History",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: "Open",
-                    color: Color(0xFF3475F0),
-                  ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Visibility(
+              child: Container(
+                child: Column(
+                  children: <Widget>[],
                 ),
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Visibility(child: Container(child: Column(children: <Widget>[
-
-              ],),))
-            ],
-          ),
-        ));
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
