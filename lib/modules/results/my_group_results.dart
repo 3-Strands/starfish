@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
@@ -15,7 +16,6 @@ import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -201,7 +201,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                               .resultsBloc.hiveGroup!.learners!
                               .elementAt(index);
                           return InkWell(
-                              onTap: _onLearnerSummarySelection,
+                              onTap: () =>
+                                  _onLearnerSummarySelection(_hiveGroupUser),
                               child: LearnerSummary(
                                   hiveGroupUser: _hiveGroupUser));
                         }),
@@ -233,7 +234,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  void _onLearnerSummarySelection() {
+  void _onLearnerSummarySelection(HiveGroupUser hiveGroupUser) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -250,13 +251,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             builder: (BuildContext context, StateSetter setState) {
           return Container(
               height: MediaQuery.of(context).size.height * 0.70,
-              child: _buildSlidingUpPanel());
+              child: _buildSlidingUpPanel(hiveGroupUser));
         });
       },
     );
   }
 
-  Widget _buildSlidingUpPanel() {
+  Widget _buildSlidingUpPanel(HiveGroupUser hiveGroupUser) {
     return Column(
       children: [
         Expanded(
@@ -276,9 +277,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         Expanded(
                           child: Center(
                             child: Text(
-                              'Group Name',
+                              '${hiveGroupUser.group!.name}',
                               //overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.left,
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Color(0xFF3475F0),
                                 fontFamily: 'OpenSans',
@@ -294,6 +295,99 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   SizedBox(
                     height: 20.h,
                   ),
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xFFEFEFEF),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(8.5.r))),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<HiveGroup>(
+                            isExpanded: true,
+                            iconSize: 35,
+                            style: TextStyle(
+                              color: Color(0xFFEFEFEF),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                            hint: Text(
+                              bloc.resultsBloc.hiveGroup?.name ??
+                                  'Select Group',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            onChanged: (HiveGroup? value) {
+                              setState(() {
+                                bloc.resultsBloc.hiveGroup = value;
+                              });
+                            },
+                            items: bloc.resultsBloc
+                                .fetchGroupsWtihLeaderRole()
+                                ?.map<DropdownMenuItem<HiveGroup>>(
+                                    (HiveGroup value) {
+                              return DropdownMenuItem<HiveGroup>(
+                                value: value,
+                                child: Text(
+                                  value.name!,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 17.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 19.sp,
+                          fontFamily: "OpenSans",
+                          color: Color(0xFF4F4F4F),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5.w,
+                      ),
+                      Icon(
+                        Icons.thumb_up,
+                        color: Color(0xFF707070),
+                      ),
+                      SizedBox(
+                        width: 5.w,
+                      ),
+                      Text(
+                        '${AppLocalizations.of(context)!.goodText}',
+                        style: TextStyle(
+                          //    fontWeight: FontWeight.w600,
+                          fontSize: 16.sp,
+                          fontFamily: "Rubik",
+                          color: Color(0xFF707070),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30.h,
+                  ),
                   _buildActionCard(),
                   SizedBox(
                     height: 5.h,
@@ -301,6 +395,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   SizedBox(
                     height: 10.h,
                   ),
+                  _buildTrasnformatonsCard(),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  _buiildTeacherFeedBackCard(),
                 ],
               ),
             ),
@@ -338,6 +437,269 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           ),
         ),
       ],
+    );
+  }
+
+  _buiildTeacherFeedBackCard() {
+    return Card(
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            10,
+          ),
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              "Teacher feedback for this person",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 19.sp,
+                fontFamily: "OpenSans",
+                color: Color(0xFF4F4F4F),
+              ),
+            ),
+            Text(
+              'Write in the box below, then click "Save"',
+              style: TextStyle(
+                // fontWeight: FontWeight.w600,
+                fontStyle: FontStyle.italic,
+                fontSize: 14.sp,
+                fontFamily: "OpenSans",
+                color: Color(0xFF797979),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFFFF),
+                border: Border.all(
+                  color: Color(0xFF979797),
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  hintText: "",
+                  hintStyle: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic),
+                ),
+                maxLines: 3,
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 19.0, bottom: 19.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 37.5.h,
+                child: ElevatedButton(
+                  onPressed: () {
+                    //_closeSlidingUpPanelIfOpen();
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40.r),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppColors.unselectedButtonBG),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.save),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildTrasnformatonsCard() {
+    return Card(
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            10,
+          ),
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(AssetsPath.resultsActiveIcon),
+                SizedBox(
+                  width: 5.w,
+                ),
+                Text(
+                  "Transformatons",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 19.sp,
+                    fontFamily: "OpenSans",
+                    color: Color(0xFF4F4F4F),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFFFF),
+                border: Border.all(
+                  color: Color(0xFF979797),
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  hintText:
+                      "The impact story entered by the person is here and is editable by the leader",
+                  hintStyle: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic),
+                ),
+                maxLines: 3,
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            //  if (_isEditMode) _previewFiles(widget.material!),
+            // SizedBox(height: 10.h),
+
+            // // Selected files (Not uploaded)
+            // _previewSelectedFiles(),
+
+            // Add Materials
+            DottedBorder(
+              borderType: BorderType.RRect,
+              radius: Radius.circular(30.r),
+              color: Color(0xFF3475F0),
+              child: Container(
+                width: double.infinity,
+                height: 50.h,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // if ((!_isEditMode && _selectedFiles.length >= 5) ||
+                    //     (_isEditMode &&
+                    //         (_selectedFiles.length +
+                    //                 (widget.material!.localFiles.length)) >=
+                    //             5)) {
+                    //   StarfishSnackbar.showErrorMessage(context,
+                    //       AppLocalizations.of(context)!.maxFilesSelected);
+                    // } else {
+                    //   FilePickerResult? result = await FilePicker.platform
+                    //       .pickFiles(allowMultiple: false);
+
+                    //   if (result != null) {
+                    //     // if single selected file is IMAGE, open image in Cropper
+                    //     if (result.count == 1 &&
+                    //         ['jpg', 'jpeg', 'png'].contains(result.paths.first
+                    //             ?.split("/")
+                    //             .last
+                    //             .split(".")
+                    //             .last)) {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) => ImageCropperScreen(
+                    //             sourceImage: File(result.paths.first!),
+                    //             onDone: (File? _newFile) {
+                    //               if (_newFile == null) {
+                    //                 return;
+                    //               }
+                    //               setState(() {
+                    //                 _selectedFiles.add(_newFile);
+                    //               });
+                    //             },
+                    //           ),
+                    //         ),
+                    //       ).then((value) => {
+                    //             // Handle cropped image here
+                    //           });
+                    //     } else {
+                    //       setState(() {
+                    //         _selectedFiles.addAll(result.paths
+                    //             .map((path) => File(path!))
+                    //             .toList());
+                    //       });
+                    //     }
+                    //   } else {
+                    //     // User canceled the picker
+                    //   }
+                    // }
+                  },
+                  child: Text(
+                    "Add Photos",
+                    style: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 17.sp,
+                      color: Color(0xFF3475F0),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 19.0, bottom: 19.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 37.5.h,
+                child: ElevatedButton(
+                  onPressed: () {
+                    //_closeSlidingUpPanelIfOpen();
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40.r),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppColors.unselectedButtonBG),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.save),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
