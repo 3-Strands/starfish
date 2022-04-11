@@ -7,6 +7,7 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 class ResultsBloc extends Object {
   HiveGroup? hiveGroup;
@@ -14,11 +15,12 @@ class ResultsBloc extends Object {
   HiveDate? hivePreviousDate;
 
   ResultsBloc() {
-    hiveGroup = fetchGroupsWtihLeaderRole()?.first;
-    hiveDate = HiveDate.create(2022, 3,
-        0); // TODO: this will be set by view, default fo current month/year
-
+    hiveDate = DateTimeUtils.toHiveDate(DateTime.now());
     hivePreviousDate = hiveDate?.previousMonth;
+  }
+
+  init() {
+    hiveGroup = fetchGroupsWtihLeaderRole()?.first;
   }
 
   List<HiveGroup>? fetchGroupsWtihLeaderRole() {

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,6 +39,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    bloc.resultsBloc.init();
 
     return FocusDetector(
       onFocusGained: () {},
@@ -145,6 +149,41 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       ),
                     ),
                     SizedBox(height: 20.h),
+                    Container(
+                      height: 52.h,
+                      width: 345.w,
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          _selectMonth(bloc);
+                        },
+                        child: Center(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: Text(
+                              DateTimeUtils.formatHiveDate(
+                                  bloc.resultsBloc.hiveDate!,
+                                  requiredDateFormat: "MMMM yyyy"),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
                     SummaryForAllLearners(),
                     SizedBox(
                       height: 10.h,
@@ -156,13 +195,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                    itemCount: bloc.resultsBloc.hiveGroup!.learners!.length,
-                    itemBuilder: (BuildContext context, index) {
-                      HiveGroupUser _hiveGroupUser = bloc
-                          .resultsBloc.hiveGroup!.learners!
-                          .elementAt(index);
-                      return InkWell(
-                          onTap: _onLearnerSummarySelection,
+                        itemCount: bloc.resultsBloc.hiveGroup!.learners!.length,
+                        itemBuilder: (BuildContext context, index) {
+                          HiveGroupUser _hiveGroupUser = bloc
+                              .resultsBloc.hiveGroup!.learners!
+                              .elementAt(index);
+                          return InkWell(
+                              onTap: _onLearnerSummarySelection,
                               child: LearnerSummary(
                                   hiveGroupUser: _hiveGroupUser));
                         }),
@@ -417,5 +456,29 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         ),
       ),
     );
+  }
+
+  Future<void> _selectMonth(AppBloc bloc) async {
+    // reference for the MonthYearPickerLocalizations is add in app.dart
+    final selected = await showMonthYearPicker(
+      context: context,
+      initialDate: DateTimeUtils.toDateTime(
+          DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
+              requiredDateFormat: "dd-MMM-yyyy"),
+          "dd-MMM-yyyy"),
+      firstDate: DateTime(2011),
+      lastDate: DateTime.now(),
+    );
+    if (selected != null) {
+      HiveDate _hiveDate = HiveDate();
+
+      _hiveDate.year = selected.year;
+      _hiveDate.month = selected.month;
+      _hiveDate.day = 1;
+
+      setState(() {
+        bloc.resultsBloc.hiveDate = _hiveDate;
+      });
+    }
   }
 }
