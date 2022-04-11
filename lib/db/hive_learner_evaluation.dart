@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -71,5 +72,9 @@ class HiveLearnerEvaluation extends HiveObject {
 extension HiveLearnerEvaluationExt on HiveLearnerEvaluation {
   String? get name {
     return EvaluationCategoryProvider().getCategoryById(this.categoryId!)?.name;
+  }
+
+  HiveEvaluationCategory? get category {
+    return EvaluationCategoryProvider().getCategoryById(this.categoryId!);
   }
 }

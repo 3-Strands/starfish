@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LearnerSummary extends StatelessWidget {
@@ -39,10 +39,11 @@ class LearnerSummary extends StatelessWidget {
                 Text(
                   "${hiveGroupUser.name}",
                   style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontFamily: "OpenSans Bold",
-                      fontSize: 19.sp,
-                      fontWeight: FontWeight.bold),
+                    color: Color(0xFF434141),
+                    fontFamily: "OpenSans Bold",
+                    fontSize: 19.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(
                   height: 10.h,
@@ -241,9 +242,9 @@ class LearnerSummary extends StatelessWidget {
                   height: 20.h,
                 ),
                 _buildCategoryAverageWidget(
-                    hiveGroupUser.getLearnerEvaluationForMonth(
-                            bloc.resultsBloc.hiveDate!) ??
-                        []),
+                  hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(
+                      bloc.resultsBloc.hiveDate!),
+                ),
                 SizedBox(height: 10.h),
               ],
             ),
@@ -254,13 +255,16 @@ class LearnerSummary extends StatelessWidget {
   }
 
   Widget _buildCategoryAverageWidget(
-      List<HiveLearnerEvaluation> _learnersEvaluationsList) {
+      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations) {
     List<Widget> _categoryWidgets = [];
-    _learnersEvaluationsList.forEach((HiveLearnerEvaluation learnerEvaluation) {
-      _categoryWidgets.add(
-        _buildCategoryStatics(learnerEvaluation.evaluation!,
-            learnerEvaluation.name!, Color(0xFFFFFFFF)),
-      );
+    _learnersEvaluations.forEach(
+        (HiveEvaluationCategory category, Map<String, int> countByMonth) {
+      _categoryWidgets.add(_buildCategoryStatics(
+          countByMonth["this-month"] ?? 0,
+          category.name!,
+          ((countByMonth["this-month"] ?? 0) -
+              (countByMonth["last-month"] ?? 0)),
+          Color(0xFF4F4F4F)));
     });
     return Row(
       children: _categoryWidgets,
@@ -268,7 +272,7 @@ class LearnerSummary extends StatelessWidget {
   }
 
   Widget _buildCategoryStatics(
-      int count, String categoryName, Color textColor) {
+      int count, String categoryName, int changeInCount, Color textColor) {
     return Expanded(
       child: Container(
         child: Column(
@@ -287,15 +291,19 @@ class LearnerSummary extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 Icon(
-                  Icons.arrow_upward,
-                  color: Color(0xFF6DE26B),
-                )
+                  changeInCount > 0 ? Icons.arrow_upward : Icons.arrow_downward,
+                  color:
+                      changeInCount > 0 ? Color(0xFF6DE26B) : Color(0xFFFF5E4D),
+                ),
               ],
             ),
             Text(
               "$categoryName",
               style: TextStyle(
-                  fontSize: 15.sp, color: textColor, fontFamily: "Rubik"),
+                fontSize: 15.sp,
+                color: textColor,
+                fontFamily: "Rubik",
+              ),
             )
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
@@ -11,6 +12,7 @@ import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
@@ -75,20 +77,53 @@ class HiveGroupUser extends HiveObject {
 
   HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
     this.transformations.firstWhereOrNull((element) {
+      if (element.month == null) {
+        return false;
+      }
       return element.month!.year == hiveDate.year &&
           element.month!.month == hiveDate.month;
     });
   }
 
-  List<HiveLearnerEvaluation>? getLearnerEvaluationForMonth(HiveDate hiveDate) {
-    this.learnerEvaluations.firstWhereOrNull((element) {
+  Map<HiveEvaluationCategory, Map<String, int>>
+      getLearnerEvaluationsByCategoryForMoth(HiveDate hiveDate) {
+    Map<HiveEvaluationCategory, Map<String, int>> _map = Map();
+    group?.evaluationCategoryIds?.forEach((categoryId) {
+      HiveEvaluationCategory? _evaluationCategory =
+          EvaluationCategoryProvider().getCategoryById(categoryId);
+      if (_evaluationCategory != null) {
+        Map<String, int> _countByMonth = Map();
+        _countByMonth["this-month"] =
+            _countCategoryLearnerEvaluationsForMonth(categoryId, hiveDate);
+        _countByMonth["last-month"] = _countCategoryLearnerEvaluationsForMonth(
+            categoryId, hiveDate.previousMonth);
+
+        _map[_evaluationCategory] = _countByMonth;
+      }
+    });
+
+    return _map;
+  }
+
+  int _countCategoryLearnerEvaluationsForMonth(
+      String categoryId, HiveDate hiveDate) {
+    return this
+        .learnerEvaluations
+        .where((element) => element.categoryId == categoryId)
+        .where((element) {
+      if (element.month == null) {
+        return false;
+      }
       return element.month!.year == hiveDate.year &&
           element.month!.month == hiveDate.month;
-    });
+    }).length;
   }
 
   HiveGroupEvaluation? getGroupEvaluationForMonth(HiveDate hiveDate) {
     this.groupEvaluations.firstWhereOrNull((element) {
+      if (element.month == null) {
+        return false;
+      }
       return element.month!.year == hiveDate.year &&
           element.month!.month == hiveDate.month;
     });
@@ -96,6 +131,9 @@ class HiveGroupUser extends HiveObject {
 
   HiveTeacherResponse? getTeacherResponseForMonth(HiveDate hiveDate) {
     this.teacherResponses.firstWhereOrNull((element) {
+      if (element.month == null) {
+        return false;
+      }
       return element.month!.year == hiveDate.year &&
           element.month!.month == hiveDate.month;
     });
