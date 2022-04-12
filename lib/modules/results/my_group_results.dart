@@ -260,9 +260,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   Center(
                     child: Container(
                       decoration: BoxDecoration(
-                          color: Color(0xFFEFEFEF),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(8.5.r))),
+                        color: Color(0xFFEFEFEF),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.5.r),
+                        ),
+                      ),
                       child: DropdownButtonHideUnderline(
                         child: ButtonTheme(
                           alignedDropdown: true,
@@ -361,7 +363,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   SizedBox(
                     height: 10.h,
                   ),
-                  _buiildTeacherFeedBackCard(),
+                  _buildTeacherFeedBackCard(),
+                  SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ),
@@ -391,7 +396,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ),
                   ),
                   backgroundColor: MaterialStateProperty.all<Color>(
-                      AppColors.selectedButtonBG),
+                      AppColors.unselectedButtonBG),
                 ),
                 child: Text(AppLocalizations.of(context)!.close),
               ),
@@ -402,7 +407,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buiildTeacherFeedBackCard() {
+  _buildTeacherFeedBackCard() {
     return Card(
       color: Color(0xFFEFEFEF),
       elevation: 4,
@@ -424,10 +429,14 @@ class _MyGroupResultsState extends State<MyGroupResults> {
               "Teacher feedback for this person",
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 19.sp,
+                fontSize: 17.sp,
                 fontFamily: "OpenSans",
                 color: Color(0xFF4F4F4F),
               ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 5.h,
             ),
             Text(
               'Write in the box below, then click "Save"',
@@ -487,11 +496,51 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 ),
               ),
             ),
+            SizedBox(
+              height: 20.h,
+            ),
+            // ListView.builder(
+            //     shrinkWrap: true,
+            //     physics: NeverScrollableScrollPhysics(),
+            //     itemCount: 3,
+            //     itemBuilder: (context, item) {
+            //       return _buildCategorySlider();
+            //     }),
+            SizedBox(
+              height: 20.h,
+            ),
           ],
         ),
       ),
     );
   }
+
+  // _buildCategorySlider() {
+  //   int _value = 3;
+  //   Row(
+  //     children: [
+  //       Text("Category 1"),
+  //       SizedBox(
+  //         height: 10.h,
+  //       ),
+  //       SfSlider(
+  //         min: 0.0,
+  //         max: 100.0,
+  //         value: _value,
+  //         interval: 20,
+  //         showTicks: true,
+  //         showLabels: true,
+  //         enableTooltip: true,
+  //         minorTicksPerInterval: 1,
+  //         onChanged: (dynamic value) {
+  //           setState(() {
+  //             _value = value;
+  //           });
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   _buildTrasnformatonsCard() {
     return Card(
