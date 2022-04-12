@@ -10,12 +10,19 @@ import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_teacher_response.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/group_evaluation_provider.dart';
+import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -30,6 +37,10 @@ class MyGroupResults extends StatefulWidget {
 
 class _MyGroupResultsState extends State<MyGroupResults> {
   late AppBloc bloc;
+
+  bool _isEditMode = false;
+
+  TextEditingController _teacherFeedbackController = TextEditingController();
 
   @override
   void initState() {
@@ -364,9 +375,16 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           SizedBox(
                             width: 5.w,
                           ),
-                          Icon(
-                            Icons.thumb_up,
-                            color: Color(0xFF707070),
+                          InkWell(
+                            onTap: () {
+                              // TODO:  createUpdateGroupEvaluation
+                              hiveGroupUser.getGroupEvaluationForMonth(
+                                  bloc.resultsBloc.hiveDate!);
+                            },
+                            child: Icon(
+                              Icons.thumb_up,
+                              color: Color(0xFF707070),
+                            ),
                           ),
                           SizedBox(
                             width: 5.w,
@@ -439,7 +457,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     });
   }
 
-  _buiildTeacherFeedBackCard() {
+  Widget _buiildTeacherFeedBackCard() {
     return Card(
       color: Color(0xFFEFEFEF),
       elevation: 4,
@@ -488,12 +506,14 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 ),
               ),
               child: TextFormField(
+                controller: _teacherFeedbackController,
                 decoration: InputDecoration(
                   hintText: "",
                   hintStyle: TextStyle(
-                      fontFamily: "OpenSans",
-                      fontSize: 16.sp,
-                      fontStyle: FontStyle.italic),
+                    fontFamily: "OpenSans",
+                    fontSize: 16.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
                 maxLines: 3,
               ),
@@ -509,7 +529,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 child: ElevatedButton(
                   onPressed: () {
                     //_closeSlidingUpPanelIfOpen();
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
+                    _saveTeacherFeedback();
                   },
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -530,7 +551,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buildTrasnformatonsCard() {
+  Widget _buildTrasnformatonsCard() {
     return Card(
       color: Color(0xFFEFEFEF),
       elevation: 4,
@@ -702,7 +723,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buildActionCard() {
+  Widget _buildActionCard() {
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
       color: Color(0xFFEFEFEF),
@@ -843,5 +864,43 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     }
   }
 
-  void setModalState(Null Function() param0) {}
+  void _saveGroupEvaluation(GroupEvaluation_Evaluation evaluation) {
+    HiveGroupEvaluation _hiveGroupEvaluation;
+
+    if (_isEditMode) {
+      // TODO:
+
+      _hiveGroupEvaluation = HiveGroupEvaluation();
+    } else {
+      _hiveGroupEvaluation = HiveGroupEvaluation();
+      _hiveGroupEvaluation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _hiveGroupEvaluation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
+      _hiveGroupEvaluation.month = bloc.resultsBloc.hiveDate;
+    }
+    _hiveGroupEvaluation.evaluation = evaluation.value;
+
+    GroupEvaluationProvider().createUpdateGroupEvaluation(_hiveGroupEvaluation);
+  }
+
+  void _saveTeacherFeedback() {
+    HiveTeacherResponse _teacherResponse;
+    if (_isEditMode) {
+      // TODO:
+
+      _teacherResponse = HiveTeacherResponse();
+    } else {
+      _teacherResponse = HiveTeacherResponse();
+      _teacherResponse.id = UuidGenerator.uuid();
+      _teacherResponse.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
+      _teacherResponse.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _teacherResponse.teacherId = CurrentUserProvider().getUserSync().id;
+      _teacherResponse.month = bloc.resultsBloc.hiveDate;
+    }
+
+    _teacherResponse.response = _teacherFeedbackController.text;
+
+    TeacherResponseProvider()
+        .createUpdateTeacherResponse(_teacherResponse)
+        .then((value) {});
+  }
 }

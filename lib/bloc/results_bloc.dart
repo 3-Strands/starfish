@@ -2,6 +2,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
@@ -78,6 +79,19 @@ class ResultsBloc extends Object {
     });
 
     return count;
+  }
+
+  // TODO: may be we nned to change this and user value notifier/Stream to notify the UI for changes
+  GroupEvaluation_Evaluation getGroupEvaluation() {
+    HiveGroupEvaluation? _hiveGroupEvaluation =
+        hiveGroupUser!.getGroupEvaluationForMonth(hiveDate!);
+
+    if (_hiveGroupEvaluation == null) {
+      return GroupEvaluation_Evaluation.EVAL_UNSPECIFIED;
+    }
+
+    return GroupEvaluation_Evaluation.valueOf(
+        _hiveGroupEvaluation.evaluation!)!;
   }
 
   void dispose() {}
