@@ -2,18 +2,20 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -38,6 +40,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
     bloc.resultsBloc.init();
+
     return FocusDetector(
       onFocusGained: () {},
       onFocusLost: () {},
@@ -146,6 +149,41 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       ),
                     ),
                     SizedBox(height: 20.h),
+                    Container(
+                      height: 52.h,
+                      width: 345.w,
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          _selectMonth(bloc);
+                        },
+                        child: Center(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: Text(
+                              DateTimeUtils.formatHiveDate(
+                                  bloc.resultsBloc.hiveDate!,
+                                  requiredDateFormat: "MMMM yyyy"),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
                     SummaryForAllLearners(),
                     SizedBox(
                       height: 10.h,
@@ -209,202 +247,196 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return widgetsBasic.StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Container(
-              height: MediaQuery.of(context).size.height * 0.70,
-              child: _buildSlidingUpPanel(hiveGroupUser));
-        });
+        return _buildSlidingUpPanel(hiveGroupUser);
       },
     );
   }
 
   Widget _buildSlidingUpPanel(HiveGroupUser hiveGroupUser) {
-    return Column(
-      children: [
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    //height: 22.h,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              '${hiveGroupUser.group!.name}',
-                              //overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF3475F0),
-                                fontFamily: 'OpenSans',
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFEFEFEF),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.5.r),
-                        ),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButton<HiveGroup>(
-                            isExpanded: true,
-                            iconSize: 35,
-                            style: TextStyle(
-                              color: Color(0xFFEFEFEF),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            hint: Text(
-                              bloc.resultsBloc.hiveGroup?.name ??
-                                  'Select Group',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            onChanged: (HiveGroup? value) {
-                              setState(() {
-                                bloc.resultsBloc.hiveGroup = value;
-                              });
-                            },
-                            items: bloc.resultsBloc
-                                .fetchGroupsWtihLeaderRole()
-                                ?.map<DropdownMenuItem<HiveGroup>>(
-                                    (HiveGroup value) {
-                              return DropdownMenuItem<HiveGroup>(
-                                value: value,
+    return widgetsBasic.StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+      return Container(
+        height: MediaQuery.of(context).size.height * 0.70,
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        //height: 22.h,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Expanded(
+                              child: Center(
                                 child: Text(
-                                  value.name!,
+                                  '${hiveGroupUser.group!.name}',
+                                  //overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 17.sp,
+                                    color: Color(0xFF3475F0),
                                     fontFamily: 'OpenSans',
+                                    fontSize: 19.sp,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              );
-                            }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xFFEFEFEF),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.5.r))),
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton<HiveGroupUser>(
+                                isExpanded: true,
+                                iconSize: 35,
+                                style: TextStyle(
+                                  color: Color(0xFFEFEFEF),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                hint: Text(
+                                  "Learner: ${bloc.resultsBloc.hiveGroupUser?.name}",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 19.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                onChanged: (HiveGroupUser? value) {
+                                  setModalState(() {
+                                    bloc.resultsBloc.hiveGroupUser = value;
+                                  });
+                                },
+                                items: bloc.resultsBloc.hiveGroup!.learners
+                                    ?.map<DropdownMenuItem<HiveGroupUser>>(
+                                        (HiveGroupUser value) {
+                                  return DropdownMenuItem<HiveGroupUser>(
+                                    value: value,
+                                    child: Text(
+                                      value.name,
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 17.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 19.sp,
-                          fontFamily: "OpenSans",
-                          color: Color(0xFF4F4F4F),
-                        ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 19.sp,
+                              fontFamily: "OpenSans",
+                              color: Color(0xFF4F4F4F),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Icon(
+                            Icons.thumb_up,
+                            color: Color(0xFF707070),
+                          ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Text(
+                            '${AppLocalizations.of(context)!.goodText}',
+                            style: TextStyle(
+                              //    fontWeight: FontWeight.w600,
+                              fontSize: 16.sp,
+                              fontFamily: "Rubik",
+                              color: Color(0xFF707070),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(
-                        width: 5.w,
+                        height: 30.h,
                       ),
-                      Icon(
-                        Icons.thumb_up,
-                        color: Color(0xFF707070),
+                      _buildActionCard(),
+                      SizedBox(
+                        height: 5.h,
                       ),
                       SizedBox(
-                        width: 5.w,
+                        height: 10.h,
                       ),
-                      Text(
-                        '${AppLocalizations.of(context)!.goodText}',
-                        style: TextStyle(
-                          //    fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
-                          fontFamily: "Rubik",
-                          color: Color(0xFF707070),
-                        ),
+                      _buildTrasnformatonsCard(),
+                      SizedBox(
+                        height: 10.h,
                       ),
+                      _buildTeacherFeedBackCard(),
                     ],
                   ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  _buildActionCard(),
-                  SizedBox(
-                    height: 5.h,
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _buildTrasnformatonsCard(),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _buildTeacherFeedBackCard(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Container(
-          height: 75.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Color(0xFFEFEFEF),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-            child: Container(
-              height: 37.5.h,
-              color: Color(0xFFEFEFEF),
-              child: ElevatedButton(
-                onPressed: () {
-                  //_closeSlidingUpPanelIfOpen();
-                  Navigator.pop(context);
-                },
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40.r),
-                    ),
-                  ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      AppColors.unselectedButtonBG),
                 ),
-                child: Text(AppLocalizations.of(context)!.close),
               ),
             ),
-          ),
+            Container(
+              height: 75.0,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color(0xFFEFEFEF),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                child: Container(
+                  height: 37.5.h,
+                  color: Color(0xFFEFEFEF),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      //_closeSlidingUpPanelIfOpen();
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40.r),
+                        ),
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.unselectedButtonBG),
+                    ),
+                    child: Text(AppLocalizations.of(context)!.close),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
+      );
+    });
   }
 
   _buildTeacherFeedBackCard() {
@@ -830,4 +862,30 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       ),
     );
   }
+
+  Future<void> _selectMonth(AppBloc bloc) async {
+    // reference for the MonthYearPickerLocalizations is add in app.dart
+    final selected = await showMonthYearPicker(
+      context: context,
+      initialDate: DateTimeUtils.toDateTime(
+          DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
+              requiredDateFormat: "dd-MMM-yyyy"),
+          "dd-MMM-yyyy"),
+      firstDate: DateTime(2011),
+      lastDate: DateTime.now(),
+    );
+    if (selected != null) {
+      HiveDate _hiveDate = HiveDate();
+
+      _hiveDate.year = selected.year;
+      _hiveDate.month = selected.month;
+      _hiveDate.day = 1;
+
+      setState(() {
+        bloc.resultsBloc.hiveDate = _hiveDate;
+      });
+    }
+  }
+
+  void setModalState(Null Function() param0) {}
 }
