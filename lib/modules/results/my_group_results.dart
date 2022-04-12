@@ -27,6 +27,8 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class MyGroupResults extends StatefulWidget {
   MyGroupResults({Key? key}) : super(key: key);
@@ -39,6 +41,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   late AppBloc bloc;
 
   bool _isEditMode = false;
+  double _value = 0.0;
 
   TextEditingController _teacherFeedbackController = TextEditingController();
 
@@ -552,13 +555,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             SizedBox(
               height: 20.h,
             ),
-            // ListView.builder(
-            //     shrinkWrap: true,
-            //     physics: NeverScrollableScrollPhysics(),
-            //     itemCount: 3,
-            //     itemBuilder: (context, item) {
-            //       return _buildCategorySlider();
-            //     }),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: 3,
+                itemBuilder: (context, item) {
+                  return _buildCategorySlider();
+                }),
             SizedBox(
               height: 20.h,
             ),
@@ -568,32 +571,92 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  // _buildCategorySlider() {
-  //   int _value = 3;
-  //   Row(
-  //     children: [
-  //       Text("Category 1"),
-  //       SizedBox(
-  //         height: 10.h,
-  //       ),
-  //       SfSlider(
-  //         min: 0.0,
-  //         max: 100.0,
-  //         value: _value,
-  //         interval: 20,
-  //         showTicks: true,
-  //         showLabels: true,
-  //         enableTooltip: true,
-  //         minorTicksPerInterval: 1,
-  //         onChanged: (dynamic value) {
-  //           setState(() {
-  //             _value = value;
-  //           });
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildCategorySlider() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Category 1",
+          style: TextStyle(
+            fontFamily: "OpenSans",
+            fontSize: 19.sp,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF434141),
+          ),
+          textAlign: TextAlign.left,
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        StatefulBuilder(builder: (context, setState) {
+          return Container(
+            child: SfSliderTheme(
+              data: SfSliderThemeData(
+                thumbColor: Color(0xFFE5625C),
+                activeTrackColor: Color(0xFFFCDFBA),
+                inactiveTrackColor: Color(0xFFFCDFBA),
+              ),
+              child: SfSlider(
+                //  thumbIcon: Icon(Icons.mail),
+                shouldAlwaysShowTooltip: true,
+                showDividers: false,
+                stepSize: 1,
+                min: 1.0,
+                max: 5.0,
+                value: _value,
+                interval: 1,
+                showTicks: false,
+                showLabels: false,
+                enableTooltip: true,
+                tooltipTextFormatterCallback: (actualValue, formattedText) {
+                  switch (actualValue) {
+                    case 1:
+                      return "Poor";
+
+                    case 2:
+                      return "Not so good";
+
+                    case 3:
+                      return "Acceptable";
+
+                    case 4:
+                      return "Good";
+
+                    case 5:
+                      return "Great";
+
+                    default:
+                      return "";
+                  }
+                },
+                minorTicksPerInterval: 1,
+                onChanged: (dynamic value) {
+                  setState(() {
+                    _value = value;
+                  });
+                },
+              ),
+            ),
+          );
+        }),
+        SizedBox(
+          height: 5.h,
+        ),
+        Text(
+          "This is dynamic text which explains the meaning of each ",
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            fontFamily: "OpenSans",
+            fontSize: 14.sp,
+            color: Color(0xFF797979),
+          ),
+        ),
+        SizedBox(
+          height: 5.h,
+        ),
+      ],
+    );
+  }
 
   Widget _buildTrasnformatonsCard() {
     return Card(
