@@ -174,8 +174,20 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         ),
                       ),
                       child: InkWell(
-                        onTap: () {
-                          _selectMonth(bloc);
+                        onTap: () async {
+                          DateTime? selected = await _selectMonth(bloc);
+
+                          if (selected != null) {
+                            HiveDate _hiveDate = HiveDate();
+
+                            _hiveDate.year = selected.year;
+                            _hiveDate.month = selected.month;
+                            _hiveDate.day = 1;
+
+                            setState(() {
+                              bloc.resultsBloc.hiveDate = _hiveDate;
+                            });
+                          }
                         },
                         child: Center(
                           child: ButtonTheme(
@@ -320,8 +332,26 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           ),
                         ),
                         child: InkWell(
-                          onTap: () {
-                            _selectMonth(bloc);
+                          onTap: () async {
+                            final selected = await _selectMonth(bloc);
+                            if (selected != null) {
+                              HiveDate _hiveDate = HiveDate();
+
+                              _hiveDate.year = selected.year;
+                              _hiveDate.month = selected.month;
+                              _hiveDate.day = 1;
+
+                              setModalState(() {
+                                bloc.resultsBloc.hiveDate = _hiveDate;
+                              });
+
+                              // update parent view also
+                              setState(() {
+                                bloc.resultsBloc.hiveDate = _hiveDate;
+                              });
+
+                              _updateLearnerSummary();
+                            }
                           },
                           child: Center(
                             child: ButtonTheme(
@@ -1015,9 +1045,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     }
   }
 
-  Future<void> _selectMonth(AppBloc bloc) async {
+  Future<DateTime?> _selectMonth(AppBloc bloc) async {
     // reference for the MonthYearPickerLocalizations is add in app.dart
-    final selected = await showMonthYearPicker(
+    return await showMonthYearPicker(
       context: context,
       initialDate: DateTimeUtils.toDateTime(
           DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
@@ -1026,19 +1056,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       firstDate: DateTime(2011),
       lastDate: DateTime.now(),
     );
-    if (selected != null) {
-      HiveDate _hiveDate = HiveDate();
-
-      _hiveDate.year = selected.year;
-      _hiveDate.month = selected.month;
-      _hiveDate.day = 1;
-
-      setState(() {
-        bloc.resultsBloc.hiveDate = _hiveDate;
-      });
-
-      _updateLearnerSummary();
-    }
   }
 
   _updateLearnerSummary() {
