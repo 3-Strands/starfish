@@ -5,6 +5,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 class LearnerSummary extends StatelessWidget {
   HiveGroupUser hiveGroupUser;
@@ -152,7 +153,7 @@ class LearnerSummary extends StatelessWidget {
                     Expanded(
                       child: Container(
                         child: Text(
-                          "${hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)}",
+                          "${hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)?.impactStory ?? ''}",
                           style: TextStyle(
                             fontFamily: "Open Sans Italic",
                             fontSize: 17.sp,

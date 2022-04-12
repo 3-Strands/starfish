@@ -13,9 +13,11 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
+import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
+import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
@@ -44,6 +46,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   double _value = 0.0;
 
   TextEditingController _teacherFeedbackController = TextEditingController();
+  TextEditingController _transformationController = TextEditingController();
 
   @override
   void initState() {
@@ -282,7 +285,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     return widgetsBasic.StatefulBuilder(
         builder: (BuildContext context, StateSetter setModalState) {
       return Container(
-        height: MediaQuery.of(context).size.height * 0.70,
+        height: MediaQuery.of(context).size.height * 0.80,
         child: Column(
           children: [
             Expanded(
@@ -405,9 +408,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 onChanged: (HiveGroupUser? value) {
                                   setModalState(() {
                                     bloc.resultsBloc.hiveGroupUser = value;
-
-                                    _updateLearnerSummary();
                                   });
+
+                                  /*setState(() {
+                                    bloc.resultsBloc.hiveGroupUser = value;
+                                  });*/
+
+                                  _updateLearnerSummary();
                                 },
                                 items: bloc.resultsBloc.hiveGroup!.learners
                                     ?.map<DropdownMenuItem<HiveGroupUser>>(
@@ -754,6 +761,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 ),
               ),
               child: TextFormField(
+                controller: _transformationController,
                 decoration: InputDecoration(
                   hintText:
                       "The impact story entered by the person is here and is editable by the leader",
@@ -860,7 +868,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 child: ElevatedButton(
                   onPressed: () {
                     //_closeSlidingUpPanelIfOpen();
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
+                    if (_transformationController.text.length > 0) {
+                      _saveTransformation();
+                    }
                   },
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -868,8 +879,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         borderRadius: BorderRadius.circular(40.r),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        AppColors.unselectedButtonBG),
+                    backgroundColor: _transformationController.text.length > 0
+                        ? MaterialStateProperty.all<Color>(
+                            AppColors.selectedButtonBG)
+                        : MaterialStateProperty.all<Color>(
+                            AppColors.unselectedButtonBG),
                   ),
                   child: Text(AppLocalizations.of(context)!.save),
                 ),
@@ -1063,6 +1077,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)
             ?.response ??
         '';
+
+    _transformationController.text = bloc.resultsBloc.hiveGroupUser
+            ?.getTransformationForMonth(bloc.resultsBloc.hiveDate!)
+            ?.impactStory ??
+        '';
   }
 
   void _saveGroupEvaluation(GroupEvaluation_Evaluation evaluation) {
@@ -1094,6 +1113,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       _teacherResponse.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
       _teacherResponse.teacherId = CurrentUserProvider().getUserSync().id;
       _teacherResponse.month = bloc.resultsBloc.hiveDate;
+      _teacherResponse.isNew = true;
+    } else {
+      _teacherResponse.isUpdated = true;
     }
 
     _teacherResponse.response = _teacherFeedbackController.text;
@@ -1102,8 +1124,37 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         .createUpdateTeacherResponse(_teacherResponse)
         .then((value) {
       debugPrint("Feedback saved.");
+      setState(() {}); // refresh ParentView
     }).onError((error, stackTrace) {
-      debugPrint("Feedback saved.");
+      debugPrint("Failed to save Feedback.");
+    });
+  }
+
+  void _saveTransformation() {
+    HiveTransformation? _transformation = bloc.resultsBloc.hiveGroupUser
+        ?.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+
+    print(_transformation.toString());
+
+    if (_transformation == null) {
+      _transformation = HiveTransformation();
+      _transformation.id = UuidGenerator.uuid();
+      _transformation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
+      _transformation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _transformation.month = bloc.resultsBloc.hiveDate;
+      _transformation.isNew = true;
+    } else {
+      _transformation.isUpdated = true;
+    }
+    _transformation.impactStory = _transformationController.text;
+
+    TransformationProvider()
+        .createUpdateTransformation(_transformation)
+        .then((value) {
+      debugPrint("Transformation saved.");
+      setState(() {}); // refresh ParentView
+    }).onError((error, stackTrace) {
+      debugPrint("Failed to save Transformation");
     });
   }
 }
