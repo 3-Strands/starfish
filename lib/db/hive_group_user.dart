@@ -76,7 +76,7 @@ class HiveGroupUser extends HiveObject {
   }
 
   HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
-    this.transformations.firstWhereOrNull((element) {
+    return this.transformations.firstWhereOrNull((element) {
       if (element.month == null) {
         return false;
       }
@@ -120,7 +120,7 @@ class HiveGroupUser extends HiveObject {
   }
 
   HiveGroupEvaluation? getGroupEvaluationForMonth(HiveDate hiveDate) {
-    this.groupEvaluations.firstWhereOrNull((element) {
+    return this.groupEvaluations.firstWhereOrNull((element) {
       if (element.month == null) {
         return false;
       }
@@ -130,7 +130,7 @@ class HiveGroupUser extends HiveObject {
   }
 
   HiveTeacherResponse? getTeacherResponseForMonth(HiveDate hiveDate) {
-    this.teacherResponses.firstWhereOrNull((element) {
+    return this.teacherResponses.firstWhereOrNull((element) {
       if (element.month == null) {
         return false;
       }

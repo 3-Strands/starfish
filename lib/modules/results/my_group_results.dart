@@ -308,6 +308,42 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       SizedBox(
                         height: 20.h,
                       ),
+                      SizedBox(height: 20.h),
+                      Container(
+                        height: 52.h,
+                        width: 345.w,
+                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            _selectMonth(bloc);
+                          },
+                          child: Center(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: Text(
+                                DateTimeUtils.formatHiveDate(
+                                    bloc.resultsBloc.hiveDate!,
+                                    requiredDateFormat: "MMMM yyyy"),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
@@ -339,6 +375,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 onChanged: (HiveGroupUser? value) {
                                   setModalState(() {
                                     bloc.resultsBloc.hiveGroupUser = value;
+
+                                    _updateLearnerSummary();
                                   });
                                 },
                                 items: bloc.resultsBloc.hiveGroup!.learners
@@ -515,7 +553,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   onPressed: () {
                     //_closeSlidingUpPanelIfOpen();
                     //Navigator.pop(context);
-                    _saveTeacherFeedback();
+                    if (_teacherFeedbackController.text.length > 0) {
+                      _saveTeacherFeedback();
+                    }
                   },
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -523,8 +563,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         borderRadius: BorderRadius.circular(40.r),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        AppColors.unselectedButtonBG),
+                    backgroundColor: _teacherFeedbackController.text.length > 0
+                        ? MaterialStateProperty.all<Color>(
+                            AppColors.selectedButtonBG)
+                        : MaterialStateProperty.all<Color>(
+                            AppColors.unselectedButtonBG),
                   ),
                   child: Text(AppLocalizations.of(context)!.save),
                 ),
@@ -993,7 +1036,16 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       setState(() {
         bloc.resultsBloc.hiveDate = _hiveDate;
       });
+
+      _updateLearnerSummary();
     }
+  }
+
+  _updateLearnerSummary() {
+    _teacherFeedbackController.text = bloc.resultsBloc.hiveGroupUser
+            ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)
+            ?.response ??
+        '';
   }
 
   void _saveGroupEvaluation(GroupEvaluation_Evaluation evaluation) {
@@ -1015,12 +1067,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   }
 
   void _saveTeacherFeedback() {
-    HiveTeacherResponse _teacherResponse;
-    if (_isEditMode) {
-      // TODO:
+    HiveTeacherResponse? _teacherResponse = bloc.resultsBloc.hiveGroupUser
+        ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
 
-      _teacherResponse = HiveTeacherResponse();
-    } else {
+    if (_teacherResponse == null) {
       _teacherResponse = HiveTeacherResponse();
       _teacherResponse.id = UuidGenerator.uuid();
       _teacherResponse.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
@@ -1033,6 +1083,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
 
     TeacherResponseProvider()
         .createUpdateTeacherResponse(_teacherResponse)
-        .then((value) {});
+        .then((value) {
+      debugPrint("Feedback saved.");
+    }).onError((error, stackTrace) {
+      debugPrint("Feedback saved.");
+    });
   }
 }

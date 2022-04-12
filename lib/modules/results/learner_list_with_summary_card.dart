@@ -224,7 +224,7 @@ class LearnerSummary extends StatelessWidget {
                     Expanded(
                       child: Container(
                         child: Text(
-                          "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)}",
+                          "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response ?? ''}",
                           style: TextStyle(
                             fontFamily: "Open Sans Italic",
                             fontSize: 17.sp,
