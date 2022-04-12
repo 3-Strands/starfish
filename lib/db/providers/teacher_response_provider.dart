@@ -17,4 +17,20 @@ class TeacherResponseProvider {
             element.learnerId! == userId && element.groupId! == groupId)
         .toList();
   }
+
+  Future<void> createUpdateTeacherResponse(
+      HiveTeacherResponse _teacherResponse) async {
+    int _currentIndex = -1;
+    _teacherResponseBox.values.toList().asMap().forEach((key, feedback) {
+      if (feedback.id == _teacherResponse.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _teacherResponseBox.putAt(_currentIndex, _teacherResponse);
+    } else {
+      _teacherResponseBox.add(_teacherResponse);
+    }
+  }
 }
