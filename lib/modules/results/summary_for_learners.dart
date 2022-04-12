@@ -5,6 +5,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
   const SummaryForAllLearners({Key? key}) : super(key: key);
@@ -131,7 +132,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup?.learnersEvaluationGood} ${AppLocalizations.of(context)!.goodText}",
+                  "${bloc.resultsBloc.getLearnersEvaluationCountByType(GroupEvaluation_Evaluation.GOOD)} ${AppLocalizations.of(context)!.goodText}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik Medium",
@@ -150,7 +151,7 @@ class SummaryForAllLearners extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Flexible(
                   child: Text(
-                    "${bloc.resultsBloc.hiveGroup?.learnersEvaluationNotGood} ${AppLocalizations.of(context)!.notSoGoodText}",
+                    "${bloc.resultsBloc.getLearnersEvaluationCountByType(GroupEvaluation_Evaluation.BAD)} ${AppLocalizations.of(context)!.notSoGoodText}",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Rubik Medium",

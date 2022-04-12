@@ -18,6 +18,13 @@ class GroupEvaluationProvider {
         .toList();
   }
 
+  // return all the 'GroupEvaluation' for a given groupId
+  List<HiveGroupEvaluation> getGroupEvaluations(String groupId) {
+    return _groupEvaluationBox.values
+        .where((element) => element.groupId! == groupId)
+        .toList();
+  }
+
   Future<void> createUpdateGroupEvaluation(
       HiveGroupEvaluation _groupEvaluation) async {
     int _currentIndex = -1;

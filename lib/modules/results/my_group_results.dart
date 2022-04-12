@@ -378,29 +378,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           SizedBox(
                             width: 5.w,
                           ),
-                          InkWell(
-                            onTap: () {
-                              // TODO:  createUpdateGroupEvaluation
-                              hiveGroupUser.getGroupEvaluationForMonth(
-                                  bloc.resultsBloc.hiveDate!);
-                            },
-                            child: Icon(
-                              Icons.thumb_up,
-                              color: Color(0xFF707070),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 5.w,
-                          ),
-                          Text(
-                            '${AppLocalizations.of(context)!.goodText}',
-                            style: TextStyle(
-                              //    fontWeight: FontWeight.w600,
-                              fontSize: 16.sp,
-                              fontFamily: "Rubik",
-                              color: Color(0xFF707070),
-                            ),
-                          ),
+                          _buildGroupEvaluationWidget(),
                         ],
                       ),
                       SizedBox(
@@ -945,6 +923,53 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         ),
       ),
     );
+  }
+
+  Widget _buildGroupEvaluationWidget() {
+    if (bloc.resultsBloc.getGroupEvaluation() ==
+        GroupEvaluation_Evaluation.GOOD) {
+      return Row(children: [
+        Icon(
+          Icons.thumb_up,
+          color: Color(0xFF707070),
+        ),
+        SizedBox(
+          width: 5.w,
+        ),
+        Text(
+          '${AppLocalizations.of(context)!.goodText}',
+          style: TextStyle(
+            //    fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
+            fontFamily: "Rubik",
+            color: Color(0xFF707070),
+          ),
+        ),
+      ]);
+    } else if (bloc.resultsBloc.getGroupEvaluation() ==
+        GroupEvaluation_Evaluation.BAD) {
+      return Row(children: [
+        Icon(
+          Icons.thumb_down,
+          color: Color(0xFF707070),
+        ),
+        SizedBox(
+          width: 5.w,
+        ),
+        Text(
+          '${AppLocalizations.of(context)!.notSoGoodText}',
+          style: TextStyle(
+            //    fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
+            fontFamily: "Rubik",
+            color: Color(0xFF707070),
+          ),
+        ),
+      ]);
+    } else {
+      //if (bloc.resultsBloc.getGroupEvaluation() == GroupEvaluation_Evaluation.EVAL_UNSPECIFIED) {
+      return Container();
+    }
   }
 
   Future<void> _selectMonth(AppBloc bloc) async {
