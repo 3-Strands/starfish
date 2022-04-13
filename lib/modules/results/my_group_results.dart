@@ -22,6 +22,7 @@ import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
+import 'package:starfish/widgets/shapes/slider_thumb.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -44,7 +45,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   late AppBloc bloc;
 
   bool _isEditMode = false;
-  double _value = 0.0;
+  double _value = 2.0;
 
   TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
@@ -844,23 +845,34 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           textAlign: TextAlign.left,
         ),
         SizedBox(
-          height: 50.h,
+          height: 10.h,
         ),
         StatefulBuilder(builder: (context, setState) {
           return Container(
-            child: Slider(
-              activeColor: Color(0xFFFCDFBA),
-              inactiveColor: Color(0xFFFCDFBA),
-              thumbColor: Color(0xFFE5625C),
-              max: 5.0,
-              divisions: 4,
-              value: _value,
-              label: sliderLabel(_value.toInt()),
-              onChanged: (double value) {
-                setState(() {
-                  _value = value;
-                });
-              },
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                thumbShape: SliderThumb(),
+                valueIndicatorColor: Colors.transparent,
+                valueIndicatorTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                showValueIndicator: ShowValueIndicator.never,
+              ),
+              child: Slider(
+                activeColor: Color(0xFFFCDFBA),
+                inactiveColor: Color(0xFFFCDFBA),
+                thumbColor: Color(0xFFE5625C),
+                max: 5.0,
+                divisions: 4,
+                value: _value,
+                label: sliderLabel(_value.toInt()),
+                onChanged: (double value) {
+                  setState(() {
+                    _value = value;
+                  });
+                },
+              ),
             ),
           );
         }),
