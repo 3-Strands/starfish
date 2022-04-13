@@ -71,7 +71,6 @@ dependencies:
   jiffy: ^5.0.0
   sentry_flutter: ^6.4.0
   connectivity_plus: ^2.2.0
-  syncfusion_flutter_sliders: ^20.1.47
   syncfusion_flutter_core: ^20.1.47
 
 
