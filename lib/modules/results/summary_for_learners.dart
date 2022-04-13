@@ -103,7 +103,9 @@ class SummaryForAllLearners extends StatelessWidget {
               ),
             ],
           ),
-          Padding(
+
+          // Uncomment once leaner is allowed to update 'GroupEvaluation' 
+          /*Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(
               color: Color(0xFF5D5D5D),
@@ -162,7 +164,7 @@ class SummaryForAllLearners extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          ),*/
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(

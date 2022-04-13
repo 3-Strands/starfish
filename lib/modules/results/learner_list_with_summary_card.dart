@@ -167,7 +167,7 @@ class LearnerSummary extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(
+                /*SizedBox(
                   height: 15.h,
                 ),
                 Row(
@@ -208,7 +208,7 @@ class LearnerSummary extends StatelessWidget {
                       ),
                     )
                   ],
-                ),
+                ),*/
                 SizedBox(
                   height: 15.h,
                 ),

@@ -438,7 +438,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      /*SizedBox(
                         height: 20.h,
                       ),
                       Row(
@@ -457,7 +457,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           ),
                           _buildGroupEvaluationWidget(),
                         ],
-                      ),
+                      ),*/
                       SizedBox(
                         height: 30.h,
                       ),
