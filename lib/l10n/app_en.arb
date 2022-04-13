@@ -379,9 +379,11 @@
   "actuals" : "Actuals",
   "addSignOfTransformation": "Add Sign Of Transformation",
   "transformation":"Transformation",
-  "feedback" : "Feedback"
+  "feedback" : "Feedback",
 
 
-
+  "cancelButtonLabel": "CANCEL",
+  "okButtonLabel": "OK",
+  "helpText": "SELECT MONTH/YEAR"
 
 }

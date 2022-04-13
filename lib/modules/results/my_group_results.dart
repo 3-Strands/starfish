@@ -4,7 +4,6 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:month_year_picker/month_year_picker.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -32,8 +31,7 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
-import 'package:syncfusion_flutter_core/theme.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 
 class MyGroupResults extends StatefulWidget {
   MyGroupResults({Key? key}) : super(key: key);
@@ -850,58 +848,19 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         ),
         StatefulBuilder(builder: (context, setState) {
           return Container(
-            child: SfSliderTheme(
-              data: SfSliderThemeData(
-                thumbColor: Color(0xFFE5625C),
-                activeTrackColor: Color(0xFFFCDFBA),
-                inactiveTrackColor: Color(0xFFFCDFBA),
-                tooltipTextStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontFamily: "OpenSans",
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              child: SfSlider(
-                shouldAlwaysShowTooltip: true,
-                showDividers: false,
-                //   tooltipShape: SfPaddleTooltipShape(),
-                stepSize: 1,
-                min: 1.0,
-                max: 5.0,
-                value: _value,
-                interval: 1,
-                showTicks: false,
-                showLabels: false,
-                enableTooltip: false,
-                tooltipTextFormatterCallback: (actualValue, formattedText) {
-                  switch (actualValue) {
-                    case 1:
-                      return "Poor";
-
-                    case 2:
-                      return "Not so good";
-
-                    case 3:
-                      return "Acceptable";
-
-                    case 4:
-                      return "Good";
-
-                    case 5:
-                      return "Great";
-
-                    default:
-                      return "";
-                  }
-                },
-                minorTicksPerInterval: 1,
-                onChanged: (dynamic value) {
-                  setState(() {
-                    _value = value;
-                  });
-                },
-              ),
+            child: Slider(
+              activeColor: Color(0xFFFCDFBA),
+              inactiveColor: Color(0xFFFCDFBA),
+              thumbColor: Color(0xFFE5625C),
+              max: 5.0,
+              divisions: 4,
+              value: _value,
+              label: sliderLabel(_value.toInt()),
+              onChanged: (double value) {
+                setState(() {
+                  _value = value;
+                });
+              },
             ),
           );
         }),
@@ -1379,6 +1338,22 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       firstDate: DateTime(2011),
       lastDate: DateTime.now(),
     );
+  }
+
+  String sliderLabel(int value) {
+    switch (value) {
+      case 0:
+        return "Poor";
+      case 1:
+        return "Not so good";
+      case 2:
+        return "Acceptable";
+      case 3:
+        return "Good";
+      case 4:
+      default:
+        return "Great";
+    }
   }
 
   void _updateLearnerSummary() {

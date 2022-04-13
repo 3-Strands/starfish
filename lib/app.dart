@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:month_year_picker/month_year_picker.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
@@ -73,7 +72,6 @@ class _StarfishState extends State<Starfish> {
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
-            MonthYearPickerLocalizations.delegate,
           ],
           supportedLocales: L10n.all,
           navigatorKey: NavigationService.navigatorKey, // set property
