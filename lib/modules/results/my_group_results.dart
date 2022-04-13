@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -472,6 +474,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         height: 10.h,
                       ),
                       _buildTeacherFeedBackCard(),
+                      SizedBox(
+                        height: 10.h,
+                      ),
                     ],
                   ),
                 ),
@@ -629,9 +634,200 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             SizedBox(
               height: 20.h,
             ),
+            _buildCurrentEvaluationWidget(
+                bloc.resultsBloc.getGroupLearnerEvaluationsByCategory()),
+            SizedBox(
+              height: 20.h,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "History",
+                style: TextStyle(
+                  fontFeatures: [FontFeature.subscripts()],
+                  color: Color(0xFF434141),
+                  fontFamily: "OpenSans",
+                  fontSize: 19.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            _buildHistoryWidget(),
+            SizedBox(
+              height: 20.h,
+            )
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildHistoryWidget() {
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: 4,
+        itemBuilder: (BuildContext context, index) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(
+                "JUL 2021",
+                style: TextStyle(
+                  fontFamily: "OpenSans",
+                  fontSize: 19.sp,
+                  color: Color(0xFF434141),
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    "Category1:",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5.h,
+                  ),
+                  Text(
+                    "5",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5.h,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    "Category3: ",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5.h,
+                  ),
+                  Text(
+                    "5",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    "Category2: ",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5.h,
+                  ),
+                  Text(
+                    "5",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
+  }
+
+  Widget _buildCurrentEvaluation(
+      int count, String categoryName, int changeInCount, Color textColor) {
+    return Expanded(
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    "$count",
+                    style: TextStyle(
+                      fontFeatures: [FontFeature.subscripts()],
+                      color: Color(0xFF434141),
+                      fontFamily: "OpenSans",
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    child: Text(
+                      "+3",
+                      style: TextStyle(
+                          fontFeatures: [FontFeature.superscripts()],
+                          color: Colors.red),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Text(
+              "$categoryName",
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontFamily: "OpenSans",
+                color: Color(0xFF434141),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentEvaluationWidget(
+      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations) {
+    List<Widget> _currentEvaluationWidget = [];
+    _learnersEvaluations.forEach(
+        (HiveEvaluationCategory category, Map<String, int> countByMonth) {
+      _currentEvaluationWidget.add(_buildCurrentEvaluation(
+          countByMonth["this-month"] ?? 0,
+          category.name!,
+          ((countByMonth["this-month"] ?? 0) -
+              (countByMonth["last-month"] ?? 0)),
+          Color(0xFFFFFFFF)));
+    });
+    return Row(
+      children: _currentEvaluationWidget,
     );
   }
 
@@ -650,7 +846,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           textAlign: TextAlign.left,
         ),
         SizedBox(
-          height: 10.h,
+          height: 50.h,
         ),
         StatefulBuilder(builder: (context, setState) {
           return Container(
@@ -659,11 +855,17 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 thumbColor: Color(0xFFE5625C),
                 activeTrackColor: Color(0xFFFCDFBA),
                 inactiveTrackColor: Color(0xFFFCDFBA),
+                tooltipTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontFamily: "OpenSans",
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               child: SfSlider(
-                //  thumbIcon: Icon(Icons.mail),
                 shouldAlwaysShowTooltip: true,
                 showDividers: false,
+                //   tooltipShape: SfPaddleTooltipShape(),
                 stepSize: 1,
                 min: 1.0,
                 max: 5.0,
@@ -671,7 +873,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 interval: 1,
                 showTicks: false,
                 showLabels: false,
-                enableTooltip: true,
+                enableTooltip: false,
                 tooltipTextFormatterCallback: (actualValue, formattedText) {
                   switch (actualValue) {
                     case 1:
@@ -991,6 +1193,27 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             SizedBox(
               height: 15.h,
             ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "History",
+                style: TextStyle(
+                  fontFeatures: [FontFeature.subscripts()],
+                  color: Color(0xFF434141),
+                  fontFamily: "OpenSans",
+                  fontSize: 19.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            _buildActionHistoryWidget(),
+            SizedBox(
+              height: 10.h,
+            ),
             InkWell(
               onTap: () {},
               child: Text(
@@ -1016,6 +1239,86 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         ),
       ),
     );
+  }
+
+  _buildActionHistoryWidget() {
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: 4,
+        itemBuilder: (BuildContext context, index) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(
+                "JUL 2021",
+                style: TextStyle(
+                  fontFamily: "OpenSans",
+                  fontSize: 19.sp,
+                  color: Color(0xFF434141),
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    "Action Completed:",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5.h,
+                  ),
+                  Text(
+                    "5",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5.h,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    "Action Incomplete: ",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 5.h,
+                  ),
+                  Text(
+                    "5",
+                    style: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 14.sp,
+                      color: Color(0xFF434141),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+            ],
+          );
+        });
   }
 
   Widget _buildGroupEvaluationWidget() {
