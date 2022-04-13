@@ -383,6 +383,11 @@
   "Actuals" : "वास्तविक",
   "addSignOfTransformation": "परिवर्तन का संकेत जोड़ें",
   "transformation":"परिवर्तन",
-  "feedback" : "प्रतिक्रिया"
+  "feedback" : "प्रतिक्रिया",
+
+
+  "cancelButtonLabel": "रद्द करें",
+  "okButtonLabel": "ठीक है",
+  "helpText": "माह/वर्ष चुनें"
 
 }
