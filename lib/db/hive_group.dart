@@ -4,10 +4,12 @@ import 'package:collection/collection.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_edit.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/results_provider.dart';
@@ -219,11 +221,17 @@ extension HiveGroupExt on HiveGroup {
     return ActionProvider().getGroupActions(this.id!);
   }
 
-  /*List<HiveEvaluationCategory>? get groupEvaluationCategories {
-    this.evaluationCategoryIds?.map((e) {
-      return EvaluationCategoryProvider().getCategoryById(e);
-    }).toList();
-  }*/
+  List<HiveEvaluationCategory>? get groupEvaluationCategories {
+    List<HiveEvaluationCategory> _categoryies = [];
+    this.evaluationCategoryIds?.forEach((e) {
+      HiveEvaluationCategory? _category =
+          EvaluationCategoryProvider().getCategoryById(e);
+      if (_category != null) {
+        _categoryies.add(_category);
+      }
+    });
+    return _categoryies;
+  }
 
   List<HiveLearnerEvaluation> get groupLearnerEvaluations {
     return LearnerEvaluationProvider().getGroupLearnerEvaluations(this.id!);

@@ -9,6 +9,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -613,13 +614,18 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             SizedBox(
               height: 20.h,
             ),
-            ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 3,
-                itemBuilder: (context, item) {
-                  return _buildCategorySlider();
-                }),
+            if (bloc.resultsBloc.hiveGroup?.groupEvaluationCategories != null)
+              ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: bloc
+                      .resultsBloc.hiveGroup?.groupEvaluationCategories?.length,
+                  itemBuilder: (context, index) {
+                    HiveEvaluationCategory _category = bloc
+                        .resultsBloc.hiveGroup!.groupEvaluationCategories!
+                        .elementAt(index);
+                    return _buildCategorySlider(_category);
+                  }),
             SizedBox(
               height: 20.h,
             ),
@@ -629,12 +635,12 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  Widget _buildCategorySlider() {
+  Widget _buildCategorySlider(HiveEvaluationCategory _evaluationCategory) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Category 1",
+          _evaluationCategory.name!,
           style: TextStyle(
             fontFamily: "OpenSans",
             fontSize: 19.sp,
@@ -1072,7 +1078,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _updateLearnerSummary() {
+  void _updateLearnerSummary() {
     _teacherFeedbackController.text = bloc.resultsBloc.hiveGroupUser
             ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)
             ?.response ??
