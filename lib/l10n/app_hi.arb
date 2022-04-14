@@ -388,6 +388,25 @@
 
   "cancelButtonLabel": "रद्द करें",
   "okButtonLabel": "ठीक है",
-  "helpText": "माह/वर्ष चुनें"
-
+  "helpText": "माह/वर्ष चुनें",
+  "selectGroup": "समूह का चयन करें",
+  "joinOrCreateGroupMessage": "एक समूह में शामिल हों, या एक नया समूह बनाएं, फिर आप यहां समूह के परिणामों की निगरानी कर सकते हैं।",
+  "teacherFeedbackForLearner":"इस व्यक्ति के लिए शिक्षक प्रतिक्रिया",
+  "helpTextForTeacherFeedback":"नीचे दिए गए बॉक्स में लिखें, फिर सहेजें पर क्लिक करें",
+  "hideHistory": "इतिहास छुपाएं",
+  "viewHistory": "इतिहास देखें",
+  "transformations":"परिवर्तनों",
+  "hintTextTransformationsTextField":"व्यक्ति द्वारा दर्ज की गई प्रभाव कहानी यहां है और नेता द्वारा संपादन योग्य है",
+  "addPhotos": "तस्वीरें जोडो",
+  "poorText" : "गरीब",
+  "acceptableText" : "स्वीकार्य",
+  "greatText" : "महान",
+  "resultZeroOrOneActionCompleted": "कार्य पूर्ण",
+  "resultMoreThenOneActionCompleted": "कार्य पूर्ण",
+  "resultZeroOrOneActionsIncompleted": "कार्य अपूर्ण",
+  "resultMoreThenOneActionsIncompleted": "कार्य अपूर्ण",
+  "resultZeroOrOneActionsOverdue": "कार्रवाई अतिदेय",
+  "resultMoreThenOneActionsOverdue": "कार्रवाई अतिदेय",
+  "learner" : "सिखाने वाला",
+  "currentEvaluation" : "वर्तमान मूल्यांकन"
 }
