@@ -23,7 +23,7 @@ class ProjectReporsForGroup extends StatelessWidget {
             "${AppLocalizations.of(context)!.projectReportFor}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
-                fontFamily: "Rubik Medium",
+                fontFamily: "OpenSans",
                 fontSize: 19.sp,
                 fontWeight: FontWeight.bold),
           ),
@@ -36,17 +36,18 @@ class ProjectReporsForGroup extends StatelessWidget {
               Text(
                 "${AppLocalizations.of(context)!.markers}",
                 style: TextStyle(
-                  fontSize: 17.sp,
-                  fontFamily: "Open Sans Semibold",
-                  color: Color(0xFFC6C6C6),
-                ),
+                    fontSize: 17.sp,
+                    fontFamily: "OpenSans",
+                    color: Color(0xFFFFFFFF),
+                    fontWeight: FontWeight.w600),
               ),
               Text(
                 "${AppLocalizations.of(context)!.actuals}",
                 style: TextStyle(
                   fontSize: 17.sp,
-                  fontFamily: "Open Sans Semibold",
-                  color: Color(0xFFC6C6C6),
+                  fontFamily: "OpenSans",
+                  color: Color(0xFFFFFFFF),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -54,22 +55,22 @@ class ProjectReporsForGroup extends StatelessWidget {
           SizedBox(
             height: 10.h,
           ),
-          _buildMarkerStatics(53, 43),
+          _buildMarkerStatics(context, 53, 43),
           Divider(
             color: Color(0xFF5D5D5D),
             thickness: 1,
           ),
-          _buildMarkerStatics(53, 43),
+          _buildMarkerStatics(context, 53, 43),
           Divider(
             color: Color(0xFF5D5D5D),
             thickness: 1,
           ),
-          _buildMarkerStatics(126, 22),
+          _buildMarkerStatics(context, 126, 22),
           Divider(
             color: Color(0xFF5D5D5D),
             thickness: 1,
           ),
-          _buildMarkerStatics(143, 89),
+          _buildMarkerStatics(context, 143, 89),
           Divider(
             color: Color(0xFF5D5D5D),
             thickness: 1,
@@ -89,8 +90,7 @@ class ProjectReporsForGroup extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 "${AppLocalizations.of(context)!.addSignOfTransformation}",
-                style:
-                    TextStyle(fontSize: 17.sp, fontFamily: "Open Sans Regular"),
+                style: TextStyle(fontSize: 17.sp, fontFamily: "OpenSans"),
               ),
             ),
           ),
@@ -102,17 +102,17 @@ class ProjectReporsForGroup extends StatelessWidget {
     );
   }
 
-  Row _buildMarkerStatics(int marker, int actuals) {
+  Row _buildMarkerStatics(context, int marker, int actuals) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Markers $marker',
+          "${AppLocalizations.of(context)!.markers} $marker",
           style: TextStyle(
               fontSize: 17.sp,
-              fontFamily: "Open Sans Semibold",
-              color: Color(0xFFC6C6C6),
-              fontWeight: FontWeight.bold),
+              fontFamily: "OpenSans",
+              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.w600),
         ),
         Container(
           height: 40.h,
@@ -122,10 +122,10 @@ class ProjectReporsForGroup extends StatelessWidget {
             child: Text(
               "$actuals",
               style: TextStyle(
-                fontSize: 17.sp,
-                fontFamily: "Open Sans Bold",
-                color: Color(0xFF000000),
-              ),
+                  fontSize: 17.sp,
+                  fontFamily: "OpenSans",
+                  color: Color(0xFF000000),
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
