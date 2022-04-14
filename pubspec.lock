@@ -349,6 +349,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
+  flutter_hooks:
+    dependency: "direct main"
+    description:
+      name: flutter_hooks
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.18.3"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -567,13 +574,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  month_year_picker:
-    dependency: "direct main"
-    description:
-      name: month_year_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0+1"
   multi_select_flutter:
     dependency: "direct main"
     description:
@@ -943,6 +943,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  syncfusion_flutter_core:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "20.1.48"
   synchronized:
     dependency: "direct main"
     description:
