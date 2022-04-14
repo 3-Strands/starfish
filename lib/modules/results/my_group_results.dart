@@ -22,6 +22,7 @@ import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
+import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
@@ -570,8 +571,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   Radius.circular(10),
                 ),
               ),
-              child: TextFormField(
+              child: FocusableTextField(
                 controller: _teacherFeedbackController,
+                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   hintText: "",
                   hintStyle: TextStyle(
@@ -581,38 +583,16 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   ),
                 ),
                 maxLines: 3,
-              ),
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 19.0, bottom: 19.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 37.5.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    //_closeSlidingUpPanelIfOpen();
-                    //Navigator.pop(context);
-                    if (_teacherFeedbackController.text.length > 0) {
-                      _saveTeacherFeedback();
-                    }
-                  },
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40.r),
-                      ),
-                    ),
-                    backgroundColor: _teacherFeedbackController.text.length > 0
-                        ? MaterialStateProperty.all<Color>(
-                            AppColors.selectedButtonBG)
-                        : MaterialStateProperty.all<Color>(
-                            AppColors.unselectedButtonBG),
-                  ),
-                  child: Text(AppLocalizations.of(context)!.save),
-                ),
+                textInputAction: TextInputAction.done,
+                onFocusChange: (isFocused) {
+                  debugPrint("Has focus: $isFocused");
+                  if (isFocused) {
+                    return;
+                  }
+                  if (_teacherFeedbackController.text.length > 0) {
+                    _saveTeacherFeedback();
+                  }
+                },
               ),
             ),
             SizedBox(
@@ -939,17 +919,29 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   Radius.circular(10),
                 ),
               ),
-              child: TextFormField(
+              child: FocusableTextField(
                 controller: _transformationController,
+                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   hintText:
                       "The impact story entered by the person is here and is editable by the leader",
                   hintStyle: TextStyle(
-                      fontFamily: "OpenSans",
-                      fontSize: 16.sp,
-                      fontStyle: FontStyle.italic),
+                    fontFamily: "OpenSans",
+                    fontSize: 16.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
                 maxLines: 3,
+                textInputAction: TextInputAction.done,
+                onFocusChange: (isFocused) {
+                  debugPrint("Has focus: $isFocused");
+                  if (isFocused) {
+                    return;
+                  }
+                  if (_transformationController.text.length > 0) {
+                    _saveTransformation();
+                  }
+                },
               ),
             ),
             SizedBox(
@@ -1036,37 +1028,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
               ),
             ),
             SizedBox(
-              height: 10.h,
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 19.0, bottom: 19.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 37.5.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    //_closeSlidingUpPanelIfOpen();
-                    // Navigator.pop(context);
-                    if (_transformationController.text.length > 0) {
-                      _saveTransformation();
-                    }
-                  },
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40.r),
-                      ),
-                    ),
-                    backgroundColor: _transformationController.text.length > 0
-                        ? MaterialStateProperty.all<Color>(
-                            AppColors.selectedButtonBG)
-                        : MaterialStateProperty.all<Color>(
-                            AppColors.unselectedButtonBG),
-                  ),
-                  child: Text(AppLocalizations.of(context)!.save),
-                ),
-              ),
+              height: 20.h,
             ),
           ],
         ),
@@ -1212,7 +1174,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     );
   }
 
-  _buildActionHistoryWidget() {
+  Widget _buildActionHistoryWidget() {
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
