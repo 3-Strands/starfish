@@ -227,7 +227,8 @@ class LearnerSummary extends StatelessWidget {
                         child: Text(
                           "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response ?? ''}",
                           style: TextStyle(
-                            fontFamily: "Open Sans Italic",
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "OpenSans",
                             fontSize: 17.sp,
                             fontStyle: FontStyle.italic,
                             color: Color(0xFF4F4F4F),
@@ -265,7 +266,7 @@ class LearnerSummary extends StatelessWidget {
           category.name!,
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
-          Color(0xFF4F4F4F)));
+          Color(0xFF797979)));
     });
     return Row(
       children: _categoryWidgets,
@@ -287,7 +288,7 @@ class LearnerSummary extends StatelessWidget {
                   "$count",
                   style: TextStyle(
                       color: textColor,
-                      fontFamily: "Rubik Medium",
+                      fontFamily: "OpenSans",
                       fontSize: 30.sp,
                       fontWeight: FontWeight.bold),
                 ),
@@ -302,7 +303,7 @@ class LearnerSummary extends StatelessWidget {
               "$categoryName",
               style: TextStyle(
                 fontSize: 15.sp,
-                color: textColor,
+                color: Color(0xFF000000),
                 fontFamily: "Rubik",
               ),
             )
