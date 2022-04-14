@@ -384,6 +384,31 @@
 
   "cancelButtonLabel": "CANCEL",
   "okButtonLabel": "OK",
-  "helpText": "SELECT MONTH/YEAR"
+  "helpText": "SELECT MONTH/YEAR",
+  "selectGroup": "Select Group",
+  "joinOrCreateGroupMessage": "Join a Group, or create a new Group, then you can monitor the results of the Group here.",
+  "teacherFeedbackForLearner" : "Teacher feedback for this person",
+  "helpTextForTeacherFeedback":"Write in the box below, then click Save",
+  "hideHistory" :"Hide History",
+  "viewHistory" : "View History",
+  "transformations" : "Transformations",
+  "hintTextTransformationsTextField" : "The impact story entered by the person is here and is editable by the leader",
+  "addPhotos" : "Add Photos",
+  "poorText" : "Poor",
+  "acceptableText" : "Acceptable",
+  "greatText" : "Great",
+  "resultZeroOrOneActionCompleted": "Action Completed",
+  "resultMoreThenOneActionCompleted": "Actions Completed",
+  "resultZeroOrOneActionsIncompleted": "Action Incomplete",
+  "resultMoreThenOneActionsIncompleted": "Actions Incomplete",
+  "resultZeroOrOneActionsOverdue": "Action overdue",
+  "resultMoreThenOneActionsOverdue": "Actions overdue",
+  "learner" : "Learner",
+  "currentEvaluation" : "Current Evaluation"
+
+  
+
+
+  
 
 }
