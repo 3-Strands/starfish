@@ -139,6 +139,19 @@ class HiveGroupUser extends HiveObject {
     });
   }
 
+  HiveLearnerEvaluation? getLearnerEvaluation(
+      HiveDate hiveDate, String categoryId, String evaluatorId) {
+    return this.learnerEvaluations.firstWhereOrNull((element) {
+      if (element.month == null) {
+        return false;
+      }
+      return element.month!.year == hiveDate.year &&
+          element.month!.month == hiveDate.month &&
+          element.evaluatorId == evaluatorId &&
+          element.categoryId == categoryId;
+    });
+  }
+
   String toString() {
     return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
     user: ${this.user},  

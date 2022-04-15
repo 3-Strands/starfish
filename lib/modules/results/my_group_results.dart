@@ -15,10 +15,12 @@ import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
+import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
@@ -47,7 +49,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   late AppBloc bloc;
 
   bool _isEditMode = false;
-  double _value = 2.0;
+  //double _value = 2.0;
 
   TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
@@ -938,6 +940,12 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   }
 
   Widget _buildCategorySlider(HiveEvaluationCategory _evaluationCategory) {
+    HiveLearnerEvaluation? _evaluation = bloc.resultsBloc.hiveGroupUser
+        ?.getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
+            _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
+
+    double _value =
+        _evaluation != null ? _evaluation.evaluation!.toDouble() : 3.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -971,13 +979,18 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 inactiveColor: Color(0xFFFCDFBA),
                 thumbColor: Color(0xFFE5625C),
                 max: 5.0,
+                min: 1.0,
                 divisions: 4,
                 value: _value,
                 label: sliderLabel(_value.toInt()),
                 onChanged: (double value) {
+                  debugPrint("Slider Value: $value");
                   setState(() {
                     _value = value;
                   });
+
+                  _saveLearnerEvaluation(
+                      _evaluationCategory.id!, value.toInt());
                 },
               ),
             ),
@@ -1503,17 +1516,18 @@ class _MyGroupResultsState extends State<MyGroupResults> {
 
   String sliderLabel(int value) {
     switch (value) {
-      case 0:
-        return "${AppLocalizations.of(context)!.poorText}";
       case 1:
-        return "${AppLocalizations.of(context)!.notSoGoodText}";
+        return "${AppLocalizations.of(context)!.poorText}";
       case 2:
-        return "${AppLocalizations.of(context)!.acceptableText}";
+        return "${AppLocalizations.of(context)!.notSoGoodText}";
       case 3:
-        return "${AppLocalizations.of(context)!.goodText}";
+        return "${AppLocalizations.of(context)!.acceptableText}";
       case 4:
-      default:
+        return "${AppLocalizations.of(context)!.goodText}";
+      case 5:
         return "${AppLocalizations.of(context)!.greatText}";
+      default:
+        return "";
     }
   }
 
@@ -1600,6 +1614,37 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       setState(() {}); // refresh ParentView
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Transformation");
+    });
+  }
+
+  void _saveLearnerEvaluation(String categoryId, int value) {
+    String evaluatorId = CurrentUserProvider().getUserSync().id;
+
+    HiveLearnerEvaluation? _learnerEvaluation = bloc.resultsBloc.hiveGroupUser
+        ?.getLearnerEvaluation(
+            bloc.resultsBloc.hiveDate!, categoryId, evaluatorId);
+
+    if (_learnerEvaluation == null) {
+      _learnerEvaluation = HiveLearnerEvaluation();
+      _learnerEvaluation.id = UuidGenerator.uuid();
+      _learnerEvaluation.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _learnerEvaluation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
+      _learnerEvaluation.evaluatorId = evaluatorId;
+      _learnerEvaluation.month = bloc.resultsBloc.hiveDate;
+      _learnerEvaluation.categoryId = categoryId;
+      _learnerEvaluation.isNew = true;
+    } else {
+      _learnerEvaluation.isUpdated = true;
+    }
+    _learnerEvaluation.evaluation = value;
+
+    LearnerEvaluationProvider()
+        .createUpdateLearnerEvaluation(_learnerEvaluation)
+        .then((value) {
+      debugPrint("LearnerEvaluation saved.");
+      setState(() {}); // refresh ParentView
+    }).onError((error, stackTrace) {
+      debugPrint("Failed to save LearnerEvaluation");
     });
   }
 }

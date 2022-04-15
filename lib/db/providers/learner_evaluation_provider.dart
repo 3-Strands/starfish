@@ -23,4 +23,20 @@ class LearnerEvaluationProvider {
         .where((element) => element.groupId! == groupId)
         .toList();
   }
+
+  Future<void> createUpdateLearnerEvaluation(
+      HiveLearnerEvaluation _evaluation) async {
+    int _currentIndex = -1;
+    _learnerEvaluationBox.values.toList().asMap().forEach((key, eval) {
+      if (eval.id == _evaluation.id) {
+        _currentIndex = key;
+      }
+    });
+
+    if (_currentIndex > -1) {
+      return _learnerEvaluationBox.putAt(_currentIndex, _evaluation);
+    } else {
+      _learnerEvaluationBox.add(_evaluation);
+    }
+  }
 }
