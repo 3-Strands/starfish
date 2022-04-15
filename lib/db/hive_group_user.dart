@@ -94,8 +94,8 @@ class HiveGroupUser extends HiveObject {
       if (_evaluationCategory != null) {
         Map<String, int> _countByMonth = Map();
         _countByMonth["this-month"] =
-            _countCategoryLearnerEvaluationsForMonth(categoryId, hiveDate);
-        _countByMonth["last-month"] = _countCategoryLearnerEvaluationsForMonth(
+            _categoryLearnerEvaluationsForMonth(categoryId, hiveDate);
+        _countByMonth["last-month"] = _categoryLearnerEvaluationsForMonth(
             categoryId, hiveDate.previousMonth);
 
         _map[_evaluationCategory] = _countByMonth;
@@ -105,9 +105,9 @@ class HiveGroupUser extends HiveObject {
     return _map;
   }
 
-  int _countCategoryLearnerEvaluationsForMonth(
+  int _categoryLearnerEvaluationsForMonth(
       String categoryId, HiveDate hiveDate) {
-    return this
+    HiveLearnerEvaluation? _learnerEvaluation = this
         .learnerEvaluations
         .where((element) => element.categoryId == categoryId)
         .where((element) {
@@ -116,7 +116,9 @@ class HiveGroupUser extends HiveObject {
       }
       return element.month!.year == hiveDate.year &&
           element.month!.month == hiveDate.month;
-    }).length;
+    }).firstOrNull;
+
+    return _learnerEvaluation == null ? 0 : _learnerEvaluation.evaluation!;
   }
 
   HiveGroupEvaluation? getGroupEvaluationForMonth(HiveDate hiveDate) {
