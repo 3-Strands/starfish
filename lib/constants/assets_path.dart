@@ -16,4 +16,6 @@ class AssetsPath {
   static const String nextIcon = 'assets/images/icon_next.svg';
   static const String resultsIcon = 'assets/images/results.svg';
   static const String resultsActiveIcon = 'assets/images/results_active.svg';
+  static const String arrowUpIcon = 'assets/images/arrow_green.png';
+  static const String arrowDownIcon = 'assets/images/arrow_red.png';
 }
