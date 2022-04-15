@@ -104,7 +104,7 @@ class SummaryForAllLearners extends StatelessWidget {
             ],
           ),
 
-          // Uncomment once leaner is allowed to update 'GroupEvaluation' 
+          // Uncomment once leaner is allowed to update 'GroupEvaluation'
           /*Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(
@@ -184,7 +184,8 @@ class SummaryForAllLearners extends StatelessWidget {
           ),
           SizedBox(height: 10.h),
           _buildCategoryAverageWidget(
-              bloc.resultsBloc.getGroupLearnerEvaluationsByCategory()),
+              bloc.resultsBloc.getGroupLearnerEvaluationsByCategory(),
+              bloc.resultsBloc.hiveGroup?.learners?.length ?? 1),
           SizedBox(height: 20.h),
         ],
       ),
@@ -192,15 +193,16 @@ class SummaryForAllLearners extends StatelessWidget {
   }
 
   Widget _buildCategoryAverageWidget(
-      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations) {
+      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations,
+      int learnerCount) {
     List<Widget> _categoryWidgets = [];
     _learnersEvaluations.forEach(
         (HiveEvaluationCategory category, Map<String, int> countByMonth) {
       _categoryWidgets.add(_buildCategoryStatics(
-          countByMonth["this-month"] ?? 0,
+          (countByMonth["this-month"] ?? 0) / learnerCount,
           category.name!,
-          ((countByMonth["this-month"] ?? 0) -
-              (countByMonth["last-month"] ?? 0)),
+          (((countByMonth["this-month"] ?? 0) / learnerCount) -
+              ((countByMonth["last-month"] ?? 0) / learnerCount)),
           Color(0xFFFFFFFF)));
     });
     return Row(
@@ -208,8 +210,8 @@ class SummaryForAllLearners extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryStatics(
-      int count, String categoryName, int changeInCount, Color textColor) {
+  Widget _buildCategoryStatics(double count, String categoryName,
+      double changeInCount, Color textColor) {
     return Expanded(
       child: Container(
         child: Column(
@@ -221,7 +223,7 @@ class SummaryForAllLearners extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    "$count",
+                    "${count.toStringAsFixed(1)}",
                     style: TextStyle(
                       color: textColor,
                       fontFamily: "Rubik Medium",
