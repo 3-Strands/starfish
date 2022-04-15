@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -58,11 +59,10 @@ class LearnerSummary extends StatelessWidget {
                         child: Text(
                           "${AppLocalizations.of(context)!.actionsTabItemText}",
                           style: TextStyle(
-                              color: Color(
-                                0xFF4F4F4F,
-                              ),
-                              fontFamily: "OpenSans Semibold",
-                              fontSize: 17.sp),
+                              fontSize: 17.sp,
+                              fontFamily: "OpenSans ",
+                              color: Color(0xFF4F4F4F),
+                              fontWeight: FontWeight.w600),
                         ),
                       ),
                       SizedBox(
@@ -143,10 +143,10 @@ class LearnerSummary extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "${AppLocalizations.of(context)!.transformation}: ",
+                      "${AppLocalizations.of(context)!.transformations}: ",
                       style: TextStyle(
                           fontSize: 17.sp,
-                          fontFamily: "Open Sans Semibold",
+                          fontFamily: "OpenSans ",
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w600),
                     ),
@@ -155,7 +155,7 @@ class LearnerSummary extends StatelessWidget {
                         child: Text(
                           "${hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)?.impactStory ?? ''}",
                           style: TextStyle(
-                            fontFamily: "Open Sans Italic",
+                            fontFamily: "OpenSans",
                             fontSize: 17.sp,
                             fontStyle: FontStyle.italic,
                             color: Color(0xFF4F4F4F),
@@ -218,7 +218,7 @@ class LearnerSummary extends StatelessWidget {
                       "${AppLocalizations.of(context)!.feedback}: ",
                       style: TextStyle(
                           fontSize: 17.sp,
-                          fontFamily: "Open Sans Semibold",
+                          fontFamily: "OpenSans ",
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w600),
                     ),
@@ -227,7 +227,6 @@ class LearnerSummary extends StatelessWidget {
                         child: Text(
                           "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response ?? ''}",
                           style: TextStyle(
-                            fontWeight: FontWeight.w600,
                             fontFamily: "OpenSans",
                             fontSize: 17.sp,
                             fontStyle: FontStyle.italic,
@@ -292,10 +291,10 @@ class LearnerSummary extends StatelessWidget {
                       fontSize: 30.sp,
                       fontWeight: FontWeight.bold),
                 ),
-                Icon(
-                  changeInCount > 0 ? Icons.arrow_upward : Icons.arrow_downward,
-                  color:
-                      changeInCount > 0 ? Color(0xFF6DE26B) : Color(0xFFFF5E4D),
+                Image.asset(
+                  changeInCount > 0
+                      ? AssetsPath.arrowUpIcon
+                      : AssetsPath.arrowDownIcon,
                 ),
               ],
             ),

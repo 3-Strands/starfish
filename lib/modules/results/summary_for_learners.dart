@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,7 +30,7 @@ class SummaryForAllLearners extends StatelessWidget {
             "${AppLocalizations.of(context)!.summaryForAllLearners}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
-                fontFamily: "Rubik Medium",
+                fontFamily: "OpenSans",
                 fontSize: 19.sp,
                 fontWeight: FontWeight.bold),
           ),
@@ -41,7 +42,7 @@ class SummaryForAllLearners extends StatelessWidget {
               "${AppLocalizations.of(context)!.actionsTabItemText}",
               style: TextStyle(
                   color: Color(0xFFFFFFFF),
-                  fontFamily: "Rubik Medium",
+                  fontFamily: "OpenSans",
                   fontSize: 17.sp,
                   fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
@@ -63,7 +64,7 @@ class SummaryForAllLearners extends StatelessWidget {
                   "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.done}",
                   style: TextStyle(
                       color: Colors.black,
-                      fontFamily: "Rubik Medium",
+                      fontFamily: "Rubik",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -79,7 +80,7 @@ class SummaryForAllLearners extends StatelessWidget {
                   "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
                   style: TextStyle(
                       color: Colors.black,
-                      fontFamily: "Rubik Medium",
+                      fontFamily: "Rubik",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -95,7 +96,7 @@ class SummaryForAllLearners extends StatelessWidget {
                   "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
                   style: TextStyle(
                       color: Colors.black,
-                      fontFamily: "Rubik Medium",
+                      fontFamily: "Rubik",
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -104,7 +105,7 @@ class SummaryForAllLearners extends StatelessWidget {
             ],
           ),
 
-          // Uncomment once leaner is allowed to update 'GroupEvaluation' 
+          // Uncomment once leaner is allowed to update 'GroupEvaluation'
           /*Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(
@@ -177,7 +178,7 @@ class SummaryForAllLearners extends StatelessWidget {
               "${AppLocalizations.of(context)!.averages}",
               style: TextStyle(
                   color: Color(0xFFFFFFFF),
-                  fontFamily: "Open Sans Bold",
+                  fontFamily: "OpenSans",
                   fontSize: 17.sp,
                   fontWeight: FontWeight.bold),
             ),
@@ -224,19 +225,16 @@ class SummaryForAllLearners extends StatelessWidget {
                     "$count",
                     style: TextStyle(
                       color: textColor,
-                      fontFamily: "Rubik Medium",
+                      fontFamily: "OpenSans",
                       fontSize: 30.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   if (changeInCount != 0)
-                    Icon(
+                    Image.asset(
                       changeInCount > 0
-                          ? Icons.arrow_upward
-                          : Icons.arrow_downward,
-                      color: changeInCount > 0
-                          ? Color(0xFF6DE26B)
-                          : Color(0xFFFF5E4D),
+                          ? AssetsPath.arrowUpIcon
+                          : AssetsPath.arrowDownIcon,
                     ),
                 ],
               ),
