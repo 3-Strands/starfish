@@ -5,7 +5,7 @@ import 'package:starfish/utils/date_time_utils.dart';
 part 'hive_date.g.dart';
 
 @HiveType(typeId: 7)
-class HiveDate {
+class HiveDate extends Comparable {
   @HiveField(0)
   late int year;
   @HiveField(1)
@@ -30,6 +30,31 @@ class HiveDate {
 
   Date toDate() {
     return Date(year: this.year, month: this.month, day: this.day);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveDate &&
+          runtimeType == other.runtimeType &&
+          year == other.year &&
+          month == other.month &&
+          day == other.day;
+
+  @override
+  int get hashCode => year.hashCode ^ month.hashCode ^ day.hashCode;
+
+  @override
+  int compareTo(other) {
+    if (year == other.year && month == other.month && day == other.day) {
+      return 0;
+    } else if (year > other.year ||
+        (year == other.year && month > other.month) ||
+        (year == other.year && month == other.month && day > other.day)) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   String toString() {
