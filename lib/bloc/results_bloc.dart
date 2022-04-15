@@ -9,6 +9,7 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
@@ -106,6 +107,21 @@ class ResultsBloc extends Object {
             GroupEvaluation_Evaluation.valueOf(element.evaluation!) ==
                 evaluation)
         .length;
+  }
+
+  List<HiveDate> getListOfAvailableHistoryMonths() {
+    if (hiveGroup == null) {
+      return [];
+    }
+    List<HiveDate> _listMonth = [];
+    LearnerEvaluationProvider()
+        .getGroupLearnerEvaluations(hiveGroup!.id!)
+        .forEach((element) {
+      if (!_listMonth.contains(element.month!)) {
+        _listMonth.add(element.month!);
+      }
+    });
+    return _listMonth;
   }
 
   void dispose() {}

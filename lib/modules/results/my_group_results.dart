@@ -643,7 +643,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     Visibility(
                       visible: isViewCategoryEvalutionHistory,
                       child: _buildCurrentEvaluationWidget(
-                        bloc.resultsBloc.getGroupLearnerEvaluationsByCategory(),
+                        bloc.resultsBloc.hiveGroupUser!
+                            .getLearnerEvaluationsByCategoryForMoth(
+                                bloc.resultsBloc.hiveDate!),
                       ),
                     ),
                     Visibility(
@@ -712,10 +714,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   }
 
   Widget _buildCategoryHistoryWidget() {
+    List<HiveDate> _historyAvailableMonths =
+        bloc.resultsBloc.getListOfAvailableHistoryMonths();
+    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 4,
+        itemCount: _historyAvailableMonths.length,
         itemBuilder: (BuildContext context, index) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -724,7 +729,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 height: 10.h,
               ),
               Text(
-                "JUL 2021",
+                DateTimeUtils.formatHiveDate(
+                    _historyAvailableMonths.elementAt(index),
+                    requiredDateFormat: "MMM yyyy"), //"JUL 2021",
                 style: TextStyle(
                   fontFamily: "OpenSans",
                   fontSize: 19.sp,
@@ -735,7 +742,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 height: 10.h,
               ),
               _buildMonthlyEvaluationWidget(
-                bloc.resultsBloc.getGroupLearnerEvaluationsByCategory(),
+                bloc.resultsBloc.hiveGroupUser!
+                    .getLearnerEvaluationsByCategoryForMoth(
+                        _historyAvailableMonths.elementAt(index)),
               )
 
               // Row(
@@ -842,7 +851,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                     child: Text(
-                      "+3",
+                      "$changeInCount",
                       style: TextStyle(
                           fontFeatures: [FontFeature.superscripts()],
                           color: Colors.red),
@@ -873,23 +882,15 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text("$count",
-                      style: TextStyle(
-                        fontFeatures: [FontFeature.subscripts()],
-                        color: Color(0xFF434141),
-                        fontFamily: "OpenSans",
-                        fontSize: 30.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center),
-                ],
-              ),
-            ),
+            Text("$count",
+                style: TextStyle(
+                  fontFeatures: [FontFeature.subscripts()],
+                  color: Color(0xFF434141),
+                  fontFamily: "OpenSans",
+                  fontSize: 30.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center),
             Text(
               "$categoryName",
               style: TextStyle(
