@@ -996,18 +996,18 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             ),
           );
         }),
-        SizedBox(
-          height: 5.h,
-        ),
-        Text(
-          "This is dynamic text which explains the meaning of each ",
-          style: TextStyle(
-            fontStyle: FontStyle.italic,
-            fontFamily: "OpenSans",
-            fontSize: 14.sp,
-            color: Color(0xFF797979),
-          ),
-        ),
+        // SizedBox(
+        //   height: 5.h,
+        // ),
+        // Text(
+        //   "This is dynamic text which explains the meaning of each ",
+        //   style: TextStyle(
+        //     fontStyle: FontStyle.italic,
+        //     fontFamily: "OpenSans",
+        //     fontSize: 14.sp,
+        //     color: Color(0xFF797979),
+        //   ),
+        // ),
         SizedBox(
           height: 5.h,
         ),
@@ -1030,10 +1030,16 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         padding: EdgeInsets.only(left: 15.w, right: 15.w),
         child: Column(
           children: [
+            SizedBox(
+              height: 10.h,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(AssetsPath.resultsActiveIcon),
+                SvgPicture.asset(
+                  AssetsPath.resultsActiveIcon,
+                  color: Colors.green,
+                ),
                 SizedBox(
                   width: 5.w,
                 ),
