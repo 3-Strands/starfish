@@ -32,9 +32,13 @@ import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/db/providers/results_provider.dart';
+import 'package:starfish/db/providers/teacher_response_provider.dart';
+import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repository/action_repository.dart';
@@ -217,8 +221,12 @@ class SyncService {
     await lock.synchronized(() => syncLocalActionsToRemote());
 
     await lock.synchronized(() => syncLocalHiveActionUserToRemote());
-    // navigatorKey: Application.navKey, // GlobalKey()
-    //showAlert(NavigationService.navigatorKey.currentContext!);
+
+    // Synchronize the syncing of results elements
+    await lock.synchronized(() => syncLocalTransformationsToRemote());
+    await lock.synchronized(() => syncLocalTeacherResponsesToRemote());
+    await lock.synchronized(() => syncLocalLearnerEvaluationsToRemote());
+    //await lock.synchronized(() => syncLocalGroupEvaluationsToRemote()); // Pending
 
     // Synchronize the syncing of material(s), sequentily to avoid failure.
 
@@ -241,7 +249,7 @@ class SyncService {
         syncEvaluationCategories(),
         syncGroup(),
         syncLearnerEvaluations(),
-        syncGroupEvaluations(),
+        //syncGroupEvaluations(), // Pending
         syncTeacherResponses(),
         syncTransformaitons(),
       ],
@@ -1304,19 +1312,17 @@ class SyncService {
         request.learnerEvaluation =
             _hiveLearnerEvaluation.toLearnerEvaluation();
 
-        if (_hiveLearnerEvaluation.isUpdated) {
-          // TODO:
-        }
-
         _controller.add(request);
       });
       _controller.close();
 
-      return await responseStream.forEach((value) {
-        print('Remote Learner Evaluation: ${value.learnerEvaluation}');
-        if (value.status ==
+      return await responseStream.forEach((response) {
+        print('Remote Learner Evaluation: ${response.learnerEvaluation}');
+        if (response.status ==
             CreateUpdateLearnerEvaluationResponse_Status.SUCCESS) {
           // update flag(s) isNew and/or isUpdated to false
+          LearnerEvaluationProvider().createUpdateLearnerEvaluation(
+              HiveLearnerEvaluation.from(response.learnerEvaluation));
 
           print(
               '============= END: LocalLearnerEvaluationsToRemote =============');
@@ -1354,20 +1360,17 @@ class SyncService {
 
         request.groupEvaluation = _hiveGroupEvaluation.toGroupEvaluation();
 
-        if (_hiveGroupEvaluation.isUpdated) {
-          // TODO:
-        }
-
         _controller.add(request);
       });
       _controller.close();
 
-      return await responseStream.forEach((value) {
-        print('Remote Group Evaluation: ${value.groupEvaluation}');
-        if (value.status ==
-            CreateUpdateLearnerEvaluationResponse_Status.SUCCESS) {
+      return await responseStream.forEach((response) {
+        print('Remote Group Evaluation: ${response.groupEvaluation}');
+        if (response.status ==
+            CreateUpdateGroupEvaluationResponse_Status.SUCCESS) {
           // update flag(s) isNew and/or isUpdated to false
-
+          GroupEvaluationProvider().createUpdateGroupEvaluation(
+              HiveGroupEvaluation.from(response.groupEvaluation));
           print(
               '============= END: LocalGroupEvaluationsToRemote =============');
         } else {
@@ -1405,18 +1408,21 @@ class SyncService {
         request.transformation = _hivetransformation.toTransformation();
 
         if (_hivetransformation.isUpdated) {
-          // TODO:
+          FieldMask mask = FieldMask(paths: kTransformationFieldMask);
+          request.updateMask = mask;
         }
 
         _controller.add(request);
       });
       _controller.close();
 
-      return await responseStream.forEach((value) {
-        print('Remote Transformation: ${value.transformation}');
-        if (value.status == CreateUpdateTransformationResponse_Status.SUCCESS) {
+      return await responseStream.forEach((response) {
+        print('Remote Transformation: ${response.transformation}');
+        if (response.status ==
+            CreateUpdateTransformationResponse_Status.SUCCESS) {
           // update flag(s) isNew and/or isUpdated to false
-
+          TransformationProvider().createUpdateTransformation(
+              HiveTransformation.from(response.transformation));
           print(
               '============= END: LocalTransformationsToRemote =============');
         } else {
@@ -1453,19 +1459,17 @@ class SyncService {
 
         request.teacherResponse = _hiveTeacherResponse.toTeacherResponse();
 
-        if (_hiveTeacherResponse.isUpdated) {
-          // TODO:
-        }
-
         _controller.add(request);
       });
       _controller.close();
 
-      return await responseStream.forEach((value) {
-        print('Remote Teacher Response: ${value.teacherResponse}');
-        if (value.status ==
+      return await responseStream.forEach((response) {
+        print('Remote Teacher Response: ${response.teacherResponse}');
+        if (response.status ==
             CreateUpdateTeacherResponseResponse_Status.SUCCESS) {
           // update flag(s) isNew and/or isUpdated to false
+          TeacherResponseProvider().createUpdateTeacherResponse(
+              HiveTeacherResponse.from(response.teacherResponse));
 
           print(
               '============= END: syncLocalTeacherResponsesToRemote =============');

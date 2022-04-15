@@ -58,3 +58,7 @@ final List<String> kActionUserFieldMask = [
   'userResponse',
   'evaluation',
 ];
+
+final List<String> kTransformationFieldMask = [
+  'impactStory',
+];
