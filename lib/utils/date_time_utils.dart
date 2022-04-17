@@ -9,6 +9,10 @@ class DateTimeUtils {
 
   static String formatHiveDate(HiveDate hiveDate,
       {String requiredDateFormat = 'dd-MMM-yyyy'}) {
+    // Handle special case where day is set as 0 to indicate monthly data    
+    if (hiveDate.day == 0) {
+      hiveDate.day = 1;
+    }
     String dateString = '${hiveDate.day}-${hiveDate.month}-${hiveDate.year}';
     return formatDate(toDateTime(dateString, 'dd-MM-yyyy'), requiredDateFormat);
   }

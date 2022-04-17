@@ -717,6 +717,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     List<HiveDate> _historyAvailableMonths =
         bloc.resultsBloc.getListOfAvailableHistoryMonths();
     _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    if (_historyAvailableMonths.contains(bloc.resultsBloc.hiveDate!)) {
+      _historyAvailableMonths.remove(bloc.resultsBloc.hiveDate!);
+    }
+
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
