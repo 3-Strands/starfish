@@ -173,8 +173,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ),
                     SizedBox(height: 20.h),
                     Container(
+                      alignment: Alignment.centerLeft,
                       height: 52.h,
                       width: 345.w,
+                      padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       decoration: BoxDecoration(
                         color: AppColors.txtFieldBackground,
@@ -198,22 +200,20 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                             });
                           }
                         },
-                        child: Center(
-                          child: ButtonTheme(
-                            alignedDropdown: true,
-                            child: Text(
-                              DateTimeUtils.formatHiveDate(
-                                  bloc.resultsBloc.hiveDate!,
-                                  requiredDateFormat: "MMMM yyyy"),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: Text(
+                            DateTimeUtils.formatHiveDate(
+                                bloc.resultsBloc.hiveDate!,
+                                requiredDateFormat: "MMMM yyyy"),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
                             ),
+                            textAlign: TextAlign.left,
                           ),
                         ),
                       ),
@@ -221,7 +221,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     SizedBox(height: 20.h),
                     SummaryForAllLearners(),
                     SizedBox(
-                      height: 10.h,
+                      height: 20.h,
                     ),
                     ProjectReporsForGroup(),
                     SizedBox(
@@ -331,9 +331,12 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       ),
                       SizedBox(height: 20.h),
                       Container(
+                        alignment: Alignment.centerLeft,
+
                         height: 52.h,
                         width: 345.w,
-                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
                         decoration: BoxDecoration(
                           color: AppColors.txtFieldBackground,
                           borderRadius: BorderRadius.all(
@@ -362,22 +365,20 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                               _updateLearnerSummary();
                             }
                           },
-                          child: Center(
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: Text(
-                                DateTimeUtils.formatHiveDate(
-                                    bloc.resultsBloc.hiveDate!,
-                                    requiredDateFormat: "MMMM yyyy"),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 19.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
-                                textAlign: TextAlign.left,
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: Text(
+                              DateTimeUtils.formatHiveDate(
+                                  bloc.resultsBloc.hiveDate!,
+                                  requiredDateFormat: "MMMM yyyy"),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
                               ),
+                              textAlign: TextAlign.left,
                             ),
                           ),
                         ),
