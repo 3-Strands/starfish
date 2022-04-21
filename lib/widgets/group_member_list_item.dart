@@ -46,15 +46,18 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.groupUser.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontSize: 21.5.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF434141),
+              Container(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text(
+                  widget.groupUser.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 21.5.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF434141),
+                  ),
                 ),
               ),
               // if (widget.groupUser.user != null &&
@@ -78,19 +81,23 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   borderSide: BorderSide(color: Colors.white, width: 2),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Text(
-                  widget.groupUser.user != null &&
-                          User_Status.valueOf(widget.groupUser.user!.status!) !=
-                              User_Status.ACTIVE
-                      ? '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}'+" " +
-                          AppLocalizations.of(context)!
-                              .userStatusInvited
-                              .toUpperCase()
-                      : '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}',
-                  style: TextStyle(
-                    fontFamily: 'OpenSans',
-                    fontSize: 19.sp,
-                    color: Color(0xFF3475F0),
+                child: Container(
+                  child: Text(
+                    widget.groupUser.user != null &&
+                            User_Status.valueOf(
+                                    widget.groupUser.user!.status!) !=
+                                User_Status.ACTIVE
+                        ? '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}' +
+                            " " +
+                            AppLocalizations.of(context)!
+                                .userStatusInvited
+                                .toUpperCase()
+                        : '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}',
+                    style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 19.sp,
+                        color: Color(0xFF3475F0),
+                        overflow: TextOverflow.ellipsis),
                   ),
                 ),
                 itemBuilder: (context) => [
