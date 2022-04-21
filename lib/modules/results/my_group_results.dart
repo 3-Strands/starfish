@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
@@ -23,8 +25,10 @@ import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
+import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
@@ -37,6 +41,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
+
 
 class MyGroupResults extends StatefulWidget {
   MyGroupResults({Key? key}) : super(key: key);
@@ -53,6 +58,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
 
   TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
+  List<File> _selectedFiles = [];
+ 
 
   @override
   void initState() {
@@ -500,6 +507,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   color: Color(0xFFEFEFEF),
                   child: ElevatedButton(
                     onPressed: () {
+                      _selectedFiles.clear();
                       //_closeSlidingUpPanelIfOpen();
                       Navigator.pop(context);
                     },
@@ -1102,10 +1110,16 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             //  if (_isEditMode) _previewFiles(widget.material!),
             // SizedBox(height: 10.h),
 
-            // // Selected files (Not uploaded)
             // _previewSelectedFiles(),
 
             // Add Materials
+            // // Selected files (Not uploaded)
+            StatefulBuilder(builder: (context, setModal) {
+              return Column(
+                children: [
+                  _previewSelectedFiles(),
+                  SizedBox(height: 10.h),
+
             DottedBorder(
               borderType: BorderType.RRect,
               radius: Radius.circular(30.r),
@@ -1113,72 +1127,79 @@ class _MyGroupResultsState extends State<MyGroupResults> {
               child: Container(
                 width: double.infinity,
                 height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // if ((!_isEditMode && _selectedFiles.length >= 5) ||
-                    //     (_isEditMode &&
-                    //         (_selectedFiles.length +
-                    //                 (widget.material!.localFiles.length)) >=
-                    //             5)) {
-                    //   StarfishSnackbar.showErrorMessage(context,
-                    //       AppLocalizations.of(context)!.maxFilesSelected);
-                    // } else {
-                    //   FilePickerResult? result = await FilePicker.platform
-                    //       .pickFiles(allowMultiple: false);
-
-                    //   if (result != null) {
-                    //     // if single selected file is IMAGE, open image in Cropper
-                    //     if (result.count == 1 &&
-                    //         ['jpg', 'jpeg', 'png'].contains(result.paths.first
-                    //             ?.split("/")
-                    //             .last
-                    //             .split(".")
-                    //             .last)) {
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (context) => ImageCropperScreen(
-                    //             sourceImage: File(result.paths.first!),
-                    //             onDone: (File? _newFile) {
-                    //               if (_newFile == null) {
-                    //                 return;
-                    //               }
-                    //               setState(() {
-                    //                 _selectedFiles.add(_newFile);
-                    //               });
-                    //             },
-                    //           ),
-                    //         ),
-                    //       ).then((value) => {
-                    //             // Handle cropped image here
-                    //           });
-                    //     } else {
-                    //       setState(() {
-                    //         _selectedFiles.addAll(result.paths
-                    //             .map((path) => File(path!))
-                    //             .toList());
-                    //       });
-                    //     }
-                    //   } else {
-                    //     // User canceled the picker
-                    //   }
-                    // }
-                  },
-                  child: Text(
-                    '${AppLocalizations.of(context)!.addPhotos}',
-                    style: TextStyle(
-                      fontFamily: 'OpenSans',
-                      fontSize: 17.sp,
-                      color: Color(0xFF3475F0),
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                  ),
-                ),
+                child:  ElevatedButton(
+                      onPressed: () async {
+                        if ((!_isEditMode && _selectedFiles.length >= 5)) {
+                          StarfishSnackbar.showErrorMessage(context,
+                              AppLocalizations.of(context)!.maxFilesSelected);
+                        } else {
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(
+                                allowMultiple: false
+                                  type: FileType.custom,
+                                   allowedExtensions: ['jpg', 'png','jpeg'],
+                                );
+                
+                          if (result != null) {
+                            // if single selected file is IMAGE, open image in Cropper
+                            if (result.count == 1 &&
+                                ['jpg', 'jpeg', 'png'].contains(result.paths.first
+                                    ?.split("/")
+                                    .last
+                                    .split(".")
+                                    .last)) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImageCropperScreen(
+                                    sourceImage: File(result.paths.first!),
+                                    onDone: (File? _newFile) {
+                                      if (_newFile == null) {
+                                        return;
+                                      }
+                                     
+                                      setModal(() {
+                                        _selectedFiles.add(_newFile);
+                                        print('pathhhhhhh${_selectedFiles[0].path}');
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ).then((value) => {
+                                    // Handle cropped image here
+                                  });
+                            } else {
+                              setModal(() {
+                                _selectedFiles.addAll(result.paths
+                                    .map((path) => File(path!))
+                                    .toList());
+                              });
+                            }
+                          } else {
+                            // User canceled the picker
+                          }
+                        }
+                      },
+                      child: Text(
+                        '${AppLocalizations.of(context)!.addPhotos}',
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 17.sp,
+                          color: Color(0xFF3475F0),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                      ),
+                    )
+                  
               ),
             ),
+                ],
+              );
+            }),
+
             SizedBox(
               height: 20.h,
             ),
@@ -1658,5 +1679,59 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     }).onError((error, stackTrace) {
       debugPrint("Failed to save LearnerEvaluation");
     });
+  }
+
+  Widget _previewSelectedFiles() {
+    final List<Widget> _widgetList = [];
+
+    for (File file in _selectedFiles) {
+      _widgetList.add(
+        InkWell(onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ImagePreview(file))),
+          child: Hero(tag: file,
+            child: Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
+    color: Colors.white,
+    boxShadow: [
+      BoxShadow(color: Colors.grey, spreadRadius: 3),
+    ],),
+              height: 70.h,
+              width: 70.w,
+              child: ClipRect(
+                child: Image.file(
+                  file,fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          flightShuttleBuilder: (flightContext, animation, direction,
+          fromContext, toContext) {
+          return Center(child: CircularProgressIndicator(),);
+          },
+          ),
+        ),
+      );
+    }
+
+    return Wrap(spacing: 10,
+    runSpacing: 10,
+   
+    //  mainAxisSize: MainAxisSize.max,
+   //   crossAxisAlignment: CrossAxisAlignment.start,
+      children: _widgetList,
+     
+    );
+  }
+}
+
+
+class ImagePreview extends StatelessWidget {
+  const ImagePreview(this.file,{ Key? key }) : super(key: key);
+final file;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: InkWell(onTap:()=> Navigator.pop(context),
+      child: Hero(tag: file,
+      child: Center(child: Image.file(file))),
+    ),
+      
+    );
   }
 }
