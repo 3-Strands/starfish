@@ -42,6 +42,9 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
+    // Update or create outputs as a stream
+    rpc CreateUpdateOutputs (stream CreateUpdateOutputRequest) returns (stream CreateUpdateOutputResponse) {}
+
     // Create or update teacher responses
     rpc CreateUpdateTeacherResponses (stream CreateUpdateTeacherResponseRequest) returns (stream CreateUpdateTeacherResponseResponse) {}
 
@@ -499,6 +502,34 @@ message CreateUpdateMaterialsResponse {
 
     // The Material after update or create request.
     Material material = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
+message CreateUpdateOutputRequest {
+
+    // The Output resource that will be created or replace the existing one on the server.
+    // The project_id, marker_id and month will be used to determine which output is being updated.
+    // If not existing output matches these values then it will be a create request.
+    // For an update, only the value field is set, and all other fields are ignored.
+    Output output = 1;
+
+}
+
+message CreateUpdateOutputResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Output after the update or create action.
+    Output output = 1;
 
     // The status of the update or create request.
     Status status = 2;
