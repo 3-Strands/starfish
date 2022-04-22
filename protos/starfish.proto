@@ -731,6 +731,21 @@ message EvaluationCategory {
 
     string name = 2;
 
+    // each value may have a name specific to this category
+    // here is a list of named values
+    repeated EvaluationValueName value_names = 3;
+
+}
+
+// The name for a particular evaluation value
+message EvaluationValueName {
+
+    // The value being named
+    int32 value = 1;
+
+    // The name for the value
+    string name = 2;
+
 }
 
 // A literacy group
