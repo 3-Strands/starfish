@@ -74,7 +74,7 @@ extension HiveDateExt on HiveDate {
     int currentYear = this.year;
 
     if (currentMonth > 1) {
-      return HiveDate.create(currentYear, currentMonth, 0);
+      return HiveDate.create(currentYear, currentMonth - 1, 0);
     } else {
       return HiveDate.create(currentYear - 1, 12, 0);
     }
