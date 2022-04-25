@@ -1,3 +1,5 @@
+import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
@@ -5,11 +7,14 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
+import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
+import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
@@ -122,6 +127,52 @@ class ResultsBloc extends Object {
       }
     });
     return _listMonth;
+  }
+
+  Map<String, int> actionUserStatusForSelectedMonth(HiveDate _hiveDate) {
+    Map<String, int> _map = Map();
+    _map['done'] = 0;
+    _map['not_done'] = 0;
+    _map['overdue'] = 0;
+
+    if (this.hiveGroupUser == null) {
+      return _map;
+    }
+    List<HiveAction>? _actions =
+        ActionProvider().getGroupActions(this.hiveGroupUser!.groupId!);
+    if (_actions == null) {
+      return _map;
+    }
+    int _countDone = 0;
+    int _countNotDone = 0;
+    int _countOverdue = 0;
+    _actions
+        .where((element) => element.isDueInMonth(_hiveDate))
+        .forEach((HiveAction hiveAction) {
+      HiveActionUser? _hiveActionUser = ActionProvider()
+          .getActionUser(this.hiveGroupUser!.userId!, hiveAction.id!);
+
+      if (_hiveActionUser != null) {
+        switch (
+            ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo()) {
+          case ActionStatus.DONE:
+            _countDone++;
+            break;
+
+          case ActionStatus.NOT_DONE:
+            _countNotDone++;
+            break;
+          case ActionStatus.OVERDUE:
+            _countOverdue++;
+            break;
+        }
+      }
+    });
+    _map['done'] = _countDone;
+    _map['not_done'] = _countNotDone;
+    _map['overdue'] = _countOverdue;
+
+    return _map;
   }
 
   void dispose() {}

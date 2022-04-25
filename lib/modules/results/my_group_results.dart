@@ -1246,89 +1246,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             SizedBox(
               height: 10.h,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  width: 99.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF6DE26B),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Text(
-                    Intl.plural(
-                      bloc.resultsBloc.hiveGroup!.actionsCompleted,
-                      zero:
-                          "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                      one:
-                          "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                      other:
-                          "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
-                      args: [bloc.resultsBloc.hiveGroup!.actionsCompleted],
-                    ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  width: 99.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFFFBE4A),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Text(
-                    Intl.plural(
-                      bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
-                      zero:
-                          "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                      one:
-                          "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                      other:
-                          "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
-                      args: [bloc.resultsBloc.hiveGroup!.actionsNotDoneYet],
-                    ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  width: 99.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFFF5E4D),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                  child: Text(
-                    Intl.plural(
-                      bloc.resultsBloc.hiveGroup!.actionsOverdue,
-                      zero:
-                          "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
-                      one:
-                          "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
-                      other:
-                          "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
-                      args: [bloc.resultsBloc.hiveGroup!.actionsOverdue],
-                    ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
+            _buildMonthlyActionWidget(bloc.resultsBloc.actionUserStatusForSelectedMonth(bloc.resultsBloc.hiveDate!), displayOverdue: true),
             StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
                 return Column(
@@ -1396,10 +1314,21 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   }
 
   Widget _buildActionHistoryWidget() {
+    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    _currentMonth.day = 0;
+
+    List<HiveDate> _historyAvailableMonths =
+        bloc.resultsBloc.getListOfAvailableHistoryMonths();
+    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    if (_historyAvailableMonths.contains(_currentMonth)) {
+      _historyAvailableMonths.remove(_currentMonth);
+    }
+
+    _historyAvailableMonths.forEach((element) {print(DateTimeUtils.formatHiveDate(element, requiredDateFormat: 'dd MMM yyyy'));});
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 4,
+        itemCount: _historyAvailableMonths.length,
         itemBuilder: (BuildContext context, index) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1408,7 +1337,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 height: 10.h,
               ),
               Text(
-                "JUL 2021",
+                DateTimeUtils.formatHiveDate(
+                    _historyAvailableMonths.elementAt(index),
+                    requiredDateFormat: "MMM yyyy"), //"JUL 2021",
                 style: TextStyle(
                   fontFamily: "OpenSans",
                   fontSize: 19.sp,
@@ -1418,71 +1349,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
               SizedBox(
                 height: 10.h,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: Container(
-                      width: 99.w,
-                      decoration: BoxDecoration(
-                          color: Color(0xFF6DE26B),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(8.5.r))),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.h, horizontal: 10.w),
-                      child: Text(
-                        Intl.plural(
-                          bloc.resultsBloc.hiveGroup!.actionsCompleted,
-                          zero:
-                              "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                          one:
-                              "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                          other:
-                              "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
-                          args: [bloc.resultsBloc.hiveGroup!.actionsCompleted],
-                        ),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Rubik",
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 15.w,
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: 99.w,
-                      decoration: BoxDecoration(
-                          color: Color(0xFFFFBE4A),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(8.5.r))),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.h, horizontal: 10.w),
-                      child: Text(
-                        Intl.plural(
-                          bloc.resultsBloc.hiveGroup!.actionsNotDoneYet,
-                          zero:
-                              "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                          one:
-                              "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                          other:
-                              "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
-                          args: [bloc.resultsBloc.hiveGroup!.actionsNotDoneYet],
-                        ),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Rubik",
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
+              _buildMonthlyActionWidget(
+                bloc.resultsBloc.actionUserStatusForSelectedMonth(_historyAvailableMonths.elementAt(index))
               ),
               SizedBox(
                 height: 10.h,
@@ -1490,6 +1358,112 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             ],
           );
         });
+  }
+
+  Widget _buildMonthlyActionWidget(Map<String, int> actionStatusCount, {displayOverdue = false}) {
+    int complete = actionStatusCount['done'] ?? 0;
+    int notComplete = actionStatusCount['not_done'] ?? 0;
+    int overdue = actionStatusCount['overdue'] ?? 0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Expanded(
+          child: Container(
+            width: 99.w,
+            decoration: BoxDecoration(
+                color: Color(0xFF6DE26B),
+                borderRadius:
+                    BorderRadius.all(Radius.circular(8.5.r))),
+            padding: EdgeInsets.symmetric(
+                vertical: 10.h, horizontal: 10.w),
+            child: Text(
+              Intl.plural(
+                complete,
+                zero:
+                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
+                one:
+                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
+                other:
+                    "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+                args: [complete],
+              ),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Rubik",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 10.w,
+        ),
+        Expanded(
+          child: Container(
+            width: 99.w,
+            decoration: BoxDecoration(
+                color: Color(0xFFFFBE4A),
+                borderRadius:
+                    BorderRadius.all(Radius.circular(8.5.r))),
+            padding: EdgeInsets.symmetric(
+                vertical: 10.h, horizontal: 10.w),
+            child: Text(
+              Intl.plural(
+                notComplete,
+                zero:
+                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                one:
+                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                other:
+                    "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
+                args: [notComplete],
+              ),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Rubik",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        
+        if (displayOverdue == true) ...[
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Container(
+              width: 99.w,
+              decoration: BoxDecoration(
+                  color: Color(0xFFFF5E4D),
+                  borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+              padding:
+                  EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              child: Text(
+                Intl.plural(
+                  overdue,
+                  zero:
+                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                  one:
+                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                  other:
+                      "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
+                  args: [overdue],
+                ),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Rubik",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ]
+      ],
+    );
   }
 
   Widget _buildGroupEvaluationWidget() {
