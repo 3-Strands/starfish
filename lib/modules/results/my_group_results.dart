@@ -723,11 +723,14 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   }
 
   Widget _buildCategoryHistoryWidget() {
+    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    _currentMonth.day = 0;
+
     List<HiveDate> _historyAvailableMonths =
         bloc.resultsBloc.getListOfAvailableHistoryMonths();
     _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-    if (_historyAvailableMonths.contains(bloc.resultsBloc.hiveDate!)) {
-      _historyAvailableMonths.remove(bloc.resultsBloc.hiveDate!);
+    if (_historyAvailableMonths.contains(_currentMonth)) {
+      _historyAvailableMonths.remove(_currentMonth);
     }
 
     return ListView.builder(
@@ -861,15 +864,17 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center),
-                  Padding(
+                  Visibility(child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                     child: Text(
-                      "$changeInCount",
+                      changeInCount > 0 ? "+$changeInCount" : "$changeInCount",
                       style: TextStyle(
                           fontFeatures: [FontFeature.superscripts()],
-                          color: Colors.red),
+                          fontWeight: FontWeight.bold,
+                          color: changeInCount > 0 ? Colors.green : Colors.red,),
                     ),
-                  )
+                  ),
+                  visible: changeInCount != 0,),
                 ],
               ),
             ),
