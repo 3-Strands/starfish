@@ -58,7 +58,7 @@ class HiveGroup extends HiveObject {
     this.users,
     this.evaluationCategoryIds,
     this.actions,
-    this.status,
+    this.status = 0, // Group_Status.ACTIVE,
     this.editHistory,
     this.isNew = false,
     this.isUpdated = false,
