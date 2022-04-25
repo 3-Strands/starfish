@@ -53,7 +53,7 @@ class HiveDate extends Comparable {
         (year == other.year && month == other.month && day > other.day)) {
       return 1;
     } else {
-      return 0;
+      return -1;
     }
   }
 
