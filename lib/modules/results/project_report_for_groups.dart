@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/db/hive_output.dart';
 
-class ProjectReporsForGroup extends StatelessWidget {
+class ProjectReporsForGroup extends StatefulWidget {
   const ProjectReporsForGroup({Key? key}) : super(key: key);
 
+  @override
+  State<ProjectReporsForGroup> createState() => _ProjectReporsForGroupState();
+}
+
+class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,22 +63,7 @@ class ProjectReporsForGroup extends StatelessWidget {
           SizedBox(
             height: 10.h,
           ),
-          _buildMarkerStatics(context, 53, 43),
-          Divider(
-            color: Color(0xFF5D5D5D),
-            thickness: 1,
-          ),
-          _buildMarkerStatics(context, 53, 43),
-          Divider(
-            color: Color(0xFF5D5D5D),
-            thickness: 1,
-          ),
-          _buildMarkerStatics(context, 126, 22),
-          Divider(
-            color: Color(0xFF5D5D5D),
-            thickness: 1,
-          ),
-          _buildMarkerStatics(context, 143, 89),
+          _buildMarkerStaticsList(context),
           Divider(
             color: Color(0xFF5D5D5D),
             thickness: 1,
@@ -102,12 +95,12 @@ class ProjectReporsForGroup extends StatelessWidget {
     );
   }
 
-  Row _buildMarkerStatics(context, int marker, int actuals) {
+  Widget _buildMarkerStatics(HiveOutput output) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "${AppLocalizations.of(context)!.markers} $marker",
+          "${output.markerName}",
           style: TextStyle(
               fontSize: 17.sp,
               fontFamily: "OpenSans",
@@ -120,7 +113,7 @@ class ProjectReporsForGroup extends StatelessWidget {
           color: Color(0xFFFFFFFF),
           child: Center(
             child: Text(
-              "$actuals",
+              "${output.value}",
               style: TextStyle(
                   fontSize: 17.sp,
                   fontFamily: "OpenSans",
@@ -131,5 +124,17 @@ class ProjectReporsForGroup extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildMarkerStaticsList(BuildContext context) {
+    AppBloc bloc = Provider.of(context);
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: bloc.resultsBloc.fetchOutputs().length,
+        itemBuilder: (BuildContext context, int index) {
+          return _buildMarkerStatics(
+              bloc.resultsBloc.fetchOutputs().elementAt(index));
+        });
   }
 }

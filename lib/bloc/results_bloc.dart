@@ -7,12 +7,15 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
+import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
+import 'package:starfish/db/providers/output_provider.dart';
+import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -43,6 +46,14 @@ class ResultsBloc extends Object {
     ];
 
     return GroupProvider().userGroupsWithRole(_currentUser.id, groupUserRole);
+  }
+
+  List<HiveOutput> fetchOutputs() {
+    return OutputProvider().getGroupOutputsForMonth(hiveGroup!.id!, hiveDate!);
+  }
+
+  bool shouldDisplayProjectReport() {
+    return CurrentUserProvider().getUserSync().linkGroups;
   }
 
   List<HiveLearnerEvaluation>? getGroupLearnerEvaluationsForMonth(

@@ -214,7 +214,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     SizedBox(
                       height: 20.h,
                     ),
-                    ProjectReporsForGroup(),
+                    if (bloc.resultsBloc.shouldDisplayProjectReport())
+                      ProjectReporsForGroup(),
                     SizedBox(
                       height: 20.h,
                     ),

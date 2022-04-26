@@ -20,6 +20,7 @@ import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
@@ -48,6 +49,7 @@ class HiveDatabase {
   static const String TEACHER_RESPONSE_BOX = 'teacherResponseBox'; // 19
   static const String GROUP_EVALUATION_BOX = 'groupResponseBox'; // 20
   static const String TRANSFORMATION_BOX = 'transformationBox'; // 21
+  static const String OUTPUT_BOX = 'outputBox'; // 22
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -85,12 +87,12 @@ class HiveDatabase {
     Hive.registerAdapter(HiveTeacherResponseAdapter());
     Hive.registerAdapter(HiveGroupEvaluationAdapter());
     Hive.registerAdapter(HiveTransformationAdapter());
+    Hive.registerAdapter(HiveOutputAdapter());
 
     await openBoxes();
   }
 
   openBoxes() async {
-    print("open boxes");
     await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX);
     await Hive.openBox<HiveCountry>(COUNTRY_BOX);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX);
@@ -110,5 +112,6 @@ class HiveDatabase {
     await Hive.openBox<HiveTeacherResponse>(TEACHER_RESPONSE_BOX);
     await Hive.openBox<HiveGroupEvaluation>(GROUP_EVALUATION_BOX);
     await Hive.openBox<HiveTransformation>(TRANSFORMATION_BOX);
+    await Hive.openBox<HiveOutput>(OUTPUT_BOX);
   }
 }

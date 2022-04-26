@@ -304,6 +304,14 @@ class ApiProvider {
     return client!.createUpdateTeacherResponses(request);
   }
 
+  Future<ResponseStream<CreateUpdateOutputResponse>> createUpdateOutputs(
+      Stream<CreateUpdateOutputRequest> request) async {
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.createUpdateOutputs(request);
+  }
+
   Future<ResponseStream<LearnerEvaluation>> listLearnerEvaluations() async {
     var request = ListLearnerEvaluationsRequest.create();
     Date? date = SyncTime().lastSyncDateTime();
@@ -354,5 +362,18 @@ class ApiProvider {
       await getGrpcClient();
     }
     return client!.listTransformations(request);
+  }
+
+  Future<ResponseStream<Output>> listOutputs() async {
+    var request = ListOutputsRequest.create();
+    Date? date = SyncTime().lastSyncDateTime();
+
+    if (date != null) {
+      request.updatedSince = date;
+    }
+    if (client == null) {
+      await getGrpcClient();
+    }
+    return client!.listOutputs(request);
   }
 }

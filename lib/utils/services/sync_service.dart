@@ -28,6 +28,7 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
+import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
@@ -36,6 +37,7 @@ import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
+import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
@@ -99,6 +101,7 @@ class SyncService {
   late Box<HiveTeacherResponse> teacherResponseBox;
   late Box<HiveGroupEvaluation> groupEvaluationBox;
   late Box<HiveTransformation> transformationBox;
+  late Box<HiveOutput> outputBox;
 
   SyncService() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
@@ -128,6 +131,7 @@ class SyncService {
         Hive.box<HiveGroupEvaluation>(HiveDatabase.GROUP_EVALUATION_BOX);
     transformationBox =
         Hive.box<HiveTransformation>(HiveDatabase.TRANSFORMATION_BOX);
+    outputBox = Hive.box<HiveOutput>(HiveDatabase.OUTPUT_BOX);
   }
 
   void showAlert(BuildContext context) async {
@@ -252,6 +256,7 @@ class SyncService {
         //syncGroupEvaluations(), // Pending
         syncTeacherResponses(),
         syncTransformaitons(),
+        syncOutputs(),
       ],
       eagerError: true,
     ).then((value) {
@@ -1580,6 +1585,30 @@ class SyncService {
         handleGrpcError(err);
       }), onDone: () {
         print('TeacherResponse Sync Done.');
+      });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError(handleError);
+  }
+
+  Future syncOutputs() async {
+    /**
+     * TODO: fetch only records updated after last sync and update in local DB.
+     */
+    if (DEBUG) {
+      outputBox.values.forEach((element) {});
+    }
+
+    await ResultsRepository()
+        .listOutputs()
+        .then((ResponseStream<Output> stream) {
+      stream.listen((output) {
+        HiveOutput _hiveOutput = HiveOutput.from(output);
+
+        OutputProvider().createUpdateOutput(_hiveOutput);
+      }, onError: ((err) {
+        handleGrpcError(err);
+      }), onDone: () {
+        print('Output Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
     }).catchError(handleError);
