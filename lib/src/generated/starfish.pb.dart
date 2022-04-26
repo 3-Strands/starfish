@@ -7,6 +7,7 @@
 
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'google/type/date.pb.dart' as $2;
@@ -1618,6 +1619,132 @@ class CreateUpdateMaterialsResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(3);
 }
 
+class CreateUpdateOutputRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateOutputRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<Output>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'output', subBuilder: Output.create)
+    ..hasRequiredFields = false
+  ;
+
+  CreateUpdateOutputRequest._() : super();
+  factory CreateUpdateOutputRequest({
+    Output? output,
+  }) {
+    final _result = create();
+    if (output != null) {
+      _result.output = output;
+    }
+    return _result;
+  }
+  factory CreateUpdateOutputRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CreateUpdateOutputRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CreateUpdateOutputRequest clone() => CreateUpdateOutputRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CreateUpdateOutputRequest copyWith(void Function(CreateUpdateOutputRequest) updates) => super.copyWith((message) => updates(message as CreateUpdateOutputRequest)) as CreateUpdateOutputRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CreateUpdateOutputRequest create() => CreateUpdateOutputRequest._();
+  CreateUpdateOutputRequest createEmptyInstance() => create();
+  static $pb.PbList<CreateUpdateOutputRequest> createRepeated() => $pb.PbList<CreateUpdateOutputRequest>();
+  @$core.pragma('dart2js:noInline')
+  static CreateUpdateOutputRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateUpdateOutputRequest>(create);
+  static CreateUpdateOutputRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Output get output => $_getN(0);
+  @$pb.TagNumber(1)
+  set output(Output v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasOutput() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearOutput() => clearField(1);
+  @$pb.TagNumber(1)
+  Output ensureOutput() => $_ensure(0);
+}
+
+class CreateUpdateOutputResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateOutputResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<Output>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'output', subBuilder: Output.create)
+    ..e<CreateUpdateOutputResponse_Status>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: CreateUpdateOutputResponse_Status.SUCCESS, valueOf: CreateUpdateOutputResponse_Status.valueOf, enumValues: CreateUpdateOutputResponse_Status.values)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..hasRequiredFields = false
+  ;
+
+  CreateUpdateOutputResponse._() : super();
+  factory CreateUpdateOutputResponse({
+    Output? output,
+    CreateUpdateOutputResponse_Status? status,
+    $core.String? message,
+  }) {
+    final _result = create();
+    if (output != null) {
+      _result.output = output;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    return _result;
+  }
+  factory CreateUpdateOutputResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CreateUpdateOutputResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CreateUpdateOutputResponse clone() => CreateUpdateOutputResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CreateUpdateOutputResponse copyWith(void Function(CreateUpdateOutputResponse) updates) => super.copyWith((message) => updates(message as CreateUpdateOutputResponse)) as CreateUpdateOutputResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CreateUpdateOutputResponse create() => CreateUpdateOutputResponse._();
+  CreateUpdateOutputResponse createEmptyInstance() => create();
+  static $pb.PbList<CreateUpdateOutputResponse> createRepeated() => $pb.PbList<CreateUpdateOutputResponse>();
+  @$core.pragma('dart2js:noInline')
+  static CreateUpdateOutputResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateUpdateOutputResponse>(create);
+  static CreateUpdateOutputResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Output get output => $_getN(0);
+  @$pb.TagNumber(1)
+  set output(Output v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasOutput() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearOutput() => clearField(1);
+  @$pb.TagNumber(1)
+  Output ensureOutput() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  CreateUpdateOutputResponse_Status get status => $_getN(1);
+  @$pb.TagNumber(2)
+  set status(CreateUpdateOutputResponse_Status v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasStatus() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearStatus() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get message => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set message($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMessage() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMessage() => clearField(3);
+}
+
 class CreateUpdateTeacherResponseRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateUpdateTeacherResponseRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<TeacherResponse>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'teacherResponse', subBuilder: TeacherResponse.create)
@@ -2442,6 +2569,7 @@ class EvaluationCategory extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'EvaluationCategory', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..pc<EvaluationValueName>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'valueNames', $pb.PbFieldType.PM, subBuilder: EvaluationValueName.create)
     ..hasRequiredFields = false
   ;
 
@@ -2449,6 +2577,7 @@ class EvaluationCategory extends $pb.GeneratedMessage {
   factory EvaluationCategory({
     $core.String? id,
     $core.String? name,
+    $core.Iterable<EvaluationValueName>? valueNames,
   }) {
     final _result = create();
     if (id != null) {
@@ -2456,6 +2585,9 @@ class EvaluationCategory extends $pb.GeneratedMessage {
     }
     if (name != null) {
       _result.name = name;
+    }
+    if (valueNames != null) {
+      _result.valueNames.addAll(valueNames);
     }
     return _result;
   }
@@ -2497,6 +2629,70 @@ class EvaluationCategory extends $pb.GeneratedMessage {
   $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
   void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<EvaluationValueName> get valueNames => $_getList(2);
+}
+
+class EvaluationValueName extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'EvaluationValueName', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value', $pb.PbFieldType.O3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..hasRequiredFields = false
+  ;
+
+  EvaluationValueName._() : super();
+  factory EvaluationValueName({
+    $core.int? value,
+    $core.String? name,
+  }) {
+    final _result = create();
+    if (value != null) {
+      _result.value = value;
+    }
+    if (name != null) {
+      _result.name = name;
+    }
+    return _result;
+  }
+  factory EvaluationValueName.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory EvaluationValueName.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  EvaluationValueName clone() => EvaluationValueName()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  EvaluationValueName copyWith(void Function(EvaluationValueName) updates) => super.copyWith((message) => updates(message as EvaluationValueName)) as EvaluationValueName; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static EvaluationValueName create() => EvaluationValueName._();
+  EvaluationValueName createEmptyInstance() => create();
+  static $pb.PbList<EvaluationValueName> createRepeated() => $pb.PbList<EvaluationValueName>();
+  @$core.pragma('dart2js:noInline')
+  static EvaluationValueName getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EvaluationValueName>(create);
+  static EvaluationValueName? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get value => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set value($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasValue() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearValue() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
 }
 
 class Group extends $pb.GeneratedMessage {
@@ -2511,6 +2707,7 @@ class Group extends $pb.GeneratedMessage {
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'linkEmail')
     ..m<$core.String, $core.String>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'languages', entryClassName: 'Group.LanguagesEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('sil.starfish'))
     ..e<Group_Status>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: Group_Status.ACTIVE, valueOf: Group_Status.valueOf, enumValues: Group_Status.values)
+    ..pPS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'projectIds')
     ..hasRequiredFields = false
   ;
 
@@ -2526,6 +2723,7 @@ class Group extends $pb.GeneratedMessage {
     $core.String? linkEmail,
     $core.Map<$core.String, $core.String>? languages,
     Group_Status? status,
+    $core.Iterable<$core.String>? projectIds,
   }) {
     final _result = create();
     if (id != null) {
@@ -2557,6 +2755,9 @@ class Group extends $pb.GeneratedMessage {
     }
     if (status != null) {
       _result.status = status;
+    }
+    if (projectIds != null) {
+      _result.projectIds.addAll(projectIds);
     }
     return _result;
   }
@@ -2640,6 +2841,9 @@ class Group extends $pb.GeneratedMessage {
   $core.bool hasStatus() => $_has(9);
   @$pb.TagNumber(11)
   void clearStatus() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.List<$core.String> get projectIds => $_getList(10);
 }
 
 class GroupEvaluation extends $pb.GeneratedMessage {
@@ -3506,6 +3710,55 @@ class ListMaterialTypesRequest extends $pb.GeneratedMessage {
   $2.Date ensureUpdatedSince() => $_ensure(0);
 }
 
+class ListOutputsRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListOutputsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  ListOutputsRequest._() : super();
+  factory ListOutputsRequest({
+    $2.Date? updatedSince,
+  }) {
+    final _result = create();
+    if (updatedSince != null) {
+      _result.updatedSince = updatedSince;
+    }
+    return _result;
+  }
+  factory ListOutputsRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListOutputsRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListOutputsRequest clone() => ListOutputsRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListOutputsRequest copyWith(void Function(ListOutputsRequest) updates) => super.copyWith((message) => updates(message as ListOutputsRequest)) as ListOutputsRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ListOutputsRequest create() => ListOutputsRequest._();
+  ListOutputsRequest createEmptyInstance() => create();
+  static $pb.PbList<ListOutputsRequest> createRepeated() => $pb.PbList<ListOutputsRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ListOutputsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListOutputsRequest>(create);
+  static ListOutputsRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $2.Date get updatedSince => $_getN(0);
+  @$pb.TagNumber(1)
+  set updatedSince($2.Date v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUpdatedSince() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUpdatedSince() => clearField(1);
+  @$pb.TagNumber(1)
+  $2.Date ensureUpdatedSince() => $_ensure(0);
+}
+
 class ListTeacherResponsesRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListTeacherResponsesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<$2.Date>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $2.Date.create)
@@ -4137,6 +4390,125 @@ class MaterialType extends $pb.GeneratedMessage {
   $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
   void clearName() => clearField(2);
+}
+
+class Output extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Output', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'projectId')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'markerId')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'markerName')
+    ..aOM<$2.Date>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'month', subBuilder: $2.Date.create)
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
+    ..hasRequiredFields = false
+  ;
+
+  Output._() : super();
+  factory Output({
+    $core.String? groupId,
+    $core.String? projectId,
+    $core.String? markerId,
+    $core.String? markerName,
+    $2.Date? month,
+    $fixnum.Int64? value,
+  }) {
+    final _result = create();
+    if (groupId != null) {
+      _result.groupId = groupId;
+    }
+    if (projectId != null) {
+      _result.projectId = projectId;
+    }
+    if (markerId != null) {
+      _result.markerId = markerId;
+    }
+    if (markerName != null) {
+      _result.markerName = markerName;
+    }
+    if (month != null) {
+      _result.month = month;
+    }
+    if (value != null) {
+      _result.value = value;
+    }
+    return _result;
+  }
+  factory Output.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Output.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Output clone() => Output()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Output copyWith(void Function(Output) updates) => super.copyWith((message) => updates(message as Output)) as Output; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Output create() => Output._();
+  Output createEmptyInstance() => create();
+  static $pb.PbList<Output> createRepeated() => $pb.PbList<Output>();
+  @$core.pragma('dart2js:noInline')
+  static Output getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Output>(create);
+  static Output? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get groupId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set groupId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasGroupId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGroupId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get projectId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set projectId($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasProjectId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearProjectId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get markerId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set markerId($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMarkerId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMarkerId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get markerName => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set markerName($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasMarkerName() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearMarkerName() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $2.Date get month => $_getN(4);
+  @$pb.TagNumber(5)
+  set month($2.Date v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasMonth() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearMonth() => clearField(5);
+  @$pb.TagNumber(5)
+  $2.Date ensureMonth() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get value => $_getI64(5);
+  @$pb.TagNumber(6)
+  set value($fixnum.Int64 v) { $_setInt64(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasValue() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearValue() => clearField(6);
 }
 
 class RefreshSessionRequest extends $pb.GeneratedMessage {

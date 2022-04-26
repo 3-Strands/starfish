@@ -42,6 +42,9 @@ service Starfish {
     // Update or create materials as a stream
     rpc CreateUpdateMaterials (stream CreateUpdateMaterialsRequest) returns (stream CreateUpdateMaterialsResponse) {}
 
+    // Update or create outputs as a stream
+    rpc CreateUpdateOutputs (stream CreateUpdateOutputRequest) returns (stream CreateUpdateOutputResponse) {}
+
     // Create or update teacher responses
     rpc CreateUpdateTeacherResponses (stream CreateUpdateTeacherResponseRequest) returns (stream CreateUpdateTeacherResponseResponse) {}
 
@@ -100,6 +103,9 @@ service Starfish {
 
     // List all material types
     rpc ListMaterialTypes (ListMaterialTypesRequest) returns (stream MaterialType) {}
+
+    // List outputs visible to the user
+    rpc ListOutputs (ListOutputsRequest) returns (stream Output) {}
 
     // List the teacher responses visible to this user
     rpc ListTeacherResponses (ListTeacherResponsesRequest) returns (stream TeacherResponse) {}
@@ -505,6 +511,34 @@ message CreateUpdateMaterialsResponse {
 
 }
 
+message CreateUpdateOutputRequest {
+
+    // The Output resource that will be created or replace the existing one on the server.
+    // The project_id, marker_id and month will be used to determine which output is being updated.
+    // If not existing output matches these values then it will be a create request.
+    // For an update, only the value field is set, and all other fields are ignored.
+    Output output = 1;
+
+}
+
+message CreateUpdateOutputResponse {
+
+    enum Status {
+        SUCCESS = 0;
+        FAILURE = 1;
+    }
+
+    // The Output after the update or create action.
+    Output output = 1;
+
+    // The status of the update or create request.
+    Status status = 2;
+
+    // Error message or any relevant message in response to the request.
+    string message = 3;
+
+}
+
 message CreateUpdateTeacherResponseRequest {
 
     // The TeacherResponse resource that will be created or replace the existing one on the server.
@@ -697,6 +731,21 @@ message EvaluationCategory {
 
     string name = 2;
 
+    // each value may have a name specific to this category
+    // here is a list of named values
+    repeated EvaluationValueName value_names = 3;
+
+}
+
+// The name for a particular evaluation value
+message EvaluationValueName {
+
+    // The value being named
+    int32 value = 1;
+
+    // The name for the value
+    string name = 2;
+
 }
 
 // A literacy group
@@ -737,6 +786,9 @@ message Group {
 
     // Status of the group
     Status status = 11;
+
+    // Output only. The IDs of EveryLanguage.app projects connected to this group.
+    repeated string project_ids = 12;
 }
 
 // An evaluation of a literacy group by a user
@@ -887,6 +939,13 @@ message ListMaterialTypesRequest {
 
 }
 
+message ListOutputsRequest {
+
+    // Only return results updated at this date or later
+    google.type.Date updated_since = 1;
+
+}
+
 message ListTeacherResponsesRequest {
 
     // Only return results updated at this date or later
@@ -1019,6 +1078,32 @@ message MaterialType {
     string id = 1;
 
     string name = 2;
+
+}
+
+// An Output is connected to a group, an EveryLanguage.app project ID and also an output marker.
+// Each output is a number and has a month for which the number applies to the marker.
+message Output {
+
+    // The ID of the group to which this output relates.
+    string group_id = 1;
+
+    // The ID of the EveryLanguage.app project to which this output relates.
+    // Each Starfish group may be connected to more than one project in EveryLanguage.app
+    string project_id = 2;
+
+    // The ID of the output marker to which this output relates.
+    string marker_id = 3;
+
+    // Output only. The name of the output marker to which this output relates.
+    string marker_name = 4;
+
+    // The month to which this output relates.
+    // In output the day value is set to 0, and ignored in input
+    google.type.Date month = 5;
+
+    // The integer value of this output.
+    int64 value = 6;
 
 }
 

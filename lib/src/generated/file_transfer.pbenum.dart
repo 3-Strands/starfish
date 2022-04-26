@@ -12,10 +12,12 @@ import 'package:protobuf/protobuf.dart' as $pb;
 class EntityType extends $pb.ProtobufEnum {
   static const EntityType ENTITY_UNSPECIFIED = EntityType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ENTITY_UNSPECIFIED');
   static const EntityType MATERIAL = EntityType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL');
+  static const EntityType TRANSFORMATION = EntityType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TRANSFORMATION');
 
   static const $core.List<EntityType> values = <EntityType> [
     ENTITY_UNSPECIFIED,
     MATERIAL,
+    TRANSFORMATION,
   ];
 
   static final $core.Map<$core.int, EntityType> _byValue = $pb.ProtobufEnum.initByValue(values);

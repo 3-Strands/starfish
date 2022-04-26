@@ -14,11 +14,12 @@ const EntityType$json = const {
   '2': const [
     const {'1': 'ENTITY_UNSPECIFIED', '2': 0},
     const {'1': 'MATERIAL', '2': 1},
+    const {'1': 'TRANSFORMATION', '2': 2},
   ],
 };
 
 /// Descriptor for `EntityType`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List entityTypeDescriptor = $convert.base64Decode('CgpFbnRpdHlUeXBlEhYKEkVOVElUWV9VTlNQRUNJRklFRBAAEgwKCE1BVEVSSUFMEAE=');
+final $typed_data.Uint8List entityTypeDescriptor = $convert.base64Decode('CgpFbnRpdHlUeXBlEhYKEkVOVElUWV9VTlNQRUNJRklFRBAAEgwKCE1BVEVSSUFMEAESEgoOVFJBTlNGT1JNQVRJT04QAg==');
 @$core.Deprecated('Use fileDataDescriptor instead')
 const FileData$json = const {
   '1': 'FileData',
@@ -109,23 +110,3 @@ const DownloadResponse$json = const {
 
 /// Descriptor for `DownloadResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List downloadResponseDescriptor = $convert.base64Decode('ChBEb3dubG9hZFJlc3BvbnNlEjkKCW1ldGFfZGF0YRgBIAEoCzIaLnNpbC5zdGFyZmlzaC5GaWxlTWV0YURhdGFIAFIIbWV0YURhdGESFgoFY2h1bmsYAiABKAxIAFIFY2h1bmsSMwoFZXJyb3IYAyABKAsyGy5zaWwuc3RhcmZpc2guRG93bmxvYWRFcnJvckgAUgVlcnJvckIKCghyZXNwb25zZQ==');
-const $core.Map<$core.String, $core.dynamic> FileTransferServiceBase$json = const {
-  '1': 'FileTransfer',
-  '2': const [
-    const {'1': 'Upload', '2': '.sil.starfish.FileData', '3': '.sil.starfish.UploadStatus', '4': const {}, '5': true, '6': true},
-    const {'1': 'Download', '2': '.sil.starfish.DownloadRequest', '3': '.sil.starfish.DownloadResponse', '4': const {}, '5': true, '6': true},
-  ],
-};
-
-@$core.Deprecated('Use fileTransferServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> FileTransferServiceBase$messageJson = const {
-  '.sil.starfish.FileData': FileData$json,
-  '.sil.starfish.FileMetaData': FileMetaData$json,
-  '.sil.starfish.UploadStatus': UploadStatus$json,
-  '.sil.starfish.DownloadRequest': DownloadRequest$json,
-  '.sil.starfish.DownloadResponse': DownloadResponse$json,
-  '.sil.starfish.DownloadError': DownloadError$json,
-};
-
-/// Descriptor for `FileTransfer`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List fileTransferServiceDescriptor = $convert.base64Decode('CgxGaWxlVHJhbnNmZXISQgoGVXBsb2FkEhYuc2lsLnN0YXJmaXNoLkZpbGVEYXRhGhouc2lsLnN0YXJmaXNoLlVwbG9hZFN0YXR1cyIAKAEwARJPCghEb3dubG9hZBIdLnNpbC5zdGFyZmlzaC5Eb3dubG9hZFJlcXVlc3QaHi5zaWwuc3RhcmZpc2guRG93bmxvYWRSZXNwb25zZSIAKAEwAQ==');

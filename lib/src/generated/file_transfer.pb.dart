@@ -5,7 +5,6 @@
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
-import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:fixnum/fixnum.dart' as $fixnum;
@@ -515,19 +514,5 @@ class DownloadResponse extends $pb.GeneratedMessage {
   void clearError() => clearField(3);
   @$pb.TagNumber(3)
   DownloadError ensureError() => $_ensure(2);
-}
-
-class FileTransferApi {
-  $pb.RpcClient _client;
-  FileTransferApi(this._client);
-
-  $async.Future<UploadStatus> upload($pb.ClientContext? ctx, FileData request) {
-    var emptyResponse = UploadStatus();
-    return _client.invoke<UploadStatus>(ctx, 'FileTransfer', 'Upload', request, emptyResponse);
-  }
-  $async.Future<DownloadResponse> download($pb.ClientContext? ctx, DownloadRequest request) {
-    var emptyResponse = DownloadResponse();
-    return _client.invoke<DownloadResponse>(ctx, 'FileTransfer', 'Download', request, emptyResponse);
-  }
 }
 
