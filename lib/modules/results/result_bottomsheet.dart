@@ -1440,64 +1440,119 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
-    for (File file in _selectedFiles) {
-      var index = _selectedFiles.indexOf(file);
-      _widgetList.add(
-        InkWell(
-          onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => ImagePreview(file))),
-          child: Hero(
-            tag: file,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(color: Colors.grey, spreadRadius: 3),
-                ],
-              ),
-              height: 70.h,
-              width: 70.w,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipRect(
-                    child: Image.file(file, fit: BoxFit.fill),
+    if (_selectedFiles.length == 1) {
+      _widgetList.add(Expanded(
+        child: Stack(
+          alignment: AlignmentDirectional.topEnd,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              //color: Colors.blue,
+              padding: const EdgeInsets.only(top: 10.0, right: 0.0),
+              child: Container(
+                //color: Colors.amber,
+                width: MediaQuery.of(context).size.width / 2,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          ImagePreview(_selectedFiles.first))),
+                  child: Hero(
+                    tag: _selectedFiles.first,
+                    child: Card(
+                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
+                      shape: BeveledRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          _selectedFiles.first,
+                          fit: BoxFit.fill,
+                          height: 130.h,
+                        ),
+                      ),
+                    ),
+                    flightShuttleBuilder: (flightContext, animation, direction,
+                        fromContext, toContext) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
                   ),
-                  Positioned(
-                    top: -20,
-                    right: -15,
-                    child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _onDeleteGridPhoto(index);
-                          });
-                        },
-                        icon: Icon(Icons.delete)),
-                  )
-                ],
+                ),
               ),
             ),
-            flightShuttleBuilder:
-                (flightContext, animation, direction, fromContext, toContext) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _selectedFiles.remove(_selectedFiles.first);
+                });
+              },
+              icon: Icon(Icons.delete),
+            ),
+          ],
         ),
-      );
+      ));
+    } else {
+      for (File file in _selectedFiles) {
+        _widgetList.add(Stack(
+          alignment: AlignmentDirectional.topEnd,
+          children: [
+            Container(
+              //color: Colors.blue,
+              padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+              child: Container(
+                //color: Colors.amber,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ImagePreview(file))),
+                  child: Hero(
+                    tag: file,
+                    child: Card(
+                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
+                      shape: BeveledRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          file,
+                          fit: BoxFit.scaleDown,
+                          height: 130.h,
+                        ),
+                      ),
+                    ),
+                    flightShuttleBuilder: (flightContext, animation, direction,
+                        fromContext, toContext) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _selectedFiles.remove(file);
+                });
+              },
+              icon: Icon(Icons.delete),
+            ),
+          ],
+        ));
+      }
     }
 
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
+    return GridView(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
+      ),
       children: _widgetList,
     );
-  }
-
-  _onDeleteGridPhoto(index) {
-    _selectedFiles.removeAt(index);
   }
 }
 
