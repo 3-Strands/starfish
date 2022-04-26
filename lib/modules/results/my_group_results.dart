@@ -48,7 +48,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    bloc.resultsBloc.init();
+
+    // call init only once
+    if (bloc.resultsBloc.hiveGroup == null) {
+      bloc.resultsBloc.init();
+    }
 
     return FocusDetector(
       onFocusGained: () {},
@@ -132,6 +136,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 textAlign: TextAlign.left,
                               ),
                               onChanged: (HiveGroup? value) {
+                                debugPrint("HiveGroup: ${value!.name}");
                                 setState(() {
                                   bloc.resultsBloc.hiveGroup = value;
                                 });

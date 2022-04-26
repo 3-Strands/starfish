@@ -90,6 +90,13 @@ class HiveAction extends HiveObject {
     );
   }
 
+  bool isDueInMonth(HiveDate hiveDate) {
+    if (dateDue == null) {
+      return false;
+    }
+    return dateDue!.year == hiveDate.year && dateDue!.month == hiveDate.month;
+  }
+
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, type: ${this.type}, 
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
