@@ -15,6 +15,7 @@ class ProjectReporsForGroup extends StatefulWidget {
 class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
   @override
   Widget build(BuildContext context) {
+    AppBloc bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -28,7 +29,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
             height: 10.h,
           ),
           Text(
-            "${AppLocalizations.of(context)!.projectReportFor}",
+            "${AppLocalizations.of(context)!.projectReportFor} ${bloc.resultsBloc.hiveGroup?.name ?? ''}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
