@@ -259,7 +259,7 @@ class ApiProvider {
     return fileTransferClient!.upload(request);
   }
 
-  Future<ResponseStream<FileData>> downloadFile(
+  Future<ResponseStream<DownloadResponse>> downloadFile(
       Stream<DownloadRequest> request) async {
     if (fileTransferClient == null) {
       await getFileTransferClient();

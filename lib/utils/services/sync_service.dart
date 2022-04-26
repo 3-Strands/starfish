@@ -1190,7 +1190,7 @@ class SyncService {
             entityType: EntityType.MATERIAL,
             filenames: [hiveFile.filename!].toList())))
         .then((responseStream) {
-      responseStream.listen((FileData fileData) async {
+      responseStream.listen((DownloadResponse fileData) async {
         //print("DATA Received: $fileData");
         if (fileData.hasMetaData()) {
           print("META DATA: ${fileData.metaData}");
