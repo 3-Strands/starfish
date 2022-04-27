@@ -276,37 +276,42 @@ class LearnerSummary extends StatelessWidget {
       int count, String categoryName, int changeInCount, Color textColor) {
     return Expanded(
       child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  "$count",
-                  style: TextStyle(
-                      color: textColor,
-                      fontFamily: "OpenSans",
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.bold),
-                ),
-                Image.asset(
-                  changeInCount > 0
-                      ? AssetsPath.arrowUpIcon
-                      : AssetsPath.arrowDownIcon,
-                ),
-              ],
-            ),
-            Text(
-              "$categoryName",
-              style: TextStyle(
-                fontSize: 15.sp,
-                color: Color(0xFF000000),
-                fontFamily: "Rubik",
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    "$count",
+                    style: TextStyle(
+                        color: textColor,
+                        fontFamily: "OpenSans",
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Image.asset(
+                    changeInCount > 0
+                        ? AssetsPath.arrowUpIcon
+                        : AssetsPath.arrowDownIcon,
+                  ),
+                ],
               ),
-            )
-          ],
+              Text(
+                "$categoryName",
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  color: Color(0xFF000000),
+                  fontFamily: "Rubik",
+                ),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
         ),
       ),
     );
