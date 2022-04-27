@@ -1470,7 +1470,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   _selectedFiles.remove(_selectedFiles.first);
                 });
               },
-              icon: Icon(Icons.delete),
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
             ),
           ],
         ),
@@ -1499,7 +1502,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                         borderRadius: BorderRadius.circular(10),
                         child: Image.file(
                           file,
-                          fit: BoxFit.scaleDown,
+                          fit: BoxFit.cover,
                           height: 130.h,
                         ),
                       ),
@@ -1520,7 +1523,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   _selectedFiles.remove(file);
                 });
               },
-              icon: Icon(Icons.delete),
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
             ),
           ],
         ));
