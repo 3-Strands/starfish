@@ -13,6 +13,7 @@ class ProjectReporsForGroup extends StatefulWidget {
 }
 
 class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
+  TextEditingController _markerTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     AppBloc bloc = Provider.of(context);
@@ -100,27 +101,35 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          "${output.markerName}",
-          style: TextStyle(
-              fontSize: 17.sp,
-              fontFamily: "OpenSans",
-              color: Color(0xFFFFFFFF),
-              fontWeight: FontWeight.w600),
+        Expanded(
+          child: Text(
+            "Test marker of group 16 health founder Aus", // "${output.markerName}",
+            style: TextStyle(
+                fontSize: 17.sp,
+                fontFamily: "OpenSans",
+                color: Color(0xFFFFFFFF),
+                fontWeight: FontWeight.w600),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        SizedBox(
+          width: 50.w,
         ),
         Container(
           height: 40.h,
-          width: 50.w,
+          width: 100.w,
           color: Color(0xFFFFFFFF),
-          child: Center(
-            child: Text(
-              "${output.value}",
-              style: TextStyle(
-                  fontSize: 17.sp,
-                  fontFamily: "OpenSans",
-                  color: Color(0xFF000000),
-                  fontWeight: FontWeight.bold),
-            ),
+          child: TextFormField(
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            controller: _markerTextEditingController,
+            onChanged: (value) {
+              _markerTextEditingController.text = value;
+              output.value = int.parse(value);
+            },
+            // onSaved: (value) {},
           ),
         ),
       ],
