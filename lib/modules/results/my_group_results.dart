@@ -180,11 +180,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           DateTime? selected = await _selectMonth(bloc);
 
                           if (selected != null) {
-                            HiveDate _hiveDate = HiveDate();
-
-                            _hiveDate.year = selected.year;
-                            _hiveDate.month = selected.month;
-                            _hiveDate.day = 1;
+                            HiveDate _hiveDate = HiveDate.create(
+                                selected.year, selected.month, 0);
 
                             setState(() {
                               bloc.resultsBloc.hiveDate = _hiveDate;
