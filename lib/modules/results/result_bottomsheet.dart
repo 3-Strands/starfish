@@ -521,6 +521,13 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 bloc.resultsBloc.hiveGroupUser!
                     .getLearnerEvaluationsByCategoryForMoth(
                         _historyAvailableMonths.elementAt(index)),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Divider(
+                thickness: 1.0,
+                color: Colors.grey,
               )
 
               // Row(
