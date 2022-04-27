@@ -32,6 +32,7 @@ import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
+import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 
@@ -1537,20 +1538,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
       ),
       children: _widgetList,
-    );
-  }
-}
-
-class ImagePreview extends StatelessWidget {
-  const ImagePreview(this.file, {Key? key}) : super(key: key);
-  final file;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: InkWell(
-        onTap: () => Navigator.pop(context),
-        child: Hero(tag: file, child: Center(child: Image.file(file))),
-      ),
     );
   }
 }
