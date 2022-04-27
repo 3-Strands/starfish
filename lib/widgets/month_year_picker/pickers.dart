@@ -272,7 +272,7 @@ class _MonthButton extends StatelessWidget {
     final isThisMonth = date.month == now.month && date.year == now.year;
 
     return _Button(
-      label: DateFormat.MMMM(locale).format(date),
+      label: DateFormat.MMM(locale).format(date),
       isEnabled: isEnabled,
       isHighlighted: isThisMonth,
       isSelected: isSelected,
