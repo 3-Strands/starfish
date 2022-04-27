@@ -215,41 +215,45 @@ class SummaryForAllLearners extends StatelessWidget {
       double changeInCount, Color textColor) {
     return Expanded(
       child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    "${count.toStringAsFixed(1)}",
-                    style: TextStyle(
-                      color: textColor,
-                      fontFamily: "OpenSans",
-                      fontSize: 30.sp,
-                      fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      "${count.toStringAsFixed(1)}",
+                      style: TextStyle(
+                        color: textColor,
+                        fontFamily: "OpenSans",
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  if (changeInCount != 0)
-                    Image.asset(
-                      changeInCount > 0
-                          ? AssetsPath.arrowUpIcon
-                          : AssetsPath.arrowDownIcon,
-                    ),
-                ],
+                    if (changeInCount != 0)
+                      Image.asset(
+                        changeInCount > 0
+                            ? AssetsPath.arrowUpIcon
+                            : AssetsPath.arrowDownIcon,
+                      ),
+                  ],
+                ),
               ),
-            ),
-            Text(
-              "$categoryName",
-              style: TextStyle(
-                fontSize: 15.sp,
-                color: textColor,
-                fontFamily: "Rubik",
-              ),
-            )
-          ],
+              Text(
+                "$categoryName",
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  color: textColor,
+                  fontFamily: "Rubik",
+                ),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
         ),
       ),
     );
