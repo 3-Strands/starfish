@@ -37,7 +37,8 @@ class _StarfishState extends State<Starfish> {
       ..backgroundColor = Colors.transparent
       ..indicatorColor = Colors.blue
       ..textColor = Colors.black45
-      ..maskColor = Colors.blue.withOpacity(0.5);
+      ..maskColor = Colors.blue.withOpacity(0.5)
+      ..boxShadow = <BoxShadow>[];
   }
 
   initDeviceLanguage() async {
@@ -64,7 +65,7 @@ class _StarfishState extends State<Starfish> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder: () => Provider(
+      builder: (_) => Provider(
         child: MaterialApp(
           locale: _locale,
           localizationsDelegates: const [
