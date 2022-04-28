@@ -408,5 +408,8 @@
   "resultZeroOrOneActionsOverdue": "कार्रवाई अतिदेय",
   "resultMoreThenOneActionsOverdue": "कार्रवाई अतिदेय",
   "learner" : "सिखाने वाला",
-  "currentEvaluation" : "वर्तमान मूल्यांकन"
+  "currentEvaluation" : "वर्तमान मूल्यांकन",
+
+  "imageCropperScreenTitle": "क्रॉप करें",
+  "imageCropDoneButton": "क्रॉप करें"
 }

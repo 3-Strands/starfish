@@ -404,11 +404,8 @@
   "resultZeroOrOneActionsOverdue": "Action overdue",
   "resultMoreThenOneActionsOverdue": "Actions overdue",
   "learner" : "Learner",
-  "currentEvaluation" : "Current Evaluation"
+  "currentEvaluation" : "Current Evaluation",
 
-  
-
-
-  
-
+  "imageCropperScreenTitle": "Crop",
+  "imageCropDoneButton": "CROP IT!"
 }

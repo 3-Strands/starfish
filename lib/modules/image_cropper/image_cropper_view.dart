@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ImageCropperScreen extends StatefulWidget {
   final File? sourceImage;
@@ -108,7 +109,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crop'),
+        title: Text("${AppLocalizations.of(context)!.imageCropperScreenTitle}"),
       ),
       body: Container(
         width: double.infinity,
@@ -217,7 +218,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
                               },
                             ),
                             IconButton(
-                                icon: Icon(Icons.circle),
+                                icon: Icon(Icons.circle_outlined),
                                 onPressed: () {
                                   _isCircleUi = true;
                                   _cropController.withCircleUi = true;
@@ -238,17 +239,18 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              child: Text('CROP IT!'),
+                              child: Text(
+                                  "${AppLocalizations.of(context)!.imageCropDoneButton}"),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 40),
+                        //const SizedBox(height: 40),
                       ],
                     ),
                   ),
                 const SizedBox(height: 16),
-                Text(_statusText),
-                const SizedBox(height: 16),
+                /*Text(_statusText),
+                const SizedBox(height: 16),*/
               ],
             ),
             replacement: const CircularProgressIndicator(),
