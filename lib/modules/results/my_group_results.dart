@@ -163,31 +163,31 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       ),
                     ),
                     SizedBox(height: 20.h),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      height: 52.h,
-                      width: 345.w,
-                      padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
-                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.txtFieldBackground,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                    InkWell(
+                      onTap: () async {
+                        DateTime? selected = await _selectMonth(bloc);
+
+                        if (selected != null) {
+                          HiveDate _hiveDate =
+                              HiveDate.create(selected.year, selected.month, 0);
+
+                          setState(() {
+                            bloc.resultsBloc.hiveDate = _hiveDate;
+                          });
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        height: 52.h,
+                        width: 345.w,
+                        padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
-                      ),
-                      child: InkWell(
-                        onTap: () async {
-                          DateTime? selected = await _selectMonth(bloc);
-
-                          if (selected != null) {
-                            HiveDate _hiveDate = HiveDate.create(
-                                selected.year, selected.month, 0);
-
-                            setState(() {
-                              bloc.resultsBloc.hiveDate = _hiveDate;
-                            });
-                          }
-                        },
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: Text(
