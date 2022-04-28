@@ -8,11 +8,11 @@ import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
-import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -39,14 +39,16 @@ class HiveGroup extends HiveObject {
   @HiveField(8)
   int? status;
   @HiveField(9)
-  List<HiveEdit>? editHistory;
+  List<HiveOutputMarker>? outputMarkers;
   @HiveField(10)
-  bool isNew = false;
+  List<HiveEdit>? editHistory;
   @HiveField(11)
-  bool isUpdated = false;
+  bool isNew = false;
   @HiveField(12)
-  bool isDirty = false; //Deprecated
+  bool isUpdated = false;
   @HiveField(13)
+  bool isDirty = false; //Deprecated
+  @HiveField(14)
   bool isMe = false;
 
   HiveGroup({
@@ -59,6 +61,7 @@ class HiveGroup extends HiveObject {
     this.evaluationCategoryIds,
     this.actions,
     this.status = 0, // Group_Status.ACTIVE,
+    this.outputMarkers,
     this.editHistory,
     this.isNew = false,
     this.isUpdated = false,
@@ -76,6 +79,9 @@ class HiveGroup extends HiveObject {
         group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
     this.evaluationCategoryIds = group.evaluationCategoryIds;
     this.status = group.status.value;
+    this.outputMarkers = group.outputMarkers
+        .map((OutputMarker outputMarker) => HiveOutputMarker.from(outputMarker))
+        .toList();
     // this.actions = group.actions
     //     .map((GroupAction action) => HiveGroupAction.from(action))
     //     .toList();
@@ -180,7 +186,7 @@ class HiveGroup extends HiveObject {
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
     languageIds: ${this.languageIds?.toString()}, status: ${this.status}, users: ${this.users?.toString()},
-    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
+    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole}, outputMarkers: ${this.outputMarkers} }''';
   }
 }
 

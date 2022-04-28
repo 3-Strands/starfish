@@ -26,18 +26,19 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       evaluationCategoryIds: (fields[6] as List?)?.cast<String>(),
       actions: (fields[7] as List?)?.cast<HiveGroupAction>(),
       status: fields[8] as int?,
-      editHistory: (fields[9] as List?)?.cast<HiveEdit>(),
-      isNew: fields[10] as bool,
-      isUpdated: fields[11] as bool,
-      isDirty: fields[12] as bool,
-      isMe: fields[13] as bool,
+      outputMarkers: (fields[9] as List?)?.cast<HiveOutputMarker>(),
+      editHistory: (fields[10] as List?)?.cast<HiveEdit>(),
+      isNew: fields[11] as bool,
+      isUpdated: fields[12] as bool,
+      isDirty: fields[13] as bool,
+      isMe: fields[14] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveGroup obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -57,14 +58,16 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       ..writeByte(8)
       ..write(obj.status)
       ..writeByte(9)
-      ..write(obj.editHistory)
+      ..write(obj.outputMarkers)
       ..writeByte(10)
-      ..write(obj.isNew)
+      ..write(obj.editHistory)
       ..writeByte(11)
-      ..write(obj.isUpdated)
+      ..write(obj.isNew)
       ..writeByte(12)
-      ..write(obj.isDirty)
+      ..write(obj.isUpdated)
       ..writeByte(13)
+      ..write(obj.isDirty)
+      ..writeByte(14)
       ..write(obj.isMe);
   }
 

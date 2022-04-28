@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 part 'hive_output.g.dart';
@@ -9,27 +10,20 @@ class HiveOutput extends HiveObject {
   @HiveField(0)
   String? groupId;
   @HiveField(1)
-  String? projectId;
+  HiveOutputMarker? outputMarker;
   @HiveField(2)
-  String? markerId;
-  @HiveField(3)
-  String? markerName;
-  @HiveField(4)
   HiveDate? month;
-  @HiveField(5)
+  @HiveField(3)
   int value = 0;
-  @HiveField(6)
+  @HiveField(4)
   bool isNew = false;
-  @HiveField(7)
+  @HiveField(5)
   bool isUpdated = false;
-  @HiveField(8)
+  @HiveField(6)
   bool isDirty = false;
 
   HiveOutput({
     this.groupId,
-    this.projectId,
-    this.markerId,
-    this.markerName,
     this.month,
     this.value = 0,
     this.isNew = false,
@@ -39,9 +33,7 @@ class HiveOutput extends HiveObject {
 
   HiveOutput.from(Output output) {
     this.groupId = output.groupId;
-    this.projectId = output.projectId;
-    this.markerId = output.markerId;
-    this.markerName = output.markerName;
+    this.outputMarker = HiveOutputMarker.from(output.outputMarker);
     this.month = HiveDate.from(output.month);
     this.value = output.value.toInt();
   }
@@ -52,20 +44,14 @@ class HiveOutput extends HiveObject {
       other is HiveOutput &&
           runtimeType == other.runtimeType &&
           groupId == other.groupId &&
-          projectId == other.projectId &&
-          markerId == other.markerId &&
+          outputMarker == other.outputMarker &&
           month == other.month;
 
   @override
-  int get hashCode =>
-      groupId.hashCode ^
-      projectId.hashCode ^
-      markerId.hashCode ^
-      month.hashCode;
+  int get hashCode => groupId.hashCode ^ outputMarker.hashCode ^ month.hashCode;
 
   String toString() {
-    return '''{ groupId: ${this.groupId}, projectId: ${this.projectId}, 
-            markerId: ${this.markerId}, markerName: ${this.markerName}, 
-            month: ${this.month}, value: ${this.value} }''';
+    return '''{ groupId: ${this.groupId}, outputMarker: ${this.outputMarker}, 
+              month: ${this.month}, value: ${this.value} }''';
   }
 }

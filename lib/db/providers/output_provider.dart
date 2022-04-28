@@ -23,8 +23,7 @@ class OutputProvider {
     int _currentIndex = -1;
     _outputBox.values.toList().asMap().forEach((key, output) {
       if (output.groupId == hiveOutput.groupId &&
-          output.projectId == hiveOutput.projectId &&
-          output.markerId == hiveOutput.markerId &&
+          output.outputMarker == hiveOutput.outputMarker &&
           output.month == hiveOutput.month) {
         _currentIndex = key;
       }
