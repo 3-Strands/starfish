@@ -15,7 +15,6 @@ import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/output_provider.dart';
-import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -29,7 +28,7 @@ class ResultsBloc extends Object {
   HiveGroupUser? hiveGroupUser;
 
   ResultsBloc() {
-    hiveDate = DateTimeUtils.toHiveDate(DateTime.now());
+    hiveDate = DateTimeUtils.toHiveDate(DateTime.now()).toMonth;
     hivePreviousDate = hiveDate?.previousMonth;
   }
 
@@ -133,11 +132,11 @@ class ResultsBloc extends Object {
     LearnerEvaluationProvider()
         .getGroupLearnerEvaluations(hiveGroup!.id!)
         .forEach((element) {
-      if (!_listMonth.contains(element.month!)) {
-        _listMonth.add(element.month!);
+      if (!_listMonth.contains(element.month!.toMonth)) {
+        _listMonth.add(element.month!.toMonth);
       }
     });
-    return _listMonth;
+    return _listMonth.toSet().toList();
   }
 
   Map<String, int> actionUserStatusForSelectedMonth(HiveDate _hiveDate) {
