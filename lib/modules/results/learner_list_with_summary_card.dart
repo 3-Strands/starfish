@@ -213,6 +213,7 @@ class LearnerSummary extends StatelessWidget {
                   height: 15.h,
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "${AppLocalizations.of(context)!.feedback}: ",
@@ -221,11 +222,20 @@ class LearnerSummary extends StatelessWidget {
                           fontFamily: "OpenSans ",
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.start,
                     ),
                     Expanded(
                       child: Container(
                         child: Text(
-                          "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response ?? ''}",
+                          (hiveGroupUser
+                                          .getTeacherResponseForMonth(
+                                              bloc.resultsBloc.hiveDate!)
+                                          ?.response
+                                          ?.length ??
+                                      0) >
+                                  25
+                              ? "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response?.substring(0, 25) ?? ''}..."
+                              : "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response ?? ''}",
                           style: TextStyle(
                             fontFamily: "OpenSans",
                             fontSize: 17.sp,
@@ -233,7 +243,8 @@ class LearnerSummary extends StatelessWidget {
                             color: Color(0xFF4F4F4F),
                           ),
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                          textAlign: TextAlign.start,
+                          maxLines: 2,
                         ),
                       ),
                     )
