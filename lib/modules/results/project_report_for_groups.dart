@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/modules/results/marker_statics.dart';
 
 class ProjectReporsForGroup extends StatefulWidget {
   const ProjectReporsForGroup({Key? key}) : super(key: key);
@@ -97,45 +98,6 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
     );
   }
 
-  Widget _buildMarkerStatics(HiveOutput output) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            "Test marker of group 16 health founder Aus", // "${output.markerName}",
-            style: TextStyle(
-                fontSize: 17.sp,
-                fontFamily: "OpenSans",
-                color: Color(0xFFFFFFFF),
-                fontWeight: FontWeight.w600),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        SizedBox(
-          width: 50.w,
-        ),
-        Container(
-          height: 40.h,
-          width: 100.w,
-          color: Color(0xFFFFFFFF),
-          child: TextFormField(
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
-            autofocus: true,
-            controller: _markerTextEditingController,
-            onChanged: (value) {
-              _markerTextEditingController.text = value;
-              output.value = int.parse(value);
-            },
-            // onSaved: (value) {},
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildMarkerStaticsList(BuildContext context) {
     AppBloc bloc = Provider.of(context);
     return ListView.builder(
@@ -143,8 +105,11 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
         physics: NeverScrollableScrollPhysics(),
         itemCount: bloc.resultsBloc.fetchOutputs().length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildMarkerStatics(
-              bloc.resultsBloc.fetchOutputs().elementAt(index));
+          return MarkerStaticRow(
+              bloc.resultsBloc.fetchOutputs().elementAt(index),
+              markerValueUpdate: (String value) {
+            int markerValue = int.parse(value);
+          });
         });
   }
 }
