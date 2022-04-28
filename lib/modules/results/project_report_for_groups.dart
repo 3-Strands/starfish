@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/modules/results/marker_statics.dart';
 
 class ProjectReporsForGroup extends StatefulWidget {
@@ -100,15 +101,17 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
 
   Widget _buildMarkerStaticsList(BuildContext context) {
     AppBloc bloc = Provider.of(context);
+    Map<HiveOutputMarker, int> _outputs =
+        bloc.resultsBloc.fetchGroupOutputsForMonth();
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: bloc.resultsBloc.fetchOutputs().length,
+        itemCount: _outputs.length,
         itemBuilder: (BuildContext context, int index) {
-          return MarkerStaticRow(
-              bloc.resultsBloc.fetchOutputs().elementAt(index),
+          HiveOutputMarker _outputMarker = _outputs.keys.elementAt(index);
+          return MarkerStaticRow(_outputMarker, _outputs[_outputMarker] ?? 0,
               markerValueUpdate: (String value) {
-            int markerValue = int.parse(value);
+            //int markerValue = int.parse(value);
           });
         });
   }

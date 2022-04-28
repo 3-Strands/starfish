@@ -21,6 +21,7 @@ import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
@@ -88,6 +89,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveGroupEvaluationAdapter());
     Hive.registerAdapter(HiveTransformationAdapter());
     Hive.registerAdapter(HiveOutputAdapter());
+    Hive.registerAdapter(HiveOutputMarkerAdapter());
 
     await openBoxes();
   }

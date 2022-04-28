@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
@@ -47,12 +48,22 @@ class ResultsBloc extends Object {
     return GroupProvider().userGroupsWithRole(_currentUser.id, groupUserRole);
   }
 
-  List<HiveOutput> fetchOutputs() {
-    return OutputProvider().getGroupOutputsForMonth(hiveGroup!.id!, hiveDate!);
+  Map<HiveOutputMarker, int> fetchGroupOutputsForMonth() {
+    Map<HiveOutputMarker, int> _map = Map();
+    hiveGroup!.outputMarkers!.forEach((HiveOutputMarker element) {
+      HiveOutput? _output = OutputProvider()
+          .getGroupOutputForMonth(hiveGroup!.id!, element, hiveDate!);
+      int _markerValue = _output != null ? _output.value : 0;
+      _map[element] = _markerValue;
+    });
+
+    return _map;
   }
 
   bool shouldDisplayProjectReport() {
-    return CurrentUserProvider().getUserSync().linkGroups;
+    return CurrentUserProvider().getUserSync().linkGroups &&
+        (hiveGroup?.outputMarkers != null &&
+            hiveGroup!.outputMarkers!.length > 0);
   }
 
   List<HiveLearnerEvaluation>? getGroupLearnerEvaluationsForMonth(
