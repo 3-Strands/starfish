@@ -787,8 +787,8 @@ message Group {
     // Status of the group
     Status status = 11;
 
-    // Output only. The IDs of EveryLanguage.app projects connected to this group.
-    repeated string project_ids = 12;
+    // Output only. The output markers connected to this group through EveryLanguage.app projects
+    repeated OutputMarker output_markers = 13;
 }
 
 // An evaluation of a literacy group by a user
@@ -1088,22 +1088,29 @@ message Output {
     // The ID of the group to which this output relates.
     string group_id = 1;
 
-    // The ID of the EveryLanguage.app project to which this output relates.
-    // Each Starfish group may be connected to more than one project in EveryLanguage.app
-    string project_id = 2;
-
-    // The ID of the output marker to which this output relates.
-    string marker_id = 3;
-
-    // Output only. The name of the output marker to which this output relates.
-    string marker_name = 4;
-
     // The month to which this output relates.
     // In output the day value is set to 0, and ignored in input
     google.type.Date month = 5;
 
     // The integer value of this output.
     int64 value = 6;
+
+    // Output only. The output marker to which this output relates.
+    OutputMarker output_marker = 7;
+
+}
+
+message OutputMarker {
+
+    // The ID of the EveryLanguage.app project to which this output marker relates.
+    // Each Starfish group may be connected to more than one project in EveryLanguage.app
+    string project_id = 2;
+
+    // The ID of the output marker.
+    string marker_id = 3;
+
+    // The name of the output marker.
+    string marker_name = 4;
 
 }
 
