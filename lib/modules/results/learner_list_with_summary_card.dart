@@ -17,9 +17,6 @@ class LearnerSummary extends StatelessWidget {
     AppBloc bloc = Provider.of(context);
     return Column(
       children: [
-        SizedBox(
-          height: 10.h,
-        ),
         Card(
           margin: EdgeInsets.only(left: 15.w, right: 15.w),
           color: Color(0xFFEFEFEF),
