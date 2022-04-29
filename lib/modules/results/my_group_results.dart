@@ -208,9 +208,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ),
                     SizedBox(height: 20.h),
                     SummaryForAllLearners(),
-                    SizedBox(
-                      height: 20.h,
-                    ),
+                    if (bloc.resultsBloc.shouldDisplayProjectReport())
+                      SizedBox(
+                        height: 20.h,
+                      ),
                     if (bloc.resultsBloc.shouldDisplayProjectReport())
                       ProjectReporsForGroup(),
                     SizedBox(
@@ -227,8 +228,18 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           return InkWell(
                               onTap: () =>
                                   _onLearnerSummarySelection(_hiveGroupUser),
-                              child: LearnerSummary(
-                                  hiveGroupUser: _hiveGroupUser));
+                              child: Column(
+                                children: [
+                                  index != 0
+                                      ? SizedBox(
+                                          height: 20.h,
+                                        )
+                                      : SizedBox(
+                                          height: 0.0,
+                                        ),
+                                  LearnerSummary(hiveGroupUser: _hiveGroupUser),
+                                ],
+                              ));
                         }),
                     SizedBox(
                       height: 20.h,
