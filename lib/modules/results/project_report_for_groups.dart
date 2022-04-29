@@ -71,31 +71,27 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
             height: 10.h,
           ),
           _buildMarkerStaticsList(context),
-          Divider(
-            color: Color(0xFF5D5D5D),
-            thickness: 1,
-          ),
+          // SizedBox(
+          //   height: 10.h,
+          // ),
+          // Container(
+          //   margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+          //   color: Colors.transparent,
+          //   width: MediaQuery.of(context).size.width - 20,
+          //   //    width: 1000.w,
+          //   height: 50.h,
+          //   child: ElevatedButton(
+          //     style: ElevatedButton.styleFrom(
+          //         shape: StadiumBorder(), primary: Colors.blue),
+          //     onPressed: () {},
+          //     child: Text(
+          //       "${AppLocalizations.of(context)!.addSignOfTransformation}",
+          //       style: TextStyle(fontSize: 17.sp, fontFamily: "OpenSans"),
+          //     ),
+          //   ),
+          // ),
           SizedBox(
-            height: 10.h,
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
-            color: Colors.transparent,
-            width: MediaQuery.of(context).size.width - 20,
-            //    width: 1000.w,
-            height: 50.h,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  shape: StadiumBorder(), primary: Colors.blue),
-              onPressed: () {},
-              child: Text(
-                "${AppLocalizations.of(context)!.addSignOfTransformation}",
-                style: TextStyle(fontSize: 17.sp, fontFamily: "OpenSans"),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
+            height: 15.h,
           ),
         ],
       ),

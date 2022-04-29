@@ -29,40 +29,48 @@ class _MarkerStaticRowState extends State<MarkerStaticRow> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Expanded(
-            child: Text(
-              "${widget.outputMarker.markerName ?? ""}",
-              style: TextStyle(
-                  fontSize: 17.sp,
-                  fontFamily: "OpenSans",
-                  color: Color(0xFFFFFFFF),
-                  fontWeight: FontWeight.w600),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  "${widget.outputMarker.markerName ?? ""}",
+                  style: TextStyle(
+                      fontSize: 17.sp,
+                      fontFamily: "OpenSans",
+                      color: Color(0xFFFFFFFF),
+                      fontWeight: FontWeight.w600),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(
+                width: 50.w,
+              ),
+              Container(
+                height: 40.h,
+                width: 100.w,
+                color: Color(0xFFFFFFFF),
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                  controller: _markerTextEditingController,
+                  maxLines: 1,
+                  onChanged: (value) {
+                    //widget.value = int.parse(value);
+                    widget.markerValueUpdate(value);
+                  },
+                  // onSaved: (value) {},
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            width: 50.w,
-          ),
-          Container(
-            height: 40.h,
-            width: 100.w,
-            color: Color(0xFFFFFFFF),
-            child: TextFormField(
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              autofocus: true,
-              controller: _markerTextEditingController,
-              maxLines: 1,
-              onChanged: (value) {
-                //widget.value = int.parse(value);
-                widget.markerValueUpdate(value);
-              },
-              // onSaved: (value) {},
-            ),
+          Divider(
+            color: Color(0xFF5D5D5D),
+            thickness: 1,
           ),
         ],
       ),
