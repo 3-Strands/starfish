@@ -887,81 +887,77 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
             // Add Materials
 
-            Column(
-              children: [
-                _previewSelectedFiles(),
-                SizedBox(height: 10.h),
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(30.r),
-                  color: Color(0xFF3475F0),
-                  child: Container(
-                      width: double.infinity,
-                      height: 50.h,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if ((!_isEditMode && _selectedFiles.length >= 5)) {
-                            StarfishSnackbar.showErrorMessage(context,
-                                AppLocalizations.of(context)!.maxFilesSelected);
-                          } else {
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles(
-                              allowMultiple: false,
-                              type: FileType.image,
-                              //  allowedExtensions: ['jpg', 'png', 'jpeg'],
-                            );
+            if (_selectedFiles.isNotEmpty) _previewSelectedFiles(),
+            SizedBox(height: 10.h),
+            DottedBorder(
+              borderType: BorderType.RRect,
+              radius: Radius.circular(30.r),
+              color: Color(0xFF3475F0),
+              child: Container(
+                  width: double.infinity,
+                  height: 50.h,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if ((!_isEditMode && _selectedFiles.length >= 5)) {
+                        StarfishSnackbar.showErrorMessage(context,
+                            AppLocalizations.of(context)!.maxFilesSelected);
+                      } else {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          allowMultiple: false,
+                          type: FileType.image,
+                          //  allowedExtensions: ['jpg', 'png', 'jpeg'],
+                        );
 
-                            if (result != null) {
-                              // if single selected file is IMAGE, open image in Cropper
-                              if (result.count == 1) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageCropperScreen(
-                                      sourceImage: File(result.paths.first!),
-                                      onDone: (File? _newFile) {
-                                        if (_newFile == null) {
-                                          return;
-                                        }
+                        if (result != null) {
+                          // if single selected file is IMAGE, open image in Cropper
+                          if (result.count == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageCropperScreen(
+                                  sourceImage: File(result.paths.first!),
+                                  onDone: (File? _newFile) {
+                                    if (_newFile == null) {
+                                      return;
+                                    }
 
-                                        setState(() {
-                                          _selectedFiles.add(_newFile);
-                                          print(
-                                              'pathhhhhhh${_selectedFiles[0].path}');
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ).then((value) => {
-                                      // Handle cropped image here
+                                    setState(() {
+                                      _selectedFiles.add(_newFile);
+                                      print(
+                                          'pathhhhhhh${_selectedFiles[0].path}');
                                     });
-                              } else {
-                                setState(() {
-                                  _selectedFiles.addAll(result.paths
-                                      .map((path) => File(path!))
-                                      .toList());
+                                  },
+                                ),
+                              ),
+                            ).then((value) => {
+                                  // Handle cropped image here
                                 });
-                              }
-                            } else {
-                              // User canceled the picker
-                            }
+                          } else {
+                            setState(() {
+                              _selectedFiles.addAll(result.paths
+                                  .map((path) => File(path!))
+                                  .toList());
+                            });
                           }
-                        },
-                        child: Text(
-                          '${AppLocalizations.of(context)!.addPhotos}',
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            color: Color(0xFF3475F0),
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                      )),
-                ),
-              ],
+                        } else {
+                          // User canceled the picker
+                        }
+                      }
+                    },
+                    child: Text(
+                      '${AppLocalizations.of(context)!.addPhotos}',
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 17.sp,
+                        color: Color(0xFF3475F0),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                  )),
             ),
 
             SizedBox(
@@ -1407,85 +1403,28 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     }
     _learnerEvaluation.evaluation = value;
 
-    /*LearnerEvaluationProvider()
+    LearnerEvaluationProvider()
         .createUpdateLearnerEvaluation(_learnerEvaluation)
         .then((value) {
       debugPrint("LearnerEvaluation saved.");
       setState(() {}); // refresh ParentView
     }).onError((error, stackTrace) {
       debugPrint("Failed to save LearnerEvaluation");
-    });*/
+    });
   }
 
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
-    if (_selectedFiles.length == 1) {
+    for (File file in _selectedFiles) {
       _widgetList.add(Expanded(
         child: Stack(
           alignment: AlignmentDirectional.topEnd,
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              //color: Colors.blue,
-              padding: const EdgeInsets.only(top: 10.0, right: 0.0),
-              child: Container(
-                //color: Colors.amber,
-                width: MediaQuery.of(context).size.width / 2,
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          ImagePreview(_selectedFiles.first))),
-                  child: Hero(
-                    tag: _selectedFiles.first,
-                    child: Card(
-                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          _selectedFiles.first,
-                          fit: BoxFit.fill,
-                          height: 130.h,
-                        ),
-                      ),
-                    ),
-                    flightShuttleBuilder: (flightContext, animation, direction,
-                        fromContext, toContext) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFiles.remove(_selectedFiles.first);
-                });
-              },
-              icon: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-            ),
-          ],
-        ),
-      ));
-    } else {
-      for (File file in _selectedFiles) {
-        _widgetList.add(Stack(
-          alignment: AlignmentDirectional.topEnd,
-          children: [
-            Container(
-              //color: Colors.blue,
               padding: const EdgeInsets.only(top: 10.0, right: 10.0),
               child: Container(
-                //color: Colors.amber,
                 child: InkWell(
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ImagePreview(file))),
@@ -1500,8 +1439,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                         borderRadius: BorderRadius.circular(10),
                         child: Image.file(
                           file,
-                          fit: BoxFit.cover,
-                          height: 130.h,
+                          fit: BoxFit.scaleDown,
+                          //  height: 130.h,
                         ),
                       ),
                     ),
@@ -1527,16 +1466,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               ),
             ),
           ],
-        ));
-      }
+        ),
+      ));
     }
 
-    return GridView(
+    return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
-      ),
+      crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
+      childAspectRatio: 1,
       children: _widgetList,
     );
   }
