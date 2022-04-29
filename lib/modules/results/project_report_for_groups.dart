@@ -3,8 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_output_marker.dart';
+import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/modules/results/marker_statics.dart';
 
 class ProjectReporsForGroup extends StatefulWidget {
@@ -111,8 +113,29 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
           HiveOutputMarker _outputMarker = _outputs.keys.elementAt(index);
           return MarkerStaticRow(_outputMarker, _outputs[_outputMarker] ?? 0,
               markerValueUpdate: (String value) {
-            //int markerValue = int.parse(value);
+            if (value.isEmpty) {
+              return;
+            }
+
+            _saveOutput(bloc.resultsBloc.hiveGroup!.id!, _outputMarker,
+                bloc.resultsBloc.hiveDate!.toMonth, int.tryParse(value) ?? 0);
           });
         });
+  }
+
+  void _saveOutput(String groupId, HiveOutputMarker outputMarker,
+      HiveDate month, int value) {
+    HiveOutput? _hiveOutput =
+        OutputProvider().getGroupOutputForMonth(groupId, outputMarker, month);
+
+    if (_hiveOutput == null) {
+      _hiveOutput!.groupId = groupId;
+      _hiveOutput.outputMarker = outputMarker;
+      _hiveOutput.month = month;
+      _hiveOutput.isNew = true;
+    } else {
+      _hiveOutput.isUpdated = true;
+    }
+    _hiveOutput.value = value;
   }
 }

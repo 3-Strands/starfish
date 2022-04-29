@@ -56,9 +56,9 @@ class _MarkerStaticRowState extends State<MarkerStaticRow> {
               keyboardType: TextInputType.number,
               autofocus: true,
               controller: _markerTextEditingController,
+              maxLines: 1,
               onChanged: (value) {
-                _markerTextEditingController.text = value;
-                widget.value = int.parse(value);
+                //widget.value = int.parse(value);
                 widget.markerValueUpdate(value);
               },
               // onSaved: (value) {},
