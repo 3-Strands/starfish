@@ -53,7 +53,7 @@ class ResultsBloc extends Object {
     hiveGroup!.outputMarkers!.forEach((HiveOutputMarker element) {
       HiveOutput? _output = OutputProvider()
           .getGroupOutputForMonth(hiveGroup!.id!, element, hiveDate!);
-      int _markerValue = _output != null ? _output.value : 0;
+      int _markerValue = _output != null ? _output.value!.toInt() : 0;
       _map[element] = _markerValue;
     });
 

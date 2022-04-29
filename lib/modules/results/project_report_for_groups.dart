@@ -1,3 +1,4 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -136,6 +137,12 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
     } else {
       _hiveOutput.isUpdated = true;
     }
-    _hiveOutput.value = value;
+    _hiveOutput.value = Int64(value);
+
+    OutputProvider().createUpdateOutput(_hiveOutput).then((value) {
+      debugPrint("Ouput saved.");
+    }).onError((error, stackTrace) {
+      debugPrint("Failed to save Output");
+    });
   }
 }

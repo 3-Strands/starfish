@@ -24,6 +24,13 @@ class HiveOutputMarker extends HiveObject {
     this.markerName = outputMarker.markerName;
   }
 
+  OutputMarker toOutputMarker() {
+    return OutputMarker(
+        projectId: this.projectId,
+        markerId: this.projectId,
+        markerName: this.markerName);
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

@@ -73,6 +73,7 @@ dependencies:
   connectivity_plus: ^2.2.0
   syncfusion_flutter_core: ^20.1.47
   flutter_hooks: ^0.18.3
+  fixnum: ^1.0.0
 
 dev_dependencies:
   flutter_test:

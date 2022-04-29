@@ -19,7 +19,7 @@ class HiveOutputAdapter extends TypeAdapter<HiveOutput> {
     return HiveOutput(
       groupId: fields[0] as String?,
       month: fields[2] as HiveDate?,
-      value: fields[3] as int,
+      value: fields[3] as Int64?,
       isNew: fields[4] as bool,
       isUpdated: fields[5] as bool,
       isDirty: fields[6] as bool,

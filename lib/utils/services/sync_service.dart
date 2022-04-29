@@ -230,6 +230,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalTransformationsToRemote());
     await lock.synchronized(() => syncLocalTeacherResponsesToRemote());
     await lock.synchronized(() => syncLocalLearnerEvaluationsToRemote());
+    await lock.synchronized(() => syncLocalOutputsToRemote());
     //await lock.synchronized(() => syncLocalGroupEvaluationsToRemote()); // Pending
 
     // Synchronize the syncing of material(s), sequentily to avoid failure.
@@ -1480,6 +1481,49 @@ class SyncService {
               '============= END: syncLocalTeacherResponsesToRemote =============');
         } else {
           print("ERROR: syncLocalTeacherResponsesToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+  }
+
+  Future syncLocalOutputsToRemote() async {
+    if (outputBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
+    print('============= START: Sync syncLocalOutputsToRemote =============');
+    StreamController<CreateUpdateOutputRequest> _controller =
+        StreamController();
+
+    try {
+      ResponseStream<CreateUpdateOutputResponse> responseStream =
+          await ResultsRepository().createUpdateOutputs(_controller.stream);
+      outputBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveOutput) {
+        var request = CreateUpdateOutputRequest.create();
+
+        request.output = _hiveOutput.toOutput();
+
+        _controller.add(request);
+      });
+      _controller.close();
+
+      return await responseStream.forEach((response) {
+        print('Remote Output Response: ${response.output}');
+        if (response.status == CreateUpdateOutputResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+          OutputProvider().createUpdateOutput(HiveOutput.from(response.output));
+
+          print('============= END: syncLocalOutputsToRemote =============');
+        } else {
+          print("ERROR: syncLocalOutputsToRemote STATUS.FAILED");
         }
       });
     } catch (error, stackTrace) {
