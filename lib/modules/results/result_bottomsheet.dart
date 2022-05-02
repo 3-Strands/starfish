@@ -14,6 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -26,6 +27,7 @@ import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
+import 'package:starfish/src/generated/file_transfer.pb.dart';
 
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
@@ -872,7 +874,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                     return;
                   }
                   if (_transformationController.text.length > 0) {
-                    _saveTransformation();
+                    _saveTransformation(
+                        _transformationController.text, _selectedFiles);
+
+                    // TODO: Save images here
+
                   }
                 },
               ),
@@ -1352,7 +1358,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     });
   }
 
-  void _saveTransformation() {
+  void _saveTransformation(String _impactStory, List<File> _files) {
     HiveTransformation? _transformation = bloc.resultsBloc.hiveGroupUser
         ?.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
 
@@ -1366,13 +1372,26 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     } else {
       _transformation.isUpdated = true;
     }
-    _transformation.impactStory = _transformationController.text;
+    _transformation.impactStory = _impactStory;
+
+    List<HiveFile> _transformationFiles = [];
+
+    _files.forEach((_file) {
+      _transformationFiles.add(HiveFile(
+        entityId: _transformation!.id,
+        entityType: EntityType.TRANSFORMATION.value,
+        filepath: _file.path,
+        filename: _file.path.split("/").last,
+        isSynced: false,
+      ));
+    });
 
     TransformationProvider()
-        .createUpdateTransformation(_transformation)
+        .createUpdateTransformation(_transformation,
+            transformationFiles: _transformationFiles)
         .then((value) {
       debugPrint("Transformation saved.");
-      setState(() {}); // refresh ParentView
+      // save files also
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Transformation");
     });

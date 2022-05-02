@@ -239,7 +239,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalMaterialsToRemote());
     await lock.synchronized(() => syncLocalFiles());
     await lock.synchronized(() => syncMaterial()); // Upload local files
-    await lock.synchronized(() => syncFiles()); // Download remote files
+    await lock.synchronized(() => downloadFiles()); // Download remote files
 
     Future.wait(
       [
@@ -448,25 +448,23 @@ class SyncService {
     });
   }
 
-  void syncMaterialFiles(HiveMaterial _hiveMaterial) {
-    if (_hiveMaterial.files == null || _hiveMaterial.files!.length == 0) {
-      return;
-    }
-
-    _hiveMaterial.files?.forEach((String filename) async {
+  void addEntityFilesToLocalDB(
+      {required EntityType entityType,
+      required String entityId,
+      required List<String> files}) {
+    files.forEach((String filename) async {
       HiveFile? _hiveFile = fileBox.values.firstWhereOrNull(
           (HiveFile element) =>
-              element.entityId == _hiveMaterial.id &&
-              element.filename == filename);
+              element.entityId == entityId && element.filename == filename);
 
       if (_hiveFile != null) {
         // TODO: verify if files is correctly downloaded or physically exists after successful download
         return;
       }
       _hiveFile = HiveFile(
-          entityId: _hiveMaterial.id,
+          entityId: entityId,
           filename: filename,
-          entityType: EntityType.MATERIAL.value,
+          entityType: entityType.value,
           isSynced: false);
 
       await fileBox.add(_hiveFile);
@@ -489,7 +487,12 @@ class SyncService {
       stream.listen((material) async {
         HiveMaterial _hiveMaterial = HiveMaterial.from(material);
 
-        syncMaterialFiles(_hiveMaterial);
+        if (_hiveMaterial.files != null && _hiveMaterial.files!.length > 0) {
+          addEntityFilesToLocalDB(
+              entityId: _hiveMaterial.id!,
+              entityType: EntityType.MATERIAL,
+              files: _hiveMaterial.files!);
+        }
 
         int _currentIndex = -1;
         materialBox.values.toList().asMap().forEach((key, hiveMaterial) {
@@ -1160,7 +1163,7 @@ class SyncService {
     }*/
   }
 
-  syncFiles() async {
+  downloadFiles() async {
     print('============= START: SyncFiles FROM Remote =============');
     // Filter items not downloaded yet
     fileBox.values
@@ -1171,13 +1174,13 @@ class SyncService {
         .forEach((HiveFile hiveFile) {
           print(
               '=============DownloadMaterial: ${hiveFile.filename} =============');
-          downloadMaterial(hiveFile); //.entityId!, file.remoteFileName!);
+          download(hiveFile); //.entityId!, file.remoteFileName!);
         });
     //downloadMaterial(materialBox.values.first);
   }
 
   // TODO: don't download the file again if already downloaded.
-  downloadMaterial(HiveFile hiveFile) async {
+  download(HiveFile hiveFile) async {
     //String entityId, String remoteFilename) async {
     String? filePath = await getFilePath(hiveFile.filename!);
     if (filePath == null) {
@@ -1193,7 +1196,7 @@ class SyncService {
         .apiProvider
         .downloadFile(Stream.value(DownloadRequest(
             entityId: hiveFile.entityId,
-            entityType: EntityType.MATERIAL,
+            entityType: EntityType.valueOf(hiveFile.entityType!),
             filenames: [hiveFile.filename!].toList())))
         .then((responseStream) {
       responseStream.listen((DownloadResponse fileData) async {
@@ -1598,6 +1601,14 @@ class SyncService {
       stream.listen((transformaiton) {
         HiveTransformation _hiveTransformation =
             HiveTransformation.from(transformaiton);
+
+        if (_hiveTransformation.files != null &&
+            _hiveTransformation.files!.length > 0) {
+          addEntityFilesToLocalDB(
+              entityId: _hiveTransformation.id!,
+              entityType: EntityType.TRANSFORMATION,
+              files: _hiveTransformation.files!);
+        }
 
         ResultsProvider().createUpdateTransformation(_hiveTransformation);
       }, onError: ((err) {
