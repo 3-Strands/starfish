@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:starfish/wrappers/file_system.dart';
 
 class ImageCropperScreen extends StatefulWidget {
   final File? sourceImage;
@@ -88,17 +88,10 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
 
     String _destinationPath = sourceFilePath.replaceFirstMapped(
         _filename, (match) => _targetFileName);
-    ;
 
     File _targetFile = File(_destinationPath);
-    _targetFile.create(recursive: true);
-
-    RandomAccessFile _randomAccessFile =
-        await _targetFile.open(mode: FileMode.write);
-
-    _randomAccessFile.writeFromSync(croppedData.toList());
-
-    _randomAccessFile.closeSync();
+    
+    await _targetFile.createWithContent(croppedData.toList());
 
     widget.onDone(_targetFile);
     Navigator.pop(context);

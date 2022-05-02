@@ -42,7 +42,7 @@ class _ContactListItemState extends State<ContactListItem> {
                 Container(
                   width: MediaQuery.of(context).size.width - 70.0,
                   child: Text(
-                    widget.contact.contact.displayName ?? '',
+                    widget.contact.displayName ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

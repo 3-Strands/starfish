@@ -1,4 +1,3 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
@@ -7,7 +6,6 @@ import 'package:flutter/src/widgets/basic.dart' as widgets;
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -42,7 +40,7 @@ import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
 import 'package:starfish/widgets/uninvited_person_list_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:telephony/telephony.dart';
+import 'package:starfish/wrappers/sms.dart';
 import 'package:template_string/template_string.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
@@ -63,8 +61,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _personNameController = TextEditingController();
-
-  final _telephony = Telephony.instance;
 
   bool _isEditMode = false;
   String _query = '';
@@ -96,8 +92,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _getAllLanguages();
     _getAllEvaluationCategories();
 
-    Permission.contacts.status.then((PermissionStatus permissionStatus) {
-      if (permissionStatus == PermissionStatus.granted) {
+    hasContactAccess().then((hasAccess) {
+      if (hasAccess) {
         _loadContacts();
       }
     });
@@ -131,69 +127,36 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   }
 
   Future<void> _checkPermissionsAndShowContact() async {
-    PermissionStatus permissionStatus = await _getContactPermission();
-    if (permissionStatus == PermissionStatus.granted) {
+    if (await hasContactAccess(shouldAskIfUnknown: true)) {
       _showContactList();
     } else {
-      _handleInvalidPermissions(permissionStatus);
+      _handleInvalidPermissions();
     }
   }
 
-  Future<PermissionStatus> _getContactPermission() async {
-    PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.permanentlyDenied) {
-      PermissionStatus permissionStatus = await Permission.contacts.request();
-      if (permissionStatus.isGranted) {
-        _loadContacts();
-      }
-      return permissionStatus;
-    } else {
-      return permission;
-    }
-  }
-
-  void _handleInvalidPermissions(PermissionStatus permissionStatus) {
-    if (permissionStatus == PermissionStatus.denied) {
-      final snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context)!.contactAccessDenied));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
-      final snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context)!.contactDataNotAvailable));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
+  void _handleInvalidPermissions() async {
+    final l18n = AppLocalizations.of(context)!;
+    final snackbar = SnackBar(
+      content: Text(
+        (await canRequestContactAccess())
+          ? l18n.contactAccessDenied
+          : l18n.contactDataNotAvailable
+        ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   void _sendInviteSMS(String message, List<InviteContact> recipents) async {
-    bool _permissionsGranted = await _telephony.requestSmsPermissions ?? false;
-    if (!_permissionsGranted) {
-      return;
-    }
-
     recipents.forEach((element) {
-      if (element.contact.phones != null) {
-        sendSms(
-            message.insertTemplateValues({
-              'receiver_first_name': element.contact.displayName ??
-                  element.contact.givenName ??
-                  '',
-              'sender_name': CurrentUserProvider().user.name!
-            }),
-            element.contact.phones!.first.value!);
-      }
+      SMS.send(
+          message.insertTemplateValues({
+            'receiver_first_name': element.displayName ??
+                element.givenName ??
+                '',
+            'sender_name': CurrentUserProvider().user.name!
+          }),
+          element.phoneNumber);
     });
-  }
-
-  sendSms(String message, String phoneNumber) async {
-    _telephony.sendSms(
-        to: phoneNumber,
-        message: message,
-        statusListener: (sendStatus) {
-          debugPrint(
-              'Status of Invitation Send to [$phoneNumber]: $sendStatus');
-        },
-        isMultipart: true);
   }
 
   Widget _buildSlidingUpPanel() {
@@ -210,14 +173,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             List<InviteContact> _listToShow = [];
 
             if (_query.isNotEmpty) {
+              final lowerCaseQuery = _query.toLowerCase();
               _listToShow = snapshot
                   .where((data) =>
-                      (data.contact.displayName ?? '')
+                      (data.displayName ?? '')
                           .toLowerCase()
-                          .contains(_query.toLowerCase()) ||
-                      (data.contact.displayName ?? '')
-                          .toLowerCase()
-                          .startsWith(_query.toLowerCase()))
+                          .contains(lowerCaseQuery))
                   .toList();
             } else {
               _listToShow = snapshot;
@@ -246,17 +207,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
   }
 
-  _loadContacts() async {
-    ContactsService.getContacts().then((List<Contact> contactList) {
-      List<InviteContact> _contactList = [];
-      contactList.forEach((Contact contact) {
-        // Add only contacts having atleast one phone numbers added
-        if (contact.phones != null && contact.phones!.length > 0) {
-          _contactList.add(InviteContact(contact: contact));
-        }
-      });
-      _contactsNotifier.value = _contactList;
-    });
+  void _loadContacts() async {
+    if (_contactsNotifier.value == null) {
+      _contactsNotifier.value = await getAllContacts();
+    }
   }
 
   _showContactList() {
@@ -886,9 +840,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   Widget _invitedContactsContainer() {
     final List<Widget> _widgetList = [];
 
-    _selectedContacts.sort((a, b) => a.contact.displayName!
+    _selectedContacts.sort((a, b) => (a.displayName ?? '')
         .toLowerCase()
-        .compareTo(b.contact.displayName!.toLowerCase()));
+        .compareTo((b.displayName ?? '').toLowerCase()));
     for (InviteContact inviteContact in _selectedContacts) {
       _widgetList.add(InvitedContactListItem(contact: inviteContact));
     }
@@ -1038,7 +992,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             }
           },
           onInvite: (HiveUser _user) {
-            sendSms(
+            SMS.send(
                 AppLocalizations.of(context)!.inviteSMS.insertTemplateValues({
                   'receiver_first_name': _user.name ?? '',
                   'sender_name': CurrentUserProvider().user.name!

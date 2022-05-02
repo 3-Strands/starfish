@@ -1,7 +1,4 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -24,6 +21,7 @@ import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/wrappers/file_system.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
@@ -61,10 +59,7 @@ class HiveDatabase {
   // }
 
   init() async {
-    if (!kIsWeb) {
-      Directory directory = await getApplicationDocumentsDirectory();
-      Hive.init(directory.path);
-    }
+    await initHive();
     Hive.registerAdapter(HiveLastSyncDateTimeAdapter());
     Hive.registerAdapter(HiveCountryAdapter());
     Hive.registerAdapter(HiveLanguageAdapter());

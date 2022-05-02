@@ -36,7 +36,7 @@ dependencies:
   grpc: ^3.0.1
   protobuf: ^2.0.0
   rxdart: ^0.27.1
-  shared_preferences: ^2.0.5
+  shared_preferences: ^2.0.13
   sticky_headers: ^0.1.8
   flutter_svg: ^0.22.0
   flutter_easyloading: ^3.0.3
@@ -73,6 +73,7 @@ dependencies:
   connectivity_plus: ^2.2.0
   syncfusion_flutter_core: ^20.1.47
   flutter_hooks: ^0.18.3
+  platform: ^3.1.0
 
 dev_dependencies:
   flutter_test:

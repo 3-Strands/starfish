@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -29,6 +26,8 @@ import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 // ignore: implementation_imports
 import 'package:template_string/src/extension.dart';
 
@@ -630,11 +629,9 @@ class _MeState extends State<Me> {
               .clickToDownload
               .insertTemplateValues({'file_name': hiveFile.filename!}),
           onButtonTap: () {
-            if (Platform.isIOS) {
-              return;
-            } else if (Platform.isAndroid) {
+            if (Platform.isAndroid) {
               if (hiveFile.filepath != null) {
-                OpenFile.open(hiveFile.filepath!);
+                openFile(hiveFile.filepath!);
               }
             }
           },

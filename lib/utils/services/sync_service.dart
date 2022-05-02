@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
 import 'package:flutter/widgets.dart';
-import 'package:grpc/grpc.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:starfish/wrappers/file_system.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:starfish/config/app_config.dart';
 import 'package:starfish/db/hive_action.dart';
@@ -1085,78 +1083,26 @@ class SyncService {
     StreamController<FileData> _controller = StreamController();
     _localFiles.forEach((hiveFile) {
       // TODO: Check existance of the the file before upload
-      uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!), _controller);
-    });
-    _controller.done;
-    _controller.close();
-    //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
-  }
-
-  uploadMaterial(String entityId, File file,
-      StreamController<FileData> _controller) async {
-    FileMetaData metaData = FileMetaData(
-      entityId: entityId,
-      filename: file.path.split("/").last,
-      entityType: EntityType.MATERIAL,
-    );
-    FileData fileMetaData = FileData(metaData: metaData);
-
-    /*ResponseStream<UploadStatus> responseStream =
-        client.upload(_controller.stream);*/
-
-    MaterialRepository()
-        .apiProvider
-        .uploadFile(_controller.stream)
-        .then((responseStream) {
-      responseStream.listen((UploadStatus uploadStatus) {
-        //print("File UploadStatus: $uploadStatus");
-        if (uploadStatus.status == UploadStatus_Status.OK) {
+      uploadMaterial(hiveFile, _controller,
+        onDone: (fileMetaData) {
           List<HiveFile> _files = fileBox.values
-              .where((element) =>
-                  element.entityId == uploadStatus.fileMetaData.entityId)
-              .toList();
+            .where((element) =>
+                element.entityId == fileMetaData.entityId)
+            .toList();
           _files.forEach((element) {
             element.isSynced = true;
             element.save();
           });
-        } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
-          //_controller.done;
-        }
-      });
-    }).onError((error, stackTrace) {
-      Sentry.captureException(error, stackTrace: stackTrace);
-      handleError(error);
+        },
+        onError: (error, stackTrace) {
+          Sentry.captureException(error, stackTrace: stackTrace);
+          handleError(error);
+        });
+      // uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!), _controller);
     });
-
-    _controller.add(fileMetaData);
-
-    Stream<List<int>> inputStream = file.openRead();
-    inputStream.listen((event) {
-      _controller.add(FileData(chunk: event));
-    }, onDone: () {
-      print("DONE");
-      //_controller.sink.add(fileMetaData);
-      _controller.close();
-    }, onError: (error) {
-      print("ERROR: $error");
-    });
-
-    /*final semicolon = ';'.codeUnitAt(0);
-    RandomAccessFile randomAccessFile = file.openSync(mode: FileMode.read);
-    //final result = <int>[];
-    while (true) {
-      final byte = await randomAccessFile.readByte();
-      //result.add(byte);
-      _controller.sink.add(FileData(chunk: [byte].toList()));
-      if (byte == semicolon) {
-        //print(String.fromCharCodes(result));
-        _controller.sink.add(fileMetaData);
-        //_controller.sink.done;
-        //_controller.close();
-        await randomAccessFile.close();
-        break;
-      }
-    }*/
+    _controller.done;
+    _controller.close();
+    //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
   }
 
   syncFiles() async {
@@ -1170,87 +1116,31 @@ class SyncService {
         .forEach((HiveFile hiveFile) {
           print(
               '=============DownloadMaterial: ${hiveFile.filename} =============');
-          downloadMaterial(hiveFile); //.entityId!, file.remoteFileName!);
+          downloadMaterial(hiveFile,
+            onDone: (filePath) {
+              // Update downloaded file info in `FILE_BOX`
+
+              int _currentIndex = -1;
+              fileBox.values.toList().asMap().forEach((key, _hiveFile) {
+                if (hiveFile.entityId == _hiveFile.entityId &&
+                    hiveFile.filename == _hiveFile.filename) {
+                  _currentIndex = key;
+                }
+              });
+
+              if (_currentIndex > -1) {
+                hiveFile.filepath = filePath;
+                hiveFile.isSynced = true;
+
+                fileBox.putAt(_currentIndex, hiveFile);
+              }
+            },
+            onError: (error, stackTrace) {
+              Sentry.captureException(error, stackTrace: stackTrace);
+              handleError(error);
+            }); //.entityId!, file.remoteFileName!);
         });
     //downloadMaterial(materialBox.values.first);
-  }
-
-  // TODO: don't download the file again if already downloaded.
-  downloadMaterial(HiveFile hiveFile) async {
-    //String entityId, String remoteFilename) async {
-    String? filePath = await getFilePath(hiveFile.filename!);
-    if (filePath == null) {
-      print("Storage NOT accessible");
-      return;
-    }
-
-    File file = File(filePath);
-    await file.create();
-    RandomAccessFile randomAccessFile = await file.open(mode: FileMode.write);
-
-    MaterialRepository()
-        .apiProvider
-        .downloadFile(Stream.value(DownloadRequest(
-            entityId: hiveFile.entityId,
-            entityType: EntityType.MATERIAL,
-            filenames: [hiveFile.filename!].toList())))
-        .then((responseStream) {
-      responseStream.listen((DownloadResponse fileData) async {
-        //print("DATA Received: $fileData");
-        if (fileData.hasMetaData()) {
-          print("META DATA: ${fileData.metaData}");
-        } else if (fileData.hasChunk()) {
-          //print("FILE CHUNK:");
-          randomAccessFile.writeFromSync(fileData.chunk);
-        }
-      }, onDone: () {
-        print("FILE Transfer DONE");
-        randomAccessFile.closeSync();
-
-        // Update downloaded file info in `FILE_BOX`
-
-        int _currentIndex = -1;
-        fileBox.values.toList().asMap().forEach((key, _hiveFile) {
-          if (hiveFile.entityId == _hiveFile.entityId &&
-              hiveFile.filename == _hiveFile.filename) {
-            _currentIndex = key;
-          }
-        });
-
-        if (_currentIndex > -1) {
-          hiveFile.filepath = file.path;
-          hiveFile.isSynced = true;
-
-          fileBox.putAt(_currentIndex, hiveFile);
-        }
-      }, onError: (error, stackTrace) {
-        print("FILE Transfer ERROR:: $error");
-      }, cancelOnError: true);
-    }).onError((error, stackTrace) {
-      Sentry.captureException(error, stackTrace: stackTrace);
-      handleError(error);
-    });
-  }
-
-  // TODO:
-  Future<String?> getFilePath(String filename) async {
-    /*List<Directory>? directories =
-        await getExternalStorageDirectories(type: StorageDirectory.downloads);
-    if (directories == null || directories.length == 0) {
-      return null;
-    }
-    String appDocumentsPath = directories.first.path;
-
-    String filePath = '$appDocumentsPath/$filename';
-    */
-
-    Directory? appDocumentsPath = await getApplicationDocumentsDirectory();
-    if (appDocumentsPath == null) {
-      return null;
-    }
-    String filePath = '${appDocumentsPath.path}/$filename';
-    print("FILE PATH: $filePath");
-    return filePath;
   }
 
   Future syncLocalHiveActionUserToRemote() async {

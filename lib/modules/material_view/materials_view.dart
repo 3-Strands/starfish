@@ -1,6 +1,4 @@
 // ignore: import_of_legacy_library_into_null_safe
-import 'dart:io';
-import 'dart:ui';
 
 import 'package:fbroadcast/fbroadcast.dart';
 // ignore: implementation_imports
@@ -11,7 +9,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -45,6 +42,8 @@ import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -583,11 +582,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           children: [
             InkWell(
               onTap: () {
-                if (Platform.isIOS) {
-                  return;
-                } else if (Platform.isAndroid) {
+                if (Platform.isAndroid) {
                   if (hiveFile.filepath != null) {
-                    OpenFile.open(hiveFile.filepath!);
+                    openFile(hiveFile.filepath!);
                   }
                 }
               },

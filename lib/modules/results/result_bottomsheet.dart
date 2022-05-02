@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -34,6 +33,7 @@ import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
+import 'package:starfish/wrappers/file_system.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
   ResultWidgetBottomSheet(this.hiveGroupUser, {Key? key}) : super(key: key);
@@ -1447,8 +1447,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          _selectedFiles.first,
+                        child: _selectedFiles.first.getImagePreview(
                           fit: BoxFit.fill,
                           height: 130.h,
                         ),
@@ -1500,8 +1499,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          file,
+                        child: file.getImagePreview(
                           fit: BoxFit.cover,
                           height: 130.h,
                         ),

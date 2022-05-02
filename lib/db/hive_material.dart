@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
-import 'package:grpc/grpc.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
@@ -196,13 +193,13 @@ extension HiveMaterialExt on HiveMaterial {
         .toList();
   }
 
-  File? get localImageFile {
+  String? get localImageFilepath {
     HiveFile? _hiveFile = this.localFiles.firstWhereOrNull((_file) =>
         _file.filepath != null &&
         ['jpg', 'png']
             .toList()
             .contains(_file.filepath!.split("/").last.split(".").last));
 
-    return _hiveFile != null ? File(_hiveFile.filepath!) : null;
+    return _hiveFile?.filepath!;
   }
 }

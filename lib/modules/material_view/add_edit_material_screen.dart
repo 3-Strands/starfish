@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
@@ -8,7 +6,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -37,6 +34,8 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
@@ -839,11 +838,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      if (Platform.isIOS) {
-                        return;
-                      } else if (Platform.isAndroid) {
+                      if (Platform.isAndroid) {
                         if (hiveFile.filepath != null) {
-                          OpenFile.open(hiveFile.filepath!);
+                          openFile(hiveFile.filepath!);
                         }
                       }
                       /*_copyFileToDownloads(file).then((value) {
@@ -859,7 +856,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               ),
       ));
     }
-    if (_hiveMaterial.localImageFile != null) {
+    final filepath = _hiveMaterial.localImageFilepath;
+    if (filepath != null) {
       final imagePreview = Card(
         margin: EdgeInsets.only(top: 10.h),
         child: Container(
@@ -869,8 +867,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           ),
           height: 150.h,
           alignment: Alignment.center,
-          child: Image.file(
-            _hiveMaterial.localImageFile!,
+          child: File(filepath).getImagePreview(
             fit: BoxFit.fill,
           ),
         ),
@@ -908,10 +905,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                if (Platform.isIOS) {
-                  return;
-                } else if (Platform.isAndroid) {
-                  OpenFile.open(file.path);
+                if (Platform.isAndroid) {
+                  openFile(file.path);
                 }
               },
           ),

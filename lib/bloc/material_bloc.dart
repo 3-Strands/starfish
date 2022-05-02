@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:fbroadcast/fbroadcast.dart';
@@ -51,7 +50,6 @@ class MaterialBloc extends Object {
   Stream<List<HiveMaterial>> get materials => _materials.stream;
   Stream<FileData> get fileData => _fileData.stream;
 
-  List<File> _selectedFiles = [];
   List<HiveMaterial> _allMaterials = [];
   List<HiveMaterial> _filteredMaterialsList = [];
 
@@ -223,85 +221,6 @@ class MaterialBloc extends Object {
           action.type = Action_Type.TEXT_INSTRUCTION.value;
           action.isUpdated = true;
         });
-  }
-
-  @Deprecated('upload is to be done using syncService')
-  uploadMaterial(String entityId, File file) async {
-/*    final Map<String, String>? metadata = {
-      'authorization': await StarfishSharedPreference().getAccessToken(),
-      'x-api-key': 'AIzaSyCRxikcHzD0PrDAqG797MQyctEwBSIf5t0'
-    };
-
-    final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-        host: "sandbox-api.everylanguage.app",
-        port: 443,
-        transportSecure: true);
-
-    FileTransferClient? client = FileTransferClient(
-      channel,
-      options: CallOptions(metadata: metadata),
-    );
-*/
-    /*StreamController<FileData> _controller = 
-        StreamController<FileData>.broadcast();*/
-
-    FileMetaData metaData = FileMetaData(
-      entityId: entityId,
-      filename: file.path.split("/").last,
-      entityType: EntityType.MATERIAL,
-    );
-    FileData fileMetaData = FileData(metaData: metaData);
-
-    /*ResponseStream<UploadStatus> responseStream =
-        client.upload(_controller.stream);*/
-
-    /*   materialRepository.apiProvider.uploadFile(fileData).then((responseStream) {
-      responseStream.listen((value) {
-        print("File UploadStatus: $value");
-      });
-    });*/
-
-    /*responseStream.listen((value) {
-      print("File UploadStatus: $value");
-    });*/
-
-    _fileData.sink.add(fileMetaData);
-
-    /*Stream<List<int>> inputStream = file.openRead();
-    inputStream.listen((event) {
-      _controller.sink.add(FileData(chunk: event));
-    }, onDone: () {
-      print("DONE");
-      _controller.sink.add(fileMetaData);
-      _controller.close();
-    }, onError: (error) {
-      print("ERROR: $error");
-    });*/
-
-    final semicolon = ';'.codeUnitAt(0);
-    RandomAccessFile randomAccessFile = file.openSync(mode: FileMode.read);
-    //final result = <int>[];
-    while (true) {
-      final byte = await randomAccessFile.readByte();
-      //result.add(byte);
-      _fileData.sink.add(FileData(chunk: [byte].toList()));
-      if (byte == semicolon) {
-        //print(String.fromCharCodes(result));
-        _fileData.sink.add(fileMetaData);
-        //_controller.sink.done;
-        //_controller.close();
-        await randomAccessFile.close();
-        break;
-      }
-    }
-  }
-
-  _handleUploadError(Object? error, StackTrace stackTrace) {
-    print("UploadStatus[onError]: $error");
-  }
-
-  void setSelectedFiles(List<File> selectedFiles) {
-    _selectedFiles = selectedFiles;
   }
 
   void checkAndUpdateUserfollowedLangguages(List<String>? languageIds) {

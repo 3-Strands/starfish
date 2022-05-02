@@ -14,6 +14,19 @@
             ]
         },
         {
+            "name": "Chrome Dev",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_dev.dart",
+           
+            "args": [
+                "--flavor",
+                "dev",
+                "--no-sound-null-safety",
+                "-d", "chrome"
+            ]
+        },
+        {
             "name": "Production",
             "request": "launch",
             "type": "dart",

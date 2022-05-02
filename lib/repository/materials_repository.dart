@@ -1,4 +1,4 @@
-import 'package:grpc/grpc.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/db/hive_material.dart';

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -7,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/wrappers/platform.dart';
 import 'config/routes/routes.dart';
 import 'constants/app_styles.dart';
 import 'l10n/l10n.dart';
@@ -65,7 +64,7 @@ class _StarfishState extends State<Starfish> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder: (_) => Provider(
+      builder: () => Provider(
         child: MaterialApp(
           locale: _locale,
           localizationsDelegates: const [
