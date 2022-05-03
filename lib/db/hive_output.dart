@@ -15,7 +15,7 @@ class HiveOutput extends HiveObject {
   @HiveField(2)
   HiveDate? month;
   @HiveField(3)
-  Int64? value;
+  String? value;
   @HiveField(4)
   bool isNew = false;
   @HiveField(5)
@@ -36,16 +36,15 @@ class HiveOutput extends HiveObject {
     this.groupId = output.groupId;
     this.outputMarker = HiveOutputMarker.from(output.outputMarker);
     this.month = HiveDate.from(output.month);
-    this.value = output.value;
+    this.value = output.value.toString();
   }
 
   Output toOutput() {
     return Output(
-      groupId: this.groupId,
-      outputMarker: this.outputMarker?.toOutputMarker(),
-      month: this.month?.toDate(),
-      value: this.value,
-    );
+        groupId: this.groupId,
+        outputMarker: this.outputMarker?.toOutputMarker(),
+        month: this.month?.toDate(),
+        value: Int64.parseRadix(this.value!, 10));
   }
 
   @override

@@ -3,16 +3,19 @@ import 'package:collection/collection.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
+import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
+import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -181,6 +184,18 @@ class HiveGroup extends HiveObject {
       return _users;
     }
     return this.users;
+  }
+
+  Map<HiveOutputMarker, String> getGroupOutputsForMonth(HiveDate hiveDate) {
+    Map<HiveOutputMarker, String> _map = Map();
+    this.outputMarkers?.forEach((HiveOutputMarker element) {
+      HiveOutput? _output =
+          OutputProvider().getGroupOutputForMonth(this.id!, element, hiveDate);
+      String _markerValue = _output != null ? _output.value!.toString() : '';
+      _map[element] = _markerValue;
+    });
+
+    return _map;
   }
 
   String toString() {

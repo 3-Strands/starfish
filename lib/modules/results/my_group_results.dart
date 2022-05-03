@@ -1,12 +1,6 @@
-import 'dart:io';
-import 'dart:ui';
-
-import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:intl/intl.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -38,6 +32,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   late AppBloc bloc;
 
   bool _isEditMode = false;
+  bool _isInitialized = false;
   //double _value = 2.0;
 
   @override
@@ -46,14 +41,19 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    bloc = Provider.of(context);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    // call init only once
-    if (bloc.resultsBloc.hiveGroup == null) {
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      // call init only once
       bloc.resultsBloc.init();
+      _isInitialized = true;
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {},
       onFocusLost: () {},
@@ -207,13 +207,19 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       ),
                     ),
                     SizedBox(height: 20.h),
-                    SummaryForAllLearners(),
-                    if (bloc.resultsBloc.shouldDisplayProjectReport())
+                    SummaryForAllLearners(
+                        hiveGroup: bloc.resultsBloc.hiveGroup!,
+                        groupLearnerEvaluationsByCategory: bloc.resultsBloc
+                            .getGroupLearnerEvaluationsByCategory()),
+                    if (bloc.resultsBloc.shouldDisplayProjectReport() &&
+                        bloc.resultsBloc.hiveGroup != null) ...[
                       SizedBox(
                         height: 20.h,
                       ),
-                    if (bloc.resultsBloc.shouldDisplayProjectReport())
-                      ProjectReporsForGroup(),
+                      ProjectReporsForGroup(
+                          hiveGroup: bloc.resultsBloc.hiveGroup!,
+                          hiveDate: bloc.resultsBloc.hiveDate!),
+                    ],
                     SizedBox(
                       height: 20.h,
                     ),
@@ -237,7 +243,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                       : SizedBox(
                                           height: 0.0,
                                         ),
-                                  LearnerSummary(hiveGroupUser: _hiveGroupUser),
+                                  LearnerSummary(
+                                    hiveGroupUser: _hiveGroupUser,
+                                    month: bloc.resultsBloc.hiveDate!,
+                                  ),
                                 ],
                               ));
                         }),

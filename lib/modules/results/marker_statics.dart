@@ -4,7 +4,7 @@ import 'package:starfish/db/hive_output_marker.dart';
 
 class MarkerStaticRow extends StatefulWidget {
   HiveOutputMarker outputMarker;
-  int value;
+  String value;
 
   final markerValueUpdate;
 

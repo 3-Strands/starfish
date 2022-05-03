@@ -48,9 +48,9 @@ class ResultsBloc extends Object {
     return GroupProvider().userGroupsWithRole(_currentUser.id, groupUserRole);
   }
 
-  Map<HiveOutputMarker, int> fetchGroupOutputsForMonth() {
+  /*Map<HiveOutputMarker, int> fetchGroupOutputsForMonth() {
     Map<HiveOutputMarker, int> _map = Map();
-    hiveGroup!.outputMarkers!.forEach((HiveOutputMarker element) {
+    hiveGroup?.outputMarkers?.forEach((HiveOutputMarker element) {
       HiveOutput? _output = OutputProvider()
           .getGroupOutputForMonth(hiveGroup!.id!, element, hiveDate!);
       int _markerValue = _output != null ? _output.value!.toInt() : 0;
@@ -58,7 +58,7 @@ class ResultsBloc extends Object {
     });
 
     return _map;
-  }
+  }*/
 
   bool shouldDisplayProjectReport() {
     return CurrentUserProvider().getUserSync().linkGroups &&

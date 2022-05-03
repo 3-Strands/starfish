@@ -392,7 +392,6 @@
   "selectGroup": "समूह का चयन करें",
   "joinOrCreateGroupMessage": "एक समूह में शामिल हों, या एक नया समूह बनाएं, फिर आप यहां समूह के परिणामों की निगरानी कर सकते हैं।",
   "teacherFeedbackForLearner":"इस व्यक्ति के लिए शिक्षक प्रतिक्रिया",
-  "helpTextForTeacherFeedback":"नीचे दिए गए बॉक्स में लिखें, फिर सहेजें पर क्लिक करें",
   "hideHistory": "इतिहास छुपाएं",
   "viewHistory": "इतिहास देखें",
   "transformations":"परिवर्तनों",

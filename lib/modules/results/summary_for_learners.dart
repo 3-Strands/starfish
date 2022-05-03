@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
-  const SummaryForAllLearners({Key? key}) : super(key: key);
+  HiveGroup hiveGroup;
+  Map<HiveEvaluationCategory, Map<String, int>>
+      groupLearnerEvaluationsByCategory;
+  SummaryForAllLearners(
+      {Key? key,
+      required this.hiveGroup,
+      required this.groupLearnerEvaluationsByCategory})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
+    //AppBloc bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -61,7 +65,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.done}",
+                  "${hiveGroup.actionsCompleted} ${AppLocalizations.of(context)!.done}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -77,7 +81,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
+                  "${hiveGroup.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -93,7 +97,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
+                  "${hiveGroup.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -184,9 +188,8 @@ class SummaryForAllLearners extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10.h),
-          _buildCategoryAverageWidget(
-              bloc.resultsBloc.getGroupLearnerEvaluationsByCategory(),
-              bloc.resultsBloc.hiveGroup?.learners?.length ?? 1),
+          _buildCategoryAverageWidget(groupLearnerEvaluationsByCategory,
+              hiveGroup.learners?.length ?? 1),
           SizedBox(height: 20.h),
         ],
       ),

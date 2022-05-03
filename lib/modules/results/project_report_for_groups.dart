@@ -2,26 +2,28 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/modules/results/marker_statics.dart';
 
 class ProjectReporsForGroup extends StatefulWidget {
-  const ProjectReporsForGroup({Key? key}) : super(key: key);
+  HiveGroup hiveGroup;
+  HiveDate hiveDate;
+  ProjectReporsForGroup(
+      {Key? key, required this.hiveGroup, required this.hiveDate})
+      : super(key: key);
 
   @override
   State<ProjectReporsForGroup> createState() => _ProjectReporsForGroupState();
 }
 
 class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
-  TextEditingController _markerTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
+    //AppBloc bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -35,7 +37,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
             height: 10.h,
           ),
           Text(
-            "${AppLocalizations.of(context)!.projectReportFor} ${bloc.resultsBloc.hiveGroup?.name ?? ''}",
+            "${AppLocalizations.of(context)!.projectReportFor} ${widget.hiveGroup.name ?? ''}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
@@ -70,7 +72,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
           SizedBox(
             height: 10.h,
           ),
-          _buildMarkerStaticsList(context),
+          _buildMarkerStaticsList(context, widget.hiveGroup, widget.hiveDate),
           // SizedBox(
           //   height: 10.h,
           // ),
@@ -98,30 +100,31 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
     );
   }
 
-  Widget _buildMarkerStaticsList(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
-    Map<HiveOutputMarker, int> _outputs =
-        bloc.resultsBloc.fetchGroupOutputsForMonth();
+  Widget _buildMarkerStaticsList(
+      BuildContext context, HiveGroup hiveGroup, HiveDate hiveDate) {
+    //AppBloc bloc = Provider.of(context);
+    Map<HiveOutputMarker, String> _outputs =
+        hiveGroup.getGroupOutputsForMonth(hiveDate);
+    //bloc.resultsBloc.fetchGroupOutputsForMonth();
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         itemCount: _outputs.length,
         itemBuilder: (BuildContext context, int index) {
           HiveOutputMarker _outputMarker = _outputs.keys.elementAt(index);
-          return MarkerStaticRow(_outputMarker, _outputs[_outputMarker] ?? 0,
+          return MarkerStaticRow(_outputMarker, _outputs[_outputMarker] ?? '',
               markerValueUpdate: (String value) {
             if (value.isEmpty) {
               return;
             }
 
-            _saveOutput(bloc.resultsBloc.hiveGroup!.id!, _outputMarker,
-                bloc.resultsBloc.hiveDate!.toMonth, int.tryParse(value) ?? 0);
+            _saveOutput(hiveGroup.id!, _outputMarker, hiveDate.toMonth, value);
           });
         });
   }
 
   void _saveOutput(String groupId, HiveOutputMarker outputMarker,
-      HiveDate month, int value) {
+      HiveDate month, String value) {
     HiveOutput? _hiveOutput =
         OutputProvider().getGroupOutputForMonth(groupId, outputMarker, month);
 
@@ -134,7 +137,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
     } else {
       _hiveOutput.isUpdated = true;
     }
-    _hiveOutput.value = Int64(value);
+    _hiveOutput.value = value;
 
     OutputProvider().createUpdateOutput(_hiveOutput).then((value) {
       debugPrint("Ouput saved.");

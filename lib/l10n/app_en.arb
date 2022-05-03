@@ -388,7 +388,6 @@
   "selectGroup": "Select Group",
   "joinOrCreateGroupMessage": "Join a Group, or create a new Group, then you can monitor the results of the Group here.",
   "teacherFeedbackForLearner" : "Teacher feedback for this person",
-  "helpTextForTeacherFeedback":"Write in the box below, then click Save",
   "hideHistory" :"Hide History",
   "viewHistory" : "View History",
   "transformations" : "Transformations",

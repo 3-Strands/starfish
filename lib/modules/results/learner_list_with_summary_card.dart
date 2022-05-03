@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 
 class LearnerSummary extends StatelessWidget {
   HiveGroupUser hiveGroupUser;
-  LearnerSummary({Key? key, required this.hiveGroupUser}) : super(key: key);
+  HiveDate month;
+
+  LearnerSummary({Key? key, required this.hiveGroupUser, required this.month})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
+    //AppBloc bloc = Provider.of(context);
     return Column(
       children: [
         Card(
@@ -150,7 +151,7 @@ class LearnerSummary extends StatelessWidget {
                     Expanded(
                       child: Container(
                         child: Text(
-                          "${hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!)?.impactStory ?? ''}",
+                          "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
                           style: TextStyle(
                             fontFamily: "OpenSans",
                             fontSize: 17.sp,
@@ -225,14 +226,13 @@ class LearnerSummary extends StatelessWidget {
                       child: Container(
                         child: Text(
                           (hiveGroupUser
-                                          .getTeacherResponseForMonth(
-                                              bloc.resultsBloc.hiveDate!)
+                                          .getTeacherResponseForMonth(month)
                                           ?.response
                                           ?.length ??
                                       0) >
                                   25
-                              ? "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response?.substring(0, 25) ?? ''}..."
-                              : "${hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)?.response ?? ''}",
+                              ? "${hiveGroupUser.getTeacherResponseForMonth(month)?.response?.substring(0, 25) ?? ''}..."
+                              : "${hiveGroupUser.getTeacherResponseForMonth(month)?.response ?? ''}",
                           style: TextStyle(
                             fontFamily: "OpenSans",
                             fontSize: 17.sp,
@@ -251,8 +251,7 @@ class LearnerSummary extends StatelessWidget {
                   height: 20.h,
                 ),
                 _buildCategoryAverageWidget(
-                  hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(
-                      bloc.resultsBloc.hiveDate!),
+                  hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(month),
                 ),
                 SizedBox(height: 10.h),
               ],

@@ -321,17 +321,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 5.h,
             ),
-            Text(
-              '${AppLocalizations.of(context)!.helpTextForTeacherFeedback}',
-              style: TextStyle(
-                // fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic,
-                fontSize: 14.sp,
-                fontFamily: "OpenSans",
-                color: Color(0xFF797979),
-              ),
-            ),
-            SizedBox(height: 10.h),
             Container(
               decoration: BoxDecoration(
                 color: Color(0xFFFFFFFF),
