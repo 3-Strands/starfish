@@ -117,16 +117,13 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       ),
                       child: InkWell(
                         onTap: () async {
-                          print("PRE DATE: ${bloc.resultsBloc.hiveDate}");
                           final selected = await _selectMonth(bloc);
-                          print("POST DATE: $selected");
                           if (selected != null) {
                             HiveDate _hiveDate = HiveDate.create(
                                 selected.year, selected.month, 0);
 
                             setState(() {
                               bloc.resultsBloc.hiveDate = _hiveDate;
-                              print("POST DATE: ${bloc.resultsBloc.hiveDate}");
                             });
 
                             _updateLearnerSummary();

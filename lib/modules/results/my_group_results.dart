@@ -209,6 +209,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     SizedBox(height: 20.h),
                     SummaryForAllLearners(
                         hiveGroup: bloc.resultsBloc.hiveGroup!,
+                        month: bloc.resultsBloc.hiveDate!,
                         groupLearnerEvaluationsByCategory: bloc.resultsBloc
                             .getGroupLearnerEvaluationsByCategory()),
                     if (bloc.resultsBloc.shouldDisplayProjectReport() &&
