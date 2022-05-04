@@ -39,8 +39,10 @@ import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
-  ResultWidgetBottomSheet(this.hiveGroupUser, {Key? key}) : super(key: key);
   HiveGroupUser hiveGroupUser;
+
+  ResultWidgetBottomSheet(this.hiveGroupUser, {Key? key}) : super(key: key);
+
   @override
   State<ResultWidgetBottomSheet> createState() =>
       _ResultWidgetBottomSheetState();
@@ -49,6 +51,7 @@ class ResultWidgetBottomSheet extends StatefulWidget {
 class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   late AppBloc bloc;
 
+  bool _isInitialized = false;
   bool _isEditMode = false;
   bool isViewActionHistory = false;
   bool isViewCategoryEvalutionHistory = false;
@@ -60,8 +63,20 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
-    bloc.resultsBloc.init();
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      bloc.resultsBloc.init();
+      _isInitialized = true;
+    }
+
+    _teacherFeedbackController.text = widget.hiveGroupUser
+            .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!.toMonth)
+            ?.response ??
+        '';
+    _transformationController.text = widget.hiveGroupUser
+            .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
+            ?.impactStory ??
+        '';
     return Container(
       height: MediaQuery.of(context).size.height * 0.80,
       child: Column(
@@ -106,7 +121,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       alignment: Alignment.centerLeft,
 
                       height: 52.h,
-                      width: 345.w,
+                      //width: 345.w,
                       padding: EdgeInsets.only(left: 15.w, right: 15.w),
                       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       decoration: BoxDecoration(
@@ -166,7 +181,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                 fontFamily: 'OpenSans',
                               ),
                               hint: Text(
-                                "${AppLocalizations.of(context)!.learner}: ${bloc.resultsBloc.hiveGroupUser?.name}",
+                                "${AppLocalizations.of(context)!.learner}: ${widget.hiveGroupUser.name}",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -178,6 +193,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                               ),
                               onChanged: (HiveGroupUser? value) {
                                 setState(() {
+                                  widget.hiveGroupUser = value!;
                                   bloc.resultsBloc.hiveGroupUser = value;
                                 });
 
@@ -241,7 +257,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTeacherFeedBackCard(),
+                    _buildTeacherFeedbackCard(),
                     SizedBox(
                       height: 10.h,
                     ),
@@ -287,7 +303,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     );
   }
 
-  Widget _buildTeacherFeedBackCard() {
+  Widget _buildTeacherFeedbackCard() {
     return Card(
       color: Color(0xFFEFEFEF),
       elevation: 4,
@@ -342,7 +358,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
                 onFocusChange: (isFocused) {
-                  debugPrint("Has focus: $isFocused");
                   if (isFocused) {
                     return;
                   }
@@ -759,7 +774,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 value: _value,
                 label: sliderLabel(_value.toInt()),
                 onChanged: (double value) {
-                  debugPrint("Slider Value: $value");
                   setState(() {
                     _value = value;
                   });
@@ -855,7 +869,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
                 onFocusChange: (isFocused) {
-                  debugPrint("Has focus: $isFocused");
                   if (isFocused) {
                     return;
                   }
@@ -916,8 +929,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
                                     setState(() {
                                       _selectedFiles.add(_newFile);
-                                      print(
-                                          'pathhhhhhh${_selectedFiles[0].path}');
                                     });
                                   },
                                 ),
@@ -1069,10 +1080,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _historyAvailableMonths.remove(_currentMonth);
     }
 
-    _historyAvailableMonths.forEach((element) {
-      print(DateTimeUtils.formatHiveDate(element,
-          requiredDateFormat: 'dd MMM yyyy'));
-    });
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -1317,14 +1324,14 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   void _saveTeacherFeedback() {
-    HiveTeacherResponse? _teacherResponse = bloc.resultsBloc.hiveGroupUser
-        ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
+    HiveTeacherResponse? _teacherResponse = widget.hiveGroupUser
+        .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
 
     if (_teacherResponse == null) {
       _teacherResponse = HiveTeacherResponse();
       _teacherResponse.id = UuidGenerator.uuid();
-      _teacherResponse.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-      _teacherResponse.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _teacherResponse.groupId = widget.hiveGroupUser.groupId;
+      _teacherResponse.learnerId = widget.hiveGroupUser.userId;
       _teacherResponse.teacherId = CurrentUserProvider().getUserSync().id;
       _teacherResponse.month = bloc.resultsBloc.hiveDate!.toMonth;
       _teacherResponse.isNew = true;
@@ -1345,14 +1352,14 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   void _saveTransformation(String _impactStory, List<File> _files) {
-    HiveTransformation? _transformation = bloc.resultsBloc.hiveGroupUser
-        ?.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+    HiveTransformation? _transformation = widget.hiveGroupUser
+        .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
 
     if (_transformation == null) {
       _transformation = HiveTransformation();
       _transformation.id = UuidGenerator.uuid();
-      _transformation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-      _transformation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _transformation.groupId = widget.hiveGroupUser.groupId;
+      _transformation.userId = widget.hiveGroupUser.userId;
       _transformation.month = bloc.resultsBloc.hiveDate!.toMonth;
       _transformation.isNew = true;
     } else {
@@ -1390,15 +1397,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         "LearnerEvaluation saved for Month: ${bloc.resultsBloc.hiveDate}");
     debugPrint(
         "LearnerEvaluation saved for PreviousDate: ${bloc.resultsBloc.hivePreviousDate}");
-    HiveLearnerEvaluation? _learnerEvaluation = bloc.resultsBloc.hiveGroupUser
-        ?.getLearnerEvaluation(
+    HiveLearnerEvaluation? _learnerEvaluation = widget.hiveGroupUser
+        .getLearnerEvaluation(
             bloc.resultsBloc.hiveDate!, categoryId, evaluatorId);
 
     if (_learnerEvaluation == null) {
       _learnerEvaluation = HiveLearnerEvaluation();
       _learnerEvaluation.id = UuidGenerator.uuid();
-      _learnerEvaluation.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
-      _learnerEvaluation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
+      _learnerEvaluation.learnerId = widget.hiveGroupUser.userId;
+      _learnerEvaluation.groupId = widget.hiveGroupUser.groupId;
       _learnerEvaluation.evaluatorId = evaluatorId;
       _learnerEvaluation.month = bloc.resultsBloc.hiveDate!.toMonth;
       _learnerEvaluation.categoryId = categoryId;
