@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -13,12 +10,9 @@ import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/result_bottomsheet.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 
 class MyGroupResults extends StatefulWidget {
@@ -59,38 +53,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       onFocusLost: () {},
       child: Scaffold(
         backgroundColor: AppColors.resultsScreenBG,
-        appBar: AppBar(
-          title: Container(
-            height: 64.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                AppLogo(hight: 36.h, width: 37.w),
-                Text(
-                  AppLocalizations.of(context)!.resultsTabItemText,
-                  style: dashboardNavigationTitle,
-                ),
-                IconButton(
-                  icon: SvgPicture.asset(AssetsPath.settings),
-                  onPressed: () {
-                    setState(
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SettingsScreen(),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          backgroundColor: AppColors.resultsScreenBG,
-          elevation: 0.0,
-        ),
         body: bloc.resultsBloc.hiveGroup != null
             ? Scrollbar(
                 thickness: 5.w,
