@@ -193,26 +193,22 @@ class _SelectDropDownState extends State<SelectDropDown> {
             );
           }
         },
-        child: Container(
-          margin: EdgeInsets.only(left: 15.w),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.w),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 300.w,
-                child: Text(
-                  (widget.selectedValues == '')
-                      ? widget.placeholder
-                      : _selectedValue,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: _selectedValue == widget.placeholder
-                      ? formTitleHintStyle
-                      : textFormFieldText,
-                ),
+              Text(
+                (widget.selectedValues == '')
+                    ? widget.placeholder
+                    : _selectedValue,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: _selectedValue == widget.placeholder
+                    ? formTitleHintStyle
+                    : textFormFieldText,
               ),
-              Spacer(),
               Icon(Icons.navigate_next_sharp, color: Colors.grey),
-              Spacer(),
             ],
           ),
         ),

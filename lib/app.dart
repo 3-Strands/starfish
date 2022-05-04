@@ -6,6 +6,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/wrappers/platform.dart';
+import 'package:starfish/wrappers/window.dart';
 import 'config/routes/routes.dart';
 import 'constants/app_styles.dart';
 import 'l10n/l10n.dart';
@@ -21,12 +22,14 @@ class Starfish extends StatefulWidget {
 }
 
 class _StarfishState extends State<Starfish> {
+  bool _isInitialized = false;
+  String _initialRoute = Routes.phoneAuthentication;
   Locale _locale = Locale('en');
 
   @override
   void initState() {
     // _locale = Locale('en');
-    initDeviceLanguage();
+    initContext();
     super.initState();
 
     EasyLoading.instance
@@ -40,60 +43,83 @@ class _StarfishState extends State<Starfish> {
       ..boxShadow = <BoxShadow>[];
   }
 
-  initDeviceLanguage() async {
-    String deviceLanguage = Platform.localeName.substring(0, 2);
-    await StarfishSharedPreference().getDeviceLanguage().then((value) => {
-          (value == '')
-              ? {
-                  (deviceLanguage == 'hi')
-                      ? setLocale(Locale(deviceLanguage))
-                      : setLocale(Locale('en'))
-                }
-              : setLocale(Locale(value))
-        });
+  initContext() async {
+    final results = await Future.wait([
+      StarfishSharedPreference().isUserLoggedIn(),
+      StarfishSharedPreference().getDeviceLanguage(),
+      // want to show the splash screen for at least 3 seconds on mobile
+      Future.delayed(Duration(seconds: Platform.isWeb ? 0 : 3)),
+    ]);
+    final isSignedIn = results[0] as bool;
+    final savedLocale = results[1] as String;
+    final deviceLanguage = Platform.localeName.substring(0, 2);
+    final locale = (savedLocale == '')
+      ? (
+        deviceLanguage == 'hi'
+          ? deviceLanguage
+          : 'en'
+      )
+      : savedLocale;
+
+    setState(() {
+      _initialRoute = isSignedIn ? Routes.dashboard : Routes.phoneAuthentication;
+      _locale = Locale(locale);
+      _isInitialized = true;
+      removeSplashScreen();
+    });
   }
 
-  void setLocale(Locale value) {
+  void setLocale(Locale locale) {
     setState(() {
-      _locale = value;
+      _locale = locale;
     });
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final app = _isInitialized
+      ? MaterialApp(
+        locale: _locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: L10n.all,
+        navigatorKey: NavigationService.navigatorKey, // set property
+        debugShowCheckedModeBanner: false,
+        title: '',
+        theme: AppStyles.defaultTheme(),
+        // home: SplashScreen(),
+        initialRoute: _initialRoute,
+        routes: Routes.routes,
+        builder: EasyLoading.init(
+          builder: (context, widget) {
+            ScreenUtil.setContext(context);
+            if (Platform.isWeb) {
+              ScreenUtil().uiSize = MediaQuery.of(context).size;
+            }
+            return MediaQuery(
+              //Setting font does not change with system font size
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: widget!,
+            );
+          },
+        ),
+      )
+      : MaterialApp(
+        onGenerateRoute: (_) =>
+          MaterialPageRoute(
+            builder: (_) => Platform.isWeb ? SizedBox.shrink() : SplashScreen(),
+          ),
+      );
+
     return ScreenUtilInit(
       designSize: Size(375, 812),
       builder: () => Provider(
-        child: MaterialApp(
-          locale: _locale,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: L10n.all,
-          navigatorKey: NavigationService.navigatorKey, // set property
-          debugShowCheckedModeBanner: false,
-          title: '',
-          theme: AppStyles.defaultTheme(),
-          home: SplashScreen(),
-          routes: Routes.routes,
-          builder: EasyLoading.init(
-            builder: (context, widget) {
-              ScreenUtil.setContext(context);
-              if (Platform.isWeb) {
-                ScreenUtil().uiSize = MediaQuery.of(context).size;
-              }
-              return MediaQuery(
-                //Setting font does not change with system font size
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                child: widget!,
-              );
-            },
-          ),
-        ),
+        child: app,
       ),
     );
   }
