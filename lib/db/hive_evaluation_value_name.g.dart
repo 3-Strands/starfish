@@ -1,38 +1,36 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'hive_evaluation_category.dart';
+part of 'hive_evaluation_value_name.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class HiveEvaluationCategoryAdapter
-    extends TypeAdapter<HiveEvaluationCategory> {
+class HiveEvaluationValueNameAdapter
+    extends TypeAdapter<HiveEvaluationValueName> {
   @override
-  final int typeId = 14;
+  final int typeId = 24;
 
   @override
-  HiveEvaluationCategory read(BinaryReader reader) {
+  HiveEvaluationValueName read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HiveEvaluationCategory(
-      id: fields[0] as String?,
+    return HiveEvaluationValueName(
+      value: fields[0] as int?,
       name: fields[1] as String?,
-    )..valueNames = (fields[3] as List?)?.cast<HiveEvaluationValueName>();
+    );
   }
 
   @override
-  void write(BinaryWriter writer, HiveEvaluationCategory obj) {
+  void write(BinaryWriter writer, HiveEvaluationValueName obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.value)
       ..writeByte(1)
-      ..write(obj.name)
-      ..writeByte(3)
-      ..write(obj.valueNames);
+      ..write(obj.name);
   }
 
   @override
@@ -41,7 +39,7 @@ class HiveEvaluationCategoryAdapter
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HiveEvaluationCategoryAdapter &&
+      other is HiveEvaluationValueNameAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

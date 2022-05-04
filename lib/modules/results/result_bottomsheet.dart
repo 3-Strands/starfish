@@ -785,18 +785,18 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             ),
           );
         }),
-        // SizedBox(
-        //   height: 5.h,
-        // ),
-        // Text(
-        //   "This is dynamic text which explains the meaning of each ",
-        //   style: TextStyle(
-        //     fontStyle: FontStyle.italic,
-        //     fontFamily: "OpenSans",
-        //     fontSize: 14.sp,
-        //     color: Color(0xFF797979),
-        //   ),
-        // ),
+        SizedBox(
+          height: 5.h,
+        ),
+        Text(
+          _evaluationCategory.getEvaluationNameFromValue(_value.toInt()),
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            fontFamily: "OpenSans",
+            fontSize: 14.sp,
+            color: Color(0xFF797979),
+          ),
+        ),
         SizedBox(
           height: 5.h,
         ),
