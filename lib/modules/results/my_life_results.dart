@@ -1,0 +1,486 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:focus_detector/focus_detector.dart';
+import 'package:intl/intl.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/widgets/month_year_picker/dialogs.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/widgets/result_transformations_widget.dart';
+
+class MyLifeResults extends StatefulWidget {
+  const MyLifeResults({Key? key}) : super(key: key);
+
+  @override
+  State<MyLifeResults> createState() => _MyLifeResultsState();
+}
+
+class _MyLifeResultsState extends State<MyLifeResults> {
+  late AppBloc bloc;
+  @override
+  Widget build(BuildContext context) {
+    bloc = Provider.of(context);
+
+    // call init only once
+    if (bloc.resultsBloc.hiveGroup == null) {
+      bloc.resultsBloc.init();
+    }
+    return FocusDetector(
+      onFocusGained: () {},
+      onFocusLost: () {},
+      child: Scaffold(
+          backgroundColor: AppColors.resultsScreenBG,
+          body: Scrollbar(
+            thickness: 5.w,
+            isAlwaysShown: false,
+            child: SingleChildScrollView(
+                child: Column(
+              children: [
+                SizedBox(
+                  height: 20.h,
+                ),
+                InkWell(
+                  onTap: () async {
+                    DateTime? selected = await _selectMonth(bloc);
+
+                    if (selected != null) {
+                      // HiveDate _hiveDate =
+                      //     HiveDate.create(selected.year, selected.month, 0);
+
+                      setState(() {
+                        //  bloc.resultsBloc.hiveDate = _hiveDate;
+                      });
+                    }
+                  },
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    height: 52.h,
+                    width: 345.w,
+                    padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: Text(
+                        DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
+                            requiredDateFormat: "MMMM yyyy"),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 19.sp,
+                          fontFamily: 'OpenSans',
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15.h),
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount:
+                        2, //bloc.resultsBloc.hiveGroup!.learners!.length,
+                    itemBuilder: (BuildContext context, index) {
+                      //  HiveGroupUser _hiveGroupUser = bloc
+                      //       .resultsBloc.hiveGroup!.learners!
+                      //    .elementAt(index);
+                      return Container(
+                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            index != 0
+                                ? SizedBox(
+                                    height: 10.h,
+                                  )
+                                : Container(),
+                            Text(
+                              "Group Name",
+                              style: TextStyle(
+                                  fontFamily: "OpenSans",
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19.sp),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            _buildActionCard(),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            ResultTransformationsWidget(),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            _buildFeedbackFromTeachers(),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            _buildFeelingAboutGroupCard()
+                          ],
+                        ),
+                      );
+                    }),
+                SizedBox(
+                  height: 20.h,
+                )
+              ],
+            )),
+          )
+          // : Container(
+          //     height: MediaQuery.of(context).size.height - 40.h,
+          //     child: Center(
+          //       child: Padding(
+          //         padding: const EdgeInsets.all(10.0),
+          //         child: Text(
+          //           '${AppLocalizations.of(context)!.joinOrCreateGroupMessage}',
+          //           style: TextStyle(
+          //             fontSize: 16.sp,
+          //             fontFamily: "OpenSans",
+          //             fontStyle: FontStyle.italic,
+          //             color: Color(0xFF797979),
+          //           ),
+          //           textAlign: TextAlign.center,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          ),
+    );
+  }
+
+  Widget _buildFeelingAboutGroupCard() {
+    return Card(
+        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+        color: Color(0xFFEFEFEF),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+          Radius.circular(
+            10,
+          ),
+        )),
+        child: Container(
+          padding: EdgeInsets.only(left: 15.w, right: 15.w),
+          child: Column(children: [
+            SizedBox(
+              height: 5.h,
+            ),
+            Text(
+              "How do you feel about this Group?",
+              style: TextStyle(
+                color: Color(0xFF4F4F4F),
+                fontFamily: "OpenSans",
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 45.h,
+                    decoration: BoxDecoration(),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          //AppColors.completeTaskBGColor),
+                          Color(0xFF6DE26B),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            AssetsPath.thumbsUp,
+                            width: 15.w,
+                          ),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.goodText,
+                            style: TextStyle(
+                                fontSize: 17.sp,
+                                fontFamily: "Rubik",
+                                color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Expanded(
+                  child: Container(
+                    height: 45.h,
+                    decoration: BoxDecoration(),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            Color(0xFF797979).withOpacity(0.4),
+                          )),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            AssetsPath.thumbsDown,
+                            width: 15.w,
+                          ),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.notSoGoodText,
+                            style: TextStyle(
+                                fontSize: 17.sp,
+                                fontFamily: "Rubik",
+                                color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15.h,
+            ),
+          ]),
+        ));
+  }
+
+  Widget _buildFeedbackFromTeachers() {
+    return Card(
+      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+        Radius.circular(
+          10,
+        ),
+      )),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(
+                "Feedback from Group Teacher(s)",
+                style: TextStyle(
+                  fontFamily: "OpenSans",
+                  color: Color(0xFF4F4F4F),
+                  fontSize: 19.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            ]),
+      ),
+    );
+  }
+
+  Widget _buildActionCard() {
+    return Card(
+      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+        Radius.circular(
+          10,
+        ),
+      )),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              "${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+              style: TextStyle(
+                fontSize: 19.sp,
+                color: Color(0xFF4F4F4F),
+                fontWeight: FontWeight.w600,
+                fontFamily: "OpenSans",
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            _buildMonthlyActionWidget(
+                bloc.resultsBloc.actionUserStatusForSelectedMonth(
+                    bloc.resultsBloc.hiveDate!),
+                displayOverdue: true),
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              "To complete more Actions, go to Actions screen",
+              style: TextStyle(
+                fontFamily: "OpenSans",
+                fontStyle: FontStyle.italic,
+                fontSize: 14.sp,
+                color: Color(0xFF797979),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMonthlyActionWidget(Map<String, int> actionStatusCount,
+      {displayOverdue = false}) {
+    int complete = actionStatusCount['done'] ?? 0;
+    int notComplete = actionStatusCount['not_done'] ?? 0;
+    int overdue = actionStatusCount['overdue'] ?? 0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Expanded(
+          child: Container(
+            width: 99.w,
+            decoration: BoxDecoration(
+                color: Color(0xFF6DE26B),
+                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+            child: Text(
+              Intl.plural(
+                complete,
+                zero:
+                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
+                one:
+                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
+                other:
+                    "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+                args: [complete],
+              ),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Rubik",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 10.w,
+        ),
+        Expanded(
+          child: Container(
+            width: 99.w,
+            decoration: BoxDecoration(
+                color: Color(0xFFFFBE4A),
+                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+            child: Text(
+              Intl.plural(
+                notComplete,
+                zero:
+                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                one:
+                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                other:
+                    "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
+                args: [notComplete],
+              ),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Rubik",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        if (displayOverdue == true) ...[
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Container(
+              width: 99.w,
+              decoration: BoxDecoration(
+                  color: Color(0xFFFF5E4D),
+                  borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              child: Text(
+                Intl.plural(
+                  overdue,
+                  zero:
+                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                  one:
+                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                  other:
+                      "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
+                  args: [overdue],
+                ),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Rubik",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ]
+      ],
+    );
+  }
+
+  Future<DateTime?> _selectMonth(AppBloc bloc) async {
+    // reference for the MonthYearPickerLocalizations is add in app.dart
+    return await showMonthYearPicker(
+      context: context,
+      initialDate: DateTimeUtils.toDateTime(
+          DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
+              requiredDateFormat: "dd-MMM-yyyy"),
+          "dd-MMM-yyyy"),
+      firstDate: DateTime(2011),
+      lastDate: DateTime.now(),
+    );
+  }
+}
