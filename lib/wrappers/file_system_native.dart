@@ -132,28 +132,30 @@ Future<void> initHive() async {
 }
 
 class File {
-  final io.File ioFile;
+  final io.File _ioFile;
 
-  File(String path) : ioFile = io.File(path);
+  File(String path) : _ioFile = io.File(path);
+
+  String get path => _ioFile.path;
 
   Widget getImagePreview({
     BoxFit? fit,
     double? width,
     double? height,
   }) => Image.file(
-    ioFile,
+    _ioFile,
     fit: fit,
     width: width,
     height: height,
   );
 
-  Future<Uint8List> readAsBytes() => ioFile.readAsBytes();
+  Future<Uint8List> readAsBytes() => _ioFile.readAsBytes();
 
   Future<void> createWithContent(List<int> buffer) async {
-     ioFile.create(recursive: true);
+     _ioFile.create(recursive: true);
 
     final _randomAccessFile =
-        await ioFile.open(mode: io.FileMode.write);
+        await _ioFile.open(mode: io.FileMode.write);
 
     _randomAccessFile.writeFromSync(buffer);
 
