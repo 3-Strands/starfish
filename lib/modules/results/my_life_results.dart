@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
@@ -6,6 +8,7 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -32,12 +35,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       onFocusGained: () {},
       onFocusLost: () {},
       child: Scaffold(
-          backgroundColor: AppColors.resultsScreenBG,
-          body: Scrollbar(
-            thickness: 5.w,
-            isAlwaysShown: false,
-            child: SingleChildScrollView(
-                child: Column(
+        backgroundColor: AppColors.resultsScreenBG,
+        body: Scrollbar(
+          thickness: 5.w,
+          isAlwaysShown: false,
+          child: SingleChildScrollView(
+            child: Column(
               children: [
                 SizedBox(
                   height: 20.h,
@@ -85,77 +88,79 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   ),
                 ),
                 SizedBox(height: 15.h),
-                ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount:
-                        2, //bloc.resultsBloc.hiveGroup!.learners!.length,
-                    itemBuilder: (BuildContext context, index) {
-                      //  HiveGroupUser _hiveGroupUser = bloc
-                      //       .resultsBloc.hiveGroup!.learners!
-                      //    .elementAt(index);
-                      return Container(
-                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            index != 0
-                                ? SizedBox(
-                                    height: 10.h,
-                                  )
-                                : Container(),
-                            Text(
-                              "Group Name",
+                bloc.resultsBloc.hiveGroup != null
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount:
+                            2, //bloc.resultsBloc.hiveGroup!.learners!.length,
+                        itemBuilder: (BuildContext context, index) {
+                          //  HiveGroupUser _hiveGroupUser = bloc
+                          //       .resultsBloc.hiveGroup!.learners!
+                          //    .elementAt(index);
+                          return Container(
+                            margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                index != 0
+                                    ? SizedBox(
+                                        height: 10.h,
+                                      )
+                                    : Container(),
+                                Text(
+                                  "Group Name",
+                                  style: TextStyle(
+                                      fontFamily: "OpenSans",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 19.sp),
+                                ),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                _buildActionCard(),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                ResultTransformationsWidget(),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                _buildFeedbackFromTeachers(),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                _buildFeelingAboutGroupCard()
+                              ],
+                            ),
+                          );
+                        })
+                    : Container(
+                        height: MediaQuery.of(context).size.height - 40.h,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              '${AppLocalizations.of(context)!.joinOrCreateGroupMessage}',
                               style: TextStyle(
-                                  fontFamily: "OpenSans",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 19.sp),
+                                fontSize: 16.sp,
+                                fontFamily: "OpenSans",
+                                fontStyle: FontStyle.italic,
+                                color: Color(0xFF797979),
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            _buildActionCard(),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            ResultTransformationsWidget(),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            _buildFeedbackFromTeachers(),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            _buildFeelingAboutGroupCard()
-                          ],
+                          ),
                         ),
-                      );
-                    }),
+                      ),
                 SizedBox(
                   height: 20.h,
-                )
+                ),
               ],
-            )),
-          )
-          // : Container(
-          //     height: MediaQuery.of(context).size.height - 40.h,
-          //     child: Center(
-          //       child: Padding(
-          //         padding: const EdgeInsets.all(10.0),
-          //         child: Text(
-          //           '${AppLocalizations.of(context)!.joinOrCreateGroupMessage}',
-          //           style: TextStyle(
-          //             fontSize: 16.sp,
-          //             fontFamily: "OpenSans",
-          //             fontStyle: FontStyle.italic,
-          //             color: Color(0xFF797979),
-          //           ),
-          //           textAlign: TextAlign.center,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
+            ),
           ),
+        ),
+      ),
     );
   }
 
@@ -294,21 +299,155 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       child: Container(
         padding: EdgeInsets.only(left: 15.w, right: 15.w),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              "Feedback from Group Teacher(s)",
+              style: TextStyle(
+                fontFamily: "OpenSans",
+                color: Color(0xFF4F4F4F),
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        border: Border.all(
+                          color: Color(0xFF979797),
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      padding: EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Feedback form teacher comes here, which is month specific",
+                            style: TextStyle(
+                              fontFamily: "OpenSans",
+                              fontSize: 16.sp,
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xFF797979),
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          Text(
+                            "Teacher: Matt",
+                            style: TextStyle(
+                              fontFamily: "OpenSans",
+                              fontSize: 16.sp,
+                              color: Color(0xFF797979),
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                  ],
+                );
+              },
+              itemCount: 3,
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            _buildCurrentEvaluationWidget(
+              bloc.resultsBloc.hiveGroupUser!
+                  .getLearnerEvaluationsByCategoryForMoth(
+                      bloc.resultsBloc.hiveDate!),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentEvaluationWidget(
+      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations) {
+    List<Widget> _currentEvaluationWidget = [];
+    _learnersEvaluations.forEach(
+        (HiveEvaluationCategory category, Map<String, int> countByMonth) {
+      _currentEvaluationWidget.add(_buildCategoryStatics(
+          countByMonth["this-month"] ?? 0,
+          category.name!,
+          ((countByMonth["this-month"] ?? 0) -
+              (countByMonth["last-month"] ?? 0)),
+          Color(0xFF797979)));
+    });
+    return Row(
+      children: _currentEvaluationWidget,
+    );
+  }
+
+  Widget _buildCategoryStatics(
+      int count, String categoryName, int changeInCount, Color textColor) {
+    return Expanded(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 10.h,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    "$count",
+                    style: TextStyle(
+                        color: textColor,
+                        fontFamily: "OpenSans",
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Image.asset(
+                    changeInCount > 0
+                        ? AssetsPath.arrowUpIcon
+                        : AssetsPath.arrowDownIcon,
+                  ),
+                ],
               ),
               Text(
-                "Feedback from Group Teacher(s)",
+                "$categoryName",
                 style: TextStyle(
-                  fontFamily: "OpenSans",
-                  color: Color(0xFF4F4F4F),
-                  fontSize: 19.sp,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15.sp,
+                  color: Color(0xFF000000),
+                  fontFamily: "Rubik",
                 ),
+                textAlign: TextAlign.center,
               )
-            ]),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -319,27 +458,23 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       color: Color(0xFFEFEFEF),
       elevation: 4,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-        Radius.circular(
-          10,
+        borderRadius: BorderRadius.all(
+          Radius.circular(10),
         ),
-      )),
+      ),
       child: Container(
         padding: EdgeInsets.only(left: 15.w, right: 15.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 10.h,
-            ),
+            SizedBox(height: 10.h),
             Text(
               "${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
               style: TextStyle(
-                fontSize: 19.sp,
-                color: Color(0xFF4F4F4F),
-                fontWeight: FontWeight.w600,
-                fontFamily: "OpenSans",
-              ),
+                  fontSize: 19.sp,
+                  color: Color(0xFF4F4F4F),
+                  fontWeight: FontWeight.w600,
+                  fontFamily: "OpenSans"),
             ),
             SizedBox(
               height: 10.h,
