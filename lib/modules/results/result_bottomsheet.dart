@@ -117,33 +117,33 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       height: 20.h,
                     ),
                     SizedBox(height: 20.h),
-                    Container(
-                      alignment: Alignment.centerLeft,
+                    InkWell(
+                      onTap: () async {
+                        final selected = await _selectMonth(bloc);
+                        if (selected != null) {
+                          HiveDate _hiveDate =
+                              HiveDate.create(selected.year, selected.month, 0);
 
-                      height: 52.h,
-                      //width: 345.w,
-                      padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.txtFieldBackground,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                          setState(() {
+                            bloc.resultsBloc.hiveDate = _hiveDate;
+                          });
+
+                          _updateLearnerSummary();
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+
+                        height: 52.h,
+                        //width: 345.w,
+                        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
-                      ),
-                      child: InkWell(
-                        onTap: () async {
-                          final selected = await _selectMonth(bloc);
-                          if (selected != null) {
-                            HiveDate _hiveDate = HiveDate.create(
-                                selected.year, selected.month, 0);
-
-                            setState(() {
-                              bloc.resultsBloc.hiveDate = _hiveDate;
-                            });
-
-                            _updateLearnerSummary();
-                          }
-                        },
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: Text(
@@ -730,8 +730,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildCategorySlider(HiveEvaluationCategory _evaluationCategory) {
-    HiveLearnerEvaluation? _evaluation = bloc.resultsBloc.hiveGroupUser
-        ?.getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
+    HiveLearnerEvaluation? _evaluation = widget.hiveGroupUser
+        .getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
             _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
 
     double _value =

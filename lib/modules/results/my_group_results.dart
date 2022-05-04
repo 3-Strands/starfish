@@ -294,7 +294,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       builder: (BuildContext context) {
         return ResultWidgetBottomSheet(hiveGroupUser);
       },
-    );
+    ).whenComplete(() {
+      setState(() {});
+    });
   }
 
   Future<DateTime?> _selectMonth(AppBloc bloc) async {
