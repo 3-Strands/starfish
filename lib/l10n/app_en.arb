@@ -406,5 +406,7 @@
   "currentEvaluation" : "Current Evaluation",
 
   "imageCropperScreenTitle": "Crop",
-  "imageCropDoneButton": "CROP IT!"
+  "imageCropDoneButton": "CROP IT!",
+  "forMyLifeTabText":"For My Life"
+  
 }
