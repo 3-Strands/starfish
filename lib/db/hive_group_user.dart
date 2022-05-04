@@ -231,12 +231,15 @@ extension HiveGroupUserExt on HiveGroupUser {
   }
 
   List<HiveAction>? get actions {
-    ActionProvider().getGroupActions(this.groupId!);
+    return ActionProvider().getGroupActions(this.groupId!);
   }
 
-  int get actionsCompleted {
+  int getActionsCompletedInMonth(HiveDate month) {
     int count = 0;
-    this.actions?.forEach((hiveAction) {
+    this
+        .actions
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
@@ -246,16 +249,16 @@ extension HiveGroupUserExt on HiveGroupUser {
         count++;
       }
     });
-    /*this.actions?.where((hiveAction) {
-      return user?.actionStatusbyId(hiveAction) == ActionStatus.DONE;
-    }).length;*/
 
     return count;
   }
 
-  int get actionsNotCompleted {
+  int getActionsNotCompletedInMonth(HiveDate month) {
     int count = 0;
-    this.actions?.forEach((hiveAction) {
+    this
+        .actions
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
@@ -269,9 +272,12 @@ extension HiveGroupUserExt on HiveGroupUser {
     return count;
   }
 
-  int get actionsOverdue {
+  int getActionsOverdueInMonth(HiveDate month) {
     int count = 0;
-    this.actions?.forEach((hiveAction) {
+    this
+        .actions
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 

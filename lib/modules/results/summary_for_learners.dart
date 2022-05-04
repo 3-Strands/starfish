@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
   HiveGroup hiveGroup;
+  HiveDate month;
   Map<HiveEvaluationCategory, Map<String, int>>
       groupLearnerEvaluationsByCategory;
+
   SummaryForAllLearners(
       {Key? key,
       required this.hiveGroup,
+      required this.month,
       required this.groupLearnerEvaluationsByCategory})
       : super(key: key);
 
@@ -65,7 +69,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${hiveGroup.actionsCompleted} ${AppLocalizations.of(context)!.done}",
+                  "${hiveGroup.getActionsCompletedInMonth(month)} ${AppLocalizations.of(context)!.done}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -81,7 +85,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${hiveGroup.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
+                  "${hiveGroup.getActionsNotYetCompletedInMonth(month)} ${AppLocalizations.of(context)!.pending}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -97,7 +101,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${hiveGroup.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
+                  "${hiveGroup.getActionsOverdueInMonth(month)} ${AppLocalizations.of(context)!.overdue}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",

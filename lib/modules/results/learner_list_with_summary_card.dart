@@ -76,7 +76,7 @@ class LearnerSummary extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: 8.h, horizontal: 8.w),
                           child: Text(
-                            "${hiveGroupUser.actionsCompleted} ${AppLocalizations.of(context)!.done}",
+                            "${hiveGroupUser.getActionsCompletedInMonth(month)} ${AppLocalizations.of(context)!.done}",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: "Rubik Medium",
@@ -99,7 +99,7 @@ class LearnerSummary extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: 8.h, horizontal: 8.w),
                           child: Text(
-                            "${hiveGroupUser.actionsNotCompleted} ${AppLocalizations.of(context)!.pending}",
+                            "${hiveGroupUser.getActionsNotCompletedInMonth(month)} ${AppLocalizations.of(context)!.pending}",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: "Rubik Medium",
@@ -122,7 +122,7 @@ class LearnerSummary extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: 8.h, horizontal: 8.w),
                           child: Text(
-                            "${hiveGroupUser.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
+                            "${hiveGroupUser.getActionsOverdueInMonth(month)} ${AppLocalizations.of(context)!.overdue}",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: "Rubik Medium",

@@ -238,6 +238,39 @@ extension HiveGroupExt on HiveGroup {
         0;
   }
 
+  int getActionsCompletedInMonth(HiveDate month) {
+    int count = 0;
+    this
+        .groupActionList
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) =>
+            count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
+
+    return count;
+  }
+
+  int getActionsNotYetCompletedInMonth(HiveDate month) {
+    int count = 0;
+    this
+        .groupActionList
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) => count +=
+            hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
+
+    return count;
+  }
+
+  int getActionsOverdueInMonth(HiveDate month) {
+    int count = 0;
+    this
+        .groupActionList
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) => count +=
+            hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
+
+    return count;
+  }
+
   List<HiveAction>? get groupActionList {
     return ActionProvider().getGroupActions(this.id!);
   }
