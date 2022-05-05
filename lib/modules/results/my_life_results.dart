@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
@@ -182,7 +180,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               height: 5.h,
             ),
             Text(
-              "How do you feel about this Group?",
+              '${AppLocalizations.of(context)!.howDoYouFeelAboutThisGroup}',
               style: TextStyle(
                 color: Color(0xFF4F4F4F),
                 fontFamily: "OpenSans",
@@ -193,58 +191,17 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             SizedBox(
               height: 10.h,
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 45.h,
-                    decoration: BoxDecoration(),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                        ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          //AppColors.completeTaskBGColor),
-                          Color(0xFF6DE26B),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            AssetsPath.thumbsUp,
-                            width: 15.w,
-                          ),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.goodText,
-                            style: TextStyle(
-                                fontSize: 17.sp,
-                                fontFamily: "Rubik",
-                                color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10.w,
-                ),
-                Expanded(
-                  child: Container(
-                    height: 45.h,
-                    decoration: BoxDecoration(),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Container(
+                      //   height: 45.h,
+                      decoration: BoxDecoration(),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -252,31 +209,78 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             ),
                           ),
                           backgroundColor: MaterialStateProperty.all<Color>(
-                            Color(0xFF797979).withOpacity(0.4),
-                          )),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            AssetsPath.thumbsDown,
-                            width: 15.w,
+                            //AppColors.completeTaskBGColor),
+                            Color(0xFF6DE26B),
                           ),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.notSoGoodText,
-                            style: TextStyle(
-                                fontSize: 17.sp,
-                                fontFamily: "Rubik",
-                                color: Colors.black),
-                          ),
-                        ],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AssetsPath.thumbsUp,
+                              width: 15.w,
+                            ),
+                            SizedBox(
+                              width: 3.w,
+                            ),
+                            Text(
+                              AppLocalizations.of(context)!.goodText,
+                              style: TextStyle(
+                                  fontSize: 17.sp,
+                                  fontFamily: "Rubik",
+                                  color: Colors.black),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Expanded(
+                    child: Container(
+                      //   height: 45.h,
+                      decoration: BoxDecoration(),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.r),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              Color(0xFF797979).withOpacity(0.4),
+                            )),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AssetsPath.thumbsDown,
+                              width: 15.w,
+                            ),
+                            SizedBox(
+                              width: 3.w,
+                            ),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)!.notSoGoodText,
+                                style: TextStyle(
+                                    fontSize: 17.sp,
+                                    fontFamily: "Rubik",
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             SizedBox(
               height: 15.h,
@@ -306,7 +310,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               height: 10.h,
             ),
             Text(
-              "Feedback from Group Teacher(s)",
+              "${AppLocalizations.of(context)!.feedbackFromGroupTeacher}",
               style: TextStyle(
                 fontFamily: "OpenSans",
                 color: Color(0xFF4F4F4F),
@@ -354,7 +358,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             height: 20.h,
                           ),
                           Text(
-                            "Teacher: Matt",
+                            "${AppLocalizations.of(context)!.teacher}: Matt",
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -487,7 +491,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               height: 10.h,
             ),
             Text(
-              "To complete more Actions, go to Actions screen",
+              "${AppLocalizations.of(context)!.reslutCompleteActionHelpText}",
               style: TextStyle(
                 fontFamily: "OpenSans",
                 fontStyle: FontStyle.italic,
@@ -510,87 +514,28 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     int complete = actionStatusCount['done'] ?? 0;
     int notComplete = actionStatusCount['not_done'] ?? 0;
     int overdue = actionStatusCount['overdue'] ?? 0;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Expanded(
-          child: Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-                color: Color(0xFF6DE26B),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                complete,
-                zero:
-                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                one:
-                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                other:
-                    "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
-                args: [complete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 10.w,
-        ),
-        Expanded(
-          child: Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-                color: Color(0xFFFFBE4A),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                notComplete,
-                zero:
-                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                one:
-                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                other:
-                    "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
-                args: [notComplete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        if (displayOverdue == true) ...[
-          SizedBox(
-            width: 10.w,
-          ),
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
           Expanded(
             child: Container(
               width: 99.w,
               decoration: BoxDecoration(
-                  color: Color(0xFFFF5E4D),
+                  color: Color(0xFF6DE26B),
                   borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
               padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
               child: Text(
                 Intl.plural(
-                  overdue,
+                  complete,
                   zero:
-                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
                   one:
-                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
                   other:
-                      "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
-                  args: [overdue],
+                      "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+                  args: [complete],
                 ),
                 style: TextStyle(
                     color: Colors.black,
@@ -601,8 +546,70 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               ),
             ),
           ),
-        ]
-      ],
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Container(
+              width: 99.w,
+              decoration: BoxDecoration(
+                  color: Color(0xFFFFBE4A),
+                  borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              child: Text(
+                Intl.plural(
+                  notComplete,
+                  zero:
+                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  one:
+                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  other:
+                      "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
+                  args: [notComplete],
+                ),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Rubik",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          if (displayOverdue == true) ...[
+            SizedBox(
+              width: 10.w,
+            ),
+            Expanded(
+              child: Container(
+                width: 99.w,
+                decoration: BoxDecoration(
+                    color: Color(0xFFFF5E4D),
+                    borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                child: Text(
+                  Intl.plural(
+                    overdue,
+                    zero:
+                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                    one:
+                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                    other:
+                        "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
+                    args: [overdue],
+                  ),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ]
+        ],
+      ),
     );
   }
 
