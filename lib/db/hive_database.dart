@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_evaluation_value_name.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
@@ -51,6 +52,8 @@ class HiveDatabase {
   static const String GROUP_EVALUATION_BOX = 'groupResponseBox'; // 20
   static const String TRANSFORMATION_BOX = 'transformationBox'; // 21
   static const String OUTPUT_BOX = 'outputBox'; // 22
+  // HiveOutputMarker // 23
+  // HiveEvaluationValueName // 24
 
   // static final HiveDatabase _dbHelper = HiveDatabase._internal();
 
@@ -90,6 +93,7 @@ class HiveDatabase {
     Hive.registerAdapter(HiveTransformationAdapter());
     Hive.registerAdapter(HiveOutputAdapter());
     Hive.registerAdapter(HiveOutputMarkerAdapter());
+    Hive.registerAdapter(HiveEvaluationValueNameAdapter());
 
     await openBoxes();
   }
