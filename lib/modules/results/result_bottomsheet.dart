@@ -1123,87 +1123,28 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     int complete = actionStatusCount['done'] ?? 0;
     int notComplete = actionStatusCount['not_done'] ?? 0;
     int overdue = actionStatusCount['overdue'] ?? 0;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Expanded(
-          child: Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-                color: Color(0xFF6DE26B),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                complete,
-                zero:
-                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                one:
-                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                other:
-                    "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
-                args: [complete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 10.w,
-        ),
-        Expanded(
-          child: Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-                color: Color(0xFFFFBE4A),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                notComplete,
-                zero:
-                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                one:
-                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                other:
-                    "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
-                args: [notComplete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        if (displayOverdue == true) ...[
-          SizedBox(
-            width: 10.w,
-          ),
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
           Expanded(
             child: Container(
               width: 99.w,
               decoration: BoxDecoration(
-                  color: Color(0xFFFF5E4D),
+                  color: Color(0xFF6DE26B),
                   borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
               padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
               child: Text(
                 Intl.plural(
-                  overdue,
+                  complete,
                   zero:
-                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
                   one:
-                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
                   other:
-                      "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
-                  args: [overdue],
+                      "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+                  args: [complete],
                 ),
                 style: TextStyle(
                     color: Colors.black,
@@ -1214,8 +1155,70 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               ),
             ),
           ),
-        ]
-      ],
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Container(
+              width: 99.w,
+              decoration: BoxDecoration(
+                  color: Color(0xFFFFBE4A),
+                  borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              child: Text(
+                Intl.plural(
+                  notComplete,
+                  zero:
+                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  one:
+                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  other:
+                      "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
+                  args: [notComplete],
+                ),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Rubik",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          if (displayOverdue == true) ...[
+            SizedBox(
+              width: 10.w,
+            ),
+            Expanded(
+              child: Container(
+                width: 99.w,
+                decoration: BoxDecoration(
+                    color: Color(0xFFFF5E4D),
+                    borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                child: Text(
+                  Intl.plural(
+                    overdue,
+                    zero:
+                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                    one:
+                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                    other:
+                        "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
+                    args: [overdue],
+                  ),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ]
+        ],
+      ),
     );
   }
 
