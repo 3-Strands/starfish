@@ -73,6 +73,9 @@ class SyncService {
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
   static final String kUpdateActions = 'updateActions';
+  static final String kUpdateTeacherResponse = 'updateTeacherResponse';
+  static final String kUpdateTransformation = 'updateTransformation';
+  static final String kUpdateLearnerEvaluation = 'updateLearnerEvaluation';
 
   static final String kUnauthenticated = 'unauthenticated';
 

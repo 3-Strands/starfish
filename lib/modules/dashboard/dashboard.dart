@@ -56,8 +56,22 @@ class _DashboardState extends State<Dashboard> {
         (hiveMaterial, __) {
       debugPrint('Boradcast Receiver: kUpdateMaterial');
       SyncService().syncLocalMaterialsToRemote();
+      SyncService().syncLocalFiles();
     }, more: {
-      SyncService.kDeleteMaterial: (hiveGroup, __) {
+      SyncService.kUpdateTeacherResponse: (hiveTeacherResponse, __) {
+        debugPrint('Boradcast Receiver: kUpdateTeacherResponse');
+        SyncService().syncLocalTeacherResponsesToRemote();
+      },
+      SyncService.kUpdateTransformation: (hiveTransformation, __) {
+        debugPrint('Boradcast Receiver: kUpdateTransformation');
+        SyncService().syncLocalTransformationsToRemote();
+        SyncService().syncLocalFiles();
+      },
+      SyncService.kUpdateLearnerEvaluation: (hiveLearnerEvaluation, __) {
+        debugPrint('Boradcast Receiver: kUpdateLearnerEvaluation');
+        SyncService().syncLocalLearnerEvaluationsToRemote();
+      },
+      SyncService.kDeleteMaterial: (hiveMaterial, __) {
         debugPrint('Boradcast Receiver: kDeleteMaterial');
         SyncService().syncLocalDeletedMaterialsToRemote();
       },

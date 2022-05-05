@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:fbroadcast/fbroadcast.dart';
+import 'package:flutter/src/widgets/basic.dart' as widgets;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,6 +35,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
@@ -385,7 +388,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 20.h,
             ),
-            StatefulBuilder(
+            widgets.StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -752,7 +755,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         SizedBox(
           height: 10.h,
         ),
-        StatefulBuilder(builder: (context, setState) {
+        widgets.StatefulBuilder(builder: (context, setState) {
           return Container(
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
@@ -1345,7 +1348,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         .createUpdateTeacherResponse(_teacherResponse)
         .then((value) {
       debugPrint("Feedback saved.");
-      setState(() {}); // refresh ParentView
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateTeacherResponse,
+        value: _teacherResponse,
+      );
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Feedback.");
     });
@@ -1384,6 +1390,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             transformationFiles: _transformationFiles)
         .then((value) {
       debugPrint("Transformation saved.");
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateTransformation,
+        value: _transformation,
+      );
       // save files also
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Transformation");
@@ -1419,7 +1429,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         .createUpdateLearnerEvaluation(_learnerEvaluation)
         .then((value) {
       debugPrint("LearnerEvaluation saved.");
-      setState(() {}); // refresh ParentView
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateLearnerEvaluation,
+        value: _learnerEvaluation,
+      );
     }).onError((error, stackTrace) {
       debugPrint("Failed to save LearnerEvaluation");
     });
