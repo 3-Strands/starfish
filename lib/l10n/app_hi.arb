@@ -411,5 +411,8 @@
 
   "imageCropperScreenTitle": "क्रॉप करें",
   "imageCropDoneButton": "क्रॉप करें",
-  "forMyLifeTabText":"मेरी जिन्दगी के लिये"
+  "forMyLifeTabText":"मेरी जिन्दगी के लिये",
+  "reslutCompleteActionHelpText":"अधिक क्रियाएँ पूर्ण करने के लिए, क्रियाएँ स्क्रीन पर जाएँ",
+  "feedbackFromGroupTeacher":"समूह शिक्षक से प्रतिक्रिया",
+  "howDoYouFeelAboutThisGroup":"आप इस समूह के बारे में कैसा महसूस करते हैं?"
 }

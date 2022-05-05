@@ -407,6 +407,9 @@
 
   "imageCropperScreenTitle": "Crop",
   "imageCropDoneButton": "CROP IT!",
-  "forMyLifeTabText":"For My Life"
+  "forMyLifeTabText":"For My Life",
+  "reslutCompleteActionHelpText" : "To complete more Actions, go to Actions screen",
+  "feedbackFromGroupTeacher" : "Feedback from Group Teacher",
+  "howDoYouFeelAboutThisGroup": "How do you feel about this Group?"
   
 }
