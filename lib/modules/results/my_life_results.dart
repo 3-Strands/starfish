@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +7,13 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,6 +28,8 @@ class MyLifeResults extends StatefulWidget {
 
 class _MyLifeResultsState extends State<MyLifeResults> {
   late AppBloc bloc;
+  late HiveCurrentUser currentUser;
+
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
@@ -29,6 +38,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     if (bloc.resultsBloc.hiveGroup == null) {
       bloc.resultsBloc.init();
     }
+    currentUser = CurrentUserProvider().getUserSync();
     return FocusDetector(
       onFocusGained: () {},
       onFocusLost: () {},
@@ -48,11 +58,11 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                     DateTime? selected = await _selectMonth(bloc);
 
                     if (selected != null) {
-                      // HiveDate _hiveDate =
-                      //     HiveDate.create(selected.year, selected.month, 0);
+                      HiveDate _hiveDate =
+                          HiveDate.create(selected.year, selected.month, 0);
 
                       setState(() {
-                        //  bloc.resultsBloc.hiveDate = _hiveDate;
+                        bloc.resultsBloc.hiveDate = _hiveDate;
                       });
                     }
                   },
@@ -86,16 +96,19 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   ),
                 ),
                 SizedBox(height: 15.h),
-                bloc.resultsBloc.hiveGroup != null
+                bloc.resultsBloc.groupsWithLearnerRole.isNotEmpty
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount:
-                            2, //bloc.resultsBloc.hiveGroup!.learners!.length,
+                        itemCount: bloc.resultsBloc.groupsWithLearnerRole
+                            .length, //bloc.resultsBloc.hiveGroup!.learners!.length,
                         itemBuilder: (BuildContext context, index) {
-                          //  HiveGroupUser _hiveGroupUser = bloc
-                          //       .resultsBloc.hiveGroup!.learners!
-                          //    .elementAt(index);
+                          HiveGroup _hiveGroup =
+                              bloc.resultsBloc.groupsWithLearnerRole[index];
+                          HiveGroupUser? _hiveGroupUser = _hiveGroup.learners
+                              ?.firstWhereOrNull((element) =>
+                                  element.userId == currentUser.id);
+
                           return Container(
                             margin: EdgeInsets.only(left: 15.w, right: 15.w),
                             child: Column(
@@ -107,7 +120,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                       )
                                     : Container(),
                                 Text(
-                                  "Group Name",
+                                  '${_hiveGroup.name}',
                                   style: TextStyle(
                                       fontFamily: "OpenSans",
                                       fontWeight: FontWeight.bold,
@@ -116,7 +129,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                _buildActionCard(),
+                                _buildActionCard(_hiveGroupUser),
                                 SizedBox(
                                   height: 10.h,
                                 ),
@@ -380,11 +393,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             SizedBox(
               height: 10.h,
             ),
-            _buildCurrentEvaluationWidget(
-              bloc.resultsBloc.hiveGroupUser!
-                  .getLearnerEvaluationsByCategoryForMoth(
-                      bloc.resultsBloc.hiveDate!),
-            ),
+            if (bloc.resultsBloc.hiveGroupUser != null)
+              _buildCurrentEvaluationWidget(
+                bloc.resultsBloc.hiveGroupUser!
+                    .getLearnerEvaluationsByCategoryForMoth(
+                        bloc.resultsBloc.hiveDate!),
+              ),
             SizedBox(
               height: 10.h,
             ),
@@ -456,7 +470,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  Widget _buildActionCard() {
+  Widget _buildActionCard(HiveGroupUser? _hiveGroupUser) {
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
       color: Color(0xFFEFEFEF),
@@ -485,7 +499,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             ),
             _buildMonthlyActionWidget(
                 bloc.resultsBloc.actionUserStatusForSelectedMonth(
-                    bloc.resultsBloc.hiveDate!),
+                    _hiveGroupUser, bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
             SizedBox(
               height: 10.h,
