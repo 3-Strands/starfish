@@ -23,6 +23,7 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_group_user.g.dart';
 
@@ -264,7 +265,10 @@ extension HiveGroupUserExt on HiveGroupUser {
 
       if (_hiveActionUser != null &&
           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.NOT_DONE) {
+              ActionStatus.NOT_DONE &&
+          hiveAction.dateDue!
+              .toDateTime()
+              .isAfter(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
         count++;
       }
     });
@@ -276,14 +280,16 @@ extension HiveGroupUserExt on HiveGroupUser {
     int count = 0;
     this
         .actions
-        ?.where((element) => element.isDueInMonth(month))
+        ?.where((element) => element.isDueInMonth(month.previousMonth))
         .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
       if (_hiveActionUser != null &&
           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.OVERDUE) {
+              ActionStatus.NOT_DONE &&
+          hiveAction.dateDue!.toDateTime().isBefore(
+              DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
         count++;
       }
     });

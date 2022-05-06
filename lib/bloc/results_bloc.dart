@@ -150,6 +150,7 @@ class ResultsBloc extends Object {
     return _listMonth.toSet().toList();
   }
 
+  @Deprecated('use HiveGroup or HiveGroupUser derived attributes instead')
   Map<String, int> actionUserStatusForSelectedMonth(HiveDate _hiveDate) {
     Map<String, int> _map = Map();
     _map['done'] = 0;

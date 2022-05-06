@@ -1009,8 +1009,12 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               height: 10.h,
             ),
             _buildMonthlyActionWidget(
-                bloc.resultsBloc.actionUserStatusForSelectedMonth(
-                    bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsNotCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
             Column(
               children: [
@@ -1109,9 +1113,13 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               SizedBox(
                 height: 10.h,
               ),
-              _buildMonthlyActionWidget(bloc.resultsBloc
-                  .actionUserStatusForSelectedMonth(
-                      _historyAvailableMonths.elementAt(index))),
+              _buildMonthlyActionWidget(
+                  widget.hiveGroupUser
+                      .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                  widget.hiveGroupUser.getActionsNotCompletedInMonth(
+                      bloc.resultsBloc.hiveDate!),
+                  widget.hiveGroupUser
+                      .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
               SizedBox(
                 height: 10.h,
               ),
@@ -1120,11 +1128,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         });
   }
 
-  Widget _buildMonthlyActionWidget(Map<String, int> actionStatusCount,
+  Widget _buildMonthlyActionWidget(int complete, int notComplete, int overdue,
       {displayOverdue = false}) {
-    int complete = actionStatusCount['done'] ?? 0;
-    int notComplete = actionStatusCount['not_done'] ?? 0;
-    int overdue = actionStatusCount['overdue'] ?? 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
