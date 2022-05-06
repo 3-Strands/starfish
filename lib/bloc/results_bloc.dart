@@ -28,17 +28,32 @@ class ResultsBloc extends Object {
 
   HiveGroupUser? hiveGroupUser;
 
+  List<HiveGroup> groupsWithAdminAndTeacherRole = [];
+  List<HiveGroup> groupsWithLearnerRole = [];
+
   ResultsBloc() {
     hiveDate = DateTimeUtils.toHiveDate(DateTime.now()).toMonth;
     hivePreviousDate = hiveDate?.previousMonth;
   }
 
   init() {
-    hiveGroup = fetchGroupsWtihLeaderRole()?.first;
+    final HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
+
+    groupsWithAdminAndTeacherRole = GroupProvider().userGroupsWithRole(
+            _currentUser.id, [GroupUser_Role.ADMIN, GroupUser_Role.TEACHER]) ??
+        [];
+    groupsWithLearnerRole = GroupProvider()
+            .userGroupsWithRole(_currentUser.id, [GroupUser_Role.LEARNER]) ??
+        [];
+    hiveGroup = groupsWithAdminAndTeacherRole.length > 0
+        ? groupsWithAdminAndTeacherRole.first
+        : null;
+
     hiveGroupUser = hiveGroup?.learners?.first;
   }
 
-  List<HiveGroup>? fetchGroupsWtihLeaderRole() {
+  /*List<HiveGroup>? fetchGroupsWtihLeaderRole(
+      List<GroupUser_Role> groupUserRole) {
     final HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
     final List<GroupUser_Role> groupUserRole = [
       GroupUser_Role.ADMIN,
@@ -46,7 +61,7 @@ class ResultsBloc extends Object {
     ];
 
     return GroupProvider().userGroupsWithRole(_currentUser.id, groupUserRole);
-  }
+  }*/
 
   /*Map<HiveOutputMarker, int> fetchGroupOutputsForMonth() {
     Map<HiveOutputMarker, int> _map = Map();
@@ -150,17 +165,18 @@ class ResultsBloc extends Object {
     return _listMonth.toSet().toList();
   }
 
-  Map<String, int> actionUserStatusForSelectedMonth(HiveDate _hiveDate) {
+  Map<String, int> actionUserStatusForSelectedMonth(
+      HiveGroupUser? _hiveGroupUser, HiveDate _hiveDate) {
     Map<String, int> _map = Map();
     _map['done'] = 0;
     _map['not_done'] = 0;
     _map['overdue'] = 0;
 
-    if (this.hiveGroupUser == null) {
+    if (_hiveGroupUser == null) {
       return _map;
     }
     List<HiveAction>? _actions =
-        ActionProvider().getGroupActions(this.hiveGroupUser!.groupId!);
+        ActionProvider().getGroupActions(_hiveGroupUser.groupId!);
     if (_actions == null) {
       return _map;
     }
