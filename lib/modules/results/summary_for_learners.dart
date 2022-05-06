@@ -181,20 +181,23 @@ class SummaryForAllLearners extends StatelessWidget {
               thickness: 1,
             ),
           ),
-          Center(
-            child: Text(
-              "${AppLocalizations.of(context)!.averages}",
-              style: TextStyle(
-                  color: Color(0xFFFFFFFF),
-                  fontFamily: "OpenSans",
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.bold),
+          if (hiveGroup.groupEvaluationCategories != null &&
+              hiveGroup.groupEvaluationCategories!.length > 0) ...[
+            Center(
+              child: Text(
+                "${AppLocalizations.of(context)!.averages}",
+                style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontFamily: "OpenSans",
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          SizedBox(height: 10.h),
-          _buildCategoryAverageWidget(groupLearnerEvaluationsByCategory,
-              hiveGroup.learners?.length ?? 1),
-          SizedBox(height: 20.h),
+            SizedBox(height: 10.h),
+            _buildCategoryAverageWidget(groupLearnerEvaluationsByCategory,
+                hiveGroup.learners?.length ?? 1),
+            SizedBox(height: 20.h),
+          ]
         ],
       ),
     );

@@ -73,6 +73,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       bloc.resultsBloc.init();
       _isInitialized = true;
     }
+    bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
 
     _teacherFeedbackController.text = widget.hiveGroupUser
             .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!.toMonth)
