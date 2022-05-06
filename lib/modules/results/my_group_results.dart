@@ -292,7 +292,8 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return ResultWidgetBottomSheet(hiveGroupUser);
+        return ResultWidgetBottomSheet(
+            bloc.resultsBloc.hiveGroup!, hiveGroupUser);
       },
     ).whenComplete(() {
       setState(() {});

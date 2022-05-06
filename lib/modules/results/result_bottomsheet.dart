@@ -42,9 +42,11 @@ import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
+  HiveGroup hiveGroup;
   HiveGroupUser hiveGroupUser;
 
-  ResultWidgetBottomSheet(this.hiveGroupUser, {Key? key}) : super(key: key);
+  ResultWidgetBottomSheet(this.hiveGroup, this.hiveGroupUser, {Key? key})
+      : super(key: key);
 
   @override
   State<ResultWidgetBottomSheet> createState() =>
@@ -101,7 +103,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           Expanded(
                             child: Center(
                               child: Text(
-                                '${widget.hiveGroupUser.group!.name}',
+                                '${widget.hiveGroup.name}',
                                 //overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -206,7 +208,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
                                 _updateLearnerSummary();
                               },
-                              items: bloc.resultsBloc.hiveGroup!.learners
+                              items: widget.hiveGroup.learners
                                   ?.map<DropdownMenuItem<HiveGroupUser>>(
                                       (HiveGroupUser value) {
                                 return DropdownMenuItem<HiveGroupUser>(
@@ -373,15 +375,14 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 20.h,
             ),
-            if (bloc.resultsBloc.hiveGroup?.groupEvaluationCategories != null)
+            if (widget.hiveGroup.groupEvaluationCategories != null)
               ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: bloc
-                      .resultsBloc.hiveGroup?.groupEvaluationCategories?.length,
+                  itemCount: widget.hiveGroup.groupEvaluationCategories?.length,
                   itemBuilder: (context, index) {
-                    HiveEvaluationCategory _category = bloc
-                        .resultsBloc.hiveGroup!.groupEvaluationCategories!
+                    HiveEvaluationCategory _category = widget
+                        .hiveGroup.groupEvaluationCategories!
                         .elementAt(index);
                     return _buildCategorySlider(_category);
                   }),
