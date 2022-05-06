@@ -78,48 +78,60 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                           child: ButtonTheme(
                             alignedDropdown: true,
                             child: DropdownButton<HiveGroup>(
-                              isExpanded: true,
-                              iconSize: 35,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              hint: Text(
-                                bloc.resultsBloc.hiveGroup?.name ??
-                                    '${AppLocalizations.of(context)!.selectGroup}',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                isExpanded: true,
+                                iconSize: 35,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
                                   fontSize: 19.sp,
                                   fontFamily: 'OpenSans',
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              onChanged: (HiveGroup? value) {
-                                debugPrint("HiveGroup: ${value!.name}");
-                                setState(() {
-                                  bloc.resultsBloc.hiveGroup = value;
-                                });
-                              },
-                              items: bloc.resultsBloc
-                                  .fetchGroupsWtihLeaderRole()
-                                  ?.map<DropdownMenuItem<HiveGroup>>(
-                                      (HiveGroup value) {
-                                return DropdownMenuItem<HiveGroup>(
-                                  value: value,
-                                  child: Text(
-                                    value.name!,
-                                    style: TextStyle(
-                                      color: Color(0xFF434141),
-                                      fontSize: 17.sp,
-                                      fontFamily: 'OpenSans',
-                                    ),
+                                hint: Text(
+                                  bloc.resultsBloc.hiveGroup?.name ??
+                                      '${AppLocalizations.of(context)!.selectGroup}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 19.sp,
+                                    fontFamily: 'OpenSans',
                                   ),
-                                );
-                              }).toList(),
-                            ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                onChanged: (HiveGroup? value) {
+                                  debugPrint("HiveGroup: ${value!.name}");
+                                  setState(() {
+                                    bloc.resultsBloc.hiveGroup = value;
+                                  });
+                                },
+                                items: bloc
+                                    .resultsBloc.groupsWithAdminAndTeacherRole
+                                    .map((value) {
+                                  return DropdownMenuItem<HiveGroup>(
+                                    value: value,
+                                    child: Text(
+                                      value.name!,
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 17.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
+                                    ),
+                                  );
+                                }).toList()
+
+                                // return DropdownMenuItem<HiveGroup>(
+                                //   value: value,
+                                //   child: Text(
+                                //     value.name!,
+                                //     style: TextStyle(
+                                //       color: Color(0xFF434141),
+                                //       fontSize: 17.sp,
+                                //       fontFamily: 'OpenSans',
+                                //     ),
+                                //   ),
+                                // );
+                                // }).toList(),
+                                ),
                           ),
                         ),
                       ),
@@ -195,23 +207,24 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                               .resultsBloc.hiveGroup!.learners!
                               .elementAt(index);
                           return InkWell(
-                              onTap: () =>
-                                  _onLearnerSummarySelection(_hiveGroupUser),
-                              child: Column(
-                                children: [
-                                  index != 0
-                                      ? SizedBox(
-                                          height: 20.h,
-                                        )
-                                      : SizedBox(
-                                          height: 0.0,
-                                        ),
-                                  LearnerSummary(
-                                    hiveGroupUser: _hiveGroupUser,
-                                    month: bloc.resultsBloc.hiveDate!,
-                                  ),
-                                ],
-                              ));
+                            onTap: () =>
+                                _onLearnerSummarySelection(_hiveGroupUser),
+                            child: Column(
+                              children: [
+                                index != 0
+                                    ? SizedBox(
+                                        height: 20.h,
+                                      )
+                                    : SizedBox(
+                                        height: 0.0,
+                                      ),
+                                LearnerSummary(
+                                  hiveGroupUser: _hiveGroupUser,
+                                  month: bloc.resultsBloc.hiveDate!,
+                                ),
+                              ],
+                            ),
+                          );
                         }),
                     SizedBox(
                       height: 20.h,
