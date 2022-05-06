@@ -40,7 +40,7 @@ class LearnerSummary extends StatelessWidget {
                   "${hiveGroupUser.name}",
                   style: TextStyle(
                     color: Color(0xFF434141),
-                    fontFamily: "OpenSans Bold",
+                    fontFamily: "OpenSans",
                     fontSize: 19.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -79,7 +79,7 @@ class LearnerSummary extends StatelessWidget {
                             "${hiveGroupUser.getActionsCompletedInMonth(month)} ${AppLocalizations.of(context)!.done}",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontFamily: "Rubik Medium",
+                                fontFamily: "Rubik",
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
@@ -102,7 +102,7 @@ class LearnerSummary extends StatelessWidget {
                             "${hiveGroupUser.getActionsNotCompletedInMonth(month)} ${AppLocalizations.of(context)!.pending}",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontFamily: "Rubik Medium",
+                                fontFamily: "Rubik",
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
@@ -125,7 +125,7 @@ class LearnerSummary extends StatelessWidget {
                             "${hiveGroupUser.getActionsOverdueInMonth(month)} ${AppLocalizations.of(context)!.overdue}",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontFamily: "Rubik Medium",
+                                fontFamily: "Rubik",
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
