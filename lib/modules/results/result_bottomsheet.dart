@@ -1008,7 +1008,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             ),
             _buildMonthlyActionWidget(
                 bloc.resultsBloc.actionUserStatusForSelectedMonth(
-                    bloc.resultsBloc.hiveDate!),
+                    bloc.resultsBloc.hiveGroupUser, bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
             Column(
               children: [
@@ -1109,6 +1109,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               ),
               _buildMonthlyActionWidget(bloc.resultsBloc
                   .actionUserStatusForSelectedMonth(
+                      bloc.resultsBloc.hiveGroupUser,
                       _historyAvailableMonths.elementAt(index))),
               SizedBox(
                 height: 10.h,
