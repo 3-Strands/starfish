@@ -280,7 +280,7 @@ extension HiveGroupUserExt on HiveGroupUser {
     int count = 0;
     this
         .actions
-        ?.where((element) => element.isDueInMonth(month.previousMonth))
+        ?.where((element) => element.isDueInMonth(month))
         .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);

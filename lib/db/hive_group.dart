@@ -264,7 +264,7 @@ extension HiveGroupExt on HiveGroup {
     int count = 0;
     this
         .groupActionList
-        ?.where((element) => element.isDueInMonth(month.previousMonth))
+        ?.where((element) => element.isDueInMonth(month))
         .forEach((hiveAction) => count +=
             hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
 
