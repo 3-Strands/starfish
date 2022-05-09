@@ -12,6 +12,7 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
@@ -137,7 +138,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                _buildFeedbackFromTeachers(),
+                                _buildFeedbackFromTeachers(_hiveGroupUser!),
                                 SizedBox(
                                   height: 10.h,
                                 ),
@@ -302,7 +303,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         ));
   }
 
-  Widget _buildFeedbackFromTeachers() {
+  Widget _buildFeedbackFromTeachers(HiveGroupUser _hiveGroupUser) {
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
       color: Color(0xFFEFEFEF),
@@ -339,6 +340,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
+                HiveTeacherResponse? _hiveTeacherResponse = _hiveGroupUser
+                    .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -358,7 +361,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Feedback form teacher comes here, which is month specific",
+                            '${_hiveGroupUser.teacherResponses[index].response}',
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -371,7 +374,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             height: 20.h,
                           ),
                           Text(
-                            "${AppLocalizations.of(context)!.teacher}: Matt",
+                            "${AppLocalizations.of(context)!.teacher}: ${_hiveGroupUser.teacherResponses[index].teacher?.name ?? ''}",
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -388,7 +391,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   ],
                 );
               },
-              itemCount: 3,
+              itemCount: _hiveGroupUser.teacherResponses.length,
             ),
             SizedBox(
               height: 10.h,
