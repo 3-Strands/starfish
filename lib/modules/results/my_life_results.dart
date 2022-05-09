@@ -497,9 +497,21 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             SizedBox(
               height: 10.h,
             ),
-            _buildMonthlyActionWidget(
+            /*_buildMonthlyActionWidget(
                 bloc.resultsBloc.actionUserStatusForSelectedMonth(
                     _hiveGroupUser, bloc.resultsBloc.hiveDate!),
+                displayOverdue: true),*/
+
+            _buildMonthlyActionWidget(
+                _hiveGroupUser?.getActionsCompletedInMonth(
+                        bloc.resultsBloc.hiveDate!) ??
+                    0,
+                _hiveGroupUser?.getActionsNotCompletedInMonth(
+                        bloc.resultsBloc.hiveDate!) ??
+                    0,
+                _hiveGroupUser?.getActionsOverdueInMonth(
+                        bloc.resultsBloc.hiveDate!) ??
+                    0,
                 displayOverdue: true),
             SizedBox(
               height: 10.h,
@@ -523,11 +535,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  Widget _buildMonthlyActionWidget(Map<String, int> actionStatusCount,
+  Widget _buildMonthlyActionWidget(int complete, int notComplete, int overdue,
       {displayOverdue = false}) {
-    int complete = actionStatusCount['done'] ?? 0;
-    int notComplete = actionStatusCount['not_done'] ?? 0;
-    int overdue = actionStatusCount['overdue'] ?? 0;
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,

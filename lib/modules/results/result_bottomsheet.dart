@@ -42,9 +42,11 @@ import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
+  HiveGroup hiveGroup;
   HiveGroupUser hiveGroupUser;
 
-  ResultWidgetBottomSheet(this.hiveGroupUser, {Key? key}) : super(key: key);
+  ResultWidgetBottomSheet(this.hiveGroup, this.hiveGroupUser, {Key? key})
+      : super(key: key);
 
   @override
   State<ResultWidgetBottomSheet> createState() =>
@@ -71,6 +73,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       bloc.resultsBloc.init();
       _isInitialized = true;
     }
+    bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
 
     _teacherFeedbackController.text = widget.hiveGroupUser
             .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!.toMonth)
@@ -101,7 +104,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           Expanded(
                             child: Center(
                               child: Text(
-                                '${widget.hiveGroupUser.group!.name}',
+                                '${widget.hiveGroup.name}',
                                 //overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -206,7 +209,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
                                 _updateLearnerSummary();
                               },
-                              items: bloc.resultsBloc.hiveGroup!.learners
+                              items: widget.hiveGroup.learners
                                   ?.map<DropdownMenuItem<HiveGroupUser>>(
                                       (HiveGroupUser value) {
                                 return DropdownMenuItem<HiveGroupUser>(
@@ -373,15 +376,14 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 20.h,
             ),
-            if (bloc.resultsBloc.hiveGroup?.groupEvaluationCategories != null)
+            if (widget.hiveGroup.groupEvaluationCategories != null)
               ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: bloc
-                      .resultsBloc.hiveGroup?.groupEvaluationCategories?.length,
+                  itemCount: widget.hiveGroup.groupEvaluationCategories?.length,
                   itemBuilder: (context, index) {
-                    HiveEvaluationCategory _category = bloc
-                        .resultsBloc.hiveGroup!.groupEvaluationCategories!
+                    HiveEvaluationCategory _category = widget
+                        .hiveGroup.groupEvaluationCategories!
                         .elementAt(index);
                     return _buildCategorySlider(_category);
                   }),
@@ -1007,8 +1009,12 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               height: 10.h,
             ),
             _buildMonthlyActionWidget(
-                bloc.resultsBloc.actionUserStatusForSelectedMonth(
-                    bloc.resultsBloc.hiveGroupUser, bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsNotCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
             Column(
               children: [
@@ -1107,10 +1113,13 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               SizedBox(
                 height: 10.h,
               ),
-              _buildMonthlyActionWidget(bloc.resultsBloc
-                  .actionUserStatusForSelectedMonth(
-                      bloc.resultsBloc.hiveGroupUser,
-                      _historyAvailableMonths.elementAt(index))),
+              _buildMonthlyActionWidget(
+                  widget.hiveGroupUser
+                      .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                  widget.hiveGroupUser.getActionsNotCompletedInMonth(
+                      bloc.resultsBloc.hiveDate!),
+                  widget.hiveGroupUser
+                      .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
               SizedBox(
                 height: 10.h,
               ),
@@ -1119,11 +1128,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         });
   }
 
-  Widget _buildMonthlyActionWidget(Map<String, int> actionStatusCount,
+  Widget _buildMonthlyActionWidget(int complete, int notComplete, int overdue,
       {displayOverdue = false}) {
-    int complete = actionStatusCount['done'] ?? 0;
-    int notComplete = actionStatusCount['not_done'] ?? 0;
-    int overdue = actionStatusCount['overdue'] ?? 0;
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1155,6 +1161,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 textAlign: TextAlign.center,
               ),
             ),
+          ),
+          SizedBox(
+            width: 10.w,
           ),
           SizedBox(
             width: 10.w,
@@ -1446,56 +1455,54 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     final List<Widget> _widgetList = [];
 
     for (File file in _selectedFiles) {
-      _widgetList.add(Expanded(
-        child: Stack(
-          alignment: AlignmentDirectional.topEnd,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.only(top: 10.0, right: 10.0),
-              child: Container(
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ImagePreview(file))),
-                  child: Hero(
-                    tag: file,
-                    child: Card(
-                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          file,
-                          fit: BoxFit.scaleDown,
-                          //  height: 130.h,
-                        ),
+      _widgetList.add(Stack(
+        alignment: AlignmentDirectional.topEnd,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+            child: Container(
+              child: InkWell(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ImagePreview(file))),
+                child: Hero(
+                  tag: file,
+                  child: Card(
+                    margin: const EdgeInsets.only(top: 12.0, right: 12.0),
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.file(
+                        file,
+                        fit: BoxFit.scaleDown,
+                        //  height: 130.h,
                       ),
                     ),
-                    flightShuttleBuilder: (flightContext, animation, direction,
-                        fromContext, toContext) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
                   ),
+                  flightShuttleBuilder: (flightContext, animation, direction,
+                      fromContext, toContext) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
               ),
             ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFiles.remove(file);
-                });
-              },
-              icon: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _selectedFiles.remove(file);
+              });
+            },
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
             ),
-          ],
-        ),
+          ),
+        ],
       ));
     }
 

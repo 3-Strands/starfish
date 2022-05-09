@@ -50,7 +50,7 @@
   "lanugages": "भाषा",
   "selectLanugages": "भाषा चुनें",
   "lanugagesUsedOptional": "भाषा (ओं) का इस्तेमाल किया (वैकल्पिक)",
-  "lanugagesUsed":"भाषा (ओं) का इस्तेमाल किया",
+  
 
   "selectAll": "सभी का चयन करे",
 
@@ -141,7 +141,7 @@
   "addWebLink": "वेब लिंक जोड़ें",
   "uploadAMaterial": "एक सामग्री अपलोड करें",
   "evaluateProgressOptional": "प्रगति का मूल्यांकन करें (वैकल्पिक)",
-  "evaluateProgress":"प्रगति का मूल्यांकन करें",
+  
   "invitePeopleFromContactsList": "विकल्प 1. अपनी संपर्क सूची से लोगों को स्टारफिश में अपने समूह में शामिल होने के लिए आमंत्रित करें",
   "addWithoutInvite":
       "विकल्प 2. स्टारफिश का उपयोग करने के लिए आमंत्रण भेजे बिना किसी व्यक्ति का नाम जोड़ें",

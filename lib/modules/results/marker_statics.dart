@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_output_marker.dart';
@@ -50,13 +51,12 @@ class _MarkerStaticRowState extends State<MarkerStaticRow> {
                 width: 50.w,
               ),
               Container(
-                height: 40.h,
+                height: 50.h,
                 width: 100.w,
                 color: Color(0xFFFFFFFF),
                 child: TextFormField(
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
-                  autofocus: true,
                   controller: _markerTextEditingController,
                   maxLines: 1,
                   onChanged: (value) {

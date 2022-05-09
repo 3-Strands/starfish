@@ -165,18 +165,18 @@ class ResultsBloc extends Object {
     return _listMonth.toSet().toList();
   }
 
-  Map<String, int> actionUserStatusForSelectedMonth(
-      HiveGroupUser? _hiveGroupUser, HiveDate _hiveDate) {
+  @Deprecated('use HiveGroup or HiveGroupUser derived attributes instead')
+  Map<String, int> actionUserStatusForSelectedMonth(HiveDate _hiveDate) {
     Map<String, int> _map = Map();
     _map['done'] = 0;
     _map['not_done'] = 0;
     _map['overdue'] = 0;
 
-    if (_hiveGroupUser == null) {
+    if (hiveGroupUser == null) {
       return _map;
     }
     List<HiveAction>? _actions =
-        ActionProvider().getGroupActions(_hiveGroupUser.groupId!);
+        ActionProvider().getGroupActions(hiveGroupUser!.groupId!);
     if (_actions == null) {
       return _map;
     }
