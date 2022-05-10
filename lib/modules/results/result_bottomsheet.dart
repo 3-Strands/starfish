@@ -39,6 +39,7 @@ import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
+import 'package:starfish/widgets/result_transformations_widget.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
@@ -259,7 +260,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTrasnformatonsCard(),
+                    //_buildTrasnformatonsCard(),
+                    ResultTransformationsWidget(
+                      groupUser: widget.hiveGroupUser,
+                      month: bloc.resultsBloc.hiveDate!,
+                    ),
                     SizedBox(
                       height: 10.h,
                     ),
@@ -809,6 +814,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     );
   }
 
+  @Deprecated("user 'ResultTransformationsWidget' instead")
   Widget _buildTrasnformatonsCard() {
     return Card(
       color: Color(0xFFEFEFEF),

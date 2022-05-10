@@ -11,6 +11,7 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
@@ -21,7 +22,14 @@ import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 
 class ResultTransformationsWidget extends StatefulWidget {
-  const ResultTransformationsWidget({Key? key}) : super(key: key);
+  HiveGroupUser groupUser;
+  HiveDate month;
+
+  ResultTransformationsWidget({
+    Key? key,
+    required this.groupUser,
+    required this.month,
+  }) : super(key: key);
 
   @override
   State<ResultTransformationsWidget> createState() =>
@@ -30,15 +38,30 @@ class ResultTransformationsWidget extends StatefulWidget {
 
 class _ResultTransformationsWidgetState
     extends State<ResultTransformationsWidget> {
-  late AppBloc bloc;
-  TextEditingController _teacherFeedbackController = TextEditingController();
+  //late AppBloc bloc;
+  //TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
   List<File> _selectedFiles = [];
   bool _isEditMode = false;
+
+  HiveTransformation? _hiveTransformation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _hiveTransformation =
+        widget.groupUser.getTransformationForMonth(widget.month);
+
+    if (_hiveTransformation != null) {
+      _transformationController.text = _hiveTransformation!.impactStory!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
-    bloc.resultsBloc.init();
+    //bloc = Provider.of(context);
+    //bloc.resultsBloc.init();
     return Card(
       color: Color(0xE6EFEFEF),
       elevation: 4,
@@ -276,26 +299,25 @@ class _ResultTransformationsWidgetState
   }
 
   void _saveTransformation(String _impactStory, List<File> _files) {
-    HiveTransformation? _transformation = bloc.resultsBloc.hiveGroupUser
-        ?.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+    //HiveTransformation? _transformation = widget.groupUser.getTransformationForMonth(widget.month);
 
-    if (_transformation == null) {
-      _transformation = HiveTransformation();
-      _transformation.id = UuidGenerator.uuid();
-      _transformation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-      _transformation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
-      _transformation.month = bloc.resultsBloc.hiveDate!.toMonth;
-      _transformation.isNew = true;
+    if (_hiveTransformation == null) {
+      _hiveTransformation = HiveTransformation();
+      _hiveTransformation!.id = UuidGenerator.uuid();
+      _hiveTransformation!.groupId = widget.groupUser.groupId;
+      _hiveTransformation!.userId = widget.groupUser.userId;
+      _hiveTransformation!.month = widget.month;
+      _hiveTransformation!.isNew = true;
     } else {
-      _transformation.isUpdated = true;
+      _hiveTransformation!.isUpdated = true;
     }
-    _transformation.impactStory = _impactStory;
+    _hiveTransformation!.impactStory = _impactStory;
 
     List<HiveFile> _transformationFiles = [];
 
     _files.forEach((_file) {
       _transformationFiles.add(HiveFile(
-        entityId: _transformation!.id,
+        entityId: _hiveTransformation!.id,
         entityType: EntityType.TRANSFORMATION.value,
         filepath: _file.path,
         filename: _file.path.split("/").last,
@@ -304,7 +326,7 @@ class _ResultTransformationsWidgetState
     });
 
     TransformationProvider()
-        .createUpdateTransformation(_transformation,
+        .createUpdateTransformation(_hiveTransformation!,
             transformationFiles: _transformationFiles)
         .then((value) {
       debugPrint("Transformation saved.");

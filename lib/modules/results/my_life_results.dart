@@ -12,7 +12,9 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
@@ -133,11 +135,17 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                ResultTransformationsWidget(),
+                                ResultTransformationsWidget(
+                                  groupUser: _hiveGroupUser!,
+                                  month: bloc.resultsBloc.hiveDate!,
+                                ),
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                _buildFeedbackFromTeachers(),
+                                _buildFeedbackFromTeachers(
+                                    learnerId: currentUser.id,
+                                    groupId: _hiveGroup.id!,
+                                    month: bloc.resultsBloc.hiveDate!),
                                 SizedBox(
                                   height: 10.h,
                                 ),
@@ -302,7 +310,18 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         ));
   }
 
-  Widget _buildFeedbackFromTeachers() {
+  Widget _buildFeedbackFromTeachers(
+      {required String learnerId,
+      required String groupId,
+      required HiveDate month}) {
+    List<HiveTeacherResponse> _feedbacksFromTeachers = TeacherResponseProvider()
+        .getGroupUserTeacherResponse(learnerId, groupId)
+        .where((element) => element.month != null
+            ? (element.month!.year == month.year &&
+                element.month!.month == month.month)
+            : false)
+        .toList();
+
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
       color: Color(0xFFEFEFEF),
@@ -338,7 +357,10 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
+              itemCount: _feedbacksFromTeachers.length,
               itemBuilder: (context, index) {
+                HiveTeacherResponse _hiveTeacherResponse =
+                    _feedbacksFromTeachers[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -358,7 +380,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Feedback form teacher comes here, which is month specific",
+                            "${_hiveTeacherResponse.response}",
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -371,7 +393,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             height: 20.h,
                           ),
                           Text(
-                            "${AppLocalizations.of(context)!.teacher}: Matt",
+                            "${AppLocalizations.of(context)!.teacher}: ${_hiveTeacherResponse.teacher?.name ?? ''}",
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -388,7 +410,6 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   ],
                 );
               },
-              itemCount: 3,
             ),
             SizedBox(
               height: 10.h,
