@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_transformation.g.dart';
@@ -55,6 +57,16 @@ class HiveTransformation extends HiveObject {
 
   @override
   String toString() {
-    return super.toString();
+    return '''{ id: ${this.id}, userId: ${this.userId}, groupId: ${this.groupId}, 
+          month: ${this.month}, impactStory: ${this.impactStory}, files: ${this.files}, localFiles: ${this.localFiles} }''';
+  }
+}
+
+extension HiveTransformationExt on HiveTransformation {
+  List<HiveFile> get localFiles {
+    return TransformationProvider()
+        .getFiles()
+        .where((element) => element.entityId == this.id)
+        .toList();
   }
 }
