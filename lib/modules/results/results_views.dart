@@ -32,6 +32,10 @@ class _ResultsScreenState extends State<ResultsScreen>
   late TabController _tabController;
   late HiveCurrentUser _user;
 
+  // For developement only
+  // TODO: remove once 'For My Life' is released
+  bool hideMyLife = true;
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +49,11 @@ class _ResultsScreenState extends State<ResultsScreen>
     });
     _user = CurrentUserProvider().getUserSync();
     _tabController = new TabController(
-        length: _user.hasAdminOrTeacherRole ? 2 : 1,
+        length: hideMyLife
+            ? 1
+            : _user.hasAdminOrTeacherRole
+                ? 2
+                : 1,
         vsync: this,
         initialIndex: 0);
   }
@@ -94,39 +102,43 @@ class _ResultsScreenState extends State<ResultsScreen>
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: Container(
-            width: 375.w,
-            height: 812.h,
+            // width: 375.w,
+            //height: 812.h,
             color: AppColors.resultsScreenBG,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _user.hasAdminOrTeacherRole
-                    ? TabBar(
-                        controller: _tabController,
-                        indicatorColor: Color(0xFF3475F0),
-                        labelColor: Color(0xFF3475F0),
-                        labelStyle: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w600), //For Selected tab
-                        unselectedLabelColor: Color(0xFF797979),
-                        isScrollable: true,
-                        tabs: List.generate(
-                          _tabController.length,
-                          (index) => Tab(
-                              text: index == 0
-                                  ? AppLocalizations.of(context)!
-                                      .forMyLifeTabText
-                                  : AppLocalizations.of(context)!
-                                      .forGroupITeachTabText),
-                        ),
-                      )
-                    : Container(),
+                hideMyLife
+                    ? Container()
+                    : _user.hasAdminOrTeacherRole
+                        ? TabBar(
+                            controller: _tabController,
+                            indicatorColor: Color(0xFF3475F0),
+                            labelColor: Color(0xFF3475F0),
+                            labelStyle: TextStyle(
+                                fontSize: 19.sp,
+                                fontWeight: FontWeight.w600), //For Selected tab
+                            unselectedLabelColor: Color(0xFF797979),
+                            isScrollable: true,
+                            tabs: List.generate(
+                              _tabController.length,
+                              (index) => Tab(
+                                  text: index == 0
+                                      ? AppLocalizations.of(context)!
+                                          .forMyLifeTabText
+                                      : AppLocalizations.of(context)!
+                                          .forGroupITeachTabText),
+                            ),
+                          )
+                        : Container(),
                 Expanded(
                   child: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
-                    children: _tabController.length == 2
-                        ? [MyLifeResults(), MyGroupResults()]
-                        : [MyLifeResults()],
+                    children: hideMyLife
+                        ? [MyGroupResults()]
+                        : _tabController.length == 2
+                            ? [MyLifeResults(), MyGroupResults()]
+                            : [MyLifeResults()],
                     controller: _tabController,
                   ),
                 ),
