@@ -290,30 +290,26 @@ class _ResultTransformationsWidgetState
     final List<Widget> _widgetList = [];
 
     for (File file in _selectedFiles) {
-      _widgetList.add(Expanded(
-        child: _imagePreview(
-            file: file,
-            onDelete: () {
-              setState(() {
-                _selectedFiles.remove(file);
-              });
-            }),
-      ));
+      _widgetList.add(_imagePreview(
+          file: file,
+          onDelete: () {
+            setState(() {
+              _selectedFiles.remove(file);
+            });
+          }));
     }
 
     if (_hiveTransformation != null &&
         _hiveTransformation!.localFiles.isNotEmpty) {
       for (HiveFile _hiveFile in _hiveTransformation!.localFiles) {
         File file = File(_hiveFile.filepath!);
-        _widgetList.add(Expanded(
-          child: _imagePreview(
-              file: file,
-              onDelete: () {
-                setState(() {
-                  _hiveFile.delete();
-                });
-              }),
-        ));
+        _widgetList.add(_imagePreview(
+            file: file,
+            onDelete: () {
+              setState(() {
+                _hiveFile.delete();
+              });
+            }));
       }
     }
 
