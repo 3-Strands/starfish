@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
@@ -15,7 +16,6 @@ import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/output_provider.dart';
-import 'package:starfish/db/providers/results_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -28,17 +28,32 @@ class ResultsBloc extends Object {
 
   HiveGroupUser? hiveGroupUser;
 
+  List<HiveGroup> groupsWithAdminAndTeacherRole = [];
+  List<HiveGroup> groupsWithLearnerRole = [];
+
   ResultsBloc() {
-    hiveDate = DateTimeUtils.toHiveDate(DateTime.now());
+    hiveDate = DateTimeUtils.toHiveDate(DateTime.now()).toMonth;
     hivePreviousDate = hiveDate?.previousMonth;
   }
 
   init() {
-    hiveGroup = fetchGroupsWtihLeaderRole()?.first;
+    final HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
+
+    groupsWithAdminAndTeacherRole = GroupProvider().userGroupsWithRole(
+            _currentUser.id, [GroupUser_Role.ADMIN, GroupUser_Role.TEACHER]) ??
+        [];
+    groupsWithLearnerRole = GroupProvider()
+            .userGroupsWithRole(_currentUser.id, [GroupUser_Role.LEARNER]) ??
+        [];
+    hiveGroup = groupsWithAdminAndTeacherRole.length > 0
+        ? groupsWithAdminAndTeacherRole.first
+        : null;
+
     hiveGroupUser = hiveGroup?.learners?.first;
   }
 
-  List<HiveGroup>? fetchGroupsWtihLeaderRole() {
+  /*List<HiveGroup>? fetchGroupsWtihLeaderRole(
+      List<GroupUser_Role> groupUserRole) {
     final HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
     final List<GroupUser_Role> groupUserRole = [
       GroupUser_Role.ADMIN,
@@ -46,14 +61,24 @@ class ResultsBloc extends Object {
     ];
 
     return GroupProvider().userGroupsWithRole(_currentUser.id, groupUserRole);
-  }
+  }*/
 
-  List<HiveOutput> fetchOutputs() {
-    return OutputProvider().getGroupOutputsForMonth(hiveGroup!.id!, hiveDate!);
-  }
+  /*Map<HiveOutputMarker, int> fetchGroupOutputsForMonth() {
+    Map<HiveOutputMarker, int> _map = Map();
+    hiveGroup?.outputMarkers?.forEach((HiveOutputMarker element) {
+      HiveOutput? _output = OutputProvider()
+          .getGroupOutputForMonth(hiveGroup!.id!, element, hiveDate!);
+      int _markerValue = _output != null ? _output.value!.toInt() : 0;
+      _map[element] = _markerValue;
+    });
+
+    return _map;
+  }*/
 
   bool shouldDisplayProjectReport() {
-    return CurrentUserProvider().getUserSync().linkGroups;
+    return CurrentUserProvider().getUserSync().linkGroups &&
+        (hiveGroup?.outputMarkers != null &&
+            hiveGroup!.outputMarkers!.length > 0);
   }
 
   List<HiveLearnerEvaluation>? getGroupLearnerEvaluationsForMonth(
@@ -133,24 +158,25 @@ class ResultsBloc extends Object {
     LearnerEvaluationProvider()
         .getGroupLearnerEvaluations(hiveGroup!.id!)
         .forEach((element) {
-      if (!_listMonth.contains(element.month!)) {
-        _listMonth.add(element.month!);
+      if (!_listMonth.contains(element.month!.toMonth)) {
+        _listMonth.add(element.month!.toMonth);
       }
     });
-    return _listMonth;
+    return _listMonth.toSet().toList();
   }
 
+  @Deprecated('use HiveGroup or HiveGroupUser derived attributes instead')
   Map<String, int> actionUserStatusForSelectedMonth(HiveDate _hiveDate) {
     Map<String, int> _map = Map();
     _map['done'] = 0;
     _map['not_done'] = 0;
     _map['overdue'] = 0;
 
-    if (this.hiveGroupUser == null) {
+    if (hiveGroupUser == null) {
       return _map;
     }
     List<HiveAction>? _actions =
-        ActionProvider().getGroupActions(this.hiveGroupUser!.groupId!);
+        ActionProvider().getGroupActions(hiveGroupUser!.groupId!);
     if (_actions == null) {
       return _map;
     }

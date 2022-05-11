@@ -50,7 +50,7 @@
   "lanugages": "भाषा",
   "selectLanugages": "भाषा चुनें",
   "lanugagesUsedOptional": "भाषा (ओं) का इस्तेमाल किया (वैकल्पिक)",
-  "lanugagesUsed":"भाषा (ओं) का इस्तेमाल किया",
+  
 
   "selectAll": "सभी का चयन करे",
 
@@ -141,7 +141,7 @@
   "addWebLink": "वेब लिंक जोड़ें",
   "uploadAMaterial": "एक सामग्री अपलोड करें",
   "evaluateProgressOptional": "प्रगति का मूल्यांकन करें (वैकल्पिक)",
-  "evaluateProgress":"प्रगति का मूल्यांकन करें",
+  
   "invitePeopleFromContactsList": "विकल्प 1. अपनी संपर्क सूची से लोगों को स्टारफिश में अपने समूह में शामिल होने के लिए आमंत्रित करें",
   "addWithoutInvite":
       "विकल्प 2. स्टारफिश का उपयोग करने के लिए आमंत्रण भेजे बिना किसी व्यक्ति का नाम जोड़ें",
@@ -392,7 +392,6 @@
   "selectGroup": "समूह का चयन करें",
   "joinOrCreateGroupMessage": "एक समूह में शामिल हों, या एक नया समूह बनाएं, फिर आप यहां समूह के परिणामों की निगरानी कर सकते हैं।",
   "teacherFeedbackForLearner":"इस व्यक्ति के लिए शिक्षक प्रतिक्रिया",
-  "helpTextForTeacherFeedback":"नीचे दिए गए बॉक्स में लिखें, फिर सहेजें पर क्लिक करें",
   "hideHistory": "इतिहास छुपाएं",
   "viewHistory": "इतिहास देखें",
   "transformations":"परिवर्तनों",
@@ -408,5 +407,12 @@
   "resultZeroOrOneActionsOverdue": "कार्रवाई अतिदेय",
   "resultMoreThenOneActionsOverdue": "कार्रवाई अतिदेय",
   "learner" : "सिखाने वाला",
-  "currentEvaluation" : "वर्तमान मूल्यांकन"
+  "currentEvaluation" : "वर्तमान मूल्यांकन",
+
+  "imageCropperScreenTitle": "क्रॉप करें",
+  "imageCropDoneButton": "क्रॉप करें",
+  "forMyLifeTabText":"मेरी जिन्दगी के लिये",
+  "reslutCompleteActionHelpText":"अधिक क्रियाएँ पूर्ण करने के लिए, क्रियाएँ स्क्रीन पर जाएँ",
+  "feedbackFromGroupTeacher":"समूह शिक्षक से प्रतिक्रिया",
+  "howDoYouFeelAboutThisGroup":"आप इस समूह के बारे में कैसा महसूस करते हैं?"
 }

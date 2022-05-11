@@ -3,16 +3,19 @@ import 'package:collection/collection.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
+import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
-import 'package:starfish/db/providers/results_provider.dart';
+import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -39,14 +42,16 @@ class HiveGroup extends HiveObject {
   @HiveField(8)
   int? status;
   @HiveField(9)
-  List<HiveEdit>? editHistory;
+  List<HiveOutputMarker>? outputMarkers;
   @HiveField(10)
-  bool isNew = false;
+  List<HiveEdit>? editHistory;
   @HiveField(11)
-  bool isUpdated = false;
+  bool isNew = false;
   @HiveField(12)
-  bool isDirty = false; //Deprecated
+  bool isUpdated = false;
   @HiveField(13)
+  bool isDirty = false; //Deprecated
+  @HiveField(14)
   bool isMe = false;
 
   HiveGroup({
@@ -59,6 +64,7 @@ class HiveGroup extends HiveObject {
     this.evaluationCategoryIds,
     this.actions,
     this.status = 0, // Group_Status.ACTIVE,
+    this.outputMarkers,
     this.editHistory,
     this.isNew = false,
     this.isUpdated = false,
@@ -76,6 +82,9 @@ class HiveGroup extends HiveObject {
         group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
     this.evaluationCategoryIds = group.evaluationCategoryIds;
     this.status = group.status.value;
+    this.outputMarkers = group.outputMarkers
+        .map((OutputMarker outputMarker) => HiveOutputMarker.from(outputMarker))
+        .toList();
     // this.actions = group.actions
     //     .map((GroupAction action) => HiveGroupAction.from(action))
     //     .toList();
@@ -177,10 +186,22 @@ class HiveGroup extends HiveObject {
     return this.users;
   }
 
+  Map<HiveOutputMarker, String> getGroupOutputsForMonth(HiveDate hiveDate) {
+    Map<HiveOutputMarker, String> _map = Map();
+    this.outputMarkers?.forEach((HiveOutputMarker element) {
+      HiveOutput? _output =
+          OutputProvider().getGroupOutputForMonth(this.id!, element, hiveDate);
+      String _markerValue = _output != null ? _output.value!.toString() : '';
+      _map[element] = _markerValue;
+    });
+
+    return _map;
+  }
+
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
     languageIds: ${this.languageIds?.toString()}, status: ${this.status}, users: ${this.users?.toString()},
-    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole} }''';
+    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole}, outputMarkers: ${this.outputMarkers} }''';
   }
 }
 
@@ -215,6 +236,39 @@ extension HiveGroupExt on HiveGroup {
             .where((element) => element.name.toLowerCase().contains(query))
             .length >
         0;
+  }
+
+  int getActionsCompletedInMonth(HiveDate month) {
+    int count = 0;
+    this
+        .groupActionList
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) =>
+            count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
+
+    return count;
+  }
+
+  int getActionsNotYetCompletedInMonth(HiveDate month) {
+    int count = 0;
+    this
+        .groupActionList
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) => count +=
+            hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
+
+    return count;
+  }
+
+  int getActionsOverdueInMonth(HiveDate month) {
+    int count = 0;
+    this
+        .groupActionList
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) => count +=
+            hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
+
+    return count;
   }
 
   List<HiveAction>? get groupActionList {

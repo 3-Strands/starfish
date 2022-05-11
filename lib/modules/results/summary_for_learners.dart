@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
-  const SummaryForAllLearners({Key? key}) : super(key: key);
+  HiveGroup hiveGroup;
+  HiveDate month;
+  Map<HiveEvaluationCategory, Map<String, int>>
+      groupLearnerEvaluationsByCategory;
+
+  SummaryForAllLearners(
+      {Key? key,
+      required this.hiveGroup,
+      required this.month,
+      required this.groupLearnerEvaluationsByCategory})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
+    //AppBloc bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -61,7 +69,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup!.actionsCompleted} ${AppLocalizations.of(context)!.done}",
+                  "${hiveGroup.getActionsCompletedInMonth(month)} ${AppLocalizations.of(context)!.done}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -77,7 +85,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup!.actionsNotDoneYet} ${AppLocalizations.of(context)!.pending}",
+                  "${hiveGroup.getActionsNotYetCompletedInMonth(month)} ${AppLocalizations.of(context)!.pending}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -93,7 +101,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.hiveGroup!.actionsOverdue} ${AppLocalizations.of(context)!.overdue}",
+                  "${hiveGroup.getActionsOverdueInMonth(month)} ${AppLocalizations.of(context)!.overdue}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -173,21 +181,23 @@ class SummaryForAllLearners extends StatelessWidget {
               thickness: 1,
             ),
           ),
-          Center(
-            child: Text(
-              "${AppLocalizations.of(context)!.averages}",
-              style: TextStyle(
-                  color: Color(0xFFFFFFFF),
-                  fontFamily: "OpenSans",
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.bold),
+          if (hiveGroup.groupEvaluationCategories != null &&
+              hiveGroup.groupEvaluationCategories!.length > 0) ...[
+            Center(
+              child: Text(
+                "${AppLocalizations.of(context)!.averages}",
+                style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontFamily: "OpenSans",
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          SizedBox(height: 10.h),
-          _buildCategoryAverageWidget(
-              bloc.resultsBloc.getGroupLearnerEvaluationsByCategory(),
-              bloc.resultsBloc.hiveGroup?.learners?.length ?? 1),
-          SizedBox(height: 20.h),
+            SizedBox(height: 10.h),
+            _buildCategoryAverageWidget(groupLearnerEvaluationsByCategory,
+                hiveGroup.learners?.length ?? 1),
+            SizedBox(height: 20.h),
+          ]
         ],
       ),
     );

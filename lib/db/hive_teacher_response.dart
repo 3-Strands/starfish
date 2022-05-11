@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/db/providers/user_provider.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_teacher_response.g.dart';
@@ -56,6 +58,14 @@ class HiveTeacherResponse extends HiveObject {
 
   @override
   String toString() {
-    return super.toString();
+    return '''{id: ${this.id}, learnerId: ${this.learnerId}, teacherId: 
+      ${this.teacherId}, groupId: ${this.groupId}, month: ${this.month}, response: 
+      ${this.response} }''';
+  }
+}
+
+extension HiveTeacherResponseExt on HiveTeacherResponse {
+  HiveUser? get teacher {
+    return UserProvider().getUserById(this.teacherId!);
   }
 }

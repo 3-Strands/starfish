@@ -572,9 +572,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Language(s) used
                   Text(
-                    _isEditMode
-                        ? AppLocalizations.of(context)!.lanugagesUsed
-                        : AppLocalizations.of(context)!.lanugagesUsedOptional,
+                    AppLocalizations.of(context)!.lanugagesUsedOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -600,10 +598,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Evaluate Progress
                   Text(
-                    _isEditMode
-                        ? AppLocalizations.of(context)!.evaluateProgress
-                        : AppLocalizations.of(context)!
-                            .evaluateProgressOptional,
+                    AppLocalizations.of(context)!.evaluateProgressOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -752,24 +747,27 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   if (widget.group?.editHistory != null)
                     _editHistoryContainer(widget.group),
-                    SizedBox(height: 75.h,)
+                  SizedBox(
+                    height: 75.h,
+                  )
                 ],
               ),
             ),
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
       floatingActionButton: Container(
         height: 75.h,
-       // padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+        // padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
         color: AppColors.txtFieldBackground,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
               child: Container(
-                margin: EdgeInsets.only(left: 10.h ),
+                margin: EdgeInsets.only(left: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
                     // _filteredContactList.clear();
@@ -784,7 +782,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             SizedBox(width: 25.w),
             Expanded(
               child: Container(
-                margin: EdgeInsets.only(right: 10.h ),
+                margin: EdgeInsets.only(right: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
                     _validateAndCreateUpdateGroup();

@@ -18,38 +18,31 @@ class HiveOutputAdapter extends TypeAdapter<HiveOutput> {
     };
     return HiveOutput(
       groupId: fields[0] as String?,
-      projectId: fields[1] as String?,
-      markerId: fields[2] as String?,
-      markerName: fields[3] as String?,
-      month: fields[4] as HiveDate?,
-      value: fields[5] as int,
-      isNew: fields[6] as bool,
-      isUpdated: fields[7] as bool,
-      isDirty: fields[8] as bool,
-    );
+      month: fields[2] as HiveDate?,
+      value: fields[3] as String?,
+      isNew: fields[4] as bool,
+      isUpdated: fields[5] as bool,
+      isDirty: fields[6] as bool,
+    )..outputMarker = fields[1] as HiveOutputMarker?;
   }
 
   @override
   void write(BinaryWriter writer, HiveOutput obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.groupId)
       ..writeByte(1)
-      ..write(obj.projectId)
+      ..write(obj.outputMarker)
       ..writeByte(2)
-      ..write(obj.markerId)
-      ..writeByte(3)
-      ..write(obj.markerName)
-      ..writeByte(4)
       ..write(obj.month)
-      ..writeByte(5)
+      ..writeByte(3)
       ..write(obj.value)
-      ..writeByte(6)
+      ..writeByte(4)
       ..write(obj.isNew)
-      ..writeByte(7)
+      ..writeByte(5)
       ..write(obj.isUpdated)
-      ..writeByte(8)
+      ..writeByte(6)
       ..write(obj.isDirty);
   }
 

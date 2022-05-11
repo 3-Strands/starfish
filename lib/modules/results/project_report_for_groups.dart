@@ -1,22 +1,29 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_output.dart';
+import 'package:starfish/db/hive_output_marker.dart';
+import 'package:starfish/db/providers/output_provider.dart';
+import 'package:starfish/modules/results/marker_statics.dart';
 
 class ProjectReporsForGroup extends StatefulWidget {
-  const ProjectReporsForGroup({Key? key}) : super(key: key);
+  HiveGroup hiveGroup;
+  HiveDate hiveDate;
+  ProjectReporsForGroup(
+      {Key? key, required this.hiveGroup, required this.hiveDate})
+      : super(key: key);
 
   @override
   State<ProjectReporsForGroup> createState() => _ProjectReporsForGroupState();
 }
 
 class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
-  TextEditingController _markerTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
+    //AppBloc bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -30,7 +37,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
             height: 10.h,
           ),
           Text(
-            "${AppLocalizations.of(context)!.projectReportFor} ${bloc.resultsBloc.hiveGroup?.name ?? ''}",
+            "${AppLocalizations.of(context)!.projectReportFor} ${widget.hiveGroup.name ?? ''}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
@@ -65,86 +72,77 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
           SizedBox(
             height: 10.h,
           ),
-          _buildMarkerStaticsList(context),
-          Divider(
-            color: Color(0xFF5D5D5D),
-            thickness: 1,
-          ),
+          _buildMarkerStaticsList(context, widget.hiveGroup, widget.hiveDate),
+          // SizedBox(
+          //   height: 10.h,
+          // ),
+          // Container(
+          //   margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+          //   color: Colors.transparent,
+          //   width: MediaQuery.of(context).size.width - 20,
+          //   //    width: 1000.w,
+          //   height: 50.h,
+          //   child: ElevatedButton(
+          //     style: ElevatedButton.styleFrom(
+          //         shape: StadiumBorder(), primary: Colors.blue),
+          //     onPressed: () {},
+          //     child: Text(
+          //       "${AppLocalizations.of(context)!.addSignOfTransformation}",
+          //       style: TextStyle(fontSize: 17.sp, fontFamily: "OpenSans"),
+          //     ),
+          //   ),
+          // ),
           SizedBox(
-            height: 10.h,
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
-            color: Colors.transparent,
-            width: MediaQuery.of(context).size.width - 20,
-            //    width: 1000.w,
-            height: 50.h,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  shape: StadiumBorder(), primary: Colors.blue),
-              onPressed: () {},
-              child: Text(
-                "${AppLocalizations.of(context)!.addSignOfTransformation}",
-                style: TextStyle(fontSize: 17.sp, fontFamily: "OpenSans"),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 20.h,
+            height: 15.h,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMarkerStatics(HiveOutput output) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            "Test marker of group 16 health founder Aus", // "${output.markerName}",
-            style: TextStyle(
-                fontSize: 17.sp,
-                fontFamily: "OpenSans",
-                color: Color(0xFFFFFFFF),
-                fontWeight: FontWeight.w600),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        SizedBox(
-          width: 50.w,
-        ),
-        Container(
-          height: 40.h,
-          width: 100.w,
-          color: Color(0xFFFFFFFF),
-          child: TextFormField(
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
-            autofocus: true,
-            controller: _markerTextEditingController,
-            onChanged: (value) {
-              _markerTextEditingController.text = value;
-              output.value = int.parse(value);
-            },
-            // onSaved: (value) {},
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMarkerStaticsList(BuildContext context) {
-    AppBloc bloc = Provider.of(context);
+  Widget _buildMarkerStaticsList(
+      BuildContext context, HiveGroup hiveGroup, HiveDate hiveDate) {
+    //AppBloc bloc = Provider.of(context);
+    Map<HiveOutputMarker, String> _outputs =
+        hiveGroup.getGroupOutputsForMonth(hiveDate);
+    //bloc.resultsBloc.fetchGroupOutputsForMonth();
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: bloc.resultsBloc.fetchOutputs().length,
+        itemCount: _outputs.length,
         itemBuilder: (BuildContext context, int index) {
-          return _buildMarkerStatics(
-              bloc.resultsBloc.fetchOutputs().elementAt(index));
+          HiveOutputMarker _outputMarker = _outputs.keys.elementAt(index);
+          return MarkerStaticRow(_outputMarker, _outputs[_outputMarker] ?? '',
+              markerValueUpdate: (String value) {
+            if (value.isEmpty) {
+              return;
+            }
+
+            _saveOutput(hiveGroup.id!, _outputMarker, hiveDate.toMonth, value);
+          });
         });
+  }
+
+  void _saveOutput(String groupId, HiveOutputMarker outputMarker,
+      HiveDate month, String value) {
+    HiveOutput? _hiveOutput =
+        OutputProvider().getGroupOutputForMonth(groupId, outputMarker, month);
+
+    if (_hiveOutput == null) {
+      _hiveOutput = HiveOutput();
+      _hiveOutput.groupId = groupId;
+      _hiveOutput.outputMarker = outputMarker;
+      _hiveOutput.month = month;
+      _hiveOutput.isNew = true;
+    } else {
+      _hiveOutput.isUpdated = true;
+    }
+    _hiveOutput.value = value;
+
+    OutputProvider().createUpdateOutput(_hiveOutput).then((value) {
+      debugPrint("Ouput saved.");
+    }).onError((error, stackTrace) {
+      debugPrint("Failed to save Output");
+    });
   }
 }

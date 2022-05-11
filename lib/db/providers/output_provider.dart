@@ -1,8 +1,9 @@
 import 'package:hive/hive.dart';
+import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_output.dart';
-import 'package:starfish/db/hive_transformation.dart';
+import 'package:starfish/db/hive_output_marker.dart';
 
 class OutputProvider {
   late Box<HiveOutput> _outputBox;
@@ -11,21 +12,20 @@ class OutputProvider {
     _outputBox = Hive.box<HiveOutput>(HiveDatabase.OUTPUT_BOX);
   }
 
-  List<HiveOutput> getGroupOutputsForMonth(String groupId, HiveDate month) {
-    return _outputBox.values
-        .where((element) =>
-            element.groupId! == groupId &&
-            element.month!.year == month.year &&
-            element.month!.month == month.month)
-        .toList();
+  HiveOutput? getGroupOutputForMonth(
+      String groupId, HiveOutputMarker outputMarker, HiveDate month) {
+    return _outputBox.values.firstWhereOrNull((element) =>
+        element.groupId! == groupId &&
+        element.outputMarker == outputMarker &&
+        element.month!.year == month.year &&
+        element.month!.month == month.month);
   }
 
   Future<void> createUpdateOutput(HiveOutput hiveOutput) async {
     int _currentIndex = -1;
     _outputBox.values.toList().asMap().forEach((key, output) {
       if (output.groupId == hiveOutput.groupId &&
-          output.projectId == hiveOutput.projectId &&
-          output.markerId == hiveOutput.markerId &&
+          output.outputMarker == hiveOutput.outputMarker &&
           output.month == hiveOutput.month) {
         _currentIndex = key;
       }

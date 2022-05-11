@@ -674,7 +674,7 @@ const Group$json = const {
     const {'1': 'link_email', '3': 9, '4': 1, '5': 9, '10': 'linkEmail'},
     const {'1': 'languages', '3': 10, '4': 3, '5': 11, '6': '.sil.starfish.Group.LanguagesEntry', '10': 'languages'},
     const {'1': 'status', '3': 11, '4': 1, '5': 14, '6': '.sil.starfish.Group.Status', '10': 'status'},
-    const {'1': 'project_ids', '3': 12, '4': 3, '5': 9, '10': 'projectIds'},
+    const {'1': 'output_markers', '3': 13, '4': 3, '5': 11, '6': '.sil.starfish.OutputMarker', '10': 'outputMarkers'},
   ],
   '3': const [Group_LanguagesEntry$json],
   '4': const [Group_Status$json],
@@ -700,7 +700,7 @@ const Group_Status$json = const {
 };
 
 /// Descriptor for `Group`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxI1CgxlZGl0X2hpc3RvcnkYByADKAsyEi5zaWwuc3RhcmZpc2guRWRpdFILZWRpdEhpc3RvcnkSIAoLZGVzY3JpcHRpb24YCCABKAlSC2Rlc2NyaXB0aW9uEh0KCmxpbmtfZW1haWwYCSABKAlSCWxpbmtFbWFpbBJACglsYW5ndWFnZXMYCiADKAsyIi5zaWwuc3RhcmZpc2guR3JvdXAuTGFuZ3VhZ2VzRW50cnlSCWxhbmd1YWdlcxIyCgZzdGF0dXMYCyABKA4yGi5zaWwuc3RhcmZpc2guR3JvdXAuU3RhdHVzUgZzdGF0dXMSHwoLcHJvamVjdF9pZHMYDCADKAlSCnByb2plY3RJZHMaPAoOTGFuZ3VhZ2VzRW50cnkSEAoDa2V5GAEgASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4ASIiCgZTdGF0dXMSCgoGQUNUSVZFEAASDAoISU5BQ1RJVkUQAQ==');
+final $typed_data.Uint8List groupDescriptor = $convert.base64Decode('CgVHcm91cBIOCgJpZBgBIAEoCVICaWQSEgoEbmFtZRgCIAEoCVIEbmFtZRIhCgxsYW5ndWFnZV9pZHMYAyADKAlSC2xhbmd1YWdlSWRzEi0KBXVzZXJzGAQgAygLMhcuc2lsLnN0YXJmaXNoLkdyb3VwVXNlclIFdXNlcnMSNgoXZXZhbHVhdGlvbl9jYXRlZ29yeV9pZHMYBSADKAlSFWV2YWx1YXRpb25DYXRlZ29yeUlkcxI1CgxlZGl0X2hpc3RvcnkYByADKAsyEi5zaWwuc3RhcmZpc2guRWRpdFILZWRpdEhpc3RvcnkSIAoLZGVzY3JpcHRpb24YCCABKAlSC2Rlc2NyaXB0aW9uEh0KCmxpbmtfZW1haWwYCSABKAlSCWxpbmtFbWFpbBJACglsYW5ndWFnZXMYCiADKAsyIi5zaWwuc3RhcmZpc2guR3JvdXAuTGFuZ3VhZ2VzRW50cnlSCWxhbmd1YWdlcxIyCgZzdGF0dXMYCyABKA4yGi5zaWwuc3RhcmZpc2guR3JvdXAuU3RhdHVzUgZzdGF0dXMSQQoOb3V0cHV0X21hcmtlcnMYDSADKAsyGi5zaWwuc3RhcmZpc2guT3V0cHV0TWFya2VyUg1vdXRwdXRNYXJrZXJzGjwKDkxhbmd1YWdlc0VudHJ5EhAKA2tleRgBIAEoCVIDa2V5EhQKBXZhbHVlGAIgASgJUgV2YWx1ZToCOAEiIgoGU3RhdHVzEgoKBkFDVElWRRAAEgwKCElOQUNUSVZFEAE=');
 @$core.Deprecated('Use groupEvaluationDescriptor instead')
 const GroupEvaluation$json = const {
   '1': 'GroupEvaluation',
@@ -1039,16 +1039,26 @@ const Output$json = const {
   '1': 'Output',
   '2': const [
     const {'1': 'group_id', '3': 1, '4': 1, '5': 9, '10': 'groupId'},
-    const {'1': 'project_id', '3': 2, '4': 1, '5': 9, '10': 'projectId'},
-    const {'1': 'marker_id', '3': 3, '4': 1, '5': 9, '10': 'markerId'},
-    const {'1': 'marker_name', '3': 4, '4': 1, '5': 9, '10': 'markerName'},
     const {'1': 'month', '3': 5, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'month'},
     const {'1': 'value', '3': 6, '4': 1, '5': 3, '10': 'value'},
+    const {'1': 'output_marker', '3': 7, '4': 1, '5': 11, '6': '.sil.starfish.OutputMarker', '10': 'outputMarker'},
   ],
 };
 
 /// Descriptor for `Output`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List outputDescriptor = $convert.base64Decode('CgZPdXRwdXQSGQoIZ3JvdXBfaWQYASABKAlSB2dyb3VwSWQSHQoKcHJvamVjdF9pZBgCIAEoCVIJcHJvamVjdElkEhsKCW1hcmtlcl9pZBgDIAEoCVIIbWFya2VySWQSHwoLbWFya2VyX25hbWUYBCABKAlSCm1hcmtlck5hbWUSJwoFbW9udGgYBSABKAsyES5nb29nbGUudHlwZS5EYXRlUgVtb250aBIUCgV2YWx1ZRgGIAEoA1IFdmFsdWU=');
+final $typed_data.Uint8List outputDescriptor = $convert.base64Decode('CgZPdXRwdXQSGQoIZ3JvdXBfaWQYASABKAlSB2dyb3VwSWQSJwoFbW9udGgYBSABKAsyES5nb29nbGUudHlwZS5EYXRlUgVtb250aBIUCgV2YWx1ZRgGIAEoA1IFdmFsdWUSPwoNb3V0cHV0X21hcmtlchgHIAEoCzIaLnNpbC5zdGFyZmlzaC5PdXRwdXRNYXJrZXJSDG91dHB1dE1hcmtlcg==');
+@$core.Deprecated('Use outputMarkerDescriptor instead')
+const OutputMarker$json = const {
+  '1': 'OutputMarker',
+  '2': const [
+    const {'1': 'project_id', '3': 2, '4': 1, '5': 9, '10': 'projectId'},
+    const {'1': 'marker_id', '3': 3, '4': 1, '5': 9, '10': 'markerId'},
+    const {'1': 'marker_name', '3': 4, '4': 1, '5': 9, '10': 'markerName'},
+  ],
+};
+
+/// Descriptor for `OutputMarker`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List outputMarkerDescriptor = $convert.base64Decode('CgxPdXRwdXRNYXJrZXISHQoKcHJvamVjdF9pZBgCIAEoCVIJcHJvamVjdElkEhsKCW1hcmtlcl9pZBgDIAEoCVIIbWFya2VySWQSHwoLbWFya2VyX25hbWUYBCABKAlSCm1hcmtlck5hbWU=');
 @$core.Deprecated('Use refreshSessionRequestDescriptor instead')
 const RefreshSessionRequest$json = const {
   '1': 'RefreshSessionRequest',

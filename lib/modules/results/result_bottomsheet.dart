@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:fbroadcast/fbroadcast.dart';
+import 'package:flutter/src/widgets/basic.dart' as widgets;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
@@ -25,19 +28,27 @@ import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
+import 'package:starfish/src/generated/file_transfer.pb.dart';
 
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
+import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
+import 'package:starfish/widgets/result_transformations_widget.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 import 'package:starfish/wrappers/file_system.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
-  ResultWidgetBottomSheet(this.hiveGroupUser, {Key? key}) : super(key: key);
+  HiveGroup hiveGroup;
   HiveGroupUser hiveGroupUser;
+
+  ResultWidgetBottomSheet(this.hiveGroup, this.hiveGroupUser, {Key? key})
+      : super(key: key);
+
   @override
   State<ResultWidgetBottomSheet> createState() =>
       _ResultWidgetBottomSheetState();
@@ -46,6 +57,7 @@ class ResultWidgetBottomSheet extends StatefulWidget {
 class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   late AppBloc bloc;
 
+  bool _isInitialized = false;
   bool _isEditMode = false;
   bool isViewActionHistory = false;
   bool isViewCategoryEvalutionHistory = false;
@@ -57,8 +69,21 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
-    bloc.resultsBloc.init();
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      bloc.resultsBloc.init();
+      _isInitialized = true;
+    }
+    bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
+
+    _teacherFeedbackController.text = widget.hiveGroupUser
+            .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!.toMonth)
+            ?.response ??
+        '';
+    _transformationController.text = widget.hiveGroupUser
+            .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
+            ?.impactStory ??
+        '';
     return Container(
       height: MediaQuery.of(context).size.height * 0.80,
       child: Column(
@@ -80,7 +105,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           Expanded(
                             child: Center(
                               child: Text(
-                                '${widget.hiveGroupUser.group!.name}',
+                                '${widget.hiveGroup.name}',
                                 //overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -99,41 +124,33 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       height: 20.h,
                     ),
                     SizedBox(height: 20.h),
-                    Container(
-                      alignment: Alignment.centerLeft,
+                    InkWell(
+                      onTap: () async {
+                        final selected = await _selectMonth(bloc);
+                        if (selected != null) {
+                          HiveDate _hiveDate =
+                              HiveDate.create(selected.year, selected.month, 0);
 
-                      height: 52.h,
-                      width: 345.w,
-                      padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.txtFieldBackground,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                          setState(() {
+                            bloc.resultsBloc.hiveDate = _hiveDate;
+                          });
+
+                          _updateLearnerSummary();
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+
+                        height: 52.h,
+                        //width: 345.w,
+                        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
-                      ),
-                      child: InkWell(
-                        onTap: () async {
-                          final selected = await _selectMonth(bloc);
-                          if (selected != null) {
-                            HiveDate _hiveDate = HiveDate();
-
-                            _hiveDate.year = selected.year;
-                            _hiveDate.month = selected.month;
-                            _hiveDate.day = 1;
-
-                            setState(() {
-                              bloc.resultsBloc.hiveDate = _hiveDate;
-                            });
-
-                            // update parent view also
-                            setState(() {
-                              bloc.resultsBloc.hiveDate = _hiveDate;
-                            });
-
-                            _updateLearnerSummary();
-                          }
-                        },
                         child: ButtonTheme(
                           alignedDropdown: true,
                           child: Text(
@@ -171,7 +188,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                 fontFamily: 'OpenSans',
                               ),
                               hint: Text(
-                                "${AppLocalizations.of(context)!.learner}: ${bloc.resultsBloc.hiveGroupUser?.name}",
+                                "${AppLocalizations.of(context)!.learner}: ${widget.hiveGroupUser.name}",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -183,6 +200,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                               ),
                               onChanged: (HiveGroupUser? value) {
                                 setState(() {
+                                  widget.hiveGroupUser = value!;
                                   bloc.resultsBloc.hiveGroupUser = value;
                                 });
 
@@ -192,7 +210,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
                                 _updateLearnerSummary();
                               },
-                              items: bloc.resultsBloc.hiveGroup!.learners
+                              items: widget.hiveGroup.learners
                                   ?.map<DropdownMenuItem<HiveGroupUser>>(
                                       (HiveGroupUser value) {
                                 return DropdownMenuItem<HiveGroupUser>(
@@ -242,11 +260,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTrasnformatonsCard(),
+                    //_buildTrasnformatonsCard(),
+                    ResultTransformationsWidget(
+                      groupUser: widget.hiveGroupUser,
+                      month: bloc.resultsBloc.hiveDate!,
+                    ),
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTeacherFeedBackCard(),
+                    _buildTeacherFeedbackCard(),
                     SizedBox(
                       height: 10.h,
                     ),
@@ -292,7 +314,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     );
   }
 
-  Widget _buildTeacherFeedBackCard() {
+  Widget _buildTeacherFeedbackCard() {
     return Card(
       color: Color(0xFFEFEFEF),
       elevation: 4,
@@ -323,17 +345,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 5.h,
             ),
-            Text(
-              '${AppLocalizations.of(context)!.helpTextForTeacherFeedback}',
-              style: TextStyle(
-                // fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic,
-                fontSize: 14.sp,
-                fontFamily: "OpenSans",
-                color: Color(0xFF797979),
-              ),
-            ),
-            SizedBox(height: 10.h),
             Container(
               decoration: BoxDecoration(
                 color: Color(0xFFFFFFFF),
@@ -358,7 +369,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
                 onFocusChange: (isFocused) {
-                  debugPrint("Has focus: $isFocused");
                   if (isFocused) {
                     return;
                   }
@@ -371,22 +381,21 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 20.h,
             ),
-            if (bloc.resultsBloc.hiveGroup?.groupEvaluationCategories != null)
+            if (widget.hiveGroup.groupEvaluationCategories != null)
               ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: bloc
-                      .resultsBloc.hiveGroup?.groupEvaluationCategories?.length,
+                  itemCount: widget.hiveGroup.groupEvaluationCategories?.length,
                   itemBuilder: (context, index) {
-                    HiveEvaluationCategory _category = bloc
-                        .resultsBloc.hiveGroup!.groupEvaluationCategories!
+                    HiveEvaluationCategory _category = widget
+                        .hiveGroup.groupEvaluationCategories!
                         .elementAt(index);
                     return _buildCategorySlider(_category);
                   }),
             SizedBox(
               height: 20.h,
             ),
-            StatefulBuilder(
+            widgets.StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -731,8 +740,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildCategorySlider(HiveEvaluationCategory _evaluationCategory) {
-    HiveLearnerEvaluation? _evaluation = bloc.resultsBloc.hiveGroupUser
-        ?.getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
+    HiveLearnerEvaluation? _evaluation = widget.hiveGroupUser
+        .getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
             _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
 
     double _value =
@@ -753,7 +762,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         SizedBox(
           height: 10.h,
         ),
-        StatefulBuilder(builder: (context, setState) {
+        widgets.StatefulBuilder(builder: (context, setState) {
           return Container(
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
@@ -775,7 +784,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 value: _value,
                 label: sliderLabel(_value.toInt()),
                 onChanged: (double value) {
-                  debugPrint("Slider Value: $value");
                   setState(() {
                     _value = value;
                   });
@@ -787,18 +795,18 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             ),
           );
         }),
-        // SizedBox(
-        //   height: 5.h,
-        // ),
-        // Text(
-        //   "This is dynamic text which explains the meaning of each ",
-        //   style: TextStyle(
-        //     fontStyle: FontStyle.italic,
-        //     fontFamily: "OpenSans",
-        //     fontSize: 14.sp,
-        //     color: Color(0xFF797979),
-        //   ),
-        // ),
+        SizedBox(
+          height: 5.h,
+        ),
+        Text(
+          _evaluationCategory.getEvaluationNameFromValue(_value.toInt()),
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            fontFamily: "OpenSans",
+            fontSize: 14.sp,
+            color: Color(0xFF797979),
+          ),
+        ),
         SizedBox(
           height: 5.h,
         ),
@@ -806,6 +814,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     );
   }
 
+  @Deprecated("user 'ResultTransformationsWidget' instead")
   Widget _buildTrasnformatonsCard() {
     return Card(
       color: Color(0xFFEFEFEF),
@@ -871,12 +880,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
                 onFocusChange: (isFocused) {
-                  debugPrint("Has focus: $isFocused");
                   if (isFocused) {
                     return;
                   }
                   if (_transformationController.text.length > 0) {
-                    _saveTransformation();
+                    _saveTransformation(
+                        _transformationController.text, _selectedFiles);
+
+                    // TODO: Save images here
+
                   }
                 },
               ),
@@ -891,81 +903,75 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
             // Add Materials
 
-            Column(
-              children: [
-                _previewSelectedFiles(),
-                SizedBox(height: 10.h),
-                DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: Radius.circular(30.r),
-                  color: Color(0xFF3475F0),
-                  child: Container(
-                      width: double.infinity,
-                      height: 50.h,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if ((!_isEditMode && _selectedFiles.length >= 5)) {
-                            StarfishSnackbar.showErrorMessage(context,
-                                AppLocalizations.of(context)!.maxFilesSelected);
-                          } else {
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles(
-                              allowMultiple: false,
-                              type: FileType.image,
-                              //  allowedExtensions: ['jpg', 'png', 'jpeg'],
-                            );
+            if (_selectedFiles.isNotEmpty) _previewSelectedFiles(),
+            SizedBox(height: 10.h),
+            DottedBorder(
+              borderType: BorderType.RRect,
+              radius: Radius.circular(30.r),
+              color: Color(0xFF3475F0),
+              child: Container(
+                  width: double.infinity,
+                  height: 50.h,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if ((!_isEditMode && _selectedFiles.length >= 5)) {
+                        StarfishSnackbar.showErrorMessage(context,
+                            AppLocalizations.of(context)!.maxFilesSelected);
+                      } else {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          allowMultiple: false,
+                          type: FileType.image,
+                          //  allowedExtensions: ['jpg', 'png', 'jpeg'],
+                        );
 
-                            if (result != null) {
-                              // if single selected file is IMAGE, open image in Cropper
-                              if (result.count == 1) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageCropperScreen(
-                                      sourceImage: File(result.paths.first!),
-                                      onDone: (File? _newFile) {
-                                        if (_newFile == null) {
-                                          return;
-                                        }
+                        if (result != null) {
+                          // if single selected file is IMAGE, open image in Cropper
+                          if (result.count == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageCropperScreen(
+                                  sourceImage: File(result.paths.first!),
+                                  onDone: (File? _newFile) {
+                                    if (_newFile == null) {
+                                      return;
+                                    }
 
-                                        setState(() {
-                                          _selectedFiles.add(_newFile);
-                                          print(
-                                              'pathhhhhhh${_selectedFiles[0].path}');
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ).then((value) => {
-                                      // Handle cropped image here
+                                    setState(() {
+                                      _selectedFiles.add(_newFile);
                                     });
-                              } else {
-                                setState(() {
-                                  _selectedFiles.addAll(result.paths
-                                      .map((path) => File(path!))
-                                      .toList());
+                                  },
+                                ),
+                              ),
+                            ).then((value) => {
+                                  // Handle cropped image here
                                 });
-                              }
-                            } else {
-                              // User canceled the picker
-                            }
+                          } else {
+                            setState(() {
+                              _selectedFiles.addAll(result.paths
+                                  .map((path) => File(path!))
+                                  .toList());
+                            });
                           }
-                        },
-                        child: Text(
-                          '${AppLocalizations.of(context)!.addPhotos}',
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            color: Color(0xFF3475F0),
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                      )),
-                ),
-              ],
+                        } else {
+                          // User canceled the picker
+                        }
+                      }
+                    },
+                    child: Text(
+                      '${AppLocalizations.of(context)!.addPhotos}',
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 17.sp,
+                        color: Color(0xFF3475F0),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                  )),
             ),
 
             SizedBox(
@@ -1009,8 +1015,12 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               height: 10.h,
             ),
             _buildMonthlyActionWidget(
-                bloc.resultsBloc.actionUserStatusForSelectedMonth(
-                    bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsNotCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                widget.hiveGroupUser
+                    .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
             Column(
               children: [
@@ -1085,10 +1095,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _historyAvailableMonths.remove(_currentMonth);
     }
 
-    _historyAvailableMonths.forEach((element) {
-      print(DateTimeUtils.formatHiveDate(element,
-          requiredDateFormat: 'dd MMM yyyy'));
-    });
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -1113,9 +1119,13 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               SizedBox(
                 height: 10.h,
               ),
-              _buildMonthlyActionWidget(bloc.resultsBloc
-                  .actionUserStatusForSelectedMonth(
-                      _historyAvailableMonths.elementAt(index))),
+              _buildMonthlyActionWidget(
+                  widget.hiveGroupUser
+                      .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                  widget.hiveGroupUser.getActionsNotCompletedInMonth(
+                      bloc.resultsBloc.hiveDate!),
+                  widget.hiveGroupUser
+                      .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
               SizedBox(
                 height: 10.h,
               ),
@@ -1124,92 +1134,30 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         });
   }
 
-  Widget _buildMonthlyActionWidget(Map<String, int> actionStatusCount,
+  Widget _buildMonthlyActionWidget(int complete, int notComplete, int overdue,
       {displayOverdue = false}) {
-    int complete = actionStatusCount['done'] ?? 0;
-    int notComplete = actionStatusCount['not_done'] ?? 0;
-    int overdue = actionStatusCount['overdue'] ?? 0;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Expanded(
-          child: Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-                color: Color(0xFF6DE26B),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                complete,
-                zero:
-                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                one:
-                    "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                other:
-                    "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
-                args: [complete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 10.w,
-        ),
-        Expanded(
-          child: Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-                color: Color(0xFFFFBE4A),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                notComplete,
-                zero:
-                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                one:
-                    "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                other:
-                    "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
-                args: [notComplete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        if (displayOverdue == true) ...[
-          SizedBox(
-            width: 10.w,
-          ),
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
           Expanded(
             child: Container(
               width: 99.w,
               decoration: BoxDecoration(
-                  color: Color(0xFFFF5E4D),
+                  color: Color(0xFF6DE26B),
                   borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
               padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
               child: Text(
                 Intl.plural(
-                  overdue,
+                  complete,
                   zero:
-                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
                   one:
-                      "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
                   other:
-                      "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
-                  args: [overdue],
+                      "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+                  args: [complete],
                 ),
                 style: TextStyle(
                     color: Colors.black,
@@ -1220,8 +1168,73 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               ),
             ),
           ),
-        ]
-      ],
+          SizedBox(
+            width: 10.w,
+          ),
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Container(
+              width: 99.w,
+              decoration: BoxDecoration(
+                  color: Color(0xFFFFBE4A),
+                  borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              child: Text(
+                Intl.plural(
+                  notComplete,
+                  zero:
+                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  one:
+                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  other:
+                      "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
+                  args: [notComplete],
+                ),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Rubik",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          if (displayOverdue == true) ...[
+            SizedBox(
+              width: 10.w,
+            ),
+            Expanded(
+              child: Container(
+                width: 99.w,
+                decoration: BoxDecoration(
+                    color: Color(0xFFFF5E4D),
+                    borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+                child: Text(
+                  Intl.plural(
+                    overdue,
+                    zero:
+                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                    one:
+                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
+                    other:
+                        "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
+                    args: [overdue],
+                  ),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ]
+        ],
+      ),
     );
   }
 
@@ -1325,7 +1338,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _hiveGroupEvaluation = HiveGroupEvaluation();
       _hiveGroupEvaluation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
       _hiveGroupEvaluation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-      _hiveGroupEvaluation.month = bloc.resultsBloc.hiveDate;
+      _hiveGroupEvaluation.month = bloc.resultsBloc.hiveDate!.toMonth;
     }
     _hiveGroupEvaluation.evaluation = evaluation.value;
 
@@ -1333,16 +1346,16 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   void _saveTeacherFeedback() {
-    HiveTeacherResponse? _teacherResponse = bloc.resultsBloc.hiveGroupUser
-        ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
+    HiveTeacherResponse? _teacherResponse = widget.hiveGroupUser
+        .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
 
     if (_teacherResponse == null) {
       _teacherResponse = HiveTeacherResponse();
       _teacherResponse.id = UuidGenerator.uuid();
-      _teacherResponse.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-      _teacherResponse.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
+      _teacherResponse.groupId = widget.hiveGroupUser.groupId;
+      _teacherResponse.learnerId = widget.hiveGroupUser.userId;
       _teacherResponse.teacherId = CurrentUserProvider().getUserSync().id;
-      _teacherResponse.month = bloc.resultsBloc.hiveDate;
+      _teacherResponse.month = bloc.resultsBloc.hiveDate!.toMonth;
       _teacherResponse.isNew = true;
     } else {
       _teacherResponse.isUpdated = true;
@@ -1354,35 +1367,53 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         .createUpdateTeacherResponse(_teacherResponse)
         .then((value) {
       debugPrint("Feedback saved.");
-      setState(() {}); // refresh ParentView
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateTeacherResponse,
+        value: _teacherResponse,
+      );
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Feedback.");
     });
   }
 
-  void _saveTransformation() {
-    HiveTransformation? _transformation = bloc.resultsBloc.hiveGroupUser
-        ?.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
-
-    print(_transformation.toString());
+  void _saveTransformation(String _impactStory, List<File> _files) {
+    HiveTransformation? _transformation = widget.hiveGroupUser
+        .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
 
     if (_transformation == null) {
       _transformation = HiveTransformation();
       _transformation.id = UuidGenerator.uuid();
-      _transformation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-      _transformation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
-      _transformation.month = bloc.resultsBloc.hiveDate;
+      _transformation.groupId = widget.hiveGroupUser.groupId;
+      _transformation.userId = widget.hiveGroupUser.userId;
+      _transformation.month = bloc.resultsBloc.hiveDate!.toMonth;
       _transformation.isNew = true;
     } else {
       _transformation.isUpdated = true;
     }
-    _transformation.impactStory = _transformationController.text;
+    _transformation.impactStory = _impactStory;
+
+    List<HiveFile> _transformationFiles = [];
+
+    _files.forEach((_file) {
+      _transformationFiles.add(HiveFile(
+        entityId: _transformation!.id,
+        entityType: EntityType.TRANSFORMATION.value,
+        filepath: _file.path,
+        filename: _file.path.split("/").last,
+        isSynced: false,
+      ));
+    });
 
     TransformationProvider()
-        .createUpdateTransformation(_transformation)
+        .createUpdateTransformation(_transformation,
+            transformationFiles: _transformationFiles)
         .then((value) {
       debugPrint("Transformation saved.");
-      setState(() {}); // refresh ParentView
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateTransformation,
+        value: _transformation,
+      );
+      // save files also
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Transformation");
     });
@@ -1391,17 +1422,21 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   void _saveLearnerEvaluation(String categoryId, int value) {
     String evaluatorId = CurrentUserProvider().getUserSync().id;
 
-    HiveLearnerEvaluation? _learnerEvaluation = bloc.resultsBloc.hiveGroupUser
-        ?.getLearnerEvaluation(
+    debugPrint(
+        "LearnerEvaluation saved for Month: ${bloc.resultsBloc.hiveDate}");
+    debugPrint(
+        "LearnerEvaluation saved for PreviousDate: ${bloc.resultsBloc.hivePreviousDate}");
+    HiveLearnerEvaluation? _learnerEvaluation = widget.hiveGroupUser
+        .getLearnerEvaluation(
             bloc.resultsBloc.hiveDate!, categoryId, evaluatorId);
 
     if (_learnerEvaluation == null) {
       _learnerEvaluation = HiveLearnerEvaluation();
       _learnerEvaluation.id = UuidGenerator.uuid();
-      _learnerEvaluation.learnerId = bloc.resultsBloc.hiveGroupUser?.userId;
-      _learnerEvaluation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
+      _learnerEvaluation.learnerId = widget.hiveGroupUser.userId;
+      _learnerEvaluation.groupId = widget.hiveGroupUser.groupId;
       _learnerEvaluation.evaluatorId = evaluatorId;
-      _learnerEvaluation.month = bloc.resultsBloc.hiveDate;
+      _learnerEvaluation.month = bloc.resultsBloc.hiveDate!.toMonth;
       _learnerEvaluation.categoryId = categoryId;
       _learnerEvaluation.isNew = true;
     } else {
@@ -1413,7 +1448,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         .createUpdateLearnerEvaluation(_learnerEvaluation)
         .then((value) {
       debugPrint("LearnerEvaluation saved.");
-      setState(() {}); // refresh ParentView
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateLearnerEvaluation,
+        value: _learnerEvaluation,
+      );
     }).onError((error, stackTrace) {
       debugPrint("Failed to save LearnerEvaluation");
     });
@@ -1422,136 +1460,60 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
-    if (_selectedFiles.length == 1) {
-      _widgetList.add(Expanded(
-        child: Stack(
-          alignment: AlignmentDirectional.topEnd,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              //color: Colors.blue,
-              padding: const EdgeInsets.only(top: 10.0, right: 0.0),
-              child: Container(
-                //color: Colors.amber,
-                width: MediaQuery.of(context).size.width / 2,
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          ImagePreview(_selectedFiles.first))),
-                  child: Hero(
-                    tag: _selectedFiles.first,
-                    child: Card(
-                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: _selectedFiles.first.getImagePreview(
-                          fit: BoxFit.fill,
-                          height: 130.h,
-                        ),
-                      ),
+    for (File file in _selectedFiles) {
+      _widgetList.add(Stack(
+        alignment: AlignmentDirectional.topEnd,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+            child: Container(
+              child: InkWell(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ImagePreview(file))),
+                child: Hero(
+                  tag: file,
+                  child: Card(
+                    margin: const EdgeInsets.only(top: 12.0, right: 12.0),
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    flightShuttleBuilder: (flightContext, animation, direction,
-                        fromContext, toContext) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: file.getImagePreview(fit: BoxFit.scaleDown),
+                    ),
                   ),
+                  flightShuttleBuilder: (flightContext, animation, direction,
+                      fromContext, toContext) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
               ),
             ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFiles.remove(_selectedFiles.first);
-                });
-              },
-              icon: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _selectedFiles.remove(file);
+              });
+            },
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
             ),
-          ],
-        ),
+          ),
+        ],
       ));
-    } else {
-      for (File file in _selectedFiles) {
-        _widgetList.add(Stack(
-          alignment: AlignmentDirectional.topEnd,
-          children: [
-            Container(
-              //color: Colors.blue,
-              padding: const EdgeInsets.only(top: 10.0, right: 10.0),
-              child: Container(
-                //color: Colors.amber,
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ImagePreview(file))),
-                  child: Hero(
-                    tag: file,
-                    child: Card(
-                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: file.getImagePreview(
-                          fit: BoxFit.cover,
-                          height: 130.h,
-                        ),
-                      ),
-                    ),
-                    flightShuttleBuilder: (flightContext, animation, direction,
-                        fromContext, toContext) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFiles.remove(file);
-                });
-              },
-              icon: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-            ),
-          ],
-        ));
-      }
     }
 
-    return GridView(
+    return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
-      ),
+      crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
+      childAspectRatio: 1,
       children: _widgetList,
-    );
-  }
-}
-
-class ImagePreview extends StatelessWidget {
-  const ImagePreview(this.file, {Key? key}) : super(key: key);
-  final file;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: InkWell(
-        onTap: () => Navigator.pop(context),
-        child: Hero(tag: file, child: Center(child: Image.file(file))),
-      ),
     );
   }
 }

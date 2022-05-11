@@ -71,6 +71,9 @@ class SyncService {
   static final String kUpdateGroup = 'updateGroup';
   static final String kUpdateUsers = 'updateUsers';
   static final String kUpdateActions = 'updateActions';
+  static final String kUpdateTeacherResponse = 'updateTeacherResponse';
+  static final String kUpdateTransformation = 'updateTransformation';
+  static final String kUpdateLearnerEvaluation = 'updateLearnerEvaluation';
 
   static final String kUnauthenticated = 'unauthenticated';
 
@@ -228,6 +231,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalTransformationsToRemote());
     await lock.synchronized(() => syncLocalTeacherResponsesToRemote());
     await lock.synchronized(() => syncLocalLearnerEvaluationsToRemote());
+    await lock.synchronized(() => syncLocalOutputsToRemote());
     //await lock.synchronized(() => syncLocalGroupEvaluationsToRemote()); // Pending
 
     // Synchronize the syncing of material(s), sequentily to avoid failure.
@@ -236,7 +240,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalMaterialsToRemote());
     await lock.synchronized(() => syncLocalFiles());
     await lock.synchronized(() => syncMaterial()); // Upload local files
-    await lock.synchronized(() => syncFiles()); // Download remote files
+    await lock.synchronized(() => downloadFiles()); // Download remote files
 
     Future.wait(
       [
@@ -445,25 +449,23 @@ class SyncService {
     });
   }
 
-  void syncMaterialFiles(HiveMaterial _hiveMaterial) {
-    if (_hiveMaterial.files == null || _hiveMaterial.files!.length == 0) {
-      return;
-    }
-
-    _hiveMaterial.files?.forEach((String filename) async {
+  void addEntityFilesToLocalDB(
+      {required EntityType entityType,
+      required String entityId,
+      required List<String> files}) {
+    files.forEach((String filename) async {
       HiveFile? _hiveFile = fileBox.values.firstWhereOrNull(
           (HiveFile element) =>
-              element.entityId == _hiveMaterial.id &&
-              element.filename == filename);
+              element.entityId == entityId && element.filename == filename);
 
       if (_hiveFile != null) {
         // TODO: verify if files is correctly downloaded or physically exists after successful download
         return;
       }
       _hiveFile = HiveFile(
-          entityId: _hiveMaterial.id,
+          entityId: entityId,
           filename: filename,
-          entityType: EntityType.MATERIAL.value,
+          entityType: entityType.value,
           isSynced: false);
 
       await fileBox.add(_hiveFile);
@@ -486,7 +488,12 @@ class SyncService {
       stream.listen((material) async {
         HiveMaterial _hiveMaterial = HiveMaterial.from(material);
 
-        syncMaterialFiles(_hiveMaterial);
+        if (_hiveMaterial.files != null && _hiveMaterial.files!.length > 0) {
+          addEntityFilesToLocalDB(
+              entityId: _hiveMaterial.id!,
+              entityType: EntityType.MATERIAL,
+              files: _hiveMaterial.files!);
+        }
 
         int _currentIndex = -1;
         materialBox.values.toList().asMap().forEach((key, hiveMaterial) {
@@ -1105,7 +1112,7 @@ class SyncService {
     //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
   }
 
-  syncFiles() async {
+  downloadFiles() async {
     print('============= START: SyncFiles FROM Remote =============');
     // Filter items not downloaded yet
     fileBox.values
@@ -1380,6 +1387,49 @@ class SyncService {
     }
   }
 
+  Future syncLocalOutputsToRemote() async {
+    if (outputBox.values
+        .where((element) => (element.isNew || element.isUpdated))
+        .isEmpty) {
+      return;
+    }
+    print('============= START: Sync syncLocalOutputsToRemote =============');
+    StreamController<CreateUpdateOutputRequest> _controller =
+        StreamController();
+
+    try {
+      ResponseStream<CreateUpdateOutputResponse> responseStream =
+          await ResultsRepository().createUpdateOutputs(_controller.stream);
+      outputBox.values
+          .where((element) => element.isNew || element.isUpdated)
+          .forEach((_hiveOutput) {
+        var request = CreateUpdateOutputRequest.create();
+
+        request.output = _hiveOutput.toOutput();
+
+        _controller.add(request);
+      });
+      _controller.close();
+
+      return await responseStream.forEach((response) {
+        print('Remote Output Response: ${response.output}');
+        if (response.status == CreateUpdateOutputResponse_Status.SUCCESS) {
+          // update flag(s) isNew and/or isUpdated to false
+          OutputProvider().createUpdateOutput(HiveOutput.from(response.output));
+
+          print('============= END: syncLocalOutputsToRemote =============');
+        } else {
+          print("ERROR: syncLocalOutputsToRemote STATUS.FAILED");
+        }
+      });
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    } finally {
+      _controller.close();
+    }
+  }
+
   Future syncLearnerEvaluations() async {
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
@@ -1444,6 +1494,14 @@ class SyncService {
       stream.listen((transformaiton) {
         HiveTransformation _hiveTransformation =
             HiveTransformation.from(transformaiton);
+
+        if (_hiveTransformation.files != null &&
+            _hiveTransformation.files!.length > 0) {
+          addEntityFilesToLocalDB(
+              entityId: _hiveTransformation.id!,
+              entityType: EntityType.TRANSFORMATION,
+              files: _hiveTransformation.files!);
+        }
 
         ResultsProvider().createUpdateTransformation(_hiveTransformation);
       }, onError: ((err) {

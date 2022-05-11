@@ -23,6 +23,7 @@ import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_group_user.g.dart';
 
@@ -231,12 +232,15 @@ extension HiveGroupUserExt on HiveGroupUser {
   }
 
   List<HiveAction>? get actions {
-    ActionProvider().getGroupActions(this.groupId!);
+    return ActionProvider().getGroupActions(this.groupId!);
   }
 
-  int get actionsCompleted {
+  int getActionsCompletedInMonth(HiveDate month) {
     int count = 0;
-    this.actions?.forEach((hiveAction) {
+    this
+        .actions
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
@@ -246,22 +250,25 @@ extension HiveGroupUserExt on HiveGroupUser {
         count++;
       }
     });
-    /*this.actions?.where((hiveAction) {
-      return user?.actionStatusbyId(hiveAction) == ActionStatus.DONE;
-    }).length;*/
 
     return count;
   }
 
-  int get actionsNotCompleted {
+  int getActionsNotCompletedInMonth(HiveDate month) {
     int count = 0;
-    this.actions?.forEach((hiveAction) {
+    this
+        .actions
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
       if (_hiveActionUser != null &&
           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.NOT_DONE) {
+              ActionStatus.NOT_DONE &&
+          hiveAction.dateDue!
+              .toDateTime()
+              .isAfter(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
         count++;
       }
     });
@@ -269,15 +276,20 @@ extension HiveGroupUserExt on HiveGroupUser {
     return count;
   }
 
-  int get actionsOverdue {
+  int getActionsOverdueInMonth(HiveDate month) {
     int count = 0;
-    this.actions?.forEach((hiveAction) {
+    this
+        .actions
+        ?.where((element) => element.isDueInMonth(month))
+        .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
       if (_hiveActionUser != null &&
           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.OVERDUE) {
+              ActionStatus.NOT_DONE &&
+          hiveAction.dateDue!.toDateTime().isBefore(
+              DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
         count++;
       }
     });

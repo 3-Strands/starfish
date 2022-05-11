@@ -18,6 +18,7 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/results/my_group_results.dart';
+import 'package:starfish/modules/results/results_views.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
@@ -56,8 +57,22 @@ class _DashboardState extends State<Dashboard> {
         (hiveMaterial, __) {
       debugPrint('Boradcast Receiver: kUpdateMaterial');
       SyncService().syncLocalMaterialsToRemote();
+      SyncService().syncLocalFiles();
     }, more: {
-      SyncService.kDeleteMaterial: (hiveGroup, __) {
+      SyncService.kUpdateTeacherResponse: (hiveTeacherResponse, __) {
+        debugPrint('Boradcast Receiver: kUpdateTeacherResponse');
+        SyncService().syncLocalTeacherResponsesToRemote();
+      },
+      SyncService.kUpdateTransformation: (hiveTransformation, __) {
+        debugPrint('Boradcast Receiver: kUpdateTransformation');
+        SyncService().syncLocalTransformationsToRemote();
+        SyncService().syncLocalFiles();
+      },
+      SyncService.kUpdateLearnerEvaluation: (hiveLearnerEvaluation, __) {
+        debugPrint('Boradcast Receiver: kUpdateLearnerEvaluation');
+        SyncService().syncLocalLearnerEvaluationsToRemote();
+      },
+      SyncService.kDeleteMaterial: (hiveMaterial, __) {
         debugPrint('Boradcast Receiver: kDeleteMaterial');
         SyncService().syncLocalDeletedMaterialsToRemote();
       },
@@ -93,7 +108,7 @@ class _DashboardState extends State<Dashboard> {
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
     var actionsWidget = ActionsScreen();
-    var resultsWidget = MyGroupResults();
+    var resultsWidget = ResultsScreen();
 
     _widgetOptions = <Widget>[
       materialsWidget,

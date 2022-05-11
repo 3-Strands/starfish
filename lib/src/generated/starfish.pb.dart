@@ -2707,7 +2707,7 @@ class Group extends $pb.GeneratedMessage {
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'linkEmail')
     ..m<$core.String, $core.String>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'languages', entryClassName: 'Group.LanguagesEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OS, packageName: const $pb.PackageName('sil.starfish'))
     ..e<Group_Status>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: Group_Status.ACTIVE, valueOf: Group_Status.valueOf, enumValues: Group_Status.values)
-    ..pPS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'projectIds')
+    ..pc<OutputMarker>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outputMarkers', $pb.PbFieldType.PM, subBuilder: OutputMarker.create)
     ..hasRequiredFields = false
   ;
 
@@ -2723,7 +2723,7 @@ class Group extends $pb.GeneratedMessage {
     $core.String? linkEmail,
     $core.Map<$core.String, $core.String>? languages,
     Group_Status? status,
-    $core.Iterable<$core.String>? projectIds,
+    $core.Iterable<OutputMarker>? outputMarkers,
   }) {
     final _result = create();
     if (id != null) {
@@ -2756,8 +2756,8 @@ class Group extends $pb.GeneratedMessage {
     if (status != null) {
       _result.status = status;
     }
-    if (projectIds != null) {
-      _result.projectIds.addAll(projectIds);
+    if (outputMarkers != null) {
+      _result.outputMarkers.addAll(outputMarkers);
     }
     return _result;
   }
@@ -2842,8 +2842,8 @@ class Group extends $pb.GeneratedMessage {
   @$pb.TagNumber(11)
   void clearStatus() => clearField(11);
 
-  @$pb.TagNumber(12)
-  $core.List<$core.String> get projectIds => $_getList(10);
+  @$pb.TagNumber(13)
+  $core.List<OutputMarker> get outputMarkers => $_getList(10);
 }
 
 class GroupEvaluation extends $pb.GeneratedMessage {
@@ -4395,41 +4395,31 @@ class MaterialType extends $pb.GeneratedMessage {
 class Output extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Output', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'projectId')
-    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'markerId')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'markerName')
     ..aOM<$2.Date>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'month', subBuilder: $2.Date.create)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
+    ..aOM<OutputMarker>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outputMarker', subBuilder: OutputMarker.create)
     ..hasRequiredFields = false
   ;
 
   Output._() : super();
   factory Output({
     $core.String? groupId,
-    $core.String? projectId,
-    $core.String? markerId,
-    $core.String? markerName,
     $2.Date? month,
     $fixnum.Int64? value,
+    OutputMarker? outputMarker,
   }) {
     final _result = create();
     if (groupId != null) {
       _result.groupId = groupId;
-    }
-    if (projectId != null) {
-      _result.projectId = projectId;
-    }
-    if (markerId != null) {
-      _result.markerId = markerId;
-    }
-    if (markerName != null) {
-      _result.markerName = markerName;
     }
     if (month != null) {
       _result.month = month;
     }
     if (value != null) {
       _result.value = value;
+    }
+    if (outputMarker != null) {
+      _result.outputMarker = outputMarker;
     }
     return _result;
   }
@@ -4463,52 +4453,111 @@ class Output extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearGroupId() => clearField(1);
 
+  @$pb.TagNumber(5)
+  $2.Date get month => $_getN(1);
+  @$pb.TagNumber(5)
+  set month($2.Date v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasMonth() => $_has(1);
+  @$pb.TagNumber(5)
+  void clearMonth() => clearField(5);
+  @$pb.TagNumber(5)
+  $2.Date ensureMonth() => $_ensure(1);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get value => $_getI64(2);
+  @$pb.TagNumber(6)
+  set value($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasValue() => $_has(2);
+  @$pb.TagNumber(6)
+  void clearValue() => clearField(6);
+
+  @$pb.TagNumber(7)
+  OutputMarker get outputMarker => $_getN(3);
+  @$pb.TagNumber(7)
+  set outputMarker(OutputMarker v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasOutputMarker() => $_has(3);
+  @$pb.TagNumber(7)
+  void clearOutputMarker() => clearField(7);
+  @$pb.TagNumber(7)
+  OutputMarker ensureOutputMarker() => $_ensure(3);
+}
+
+class OutputMarker extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'OutputMarker', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'projectId')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'markerId')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'markerName')
+    ..hasRequiredFields = false
+  ;
+
+  OutputMarker._() : super();
+  factory OutputMarker({
+    $core.String? projectId,
+    $core.String? markerId,
+    $core.String? markerName,
+  }) {
+    final _result = create();
+    if (projectId != null) {
+      _result.projectId = projectId;
+    }
+    if (markerId != null) {
+      _result.markerId = markerId;
+    }
+    if (markerName != null) {
+      _result.markerName = markerName;
+    }
+    return _result;
+  }
+  factory OutputMarker.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory OutputMarker.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  OutputMarker clone() => OutputMarker()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  OutputMarker copyWith(void Function(OutputMarker) updates) => super.copyWith((message) => updates(message as OutputMarker)) as OutputMarker; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static OutputMarker create() => OutputMarker._();
+  OutputMarker createEmptyInstance() => create();
+  static $pb.PbList<OutputMarker> createRepeated() => $pb.PbList<OutputMarker>();
+  @$core.pragma('dart2js:noInline')
+  static OutputMarker getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<OutputMarker>(create);
+  static OutputMarker? _defaultInstance;
+
   @$pb.TagNumber(2)
-  $core.String get projectId => $_getSZ(1);
+  $core.String get projectId => $_getSZ(0);
   @$pb.TagNumber(2)
-  set projectId($core.String v) { $_setString(1, v); }
+  set projectId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(2)
-  $core.bool hasProjectId() => $_has(1);
+  $core.bool hasProjectId() => $_has(0);
   @$pb.TagNumber(2)
   void clearProjectId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get markerId => $_getSZ(2);
+  $core.String get markerId => $_getSZ(1);
   @$pb.TagNumber(3)
-  set markerId($core.String v) { $_setString(2, v); }
+  set markerId($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(3)
-  $core.bool hasMarkerId() => $_has(2);
+  $core.bool hasMarkerId() => $_has(1);
   @$pb.TagNumber(3)
   void clearMarkerId() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get markerName => $_getSZ(3);
+  $core.String get markerName => $_getSZ(2);
   @$pb.TagNumber(4)
-  set markerName($core.String v) { $_setString(3, v); }
+  set markerName($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(4)
-  $core.bool hasMarkerName() => $_has(3);
+  $core.bool hasMarkerName() => $_has(2);
   @$pb.TagNumber(4)
   void clearMarkerName() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $2.Date get month => $_getN(4);
-  @$pb.TagNumber(5)
-  set month($2.Date v) { setField(5, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasMonth() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearMonth() => clearField(5);
-  @$pb.TagNumber(5)
-  $2.Date ensureMonth() => $_ensure(4);
-
-  @$pb.TagNumber(6)
-  $fixnum.Int64 get value => $_getI64(5);
-  @$pb.TagNumber(6)
-  set value($fixnum.Int64 v) { $_setInt64(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasValue() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearValue() => clearField(6);
 }
 
 class RefreshSessionRequest extends $pb.GeneratedMessage {

@@ -21,7 +21,6 @@ class HiveDate extends Comparable {
     this.day = date.day;
   }
 
-  // TODO: for Dev only, to be removed
   HiveDate.create(int year, int month, int day) {
     this.year = year;
     this.month = month;
@@ -66,6 +65,12 @@ extension HiveDateExt on HiveDate {
   DateTime toDateTime() {
     String dateString = '${this.day}-${this.month}-${this.year}';
     return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy');
+  }
+
+  HiveDate get toMonth {
+    int currentMonth = this.month;
+    int currentYear = this.year;
+    return HiveDate.create(currentYear, currentMonth, 0);
   }
 
   // to get previous month and year
