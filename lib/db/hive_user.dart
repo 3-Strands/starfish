@@ -218,9 +218,7 @@ extension HiveUserExt on HiveUser {
     if (action.dateDue == null || !action.hasValidDueDate) {
       return ActionStatus.NOT_DONE;
     } else if (action.dateDue != null &&
-        action.dateDue!
-            .toDateTime()
-            .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+        action.dateDue!.isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
       return ActionStatus.OVERDUE;
     } else {
       return ActionStatus.NOT_DONE;
