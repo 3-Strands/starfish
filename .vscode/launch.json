@@ -36,6 +36,18 @@
                 "prod",
                 "--no-sound-null-safety"
             ]
+        },
+        {
+            "name": "Chrome Production",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_prod.dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--no-sound-null-safety",
+                "-d", "chrome"
+            ]
         }
     ],
 }
