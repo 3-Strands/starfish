@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +18,7 @@ import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
+import 'package:starfish/wrappers/file_system.dart';
 
 class ResultTransformationsWidget extends StatefulWidget {
   HiveGroupUser groupUser;
@@ -256,8 +255,7 @@ class _ResultTransformationsWidgetState
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          file,
+                        child: file.getImagePreview(
                           fit: BoxFit.scaleDown,
                           //  height: 130.h,
                         ),

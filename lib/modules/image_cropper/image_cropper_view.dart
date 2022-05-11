@@ -8,7 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ImageCropperScreen extends StatefulWidget {
   final File? sourceImage;
-  final Function(File?) onDone;
+  final void Function(File?) onDone;
 
   ImageCropperScreen({
     Key? key,

@@ -118,7 +118,7 @@ class _StarfishState extends State<Starfish> {
 
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder: () => Provider(
+      builder: (_) => Provider(
         child: app,
       ),
     );
