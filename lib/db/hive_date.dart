@@ -84,4 +84,20 @@ extension HiveDateExt on HiveDate {
       return HiveDate.create(currentYear - 1, 12, 0);
     }
   }
+
+  bool isOnOrAfter(HiveDate other) {
+    return compareTo(other) == 0 || compareTo(other) == 1;
+  }
+
+  bool isOnOrBefore(HiveDate other) {
+    return compareTo(other) == 0 || compareTo(other) == -1;
+  }
+
+  bool isAfter(HiveDate other) {
+    return compareTo(other) == 1;
+  }
+
+  bool isBefore(HiveDate other) {
+    return compareTo(other) == -1;
+  }
 }

@@ -71,7 +71,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   child: Container(
                     alignment: Alignment.centerLeft,
                     height: 52.h,
-                    width: 345.w,
+                    //width: 345.w,
                     padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
                     margin: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
@@ -143,6 +143,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                   height: 10.h,
                                 ),
                                 _buildFeedbackFromTeachers(
+                                    hiveGroupUser: _hiveGroupUser,
                                     learnerId: currentUser.id,
                                     groupId: _hiveGroup.id!,
                                     month: bloc.resultsBloc.hiveDate!),
@@ -311,7 +312,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   }
 
   Widget _buildFeedbackFromTeachers(
-      {required String learnerId,
+      {required HiveGroupUser hiveGroupUser,
+      required String learnerId,
       required String groupId,
       required HiveDate month}) {
     List<HiveTeacherResponse> _feedbacksFromTeachers = TeacherResponseProvider()
@@ -416,9 +418,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             ),
             if (bloc.resultsBloc.hiveGroupUser != null)
               _buildCurrentEvaluationWidget(
-                bloc.resultsBloc.hiveGroupUser!
-                    .getLearnerEvaluationsByCategoryForMoth(
-                        bloc.resultsBloc.hiveDate!),
+                hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(
+                    bloc.resultsBloc.hiveDate!),
               ),
             SizedBox(
               height: 10.h,

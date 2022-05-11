@@ -37,8 +37,6 @@ class ResultTransformationsWidget extends StatefulWidget {
 
 class _ResultTransformationsWidgetState
     extends State<ResultTransformationsWidget> {
-  //late AppBloc bloc;
-  //TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
   List<File> _selectedFiles = [];
   bool _isEditMode = false;
@@ -53,14 +51,13 @@ class _ResultTransformationsWidgetState
         widget.groupUser.getTransformationForMonth(widget.month);
 
     if (_hiveTransformation != null) {
+      _isEditMode = true;
       _transformationController.text = _hiveTransformation!.impactStory!;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //bloc = Provider.of(context);
-    //bloc.resultsBloc.init();
     return Card(
       color: Color(0xE6EFEFEF),
       elevation: 4,
@@ -125,16 +122,12 @@ class _ResultTransformationsWidgetState
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
                 onFocusChange: (isFocused) {
-                  debugPrint("Has focus: $isFocused");
                   if (isFocused) {
                     return;
                   }
                   if (_transformationController.text.length > 0) {
                     _saveTransformation(
                         _transformationController.text, _selectedFiles);
-
-                    // TODO: Save images here
-
                   }
                 },
               ),
@@ -149,7 +142,10 @@ class _ResultTransformationsWidgetState
 
             // Add Materials
 
-            if (_selectedFiles.isNotEmpty) _previewSelectedFiles(),
+            if (_selectedFiles.isNotEmpty ||
+                (_hiveTransformation != null &&
+                    _hiveTransformation!.localFiles.isNotEmpty))
+              _previewSelectedFiles(),
             SizedBox(height: 10.h),
             DottedBorder(
               borderType: BorderType.RRect,
@@ -160,7 +156,12 @@ class _ResultTransformationsWidgetState
                   height: 50.h,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if ((!_isEditMode && _selectedFiles.length >= 5)) {
+                      if ((!_isEditMode && _selectedFiles.length >= 5) ||
+                          (_isEditMode &&
+                              (_selectedFiles.length +
+                                      (_hiveTransformation!
+                                          .localFiles.length)) >=
+                                  5)) {
                         StarfishSnackbar.showErrorMessage(context,
                             AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
@@ -231,60 +232,83 @@ class _ResultTransformationsWidgetState
     );
   }
 
+  Widget _imagePreview({required File file, required Function onDelete}) {
+    return Stack(
+      alignment: AlignmentDirectional.topEnd,
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+          child: Container(
+            child: InkWell(
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ImagePreview(file))),
+              child: Hero(
+                tag: file,
+                child: Card(
+                  margin: const EdgeInsets.only(top: 12.0, right: 12.0),
+                  shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: file.getImagePreview(
+                      fit: BoxFit.scaleDown,
+                      //  height: 130.h,
+                    ),
+                  ),
+                ),
+                flightShuttleBuilder: (flightContext, animation, direction,
+                    fromContext, toContext) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            // setState(() {
+            //   _selectedFiles.remove(file);
+            // });
+            onDelete();
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.red,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
     for (File file in _selectedFiles) {
-      _widgetList.add(Expanded(
-        child: Stack(
-          alignment: AlignmentDirectional.topEnd,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.only(top: 10.0, right: 10.0),
-              child: Container(
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ImagePreview(file))),
-                  child: Hero(
-                    tag: file,
-                    child: Card(
-                      margin: const EdgeInsets.only(top: 12.0, right: 12.0),
-                      shape: BeveledRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: file.getImagePreview(
-                          fit: BoxFit.scaleDown,
-                          //  height: 130.h,
-                        ),
-                      ),
-                    ),
-                    flightShuttleBuilder: (flightContext, animation, direction,
-                        fromContext, toContext) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFiles.remove(file);
-                });
-              },
-              icon: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-            ),
-          ],
-        ),
-      ));
+      _widgetList.add(_imagePreview(
+          file: file,
+          onDelete: () {
+            setState(() {
+              _selectedFiles.remove(file);
+            });
+          }));
+    }
+
+    if (_hiveTransformation != null &&
+        _hiveTransformation!.localFiles.isNotEmpty) {
+      for (HiveFile _hiveFile in _hiveTransformation!.localFiles) {
+        File file = File(_hiveFile.filepath!);
+        _widgetList.add(_imagePreview(
+            file: file,
+            onDelete: () {
+              setState(() {
+                _hiveFile.delete();
+              });
+            }));
+      }
     }
 
     return GridView.count(
@@ -297,8 +321,6 @@ class _ResultTransformationsWidgetState
   }
 
   void _saveTransformation(String _impactStory, List<File> _files) {
-    //HiveTransformation? _transformation = widget.groupUser.getTransformationForMonth(widget.month);
-
     if (_hiveTransformation == null) {
       _hiveTransformation = HiveTransformation();
       _hiveTransformation!.id = UuidGenerator.uuid();

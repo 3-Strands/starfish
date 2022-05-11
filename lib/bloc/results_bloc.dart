@@ -49,7 +49,10 @@ class ResultsBloc extends Object {
         ? groupsWithAdminAndTeacherRole.first
         : null;
 
-    hiveGroupUser = hiveGroup?.learners?.first;
+    hiveGroupUser = hiveGroup != null &&
+            (hiveGroup!.learners != null && hiveGroup!.learners!.length > 0)
+        ? hiveGroup!.learners!.first
+        : null;
   }
 
   /*List<HiveGroup>? fetchGroupsWtihLeaderRole(

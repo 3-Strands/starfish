@@ -315,6 +315,7 @@ extension HiveGroupExt on HiveGroup {
     return count;
   }
 
+  // TODO: check if this is needed or not
   int get learnersEvaluationGood {
     int count = 0;
     this.groupActionList?.forEach((hiveAction) => count +=
@@ -322,6 +323,7 @@ extension HiveGroupExt on HiveGroup {
     return count;
   }
 
+// TODO: check if this is needed or not
   int get learnersEvaluationNotGood {
     int count = 0;
     this.groupActionList?.forEach((hiveAction) => count +=

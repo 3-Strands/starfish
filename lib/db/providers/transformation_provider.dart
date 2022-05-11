@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_transformation.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
 class TransformationProvider {
   late Box<HiveTransformation> _transformationBox;
@@ -55,5 +56,13 @@ class TransformationProvider {
         _fileBox.add(file);
       }
     });
+  }
+
+  List<HiveFile> getFiles() {
+    return _fileBox.values
+        .where((element) =>
+            EntityType.valueOf(element.entityType!) ==
+            EntityType.TRANSFORMATION)
+        .toList();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
 import 'package:starfish/db/hive_action.dart';
@@ -256,19 +257,25 @@ extension HiveGroupUserExt on HiveGroupUser {
 
   int getActionsNotCompletedInMonth(HiveDate month) {
     int count = 0;
-    this
-        .actions
-        ?.where((element) => element.isDueInMonth(month))
-        .forEach((hiveAction) {
+    this.actions?.where((element) {
+      //debugPrint("Action: ${element}");
+      return element.isDueInMonth(month);
+    }).forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
-      if (_hiveActionUser != null &&
+      // These are the 'UserActions' for which user have not actully made input yet,
+      // but as the action is already assigned, we are considering them NOT_DONE,
+      // if due date is not yet over
+      if (_hiveActionUser == null &&
+          hiveAction.dateDue!
+              .isOnOrAfter(DateTimeUtils.toHiveDate(DateTime.now()))) {
+        count++;
+      } else if (_hiveActionUser != null &&
           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
               ActionStatus.NOT_DONE &&
           hiveAction.dateDue!
-              .toDateTime()
-              .isAfter(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+              .isOnOrAfter(DateTimeUtils.toHiveDate(DateTime.now()))) {
         count++;
       }
     });
@@ -285,11 +292,20 @@ extension HiveGroupUserExt on HiveGroupUser {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
-      if (_hiveActionUser != null &&
+      // These are the 'UserActions' for which user have not actully made input yet,
+      // but as the action is already assigned, we are considering them NOT_DONE,
+      // if due date is not yet over
+      debugPrint(
+          "Due[${this.user!.name}] | ${hiveAction.dateDue} | ${hiveAction.name} | ${hiveAction.dateDue!.isAfter(DateTimeUtils.toHiveDate(DateTime.now()))}");
+      if (_hiveActionUser == null &&
+          hiveAction.dateDue!
+              .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
+        count++;
+      } else if (_hiveActionUser != null &&
           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
               ActionStatus.NOT_DONE &&
-          hiveAction.dateDue!.toDateTime().isBefore(
-              DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+          hiveAction.dateDue!
+              .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
         count++;
       }
     });
