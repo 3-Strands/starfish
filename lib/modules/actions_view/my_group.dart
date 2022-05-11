@@ -586,7 +586,8 @@ class _MyGroupState extends State<MyGroup> {
                                       children: [
                                         if (action.material != null &&
                                             action.material!.url != null &&
-                                            action.material!.url!.isNotEmpty && !action.material!.isDirty)
+                                            action.material!.url!.isNotEmpty &&
+                                            !action.material!.isDirty)
                                           MaterialLinkButton(
                                             icon: Icon(
                                               Icons.open_in_new,
@@ -621,7 +622,8 @@ class _MyGroupState extends State<MyGroup> {
                           if (action.type == Action_Type.TEXT_RESPONSE.value ||
                               action.type ==
                                       Action_Type.MATERIAL_RESPONSE.value &&
-                               (action.material != null &&   !action.material!.isDirty))
+                                  (action.material != null &&
+                                      !action.material!.isDirty))
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -875,8 +877,8 @@ class _MyGroupState extends State<MyGroup> {
   Widget materialList(HiveAction hiveAction) {
     if (hiveAction.material == null ||
         (hiveAction.material != null &&
-            hiveAction.material!.files != null &&
-            hiveAction.material!.files!.length == 0 ||
+                hiveAction.material!.files != null &&
+                hiveAction.material!.files!.length == 0 ||
             hiveAction.material!.isDirty)) {
       return Container();
     }
@@ -933,6 +935,11 @@ class MyGroupActionListItem extends StatelessWidget {
             countActionStatusNotDone +
             countActionStatusOverdue) >
         0;
+
+    int _thumbsUp = action.learnerCountByEvaluation(ActionUser_Evaluation.GOOD);
+    int _thumbsDown =
+        action.learnerCountByEvaluation(ActionUser_Evaluation.BAD);
+    int _totalLearners = action.learners != null ? action.learners!.length : 1;
 
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
@@ -1157,7 +1164,59 @@ class MyGroupActionListItem extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 5,
+                height: 10.h,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${(_thumbsUp / _totalLearners).round() * 100}% learners',
+                              style: TextStyle(
+                                fontFamily: 'OpenSans',
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF000000),
+                              ),
+                            ),
+                            Icon(Icons.thumb_up),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${(_thumbsDown / _totalLearners).round() * 100}% learners',
+                              style: TextStyle(
+                                fontFamily: 'OpenSans',
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF000000),
+                              ),
+                            ),
+                            Icon(Icons.thumb_down),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
               ),
               Align(
                 alignment: Alignment.topRight,
