@@ -23,7 +23,7 @@ downloadMaterial(HiveFile hiveFile, { required DoneCallback<String> onDone, requ
       .apiProvider
       .downloadFile(Stream.value(DownloadRequest(
           entityId: hiveFile.entityId,
-          entityType: EntityType.MATERIAL,
+          entityType: EntityType.valueOf(hiveFile.entityType!),
           filenames: [hiveFile.filename!].toList())))
       .then((responseStream) {
     responseStream.listen((DownloadResponse fileData) async {
