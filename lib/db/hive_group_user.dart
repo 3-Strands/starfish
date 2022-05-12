@@ -295,8 +295,6 @@ extension HiveGroupUserExt on HiveGroupUser {
       // These are the 'UserActions' for which user have not actully made input yet,
       // but as the action is already assigned, we are considering them NOT_DONE,
       // if due date is not yet over
-      debugPrint(
-          "Due[${this.user!.name}] | ${hiveAction.dateDue} | ${hiveAction.name} | ${hiveAction.dateDue!.isAfter(DateTimeUtils.toHiveDate(DateTime.now()))}");
       if (_hiveActionUser == null &&
           hiveAction.dateDue!
               .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
