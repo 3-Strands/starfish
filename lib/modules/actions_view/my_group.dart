@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:intl/intl.dart';
@@ -1177,9 +1178,15 @@ class MyGroupActionListItem extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '${(_thumbsUp / _totalLearners).round() * 100}% learners',
+                              AppLocalizations.of(context)!
+                                  .voteByLearners
+                                  .insertTemplateValues({
+                                'votes':
+                                    ((_thumbsUp / _totalLearners) * 100).round()
+                              }),
                               style: TextStyle(
                                 fontFamily: 'OpenSans',
                                 fontSize: 17.sp,
@@ -1187,7 +1194,11 @@ class MyGroupActionListItem extends StatelessWidget {
                                 color: Color(0xFF000000),
                               ),
                             ),
-                            Icon(Icons.thumb_up),
+                            SvgPicture.asset(
+                              'assets/images/thumbs_up_solid.svg',
+                              height: 22.h,
+                              width: 22.w,
+                            ),
                           ],
                         ),
                       ),
@@ -1197,9 +1208,16 @@ class MyGroupActionListItem extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '${(_thumbsDown / _totalLearners).round() * 100}% learners',
+                              AppLocalizations.of(context)!
+                                  .voteByLearners
+                                  .insertTemplateValues({
+                                'votes': ((_thumbsDown / _totalLearners) * 100)
+                                    .round()
+                                    .round()
+                              }),
                               style: TextStyle(
                                 fontFamily: 'OpenSans',
                                 fontSize: 17.sp,
@@ -1207,7 +1225,11 @@ class MyGroupActionListItem extends StatelessWidget {
                                 color: Color(0xFF000000),
                               ),
                             ),
-                            Icon(Icons.thumb_down),
+                            SvgPicture.asset(
+                              'assets/images/thumbs_down_solid.svg',
+                              height: 22.h,
+                              width: 22.w,
+                            ),
                           ],
                         ),
                       ),
