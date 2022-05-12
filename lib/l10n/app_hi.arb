@@ -416,6 +416,5 @@
   "feedbackFromGroupTeacher":"समूह शिक्षक से प्रतिक्रिया",
   "howDoYouFeelAboutThisGroup":"आप इस समूह के बारे में कैसा महसूस करते हैं?",
   "voteByLearners": "{{votes}}% शिक्षार्थियों",
-   "imageSizeValidation" : "छवि का आकार 5 एमबी से बड़ा है
-"
+   "imageSizeValidation" : "छवि का आकार 5 एमबी से बड़ा है"
 }
