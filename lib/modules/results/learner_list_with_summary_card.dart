@@ -139,6 +139,7 @@ class LearnerSummary extends StatelessWidget {
                   height: 15.h,
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "${AppLocalizations.of(context)!.transformations}: ",
@@ -151,7 +152,15 @@ class LearnerSummary extends StatelessWidget {
                     Expanded(
                       child: Container(
                         child: Text(
-                          "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
+                          //  "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
+                          (hiveGroupUser
+                                          .getTransformationForMonth(month)
+                                          ?.impactStory
+                                          ?.length ??
+                                      0) >
+                                  25
+                              ? "${hiveGroupUser.getTransformationForMonth(month)?.impactStory?.substring(0, 25) ?? ''}..."
+                              : "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
                           style: TextStyle(
                             fontFamily: "OpenSans",
                             fontSize: 17.sp,
@@ -159,7 +168,7 @@ class LearnerSummary extends StatelessWidget {
                             color: Color(0xFF4F4F4F),
                           ),
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                          maxLines: 2,
                         ),
                       ),
                     )
