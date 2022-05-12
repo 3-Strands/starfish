@@ -177,7 +177,9 @@ class HiveGroup extends HiveObject {
               element.role;
         } else if (this.users!.contains(element) && element.isDirty) {
           _users.remove(element);
-        } else if (!this.users!.contains(element)) {
+        } else if (!this.users!.contains(element) &&
+            (element.isNew && element.user != null)) {
+          // TODO: replace '(element.isNew && element.user != null)' hack to prevend 'Unknown Users'
           _users.add(element);
         }
       });
