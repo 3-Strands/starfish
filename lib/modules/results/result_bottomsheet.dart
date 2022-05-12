@@ -360,7 +360,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               child: FocusableTextField(
                 controller: _teacherFeedbackController,
                 keyboardType: TextInputType.text,
+                maxCharacters: 200,
                 decoration: InputDecoration(
+                  counterText: "",
                   hintText: "",
                   hintStyle: TextStyle(
                     fontFamily: "OpenSans",
@@ -374,9 +376,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   if (isFocused) {
                     return;
                   }
-                  if (_teacherFeedbackController.text.length > 0) {
-                    _saveTeacherFeedback();
-                  }
+
+                  _saveTeacherFeedback();
                 },
               ),
             ),
