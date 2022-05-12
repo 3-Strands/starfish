@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -162,8 +163,9 @@ class _ResultTransformationsWidgetState
                                       (_hiveTransformation!
                                           .localFiles.length)) >=
                                   5)) {
-                        StarfishSnackbar.showErrorMessage(context,
-                            AppLocalizations.of(context)!.maxFilesSelected);
+                        Fluttertoast.showToast(
+                            msg:
+                                AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
                         FilePickerResult? result =
                             await FilePicker.platform.pickFiles(
@@ -174,22 +176,30 @@ class _ResultTransformationsWidgetState
 
                         if (result != null) {
                           // if single selected file is IMAGE, open image in Cropper
+
                           if (result.count == 1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ImageCropperScreen(
-                                  sourceImage: File(result.paths.first!),
-                                  onDone: (File? _newFile) {
-                                    if (_newFile == null) {
-                                      return;
-                                    }
-
-                                    setState(() {
-                                      _selectedFiles.add(_newFile);
-                                    });
-                                  },
-                                ),
+                                    sourceImage: File(result.paths.first!),
+                                    onDone: (File? _newFile) {
+                                      if (_newFile == null) {
+                                        return;
+                                      }
+                                      var fileSize = _newFile
+                                          .readAsBytesSync()
+                                          .lengthInBytes;
+                                      if (fileSize > 5 * 1024 * 1024) {
+                                        Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .imageSizeValidation);
+                                      } else {
+                                        setState(() {
+                                          _selectedFiles.add(_newFile);
+                                        });
+                                      }
+                                    }),
                               ),
                             ).then((value) => {
                                   // Handle cropped image here
