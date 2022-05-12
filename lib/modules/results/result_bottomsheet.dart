@@ -86,6 +86,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         '';
     return Container(
       height: MediaQuery.of(context).size.height * 0.80,
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         children: [
           Expanded(
