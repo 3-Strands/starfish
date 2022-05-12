@@ -744,8 +744,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         .getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
             _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
 
-    double _value =
-        _evaluation != null ? _evaluation.evaluation!.toDouble() : 3.0;
+    double _value = _evaluation != null &&
+            1 <= _evaluation.evaluation! &&
+            _evaluation.evaluation! <= 5
+        ? _evaluation.evaluation!.toDouble()
+        : 3.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
