@@ -181,8 +181,7 @@ class SummaryForAllLearners extends StatelessWidget {
               thickness: 1,
             ),
           ),
-          if (hiveGroup.groupEvaluationCategories != null &&
-              hiveGroup.groupEvaluationCategories!.length > 0) ...[
+          if (hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
             Center(
               child: Text(
                 "${AppLocalizations.of(context)!.averages}",

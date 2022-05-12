@@ -275,7 +275,7 @@ extension HiveGroupExt on HiveGroup {
     return ActionProvider().getGroupActions(this.id!);
   }
 
-  List<HiveEvaluationCategory>? get groupEvaluationCategories {
+  List<HiveEvaluationCategory> get groupEvaluationCategories {
     List<HiveEvaluationCategory> _categoryies = [];
     this.evaluationCategoryIds?.forEach((e) {
       HiveEvaluationCategory? _category =

@@ -125,10 +125,9 @@ class _ResultTransformationsWidgetState
                   if (isFocused) {
                     return;
                   }
-                  if (_transformationController.text.length > 0) {
-                    _saveTransformation(
-                        _transformationController.text, _selectedFiles);
-                  }
+
+                  _saveTransformation(
+                      _transformationController.text, _selectedFiles);
                 },
               ),
             ),
@@ -187,8 +186,6 @@ class _ResultTransformationsWidgetState
 
                                     setState(() {
                                       _selectedFiles.add(_newFile);
-                                      print(
-                                          'pathhhhhhh${_selectedFiles[0].path}');
                                     });
                                   },
                                 ),

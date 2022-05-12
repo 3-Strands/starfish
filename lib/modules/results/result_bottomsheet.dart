@@ -86,6 +86,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         '';
     return Container(
       height: MediaQuery.of(context).size.height * 0.80,
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         children: [
           Expanded(
@@ -381,63 +383,29 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             SizedBox(
               height: 20.h,
             ),
-            if (widget.hiveGroup.groupEvaluationCategories != null)
+            if (widget.hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
               ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: widget.hiveGroup.groupEvaluationCategories?.length,
+                  itemCount: widget.hiveGroup.groupEvaluationCategories.length,
                   itemBuilder: (context, index) {
                     HiveEvaluationCategory _category = widget
-                        .hiveGroup.groupEvaluationCategories!
+                        .hiveGroup.groupEvaluationCategories
                         .elementAt(index);
                     return _buildCategorySlider(_category);
                   }),
-            SizedBox(
-              height: 20.h,
-            ),
-            widgets.StatefulBuilder(
-              builder: (BuildContext context, StateSetter setModalState) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Visibility(
-                      visible: isViewCategoryEvalutionHistory,
-                      child: Text(
-                        '${AppLocalizations.of(context)!.currentEvaluation}',
-                        style: TextStyle(
-                          fontFeatures: [FontFeature.subscripts()],
-                          color: Color(0xFF434141),
-                          fontFamily: "OpenSans",
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Visibility(
+              SizedBox(
+                height: 20.h,
+              ),
+              widgets.StatefulBuilder(
+                builder: (BuildContext context, StateSetter setModalState) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Visibility(
                         visible: isViewCategoryEvalutionHistory,
-                        child: SizedBox(
-                          height: 10.h,
-                        )),
-                    Visibility(
-                      visible: isViewCategoryEvalutionHistory,
-                      child: _buildCurrentEvaluationWidget(
-                        bloc.resultsBloc.hiveGroupUser!
-                            .getLearnerEvaluationsByCategoryForMoth(
-                                bloc.resultsBloc.hiveDate!),
-                      ),
-                    ),
-                    Visibility(
-                      visible: isViewCategoryEvalutionHistory,
-                      child: SizedBox(
-                        height: 20.h,
-                      ),
-                    ),
-                    Visibility(
-                      visible: isViewCategoryEvalutionHistory,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
                         child: Text(
-                          '${AppLocalizations.of(context)!.history}',
+                          '${AppLocalizations.of(context)!.currentEvaluation}',
                           style: TextStyle(
                             fontFeatures: [FontFeature.subscripts()],
                             color: Color(0xFF434141),
@@ -445,43 +413,78 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                             fontSize: 19.sp,
                             fontWeight: FontWeight.bold,
                           ),
-                          textAlign: TextAlign.left,
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Visibility(
+                      Visibility(
+                          visible: isViewCategoryEvalutionHistory,
+                          child: SizedBox(
+                            height: 10.h,
+                          )),
+                      Visibility(
                         visible: isViewCategoryEvalutionHistory,
-                        child: _buildCategoryHistoryWidget()),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          isViewCategoryEvalutionHistory =
-                              !isViewCategoryEvalutionHistory;
-                        });
-                      },
-                      child: Center(
-                        child: Text(
-                          isViewCategoryEvalutionHistory
-                              ? '${AppLocalizations.of(context)!.hideHistory}'
-                              : '${AppLocalizations.of(context)!.viewHistory}',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontFamily: "Open",
-                            color: Color(0xFF3475F0),
+                        child: _buildCurrentEvaluationWidget(
+                          bloc.resultsBloc.hiveGroupUser!
+                              .getLearnerEvaluationsByCategoryForMoth(
+                                  bloc.resultsBloc.hiveDate!),
+                        ),
+                      ),
+                      Visibility(
+                        visible: isViewCategoryEvalutionHistory,
+                        child: SizedBox(
+                          height: 20.h,
+                        ),
+                      ),
+                      Visibility(
+                        visible: isViewCategoryEvalutionHistory,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '${AppLocalizations.of(context)!.history}',
+                            style: TextStyle(
+                              fontFeatures: [FontFeature.subscripts()],
+                              color: Color(0xFF434141),
+                              fontFamily: "OpenSans",
+                              fontSize: 19.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
                         ),
                       ),
-                    )
-                  ],
-                );
-              },
-            ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Visibility(
+                          visible: isViewCategoryEvalutionHistory,
+                          child: _buildCategoryHistoryWidget()),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            isViewCategoryEvalutionHistory =
+                                !isViewCategoryEvalutionHistory;
+                          });
+                        },
+                        child: Center(
+                          child: Text(
+                            isViewCategoryEvalutionHistory
+                                ? '${AppLocalizations.of(context)!.hideHistory}'
+                                : '${AppLocalizations.of(context)!.viewHistory}',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontFamily: "Open",
+                              color: Color(0xFF3475F0),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
+            ],
             SizedBox(
               height: 20.h,
             )
@@ -744,8 +747,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         .getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
             _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
 
-    double _value =
-        _evaluation != null ? _evaluation.evaluation!.toDouble() : 3.0;
+    double _value = _evaluation != null &&
+            1 <= _evaluation.evaluation! &&
+            _evaluation.evaluation! <= 5
+        ? _evaluation.evaluation!.toDouble()
+        : 3.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
