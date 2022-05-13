@@ -99,16 +99,16 @@ class _StarfishState extends State<Starfish> {
         builder: EasyLoading.init(
           builder: (context, widget) {
             ScreenUtil.setContext(context);
+            Widget wrapper = MediaQuery(
+              //Setting font does not change with system font size
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: widget!,
+            );
             if (Platform.isWeb) {
               ScreenUtil().uiSize = MediaQuery.of(context).size;
+              wrapper = ConstrainCenter(child: wrapper);
             }
-            return ConstrainCenter(
-              child: MediaQuery(
-                //Setting font does not change with system font size
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                child: widget!,
-              ),
-            );
+            return wrapper;
           },
         ),
       )
