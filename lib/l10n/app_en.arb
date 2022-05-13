@@ -373,7 +373,7 @@
   "overdue": "Overdue",
   "summaryForAllLearners" : "Summary for all Learners",
   "feelingAboutTheGroup" : "Feeling about the Group",
-  "averages" : "Averages",
+  "averages" : "Evaluation Averages",
   "projectReportFor" : "Project Report for",
   "markers" : "Markers",
   "actuals" : "Actuals",
@@ -411,6 +411,7 @@
   "reslutCompleteActionHelpText" : "To complete more Actions, go to Actions screen",
   "feedbackFromGroupTeacher" : "Feedback from Group Teacher",
   "howDoYouFeelAboutThisGroup": "How do you feel about this Group?",
-  "voteByLearners": "{{votes}}% learners"
+  "voteByLearners": "{{votes}}% learners",
+  "imageSizeValidation" : "Image size is larger then 5 MB"
   
 }

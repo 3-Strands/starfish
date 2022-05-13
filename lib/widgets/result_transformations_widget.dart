@@ -4,18 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_transformation.dart';
-import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
-import 'package:starfish/src/generated/file_transfer.pb.dart';
-import 'package:starfish/utils/helpers/snackbar.dart';
-import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/wrappers/file_system.dart';
@@ -23,11 +18,15 @@ import 'package:starfish/wrappers/file_system.dart';
 class ResultTransformationsWidget extends StatefulWidget {
   HiveGroupUser groupUser;
   HiveDate month;
+  HiveTransformation? hiveTransformation;
+  Function(String, List<File>) onChange;
 
   ResultTransformationsWidget({
     Key? key,
     required this.groupUser,
     required this.month,
+    this.hiveTransformation,
+    required this.onChange,
   }) : super(key: key);
 
   @override
@@ -41,23 +40,33 @@ class _ResultTransformationsWidgetState
   List<File> _selectedFiles = [];
   bool _isEditMode = false;
 
-  HiveTransformation? _hiveTransformation;
+  
 
-  @override
-  void initState() {
-    super.initState();
+  // @override
+  // void initState() {
+  //   super.initState();
 
-    _hiveTransformation =
-        widget.groupUser.getTransformationForMonth(widget.month);
+  //   // _hiveTransformation =
+  //   //     widget.groupUser.getTransformationForMonth(widget.month);
+  //   if (widget.hiveTransformation != null &&
+  //       widget.hiveTransformation!.impactStory != null) {
+  //     _isEditMode = true;
 
-    if (_hiveTransformation != null) {
-      _isEditMode = true;
-      _transformationController.text = _hiveTransformation!.impactStory!;
-    }
-  }
+  //     _transformationController.text = widget.hiveTransformation!.impactStory!;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.hiveTransformation != null &&
+        widget.hiveTransformation!.impactStory != null) {
+      _isEditMode = true;
+
+      _transformationController.text = widget.hiveTransformation!.impactStory!;
+    } else {
+      _transformationController.text = "";
+    }
+
     return Card(
       color: Color(0xE6EFEFEF),
       elevation: 4,
@@ -125,9 +134,9 @@ class _ResultTransformationsWidgetState
                   if (isFocused) {
                     return;
                   }
-
-                  _saveTransformation(
-                      _transformationController.text, _selectedFiles);
+                },
+                onChange: (String value) {
+                  widget.onChange(value, _selectedFiles);
                 },
               ),
             ),
@@ -142,8 +151,8 @@ class _ResultTransformationsWidgetState
             // Add Materials
 
             if (_selectedFiles.isNotEmpty ||
-                (_hiveTransformation != null &&
-                    _hiveTransformation!.localFiles.isNotEmpty))
+                (widget.hiveTransformation != null &&
+                    widget.hiveTransformation!.localFiles.isNotEmpty))
               _previewSelectedFiles(),
             SizedBox(height: 10.h),
             DottedBorder(
@@ -158,11 +167,12 @@ class _ResultTransformationsWidgetState
                       if ((!_isEditMode && _selectedFiles.length >= 5) ||
                           (_isEditMode &&
                               (_selectedFiles.length +
-                                      (_hiveTransformation!
-                                          .localFiles.length)) >=
+                                      (widget.hiveTransformation!.localFiles
+                                          .length)) >=
                                   5)) {
-                        StarfishSnackbar.showErrorMessage(context,
-                            AppLocalizations.of(context)!.maxFilesSelected);
+                        Fluttertoast.showToast(
+                            msg:
+                                AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
                         FilePickerResult? result =
                             await FilePicker.platform.pickFiles(
@@ -173,22 +183,33 @@ class _ResultTransformationsWidgetState
 
                         if (result != null) {
                           // if single selected file is IMAGE, open image in Cropper
+
                           if (result.count == 1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ImageCropperScreen(
-                                  sourceImage: File(result.paths.first!),
-                                  onDone: (File? _newFile) {
-                                    if (_newFile == null) {
-                                      return;
-                                    }
-
-                                    setState(() {
-                                      _selectedFiles.add(_newFile);
-                                    });
-                                  },
-                                ),
+                                    sourceImage: File(result.paths.first!),
+                                    onDone: (File? _newFile) {
+                                      if (_newFile == null) {
+                                        return;
+                                      }
+                                      var fileSize = _newFile
+                                          .readAsBytesSync()
+                                          .lengthInBytes;
+                                      if (fileSize > 5 * 1024 * 1024) {
+                                        Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .imageSizeValidation);
+                                      } else {
+                                        setState(() {
+                                          _selectedFiles.add(_newFile);
+                                        });
+                                        widget.onChange(
+                                            _transformationController.text,
+                                            _selectedFiles);
+                                      }
+                                    }),
                               ),
                             ).then((value) => {
                                   // Handle cropped image here
@@ -294,9 +315,9 @@ class _ResultTransformationsWidgetState
           }));
     }
 
-    if (_hiveTransformation != null &&
-        _hiveTransformation!.localFiles.isNotEmpty) {
-      for (HiveFile _hiveFile in _hiveTransformation!.localFiles) {
+    if (widget.hiveTransformation != null &&
+        widget.hiveTransformation!.localFiles.isNotEmpty) {
+      for (HiveFile _hiveFile in widget.hiveTransformation!.localFiles) {
         File file = File(_hiveFile.filepath!);
         _widgetList.add(_imagePreview(
             file: file,
@@ -311,45 +332,14 @@ class _ResultTransformationsWidgetState
     return GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: _selectedFiles.length == 1 ? 1 : 2,
+      crossAxisCount: (_selectedFiles.length == 1 &&
+                  widget.hiveTransformation!.localFiles.length == 0) ||
+              (widget.hiveTransformation!.localFiles.length == 1 &&
+                  _selectedFiles.length == 0)
+          ? 1
+          : 2,
       childAspectRatio: 1,
       children: _widgetList,
     );
-  }
-
-  void _saveTransformation(String _impactStory, List<File> _files) {
-    if (_hiveTransformation == null) {
-      _hiveTransformation = HiveTransformation();
-      _hiveTransformation!.id = UuidGenerator.uuid();
-      _hiveTransformation!.groupId = widget.groupUser.groupId;
-      _hiveTransformation!.userId = widget.groupUser.userId;
-      _hiveTransformation!.month = widget.month;
-      _hiveTransformation!.isNew = true;
-    } else {
-      _hiveTransformation!.isUpdated = true;
-    }
-    _hiveTransformation!.impactStory = _impactStory;
-
-    List<HiveFile> _transformationFiles = [];
-
-    _files.forEach((_file) {
-      _transformationFiles.add(HiveFile(
-        entityId: _hiveTransformation!.id,
-        entityType: EntityType.TRANSFORMATION.value,
-        filepath: _file.path,
-        filename: _file.path.split("/").last,
-        isSynced: false,
-      ));
-    });
-
-    TransformationProvider()
-        .createUpdateTransformation(_hiveTransformation!,
-            transformationFiles: _transformationFiles)
-        .then((value) {
-      debugPrint("Transformation saved.");
-      // save files also
-    }).onError((error, stackTrace) {
-      debugPrint("Failed to save Transformation");
-    });
   }
 }

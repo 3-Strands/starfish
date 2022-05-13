@@ -222,17 +222,23 @@ class LearnerSummary extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${AppLocalizations.of(context)!.feedback}: ",
-                      style: TextStyle(
-                          fontSize: 17.sp,
-                          fontFamily: "OpenSans ",
-                          color: Color(0xFF4F4F4F),
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.start,
+                    Baseline(
+                      baseline: 15,
+                      baselineType: TextBaseline.alphabetic,
+                      child: Text(
+                        "${AppLocalizations.of(context)!.feedback}: ",
+                        style: TextStyle(
+                            fontSize: 17.sp,
+                            fontFamily: "OpenSans ",
+                            color: Color(0xFF4F4F4F),
+                            fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                     Expanded(
-                      child: Container(
+                      child: Baseline(
+                        baseline: 15,
+                        baselineType: TextBaseline.alphabetic,
                         child: Text(
                           (hiveGroupUser
                                           .getTeacherResponseForMonth(month)
@@ -281,15 +287,16 @@ class LearnerSummary extends StatelessWidget {
           category.name!,
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
-          Color(0xFF797979)));
+          Color(0xFF797979),
+          countByMonth["last-month"] == 0));
     });
     return Row(
       children: _categoryWidgets,
     );
   }
 
-  Widget _buildCategoryStatics(
-      int count, String categoryName, int changeInCount, Color textColor) {
+  Widget _buildCategoryStatics(int count, String categoryName,
+      int changeInCount, Color textColor, bool hideGrowthIndicator) {
     return Expanded(
       child: Container(
         child: Padding(
@@ -310,11 +317,12 @@ class LearnerSummary extends StatelessWidget {
                         fontSize: 30.sp,
                         fontWeight: FontWeight.bold),
                   ),
-                  Image.asset(
-                    changeInCount > 0
-                        ? AssetsPath.arrowUpIcon
-                        : AssetsPath.arrowDownIcon,
-                  ),
+                  if (changeInCount != 0 && !hideGrowthIndicator)
+                    Image.asset(
+                      changeInCount > 0
+                          ? AssetsPath.arrowUpIcon
+                          : AssetsPath.arrowDownIcon,
+                    ),
                 ],
               ),
               Text(

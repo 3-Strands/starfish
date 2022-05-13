@@ -4,19 +4,23 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 class FocusableTextField extends HookWidget {
   InputDecoration? decoration = InputDecoration();
   int? maxLines = 1;
+  int? maxCharacters;
   TextInputAction? textInputAction;
   TextInputType? keyboardType;
   TextEditingController? controller;
   Function(bool)? onFocusChange;
+  Function(String)? onChange;
 
   String? text;
   FocusableTextField({
     this.decoration,
+    this.maxCharacters,
     this.keyboardType,
     this.textInputAction,
     this.maxLines,
     this.controller,
     this.onFocusChange,
+    this.onChange,
   });
 
   @override
@@ -39,8 +43,13 @@ class FocusableTextField extends HookWidget {
       keyboardType: TextInputType.text,
       decoration: decoration,
       maxLines: maxLines,
+      maxLength: maxCharacters,
       textInputAction: textInputAction,
-      onChanged: (value) {},
+      onChanged: (value) {
+        if (onChange != null) {
+          onChange!(value);
+        }
+      },
     );
   }
 }

@@ -376,8 +376,8 @@
   "pending" : "लंबित",
   "overdue": "अतिदेय",
   "summaryForAllLearners" : "सभी शिक्षार्थियों के लिए सारांश",
-  "feelingAboutTheGroup" : "Group के बारे में महसूस कर रहा है",
-  "averages" : "औसत",
+  "feelingAboutTheGroup" : "समूह के बारे में भावना",
+  "averages" : "मूल्यांकन औसत",
   "projectReportFor" : "के लिए परियोजना रिपोर्ट",
   "markers" : "मार्करों",
   "Actuals" : "वास्तविक",
@@ -415,5 +415,6 @@
   "reslutCompleteActionHelpText":"अधिक क्रियाएँ पूर्ण करने के लिए, क्रियाएँ स्क्रीन पर जाएँ",
   "feedbackFromGroupTeacher":"समूह शिक्षक से प्रतिक्रिया",
   "howDoYouFeelAboutThisGroup":"आप इस समूह के बारे में कैसा महसूस करते हैं?",
-  "voteByLearners": "{{votes}}% शिक्षार्थियों"
+  "voteByLearners": "{{votes}}% शिक्षार्थियों",
+   "imageSizeValidation" : "छवि का आकार 5 एमबी से बड़ा है"
 }

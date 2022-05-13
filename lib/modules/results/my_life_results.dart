@@ -135,15 +135,15 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                ResultTransformationsWidget(
-                                  groupUser: _hiveGroupUser!,
-                                  month: bloc.resultsBloc.hiveDate!,
-                                ),
+                                // ResultTransformationsWidget(
+                                //   groupUser: _hiveGroupUser!,
+                                //   month: bloc.resultsBloc.hiveDate!,
+                                // ),
                                 SizedBox(
                                   height: 10.h,
                                 ),
                                 _buildFeedbackFromTeachers(
-                                    hiveGroupUser: _hiveGroupUser,
+                                    hiveGroupUser: _hiveGroupUser!,
                                     learnerId: currentUser.id,
                                     groupId: _hiveGroup.id!,
                                     month: bloc.resultsBloc.hiveDate!),
