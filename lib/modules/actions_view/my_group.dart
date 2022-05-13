@@ -872,7 +872,7 @@ class _MyGroupState extends State<MyGroup> {
           );
         });
       },
-    );
+    ).whenComplete(() => setState(() {}));
   }
 
   Widget materialList(HiveAction hiveAction) {
