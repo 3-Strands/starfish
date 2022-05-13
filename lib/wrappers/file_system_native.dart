@@ -151,6 +151,8 @@ class File {
 
   Future<Uint8List> readAsBytes() => _ioFile.readAsBytes();
 
+  Uint8List readAsBytesSync() => _ioFile.readAsBytesSync();
+
   Future<void> createWithContent(List<int> buffer) async {
      _ioFile.create(recursive: true);
 

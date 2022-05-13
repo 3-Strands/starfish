@@ -31,6 +31,7 @@ class File {
   }) => SizedBox();
 
   Future<Uint8List> readAsBytes() => throw Exception('Cannot read file');
+  Uint8List readAsBytesSync() => throw Exception('Cannot read file');
 
   Future<void> createWithContent(List<int> buffer) async {
     throw Exception('Cannot create/write file');
