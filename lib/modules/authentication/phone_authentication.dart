@@ -66,71 +66,57 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-          //   reverse: true,
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: 118.h),
-                        AppLogo(hight: 156.h, width: 163.w),
-                        SizedBox(height: 50.h),
-                        TitleLabel(
-                          title: AppLocalizations.of(context)!
-                              .phoneAuthenticationTitle,
-                          align: TextAlign.center,
-                        ),
-                        SizedBox(height: 30.h),
-                        ConstrainCenter(
-                          child: StreamBuilder(
-                            stream: _profileBloc.countries,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<HiveCountry>?> snapshot) {
-                              if (snapshot.hasData) {
-                                snapshot.data!
-                                    .sort((a, b) => a.name.compareTo(b.name));
-                                return SelectDropDown(
-                                  navTitle:
-                                      AppLocalizations.of(context)!.selectCountry,
-                                  placeholder:
-                                      AppLocalizations.of(context)!.selectCountry,
-                                  selectedValues: _selectedCountry,
-                                  dataSource: snapshot.data,
-                                  type: SelectType.single,
-                                  dataSourceType: DataSourceType.country,
-                                  onDoneClicked: <T>(country) {
-                                    setState(() {
-                                      _selectedCountry = country as HiveCountry;
-                                      _countryCodeController
-                                          .text = _selectedCountry.diallingCode
-                                              .startsWith("+")
-                                          ? _selectedCountry.diallingCode
-                                          : "+${_selectedCountry.diallingCode}";
-                                    });
-                                  },
-                                );
-                              } else {
-                                return Container();
-                              }
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 30.h),
-                        _phoneNumberContainer(),
-                        SizedBox(height: 5.h),
-                      ],
-                    ),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: footerHeight),
+          child: Center(
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              shrinkWrap: true,
+              children: <Widget>[
+                AppLogo(hight: 156.h, width: 163.w),
+                SizedBox(height: 50.h),
+                TitleLabel(
+                  title: AppLocalizations.of(context)!
+                      .phoneAuthenticationTitle,
+                  align: TextAlign.center,
+                ),
+                SizedBox(height: 30.h),
+                ConstrainCenter(
+                  child: StreamBuilder(
+                    stream: _profileBloc.countries,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<HiveCountry>?> snapshot) {
+                      if (snapshot.hasData) {
+                        snapshot.data!
+                            .sort((a, b) => a.name.compareTo(b.name));
+                        return SelectDropDown(
+                          navTitle:
+                              AppLocalizations.of(context)!.selectCountry,
+                          placeholder:
+                              AppLocalizations.of(context)!.selectCountry,
+                          selectedValues: _selectedCountry,
+                          dataSource: snapshot.data,
+                          type: SelectType.single,
+                          dataSourceType: DataSourceType.country,
+                          onDoneClicked: <T>(country) {
+                            setState(() {
+                              _selectedCountry = country as HiveCountry;
+                              _countryCodeController
+                                  .text = _selectedCountry.diallingCode
+                                      .startsWith("+")
+                                  ? _selectedCountry.diallingCode
+                                  : "+${_selectedCountry.diallingCode}";
+                            });
+                          },
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
                   ),
                 ),
-                // _footer(),
+                SizedBox(height: 30.h),
+                _phoneNumberContainer(),
               ],
             ),
           ),
@@ -144,28 +130,26 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   Widget _phoneNumberContainer() {
     return ConstrainCenter(
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 87.w,
-              child: _countryCodeField(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 87.w,
+            child: _countryCodeField(),
+          ),
+          SizedBox(width: 15.w),
+          Expanded(
+            flex: 1,
+            child: CustomPhoneNumber(
+              controller: _phoneNumberController,
+              onChanged: (text) {
+                setState(() {
+                  _isPhoneNumberEmpty = text.isEmpty;
+                });
+              },
             ),
-            SizedBox(width: 15.w),
-            Expanded(
-              flex: 1,
-              child: CustomPhoneNumber(
-                controller: _phoneNumberController,
-                onChanged: (text) {
-                  setState(() {
-                    _isPhoneNumberEmpty = text.isEmpty;
-                  });
-                },
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
@@ -205,9 +189,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
     );
   }
 
+  get footerHeight => 75.h;
+
   Container _footer() {
     return Container(
-      height: 75.h,
+      height: footerHeight,
       child: Container(
         color: AppColors.txtFieldBackground,
         child: Padding(

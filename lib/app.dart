@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/widgets/constrain_center.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:starfish/wrappers/window.dart';
 import 'config/routes/routes.dart';
@@ -101,10 +102,12 @@ class _StarfishState extends State<Starfish> {
             if (Platform.isWeb) {
               ScreenUtil().uiSize = MediaQuery.of(context).size;
             }
-            return MediaQuery(
-              //Setting font does not change with system font size
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-              child: widget!,
+            return ConstrainCenter(
+              child: MediaQuery(
+                //Setting font does not change with system font size
+                data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                child: widget!,
+              ),
             );
           },
         ),
