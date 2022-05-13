@@ -222,17 +222,23 @@ class LearnerSummary extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${AppLocalizations.of(context)!.feedback}: ",
-                      style: TextStyle(
-                          fontSize: 17.sp,
-                          fontFamily: "OpenSans ",
-                          color: Color(0xFF4F4F4F),
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.start,
+                    Baseline(
+                      baseline: 15,
+                      baselineType: TextBaseline.alphabetic,
+                      child: Text(
+                        "${AppLocalizations.of(context)!.feedback}: ",
+                        style: TextStyle(
+                            fontSize: 17.sp,
+                            fontFamily: "OpenSans ",
+                            color: Color(0xFF4F4F4F),
+                            fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                     Expanded(
-                      child: Container(
+                      child: Baseline(
+                        baseline: 15,
+                        baselineType: TextBaseline.alphabetic,
                         child: Text(
                           (hiveGroupUser
                                           .getTeacherResponseForMonth(month)
