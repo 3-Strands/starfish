@@ -281,15 +281,16 @@ class LearnerSummary extends StatelessWidget {
           category.name!,
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
-          Color(0xFF797979)));
+          Color(0xFF797979),
+          countByMonth["last-month"] == 0));
     });
     return Row(
       children: _categoryWidgets,
     );
   }
 
-  Widget _buildCategoryStatics(
-      int count, String categoryName, int changeInCount, Color textColor) {
+  Widget _buildCategoryStatics(int count, String categoryName,
+      int changeInCount, Color textColor, bool hideGrowthIndicator) {
     return Expanded(
       child: Container(
         child: Padding(
@@ -310,11 +311,12 @@ class LearnerSummary extends StatelessWidget {
                         fontSize: 30.sp,
                         fontWeight: FontWeight.bold),
                   ),
-                  Image.asset(
-                    changeInCount > 0
-                        ? AssetsPath.arrowUpIcon
-                        : AssetsPath.arrowDownIcon,
-                  ),
+                  if (changeInCount != 0 && !hideGrowthIndicator)
+                    Image.asset(
+                      changeInCount > 0
+                          ? AssetsPath.arrowUpIcon
+                          : AssetsPath.arrowDownIcon,
+                    ),
                 ],
               ),
               Text(

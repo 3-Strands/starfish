@@ -213,7 +213,8 @@ class SummaryForAllLearners extends StatelessWidget {
           category.name!,
           (((countByMonth["this-month"] ?? 0) / learnerCount) -
               ((countByMonth["last-month"] ?? 0) / learnerCount)),
-          Color(0xFFFFFFFF)));
+          Color(0xFFFFFFFF),
+          countByMonth["last-month"] == 0));
     });
     return Row(
       children: _categoryWidgets,
@@ -221,7 +222,7 @@ class SummaryForAllLearners extends StatelessWidget {
   }
 
   Widget _buildCategoryStatics(double count, String categoryName,
-      double changeInCount, Color textColor) {
+      double changeInCount, Color textColor, bool hideGrowthIndicator) {
     return Expanded(
       child: Container(
         child: Padding(
@@ -243,7 +244,7 @@ class SummaryForAllLearners extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (changeInCount != 0)
+                    if (changeInCount != 0 && !hideGrowthIndicator)
                       Image.asset(
                         changeInCount > 0
                             ? AssetsPath.arrowUpIcon
