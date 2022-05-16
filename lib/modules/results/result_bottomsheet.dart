@@ -434,7 +434,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 height: 20.h,
               ),
               widgets.StatefulBuilder(
-                builder: (BuildContext context, StateSetter setModalState) {
+                builder: (BuildContext context, StateSetter setState) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1171,6 +1171,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
           "dd-MMM-yyyy"),
       firstDate: DateTime(2011),
       lastDate: DateTime.now(),
+      hideActions: true,
     );
   }
 

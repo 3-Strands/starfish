@@ -28,6 +28,7 @@ Future<DateTime?> showMonthYearPicker({
   SelectableMonthYearPredicate? selectableMonthYearPredicate,
   Locale? locale,
   bool useRootNavigator = true,
+  bool hideActions = false,
   RouteSettings? routeSettings,
   TextDirection? textDirection,
   TransitionBuilder? builder,
@@ -59,6 +60,7 @@ Future<DateTime?> showMonthYearPicker({
     lastDate: lastDate,
     initialMonthYearPickerMode: initialMonthYearPickerMode,
     selectableMonthYearPredicate: selectableMonthYearPredicate,
+    hideActions: hideActions,
   );
 
   if (textDirection != null) {
@@ -100,6 +102,7 @@ class MonthYearPickerDialog extends StatefulWidget {
     required this.lastDate,
     required this.initialMonthYearPickerMode,
     this.selectableMonthYearPredicate,
+    this.hideActions = true,
   }) : super(key: key);
 
   // ---------------------------------- FIELDS ---------------------------------
@@ -108,6 +111,7 @@ class MonthYearPickerDialog extends StatefulWidget {
   final DateTime lastDate;
   final MonthYearPickerMode initialMonthYearPickerMode;
   final SelectableMonthYearPredicate? selectableMonthYearPredicate;
+  final bool hideActions;
 
   // --------------------------------- METHODS ---------------------------------
   @override
@@ -122,6 +126,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
   var _canGoPrevious = false;
   var _canGoNext = false;
   late DateTime _selectedDate = widget.initialDate;
+  late bool _hideActions = widget.hideActions;
 
   // -------------------------------- PROPERTIES -------------------------------
   Size get _dialogSize {
@@ -339,7 +344,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                         header,
                         switcher,
                         Expanded(child: picker),
-                        actions,
+                        if (!_hideActions) actions,
                       ],
                     );
                   case Orientation.landscape:
@@ -355,7 +360,7 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                             children: [
                               switcher,
                               Expanded(child: picker),
-                              actions,
+                              if (!_hideActions) actions,
                             ],
                           ),
                         ),
@@ -382,6 +387,10 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
     setState(() {
       _selectedDate = DateTime(date.year, date.month);
     });
+
+    if (_hideActions) {
+      Navigator.pop(context, _selectedDate);
+    }
   }
 
   void _updateSelectedDate(DateTime date) {

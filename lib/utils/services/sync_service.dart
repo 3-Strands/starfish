@@ -1570,7 +1570,7 @@ class SyncService {
      * TODO: fetch only records updated after last sync and update in local DB.
      */
     if (DEBUG) {
-      learnerEvaluationBox.values.forEach((element) {});
+      groupEvaluationBox.values.forEach((element) {});
     }
 
     await ResultsRepository()

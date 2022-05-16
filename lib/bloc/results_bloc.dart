@@ -154,12 +154,13 @@ class ResultsBloc extends Object {
   }
 
   List<HiveDate> getListOfAvailableHistoryMonths() {
-    if (hiveGroup == null) {
+    if (hiveGroupUser == null) {
       return [];
     }
     List<HiveDate> _listMonth = [];
     LearnerEvaluationProvider()
-        .getGroupLearnerEvaluations(hiveGroup!.id!)
+        .getGroupUserLearnerEvaluations(
+            hiveGroupUser!.userId!, hiveGroupUser!.groupId!)
         .forEach((element) {
       if (!_listMonth.contains(element.month!.toMonth)) {
         _listMonth.add(element.month!.toMonth);
