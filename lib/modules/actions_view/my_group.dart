@@ -974,7 +974,10 @@ class MyGroupActionListItem extends StatelessWidget {
     int _thumbsUp = action.learnerCountByEvaluation(ActionUser_Evaluation.GOOD);
     int _thumbsDown =
         action.learnerCountByEvaluation(ActionUser_Evaluation.BAD);
-    int _totalLearners = action.learners != null ? action.learners!.length : 1;
+    int _totalLearners =
+        (action.learners != null && action.learners!.length > 0)
+            ? action.learners!.length
+            : 1;
 
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
@@ -1252,7 +1255,6 @@ class MyGroupActionListItem extends StatelessWidget {
                                   .voteByLearners
                                   .insertTemplateValues({
                                 'votes': ((_thumbsDown / _totalLearners) * 100)
-                                    .round()
                                     .round()
                               }),
                               style: TextStyle(
