@@ -1171,6 +1171,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
           "dd-MMM-yyyy"),
       firstDate: DateTime(2011),
       lastDate: DateTime.now(),
+      hideActions: true,
     );
   }
 

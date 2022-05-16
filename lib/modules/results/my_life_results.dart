@@ -668,6 +668,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
           "dd-MMM-yyyy"),
       firstDate: DateTime(2011),
       lastDate: DateTime.now(),
+      hideActions: true,
     );
   }
 }
