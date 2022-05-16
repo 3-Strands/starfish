@@ -412,6 +412,7 @@
   "feedbackFromGroupTeacher" : "Feedback from Group Teacher",
   "howDoYouFeelAboutThisGroup": "How do you feel about this Group?",
   "voteByLearners": "{{votes}}% learners",
-  "imageSizeValidation" : "Image size is larger then 5 MB"
+  "imageSizeValidation" : "Image size is larger then 5 MB",
+  "dragToSelect": "Drag Right to Select"
   
 }

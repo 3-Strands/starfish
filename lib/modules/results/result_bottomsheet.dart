@@ -784,28 +784,28 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
 
     double _value = _evaluation != null &&
-            1 <= _evaluation.evaluation! &&
+            0 <= _evaluation.evaluation! &&
             _evaluation.evaluation! <= 5
         ? _evaluation.evaluation!.toDouble()
-        : 3.0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          _evaluationCategory.name!,
-          style: TextStyle(
-            fontFamily: "OpenSans",
-            fontSize: 19.sp,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF434141),
+        : 0.0;
+    return widgets.StatefulBuilder(builder: (context, setState) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _evaluationCategory.name!,
+            style: TextStyle(
+              fontFamily: "OpenSans",
+              fontSize: 19.sp,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF434141),
+            ),
+            textAlign: TextAlign.left,
           ),
-          textAlign: TextAlign.left,
-        ),
-        SizedBox(
-          height: 10.h,
-        ),
-        widgets.StatefulBuilder(builder: (context, setState) {
-          return Container(
+          SizedBox(
+            height: 10.h,
+          ),
+          Container(
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 thumbShape: SliderThumb(),
@@ -821,8 +821,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 inactiveColor: Color(0xFFFCDFBA),
                 thumbColor: Color(0xFFE5625C),
                 max: 5.0,
-                min: 1.0,
-                divisions: 4,
+                min: 0.0,
+                divisions: 5,
                 value: _value,
                 label: sliderLabel(_value.toInt()),
                 onChanged: (double value) {
@@ -835,25 +835,28 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 },
               ),
             ),
-          );
-        }),
-        SizedBox(
-          height: 5.h,
-        ),
-        Text(
-          _evaluationCategory.getEvaluationNameFromValue(_value.toInt()),
-          style: TextStyle(
-            fontStyle: FontStyle.italic,
-            fontFamily: "OpenSans",
-            fontSize: 14.sp,
-            color: Color(0xFF797979),
           ),
-        ),
-        SizedBox(
-          height: 5.h,
-        ),
-      ],
-    );
+          SizedBox(
+            height: 5.h,
+          ),
+          Text(
+            _value.toInt() == 0
+                ? "${AppLocalizations.of(context)!.dragToSelect}"
+                : _evaluationCategory
+                    .getEvaluationNameFromValue(_value.toInt()),
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontFamily: "OpenSans",
+              fontSize: 14.sp,
+              color: Color(0xFF797979),
+            ),
+          ),
+          SizedBox(
+            height: 5.h,
+          ),
+        ],
+      );
+    });
   }
 
   Widget _buildActionCard() {

@@ -8,10 +8,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
 
 class LearnerSummary extends StatelessWidget {
-  HiveGroupUser hiveGroupUser;
-  HiveDate month;
+  final HiveGroupUser hiveGroupUser;
+  final HiveDate month;
 
-  LearnerSummary({Key? key, required this.hiveGroupUser, required this.month})
+  const LearnerSummary(
+      {Key? key, required this.hiveGroupUser, required this.month})
       : super(key: key);
 
   @override
@@ -208,7 +209,8 @@ class LearnerSummary extends StatelessWidget {
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
           Color(0xFF797979),
-          countByMonth["last-month"] == 0));
+          (countByMonth["last-month"] == 0 ||
+              countByMonth["this-month"] == 0)));
     });
     return Row(
       children: _categoryWidgets,
@@ -230,7 +232,7 @@ class LearnerSummary extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    "$count",
+                    count > 0 ? "$count" : "--",
                     style: TextStyle(
                         color: textColor,
                         fontFamily: "OpenSans",
