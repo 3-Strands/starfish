@@ -1194,6 +1194,9 @@ class MyGroupActionListItem extends StatelessWidget {
                                 color: Color(0xFF000000),
                               ),
                             ),
+                            SizedBox(
+                              width: 5.w,
+                            ),
                             SvgPicture.asset(
                               'assets/images/thumbs_up_solid.svg',
                               height: 22.h,
@@ -1224,6 +1227,9 @@ class MyGroupActionListItem extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF000000),
                               ),
+                            ),
+                            SizedBox(
+                              width: 5.w,
                             ),
                             SvgPicture.asset(
                               'assets/images/thumbs_down_solid.svg',
