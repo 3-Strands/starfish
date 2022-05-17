@@ -19,7 +19,7 @@ class AppColors {
   static Color materialTabBarTextColor = Color(0xFF3475F0);
   static Color groupTabBarTextColor = Color(0xFFD78A00);
   static Color actionTabBarTextColor = Color(0xFF800080);
-  static Color resultsTabBarTextColor = Color(0xFF03BC00);
+  static Color resultsTabBarTextColor = Color(0xFF028B00);
 
   static Color completeTaskBGColor = Color(0xFF6DE26B);
   static Color assignedTaskBGColor = Color(0xFFCBE8FA);
