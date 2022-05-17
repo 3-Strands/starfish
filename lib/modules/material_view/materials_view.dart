@@ -59,6 +59,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicList;
 
+  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
+  late MultiSelectDropDownController<HiveMaterialTopic> _topicSelectDropDownController;
+
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
 
@@ -94,11 +97,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               _scrollController.position.minScrollExtent &&
           !_scrollController.position.outOfRange) {}
     });
+
+    _languageSelectDropDownController = MultiSelectDropDownController(items: _languageList);
+    _topicSelectDropDownController = MultiSelectDropDownController(items: _topicList);
   }
 
   @override
   void didChangeDependencies() {
     bloc = Provider.of(context);
+    _languageSelectDropDownController.selectedItems = bloc.materialBloc.selectedLanguages.toSet();
+    _topicSelectDropDownController.selectedItems = bloc.materialBloc.selectedTopics.toSet();
     super.didChangeDependencies();
   }
 
@@ -233,7 +241,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
 
     return FocusDetector(
       key: _focusDetectorKey,
@@ -471,20 +478,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: SelectDropDown(
         navTitle: AppLocalizations.of(context)!.selectLanugages,
         placeholder: AppLocalizations.of(context)!.selectLanugages,
-        selectedValues: bloc.materialBloc.selectedLanguages,
-        dataSource: _languageList,
-        type: SelectType.multiple,
-        dataSourceType: DataSourceType.languages,
+        controller: _languageSelectDropDownController,
         isMovingNext: () {
           setState(() {
             _isSelectingLanguage = true;
           });
         },
-        onDoneClicked: <T>(languages) {
+        onDoneClicked: () {
           setState(() {
             _isSelectingLanguage = false;
-            List<HiveLanguage> _selectedLanguages =
-                List<HiveLanguage>.from(languages as List<dynamic>);
+            final _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
             bloc.materialBloc.checkAndUpdateUserfollowedLangguages(
                 _selectedLanguages
                     .map((hiveLanguage) => hiveLanguage.id)
@@ -504,16 +507,12 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: SelectDropDown(
         navTitle: AppLocalizations.of(context)!.selectTopics,
         placeholder: AppLocalizations.of(context)!.selectTopics,
-        selectedValues: bloc.materialBloc.selectedTopics,
-        dataSource: _topicList,
         enableSelectAllOption: true,
-        type: SelectType.multiple,
-        dataSourceType: DataSourceType.topics,
-        onDoneClicked: <T>(topics) {
+        controller: _topicSelectDropDownController,
+        onDoneClicked: () {
           setState(() {
-            List<HiveMaterialTopic> _selectedTopics =
-                List<HiveMaterialTopic>.from(topics as List<dynamic>);
-            bloc.materialBloc.selectedTopics = _selectedTopics;
+            bloc.materialBloc.selectedTopics =
+                _topicSelectDropDownController.selectedItems.toList();
             _firstLoad();
           });
         },

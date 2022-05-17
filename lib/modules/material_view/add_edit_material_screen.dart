@@ -55,6 +55,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   final _descriptionController = TextEditingController();
   final _webLinkController = TextEditingController();
 
+  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
+  late MultiSelectDropDownController<HiveMaterialType> _typeSelectDropDownController;
+  late MultiSelectDropDownController<HiveMaterialTopic> _topicSelectDropDownController;
+
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
   List<HiveMaterialTopic> _selectedTopics = [];
@@ -127,6 +131,27 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _visibleTo = MaterialVisibility.valueOf(widget.material!.visibility!);
       _editableBy = MaterialEditability.valueOf(widget.material!.editability!);
     }
+
+    _languageSelectDropDownController = MultiSelectDropDownController(
+      items: _languageList,
+      selectedItems: _selectedLanguages.toSet(),
+    );
+    _typeSelectDropDownController = MultiSelectDropDownController(
+      items: _typeList,
+      selectedItems: _selectedTypes.toSet(),
+    );
+    _topicSelectDropDownController = MultiSelectDropDownController(
+      items: _topicList,
+      selectedItems: _selectedTopics.toSet(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _languageSelectDropDownController.dispose();
+    _typeSelectDropDownController.dispose();
+    _topicSelectDropDownController.dispose();
+    super.dispose();
   }
 
   void _getAllLanguages() {
@@ -417,15 +442,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       navTitle: AppLocalizations.of(context)!.selectLanugages,
                       placeholder:
                           AppLocalizations.of(context)!.selectLanugages,
-                      selectedValues: _selectedLanguages,
-                      dataSource: _languageList,
-                      type: SelectType.multiple,
-                      dataSourceType: DataSourceType.languages,
-                      onDoneClicked: <T>(languages) {
+                      controller: _languageSelectDropDownController,
+                      onDoneClicked: () {
                         setState(() {
-                          _selectedLanguages = List<HiveLanguage>.from(
-                              languages as List<dynamic>);
-                          // _selectedLanguages = languages as List<HiveLanguage>;
+                          _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
                         });
                       },
                     ),
@@ -443,16 +463,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     child: SelectDropDown(
                       navTitle: AppLocalizations.of(context)!.selectType,
                       placeholder: AppLocalizations.of(context)!.selectType,
-                      selectedValues: _selectedTypes,
-                      dataSource: _typeList,
-                      type: SelectType.multiple,
-                      dataSourceType: DataSourceType.types,
-                      onDoneClicked: <T>(types) {
+                      controller: _typeSelectDropDownController,
+                      onDoneClicked: () {
                         setState(() {
-                          _selectedTypes = List<HiveMaterialType>.from(
-                              types as List<dynamic>);
-
-                          // _selectedTypes = types as List<HiveMaterialType>;
+                          _selectedTypes = _typeSelectDropDownController.selectedItems.toList();
                         });
                       },
                     ),
@@ -470,16 +484,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     child: SelectDropDown(
                       navTitle: AppLocalizations.of(context)!.selectTopics,
                       placeholder: AppLocalizations.of(context)!.selectTopics,
-                      selectedValues: _selectedTopics,
-                      dataSource: _topicList,
-                      type: SelectType.multiple,
-                      dataSourceType: DataSourceType.topics,
-                      onDoneClicked: <T>(topics) {
+                      controller: _topicSelectDropDownController,
+                      onDoneClicked: () {
                         setState(() {
-                          _selectedTopics = List<HiveMaterialTopic>.from(
-                              topics as List<dynamic>);
-
-                          // _selectedTopics = topics as List<HiveMaterialTopic>;
+                          _selectedTopics = _topicSelectDropDownController.selectedItems.toList();
                         });
                       },
                     ),

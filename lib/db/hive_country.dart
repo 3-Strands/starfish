@@ -1,9 +1,10 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/select_items/select_drop_down.dart';
 
 part 'hive_country.g.dart';
 
 @HiveType(typeId: 0)
-class HiveCountry {
+class HiveCountry implements Named {
   @HiveField(0)
   final String id;
 
@@ -25,4 +26,7 @@ class HiveCountry {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
+
+  @override
+  String getName() => name;
 }

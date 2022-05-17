@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
@@ -31,6 +30,8 @@ class CreateProfileScreen extends StatefulWidget {
 
 class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _nameController = TextEditingController();
+  final _countrySelectDropDownController = MultiSelectDropDownController<HiveCountry>(items: []);
+  final _languageSelectDropDownController = MultiSelectDropDownController<HiveLanguage>(items: []);
 
   final FocusNode _nameFocus = FocusNode();
 
@@ -44,6 +45,13 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     super.initState();
 
     _getCurrentUser();
+  }
+
+  @override
+  void dispose() {
+    _countrySelectDropDownController.dispose();
+    _languageSelectDropDownController.dispose();
+    super.dispose();
   }
 
   void _getCurrentUser() {
@@ -183,19 +191,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
+                              _countrySelectDropDownController.items = snapshot.data!;
                               return SelectDropDown(
                                 navTitle:
                                     AppLocalizations.of(context)!.selectCountry,
                                 placeholder:
                                     AppLocalizations.of(context)!.selectCountry,
-                                selectedValues: _selectedCountries,
-                                dataSource: snapshot.data,
-                                type: SelectType.multiple,
-                                dataSourceType: DataSourceType.countries,
-                                onDoneClicked: <T>(countries) {
+                                controller: _countrySelectDropDownController,
+                                onDoneClicked: () {
                                   setState(() {
-                                    _selectedCountries = List<HiveCountry>.from(
-                                        countries as List<dynamic>);
+                                    _selectedCountries = _countrySelectDropDownController.selectedItems.toList();
                                     _updateUserCountries();
                                   });
                                 },
@@ -231,20 +236,16 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
+                              _languageSelectDropDownController.items = snapshot.data!;
                               return SelectDropDown(
                                 navTitle: AppLocalizations.of(context)!
                                     .selectLanugages,
                                 placeholder: AppLocalizations.of(context)!
                                     .selectLanugages,
-                                selectedValues: _selectedLanguages,
-                                dataSource: snapshot.data,
-                                type: SelectType.multiple,
-                                dataSourceType: DataSourceType.languages,
-                                onDoneClicked: <T>(languages) {
+                                controller: _languageSelectDropDownController,
+                                onDoneClicked: () {
                                   setState(() {
-                                    _selectedLanguages =
-                                        List<HiveLanguage>.from(
-                                            languages as List<dynamic>);
+                                    _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
                                   });
                                 },
                               );

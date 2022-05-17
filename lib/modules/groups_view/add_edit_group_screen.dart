@@ -64,6 +64,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   final _descriptionController = TextEditingController();
   final _personNameController = TextEditingController();
 
+  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
+  late MultiSelectDropDownController<HiveEvaluationCategory> _categorySelectDropDownController;
+
   final _telephony = Telephony.instance;
 
   bool _isEditMode = false;
@@ -119,6 +122,23 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               : false)
           .toList();
     }
+
+    _languageSelectDropDownController = MultiSelectDropDownController(
+      items: _languageList,
+      selectedItems: _selectedLanguages.toSet(),
+    );
+    _categorySelectDropDownController = MultiSelectDropDownController(
+      items: _evaluationCategoryList,
+      selectedItems: _selectedEvaluationCategories.toSet(),
+      maxSelectItemLimit: 3,
+    );
+  }
+
+  @override
+  void dispose() {
+    _languageSelectDropDownController.dispose();
+    _categorySelectDropDownController.dispose();
+    super.dispose();
   }
 
   void _getAllLanguages() {
@@ -628,14 +648,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       navTitle: AppLocalizations.of(context)!.selectLanugages,
                       placeholder:
                           AppLocalizations.of(context)!.selectLanugages,
-                      selectedValues: _selectedLanguages,
-                      dataSource: _languageList,
-                      type: SelectType.multiple,
-                      dataSourceType: DataSourceType.languages,
-                      onDoneClicked: <T>(languages) {
+                      controller: _languageSelectDropDownController,
+                      onDoneClicked: () {
                         setState(() {
-                          _selectedLanguages = List<HiveLanguage>.from(
-                              languages as List<dynamic>);
+                          _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
                         });
                       },
                     ),
@@ -655,18 +671,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             AppLocalizations.of(context)!.selectCategories,
                         placeholder:
                             AppLocalizations.of(context)!.selectCategories,
-                        selectedValues: _selectedEvaluationCategories,
-                        dataSource: _evaluationCategoryList,
-                        type: SelectType.multiple,
-                        dataSourceType: DataSourceType.evaluationCategory,
-                        onDoneClicked: <T>(categories) {
+                        controller: _categorySelectDropDownController,
+                        onDoneClicked: () {
                           setState(() {
-                            _selectedEvaluationCategories =
-                                List<HiveEvaluationCategory>.from(
-                                    categories as List<dynamic>);
+                            _selectedEvaluationCategories = _categorySelectDropDownController.selectedItems.toList();
                           });
                         },
-                        maxSelectItemLimit: 3),
+                      ),
                   ),
                   SizedBox(height: 10.h),
                   Text(

@@ -54,6 +54,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final FocusNode _nameFocus = FocusNode();
   final _phoneNumberController = TextEditingController();
   final FocusNode _phoneNumberFocus = FocusNode();
+  final _countrySelectDropDownController = MultiSelectDropDownController<HiveCountry>(items: []);
+  final _languageSelectDropDownController = MultiSelectDropDownController<HiveLanguage>(items: []);
 
   late HiveCurrentUser _user;
 
@@ -115,6 +117,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _countrySelectDropDownController.dispose();
+    _languageSelectDropDownController.dispose();
+    super.dispose();
   }
 
   List<DropdownMenuItem<Map>> _buildDropDownLanguageItems(List listLanguage) {
@@ -755,16 +764,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (snapshot.hasData) {
                             snapshot.data!
                                 .sort((a, b) => a.name.compareTo(b.name));
+                            _countrySelectDropDownController.items = snapshot.data!;
                             return SelectDropDown(
                               navTitle:
                                   AppLocalizations.of(context)!.selectCountry,
                               placeholder:
                                   AppLocalizations.of(context)!.selectCountry,
-                              selectedValues: _selectedCountries,
-                              dataSource: snapshot.data,
-                              type: SelectType.multiple,
-                              dataSourceType: DataSourceType.countries,
-                              onDoneClicked: <T>(countries) async {
+                              controller: _countrySelectDropDownController,
+                              onDoneClicked: () async {
                                 bool _isNetworkAvailable =
                                     await GeneralFunctions()
                                         .isNetworkAvailable();
@@ -777,8 +784,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 }
 
                                 setState(() {
-                                  _selectedCountries = List<HiveCountry>.from(
-                                      countries as List<dynamic>);
+                                  _selectedCountries =
+                                      _countrySelectDropDownController.selectedItems.toList();
                                   updateCountries();
                                 });
                               },
@@ -810,16 +817,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
+                              _languageSelectDropDownController.items = snapshot.data!;
                               return SelectDropDown(
                                 navTitle: AppLocalizations.of(context)!
                                     .selectLanugages,
                                 placeholder: AppLocalizations.of(context)!
                                     .selectLanugages,
-                                selectedValues: _selectedLanguages,
-                                dataSource: snapshot.data,
-                                type: SelectType.multiple,
-                                dataSourceType: DataSourceType.languages,
-                                onDoneClicked: <T>(languages) async {
+                                controller: _languageSelectDropDownController,
+                                onDoneClicked: () async {
                                   bool _isNetworkAvailable =
                                       await GeneralFunctions()
                                           .isNetworkAvailable();
@@ -833,8 +838,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                                   setState(() {
                                     _selectedLanguages =
-                                        List<HiveLanguage>.from(
-                                            languages as List<dynamic>);
+                                        _languageSelectDropDownController.selectedItems.toList();
                                     updateLanguages(bloc);
                                   });
                                 },
