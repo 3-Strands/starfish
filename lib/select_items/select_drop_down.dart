@@ -2,39 +2,130 @@ import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_country.dart';
-import 'package:starfish/db/hive_evaluation_category.dart';
-import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_material_topic.dart';
-import 'package:starfish/db/hive_material_type.dart';
+// import 'package:starfish/db/hive_country.dart';
+// import 'package:starfish/db/hive_evaluation_category.dart';
+// import 'package:starfish/db/hive_group.dart';
+// import 'package:starfish/db/hive_language.dart';
+// import 'package:starfish/db/hive_material_topic.dart';
+// import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/select_items/generic_multi_select_widget.dart';
 
-enum SelectType { single, multiple }
-enum DataSourceType {
-  country,
-  countries,
-  language,
-  languages,
-  topics,
-  types,
-  evaluationCategory,
-  groups,
+abstract class Named {
+  String getName();
 }
 
-// ignore: must_be_immutable
-class SelectDropDown extends StatefulWidget {
+abstract class SelectDropDownController<T extends Named> with ChangeNotifier {
+  List<T> _items;
+
+  SelectDropDownController({ required List<T> items }) : _items = items;
+
+  bool get isSelectionComplete;
+  bool isSelected(T item);
+  bool isAllSelected();
+  String? toggleSelected(T item, bool isSelected) {
+    notifyListeners();
+    return null;
+  }
+  void setAllSelected(bool isSelected) {
+    notifyListeners();
+  }
+  List<T> get items => _items;
+  set items(List<T> items) {
+    if (_items != items) {
+      _items = items;
+      notifyListeners();
+    }
+  }
+  String? getSummary();
+}
+
+class MultiSelectDropDownController<T extends Named> extends SelectDropDownController<T> {
+  Set<T> _selectedItems;
+  int? maxSelectItemLimit;
+
+  MultiSelectDropDownController({
+    required List<T> items,
+    Set<T>? selectedItems,
+    this.maxSelectItemLimit,
+  }) : _selectedItems = selectedItems ?? {}, super(items: items);
+
+  bool get hasMaxLimit => maxSelectItemLimit != null;
+
+  bool get isSelectionComplete => hasMaxLimit && _selectedItems.length > maxSelectItemLimit!;
+
+  @override
+  bool isSelected(T item) => _selectedItems.contains(item);
+
+  @override
+  bool isAllSelected() => _selectedItems.length == items.length;
+
+  @override
+  String? toggleSelected(T item, bool isSelected) {
+    if (isSelected && isSelectionComplete) {
+      return 'Maximum $maxSelectItemLimit items can be selected.';
+    }
+    if (isSelected) {
+      _selectedItems.add(item);
+    } else {
+      _selectedItems.remove(item);
+    }
+    return super.toggleSelected(item, isSelected);
+  }
+
+  void setAllSelected(bool isSelected) {
+    _selectedItems = isSelected ? items.toSet() : Set();
+    super.setAllSelected(isSelected);
+  }
+
+  Set<T> get selectedItems => _selectedItems;
+  set selectedItems(Set<T> selectedItems) {
+    if (_selectedItems != selectedItems) {
+      _selectedItems = selectedItems;
+      notifyListeners();
+    }
+  }
+
+  @override
+  String? getSummary() => _selectedItems.isEmpty ? null
+    : _selectedItems.map((item) => item.getName()).join(', ');
+}
+
+class SingleSelectDropDownController<T extends Named> extends SelectDropDownController<T> {
+  T? _selectedItem;
+
+  SingleSelectDropDownController({required List<T> items, T? selectedItem})
+    : _selectedItem = selectedItem, super(items: items);
+
+  bool get isSelectionComplete => _selectedItem != null;
+
+  @override
+  bool isSelected(T item) => _selectedItem == item;
+
+  @override
+  bool isAllSelected() => false;
+
+  @override
+  String? toggleSelected(T item, bool isSelected) {
+    _selectedItem = isSelected ? item : null;
+    return super.toggleSelected(item, isSelected);
+  }
+
+  T? get selectedItem => _selectedItem;
+
+  void setAllSelected(bool isSelected) => throw Exception('Cannot select all in a single select.');
+
+  @override
+  String? getSummary() => _selectedItem?.getName();
+}
+
+class SelectDropDown<T extends Named> extends StatefulWidget {
   final String navTitle;
-  final int maxSelectItemLimit;
   final String placeholder;
   final bool enableSelectAllOption;
   final bool enabled;
-  final selectedValues;
-  final dataSource;
-  final SelectType type;
-  final DataSourceType dataSourceType;
-  final Function<T>(T) onDoneClicked;
-  VoidCallback? isMovingNext;
+  final SelectDropDownController<T> controller;
+  final void Function() onDoneClicked;
+  final VoidCallback? isMovingNext;
 
   SelectDropDown({
     Key? key,
@@ -42,13 +133,9 @@ class SelectDropDown extends StatefulWidget {
     required this.placeholder,
     this.enabled = true,
     this.enableSelectAllOption = false,
-    required this.selectedValues,
-    required this.dataSource,
-    required this.type,
-    required this.dataSourceType,
+    required this.controller,
     required this.onDoneClicked,
     this.isMovingNext,
-    this.maxSelectItemLimit = 0,
   }) : super(key: key);
 
   @override
@@ -56,103 +143,28 @@ class SelectDropDown extends StatefulWidget {
 }
 
 class _SelectDropDownState extends State<SelectDropDown> {
-  String _selectedValue = '';
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.selectedValues == null) {
-      _selectedValue = widget.placeholder;
-    } else {
-      showSelectedValue(widget.selectedValues);
+  void _rebuild() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
-  void showSelectedValue(value) {
-    String _value = '';
+  @override
+  void initState() {
+    widget.controller.addListener(_rebuild);
+    super.initState();
+  }
 
-    switch (widget.dataSourceType) {
-      case DataSourceType.country:
-        HiveCountry country = value as HiveCountry;
-        _value = country.name;
-        _selectedValue = _value;
-
-        break;
-      case DataSourceType.countries:
-        List<HiveCountry> countries =
-            List<HiveCountry>.from(value as List<dynamic>);
-
-        countries.forEach((element) {
-          _value += '${element.name}, ';
-        });
-
-        break;
-      case DataSourceType.languages:
-        List<HiveLanguage> languages =
-            List<HiveLanguage>.from(value as List<dynamic>);
-
-        languages.forEach((element) {
-          _value += '${element.name}, ';
-        });
-
-        break;
-      case DataSourceType.topics:
-        List<HiveMaterialTopic> topics =
-            List<HiveMaterialTopic>.from(value as List<dynamic>);
-
-        topics.forEach((element) {
-          _value += '${element.name}, ';
-        });
-
-        break;
-      case DataSourceType.types:
-        List<HiveMaterialType> types =
-            List<HiveMaterialType>.from(value as List<dynamic>);
-
-        types.forEach((element) {
-          _value += '${element.name}, ';
-        });
-
-        break;
-      case DataSourceType.evaluationCategory:
-        List<HiveEvaluationCategory> cateogries =
-            List<HiveEvaluationCategory>.from(value as List<dynamic>);
-
-        cateogries.forEach((element) {
-          _value += '${element.name}, ';
-        });
-
-        break;
-      case DataSourceType.groups:
-        List<HiveGroup> groups = List<HiveGroup>.from(value as List<dynamic>);
-
-        groups.forEach((element) {
-          _value += '${element.name}, ';
-        });
-
-        break;
-
-      default:
-    }
-
-    setState(() {
-      if (widget.type == SelectType.multiple) {
-        if (_value.length == 0) {
-          _selectedValue = widget.placeholder;
-        } else {
-          _selectedValue = _value.substring(0, _value.length - 2);
-        }
-      }
-    });
+  @override
+  void dispose() {
+    widget.controller.removeListener(_rebuild);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.selectedValues == null) {
-      _selectedValue = widget.placeholder;
-    } else {
-      showSelectedValue(widget.selectedValues);
-    }
+    final summary = widget.controller.getSummary();
+
     return Container(
       height: 52.h,
       decoration: BoxDecoration(
@@ -166,29 +178,22 @@ class _SelectDropDownState extends State<SelectDropDown> {
       child: InkWell(
         onTap: () {
           if (widget.enabled) {
-            if (widget.isMovingNext != null) {
-              widget.isMovingNext!();
-            }
+            widget.isMovingNext?.call();
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => MultiSelect(
                   navTitle: widget.navTitle,
-                  selectedValues: widget.selectedValues,
-                  dataSource: widget.dataSource,
-                  type: widget.type,
-                  dataSourceType: widget.dataSourceType,
-                  onDoneClicked: <T>(items) {
-                    showSelectedValue(items);
-                    widget.onDoneClicked(items);
+                  onDoneClicked: () {
+                    widget.onDoneClicked();
                   },
+                  controller: widget.controller,
                   enableSelectAllOption: widget.enableSelectAllOption,
-                  maxSelectItemLimit: widget.maxSelectItemLimit,
                 ),
               ),
             ).then(
               (value) => FocusScope.of(context).requestFocus(
-                new FocusNode(),
+                FocusNode(),
               ),
             );
           }
@@ -199,12 +204,10 @@ class _SelectDropDownState extends State<SelectDropDown> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                (widget.selectedValues == '')
-                    ? widget.placeholder
-                    : _selectedValue,
+                summary ?? widget.placeholder,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: _selectedValue == widget.placeholder
+                style: summary == null
                     ? formTitleHintStyle
                     : textFormFieldText,
               ),

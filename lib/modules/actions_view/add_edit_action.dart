@@ -52,6 +52,7 @@ class _AddEditActionState extends State<AddEditAction>
   late HiveAction? _actionToBeReused;
 
   final TextEditingController _actionNameController = TextEditingController();
+  late MultiSelectDropDownController<HiveGroup> _selectDropDownController;
   //Action_Type? _selectedActionType = Action_Type.TEXT_INSTRUCTION;
   Action_Type? _selectedActionType;
 
@@ -98,6 +99,10 @@ class _AddEditActionState extends State<AddEditAction>
       _dueDate = widget.action!.dateDue?.toDateTime();
     }
 
+    _selectDropDownController = MultiSelectDropDownController(
+      items: _groupList,
+      selectedItems: _selectedGroups.toSet(),
+    );
     _controller = AnimationController(vsync: this);
     _actionToBeReused = null;
   }
@@ -106,6 +111,7 @@ class _AddEditActionState extends State<AddEditAction>
   void dispose() {
     super.dispose();
     _controller.dispose();
+    _selectDropDownController.dispose();
   }
 
   _selectDate(BuildContext context) async {
@@ -532,22 +538,19 @@ class _AddEditActionState extends State<AddEditAction>
   }
 
   Widget _emptyContainer() {
-    return new Container();
+    return const SizedBox();
   }
 
   Widget _selectDropDown() {
-    return new SelectDropDown(
+    return SelectDropDown(
       navTitle: AppLocalizations.of(context)!.assignActionTo,
       placeholder: AppLocalizations.of(context)!.selectOneOrMoreGroups,
-      selectedValues: _selectedGroups,
-      dataSource: _groupList,
+      controller: _selectDropDownController,
       enableSelectAllOption: false,
       enabled: !_isEditMode,
-      type: SelectType.multiple,
-      dataSourceType: DataSourceType.groups,
-      onDoneClicked: <T>(values) {
+      onDoneClicked: () {
         setState(() {
-          _selectedGroups = List<HiveGroup>.from(values as List<dynamic>);
+          _selectedGroups = List.from(_selectDropDownController.selectedItems);
         });
       },
     );

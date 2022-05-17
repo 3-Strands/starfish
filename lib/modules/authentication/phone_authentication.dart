@@ -17,7 +17,6 @@ import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/navigation_service.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
@@ -32,17 +31,12 @@ class PhoneAuthenticationScreen extends StatefulWidget {
 class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final _countryCodeController = TextEditingController();
   final _phoneNumberController = TextEditingController();
+  final _selectDropDownController = SingleSelectDropDownController<HiveCountry>(items: []);
 
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
 
   bool _isPhoneNumberEmpty = true;
-
-  HiveCountry _selectedCountry = HiveCountry(
-      id: '',
-      name: AppLocalizations.of(NavigationService.navigatorKey.currentContext!)!
-          .selectCountry,
-      diallingCode: '');
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -54,6 +48,12 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
     SyncService obj = SyncService();
     obj.syncAll();
+  }
+
+  @override
+  void dispose() {
+    _selectDropDownController.dispose();
+    super.dispose();
   }
 
   @override
@@ -89,24 +89,20 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       if (snapshot.hasData) {
                         snapshot.data!
                             .sort((a, b) => a.name.compareTo(b.name));
+                        _selectDropDownController.items = snapshot.data!;
                         return SelectDropDown(
                           navTitle:
                               AppLocalizations.of(context)!.selectCountry,
                           placeholder:
                               AppLocalizations.of(context)!.selectCountry,
-                          selectedValues: _selectedCountry,
-                          dataSource: snapshot.data,
-                          type: SelectType.single,
-                          dataSourceType: DataSourceType.country,
-                          onDoneClicked: <T>(country) {
-                            setState(() {
-                              _selectedCountry = country as HiveCountry;
-                              _countryCodeController
-                                  .text = _selectedCountry.diallingCode
-                                      .startsWith("+")
-                                  ? _selectedCountry.diallingCode
-                                  : "+${_selectedCountry.diallingCode}";
-                            });
+                          controller: _selectDropDownController,
+                          onDoneClicked: () {
+                            final diallingCode = _selectDropDownController.selectedItem?.diallingCode;
+                            _countryCodeController
+                                .text = diallingCode == null ? ''
+                                  : diallingCode.startsWith("+")
+                                    ? diallingCode
+                                    : "+$diallingCode";
                           },
                         );
                       } else {
