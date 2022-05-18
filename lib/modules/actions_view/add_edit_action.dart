@@ -256,7 +256,6 @@ class _AddEditActionState extends State<AddEditAction>
                     },
                     child: Container(
                       height: 52.h,
-                      width: 345.w,
                       decoration: BoxDecoration(
                           color: Color(0xFFEFEFEF),
                           borderRadius:
