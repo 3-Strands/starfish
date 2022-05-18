@@ -5,12 +5,14 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/widgets/action_status_count_widget.dart';
 
 class LearnerSummary extends StatelessWidget {
-  HiveGroupUser hiveGroupUser;
-  HiveDate month;
+  final HiveGroupUser hiveGroupUser;
+  final HiveDate month;
 
-  LearnerSummary({Key? key, required this.hiveGroupUser, required this.month})
+  const LearnerSummary(
+      {Key? key, required this.hiveGroupUser, required this.month})
       : super(key: key);
 
   @override
@@ -48,93 +50,12 @@ class LearnerSummary extends StatelessWidget {
                 SizedBox(
                   height: 10.h,
                 ),
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Center(
-                        child: Text(
-                          "${AppLocalizations.of(context)!.actionsTabItemText}",
-                          style: TextStyle(
-                              fontSize: 17.sp,
-                              fontFamily: "OpenSans ",
-                              color: Color(0xFF4F4F4F),
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Expanded(
-                        child: Container(
-                          //   width: 99.w,
-                          decoration: BoxDecoration(
-                              color: Color(0xFF6DE26B),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.5.r))),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.h, horizontal: 8.w),
-                          child: Text(
-                            "${hiveGroupUser.getActionsCompletedInMonth(month)} ${AppLocalizations.of(context)!.done}",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Rubik",
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Expanded(
-                        child: Container(
-                          //    width: 99.w,
-                          decoration: BoxDecoration(
-                              color: Color(0xFFFFBE4A),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.5.r))),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.h, horizontal: 8.w),
-                          child: Text(
-                            "${hiveGroupUser.getActionsNotCompletedInMonth(month)} ${AppLocalizations.of(context)!.pending}",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Rubik",
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Expanded(
-                        child: Container(
-                          //     width: 99.w,
-                          decoration: BoxDecoration(
-                              color: Color(0xFFFF5E4D),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.5.r))),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.h, horizontal: 8.w),
-                          child: Text(
-                            "${hiveGroupUser.getActionsOverdueInMonth(month)} ${AppLocalizations.of(context)!.overdue}",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "Rubik",
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ActionStatusCountWidget(
+                    label:
+                        "${AppLocalizations.of(context)!.actionsTabItemText}",
+                    done: hiveGroupUser.getActionsCompletedInMonth(month),
+                    pending: hiveGroupUser.getActionsNotCompletedInMonth(month),
+                    overdue: hiveGroupUser.getActionsOverdueInMonth(month)),
                 SizedBox(
                   height: 15.h,
                 ),
@@ -288,7 +209,8 @@ class LearnerSummary extends StatelessWidget {
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
           Color(0xFF797979),
-          countByMonth["last-month"] == 0));
+          (countByMonth["last-month"] == 0 ||
+              countByMonth["this-month"] == 0)));
     });
     return Row(
       children: _categoryWidgets,
@@ -310,7 +232,7 @@ class LearnerSummary extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    "$count",
+                    count > 0 ? "$count" : "--",
                     style: TextStyle(
                         color: textColor,
                         fontFamily: "OpenSans",

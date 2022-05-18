@@ -192,6 +192,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             builder: (BuildContext context, StateSetter setState) {
           return Container(
               height: MediaQuery.of(context).size.height * 0.70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(34.r)),
+                color: Color(0xFFEFEFEF),
+              ),
               child: _buildSlidingUpPanel(material));
         });
       },
@@ -647,283 +651,294 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       children: [
         Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    //height: 22.h,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
-                            //overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: AppColors.txtFieldTextColor,
-                              fontFamily: 'OpenSans',
-                              fontSize: 19.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        //Spacer(),
-                        // if (material.url != null && material.url!.isNotEmpty)
-                        //   CustomIconButton(
-                        //     icon: Icon(
-                        //       Icons.open_in_new,
-                        //       color: Colors.blue,
-                        //       size: 21.5.sp,
-                        //     ),
-                        //     text: AppLocalizations.of(context)!.open,
-                        //     onButtonTap: () {
-                        //       GeneralFunctions.openUrl(material.url!);
-                        //     },
-                        //   ),
-                      ],
+            color: Colors.white,
+            margin: EdgeInsets.only(
+              top: 40.h,
+            ),
+            child: Container(
+              margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10.h,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  if (material.isAssignedToMe)
-                    TaskStatus(
-                      height: 30.h,
-                      color: getMyTaskStatusColor(material),
-                      label: getMyTaskLabel(context, material),
-                    ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  if (material.isAssignedToGroupWithLeaderRole)
-                    TaskStatus(
-                      height: 30.h,
-                      color: Color(0xFFCBE8FA),
-                      label: AppLocalizations.of(context)!.assignedToGroup,
-                    ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  if (material.url != null && material.url!.isNotEmpty)
-                    CustomIconButton(
-                      icon: Icon(
-                        Icons.open_in_new,
-                        color: Color(0xFF3475F0),
-                        size: 21.5.sp,
-                      ),
-                      text: AppLocalizations.of(context)!.openExternalLink,
-                      textStyle: TextStyle(
-                        color: Color(0xFF3475F0),
-                        fontFamily: 'OpenSans',
-                        // fontSize: 17.sp,
-                        fontStyle: FontStyle.italic,
-                        // fontWeight: FontWeight.bold,
-                      ),
-                      onButtonTap: () {
-                        GeneralFunctions.openUrl(material.url!);
-                      },
-                    ),
-                  Divider(
-                    color: Color(0xFF979797),
-                    thickness: 2,
-                  ),
-                  if (material.localFiles.length != 0 &&
-                      material.localFiles.isNotEmpty)
-                    _buildAttachment(material),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.thismaterialIsVisibleTo,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Color(0xFF3475F0),
-                      fontFamily: 'OpenSans',
-                      fontSize: 19.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5.h,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.remove_red_eye,
-                        color: Color(0xFF3475F0),
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        MaterialVisibility.valueOf(material.visibility!)
-                            .displayName!,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          //   color: Color(0xFF3475F0),
-                          fontFamily: 'OpenSans',
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        AppLocalizations.of(context)!.lanugages,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Color(0xFF3475F0),
-                          fontFamily: 'OpenSans',
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacer(),
-                      Column(
+                    Container(
+                      //height: 22.h,
+
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
-                          if (((Material_Editability.valueOf(
-                                              material.editability!) ==
-                                          Material_Editability.CREATOR_EDIT ||
-                                      Material_Editability.valueOf(
-                                              material.editability!) ==
-                                          Material_Editability.GROUP_EDIT) &&
-                                  material.creatorId ==
-                                      CurrentUserProvider().user.id) ||
-                              (Material_Editability.valueOf(
-                                          material.editability!) ==
-                                      Material_Editability.GROUP_EDIT) &&
-                                  material.isAssignedToGroupWithLeaderRole)
-                            CustomIconButton(
-                              icon: Icon(
-                                Icons.edit,
-                                color: Colors.blue,
-                                size: 21.5.sp,
+                          Expanded(
+                            child: Text(
+                              '${AppLocalizations.of(context)!.materialTitlePrefix} ${material.title}',
+                              //overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: AppColors.txtFieldTextColor,
+                                fontFamily: 'OpenSans',
+                                fontSize: 19.sp,
+                                fontWeight: FontWeight.bold,
                               ),
-                              text: AppLocalizations.of(context)!.edit,
-                              onButtonTap: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddEditMaterialScreen(
-                                      material: material,
-                                    ),
-                                  ),
-                                );
-                              },
                             ),
-                          SizedBox(
-                            height: 15.h,
                           ),
-                          if (((Material_Editability.valueOf(
-                                              material.editability!) ==
-                                          Material_Editability.CREATOR_EDIT ||
-                                      Material_Editability.valueOf(
-                                              material.editability!) ==
-                                          Material_Editability.GROUP_EDIT) &&
-                                  material.creatorId ==
-                                      CurrentUserProvider().user.id) ||
-                              (Material_Editability.valueOf(
-                                          material.editability!) ==
-                                      Material_Editability.GROUP_EDIT) &&
-                                  material.isAssignedToGroupWithLeaderRole)
-                            CustomIconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.blue,
-                                size: 21.5.sp,
-                              ),
-                              text: AppLocalizations.of(context)!.delete,
-                              onButtonTap: () {
-                                _deleteMaterial(context, material);
-                              },
-                            ),
+                          //Spacer(),
+                          // if (material.url != null && material.url!.isNotEmpty)
+                          //   CustomIconButton(
+                          //     icon: Icon(
+                          //       Icons.open_in_new,
+                          //       color: Colors.blue,
+                          //       size: 21.5.sp,
+                          //     ),
+                          //     text: AppLocalizations.of(context)!.open,
+                          //     onButtonTap: () {
+                          //       GeneralFunctions.openUrl(material.url!);
+                          //     },
+                          //   ),
                         ],
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  _buildLanguageList(material),
-                  SizedBox(
-                    height: 47.h,
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.topics,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Color(0xFF3475F0),
-                      fontFamily: 'OpenSans',
-                      fontSize: 19.sp,
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  _buildTopicsList(material),
-                  SizedBox(
-                    height: 63.h,
-                  ),
-                  RichText(
-                    text: new TextSpan(
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    if (material.isAssignedToMe)
+                      TaskStatus(
+                        height: 30.h,
+                        color: getMyTaskStatusColor(material),
+                        label: getMyTaskLabel(context, material),
+                      ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    if (material.isAssignedToGroupWithLeaderRole)
+                      TaskStatus(
+                        height: 30.h,
+                        color: Color(0xFFCBE8FA),
+                        label: AppLocalizations.of(context)!.assignedToGroup,
+                      ),
+                    SizedBox(
+                      height: 30.h,
+                    ),
+                    if (material.url != null && material.url!.isNotEmpty)
+                      CustomIconButton(
+                        icon: Icon(
+                          Icons.open_in_new,
+                          color: Color(0xFF3475F0),
+                          size: 21.5.sp,
+                        ),
+                        text: AppLocalizations.of(context)!.openExternalLink,
+                        textStyle: TextStyle(
+                          color: Color(0xFF3475F0),
+                          fontFamily: 'OpenSans',
+                          // fontSize: 17.sp,
+                          fontStyle: FontStyle.italic,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                        onButtonTap: () {
+                          GeneralFunctions.openUrl(material.url!);
+                        },
+                      ),
+                    Divider(
+                      color: Color(0xFF979797),
+                      thickness: 2,
+                    ),
+                    if (material.localFiles.length != 0 &&
+                        material.localFiles.isNotEmpty)
+                      _buildAttachment(material),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.thismaterialIsVisibleTo,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Color(0xFF3475F0),
+                        fontFamily: 'OpenSans',
+                        fontSize: 19.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                    Row(
                       children: [
-                        new TextSpan(
-                          text: AppLocalizations.of(context)!
-                              .inAppropriateMaterial,
-                          style: TextStyle(
-                              color: Color(0xFFF65A4A),
-                              fontSize: 19.sp,
-                              fontStyle: FontStyle.italic),
+                        Icon(
+                          Icons.remove_red_eye,
+                          color: Color(0xFF3475F0),
                         ),
-                        new TextSpan(
-                          text: AppLocalizations.of(context)!.clickHere,
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              decorationStyle: TextDecorationStyle.solid,
-                              color: Color(0xFFF65A4A),
-                              fontSize: 19.sp,
-                              fontStyle: FontStyle.italic),
-                          recognizer: new TapGestureRecognizer()
-                            ..onTap = () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return ReportMaterialDialogBox(
-                                    material: material,
-                                  );
-                                },
-                              );
-                            },
+                        SizedBox(
+                          width: 5.w,
                         ),
-                        new TextSpan(
-                          text: AppLocalizations.of(context)!.toReportIt,
-                          style: new TextStyle(
-                              color: Color(0xFFF65A4A),
-                              fontSize: 19.sp,
-                              fontStyle: FontStyle.italic),
+                        Text(
+                          MaterialVisibility.valueOf(material.visibility!)
+                              .displayName!,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            //   color: Color(0xFF3475F0),
+                            fontFamily: 'OpenSans',
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                ],
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          AppLocalizations.of(context)!.lanugages,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Color(0xFF3475F0),
+                            fontFamily: 'OpenSans',
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        Column(
+                          children: <Widget>[
+                            // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
+                            if (((Material_Editability.valueOf(
+                                                material.editability!) ==
+                                            Material_Editability.CREATOR_EDIT ||
+                                        Material_Editability.valueOf(
+                                                material.editability!) ==
+                                            Material_Editability.GROUP_EDIT) &&
+                                    material.creatorId ==
+                                        CurrentUserProvider().user.id) ||
+                                (Material_Editability.valueOf(
+                                            material.editability!) ==
+                                        Material_Editability.GROUP_EDIT) &&
+                                    material.isAssignedToGroupWithLeaderRole)
+                              CustomIconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                  size: 21.5.sp,
+                                ),
+                                text: AppLocalizations.of(context)!.edit,
+                                onButtonTap: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddEditMaterialScreen(
+                                        material: material,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            SizedBox(
+                              height: 15.h,
+                            ),
+                            if (((Material_Editability.valueOf(
+                                                material.editability!) ==
+                                            Material_Editability.CREATOR_EDIT ||
+                                        Material_Editability.valueOf(
+                                                material.editability!) ==
+                                            Material_Editability.GROUP_EDIT) &&
+                                    material.creatorId ==
+                                        CurrentUserProvider().user.id) ||
+                                (Material_Editability.valueOf(
+                                            material.editability!) ==
+                                        Material_Editability.GROUP_EDIT) &&
+                                    material.isAssignedToGroupWithLeaderRole)
+                              CustomIconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.blue,
+                                  size: 21.5.sp,
+                                ),
+                                text: AppLocalizations.of(context)!.delete,
+                                onButtonTap: () {
+                                  _deleteMaterial(context, material);
+                                },
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30.h,
+                    ),
+                    _buildLanguageList(material),
+                    SizedBox(
+                      height: 47.h,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.topics,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Color(0xFF3475F0),
+                        fontFamily: 'OpenSans',
+                        fontSize: 19.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30.h,
+                    ),
+                    _buildTopicsList(material),
+                    SizedBox(
+                      height: 63.h,
+                    ),
+                    RichText(
+                      text: new TextSpan(
+                        children: [
+                          new TextSpan(
+                            text: AppLocalizations.of(context)!
+                                .inAppropriateMaterial,
+                            style: TextStyle(
+                                color: Color(0xFFF65A4A),
+                                fontSize: 19.sp,
+                                fontStyle: FontStyle.italic),
+                          ),
+                          new TextSpan(
+                            text: AppLocalizations.of(context)!.clickHere,
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                decorationStyle: TextDecorationStyle.solid,
+                                color: Color(0xFFF65A4A),
+                                fontSize: 19.sp,
+                                fontStyle: FontStyle.italic),
+                            recognizer: new TapGestureRecognizer()
+                              ..onTap = () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ReportMaterialDialogBox(
+                                      material: material,
+                                    );
+                                  },
+                                );
+                              },
+                          ),
+                          new TextSpan(
+                            text: AppLocalizations.of(context)!.toReportIt,
+                            style: new TextStyle(
+                                color: Color(0xFFF65A4A),
+                                fontSize: 19.sp,
+                                fontStyle: FontStyle.italic),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

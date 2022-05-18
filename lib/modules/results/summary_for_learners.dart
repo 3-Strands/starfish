@@ -5,19 +5,20 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/widgets/action_status_count_widget.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
-  HiveGroup hiveGroup;
-  HiveDate month;
-  Map<HiveEvaluationCategory, Map<String, int>>
-      groupLearnerEvaluationsByCategory;
-
-  SummaryForAllLearners(
+  const SummaryForAllLearners(
       {Key? key,
       required this.hiveGroup,
       required this.month,
       required this.groupLearnerEvaluationsByCategory})
       : super(key: key);
+
+  final HiveGroup hiveGroup;
+  final HiveDate month;
+  final Map<HiveEvaluationCategory, Map<String, int>>
+      groupLearnerEvaluationsByCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -59,59 +60,10 @@ class SummaryForAllLearners extends StatelessWidget {
           SizedBox(
             height: 10.h,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                width: 99.w,
-                decoration: BoxDecoration(
-                    color: Color(0xFF6DE26B),
-                    borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                child: Text(
-                  "${hiveGroup.getActionsCompletedInMonth(month)} ${AppLocalizations.of(context)!.done}",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Rubik",
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                width: 99.w,
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFBE4A),
-                    borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                child: Text(
-                  "${hiveGroup.getActionsNotYetCompletedInMonth(month)} ${AppLocalizations.of(context)!.pending}",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Rubik",
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Container(
-                width: 99.w,
-                decoration: BoxDecoration(
-                    color: Color(0xFFFF5E4D),
-                    borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                child: Text(
-                  "${hiveGroup.getActionsOverdueInMonth(month)} ${AppLocalizations.of(context)!.overdue}",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Rubik",
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
+          ActionStatusCountWidget(
+              done: hiveGroup.getActionsCompletedInMonth(month),
+              pending: hiveGroup.getActionsNotYetCompletedInMonth(month),
+              overdue: hiveGroup.getActionsOverdueInMonth(month)),
 
           // Uncomment once leaner is allowed to update 'GroupEvaluation'
           /*Padding(

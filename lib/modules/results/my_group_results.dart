@@ -283,6 +283,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           "dd-MMM-yyyy"),
       firstDate: DateTime(2011),
       lastDate: DateTime.now(),
+      hideActions: true,
     );
   }
 }
