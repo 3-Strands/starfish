@@ -191,82 +191,95 @@ class _MyGroupState extends State<MyGroup> {
       isDismissible: true,
       enableDrag: true,
       builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(
-              height: 40.h,
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(34.r)),
+            color: Color(0xFFEFEFEF),
+          ),
+          child: Container(
+            color: Colors.white,
+            margin: EdgeInsets.only(
+              top: 40.h,
             ),
-            Container(
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              child: Align(
-                alignment: FractionalOffset.topLeft,
-                child: Text(
-                  action.name ?? '',
-                  style: TextStyle(
-                      fontSize: 19.sp,
-                      color: Color(0xFF3475F0),
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 20.h,
                 ),
-              ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              child: Align(
-                alignment: FractionalOffset.topLeft,
-                child: Text(
-                  AppLocalizations.of(context)!.statusOfActionForLearner,
-                  style: TextStyle(
-                      fontSize: 19.sp,
-                      color: Color(0xFF4F4F4F),
-                      fontWeight: FontWeight.normal),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildUserList(action),
-            SizedBox(
-              height: 20.h,
-            ),
-            Container(
-              height: 75.0,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: Color(0xFFEFEFEF),
-              ),
-              //margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-                child: Container(
-                  height: 37.5.h,
-                  color: Color(0xFFEFEFEF),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40.r),
-                        ),
-                      ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          AppColors.selectedButtonBG),
+                Container(
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Text(
+                      action.name ?? '',
+                      style: TextStyle(
+                          fontSize: 19.sp,
+                          color: Color(0xFF3475F0),
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
-                    child: Text(AppLocalizations.of(context)!.close),
                   ),
                 ),
-              ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Text(
+                      AppLocalizations.of(context)!.statusOfActionForLearner,
+                      style: TextStyle(
+                          fontSize: 19.sp,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.normal),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildUserList(action),
+                SizedBox(
+                  height: 20.h,
+                ),
+                Container(
+                  height: 75.0,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEFEFEF),
+                  ),
+                  //margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+                    child: Container(
+                      height: 37.5.h,
+                      color: Color(0xFFEFEFEF),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.r),
+                            ),
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.selectedButtonBG),
+                        ),
+                        child: Text(AppLocalizations.of(context)!.close),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

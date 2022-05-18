@@ -64,6 +64,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
             builder: (BuildContext context, StateSetter setState) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(34.r)),
+              color: Color(0xFFEFEFEF),
+            ),
             child: _buildSlidingUpPanel(group),
           );
         });
@@ -162,32 +166,41 @@ class _GroupsScreenState extends State<GroupsScreen> {
       children: <Widget>[
         Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: 15.0.w, top: 40.h, right: 15.0.w),
-            child: Column(
-              children: [
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: Container(
-                    child: Text(
-                      '${group.name}',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: AppColors.selectedButtonBG,
-                        fontFamily: 'OpenSans',
-                        fontSize: 21.5.sp,
-                        fontWeight: FontWeight.bold,
+            color: Colors.white,
+            margin: EdgeInsets.only(
+              top: 40.h,
+            ),
+            child: Container(
+              margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Align(
+                    alignment: FractionalOffset.topLeft,
+                    child: Container(
+                      child: Text(
+                        '${group.name}',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: AppColors.selectedButtonBG,
+                          fontFamily: 'OpenSans',
+                          fontSize: 21.5.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 36.h,
-                ),
-                _buildUsersList(group.activeUsers!),
-                SizedBox(
-                  height: 20.h,
-                ),
-              ],
+                  SizedBox(
+                    height: 36.h,
+                  ),
+                  _buildUsersList(group.activeUsers!),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
