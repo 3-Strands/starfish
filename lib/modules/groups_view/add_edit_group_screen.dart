@@ -40,6 +40,7 @@ import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
 import 'package:starfish/widgets/uninvited_person_list_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/wrappers/platform.dart';
 import 'package:starfish/wrappers/sms.dart';
 import 'package:template_string/template_string.dart';
 
@@ -648,32 +649,38 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 20.h),
-                  DottedBorder(
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(30.r),
-                    color: Color(0xFF3475F0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 50.h,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _checkPermissionsAndShowContact();
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.inviteFromContactsList,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            color: Color(0xFF3475F0),
+                  Platform.isWeb
+                    ? Text(
+                        AppLocalizations.of(context)!.featureOnlyAvailableOnWeb,
+                        style: warningTextStyle,
+                        textAlign: TextAlign.center,
+                      )
+                    : DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: Radius.circular(30.r),
+                      color: Color(0xFF3475F0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _checkPermissionsAndShowContact();
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.inviteFromContactsList,
+                            style: TextStyle(
+                              fontFamily: 'OpenSans',
+                              fontSize: 17.sp,
+                              color: Color(0xFF3475F0),
+                            ),
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent,
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   SizedBox(height: 21.h),
 
                   _invitedGroupMembersContainer(),

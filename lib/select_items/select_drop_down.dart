@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
-// import 'package:starfish/db/hive_country.dart';
-// import 'package:starfish/db/hive_evaluation_category.dart';
-// import 'package:starfish/db/hive_group.dart';
-// import 'package:starfish/db/hive_language.dart';
-// import 'package:starfish/db/hive_material_topic.dart';
-// import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/select_items/generic_multi_select_widget.dart';
 
 abstract class Named {
@@ -20,6 +14,7 @@ abstract class SelectDropDownController<T extends Named> with ChangeNotifier {
   SelectDropDownController({ required List<T> items }) : _items = items;
 
   bool get isSelectionComplete;
+  bool get hasSelected;
   bool isSelected(T item);
   bool isAllSelected();
   String? toggleSelected(T item, bool isSelected) {
@@ -51,6 +46,7 @@ class MultiSelectDropDownController<T extends Named> extends SelectDropDownContr
 
   bool get hasMaxLimit => maxSelectItemLimit != null;
 
+  bool get hasSelected => _selectedItems.isNotEmpty;
   bool get isSelectionComplete => hasMaxLimit && _selectedItems.length > maxSelectItemLimit!;
 
   @override
@@ -96,7 +92,8 @@ class SingleSelectDropDownController<T extends Named> extends SelectDropDownCont
   SingleSelectDropDownController({required List<T> items, T? selectedItem})
     : _selectedItem = selectedItem, super(items: items);
 
-  bool get isSelectionComplete => _selectedItem != null;
+  bool get hasSelected => _selectedItem != null;
+  bool get isSelectionComplete => hasSelected;
 
   @override
   bool isSelected(T item) => _selectedItem == item;
@@ -124,7 +121,7 @@ class SelectDropDown<T extends Named> extends StatefulWidget {
   final bool enableSelectAllOption;
   final bool enabled;
   final SelectDropDownController<T> controller;
-  final void Function() onDoneClicked;
+  final void Function()? onDoneClicked;
   final VoidCallback? isMovingNext;
 
   SelectDropDown({
@@ -134,7 +131,7 @@ class SelectDropDown<T extends Named> extends StatefulWidget {
     this.enabled = true,
     this.enableSelectAllOption = false,
     required this.controller,
-    required this.onDoneClicked,
+    this.onDoneClicked,
     this.isMovingNext,
   }) : super(key: key);
 
@@ -184,17 +181,12 @@ class _SelectDropDownState extends State<SelectDropDown> {
               MaterialPageRoute(
                 builder: (context) => MultiSelect(
                   navTitle: widget.navTitle,
-                  onDoneClicked: () {
-                    widget.onDoneClicked();
-                  },
                   controller: widget.controller,
                   enableSelectAllOption: widget.enableSelectAllOption,
                 ),
               ),
             ).then(
-              (value) => FocusScope.of(context).requestFocus(
-                FocusNode(),
-              ),
+              (value) => widget.onDoneClicked?.call(),
             );
           }
         },
@@ -203,13 +195,16 @@ class _SelectDropDownState extends State<SelectDropDown> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                summary ?? widget.placeholder,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: summary == null
-                    ? formTitleHintStyle
-                    : textFormFieldText,
+              Expanded(
+                child: Text(
+                  summary ?? widget.placeholder,
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
+                  style: summary == null
+                      ? formTitleHintStyle
+                      : textFormFieldText,
+                ),
               ),
               Icon(Icons.navigate_next_sharp, color: Colors.grey),
             ],

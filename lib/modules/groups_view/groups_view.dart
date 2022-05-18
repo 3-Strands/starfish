@@ -307,7 +307,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         ),
                         Container(
                           height: 60.h,
-                          width: 345.w,
+                          // width: 345.w,
                           margin: EdgeInsets.only(left: 15.w, right: 15.w),
                           decoration: BoxDecoration(
                             color: AppColors.txtFieldBackground,

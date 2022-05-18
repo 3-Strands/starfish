@@ -69,11 +69,16 @@ class _AddEditActionState extends State<AddEditAction>
   DateTime? _dueDate;
   bool _shouldRedrawWidegets = false;
 
-  void _getAllGroups() async {
-    _groupList = _groupBox.values.toList();
-
+  void _getAllGroups() {
     final currentUserId = CurrentUserProvider().getUserSync().id;
-    _groupList.insert(0, HiveGroup(id: currentUserId, name: 'Me', isMe: true));
+
+    _groupList = [
+      HiveGroup(id: currentUserId, name: 'Me', isMe: true),
+      ..._groupBox.values.where((group) {
+        final role = group.getMyRole(currentUserId);
+        return role == GroupUser_Role.ADMIN || role == GroupUser_Role.TEACHER;
+      }),
+    ];
   }
 
   @override

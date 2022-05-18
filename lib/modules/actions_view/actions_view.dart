@@ -96,7 +96,6 @@ class _ActionsScreenState extends State<ActionsScreen>
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: Container(
-            width: 375.w,
             height: 812.h,
             color: AppColors.actionScreenBG,
             child: Column(

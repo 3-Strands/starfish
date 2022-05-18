@@ -31,6 +31,7 @@ class Routes {
           timeout: 0,
         ),
     showProfile: (BuildContext context) => CreateProfileScreen(),
+    '/': (BuildContext context) => Dashboard(),
     dashboard: (BuildContext context) => Dashboard(),
     settings: (BuildContext context) => SettingsScreen(),
     addNewMaterial: (BuildContext context) => AddEditMaterialScreen(),

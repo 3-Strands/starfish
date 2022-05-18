@@ -90,7 +90,6 @@ class _MyGroupState extends State<MyGroup> {
               ),
               Container(
                 height: 52.h,
-                width: 345.w,
                 margin: EdgeInsets.only(left: 15.w, right: 15.w),
                 decoration: BoxDecoration(
                   color: AppColors.txtFieldBackground,

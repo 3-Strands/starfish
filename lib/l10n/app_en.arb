@@ -32,6 +32,8 @@
   "copyAllCodes": "Copy all codes",
   "inviteFromContactsList":
       "Invite people from your contacts list",
+  "featureOnlyAvailableOnWeb":
+      "This feature is only available in the Android and iOS Starfish apps.",
   "create": "Create",
   "invite": "Invite",
   "leaveThisGroup": "Leave this group",

@@ -65,7 +65,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ),
                     Container(
                       height: 52.h,
-                      width: 345.w,
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       decoration: BoxDecoration(
                         color: AppColors.txtFieldBackground,
@@ -153,7 +152,6 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       child: Container(
                         alignment: Alignment.centerLeft,
                         height: 52.h,
-                        width: 345.w,
                         padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
                         margin: EdgeInsets.only(left: 15.w, right: 15.w),
                         decoration: BoxDecoration(

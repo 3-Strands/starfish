@@ -46,8 +46,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width / 2,
+              Expanded(
+                // width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   widget.groupUser.name,
                   maxLines: 1,

@@ -24,7 +24,7 @@ class Starfish extends StatefulWidget {
 
 class _StarfishState extends State<Starfish> {
   bool _isInitialized = false;
-  String _initialRoute = Routes.phoneAuthentication;
+  String? _initialRoute;
   Locale _locale = Locale('en');
 
   @override
@@ -63,7 +63,9 @@ class _StarfishState extends State<Starfish> {
       : savedLocale;
 
     setState(() {
-      _initialRoute = isSignedIn ? Routes.dashboard : Routes.phoneAuthentication;
+      if (!isSignedIn) {
+        _initialRoute = Routes.phoneAuthentication;
+      }
       _locale = Locale(locale);
       _isInitialized = true;
       removeSplashScreen();
