@@ -1220,75 +1220,59 @@ class MyGroupActionListItem extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
                 child: Row(
-                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!
-                                  .voteByLearners
-                                  .insertTemplateValues({
-                                'votes':
-                                    ((_thumbsUp / _totalLearners) * 100).round()
-                              }),
-                              style: TextStyle(
-                                fontFamily: 'OpenSans',
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF000000),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            SvgPicture.asset(
-                              'assets/images/thumbs_up_solid.svg',
-                              height: 22.h,
-                              width: 22.w,
-                            ),
-                          ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!
+                              .voteByLearners
+                              .insertTemplateValues({
+                            'votes':
+                                ((_thumbsUp / _totalLearners) * 100).round()
+                          }),
+                          style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF000000),
+                          ),
                         ),
-                      ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        SvgPicture.asset(
+                          'assets/images/thumbs_up_solid.svg',
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!
-                                  .voteByLearners
-                                  .insertTemplateValues({
-                                'votes': ((_thumbsDown / _totalLearners) * 100)
-                                    .round()
-                              }),
-                              style: TextStyle(
-                                fontFamily: 'OpenSans',
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF000000),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            SvgPicture.asset(
-                              'assets/images/thumbs_down_solid.svg',
-                              height: 22.h,
-                              width: 22.w,
-                            ),
-                          ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!
+                              .voteByLearners
+                              .insertTemplateValues({
+                            'votes':
+                                ((_thumbsDown / _totalLearners) * 100).round()
+                          }),
+                          style: TextStyle(
+                            textBaseline: TextBaseline.ideographic,
+                            fontFamily: 'OpenSans',
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF000000),
+                          ),
                         ),
-                      ),
-                    )
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        SvgPicture.asset(
+                          'assets/images/thumbs_down_solid.svg',
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
