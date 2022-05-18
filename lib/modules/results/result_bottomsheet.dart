@@ -1027,12 +1027,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               child: Text(
                 Intl.plural(
                   complete,
-                  zero:
-                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                  one:
-                      "$complete ${AppLocalizations.of(context)!.resultZeroOrOneActionCompleted}",
-                  other:
-                      "$complete ${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+                  zero: "$complete ${AppLocalizations.of(context)!.done}",
+                  one: "$complete ${AppLocalizations.of(context)!.done}",
+                  other: "$complete ${AppLocalizations.of(context)!.done}",
                   args: [complete],
                 ),
                 style: TextStyle(
@@ -1060,12 +1057,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               child: Text(
                 Intl.plural(
                   notComplete,
-                  zero:
-                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
-                  one:
-                      "$notComplete ${AppLocalizations.of(context)!.resultZeroOrOneActionsIncompleted}",
+                  zero: "$notComplete ${AppLocalizations.of(context)!.pending}",
+                  one: "$notComplete ${AppLocalizations.of(context)!.pending}",
                   other:
-                      "$notComplete ${AppLocalizations.of(context)!.resultMoreThenOneActionsIncompleted}",
+                      "$notComplete ${AppLocalizations.of(context)!.pending}",
                   args: [notComplete],
                 ),
                 style: TextStyle(
@@ -1091,12 +1086,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 child: Text(
                   Intl.plural(
                     overdue,
-                    zero:
-                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
-                    one:
-                        "$overdue ${AppLocalizations.of(context)!.resultZeroOrOneActionsOverdue}",
-                    other:
-                        "$overdue ${AppLocalizations.of(context)!.resultMoreThenOneActionsOverdue}",
+                    zero: "$overdue ${AppLocalizations.of(context)!.overdue}",
+                    one: "$overdue ${AppLocalizations.of(context)!.overdue}",
+                    other: "$overdue ${AppLocalizations.of(context)!.overdue}",
                     args: [overdue],
                   ),
                   style: TextStyle(
