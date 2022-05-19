@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -101,51 +100,42 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: SingleChildScrollView(
-          //  reverse: true,
-          child: Container(height: MediaQuery.of(context).size.height,child: Column(children: [
-             Expanded(
-               child: Container(
-                   padding:
-                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                 
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 118.h),
-                    AppLogo(hight: 156.h, width: 163.w),
-                    SizedBox(height: 50.h),
-                    TitleLabel(
-                      title: AppLocalizations.of(context)!.enterOneTimePassword,
-                      align: TextAlign.center,
-                    ),
-                    SizedBox(height: 30.h),
-                    _pinCodeContiner(),
-                    SizedBox(height: 50.h),
-                    _resendOTPContainer(),
-                  ],
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Padding(
+          padding: EdgeInsets.only(bottom: footerHeight),
+          child: Center(
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              shrinkWrap: true,
+              children: <Widget>[
+                AppLogo(hight: 156.h, width: 163.w),
+                SizedBox(height: 50.h),
+                TitleLabel(
+                  title: AppLocalizations.of(context)!.enterOneTimePassword,
+                  align: TextAlign.center,
                 ),
+                SizedBox(height: 30.h),
+                _pinCodeContiner(),
+                SizedBox(height: 50.h),
+                _resendOTPContainer(),
+              ],
             ),
-             ),
-           //  _footer(),
-          ],)
           ),
         ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: _footer(),
-     //   bottomNavigationBar: _footer()
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _footer(),
     );
   }
 
+  get footerHeight => 75.h;
+
   SizedBox _footer() {
     return SizedBox(
-      height: 75.h,
+      height: footerHeight,
       child: Stack(
         children: [
           Positioned(

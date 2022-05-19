@@ -190,15 +190,11 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   Container _footer() {
     return Container(
       height: footerHeight,
-      child: Container(
-        color: AppColors.txtFieldBackground,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-          child: Align(
-            alignment: FractionalOffset.bottomCenter,
-            child: _nextButton(),
-          ),
-        ),
+      color: AppColors.txtFieldBackground,
+      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+      child: Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: _nextButton(),
       ),
     );
   }
