@@ -59,41 +59,37 @@ class LearnerSummary extends StatelessWidget {
                 SizedBox(
                   height: 15.h,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${AppLocalizations.of(context)!.transformations}: ",
-                      style: TextStyle(
-                          fontSize: 17.sp,
-                          fontFamily: "OpenSans ",
-                          color: Color(0xFF4F4F4F),
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Text(
-                          //  "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
-                          (hiveGroupUser
-                                          .getTransformationForMonth(month)
-                                          ?.impactStory
-                                          ?.length ??
-                                      0) >
-                                  25
-                              ? "${hiveGroupUser.getTransformationForMonth(month)?.impactStory?.substring(0, 25) ?? ''}..."
-                              : "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
-                          style: TextStyle(
-                            fontFamily: "OpenSans",
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text:
+                            "${AppLocalizations.of(context)!.transformations}: ",
+                        style: TextStyle(
                             fontSize: 17.sp,
-                            fontStyle: FontStyle.italic,
+                            fontFamily: "OpenSans ",
                             color: Color(0xFF4F4F4F),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      TextSpan(
+                        //  "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
+                        text: (hiveGroupUser
+                                        .getTransformationForMonth(month)
+                                        ?.impactStory
+                                        ?.length ??
+                                    0) >
+                                25
+                            ? "${hiveGroupUser.getTransformationForMonth(month)?.impactStory?.substring(0, 25) ?? ''}..."
+                            : "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
+                        style: TextStyle(
+                          fontFamily: "OpenSans",
+                          fontSize: 17.sp,
+                          fontStyle: FontStyle.italic,
+                          color: Color(0xFF4F4F4F),
                         ),
                       ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
                 /*SizedBox(
                   height: 15.h,
@@ -140,48 +136,35 @@ class LearnerSummary extends StatelessWidget {
                 SizedBox(
                   height: 15.h,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Baseline(
-                      baseline: 15,
-                      baselineType: TextBaseline.alphabetic,
-                      child: Text(
-                        "${AppLocalizations.of(context)!.feedback}: ",
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "${AppLocalizations.of(context)!.feedback}: ",
                         style: TextStyle(
                             fontSize: 17.sp,
                             fontFamily: "OpenSans ",
                             color: Color(0xFF4F4F4F),
                             fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.start,
                       ),
-                    ),
-                    Expanded(
-                      child: Baseline(
-                        baseline: 15,
-                        baselineType: TextBaseline.alphabetic,
-                        child: Text(
-                          (hiveGroupUser
-                                          .getTeacherResponseForMonth(month)
-                                          ?.response
-                                          ?.length ??
-                                      0) >
-                                  25
-                              ? "${hiveGroupUser.getTeacherResponseForMonth(month)?.response?.substring(0, 25) ?? ''}..."
-                              : "${hiveGroupUser.getTeacherResponseForMonth(month)?.response ?? ''}",
-                          style: TextStyle(
-                            fontFamily: "OpenSans",
-                            fontSize: 17.sp,
-                            fontStyle: FontStyle.italic,
-                            color: Color(0xFF4F4F4F),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
-                          maxLines: 2,
+                      TextSpan(
+                        text: (hiveGroupUser
+                                        .getTeacherResponseForMonth(month)
+                                        ?.response
+                                        ?.length ??
+                                    0) >
+                                25
+                            ? "${hiveGroupUser.getTeacherResponseForMonth(month)?.response?.substring(0, 25) ?? ''}..."
+                            : "${hiveGroupUser.getTeacherResponseForMonth(month)?.response ?? ''}",
+                        style: TextStyle(
+                          fontFamily: "OpenSans",
+                          fontSize: 17.sp,
+                          fontStyle: FontStyle.italic,
+                          color: Color(0xFF4F4F4F),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 20.h,
