@@ -420,24 +420,25 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               height: 20.h,
             ),
             if (widget.hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
-              ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: widget.hiveGroup.groupEvaluationCategories.length,
-                  itemBuilder: (context, index) {
-                    HiveEvaluationCategory _category = widget
-                        .hiveGroup.groupEvaluationCategories
-                        .elementAt(index);
-                    return _buildCategorySlider(_category);
-                  }),
-              SizedBox(
-                height: 20.h,
-              ),
               widgets.StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount:
+                              widget.hiveGroup.groupEvaluationCategories.length,
+                          itemBuilder: (context, index) {
+                            HiveEvaluationCategory _category = widget
+                                .hiveGroup.groupEvaluationCategories
+                                .elementAt(index);
+                            return _buildCategorySlider(_category);
+                          }),
+                      SizedBox(
+                        height: 20.h,
+                      ),
                       Visibility(
                         visible: isViewCategoryEvalutionHistory,
                         child: Text(
@@ -658,8 +659,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         });
   }
 
-  Widget _buildCurrentEvaluation(
-      int count, String categoryName, int changeInCount, Color textColor) {
+  Widget _buildCurrentEvaluation(int count, String categoryName,
+      int changeInCount, Color textColor, bool hideGrowthIndicator) {
     return Expanded(
       child: Container(
         child: Column(
@@ -680,21 +681,21 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       ),
                       textAlign: TextAlign.center),
                   Visibility(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                      child: Text(
-                        changeInCount > 0
-                            ? "+$changeInCount"
-                            : "$changeInCount",
-                        style: TextStyle(
-                          fontFeatures: [FontFeature.superscripts()],
-                          fontWeight: FontWeight.bold,
-                          color: changeInCount > 0 ? Colors.green : Colors.red,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                        child: Text(
+                          changeInCount > 0
+                              ? "+$changeInCount"
+                              : "$changeInCount",
+                          style: TextStyle(
+                            fontFeatures: [FontFeature.superscripts()],
+                            fontWeight: FontWeight.bold,
+                            color:
+                                changeInCount > 0 ? Colors.green : Colors.red,
+                          ),
                         ),
                       ),
-                    ),
-                    visible: changeInCount != 0,
-                  ),
+                      visible: changeInCount != 0 && !hideGrowthIndicator),
                 ],
               ),
             ),
@@ -771,7 +772,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
           category.name!,
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
-          Color(0xFFFFFFFF)));
+          Color(0xFFFFFFFF),
+          countByMonth["last-month"] == 0));
     });
     return Row(
       children: _currentEvaluationWidget,
@@ -788,75 +790,71 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             _evaluation.evaluation! <= 5
         ? _evaluation.evaluation!.toDouble()
         : 0.0;
-    return widgets.StatefulBuilder(builder: (context, setState) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _evaluationCategory.name!,
-            style: TextStyle(
-              fontFamily: "OpenSans",
-              fontSize: 19.sp,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF434141),
-            ),
-            textAlign: TextAlign.left,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _evaluationCategory.name!,
+          style: TextStyle(
+            fontFamily: "OpenSans",
+            fontSize: 19.sp,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF434141),
           ),
-          SizedBox(
-            height: 10.h,
-          ),
-          Container(
-            child: SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                thumbShape: SliderThumb(),
-                valueIndicatorColor: Colors.transparent,
-                valueIndicatorTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                showValueIndicator: ShowValueIndicator.never,
+          textAlign: TextAlign.left,
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        Container(
+          child: SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              thumbShape: SliderThumb(),
+              valueIndicatorColor: Colors.transparent,
+              valueIndicatorTextStyle: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
-              child: Slider(
-                activeColor: Color(0xFFFCDFBA),
-                inactiveColor: Color(0xFFFCDFBA),
-                thumbColor: Color(0xFFE5625C),
-                max: 5.0,
-                min: 0.0,
-                divisions: 5,
-                value: _value,
-                label: sliderLabel(_value.toInt()),
-                onChanged: (double value) {
-                  setState(() {
-                    _value = value;
-                  });
+              showValueIndicator: ShowValueIndicator.never,
+            ),
+            child: Slider(
+              activeColor: Color(0xFFFCDFBA),
+              inactiveColor: Color(0xFFFCDFBA),
+              thumbColor: Color(0xFFE5625C),
+              max: 5.0,
+              min: 0.0,
+              divisions: 5,
+              value: _value,
+              label: sliderLabel(_value.toInt()),
+              onChanged: (double value) {
+                setState(() {
+                  _value = value;
+                });
 
-                  _saveLearnerEvaluation(
-                      _evaluationCategory.id!, value.toInt());
-                },
-              ),
+                _saveLearnerEvaluation(_evaluationCategory.id!, value.toInt());
+              },
             ),
           ),
-          SizedBox(
-            height: 5.h,
+        ),
+        SizedBox(
+          height: 5.h,
+        ),
+        Text(
+          _value.toInt() == 0
+              ? "${AppLocalizations.of(context)!.dragToSelect}"
+              : _evaluationCategory.getEvaluationNameFromValue(_value.toInt()),
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            fontFamily: "OpenSans",
+            fontSize: 14.sp,
+            color: Color(0xFF797979),
           ),
-          Text(
-            _value.toInt() == 0
-                ? "${AppLocalizations.of(context)!.dragToSelect}"
-                : _evaluationCategory
-                    .getEvaluationNameFromValue(_value.toInt()),
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              fontFamily: "OpenSans",
-              fontSize: 14.sp,
-              color: Color(0xFF797979),
-            ),
-          ),
-          SizedBox(
-            height: 5.h,
-          ),
-        ],
-      );
-    });
+        ),
+        SizedBox(
+          height: 5.h,
+        ),
+      ],
+    );
   }
 
   Widget _buildActionCard() {
