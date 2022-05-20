@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
@@ -65,11 +66,13 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   bool _isEditMode = false;
   bool isViewActionHistory = false;
   bool isViewCategoryEvalutionHistory = false;
+
   //double _value = 2.0;
 
   TextEditingController _teacherFeedbackController = TextEditingController();
-  // TextEditingController _transformationController = TextEditingController();
-  // List<File> _selectedFiles = [];
+  TextEditingController _transformationController = TextEditingController();
+  List<File> _selectedFiles = [];
+  List<HiveFile> _hiveFiles = [];
 
   // @override
   // void initState() {
@@ -90,14 +93,24 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _isInitialized = true;
     }
 
+    _hiveTransformation = _hiveTransformation = widget.hiveGroupUser
+        .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+
     _teacherFeedbackController.text = widget.hiveGroupUser
             .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!.toMonth)
             ?.response ??
         '';
-    // _transformationController.text = widget.hiveGroupUser
-    //         .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
-    //         ?.impactStory ??
-    //     '';
+    _transformationController.text = widget.hiveGroupUser
+            .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
+            ?.impactStory ??
+        '';
+    if (_hiveTransformation != null) {
+      _hiveFiles = widget.hiveGroupUser
+              .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
+              ?.localFiles ??
+          [];
+    }
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.80,
       padding:
@@ -292,15 +305,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                         height: 10.h,
                       ),
                       //_buildTrasnformatonsCard(),
-                      ResultTransformationsWidget(
-                          groupUser: widget.hiveGroupUser,
-                          month: bloc.resultsBloc.hiveDate!,
-                          hiveTransformation: _hiveTransformation,
-                          onChange: (String? impactStory, List<File> files) {
-                            //  _saveTransformation(impactStory, files);
-                            userImpactStory = impactStory;
-                            imageFiles = files;
-                          }),
+                      _buildTransformationWidget(),
 
                       SizedBox(
                         height: 10.h,
@@ -329,7 +334,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 color: Color(0xFFEFEFEF),
                 child: ElevatedButton(
                   onPressed: () {
-                    _saveTransformation(userImpactStory, imageFiles ?? []);
+                    //  _saveTransformation(userImpactStory, imageFiles ?? []);
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(
@@ -1317,5 +1322,290 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     }).onError((error, stackTrace) {
       debugPrint("Failed to save LearnerEvaluation");
     });
+  }
+
+  _buildTransformationWidget() {
+    return Card(
+      color: Color(0xE6EFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            10,
+          ),
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  AssetsPath.resultsActiveIcon,
+                  color: Colors.green,
+                ),
+                SizedBox(
+                  width: 5.w,
+                ),
+                Text(
+                  '${AppLocalizations.of(context)!.transformations}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 19.sp,
+                    fontFamily: "OpenSans",
+                    color: Color(0xFF4F4F4F),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10.h),
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFFFF),
+                border: Border.all(
+                  color: Color(0xFF979797),
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: FocusableTextField(
+                controller: _transformationController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  hintText:
+                      '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
+                  hintStyle: TextStyle(
+                    fontFamily: "OpenSans",
+                    fontSize: 16.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                maxLines: 3,
+                textInputAction: TextInputAction.done,
+                onFocusChange: (isFocused) {
+                  if (isFocused) {
+                    return;
+                  }
+                },
+                onChange: (String value) {
+                  userImpactStory = value.trim();
+                  _saveTransformation(userImpactStory, _selectedFiles);
+                },
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            //  if (_isEditMode) _previewFiles(widget.material!),
+            // SizedBox(height: 10.h),
+
+            // _previewSelectedFiles(),
+
+            // Add Materials
+
+            if (_selectedFiles.isNotEmpty ||
+                (_hiveTransformation != null &&
+                    _hiveTransformation!.localFiles.isNotEmpty &&
+                    _hiveFiles != null &&
+                    _hiveFiles.isNotEmpty))
+              _previewSelectedFiles(),
+            SizedBox(height: 10.h),
+            DottedBorder(
+              borderType: BorderType.RRect,
+              radius: Radius.circular(30.r),
+              color: Color(0xFF3475F0),
+              child: Container(
+                  width: double.infinity,
+                  height: 50.h,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if ((!_isEditMode && _selectedFiles.length >= 5) ||
+                          (_isEditMode &&
+                              (_selectedFiles.length +
+                                      (_hiveTransformation!
+                                          .localFiles.length)) >=
+                                  5)) {
+                        Fluttertoast.showToast(
+                            msg:
+                                AppLocalizations.of(context)!.maxFilesSelected);
+                      } else {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          allowMultiple: false,
+                          type: FileType.image,
+                          //  allowedExtensions: ['jpg', 'png', 'jpeg'],
+                        );
+
+                        if (result != null) {
+                          // if single selected file is IMAGE, open image in Cropper
+
+                          if (result.count == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageCropperScreen(
+                                    sourceImage: File(result.paths.first!),
+                                    onDone: (File? _newFile) {
+                                      if (_newFile == null) {
+                                        return;
+                                      }
+                                      var fileSize = _newFile
+                                          .readAsBytesSync()
+                                          .lengthInBytes;
+                                      if (fileSize > 5 * 1024 * 1024) {
+                                        Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)!
+                                                .imageSizeValidation);
+                                      } else {
+                                        setState(() {
+                                          _selectedFiles.add(_newFile);
+                                          _saveTransformation(
+                                              _transformationController.text,
+                                              _selectedFiles);
+                                          _selectedFiles.clear();
+                                        });
+                                        _saveTransformation(
+                                            _transformationController.text,
+                                            _selectedFiles);
+                                      }
+                                    }),
+                              ),
+                            ).then((value) => {
+                                  // Handle cropped image here
+                                });
+                          } else {
+                            setState(() {
+                              _selectedFiles.addAll(result.paths
+                                  .map((path) => File(path!))
+                                  .toList());
+                            });
+                          }
+                        } else {
+                          // User canceled the picker
+                        }
+                      }
+                    },
+                    child: Text(
+                      '${AppLocalizations.of(context)!.addPhotos}',
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 17.sp,
+                        color: Color(0xFF3475F0),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                  )),
+            ),
+
+            SizedBox(
+              height: 20.h,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _imagePreview({required File file, required Function onDelete}) {
+    return Stack(
+      alignment: AlignmentDirectional.topEnd,
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+          child: Container(
+            child: InkWell(
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ImagePreview(file))),
+              child: Hero(
+                tag: file,
+                child: Card(
+                  margin: const EdgeInsets.only(top: 12.0, right: 12.0),
+                  shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      file,
+                      fit: BoxFit.scaleDown,
+                      //  height: 130.h,
+                    ),
+                  ),
+                ),
+                flightShuttleBuilder: (flightContext, animation, direction,
+                    fromContext, toContext) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            // setState(() {
+            //   _selectedFiles.remove(file);
+            // });
+            onDelete();
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.red,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _previewSelectedFiles() {
+    final List<Widget> _widgetList = [];
+
+    for (File file in _selectedFiles) {
+      _widgetList.add(_imagePreview(
+          file: file,
+          onDelete: () {
+            setState(() {
+              _selectedFiles.remove(file);
+            });
+          }));
+    }
+
+    if (_hiveTransformation != null &&
+        _hiveTransformation!.localFiles.isNotEmpty &&
+        _hiveFiles.isNotEmpty &&
+        _hiveFiles != null) {
+      for (HiveFile _hiveFile in _hiveFiles) {
+        File file = File(_hiveFile.filepath!);
+        _widgetList.add(_imagePreview(
+            file: file,
+            onDelete: () {
+              setState(() {
+                _hiveFile.delete();
+              });
+            }));
+      }
+    }
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      crossAxisCount: (_selectedFiles.length == 1 && _hiveFiles.length == 0) ||
+              (_hiveFiles.length == 1 && _selectedFiles.length == 0)
+          ? 1
+          : 2,
+      childAspectRatio: 1,
+      children: _widgetList,
+    );
   }
 }
