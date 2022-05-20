@@ -444,84 +444,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       SizedBox(
                         height: 20.h,
                       ),
-                      Visibility(
-                        visible: isViewCategoryEvalutionHistory,
-                        child: Text(
-                          '${AppLocalizations.of(context)!.currentEvaluation}',
-                          style: TextStyle(
-                            fontFeatures: [FontFeature.subscripts()],
-                            color: Color(0xFF434141),
-                            fontFamily: "OpenSans",
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                          visible: isViewCategoryEvalutionHistory,
-                          child: SizedBox(
-                            height: 10.h,
-                          )),
-                      Visibility(
-                        visible: isViewCategoryEvalutionHistory,
-                        child: _buildCurrentEvaluationWidget(
-                          bloc.resultsBloc.hiveGroupUser!
-                              .getLearnerEvaluationsByCategoryForMoth(
-                                  bloc.resultsBloc.hiveDate!),
-                        ),
-                      ),
-                      Visibility(
-                        visible: isViewCategoryEvalutionHistory,
-                        child: SizedBox(
-                          height: 20.h,
-                        ),
-                      ),
-                      Visibility(
-                        visible: isViewCategoryEvalutionHistory,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '${AppLocalizations.of(context)!.history}',
-                            style: TextStyle(
-                              fontFeatures: [FontFeature.subscripts()],
-                              color: Color(0xFF434141),
-                              fontFamily: "OpenSans",
-                              fontSize: 19.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Visibility(
-                          visible: isViewCategoryEvalutionHistory,
-                          child: _buildCategoryHistoryWidget()),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            isViewCategoryEvalutionHistory =
-                                !isViewCategoryEvalutionHistory;
-                          });
-                        },
-                        child: Center(
-                          child: Text(
-                            isViewCategoryEvalutionHistory
-                                ? '${AppLocalizations.of(context)!.hideHistory}'
-                                : '${AppLocalizations.of(context)!.viewHistory}',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: "Open",
-                              color: Color(0xFF3475F0),
-                            ),
-                          ),
-                        ),
-                      )
+                      _buildCategoryHistoryWidget(),
                     ],
                   );
                 },
@@ -547,121 +470,203 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _historyAvailableMonths.remove(_currentMonth);
     }
 
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: _historyAvailableMonths.length,
-        itemBuilder: (BuildContext context, index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 10.h,
+    if (_historyAvailableMonths.length == 0) {
+      return Container();
+    }
+    return Column(
+      children: [
+        Visibility(
+          visible: isViewCategoryEvalutionHistory,
+          child: Text(
+            '${AppLocalizations.of(context)!.currentEvaluation}',
+            style: TextStyle(
+              fontFeatures: [FontFeature.subscripts()],
+              color: Color(0xFF434141),
+              fontFamily: "OpenSans",
+              fontSize: 19.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Visibility(
+            visible: isViewCategoryEvalutionHistory,
+            child: SizedBox(
+              height: 10.h,
+            )),
+        Visibility(
+          visible: isViewCategoryEvalutionHistory,
+          child: _buildCurrentEvaluationWidget(
+            bloc.resultsBloc.hiveGroupUser!
+                .getLearnerEvaluationsByCategoryForMoth(
+                    bloc.resultsBloc.hiveDate!),
+          ),
+        ),
+        Visibility(
+          visible: isViewCategoryEvalutionHistory,
+          child: SizedBox(
+            height: 20.h,
+          ),
+        ),
+        Visibility(
+          visible: isViewCategoryEvalutionHistory,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '${AppLocalizations.of(context)!.history}',
+              style: TextStyle(
+                fontFeatures: [FontFeature.subscripts()],
+                color: Color(0xFF434141),
+                fontFamily: "OpenSans",
+                fontSize: 19.sp,
+                fontWeight: FontWeight.bold,
               ),
-              Text(
-                DateTimeUtils.formatHiveDate(
-                    _historyAvailableMonths.elementAt(index),
-                    requiredDateFormat: "MMM yyyy"), //"JUL 2021",
-                style: TextStyle(
-                  fontFamily: "OpenSans",
-                  fontSize: 19.sp,
-                  color: Color(0xFF434141),
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: _historyAvailableMonths.length,
+          itemBuilder: (BuildContext context, index) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 10.h,
                 ),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              _buildMonthlyEvaluationWidget(
-                bloc.resultsBloc.hiveGroupUser!
-                    .getLearnerEvaluationsByCategoryForMoth(
-                        _historyAvailableMonths.elementAt(index)),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Divider(
-                thickness: 1.0,
-                color: Colors.grey,
-              )
+                Text(
+                  DateTimeUtils.formatHiveDate(
+                      _historyAvailableMonths.elementAt(index),
+                      requiredDateFormat: "MMM yyyy"), //"JUL 2021",
+                  style: TextStyle(
+                    fontFamily: "OpenSans",
+                    fontSize: 19.sp,
+                    color: Color(0xFF434141),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                _buildMonthlyEvaluationWidget(
+                  bloc.resultsBloc.hiveGroupUser!
+                      .getLearnerEvaluationsByCategoryForMoth(
+                          _historyAvailableMonths.elementAt(index)),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Divider(
+                  thickness: 1.0,
+                  color: Colors.grey,
+                )
 
-              // Row(
-              //   children: <Widget>[
-              //     Text(
-              //       "Category1:",
-              //       style: TextStyle(
-              //         fontFamily: "OpenSans",
-              //         fontSize: 14.sp,
-              //         color: Color(0xFF434141),
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       width: 5.h,
-              //     ),
-              //     Text(
-              //       "5",
-              //       style: TextStyle(
-              //         fontFamily: "OpenSans",
-              //         fontSize: 14.sp,
-              //         color: Color(0xFF434141),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(
-              //   height: 5.h,
-              // ),
-              // Row(
-              //   children: <Widget>[
-              //     Text(
-              //       "Category3: ",
-              //       style: TextStyle(
-              //         fontFamily: "OpenSans",
-              //         fontSize: 14.sp,
-              //         color: Color(0xFF434141),
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       width: 5.h,
-              //     ),
-              //     Text(
-              //       "5",
-              //       style: TextStyle(
-              //         fontFamily: "OpenSans",
-              //         fontSize: 14.sp,
-              //         color: Color(0xFF434141),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(
-              //   height: 10.h,
-              // ),
-              // Row(
-              //   children: <Widget>[
-              //     Text(
-              //       "Category2: ",
-              //       style: TextStyle(
-              //         fontFamily: "OpenSans",
-              //         fontSize: 14.sp,
-              //         color: Color(0xFF434141),
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       width: 5.h,
-              //     ),
-              //     Text(
-              //       "5",
-              //       style: TextStyle(
-              //         fontFamily: "OpenSans",
-              //         fontSize: 14.sp,
-              //         color: Color(0xFF434141),
-              //       ),
-              //     ),
-              //   ],
-              // )
-            ],
-          );
-        });
+                // Row(
+                //   children: <Widget>[
+                //     Text(
+                //       "Category1:",
+                //       style: TextStyle(
+                //         fontFamily: "OpenSans",
+                //         fontSize: 14.sp,
+                //         color: Color(0xFF434141),
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       width: 5.h,
+                //     ),
+                //     Text(
+                //       "5",
+                //       style: TextStyle(
+                //         fontFamily: "OpenSans",
+                //         fontSize: 14.sp,
+                //         color: Color(0xFF434141),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // SizedBox(
+                //   height: 5.h,
+                // ),
+                // Row(
+                //   children: <Widget>[
+                //     Text(
+                //       "Category3: ",
+                //       style: TextStyle(
+                //         fontFamily: "OpenSans",
+                //         fontSize: 14.sp,
+                //         color: Color(0xFF434141),
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       width: 5.h,
+                //     ),
+                //     Text(
+                //       "5",
+                //       style: TextStyle(
+                //         fontFamily: "OpenSans",
+                //         fontSize: 14.sp,
+                //         color: Color(0xFF434141),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // SizedBox(
+                //   height: 10.h,
+                // ),
+                // Row(
+                //   children: <Widget>[
+                //     Text(
+                //       "Category2: ",
+                //       style: TextStyle(
+                //         fontFamily: "OpenSans",
+                //         fontSize: 14.sp,
+                //         color: Color(0xFF434141),
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       width: 5.h,
+                //     ),
+                //     Text(
+                //       "5",
+                //       style: TextStyle(
+                //         fontFamily: "OpenSans",
+                //         fontSize: 14.sp,
+                //         color: Color(0xFF434141),
+                //       ),
+                //     ),
+                //   ],
+                // )
+              ],
+            );
+          },
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              isViewCategoryEvalutionHistory = !isViewCategoryEvalutionHistory;
+            });
+          },
+          child: Center(
+            child: Text(
+              isViewCategoryEvalutionHistory
+                  ? '${AppLocalizations.of(context)!.hideHistory}'
+                  : '${AppLocalizations.of(context)!.viewHistory}',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: "Open",
+                color: Color(0xFF3475F0),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildCurrentEvaluation(int count, String categoryName,
@@ -901,59 +906,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 widget.hiveGroupUser
                     .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
-            Column(
-              children: [
-                Visibility(
-                  visible: isViewActionHistory,
-                  child: SizedBox(
-                    height: 15.h,
-                  ),
-                ),
-                Visibility(
-                  visible: isViewActionHistory,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '${AppLocalizations.of(context)!.history}',
-                      style: TextStyle(
-                        fontFeatures: [FontFeature.subscripts()],
-                        color: Color(0xFF434141),
-                        fontFamily: "OpenSans",
-                        fontSize: 19.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Visibility(
-                    visible: isViewActionHistory,
-                    child: _buildActionHistoryWidget()),
-                SizedBox(
-                  height: 10.h,
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      isViewActionHistory = !isViewActionHistory;
-                    });
-                  },
-                  child: Text(
-                    isViewActionHistory
-                        ? '${AppLocalizations.of(context)!.hideHistory}'
-                        : '${AppLocalizations.of(context)!.viewHistory}',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontFamily: "Open",
-                      color: Color(0xFF3475F0),
-                    ),
-                  ),
-                )
-              ],
-            ),
+            _buildActionHistoryWidget(),
             SizedBox(
               height: 10.h,
             ),
@@ -974,43 +927,94 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _historyAvailableMonths.remove(_currentMonth);
     }
 
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: _historyAvailableMonths.length,
-        itemBuilder: (BuildContext context, index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 10.h,
-              ),
-              Text(
-                DateTimeUtils.formatHiveDate(
-                    _historyAvailableMonths.elementAt(index),
-                    requiredDateFormat: "MMM yyyy"), //"JUL 2021",
-                style: TextStyle(
-                  fontFamily: "OpenSans",
-                  fontSize: 19.sp,
-                  color: Color(0xFF434141),
+    if (_historyAvailableMonths.length == 0) {
+      return SizedBox(
+        height: 10.h,
+      );
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 15.h,
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '${AppLocalizations.of(context)!.history}',
+            style: TextStyle(
+              fontFeatures: [FontFeature.subscripts()],
+              color: Color(0xFF434141),
+              fontFamily: "OpenSans",
+              fontSize: 19.sp,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: _historyAvailableMonths.length,
+          itemBuilder: (BuildContext context, index) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 10.h,
                 ),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              _buildMonthlyActionWidget(
-                  widget.hiveGroupUser
-                      .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
-                  widget.hiveGroupUser.getActionsNotCompletedInMonth(
-                      bloc.resultsBloc.hiveDate!),
-                  widget.hiveGroupUser
-                      .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
-              SizedBox(
-                height: 10.h,
-              ),
-            ],
-          );
-        });
+                Text(
+                  DateTimeUtils.formatHiveDate(
+                      _historyAvailableMonths.elementAt(index),
+                      requiredDateFormat: "MMM yyyy"), //"JUL 2021",
+                  style: TextStyle(
+                    fontFamily: "OpenSans",
+                    fontSize: 19.sp,
+                    color: Color(0xFF434141),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                _buildMonthlyActionWidget(
+                    widget.hiveGroupUser
+                        .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
+                    widget.hiveGroupUser.getActionsNotCompletedInMonth(
+                        bloc.resultsBloc.hiveDate!),
+                    widget.hiveGroupUser
+                        .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
+                SizedBox(
+                  height: 10.h,
+                ),
+              ],
+            );
+          },
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              isViewActionHistory = !isViewActionHistory;
+            });
+          },
+          child: Text(
+            isViewActionHistory
+                ? '${AppLocalizations.of(context)!.hideHistory}'
+                : '${AppLocalizations.of(context)!.viewHistory}',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontFamily: "Open",
+              color: Color(0xFF3475F0),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildMonthlyActionWidget(int complete, int notComplete, int overdue,
