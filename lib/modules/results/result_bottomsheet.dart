@@ -1438,12 +1438,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   height: 50.h,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if ((!_isEditMode && _selectedFiles.length >= 5) ||
-                          (_isEditMode &&
-                              (_selectedFiles.length +
-                                      (_hiveTransformation!
-                                          .localFiles.length)) >=
-                                  5)) {
+                      if ((_selectedFiles.length + (_hiveFiles.length)) >= 5) {
                         Fluttertoast.showToast(
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
