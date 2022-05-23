@@ -444,7 +444,34 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       SizedBox(
                         height: 20.h,
                       ),
-                      _buildCategoryHistoryWidget(),
+                      if (isViewCategoryEvalutionHistory)
+                        _buildCategoryHistoryWidget(),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            isViewCategoryEvalutionHistory =
+                                !isViewCategoryEvalutionHistory;
+                          });
+                        },
+                        child: Center(
+                          child: Text(
+                            isViewCategoryEvalutionHistory
+                                ? '${AppLocalizations.of(context)!.hideHistory}'
+                                : '${AppLocalizations.of(context)!.viewHistory}',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontFamily: "Open",
+                              color: Color(0xFF3475F0),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      )
                     ],
                   );
                 },
@@ -643,28 +670,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             );
           },
         ),
-        SizedBox(
-          height: 10.h,
-        ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              isViewCategoryEvalutionHistory = !isViewCategoryEvalutionHistory;
-            });
-          },
-          child: Center(
-            child: Text(
-              isViewCategoryEvalutionHistory
-                  ? '${AppLocalizations.of(context)!.hideHistory}'
-                  : '${AppLocalizations.of(context)!.viewHistory}',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: "Open",
-                color: Color(0xFF3475F0),
-              ),
-            ),
-          ),
-        ),
+        // SizedBox(
+        //   height: 10.h,
+        // ),
       ],
     );
   }
@@ -906,7 +914,27 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 widget.hiveGroupUser
                     .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
-            _buildActionHistoryWidget(),
+            if (isViewActionHistory) _buildActionHistoryWidget(),
+            SizedBox(
+              height: 10.h,
+            ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  isViewActionHistory = !isViewActionHistory;
+                });
+              },
+              child: Text(
+                isViewActionHistory
+                    ? '${AppLocalizations.of(context)!.hideHistory}'
+                    : '${AppLocalizations.of(context)!.viewHistory}',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontFamily: "Open",
+                  color: Color(0xFF3475F0),
+                ),
+              ),
+            ),
             SizedBox(
               height: 10.h,
             ),
@@ -995,23 +1023,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         ),
         SizedBox(
           height: 10.h,
-        ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              isViewActionHistory = !isViewActionHistory;
-            });
-          },
-          child: Text(
-            isViewActionHistory
-                ? '${AppLocalizations.of(context)!.hideHistory}'
-                : '${AppLocalizations.of(context)!.viewHistory}',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: "Open",
-              color: Color(0xFF3475F0),
-            ),
-          ),
         ),
       ],
     );
