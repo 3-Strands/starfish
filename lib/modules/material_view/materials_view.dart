@@ -72,6 +72,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   bool _isFirstLoad = false;
   bool _isLoading = false;
   bool _hasMore = true;
+  bool _isInitialized = false;
 
   List<HiveMaterial> _materials = [];
 
@@ -96,11 +97,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     });
   }
 
-  @override
+  /*@override
   void didChangeDependencies() {
     bloc = Provider.of(context);
     super.didChangeDependencies();
-  }
+  }*/
 
   void _firstLoad() {
     setState(() {
@@ -237,7 +238,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      _isInitialized = true;
+    }
 
     return FocusDetector(
       key: _focusDetectorKey,

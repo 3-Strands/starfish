@@ -41,6 +41,7 @@ class _MyGroupState extends State<MyGroup> {
   final Key _groupActionFocusDetectorKey = UniqueKey();
   final Map<String, GlobalKey<State<StatefulWidget>>> _groupItemKeys = Map();
 
+  bool _isInitialized = false;
   late AppBloc bloc;
 
   @override
@@ -71,7 +72,10 @@ class _MyGroupState extends State<MyGroup> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      _isInitialized = true;
+    }
 
     return FocusDetector(
       key: _groupActionFocusDetectorKey,

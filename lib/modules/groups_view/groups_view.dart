@@ -44,6 +44,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   final Key _groupFocusDetectorKey = UniqueKey();
 
+  bool _isInitialized = false;
+
   @override
   void initState() {
     super.initState();
@@ -244,7 +246,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      _isInitialized = true;
+    }
 
     return FocusDetector(
       key: _groupFocusDetectorKey,
