@@ -125,61 +125,47 @@ extension HiveActionExt on HiveAction {
         : null;
   }
 
-  /*ActionStatus get actionStatus {
-    if (this.dateDue == null) {
-      return ActionStatus.NOT_DONE;
-    }
-    // TODO: need to be updated as it depends on if the user have already taken
-    // action or not also,
-    if (this.dateDue!.toDateTime().isBefore(DateTime.now())) {
-      return ActionStatus.OVERDUE;
-    } else if (this.dateDue!.toDateTime().isAfter(DateTime.now())) {
-      return ActionStatus.NOT_DONE;
-    } else {
-      return ActionStatus.DONE;
-    }
-  }*/
-
   List<HiveUser>? get users {
-    if (this.group == null) {
+    if (this.group == null || this.group!.activeUsers == null) {
       return null;
     }
-    return this
-        .group!
-        .activeUsers
-        ?.map((HiveGroupUser groupUser) => groupUser.user!)
-        .toList();
+    List<HiveUser> _users = [];
+    this.group!.activeUsers!.forEach((HiveGroupUser groupUser) {
+      _users.add(groupUser.user!);
+    });
+
+    return _users;
   }
 
   List<HiveUser>? get learners {
-    if (this.group == null) {
+    if (this.group == null || this.group?.learners == null) {
       return null;
     }
-    return this
-        .group!
-        .activeUsers
-        ?.where((element) =>
-            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.LEARNER &&
-            element.user != null)
-        .map((HiveGroupUser groupUser) => groupUser.user!)
-        .toList();
+    List<HiveUser> _learners = [];
+    this.group!.learners!.forEach((HiveGroupUser groupUser) {
+      _learners.add(groupUser.user!);
+    });
+
+    return _learners;
   }
 
   List<HiveUser>? get leaders {
     // Admin and Teachers
-    if (this.group == null) {
+    if (this.group == null || this.group!.activeUsers == null) {
       return null;
     }
-    return this
+    List<HiveUser> _leaders = [];
+
+    this
         .group!
         .activeUsers
-        ?.where((element) =>
-            (GroupUser_Role.valueOf(element.role!) == GroupUser_Role.ADMIN ||
-                GroupUser_Role.valueOf(element.role!) ==
-                    GroupUser_Role.TEACHER) &&
-            element.user != null)
-        .map((HiveGroupUser groupUser) => groupUser.user!)
-        .toList();
+        ?.where((element) => (GroupUser_Role.valueOf(element.role!) ==
+                GroupUser_Role.ADMIN ||
+            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER))
+        .forEach((groupUser) {
+      _leaders.add(groupUser.user!);
+    });
+    return _leaders;
   }
 
   bool get isIndividualAction {
@@ -224,14 +210,6 @@ extension HiveActionExt on HiveAction {
   }
 
   ActionStatus get actionStatus {
-    /*HiveUser currentUser = CurrentUserProvider().user;
-
-    return currentUser.actionStatusbyId(this);*/
-
-    /*return this.mineAction != null
-        ? ActionUser_Status.valueOf(mineAction!.status!)!.convertTo()
-        : ActionStatus.NOT_DONE;*/
-
     HiveActionUser? actionUser = this.mineAction;
 
     if (actionUser != null) {
@@ -273,35 +251,8 @@ extension HiveActionExt on HiveAction {
 
     return hiveActionUser;
   }
-  /*ActionStatus get actionStatus {
-    HiveUser? hiveUser;
-    if (this.isIndividualAction) {
-      hiveUser = this.creator;
-
-      HiveActionUser? hiveActionUser = hiveUser?.actions!.firstWhere(
-          (element) => element.userId == creatorId && element.actionId == id);
-
-      ActionUser_Status.valueOf(hiveActionUser!.status!);
-
-    } else {
-      hiveUser = this.group!.users?.firstWhereOrNull(
-          (element) => element.id == creatorId && groupId == element.);
-      HiveUser currentUser = CurrentUserProvider().user;
-      hiveUser = this
-          .group!
-          .users
-          ?.where((HiveGroupUser element) =>
-              element.groupId == groupId && element.userId == currentUser.id)
-          .map((HiveGroupUser groupUser) => groupUser.user!)
-          .first;
-    }
-
-    return hiveUser != null
-        ? hiveUser.actionStatusbyId(this)
-        : ActionStatus.UNSPECIFIED_STATUS;
-  }*/
 
   List<HiveActionUser>? get actionsUsers {
-    ActionProvider().getAllActionsUser();
+    return ActionProvider().getAllActionsUser();
   }
 }
