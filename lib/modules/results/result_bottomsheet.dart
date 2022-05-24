@@ -444,34 +444,38 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       SizedBox(
                         height: 20.h,
                       ),
-                      if (isViewCategoryEvalutionHistory)
-                        _buildCategoryHistoryWidget(),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            isViewCategoryEvalutionHistory =
-                                !isViewCategoryEvalutionHistory;
-                          });
-                        },
-                        child: Center(
-                          child: Text(
-                            isViewCategoryEvalutionHistory
-                                ? '${AppLocalizations.of(context)!.hideHistory}'
-                                : '${AppLocalizations.of(context)!.viewHistory}',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: "Open",
-                              color: Color(0xFF3475F0),
+                      if (bloc.resultsBloc
+                          .getListOfAvailableHistoryMonths()
+                          .isNotEmpty) ...[
+                        if (isViewCategoryEvalutionHistory)
+                          _buildCategoryHistoryWidget(),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isViewCategoryEvalutionHistory =
+                                  !isViewCategoryEvalutionHistory;
+                            });
+                          },
+                          child: Center(
+                            child: Text(
+                              isViewCategoryEvalutionHistory
+                                  ? '${AppLocalizations.of(context)!.hideHistory}'
+                                  : '${AppLocalizations.of(context)!.viewHistory}',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontFamily: "Open",
+                                color: Color(0xFF3475F0),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      )
+                        SizedBox(
+                          height: 10.h,
+                        )
+                      ]
                     ],
                   );
                 },
@@ -487,15 +491,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildCategoryHistoryWidget() {
-    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
-    _currentMonth.day = 0;
+    // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    // _currentMonth.day = 0;
 
     List<HiveDate> _historyAvailableMonths =
         bloc.resultsBloc.getListOfAvailableHistoryMonths();
-    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-    if (_historyAvailableMonths.contains(_currentMonth)) {
-      _historyAvailableMonths.remove(_currentMonth);
-    }
+    // _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    // if (_historyAvailableMonths.contains(_currentMonth)) {
+    //   _historyAvailableMonths.remove(_currentMonth);
+    // }
 
     if (_historyAvailableMonths.length == 0) {
       return Container();
@@ -914,30 +918,34 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 widget.hiveGroupUser
                     .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
-            if (isViewActionHistory) _buildActionHistoryWidget(),
             SizedBox(
-              height: 10.h,
+              height: 20.h,
             ),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  isViewActionHistory = !isViewActionHistory;
-                });
-              },
-              child: Text(
-                isViewActionHistory
-                    ? '${AppLocalizations.of(context)!.hideHistory}'
-                    : '${AppLocalizations.of(context)!.viewHistory}',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: "Open",
-                  color: Color(0xFF3475F0),
+            if (bloc.resultsBloc
+                .getListOfAvailableHistoryMonths()
+                .isNotEmpty) ...[
+              if (isViewActionHistory) _buildActionHistoryWidget(),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isViewActionHistory = !isViewActionHistory;
+                  });
+                },
+                child: Text(
+                  isViewActionHistory
+                      ? '${AppLocalizations.of(context)!.hideHistory}'
+                      : '${AppLocalizations.of(context)!.viewHistory}',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: "Open",
+                    color: Color(0xFF3475F0),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
+              SizedBox(
+                height: 10.h,
+              ),
+            ]
           ],
         ),
       ),
@@ -945,15 +953,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildActionHistoryWidget() {
-    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
-    _currentMonth.day = 0;
+    // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    // _currentMonth.day = 0;
 
     List<HiveDate> _historyAvailableMonths =
         bloc.resultsBloc.getListOfAvailableHistoryMonths();
-    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-    if (_historyAvailableMonths.contains(_currentMonth)) {
-      _historyAvailableMonths.remove(_currentMonth);
-    }
+    // _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    // if (_historyAvailableMonths.contains(_currentMonth)) {
+    //   _historyAvailableMonths.remove(_currentMonth);
+    // }
 
     if (_historyAvailableMonths.length == 0) {
       return SizedBox(
