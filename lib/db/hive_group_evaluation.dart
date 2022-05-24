@@ -53,6 +53,7 @@ class HiveGroupEvaluation extends HiveObject {
 
   @override
   String toString() {
-    return super.toString();
+    return '''{id: ${this.id}, userId: ${this.userId}, month: ${this.month}, 
+      groupId: ${this.groupId}, evaluation: ${this.evaluation} }''';
   }
 }
