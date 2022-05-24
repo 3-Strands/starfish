@@ -234,7 +234,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalTeacherResponsesToRemote());
     await lock.synchronized(() => syncLocalLearnerEvaluationsToRemote());
     await lock.synchronized(() => syncLocalOutputsToRemote());
-    //await lock.synchronized(() => syncLocalGroupEvaluationsToRemote()); // Pending
+    await lock.synchronized(() => syncLocalGroupEvaluationsToRemote());
 
     // Synchronize the syncing of material(s), sequentily to avoid failure.
 
