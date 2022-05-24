@@ -223,11 +223,6 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                 element.month!.month == month.month)
             : false)
         .firstOrNull;
-    int evaluation = -1;
-
-    if (_hiveGroupEvalution != null && _hiveGroupEvalution.evaluation != null) {
-      evaluation = _hiveGroupEvalution.evaluation!;
-    }
 
     return Card(
         //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -268,11 +263,10 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            evaluation = 1;
+                            _saveGroupEvaluations(
+                                hiveGroupUser, _hiveGroupEvalution,
+                                evaluation: GroupEvaluation_Evaluation.GOOD);
                           });
-                          _saveGroupEvaluations(
-                              hiveGroupUser, _hiveGroupEvalution,
-                              evaluation: evaluation); // 1 for Good
                         },
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all<
@@ -281,7 +275,10 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                             ),
-                            backgroundColor: evaluation == 1
+                            backgroundColor: (_hiveGroupEvalution != null &&
+                                    GroupEvaluation_Evaluation.valueOf(
+                                            _hiveGroupEvalution.evaluation!) ==
+                                        GroupEvaluation_Evaluation.GOOD)
                                 ? MaterialStateProperty.all<Color>(
                                     Color(0xFF6DE26B))
                                 : MaterialStateProperty.all<Color>(
@@ -319,12 +316,10 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            evaluation = 0;
+                            _saveGroupEvaluations(
+                                hiveGroupUser, _hiveGroupEvalution,
+                                evaluation: GroupEvaluation_Evaluation.BAD);
                           });
-
-                          _saveGroupEvaluations(
-                              hiveGroupUser, _hiveGroupEvalution,
-                              evaluation: evaluation); // 0 for Bad
                         },
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all<
@@ -333,7 +328,10 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                             ),
-                            backgroundColor: evaluation == 0
+                            backgroundColor: (_hiveGroupEvalution != null &&
+                                    GroupEvaluation_Evaluation.valueOf(
+                                            _hiveGroupEvalution.evaluation!) ==
+                                        GroupEvaluation_Evaluation.BAD)
                                 ? MaterialStateProperty.all<Color>(
                                     Color(0xFF797979).withOpacity(0.4))
                                 : MaterialStateProperty.all<Color>(
@@ -741,8 +739,6 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         _currentGroupUserTransformation.impactStory != null) {
       _transformationController.text =
           _currentGroupUserTransformation.impactStory!;
-      print('this current $_currentGroupUserTransformation');
-      print('hive file ${_hiveFiles.length}');
     }
 
     if (_currentGroupUserTransformation != null &&
@@ -1086,7 +1082,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
 
   void _saveGroupEvaluations(
       HiveGroupUser hiveGroupUser, HiveGroupEvaluation? _hiveGroupEvalution,
-      {@required evaluation}) {
+      {required GroupEvaluation_Evaluation evaluation}) {
     if (_hiveGroupEvalution == null) {
       _hiveGroupEvalution = HiveGroupEvaluation();
       _hiveGroupEvalution.id = UuidGenerator.uuid();
@@ -1098,15 +1094,15 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       _hiveGroupEvalution.isUpdated = true;
     }
 
-    _hiveGroupEvalution.evaluation = evaluation;
+    _hiveGroupEvalution.evaluation = evaluation.value;
 
     GroupEvaluationProvider()
         .createUpdateGroupEvaluation(_hiveGroupEvalution)
         .then((value) {
-      debugPrint("Transformation saved.");
+      debugPrint("Evaluaitons saved.");
       // save files also
     }).onError((error, stackTrace) {
-      debugPrint("Failed to save Transformation");
+      debugPrint("Evaluations to save Transformation");
     });
   }
 }
