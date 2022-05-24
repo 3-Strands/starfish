@@ -279,6 +279,8 @@ class SyncService {
     await lock1.synchronized(() => syncLocalGroupsToRemote());
     await lock1.synchronized(() => syncLocalDeletedGroupUsersToRemote());
     await lock1.synchronized(() => syncLocalGroupUsersToRemote());
+    await lock1.synchronized(() => syncUsers());
+    await lock1.synchronized(() => syncGroup());
   }
 
   void updateLastSyncDateTime() {
