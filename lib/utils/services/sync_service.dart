@@ -257,7 +257,7 @@ class SyncService {
         syncEvaluationCategories(),
         syncGroup(),
         syncLearnerEvaluations(),
-        //syncGroupEvaluations(), // Pending
+        syncGroupEvaluations(),
         syncTeacherResponses(),
         syncTransformaitons(),
         syncOutputs(),
