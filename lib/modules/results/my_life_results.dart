@@ -18,10 +18,12 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group.dart';
+import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/teacher_response_provider.dart';
 import 'package:starfish/db/providers/transformation_provider.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
@@ -171,7 +173,11 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                _buildFeelingAboutGroupCard()
+                                _buildFeelingAboutGroupCard(
+                                    hiveGroupUser: _hiveGroupUser,
+                                    learnerId: currentUser.id,
+                                    groupId: _hiveGroup.id!,
+                                    month: bloc.resultsBloc.hiveDate!)
                               ],
                             ),
                           );
@@ -205,7 +211,24 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  Widget _buildFeelingAboutGroupCard() {
+  Widget _buildFeelingAboutGroupCard(
+      {required HiveGroupUser hiveGroupUser,
+      required String learnerId,
+      required String groupId,
+      required HiveDate month}) {
+    HiveGroupEvaluation? _hiveGroupEvalution = GroupEvaluationProvider()
+        .getGroupUserGroupEvaluation(learnerId, groupId)
+        .where((element) => element.month != null
+            ? (element.month!.year == month.year &&
+                element.month!.month == month.month)
+            : false)
+        .firstOrNull;
+    int evaluation = -1;
+
+    if (_hiveGroupEvalution != null && _hiveGroupEvalution.evaluation != null) {
+      evaluation = _hiveGroupEvalution.evaluation!;
+    }
+
     return Card(
         //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
         color: Color(0xFFEFEFEF),
@@ -243,19 +266,26 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                       //   height: 45.h,
                       decoration: BoxDecoration(),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            evaluation = 1;
+                          });
+                          _saveGroupEvaluations(
+                              hiveGroupUser, _hiveGroupEvalution,
+                              evaluation: evaluation); // 1 for Good
+                        },
                         style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.r),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.r),
+                              ),
                             ),
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            //AppColors.completeTaskBGColor),
-                            Color(0xFF6DE26B),
-                          ),
-                        ),
+                            backgroundColor: evaluation == 1
+                                ? MaterialStateProperty.all<Color>(
+                                    Color(0xFF6DE26B))
+                                : MaterialStateProperty.all<Color>(
+                                    Color(0xFFC9C9C9))),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -287,7 +317,15 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                       //   height: 45.h,
                       decoration: BoxDecoration(),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            evaluation = 0;
+                          });
+
+                          _saveGroupEvaluations(
+                              hiveGroupUser, _hiveGroupEvalution,
+                              evaluation: evaluation); // 0 for Bad
+                        },
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
@@ -295,9 +333,11 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
                             ),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              Color(0xFF797979).withOpacity(0.4),
-                            )),
+                            backgroundColor: evaluation == 0
+                                ? MaterialStateProperty.all<Color>(
+                                    Color(0xFF797979).withOpacity(0.4))
+                                : MaterialStateProperty.all<Color>(
+                                    Color(0xFFC9C9C9))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -1042,5 +1082,31 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         ),
       ],
     );
+  }
+
+  void _saveGroupEvaluations(
+      HiveGroupUser hiveGroupUser, HiveGroupEvaluation? _hiveGroupEvalution,
+      {@required evaluation}) {
+    if (_hiveGroupEvalution == null) {
+      _hiveGroupEvalution = HiveGroupEvaluation();
+      _hiveGroupEvalution.id = UuidGenerator.uuid();
+      _hiveGroupEvalution.groupId = hiveGroupUser.groupId;
+      _hiveGroupEvalution.userId = hiveGroupUser.userId;
+      _hiveGroupEvalution.month = bloc.resultsBloc.hiveDate!;
+      _hiveGroupEvalution.isNew = true;
+    } else {
+      _hiveGroupEvalution.isUpdated = true;
+    }
+
+    _hiveGroupEvalution.evaluation = evaluation;
+
+    GroupEvaluationProvider()
+        .createUpdateGroupEvaluation(_hiveGroupEvalution)
+        .then((value) {
+      debugPrint("Transformation saved.");
+      // save files also
+    }).onError((error, stackTrace) {
+      debugPrint("Failed to save Transformation");
+    });
   }
 }
