@@ -60,7 +60,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   HiveTransformation? _hiveTransformation;
   HiveTeacherResponse? _hiveTeacherResponse;
 
-  bool _isInitialized = false;
   bool _isEditMode = false;
   bool isViewActionHistory = false;
   bool isViewCategoryEvalutionHistory = false;
@@ -82,12 +81,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized) {
-      bloc = Provider.of(context);
-      bloc.resultsBloc.init();
-      bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
-      _isInitialized = true;
-    }
+    bloc = Provider.of(context);
+    bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
 
     _hiveTransformation = widget.hiveGroupUser
         .getTransformationForMonth(bloc.resultsBloc.hiveDate!);

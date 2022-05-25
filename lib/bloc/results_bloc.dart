@@ -31,9 +31,15 @@ class ResultsBloc extends Object {
   List<HiveGroup> groupsWithAdminAndTeacherRole = [];
   List<HiveGroup> groupsWithLearnerRole = [];
 
-  ResultsBloc() {
+  static final ResultsBloc _singleton = ResultsBloc._internal();
+
+  ResultsBloc._internal() {
     hiveDate = DateTimeUtils.toHiveDate(DateTime.now()).toMonth;
     hivePreviousDate = hiveDate?.previousMonth;
+  }
+
+  factory ResultsBloc() {
+    return _singleton;
   }
 
   init() {
