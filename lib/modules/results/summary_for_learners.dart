@@ -188,7 +188,7 @@ class SummaryForAllLearners extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
-                      "${count.toStringAsFixed(1)}",
+                      count > 0 ? "$count" : "--",
                       style: TextStyle(
                         color: textColor,
                         fontFamily: "OpenSans",
