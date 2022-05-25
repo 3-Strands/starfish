@@ -333,7 +333,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                             _hiveGroupEvalution.evaluation!) ==
                                         GroupEvaluation_Evaluation.BAD)
                                 ? MaterialStateProperty.all<Color>(
-                                    Color(0xFF797979).withOpacity(0.4))
+                                    Color(0xFFFFBE4A))
                                 : MaterialStateProperty.all<Color>(
                                     Color(0xFFC9C9C9))),
                         child: Row(
