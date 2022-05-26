@@ -31,9 +31,15 @@ class ResultsBloc extends Object {
   List<HiveGroup> groupsWithAdminAndTeacherRole = [];
   List<HiveGroup> groupsWithLearnerRole = [];
 
-  ResultsBloc() {
+  static final ResultsBloc _singleton = ResultsBloc._internal();
+
+  ResultsBloc._internal() {
     hiveDate = DateTimeUtils.toHiveDate(DateTime.now()).toMonth;
     hivePreviousDate = hiveDate?.previousMonth;
+  }
+
+  factory ResultsBloc() {
+    return _singleton;
   }
 
   init() {
@@ -158,6 +164,8 @@ class ResultsBloc extends Object {
       return [];
     }
     List<HiveDate> _listMonth = [];
+    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    _currentMonth.day = 0;
     LearnerEvaluationProvider()
         .getGroupUserLearnerEvaluations(
             hiveGroupUser!.userId!, hiveGroupUser!.groupId!)
@@ -166,7 +174,14 @@ class ResultsBloc extends Object {
         _listMonth.add(element.month!.toMonth);
       }
     });
-    return _listMonth.toSet().toList();
+    List<HiveDate> _historyAvailableMonths = _listMonth.toSet().toList();
+
+    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    if (_historyAvailableMonths.contains(_currentMonth)) {
+      _historyAvailableMonths.remove(_currentMonth);
+    }
+
+    return _historyAvailableMonths;
   }
 
   @Deprecated('use HiveGroup or HiveGroupUser derived attributes instead')
