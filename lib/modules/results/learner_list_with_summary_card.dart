@@ -61,7 +61,7 @@ class LearnerSummary extends StatelessWidget {
                   height: 15.h,
                 ),
                 Text(
-                  "Learner's Profile",
+                  "${AppLocalizations.of(context)!.learnerProfile}",
                   style: TextStyle(
                       fontSize: 17.sp,
                       fontFamily: "OpenSans ",
