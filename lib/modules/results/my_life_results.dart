@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +34,7 @@ import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/widgets/result_transformations_widget.dart';
+import 'package:starfish/wrappers/file_system.dart';
 
 class MyLifeResults extends StatefulWidget {
   const MyLifeResults({Key? key}) : super(key: key);
@@ -1047,8 +1046,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
-                      file,
+                    child: file.getImagePreview(
                       fit: BoxFit.scaleDown,
                       //  height: 130.h,
                     ),
