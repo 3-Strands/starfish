@@ -33,13 +33,11 @@ import 'package:starfish/src/generated/file_transfer.pb.dart';
 
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
-import 'package:starfish/widgets/result_transformations_widget.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 import 'package:starfish/wrappers/file_system.dart';
 
@@ -58,11 +56,10 @@ class ResultWidgetBottomSheet extends StatefulWidget {
 class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   late AppBloc bloc;
   List<File>? imageFiles;
-  String? userImpactStory;
 
   HiveTransformation? _hiveTransformation;
+  HiveTeacherResponse? _hiveTeacherResponse;
 
-  bool _isInitialized = false;
   bool _isEditMode = false;
   bool isViewActionHistory = false;
   bool isViewCategoryEvalutionHistory = false;
@@ -84,31 +81,19 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized) {
-      bloc = Provider.of(context);
-      bloc.resultsBloc.init();
-      bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
-      _hiveTransformation = _hiveTransformation = widget.hiveGroupUser
-          .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
-      _isInitialized = true;
-    }
+    bloc = Provider.of(context);
+    bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
 
-    _hiveTransformation = _hiveTransformation = widget.hiveGroupUser
+    _hiveTransformation = widget.hiveGroupUser
         .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+    _hiveTeacherResponse = widget.hiveGroupUser
+        .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
 
-    _teacherFeedbackController.text = widget.hiveGroupUser
-            .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!.toMonth)
-            ?.response ??
-        '';
-    _transformationController.text = widget.hiveGroupUser
-            .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
-            ?.impactStory ??
-        '';
+    _teacherFeedbackController.text = _hiveTeacherResponse?.response ?? '';
+    _transformationController.text = _hiveTransformation?.impactStory ?? '';
+
     if (_hiveTransformation != null) {
-      _hiveFiles = widget.hiveGroupUser
-              .getTransformationForMonth(bloc.resultsBloc.hiveDate!.toMonth)
-              ?.localFiles ??
-          [];
+      _hiveFiles = _hiveTransformation?.localFiles ?? [];
     }
 
     return Container(
@@ -176,7 +161,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                               bloc.resultsBloc.hiveDate = _hiveDate;
                             });
 
-                            _updateLearnerSummary();
+                            //_updateLearnerSummary();
                           }
                         },
                         child: Container(
@@ -243,16 +228,19 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                   setState(() {
                                     widget.hiveGroupUser = value!;
                                     bloc.resultsBloc.hiveGroupUser = value;
-                                    _hiveTransformation = widget.hiveGroupUser
+                                    /*_hiveTransformation = widget.hiveGroupUser
                                         .getTransformationForMonth(
                                             bloc.resultsBloc.hiveDate!);
+                                    _hiveTeacherResponse = widget.hiveGroupUser
+                                        .getTeacherResponseForMonth(
+                                            bloc.resultsBloc.hiveDate!);*/
                                   });
 
                                   /*setState(() {
                                       bloc.resultsBloc.hiveGroupUser = value;
                                     });*/
 
-                                  _updateLearnerSummary();
+                                  //_updateLearnerSummary();
                                 },
                                 items: widget.hiveGroup.learners
                                     ?.map<DropdownMenuItem<HiveGroupUser>>(
@@ -416,8 +404,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   if (isFocused) {
                     return;
                   }
-
-                  _saveTeacherFeedback();
+                  _saveTeacherFeedback(_teacherFeedbackController.text.trim());
                 },
               ),
             ),
@@ -444,34 +431,38 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       SizedBox(
                         height: 20.h,
                       ),
-                      if (isViewCategoryEvalutionHistory)
-                        _buildCategoryHistoryWidget(),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            isViewCategoryEvalutionHistory =
-                                !isViewCategoryEvalutionHistory;
-                          });
-                        },
-                        child: Center(
-                          child: Text(
-                            isViewCategoryEvalutionHistory
-                                ? '${AppLocalizations.of(context)!.hideHistory}'
-                                : '${AppLocalizations.of(context)!.viewHistory}',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: "Open",
-                              color: Color(0xFF3475F0),
+                      if (bloc.resultsBloc
+                          .getListOfAvailableHistoryMonths()
+                          .isNotEmpty) ...[
+                        if (isViewCategoryEvalutionHistory)
+                          _buildCategoryHistoryWidget(),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isViewCategoryEvalutionHistory =
+                                  !isViewCategoryEvalutionHistory;
+                            });
+                          },
+                          child: Center(
+                            child: Text(
+                              isViewCategoryEvalutionHistory
+                                  ? '${AppLocalizations.of(context)!.hideHistory}'
+                                  : '${AppLocalizations.of(context)!.viewHistory}',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontFamily: "Open",
+                                color: Color(0xFF3475F0),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      )
+                        SizedBox(
+                          height: 10.h,
+                        )
+                      ]
                     ],
                   );
                 },
@@ -487,15 +478,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildCategoryHistoryWidget() {
-    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
-    _currentMonth.day = 0;
+    // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    // _currentMonth.day = 0;
 
     List<HiveDate> _historyAvailableMonths =
         bloc.resultsBloc.getListOfAvailableHistoryMonths();
-    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-    if (_historyAvailableMonths.contains(_currentMonth)) {
-      _historyAvailableMonths.remove(_currentMonth);
-    }
+    // _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    // if (_historyAvailableMonths.contains(_currentMonth)) {
+    //   _historyAvailableMonths.remove(_currentMonth);
+    // }
 
     if (_historyAvailableMonths.length == 0) {
       return Container();
@@ -914,30 +905,34 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                 widget.hiveGroupUser
                     .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
-            if (isViewActionHistory) _buildActionHistoryWidget(),
             SizedBox(
-              height: 10.h,
+              height: 20.h,
             ),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  isViewActionHistory = !isViewActionHistory;
-                });
-              },
-              child: Text(
-                isViewActionHistory
-                    ? '${AppLocalizations.of(context)!.hideHistory}'
-                    : '${AppLocalizations.of(context)!.viewHistory}',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: "Open",
-                  color: Color(0xFF3475F0),
+            if (bloc.resultsBloc
+                .getListOfAvailableHistoryMonths()
+                .isNotEmpty) ...[
+              if (isViewActionHistory) _buildActionHistoryWidget(),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isViewActionHistory = !isViewActionHistory;
+                  });
+                },
+                child: Text(
+                  isViewActionHistory
+                      ? '${AppLocalizations.of(context)!.hideHistory}'
+                      : '${AppLocalizations.of(context)!.viewHistory}',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: "Open",
+                    color: Color(0xFF3475F0),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
+              SizedBox(
+                height: 10.h,
+              ),
+            ]
           ],
         ),
       ),
@@ -945,15 +940,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildActionHistoryWidget() {
-    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
-    _currentMonth.day = 0;
+    // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    // _currentMonth.day = 0;
 
     List<HiveDate> _historyAvailableMonths =
         bloc.resultsBloc.getListOfAvailableHistoryMonths();
-    _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-    if (_historyAvailableMonths.contains(_currentMonth)) {
-      _historyAvailableMonths.remove(_currentMonth);
-    }
+    // _historyAvailableMonths.sort((a, b) => b.compareTo(a));
+    // if (_historyAvailableMonths.contains(_currentMonth)) {
+    //   _historyAvailableMonths.remove(_currentMonth);
+    // }
 
     if (_historyAvailableMonths.length == 0) {
       return SizedBox(
@@ -1227,31 +1222,32 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     GroupEvaluationProvider().createUpdateGroupEvaluation(_hiveGroupEvaluation);
   }
 
-  void _saveTeacherFeedback() {
-    HiveTeacherResponse? _teacherResponse = widget.hiveGroupUser
-        .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
+  void _saveTeacherFeedback(String feedback) {
+    // HiveTeacherResponse? _teacherResponse = widget.hiveGroupUser
+    //     .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
 
-    if (_teacherResponse == null) {
-      _teacherResponse = HiveTeacherResponse();
-      _teacherResponse.id = UuidGenerator.uuid();
-      _teacherResponse.groupId = widget.hiveGroupUser.groupId;
-      _teacherResponse.learnerId = widget.hiveGroupUser.userId;
-      _teacherResponse.teacherId = CurrentUserProvider().getUserSync().id;
-      _teacherResponse.month = bloc.resultsBloc.hiveDate!.toMonth;
-      _teacherResponse.isNew = true;
+    if (_hiveTeacherResponse == null) {
+      _hiveTeacherResponse = HiveTeacherResponse();
+      _hiveTeacherResponse!.id = UuidGenerator.uuid();
+      _hiveTeacherResponse!.groupId = widget.hiveGroupUser.groupId;
+      _hiveTeacherResponse!.learnerId = widget.hiveGroupUser.userId;
+      _hiveTeacherResponse!.teacherId = CurrentUserProvider().getUserSync().id;
+      _hiveTeacherResponse!.month = bloc.resultsBloc.hiveDate!.toMonth;
+      _hiveTeacherResponse!.isNew = true;
     } else {
-      _teacherResponse.isUpdated = true;
+      _hiveTeacherResponse!.isUpdated = true;
     }
 
-    _teacherResponse.response = _teacherFeedbackController.text;
+    _hiveTeacherResponse!.response = feedback;
 
     TeacherResponseProvider()
-        .createUpdateTeacherResponse(_teacherResponse)
+        .createUpdateTeacherResponse(_hiveTeacherResponse!)
         .then((value) {
+      setState(() {});
       debugPrint("Feedback saved.");
       FBroadcast.instance().broadcast(
         SyncService.kUpdateTeacherResponse,
-        value: _teacherResponse,
+        value: _hiveTeacherResponse,
       );
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Feedback.");
@@ -1293,6 +1289,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
             transformationFiles: _transformationFiles)
         .then((value) {
       debugPrint("Transformation saved.");
+      setState(() {});
       // save files also
     }).onError((error, stackTrace) {
       debugPrint("Failed to save Transformation");
@@ -1337,7 +1334,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     });
   }
 
-  _buildTransformationWidget() {
+  Widget _buildTransformationWidget() {
     return Card(
       color: Color(0xE6EFEFEF),
       elevation: 4,
@@ -1405,10 +1402,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   if (isFocused) {
                     return;
                   }
-                },
-                onChange: (String value) {
-                  userImpactStory = value.trim();
-                  _saveTransformation(userImpactStory, _selectedFiles);
+                  _saveTransformation(
+                      _transformationController.text.trim(), _selectedFiles);
                 },
               ),
             ),
@@ -1438,12 +1433,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   height: 50.h,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if ((!_isEditMode && _selectedFiles.length >= 5) ||
-                          (_isEditMode &&
-                              (_selectedFiles.length +
-                                      (_hiveTransformation!
-                                          .localFiles.length)) >=
-                                  5)) {
+                      if ((_selectedFiles.length + (_hiveFiles.length)) >= 5) {
                         Fluttertoast.showToast(
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
@@ -1476,16 +1466,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                             msg: AppLocalizations.of(context)!
                                                 .imageSizeValidation);
                                       } else {
-                                        setState(() {
-                                          _selectedFiles.add(_newFile);
-                                          _saveTransformation(
-                                              _transformationController.text,
-                                              _selectedFiles);
-                                          _selectedFiles.clear();
-                                        });
+                                        _selectedFiles.add(_newFile);
                                         _saveTransformation(
                                             _transformationController.text,
                                             _selectedFiles);
+                                        _selectedFiles.clear();
                                       }
                                     }),
                               ),

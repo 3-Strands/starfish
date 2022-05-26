@@ -232,7 +232,7 @@ class SyncService {
     await lock.synchronized(() => syncLocalTeacherResponsesToRemote());
     await lock.synchronized(() => syncLocalLearnerEvaluationsToRemote());
     await lock.synchronized(() => syncLocalOutputsToRemote());
-    //await lock.synchronized(() => syncLocalGroupEvaluationsToRemote()); // Pending
+    await lock.synchronized(() => syncLocalGroupEvaluationsToRemote());
 
     // Synchronize the syncing of material(s), sequentily to avoid failure.
 
@@ -255,7 +255,7 @@ class SyncService {
         syncEvaluationCategories(),
         syncGroup(),
         syncLearnerEvaluations(),
-        //syncGroupEvaluations(), // Pending
+        syncGroupEvaluations(),
         syncTeacherResponses(),
         syncTransformaitons(),
         syncOutputs(),
@@ -277,6 +277,8 @@ class SyncService {
     await lock1.synchronized(() => syncLocalGroupsToRemote());
     await lock1.synchronized(() => syncLocalDeletedGroupUsersToRemote());
     await lock1.synchronized(() => syncLocalGroupUsersToRemote());
+    await lock1.synchronized(() => syncUsers());
+    await lock1.synchronized(() => syncGroup());
   }
 
   void updateLastSyncDateTime() {

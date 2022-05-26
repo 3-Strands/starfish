@@ -74,6 +74,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   bool _isFirstLoad = false;
   bool _isLoading = false;
   bool _hasMore = true;
+  bool _isInitialized = false;
 
   List<HiveMaterial> _materials = [];
 
@@ -101,13 +102,13 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     _topicSelectDropDownController = MultiSelectDropDownController(items: _topicList);
   }
 
-  @override
+  /*@override
   void didChangeDependencies() {
     bloc = Provider.of(context);
     _languageSelectDropDownController.selectedItems = bloc.materialBloc.selectedLanguages.toSet();
     _topicSelectDropDownController.selectedItems = bloc.materialBloc.selectedTopics.toSet();
     super.didChangeDependencies();
-  }
+  }*/
 
   void _firstLoad() {
     setState(() {
@@ -244,6 +245,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      _isInitialized = true;
+    }
 
     return FocusDetector(
       key: _focusDetectorKey,

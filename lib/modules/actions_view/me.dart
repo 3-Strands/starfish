@@ -41,6 +41,10 @@ class Me extends StatefulWidget {
 class _MeState extends State<Me> {
   final Key _meFocusDetectorKey = UniqueKey();
 
+  bool _isInitialized = false;
+
+  late AppBloc bloc;
+
   Dashboard obj = new Dashboard();
 
   _getActions(AppBloc bloc) async {
@@ -58,7 +62,10 @@ class _MeState extends State<Me> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of(context);
+    if (!_isInitialized) {
+      bloc = Provider.of(context);
+      _isInitialized = true;
+    }
 
     return FocusDetector(
       key: _meFocusDetectorKey,
