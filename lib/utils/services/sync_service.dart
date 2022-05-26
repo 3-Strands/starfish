@@ -300,7 +300,7 @@ class SyncService {
   void clearAll() async {
     await lastSyncBox.clear();
     //await languageBox.clear();
-    await currentUserBox.clear();
+    //await currentUserBox.clear();
     await actionBox.clear();
     await materialBox.clear();
     await groupBox.clear();

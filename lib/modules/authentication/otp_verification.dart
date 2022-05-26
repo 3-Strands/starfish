@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -101,45 +103,48 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: SingleChildScrollView(
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: SingleChildScrollView(
           //  reverse: true,
-          child: Container(height: MediaQuery.of(context).size.height,child: Column(children: [
-             Expanded(
-               child: Container(
-                   padding:
-                EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                 
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 118.h),
-                    AppLogo(hight: 156.h, width: 163.w),
-                    SizedBox(height: 50.h),
-                    TitleLabel(
-                      title: AppLocalizations.of(context)!.enterOneTimePassword,
-                      align: TextAlign.center,
+          child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15.w, vertical: 15.h),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: 118.h),
+                          AppLogo(hight: 156.h, width: 163.w),
+                          SizedBox(height: 50.h),
+                          TitleLabel(
+                            title: AppLocalizations.of(context)!
+                                .enterOneTimePassword,
+                            align: TextAlign.center,
+                          ),
+                          SizedBox(height: 30.h),
+                          _pinCodeContiner(),
+                          SizedBox(height: 50.h),
+                          _resendOTPContainer(),
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 30.h),
-                    _pinCodeContiner(),
-                    SizedBox(height: 50.h),
-                    _resendOTPContainer(),
-                  ],
-                ),
-            ),
-             ),
-           //  _footer(),
-          ],)
-          ),
+                  ),
+                  //  _footer(),
+                ],
+              )),
         ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: _footer(),
-     //   bottomNavigationBar: _footer()
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _footer(),
+      //   bottomNavigationBar: _footer()
     );
   }
 
@@ -395,20 +400,37 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         StarfishSharedPreference().setLoginStatus(true);
         _setAccessToken(_dialingCode, _phoneNumber, _currentUser);
 
-        bool hasCurrentUser =
-            _currentUserRepository.dbProvider.hasCurrentUser();
+        HiveCurrentUser? _existingUser =
+            _currentUserRepository.dbProvider.getCurrentUserSync();
 
-        if (!hasCurrentUser) {
-          _prepareAppAndNavigate();
-          return;
-        }
+        CurrentUserRepository().apiProvider.getCurrentUser().then((user) async {
+          HiveCurrentUser _currentUser = HiveCurrentUser(
+              id: user.id,
+              name: user.name,
+              phone: user.phone,
+              linkGroups: user.linkGroups,
+              countryIds: user.countryIds,
+              languageIds: user.languageIds,
+              groups: user.groups.map((e) => HiveGroupUser.from(e)).toList(),
+              actions: user.actions.map((e) => HiveActionUser.from(e)).toList(),
+              diallingCode: user.diallingCode,
+              phoneCountryId: user.phoneCountryId,
+              selectedActionsTab: user.selectedActionsTab.value,
+              selectedResultsTab: user.selectedResultsTab.value,
+              status: user.status.value,
+              creatorId: user.creatorId);
 
-        HiveCurrentUser _existingUser =
-            await _currentUserRepository.dbProvider.getUser();
-        CurrentUserRepository().apiProvider.getCurrentUser().then((user) {
+          await CurrentUserProvider().createUpdate(_currentUser);
+
+          if (_existingUser == null) {
+            _prepareAppAndNavigate();
+            return;
+          }
+
           if (_existingUser.id == user.id) {
             Navigator.of(context).pushNamed(Routes.showProfile);
           } else {
+            SyncService().clearAll();
             _prepareAppAndNavigate();
           }
         });
@@ -417,11 +439,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   _prepareAppAndNavigate() {
-    SyncService().clearAll();
-
     EasyLoading.show();
     Future.wait([
-      SyncService().syncCurrentUser(),
+      //SyncService().syncCurrentUser(),
       SyncService().syncCountries(),
       SyncService().syncLanguages(),
       SyncService().syncMaterialTopics(),
@@ -451,7 +471,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     }*/
 
-    print("AuthenticationResponse: $authenticateResponse");
+    debugPrint("AuthenticationResponse: $authenticateResponse");
     StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     StarfishSharedPreference()
         .setRefreshToken(authenticateResponse.refreshToken);
