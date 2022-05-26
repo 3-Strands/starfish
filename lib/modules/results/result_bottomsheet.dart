@@ -1548,8 +1548,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
-                      file,
+                    child: file.getImagePreview(
                       fit: BoxFit.scaleDown,
                       //  height: 130.h,
                     ),
