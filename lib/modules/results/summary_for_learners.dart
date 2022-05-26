@@ -12,17 +12,20 @@ class SummaryForAllLearners extends StatelessWidget {
       {Key? key,
       required this.hiveGroup,
       required this.month,
-      required this.groupLearnerEvaluationsByCategory})
+      required this.groupLearnerEvaluationsByCategory,
+      required this.groupEvaluationGoodCount,
+      required this.groupEvaluationBadCount})
       : super(key: key);
 
   final HiveGroup hiveGroup;
   final HiveDate month;
   final Map<HiveEvaluationCategory, Map<String, int>>
       groupLearnerEvaluationsByCategory;
+  final groupEvaluationGoodCount;
+  final groupEvaluationBadCount;
 
   @override
   Widget build(BuildContext context) {
-    //AppBloc bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -66,7 +69,7 @@ class SummaryForAllLearners extends StatelessWidget {
               overdue: hiveGroup.getActionsOverdueInMonth(month)),
 
           // Uncomment once leaner is allowed to update 'GroupEvaluation'
-          /*Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(
               color: Color(0xFF5D5D5D),
@@ -95,7 +98,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${bloc.resultsBloc.getLearnersEvaluationCountByType(GroupEvaluation_Evaluation.GOOD)} ${AppLocalizations.of(context)!.goodText}",
+                  "$groupEvaluationGoodCount ${AppLocalizations.of(context)!.goodText}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik Medium",
@@ -114,7 +117,7 @@ class SummaryForAllLearners extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Flexible(
                   child: Text(
-                    "${bloc.resultsBloc.getLearnersEvaluationCountByType(GroupEvaluation_Evaluation.BAD)} ${AppLocalizations.of(context)!.notSoGoodText}",
+                    "$groupEvaluationBadCount ${AppLocalizations.of(context)!.notSoGoodText}",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Rubik Medium",
@@ -125,7 +128,7 @@ class SummaryForAllLearners extends StatelessWidget {
                 ),
               ),
             ],
-          ),*/
+          ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(

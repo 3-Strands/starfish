@@ -10,6 +10,8 @@ import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/result_bottomsheet.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
+
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -182,6 +184,12 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                     ),
                     SizedBox(height: 20.h),
                     SummaryForAllLearners(
+                        groupEvaluationGoodCount: bloc.resultsBloc
+                            .getLearnersEvaluationCountByType(
+                                GroupEvaluation_Evaluation.GOOD),
+                        groupEvaluationBadCount: bloc.resultsBloc
+                            .getLearnersEvaluationCountByType(
+                                GroupEvaluation_Evaluation.BAD),
                         hiveGroup: bloc.resultsBloc.hiveGroup!,
                         month: bloc.resultsBloc.hiveDate!,
                         groupLearnerEvaluationsByCategory: bloc.resultsBloc
