@@ -153,7 +153,7 @@ class ResultsBloc extends Object {
     return GroupEvaluationProvider()
         .getGroupEvaluations(hiveGroup!.id!)
         .where((element) =>
-            element.month == hiveDate &&
+            element.month! == hiveDate!.toMonth &&
             GroupEvaluation_Evaluation.valueOf(element.evaluation!) ==
                 evaluation)
         .length;
