@@ -71,6 +71,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   List<File> _selectedFiles = [];
   List<HiveFile> _hiveFiles = [];
 
+  String _impactStory = '';
+  String _teacherFeedback = '';
   // @override
   // void initState() {
   //   // TODO: implement initState
@@ -86,11 +88,27 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
     _hiveTransformation = widget.hiveGroupUser
         .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+    if (_hiveTransformation != null) {
+      _impactStory = _impactStory.isNotEmpty
+          ? _impactStory
+          : _hiveTransformation?.impactStory ?? '';
+    }
+
     _hiveTeacherResponse = widget.hiveGroupUser
         .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
+    if (_hiveTeacherResponse != null) {
+      _teacherFeedback = _teacherFeedback.isNotEmpty
+          ? _teacherFeedback
+          : _hiveTeacherResponse?.response ?? '';
+    }
 
-    _teacherFeedbackController.text = _hiveTeacherResponse?.response ?? '';
-    _transformationController.text = _hiveTransformation?.impactStory ?? '';
+    _teacherFeedbackController.text = _teacherFeedback;
+    _teacherFeedbackController.selection = TextSelection.fromPosition(
+        new TextPosition(offset: _teacherFeedback.length));
+
+    _transformationController.text = _impactStory;
+    _transformationController.selection = TextSelection.fromPosition(
+        new TextPosition(offset: _impactStory.length));
 
     if (_hiveTransformation != null) {
       _hiveFiles = _hiveTransformation?.localFiles ?? [];
@@ -405,6 +423,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                     return;
                   }
                   _saveTeacherFeedback(_teacherFeedbackController.text.trim());
+                },
+                onChange: (value) {
+                  _teacherFeedback = value;
                 },
               ),
             ),
@@ -1404,6 +1425,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   }
                   _saveTransformation(
                       _transformationController.text.trim(), _selectedFiles);
+                },
+                onChange: (value) {
+                  _impactStory = value;
                 },
               ),
             ),

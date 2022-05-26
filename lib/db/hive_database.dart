@@ -26,6 +26,7 @@ import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
@@ -99,25 +100,47 @@ class HiveDatabase {
   }
 
   openBoxes() async {
-    await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX);
-    await Hive.openBox<HiveCountry>(COUNTRY_BOX);
-    await Hive.openBox<HiveLanguage>(LANGUAGE_BOX);
-    await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX);
-    await Hive.openBox<HiveGroupUser>(GROUP_USER_BOX);
-    await Hive.openBox<HiveAction>(ACTIONS_BOX);
-    await Hive.openBox<HiveMaterial>(MATERIAL_BOX);
-    await Hive.openBox<HiveMaterialFeedback>(MATERIAL_FEEDBACK_BOX);
-    await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX);
-    await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX);
-    await Hive.openBox<HiveGroup>(GROUP_BOX);
-    await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX);
-    await Hive.openBox<HiveActionUser>(ACTION_USER_BOX);
-    await Hive.openBox<HiveUser>(USER_BOX);
-    await Hive.openBox<HiveFile>(FILE_BOX);
-    await Hive.openBox<HiveLearnerEvaluation>(LEARNER_EVALUATION_BOX);
-    await Hive.openBox<HiveTeacherResponse>(TEACHER_RESPONSE_BOX);
-    await Hive.openBox<HiveGroupEvaluation>(GROUP_EVALUATION_BOX);
-    await Hive.openBox<HiveTransformation>(TRANSFORMATION_BOX);
-    await Hive.openBox<HiveOutput>(OUTPUT_BOX);
+    final encryptionKey = await StarfishSharedPreference().getEncryptionKey();
+
+    await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveCountry>(COUNTRY_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveLanguage>(LANGUAGE_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveGroupUser>(GROUP_USER_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveAction>(ACTIONS_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveMaterial>(MATERIAL_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveMaterialFeedback>(MATERIAL_FEEDBACK_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveGroup>(GROUP_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveActionUser>(ACTION_USER_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveUser>(USER_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveFile>(FILE_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveLearnerEvaluation>(LEARNER_EVALUATION_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveTeacherResponse>(TEACHER_RESPONSE_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveGroupEvaluation>(GROUP_EVALUATION_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveTransformation>(TRANSFORMATION_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
+    await Hive.openBox<HiveOutput>(OUTPUT_BOX,
+        encryptionCipher: HiveAesCipher(encryptionKey));
   }
 }

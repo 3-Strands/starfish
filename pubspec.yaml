@@ -37,6 +37,7 @@ dependencies:
   protobuf: ^2.0.0
   rxdart: ^0.27.1
   shared_preferences: ^2.0.5
+  encrypted_shared_preferences: ^3.0.0
   sticky_headers: ^0.1.8
   flutter_svg: ^0.22.0
   flutter_easyloading: ^3.0.3
