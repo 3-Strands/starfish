@@ -6,6 +6,7 @@ import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
+import 'package:starfish/widgets/focusable_text_field.dart';
 
 class LearnerSummary extends StatelessWidget {
   final HiveGroupUser hiveGroupUser;
@@ -58,6 +59,63 @@ class LearnerSummary extends StatelessWidget {
                     overdue: hiveGroupUser.getActionsOverdueInMonth(month)),
                 SizedBox(
                   height: 15.h,
+                ),
+                Text(
+                  "Learner's Profile",
+                  style: TextStyle(
+                      fontSize: 17.sp,
+                      fontFamily: "OpenSans ",
+                      color: Color(0xFF4F4F4F),
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: 5.h,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFFFFFF),
+                    border: Border.all(
+                      color: Color(0xFF979797),
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: FocusableTextField(
+                    //   controller: _transformationController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      // hintText:
+                      //     '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
+                      hintStyle: TextStyle(
+                        fontFamily: "OpenSans",
+                        fontSize: 16.sp,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    maxLines: 3,
+                    textInputAction: TextInputAction.done,
+                    onFocusChange: (isFocused) {
+                      if (isFocused) {
+                        return;
+                      }
+                    },
+                    onChange: (String value) {
+                      // userImpactStory = value.trim();
+                      // _saveTransformation(userImpactStory, _selectedFiles,
+                      //     hiveGroupUser, _currentGroupUserTransformation);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Divider(
+                  thickness: 1.0,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  height: 10.h,
                 ),
                 RichText(
                   text: TextSpan(
