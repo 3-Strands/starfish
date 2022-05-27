@@ -189,12 +189,10 @@ class LearnerSummary extends StatelessWidget {
                                 width: 5.w,
                               ),
                               Text(
-                                "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized}",
+                                "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
                                 style: TextStyle(
-                                  fontFamily: "OpenSans",
+                                  fontFamily: "Rubik",
                                   fontSize: 15.sp,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.w600,
                                   color: Color(0xFF797979),
                                 ),
                                 overflow: TextOverflow.ellipsis,
