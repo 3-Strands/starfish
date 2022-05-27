@@ -23,14 +23,14 @@ class StarfishSharedPreference {
     await prefs.setBool(_kIsSyncingFirstTime, value);
   }
 
-  setAccessToken(String value) async {
+  Future<bool> setAccessToken(String value) async {
     final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    await prefs.setString(_kAccessToken, value);
+    return prefs.setString(_kAccessToken, value);
   }
 
-  setDeviceLanguage(String value) async {
+  Future<bool> setDeviceLanguage(String value) async {
     final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    await prefs.setString(_kDeviceLanguage, value);
+    return prefs.setString(_kDeviceLanguage, value);
   }
 
   Future<bool> isUserLoggedIn() async {
@@ -53,9 +53,9 @@ class StarfishSharedPreference {
     return prefs.getString(_kDeviceLanguage);
   }
 
-  setRefreshToken(String value) async {
+  Future<bool> setRefreshToken(String value) async {
     final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    await prefs.setString(_kRefreshToken, value);
+    return prefs.setString(_kRefreshToken, value);
   }
 
   Future<String> getRefreshToken() async {
@@ -63,9 +63,9 @@ class StarfishSharedPreference {
     return prefs.getString(_kRefreshToken);
   }
 
-  setSessionUserId(String value) async {
+  Future<bool> setSessionUserId(String value) async {
     final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    await prefs.setString(_kSessionUserId, value);
+    return prefs.setString(_kSessionUserId, value);
   }
 
   Future<String> getSessionUserId() async {

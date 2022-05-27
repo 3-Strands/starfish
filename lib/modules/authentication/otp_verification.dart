@@ -398,7 +398,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         .then((AuthenticateResponse _currentUser) async {
       if (_currentUser.userToken.isNotEmpty) {
         StarfishSharedPreference().setLoginStatus(true);
-        _setAccessToken(_dialingCode, _phoneNumber, _currentUser);
+        await _setAccessToken(_dialingCode, _phoneNumber, _currentUser);
 
         HiveCurrentUser? _existingUser =
             _currentUserRepository.dbProvider.getCurrentUserSync();
@@ -462,7 +462,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   _setAccessToken(String dialingCode, String phoneNumnber,
-      AuthenticateResponse authenticateResponse) {
+      AuthenticateResponse authenticateResponse) async {
     /*if (FlavorConfig.isDevelopment()) {
       //SANDBOX
       StarfishSharedPreference().setAccessToken(_phoneNumber);
@@ -472,10 +472,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     }*/
 
     debugPrint("AuthenticationResponse: $authenticateResponse");
-    StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
-    StarfishSharedPreference()
+    await StarfishSharedPreference()
+        .setAccessToken(authenticateResponse.userToken);
+    await StarfishSharedPreference()
         .setRefreshToken(authenticateResponse.refreshToken);
-    StarfishSharedPreference().setSessionUserId(authenticateResponse.userId);
+    await StarfishSharedPreference()
+        .setSessionUserId(authenticateResponse.userId);
   }
 
   _handleError(dynamic e) {
