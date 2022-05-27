@@ -229,6 +229,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 LearnerSummary(
                                   hiveGroupUser: _hiveGroupUser,
                                   month: bloc.resultsBloc.hiveDate!,
+                                  leanerEvaluationForGroup : _hiveGroupUser
+                                        .getGroupEvaluationForMonth(
+                                            bloc.resultsBloc.hiveDate!)
                                 ),
                               ],
                             ),

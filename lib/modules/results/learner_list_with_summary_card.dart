@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
+import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 
 class LearnerSummary extends StatelessWidget {
   final HiveGroupUser hiveGroupUser;
   final HiveDate month;
+  final HiveGroupEvaluation? leanerEvaluationForGroup;
 
   const LearnerSummary(
-      {Key? key, required this.hiveGroupUser, required this.month})
+      {Key? key,
+      required this.hiveGroupUser,
+      required this.month,
+      this.leanerEvaluationForGroup})
       : super(key: key);
 
   @override
@@ -82,6 +90,7 @@ class LearnerSummary extends StatelessWidget {
                     ),
                   ),
                   child: FocusableTextField(
+                    maxCharacters: 500,
                     //   controller: _transformationController,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
@@ -149,7 +158,7 @@ class LearnerSummary extends StatelessWidget {
                     ],
                   ),
                 ),
-                /*SizedBox(
+                SizedBox(
                   height: 15.h,
                 ),
                 Row(
@@ -163,34 +172,45 @@ class LearnerSummary extends StatelessWidget {
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w600),
                     ),
-                    Expanded(
-                      child: Container(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.thumb_up,
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            Text(
-                              "${hiveGroupUser.getGroupEvaluationForMonth(bloc.resultsBloc.hiveDate!)}",
-                              style: TextStyle(
-                                fontFamily: "Open Sans Italic",
-                                fontSize: 17.sp,
-                                fontStyle: FontStyle.italic,
-                                color: Color(0xFF4F4F4F),
+                    if (leanerEvaluationForGroup != null)
+                      Expanded(
+                        child: Container(
+                          child: Row(
+                            children: [
+                              GroupEvaluation_Evaluation.valueOf(
+                                          leanerEvaluationForGroup!
+                                              .evaluation!) ==
+                                      GroupEvaluation_Evaluation.GOOD
+                                  ? Image.asset(
+                                      AssetsPath.thumbsUp,
+                                      color: Color(0xFF797979),
+                                      height: 15.sp,
+                                    )
+                                  : Image.asset(
+                                      AssetsPath.thumbsDown,
+                                      color: Color(0xFF797979),
+                                      height: 15.sp,
+                                    ),
+                              SizedBox(
+                                width: 5.w,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ],
+                              Text(
+                                "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name}",
+                                style: TextStyle(
+                                  fontFamily: "Open Sans Italic",
+                                  fontSize: 15.sp,
+                                  fontStyle: FontStyle.italic,
+                                  color: Color(0xFF797979),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
+                      )
                   ],
-                ),*/
+                ),
                 SizedBox(
                   height: 15.h,
                 ),
