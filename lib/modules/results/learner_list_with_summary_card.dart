@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_evaluation.dart';
@@ -188,7 +189,7 @@ class LearnerSummary extends StatelessWidget {
                                 width: 5.w,
                               ),
                               Text(
-                                "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name}",
+                                "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized}",
                                 style: TextStyle(
                                   fontFamily: "OpenSans",
                                   fontSize: 15.sp,
