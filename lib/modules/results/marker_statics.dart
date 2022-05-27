@@ -1,15 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_output_marker.dart';
 
 class MarkerStaticRow extends StatefulWidget {
-  HiveOutputMarker outputMarker;
-  String value;
+  final HiveOutputMarker outputMarker;
+  final String value;
 
   final markerValueUpdate;
 
-  MarkerStaticRow(this.outputMarker, this.value,
+  const MarkerStaticRow(this.outputMarker, this.value,
       {this.markerValueUpdate, Key? key})
       : super(key: key);
 

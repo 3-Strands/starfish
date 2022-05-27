@@ -26,6 +26,7 @@ class SummaryForAllLearners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -39,7 +40,7 @@ class SummaryForAllLearners extends StatelessWidget {
             height: 10.h,
           ),
           Text(
-            "${AppLocalizations.of(context)!.summaryForAllLearners}",
+            "${_appLocalizations.summaryForAllLearners}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
@@ -51,7 +52,7 @@ class SummaryForAllLearners extends StatelessWidget {
           ),
           Center(
             child: Text(
-              "${AppLocalizations.of(context)!.actionsTabItemText}",
+              "${_appLocalizations.actionsTabItemText}",
               style: TextStyle(
                   color: Color(0xFFFFFFFF),
                   fontFamily: "OpenSans",
@@ -78,12 +79,12 @@ class SummaryForAllLearners extends StatelessWidget {
           ),
           Center(
               child: Text(
-            "${AppLocalizations.of(context)!.feelingAboutTheGroup}",
+            "${_appLocalizations.feelingAboutTheGroup}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
-                fontFamily: "Rubik Medium",
+                fontFamily: "Rubik",
                 fontSize: 17.sp,
-                fontWeight: FontWeight.bold),
+                fontWeight: FontWeight.w500),
           )),
           SizedBox(
             height: 10.h,
@@ -98,12 +99,12 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "$groupEvaluationGoodCount ${AppLocalizations.of(context)!.goodText}",
+                  "$groupEvaluationGoodCount ${_appLocalizations.goodText}",
                   style: TextStyle(
                       color: Colors.black,
-                      fontFamily: "Rubik Medium",
+                      fontFamily: "Rubik",
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -117,12 +118,12 @@ class SummaryForAllLearners extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Flexible(
                   child: Text(
-                    "$groupEvaluationBadCount ${AppLocalizations.of(context)!.notSoGoodText}",
+                    "$groupEvaluationBadCount ${_appLocalizations.notSoGoodText}",
                     style: TextStyle(
                         color: Colors.black,
-                        fontFamily: "Rubik Medium",
+                        fontFamily: "Rubik",
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.w500),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -139,7 +140,7 @@ class SummaryForAllLearners extends StatelessWidget {
           if (hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
             Center(
               child: Text(
-                "${AppLocalizations.of(context)!.averages}",
+                "$_appLocalizations.averages}",
                 style: TextStyle(
                     color: Color(0xFFFFFFFF),
                     fontFamily: "OpenSans",

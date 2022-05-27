@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
@@ -26,7 +24,7 @@ class LearnerSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //AppBloc bloc = Provider.of(context);
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Column(
       children: [
         Card(
@@ -60,8 +58,7 @@ class LearnerSummary extends StatelessWidget {
                   height: 10.h,
                 ),
                 ActionStatusCountWidget(
-                    label:
-                        "${AppLocalizations.of(context)!.actionsTabItemText}",
+                    label: "${_appLocalizations.actionsTabItemText}",
                     done: hiveGroupUser.getActionsCompletedInMonth(month),
                     pending: hiveGroupUser.getActionsNotCompletedInMonth(month),
                     overdue: hiveGroupUser.getActionsOverdueInMonth(month)),
@@ -69,10 +66,10 @@ class LearnerSummary extends StatelessWidget {
                   height: 15.h,
                 ),
                 Text(
-                  "${AppLocalizations.of(context)!.learnerProfile}",
+                  "${_appLocalizations.learnerProfile}",
                   style: TextStyle(
                       fontSize: 17.sp,
-                      fontFamily: "OpenSans ",
+                      fontFamily: "OpenSans",
                       color: Color(0xFF4F4F4F),
                       fontWeight: FontWeight.w600),
                 ),
@@ -95,7 +92,7 @@ class LearnerSummary extends StatelessWidget {
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       // hintText:
-                      //     '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
+                      //     '${_appLocalizations.hintTextTransformationsTextField}',
                       hintStyle: TextStyle(
                         fontFamily: "OpenSans",
                         fontSize: 16.sp,
@@ -130,24 +127,18 @@ class LearnerSummary extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text:
-                            "${AppLocalizations.of(context)!.transformations}: ",
+                        text: "${_appLocalizations.transformations}: ",
                         style: TextStyle(
                             fontSize: 17.sp,
-                            fontFamily: "OpenSans ",
+                            fontFamily: "OpenSans",
                             color: Color(0xFF4F4F4F),
                             fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         //  "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
-                        text: (hiveGroupUser
-                                        .getTransformationForMonth(month)
-                                        ?.impactStory
-                                        ?.length ??
-                                    0) >
-                                25
-                            ? "${hiveGroupUser.getTransformationForMonth(month)?.impactStory?.substring(0, 25) ?? ''}..."
-                            : "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
+                        text: hiveGroupUser
+                            .getTransformationForMonth(month)
+                            ?.impactStory,
                         style: TextStyle(
                           fontFamily: "OpenSans",
                           fontSize: 17.sp,
@@ -157,6 +148,8 @@ class LearnerSummary extends StatelessWidget {
                       ),
                     ],
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(
                   height: 15.h,
@@ -164,10 +157,10 @@ class LearnerSummary extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
+                      "${_appLocalizations.feelingAboutTheGroup}: ",
                       style: TextStyle(
                           fontSize: 17.sp,
-                          fontFamily: "Open Sans Semibold",
+                          fontFamily: "OpenSans",
                           fontStyle: FontStyle.normal,
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w600),
@@ -197,9 +190,10 @@ class LearnerSummary extends StatelessWidget {
                               Text(
                                 "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name}",
                                 style: TextStyle(
-                                  fontFamily: "Open Sans Italic",
+                                  fontFamily: "OpenSans",
                                   fontSize: 15.sp,
                                   fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w600,
                                   color: Color(0xFF797979),
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -218,22 +212,17 @@ class LearnerSummary extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "${AppLocalizations.of(context)!.feedback}: ",
+                        text: "${_appLocalizations.feedback}: ",
                         style: TextStyle(
                             fontSize: 17.sp,
-                            fontFamily: "OpenSans ",
+                            fontFamily: "OpenSans",
                             color: Color(0xFF4F4F4F),
                             fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
-                        text: (hiveGroupUser
-                                        .getTeacherResponseForMonth(month)
-                                        ?.response
-                                        ?.length ??
-                                    0) >
-                                25
-                            ? "${hiveGroupUser.getTeacherResponseForMonth(month)?.response?.substring(0, 25) ?? ''}..."
-                            : "${hiveGroupUser.getTeacherResponseForMonth(month)?.response ?? ''}",
+                        text: hiveGroupUser
+                            .getTeacherResponseForMonth(month)
+                            ?.response,
                         style: TextStyle(
                           fontFamily: "OpenSans",
                           fontSize: 17.sp,
@@ -243,6 +232,8 @@ class LearnerSummary extends StatelessWidget {
                       )
                     ],
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(
                   height: 20.h,
