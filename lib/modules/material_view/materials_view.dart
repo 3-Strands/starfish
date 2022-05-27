@@ -542,8 +542,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             style: TextStyle(
               //  color: Color(0xFF3475F0),
               fontFamily: 'OpenSans',
-              fontSize: 19.sp,
-              fontWeight: FontWeight.bold,
+              fontSize: 17.sp,
+              fontWeight: FontWeight.w600,
             ),
           ),
         );
@@ -569,8 +569,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           style: TextStyle(
             //   color: Color(0xFF3475F0),
             fontFamily: 'OpenSans',
-            fontSize: 19.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 17.sp,
+            fontWeight: FontWeight.w600,
           ),
         ),
       );
@@ -693,39 +693,102 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                               ),
                             ),
                           ),
-                          //Spacer(),
-                          // if (material.url != null && material.url!.isNotEmpty)
-                          //   CustomIconButton(
-                          //     icon: Icon(
-                          //       Icons.open_in_new,
-                          //       color: Colors.blue,
-                          //       size: 21.5.sp,
-                          //     ),
-                          //     text: AppLocalizations.of(context)!.open,
-                          //     onButtonTap: () {
-                          //       GeneralFunctions.openUrl(material.url!);
-                          //     },
-                          //   ),
+                          if (((Material_Editability.valueOf(
+                                              material.editability!) ==
+                                          Material_Editability.CREATOR_EDIT ||
+                                      Material_Editability.valueOf(
+                                              material.editability!) ==
+                                          Material_Editability.GROUP_EDIT) &&
+                                  material.creatorId ==
+                                      CurrentUserProvider().user.id) ||
+                              (Material_Editability.valueOf(
+                                          material.editability!) ==
+                                      Material_Editability.GROUP_EDIT) &&
+                                  material.isAssignedToGroupWithLeaderRole)
+                            PopupMenuButton(
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Color(0xFF3475F0),
+                                size: 30,
+                              ),
+                              color: Colors.white,
+                              elevation: 20,
+                              shape: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.white, width: 2),
+                                  borderRadius: BorderRadius.circular(12.r)),
+                              enabled: true,
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 0:
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AddEditMaterialScreen(
+                                          material: material,
+                                        ),
+                                      ),
+                                    );
+
+                                    break;
+                                  case 1:
+                                    _deleteMaterial(context, material);
+
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.editMaterial,
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 19.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: 0,
+                                ),
+                                PopupMenuItem(
+                                  child: Text(
+                                    '${AppLocalizations.of(context)!.delete} ${AppLocalizations.of(context)!.material}',
+                                    style: TextStyle(
+                                        color: Color(0xFF3475F0),
+                                        fontSize: 19.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  value: 1,
+                                ),
+                              ],
+                            )
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
+                    if (material.isAssignedToMe)
+                      SizedBox(
+                        height: 30.h,
+                      ),
                     if (material.isAssignedToMe)
                       TaskStatus(
                         height: 30.h,
                         color: getMyTaskStatusColor(material),
                         label: getMyTaskLabel(context, material),
                       ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
+                    if (material.isAssignedToGroupWithLeaderRole)
+                      SizedBox(
+                        height: 10.h,
+                      ),
                     if (material.isAssignedToGroupWithLeaderRole)
                       TaskStatus(
                         height: 30.h,
                         color: Color(0xFFCBE8FA),
                         label: AppLocalizations.of(context)!.assignedToGroup,
+                      ),
+                    if (material.isAssignedToMe ||
+                        material.isAssignedToGroupWithLeaderRole)
+                      Divider(
+                        color: Color(0xFF979797),
+                        thickness: 2,
                       ),
                     SizedBox(
                       height: 30.h,
@@ -749,15 +812,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           GeneralFunctions.openUrl(material.url!);
                         },
                       ),
-                    Divider(
-                      color: Color(0xFF979797),
-                      thickness: 2,
-                    ),
+                    if (material.url != null && material.url!.isNotEmpty)
+                      Divider(
+                        color: Color(0xFF979797),
+                        thickness: 2,
+                      ),
                     if (material.localFiles.length != 0 &&
                         material.localFiles.isNotEmpty)
                       _buildAttachment(material),
                     SizedBox(
-                      height: 20.h,
+                      height: 30.h,
                     ),
                     Text(
                       AppLocalizations.of(context)!.thismaterialIsVisibleTo,
@@ -788,101 +852,40 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                           style: TextStyle(
                             //   color: Color(0xFF3475F0),
                             fontFamily: 'OpenSans',
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          AppLocalizations.of(context)!.lanugages,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: Color(0xFF3475F0),
-                            fontFamily: 'OpenSans',
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        Column(
-                          children: <Widget>[
-                            // Show `edit` button if `editable_by` is `Only me` or `Groups I lead or administer`
-                            if (((Material_Editability.valueOf(
-                                                material.editability!) ==
-                                            Material_Editability.CREATOR_EDIT ||
-                                        Material_Editability.valueOf(
-                                                material.editability!) ==
-                                            Material_Editability.GROUP_EDIT) &&
-                                    material.creatorId ==
-                                        CurrentUserProvider().user.id) ||
-                                (Material_Editability.valueOf(
-                                            material.editability!) ==
-                                        Material_Editability.GROUP_EDIT) &&
-                                    material.isAssignedToGroupWithLeaderRole)
-                              CustomIconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
-                                  size: 21.5.sp,
-                                ),
-                                text: AppLocalizations.of(context)!.edit,
-                                onButtonTap: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddEditMaterialScreen(
-                                        material: material,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            SizedBox(
-                              height: 15.h,
-                            ),
-                            if (((Material_Editability.valueOf(
-                                                material.editability!) ==
-                                            Material_Editability.CREATOR_EDIT ||
-                                        Material_Editability.valueOf(
-                                                material.editability!) ==
-                                            Material_Editability.GROUP_EDIT) &&
-                                    material.creatorId ==
-                                        CurrentUserProvider().user.id) ||
-                                (Material_Editability.valueOf(
-                                            material.editability!) ==
-                                        Material_Editability.GROUP_EDIT) &&
-                                    material.isAssignedToGroupWithLeaderRole)
-                              CustomIconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.blue,
-                                  size: 21.5.sp,
-                                ),
-                                text: AppLocalizations.of(context)!.delete,
-                                onButtonTap: () {
-                                  _deleteMaterial(context, material);
-                                },
-                              ),
-                          ],
-                        ),
-                      ],
+                    Divider(
+                      color: Color(0xFF979797),
+                      thickness: 2,
                     ),
                     SizedBox(
                       height: 30.h,
                     ),
+                    Text(
+                      AppLocalizations.of(context)!.lanugages,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Color(0xFF3475F0),
+                        fontFamily: 'OpenSans',
+                        fontSize: 19.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (material.languageIds!.isNotEmpty)
+                      SizedBox(
+                        height: 5.h,
+                      ),
                     _buildLanguageList(material),
+                    Divider(
+                      color: Color(0xFF979797),
+                      thickness: 2,
+                    ),
                     SizedBox(
-                      height: 47.h,
+                      height: 30.h,
                     ),
                     Text(
                       AppLocalizations.of(context)!.topics,
@@ -894,9 +897,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(
-                      height: 30.h,
-                    ),
+                    if (material.topics!.isNotEmpty)
+                      SizedBox(
+                        height: 5.h,
+                      ),
                     _buildTopicsList(material),
                     SizedBox(
                       height: 63.h,

@@ -140,7 +140,7 @@ class SummaryForAllLearners extends StatelessWidget {
           if (hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
             Center(
               child: Text(
-                "$_appLocalizations.averages}",
+                "${_appLocalizations.averages}",
                 style: TextStyle(
                     color: Color(0xFFFFFFFF),
                     fontFamily: "OpenSans",
