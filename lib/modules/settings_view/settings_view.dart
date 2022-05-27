@@ -13,8 +13,9 @@ import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/app_strings.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/constants/strings.dart';
+import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -88,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
 
-    _populateAppLanguages(Strings.appLanguageList);
+    _populateAppLanguages(AppStrings.appLanguageList);
     _getCurrentUser();
     _getAllCountries();
     _getAllLanguages();
