@@ -20,6 +20,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:template_string/template_string.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   OTPVerificationScreen(
@@ -59,6 +60,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   late int? _resendToken;
   late int _timeout;
   late ConfirmationResult? _confirmationResult;
+
+  late AppLocalizations _appLocalizations;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -102,6 +105,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -125,8 +130,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                           AppLogo(hight: 156.h, width: 163.w),
                           SizedBox(height: 50.h),
                           TitleLabel(
-                            title: AppLocalizations.of(context)!
-                                .enterOneTimePassword,
+                            title: _appLocalizations.enterOneTimePassword,
                             align: TextAlign.center,
                           ),
                           SizedBox(height: 30.h),
@@ -230,6 +234,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         setState(() {
           _timeout = 60;
         });
+
+        _startResentOptTimer();
       },
       forceResendingToken: _resendToken,
       timeout: Duration(seconds: 60),
@@ -239,12 +245,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   _resentOTPOnWeb() async {
     var phoneNumber = _dialingCode + _phoneNumber;
-    await auth.signInWithPhoneNumber(phoneNumber).then((confirmationResult) => {
-          setState(() {
-            _confirmationResult = confirmationResult;
-            _timeout = 60;
-          })
-        });
+    await auth.signInWithPhoneNumber(phoneNumber).then((confirmationResult) {
+      setState(() {
+        _confirmationResult = confirmationResult;
+        _timeout = 60;
+      });
+      _startResentOptTimer();
+    });
   }
 
   _verfiyPhoneNumberWithOTP() async {
@@ -282,7 +289,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       color: Colors.transparent,
       child: (_timeout > 0)
           ? Text(
-              'Please wait for $_timeout seconds',
+              _appLocalizations.waitForSeconds
+                  .insertTemplateValues({'timeout': _timeout}),
               style: resentOTPTextStyle,
             )
           : TextButton(
@@ -294,7 +302,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 }
               },
               child: Text(
-                AppLocalizations.of(context)!.resentOTP,
+                _appLocalizations.resentOTP,
                 style: resentOTPTextStyle,
               ),
             ),
@@ -321,7 +329,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  AppLocalizations.of(context)!.back,
+                  _appLocalizations.back,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
@@ -350,7 +358,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  AppLocalizations.of(context)!.next,
+                  _appLocalizations.next,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
