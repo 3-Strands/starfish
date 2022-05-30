@@ -21,8 +21,8 @@ class SummaryForAllLearners extends StatelessWidget {
   final HiveDate month;
   final Map<HiveEvaluationCategory, Map<String, int>>
       groupLearnerEvaluationsByCategory;
-  final groupEvaluationGoodCount;
-  final groupEvaluationBadCount;
+  final int? groupEvaluationGoodCount;
+  final int? groupEvaluationBadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +82,9 @@ class SummaryForAllLearners extends StatelessWidget {
             "${_appLocalizations.feelingAboutTheGroup}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
-                fontFamily: "Rubik",
+                fontFamily: "OpenSans",
                 fontSize: 17.sp,
-                fontWeight: FontWeight.w500),
+                fontWeight: FontWeight.bold),
           )),
           SizedBox(
             height: 10.h,
@@ -99,7 +99,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "$groupEvaluationGoodCount ${_appLocalizations.goodText}",
+                  "${groupEvaluationGoodCount ?? 0}  ${_appLocalizations.goodText}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -116,20 +116,19 @@ class SummaryForAllLearners extends StatelessWidget {
                     color: Color(0xFFC6C6C6),
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                child: Flexible(
-                  child: Text(
-                    "$groupEvaluationBadCount ${_appLocalizations.notSoGoodText}",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Rubik",
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
-                  ),
+                child: Text(
+                  "${groupEvaluationBadCount ?? 0} ${_appLocalizations.notSoGoodText}",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Rubik",
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],
           ),
+
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Divider(
