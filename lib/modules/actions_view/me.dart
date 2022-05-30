@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:open_file/open_file.dart';
@@ -15,12 +14,11 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/actions_view/my_action_list_item.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -749,7 +747,7 @@ class _MeState extends State<Me> {
   }
 }
 
-class MyActionListItem extends StatelessWidget {
+/*class MyActionListItem extends StatelessWidget {
   final int index;
   final HiveAction action;
   final bool displayActions;
@@ -926,4 +924,4 @@ class MyActionListItem extends StatelessWidget {
         },
         negativeActionCallback: () {});
   }
-}
+}*/

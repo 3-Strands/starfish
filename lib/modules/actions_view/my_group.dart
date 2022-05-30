@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
@@ -17,10 +15,9 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -962,6 +959,7 @@ class _MyGroupState extends State<MyGroup> {
   }
 }
 
+/*
 class MyGroupActionListItem extends StatelessWidget {
   final HiveAction action;
   final index;
@@ -1315,4 +1313,4 @@ class MyGroupActionListItem extends StatelessWidget {
         },
         negativeActionCallback: () {});
   }
-}
+}*/
