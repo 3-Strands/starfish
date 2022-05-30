@@ -38,6 +38,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+const List<String> ALLOWED_FILE_TYPES = [
+  'doc',
+  'docx',
+  'rtf',
+  'txt',
+  'jpg',
+  'png',
+  'mp3',
+  'wav',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx',
+  'odt',
+  'odp',
+  'ods'
+];
+
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
 
@@ -346,14 +364,17 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                             StarfishSnackbar.showErrorMessage(
                                 context, _appLocalizations.maxFilesSelected);
                           } else {
-                            FilePickerResult? result = await FilePicker.platform
-                                .pickFiles(allowMultiple: false);
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              allowMultiple: false,
+                              type: FileType.custom,
+                              allowedExtensions: ALLOWED_FILE_TYPES,
+                            );
 
                             if (result != null) {
                               // if single selected file is IMAGE, open image in Cropper
                               if (result.count == 1 &&
-                                  ['jpg', 'jpeg', 'png'].contains(result
-                                      .paths.first
+                                  ['jpg', 'png'].contains(result.paths.first
                                       ?.split("/")
                                       .last
                                       .split(".")
