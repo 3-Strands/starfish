@@ -30,11 +30,13 @@ class _SelectActionsState extends State<SelectActions>
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     final bloc = Provider.of(context);
     bloc.actionBloc.fetchActions();
+
     return new Scaffold(
       appBar: new AppBar(
-        title: Text(AppLocalizations.of(context)!.selectAction),
+        title: Text(_appLocalizations.selectAction),
         elevation: 0.0,
       ),
       body: Column(
@@ -84,22 +86,21 @@ class _SelectActionsState extends State<SelectActions>
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                      AppLocalizations.of(context)!.type +
+                                      _appLocalizations.type +
                                           ': ' +
                                           "${Action_Type.valueOf(action.type!)!.about}",
                                       style: TextStyle(
                                           fontSize: 17.sp,
                                           color: Color(0xFF797979))),
                                   Text(
-                                      AppLocalizations.of(context)!.usedBy +
+                                      _appLocalizations.usedBy +
                                           ': ' +
                                           "${action.group != null ? action.group!.name : 'None'}",
                                       style: TextStyle(
                                           fontSize: 17.sp,
                                           color: Color(0xFF797979))),
                                   Text(
-                                      AppLocalizations.of(context)!
-                                              .createdDate +
+                                      _appLocalizations.createdDate +
                                           ': ' +
                                           "${_getCreatedDate(action)}",
                                       style: TextStyle(

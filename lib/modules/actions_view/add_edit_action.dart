@@ -61,6 +61,7 @@ class _AddEditActionState extends State<AddEditAction>
 
   late List<HiveGroup> _groupList;
   late Box<HiveGroup> _groupBox;
+  late AppLocalizations _appLocalizations;
 
   HiveMaterial? _selectedMaterial;
   String? _instructions;
@@ -128,6 +129,7 @@ class _AddEditActionState extends State<AddEditAction>
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    _appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.actionScreenBG,
@@ -142,8 +144,8 @@ class _AddEditActionState extends State<AddEditAction>
               AppLogo(hight: 36.h, width: 37.w),
               Text(
                 _isEditMode
-                    ? AppLocalizations.of(context)!.editActionText
-                    : AppLocalizations.of(context)!.addActionText,
+                    ? _appLocalizations.editActionText
+                    : _appLocalizations.addActionText,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -179,7 +181,7 @@ class _AddEditActionState extends State<AddEditAction>
                       : _showGroupNameContainer(),
                   SizedBox(height: 20.h),
                   Text(
-                    AppLocalizations.of(context)!.nameOfAction,
+                    _appLocalizations.nameOfAction,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 19.sp,
@@ -192,9 +194,9 @@ class _AddEditActionState extends State<AddEditAction>
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      labelText: AppLocalizations.of(context)!.hintActionName,
+                      labelText: _appLocalizations.hintActionName,
                       labelStyle: formTitleHintStyle,
-                      // hintText: AppLocalizations.of(context)!.hintActionName,
+                      // hintText: _appLocalizations.hintActionName,
                       //  hintStyle: formTitleHintStyle,
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
@@ -213,7 +215,7 @@ class _AddEditActionState extends State<AddEditAction>
                   ),
                   SizedBox(height: 20.h),
                   Text(
-                    AppLocalizations.of(context)!.typeOfAction,
+                    _appLocalizations.typeOfAction,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 19.sp,
@@ -231,7 +233,7 @@ class _AddEditActionState extends State<AddEditAction>
 
                   SizedBox(height: 20.h),
                   Text(
-                    AppLocalizations.of(context)!.dueDate,
+                    _appLocalizations.dueDate,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 19.sp,
@@ -260,7 +262,7 @@ class _AddEditActionState extends State<AddEditAction>
                                 _dueDate != null
                                     //? '${_dueDate!.month} ${_dueDate!.day}, ${_dueDate!.year}'
                                     ? '${DateTimeUtils.formatDate(_dueDate!, 'MMM dd, yyyy')}'
-                                    : AppLocalizations.of(context)!.hintDueDate,
+                                    : _appLocalizations.hintDueDate,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontSize: 19.sp, color: Color(0xFF434141)),
@@ -304,7 +306,7 @@ class _AddEditActionState extends State<AddEditAction>
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                  child: Text(_appLocalizations.cancel),
                 ),
               ),
             ),
@@ -319,8 +321,8 @@ class _AddEditActionState extends State<AddEditAction>
                     },
                     child: Text(
                       _isEditMode
-                          ? AppLocalizations.of(context)!.update
-                          : AppLocalizations.of(context)!.create,
+                          ? _appLocalizations.update
+                          : _appLocalizations.create,
                     ),
                     style: ElevatedButton.styleFrom(
                       primary: AppColors.selectedButtonBG,
@@ -362,7 +364,7 @@ class _AddEditActionState extends State<AddEditAction>
         Align(
           alignment: FractionalOffset.topLeft,
           child: Text(
-            AppLocalizations.of(context)!.reuseActionText,
+            _appLocalizations.reuseActionText,
             textAlign: TextAlign.left,
             style: TextStyle(
                 fontSize: 19.sp,
@@ -408,7 +410,7 @@ class _AddEditActionState extends State<AddEditAction>
                     Text(
                       _actionToBeReused != null
                           ? _actionToBeReused!.name!
-                          : AppLocalizations.of(context)!.selectAnAction,
+                          : _appLocalizations.selectAnAction,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 19.sp, color: AppColors.optionalFieldColor),
@@ -438,7 +440,7 @@ class _AddEditActionState extends State<AddEditAction>
             alignment: FractionalOffset.topLeft,
             child: RichText(
               text: TextSpan(
-                text: AppLocalizations.of(context)!.actionWasAssignedTo + ' ',
+                text: _appLocalizations.actionWasAssignedTo + ' ',
                 style: TextStyle(
                   fontSize: 19.sp,
                   fontWeight: FontWeight.bold,
@@ -517,7 +519,7 @@ class _AddEditActionState extends State<AddEditAction>
         Align(
           alignment: FractionalOffset.topLeft,
           child: Text(
-            AppLocalizations.of(context)!.assignActionTo,
+            _appLocalizations.assignActionTo,
             textAlign: TextAlign.left,
             style: titleTextStyle,
           ),
@@ -537,8 +539,8 @@ class _AddEditActionState extends State<AddEditAction>
 
   Widget _selectDropDown() {
     return new SelectDropDown(
-      navTitle: AppLocalizations.of(context)!.assignActionTo,
-      placeholder: AppLocalizations.of(context)!.selectOneOrMoreGroups,
+      navTitle: _appLocalizations.assignActionTo,
+      placeholder: _appLocalizations.selectOneOrMoreGroups,
       selectedValues: _selectedGroups,
       dataSource: _groupList,
       enableSelectAllOption: false,
@@ -566,7 +568,7 @@ class _AddEditActionState extends State<AddEditAction>
   List<Widget>? _historyItems(HiveAction action) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      AppLocalizations.of(context)!.history,
+      _appLocalizations.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
@@ -579,7 +581,7 @@ class _AddEditActionState extends State<AddEditAction>
     for (HiveEdit edit in action.editHistory ?? []) {
       _widgetList.add(HistoryItem(
         edit: edit,
-        type: AppLocalizations.of(context)!.action,
+        type: _appLocalizations.action,
       ));
     }
 
@@ -589,26 +591,26 @@ class _AddEditActionState extends State<AddEditAction>
   _validateAndCreateUpdateAction() {
     if (_actionNameController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyActionName);
+          context, _appLocalizations.emptyActionName);
     } else if (_instructions == null || _instructions!.isEmpty) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyActionInstructions);
+          context, _appLocalizations.emptyActionInstructions);
     } else if ((_selectedActionType == Action_Type.TEXT_RESPONSE ||
             _selectedActionType == Action_Type.MATERIAL_RESPONSE) &&
         (_question == null || _question!.isEmpty)) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyActionQuestion);
+          context, _appLocalizations.emptyActionQuestion);
     } else if ((_selectedActionType == Action_Type.MATERIAL_INSTRUCTION ||
             _selectedActionType == Action_Type.MATERIAL_RESPONSE) &&
         _selectedMaterial == null) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyActionMaterial);
+          context, _appLocalizations.emptyActionMaterial);
     } else if (_selectedGroups.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.selectActionGroup);
+          context, _appLocalizations.selectActionGroup);
     } else if (_dueDate == null) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyActionDueDate);
+          context, _appLocalizations.emptyActionDueDate);
     } else {
       // create a separate request for each groups as, action creted for each
       //gorup will be considered as separate entity and therefor will have a different UUID
@@ -618,10 +620,10 @@ class _AddEditActionState extends State<AddEditAction>
 
       Alerts.showMessageBox(
         context: context,
-        title: AppLocalizations.of(context)!.dialogInfo,
+        title: _appLocalizations.dialogInfo,
         message: _isEditMode
-            ? AppLocalizations.of(context)!.updateActionSuccess
-            : AppLocalizations.of(context)!.createActionSuccess,
+            ? _appLocalizations.updateActionSuccess
+            : _appLocalizations.createActionSuccess,
         callback: () {
           Navigator.of(context).pop();
         },
@@ -666,8 +668,8 @@ class _AddEditActionState extends State<AddEditAction>
       StarfishSnackbar.showErrorMessage(
           context,
           _isEditMode
-              ? AppLocalizations.of(context)!.updateActionFailed
-              : AppLocalizations.of(context)!.createActionSuccess);
+              ? _appLocalizations.updateActionFailed
+              : _appLocalizations.createActionSuccess);
     }).whenComplete(() {});
   }
 }

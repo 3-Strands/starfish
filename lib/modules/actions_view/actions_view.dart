@@ -54,8 +54,8 @@ class _ActionsScreenState extends State<ActionsScreen>
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     bloc = Provider.of(context);
-
     return DefaultTabController(
       length: _tabController.length,
       child: Scaffold(
@@ -67,7 +67,7 @@ class _ActionsScreenState extends State<ActionsScreen>
               children: <Widget>[
                 AppLogo(hight: 36.h, width: 37.w),
                 Text(
-                  AppLocalizations.of(context)!.actionsTabItemText,
+                  _appLocalizations.actionsTabItemText,
                   style: dashboardNavigationTitle,
                 ),
                 IconButton(
@@ -116,9 +116,8 @@ class _ActionsScreenState extends State<ActionsScreen>
                           _tabController.length,
                           (index) => Tab(
                               text: index == 0
-                                  ? AppLocalizations.of(context)!.forMeTabText
-                                  : AppLocalizations.of(context)!
-                                      .forGroupITeachTabText),
+                                  ? _appLocalizations.forMeTabText
+                                  : _appLocalizations.forGroupITeachTabText),
                         ),
                       )
                     : Container(),

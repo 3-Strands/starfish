@@ -45,6 +45,7 @@ class _MeState extends State<Me> {
   bool _isInitialized = false;
 
   late AppBloc bloc;
+  late AppLocalizations _appLocalizations;
 
   Dashboard obj = new Dashboard();
 
@@ -63,6 +64,7 @@ class _MeState extends State<Me> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
     if (!_isInitialized) {
       bloc = Provider.of(context);
       _isInitialized = true;
@@ -236,7 +238,7 @@ class _MeState extends State<Me> {
                               ),
                               Center(
                                 child: Text(
-                                  '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                                  '${_appLocalizations.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
                                   style: TextStyle(
                                       fontSize: 19.sp,
                                       color: Color(0xFF3475F0),
@@ -307,7 +309,7 @@ class _MeState extends State<Me> {
                                 padding:
                                     EdgeInsets.only(left: 15.w, right: 15.w),
                                 child: Text(
-                                  '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
+                                  '${_appLocalizations.instructions}: ${action.instructions}',
                                   maxLines: 5,
                                   style: TextStyle(
                                     fontSize: 17.sp,
@@ -360,7 +362,7 @@ class _MeState extends State<Me> {
                                         width: 8.w,
                                       ),
                                       Text(
-                                        '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                                        '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
                                         maxLines: 1,
                                         style: TextStyle(
                                             fontSize: 19.sp,
@@ -387,8 +389,7 @@ class _MeState extends State<Me> {
                                       child: Align(
                                         alignment: FractionalOffset.topLeft,
                                         child: Text(
-                                          AppLocalizations.of(context)!
-                                                  .question +
+                                          _appLocalizations.question +
                                               ': ${action.question}',
                                           style: TextStyle(
                                             fontSize: 19.sp,
@@ -408,7 +409,7 @@ class _MeState extends State<Me> {
                                           color: Color(0xFF797979),
                                         ),
                                         border: InputBorder.none,
-                                        hintText: AppLocalizations.of(context)!
+                                        hintText: _appLocalizations
                                             .questionTextEditHint,
                                       ),
                                       onSubmitted: (value) {
@@ -430,8 +431,7 @@ class _MeState extends State<Me> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    AppLocalizations.of(context)!
-                                        .howWasThisActionText,
+                                    _appLocalizations.howWasThisActionText,
                                     maxLines: 1,
                                     style: TextStyle(
                                         fontSize: 19.sp,
@@ -505,8 +505,7 @@ class _MeState extends State<Me> {
                                                 width: 4.w,
                                               ),
                                               Text(
-                                                AppLocalizations.of(context)!
-                                                    .goodText,
+                                                _appLocalizations.goodText,
                                                 maxLines: 1,
                                                 style: TextStyle(
                                                   fontFamily: 'Rubik',
@@ -573,8 +572,7 @@ class _MeState extends State<Me> {
                                                 width: 4.w,
                                               ),
                                               Text(
-                                                AppLocalizations.of(context)!
-                                                    .notSoGoodText,
+                                                _appLocalizations.notSoGoodText,
                                                 maxLines: 1,
                                                 style: TextStyle(
                                                   fontFamily: 'Rubik',
@@ -632,7 +630,7 @@ class _MeState extends State<Me> {
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 AppColors.selectedButtonBG),
                           ),
-                          child: Text(AppLocalizations.of(context)!.close),
+                          child: Text(_appLocalizations.close),
                         ),
                       ),
                     ),
@@ -661,8 +659,7 @@ class _MeState extends State<Me> {
             color: Colors.blue,
             size: 18.r,
           ),
-          text: AppLocalizations.of(context)!
-              .clickToDownload
+          text: _appLocalizations.clickToDownload
               .insertTemplateValues({'file_name': hiveFile.filename!}),
           onButtonTap: () {
             if (Platform.isIOS) {
@@ -728,7 +725,7 @@ class _MeState extends State<Me> {
                       ),
                       if (snapshot.data!.keys.toList()[section].id != null)
                         Text(
-                          '${AppLocalizations.of(context)!.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                          '${_appLocalizations.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                           style: TextStyle(
                             fontSize: 17.sp,
                             fontWeight: FontWeight.w600,
@@ -767,6 +764,7 @@ class MyActionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
+    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
@@ -851,8 +849,7 @@ class MyActionListItem extends StatelessWidget {
                               itemBuilder: (context) => [
                                 PopupMenuItem(
                                   child: Text(
-                                    AppLocalizations.of(context)!
-                                        .editActionText,
+                                    _appLocalizations.editActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 19.sp,
@@ -862,8 +859,7 @@ class MyActionListItem extends StatelessWidget {
                                 ),
                                 PopupMenuItem(
                                   child: Text(
-                                    AppLocalizations.of(context)!
-                                        .deleteActionText,
+                                    _appLocalizations.deleteActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 19.sp,
@@ -898,7 +894,7 @@ class MyActionListItem extends StatelessWidget {
                     width: 10.w,
                   ),
                   Text(
-                    '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -916,12 +912,13 @@ class MyActionListItem extends StatelessWidget {
 
   _deleteAction(BuildContext context, HiveAction action) {
     final bloc = Provider.of(context);
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     Alerts.showMessageBox(
         context: context,
-        title: AppLocalizations.of(context)!.deleteActionTitle,
-        message: AppLocalizations.of(context)!.deleteActionMessage,
-        positiveButtonText: AppLocalizations.of(context)!.delete,
-        negativeButtonText: AppLocalizations.of(context)!.cancel,
+        title: _appLocalizations.deleteActionTitle,
+        message: _appLocalizations.deleteActionMessage,
+        positiveButtonText: _appLocalizations.delete,
+        negativeButtonText: _appLocalizations.cancel,
         positiveActionCallback: () {
           // Mark this action for deletion
           action.isDirty = true;

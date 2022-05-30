@@ -23,7 +23,6 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,6 +40,7 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   late AppBloc bloc;
+  late AppLocalizations _appLocalizations;
 
   final Key _groupFocusDetectorKey = UniqueKey();
 
@@ -112,8 +112,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             ? GroupUser_Role.valueOf(user.role!)!.about
                             : user.isInvited
                                 ? "${GroupUser_Role.valueOf(user.role!)!.about} " +
-                                    AppLocalizations.of(context)!
-                                        .userStatusInvited
+                                    _appLocalizations.userStatusInvited
                                         .toUpperCase()
                                 : '',
                         textAlign: TextAlign.right,
@@ -231,7 +230,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   backgroundColor: MaterialStateProperty.all<Color>(
                       AppColors.selectedButtonBG),
                 ),
-                child: Text(AppLocalizations.of(context)!.close),
+                child: Text(_appLocalizations.close),
               ),
             ),
           ),
@@ -246,6 +245,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
+
     if (!_isInitialized) {
       bloc = Provider.of(context);
       _isInitialized = true;
@@ -267,7 +268,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               children: <Widget>[
                 AppLogo(hight: 36.h, width: 37.w),
                 Text(
-                  AppLocalizations.of(context)!.groupsTabItemText,
+                  _appLocalizations.groupsTabItemText,
                   style: dashboardNavigationTitle,
                 ),
                 IconButton(
@@ -406,16 +407,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     onLeaveGroupTap: (HiveGroup group) {
                                       Alerts.showMessageBox(
                                           context: context,
-                                          title: AppLocalizations.of(context)!
-                                              .dialogAlert,
-                                          message: AppLocalizations.of(context)!
+                                          title: _appLocalizations.dialogAlert,
+                                          message: _appLocalizations
                                               .alertLeaveThisGroup,
                                           negativeButtonText:
-                                              AppLocalizations.of(context)!
-                                                  .cancel,
+                                              _appLocalizations.cancel,
                                           positiveButtonText:
-                                              AppLocalizations.of(context)!
-                                                  .leave,
+                                              _appLocalizations.leave,
                                           negativeActionCallback: () {},
                                           positiveActionCallback: () {
                                             bloc.groupBloc.leaveGroup(
@@ -485,6 +483,8 @@ class GroupListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+
     int countActionsCompleted = group.actionsCompleted;
     int countActionsNotDoneYet = group.actionsNotDoneYet;
     int countActionsOverdue = group.actionsOverdue;
@@ -534,7 +534,7 @@ class GroupListItem extends StatelessWidget {
                           height: 5.h,
                         ),
                         Text(
-                          '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
+                          '${_appLocalizations.adminNamePrifix}: ${group.adminName}',
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
@@ -582,7 +582,7 @@ class GroupListItem extends StatelessWidget {
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           child: Text(
-                            AppLocalizations.of(context)!.editGroup,
+                            _appLocalizations.editGroup,
                             style: TextStyle(
                                 color: Color(0xFF3475F0),
                                 fontSize: 19.sp,
@@ -592,7 +592,7 @@ class GroupListItem extends StatelessWidget {
                         ),
                         PopupMenuItem(
                           child: Text(
-                            AppLocalizations.of(context)!.deleteGroup,
+                            _appLocalizations.deleteGroup,
                             style: TextStyle(
                                 color: Color(0xFF3475F0),
                                 fontSize: 19.sp,
@@ -609,7 +609,7 @@ class GroupListItem extends StatelessWidget {
                   //     color: Colors.blue,
                   //     size: 18.r,
                   //   ),
-                  //   text: AppLocalizations.of(context)!.edit,
+                  //   text: _appLocalizations.edit,
                   //   onButtonTap: () {
                   //     Navigator.push(
                   //       context,
@@ -629,7 +629,7 @@ class GroupListItem extends StatelessWidget {
                         this.onLeaveGroupTap(group);
                       },
                       child: Text(
-                        AppLocalizations.of(context)!.leaveThisGroup,
+                        _appLocalizations.leaveThisGroup,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
                           fontSize: 14.5.sp,
@@ -645,7 +645,7 @@ class GroupListItem extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             // Text(
-            //   '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
+            //   '${_appLocalizations.adminNamePrifix}: ${group.adminName}',
             //   textAlign: TextAlign.left,
             //   style: TextStyle(
             //     fontFamily: 'OpenSans',
@@ -671,7 +671,7 @@ class GroupListItem extends StatelessWidget {
                     padding:
                         EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                     child: Text(
-                      AppLocalizations.of(context)!.viewTeachersAndLearners,
+                      _appLocalizations.viewTeachersAndLearners,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontFamily: 'Rubic',
@@ -701,12 +701,12 @@ class GroupListItem extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: 10.h, horizontal: 10.w),
                         child: Text(
-                          //"${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
+                          //"${group.actionsCompleted} ${_appLocalizations.actionsCompleted}",
                           Intl.plural(countActionsCompleted,
                               zero:
-                                  "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
-                              one: "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
-                              other: "$countActionsCompleted ${AppLocalizations.of(context)!.moreThenOneActionCompleted}",
+                                  "$countActionsCompleted ${_appLocalizations.zeroOrOneActionCompleted}",
+                              one: "$countActionsCompleted ${_appLocalizations.zeroOrOneActionCompleted}",
+                              other: "$countActionsCompleted ${_appLocalizations.moreThenOneActionCompleted}",
                               args: [countActionsCompleted]),
                           style: TextStyle(
                             color: Colors.black,
@@ -737,12 +737,12 @@ class GroupListItem extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: 10.h, horizontal: 10.w),
                         child: Text(
-                          //"${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
+                          //"${group.actionsNotDoneYet} ${_appLocalizations.actionsIncompleted}",
                           Intl.plural(countActionsNotDoneYet,
                               zero:
-                                  "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
-                              one: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
-                              other: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.moreThenOneActionsIncompleted}",
+                                  "$countActionsNotDoneYet ${_appLocalizations.zeroOrOneActionsIncompleted}",
+                              one: "$countActionsNotDoneYet ${_appLocalizations.zeroOrOneActionsIncompleted}",
+                              other: "$countActionsNotDoneYet ${_appLocalizations.moreThenOneActionsIncompleted}",
                               args: [countActionsNotDoneYet]),
                           style: TextStyle(
                             color: Colors.black,
@@ -773,12 +773,12 @@ class GroupListItem extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: 10.h, horizontal: 10.w),
                         child: Text(
-                          //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
+                          //"${group.actionsOverdue} ${_appLocalizations.actionsOverdue}",
                           Intl.plural(countActionsOverdue,
                               zero:
-                                  "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                              one: "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                              other: "$countActionsOverdue ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
+                                  "$countActionsOverdue ${_appLocalizations.zeroOrOneActionsOverdue}",
+                              one: "$countActionsOverdue ${_appLocalizations.zeroOrOneActionsOverdue}",
+                              other: "$countActionsOverdue ${_appLocalizations.moreThenOneActionsOverdue}",
                               args: [countActionsOverdue]),
                           style: TextStyle(
                             color: Colors.black,
@@ -806,12 +806,14 @@ class GroupListItem extends StatelessWidget {
 
   _deleteGroup(BuildContext context, HiveGroup group) {
     final bloc = Provider.of(context);
+    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+
     Alerts.showMessageBox(
         context: context,
-        title: AppLocalizations.of(context)!.deleteGroupTitle,
-        message: AppLocalizations.of(context)!.deleteGroupMessage,
-        positiveButtonText: AppLocalizations.of(context)!.delete,
-        negativeButtonText: AppLocalizations.of(context)!.cancel,
+        title: _appLocalizations.deleteGroupTitle,
+        message: _appLocalizations.deleteGroupMessage,
+        positiveButtonText: _appLocalizations.delete,
+        negativeButtonText: _appLocalizations.cancel,
         positiveActionCallback: () {
           // Mark this group for deletion
           group.status = Group_Status.INACTIVE.value;

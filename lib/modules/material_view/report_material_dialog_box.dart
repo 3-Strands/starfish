@@ -33,6 +33,8 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
 
   late HiveCurrentUser _user;
 
+  late AppLocalizations _appLocalizations;
+
   bool isDetailEmpty = true;
 
   @override
@@ -46,11 +48,12 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
   }
 
   void _getCurrentUser() {
-    _user = CurrentUserProvider().getUserSync(); 
+    _user = CurrentUserProvider().getUserSync();
   }
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -89,7 +92,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
             height: 20.h,
           ),
           Text(
-            AppLocalizations.of(context)!.reportDialogDetailText,
+            _appLocalizations.reportDialogDetailText,
             style: TextStyle(fontSize: 15.5.sp),
             textAlign: TextAlign.center,
           ),
@@ -149,7 +152,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.cancel,
+                      _appLocalizations.cancel,
                       style: cancelButtonTextStyle,
                     ),
                   ),
@@ -177,9 +180,8 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       _materialFeedbackBox.add(_materialFeedback).then((value) {
                         Alerts.showMessageBox(
                           context: context,
-                          title: AppLocalizations.of(context)!.dialogInfo,
-                          message: AppLocalizations.of(context)!
-                              .addMaterialFeedbackSuccess,
+                          title: _appLocalizations.dialogInfo,
+                          message: _appLocalizations.addMaterialFeedbackSuccess,
                           callback: () {
                             Navigator.of(context).pop();
                           },
@@ -189,7 +191,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
                       }).whenComplete((() {}));
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.sendFeedback,
+                      _appLocalizations.sendFeedback,
                       style: TextStyle(
                         fontFamily: 'OpenSans',
                         fontWeight: FontWeight.normal,

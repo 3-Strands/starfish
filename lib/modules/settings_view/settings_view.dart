@@ -79,6 +79,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late List<Map> _languages;
   late Map _language = Map();
   late List<DropdownMenuItem<Map>> _dropdownLanguagesItem;
+  late AppLocalizations _appLocalizations;
 
   List<Map<String, dynamic>> _groups = [];
 
@@ -175,7 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_nameController.text.isEmpty) {
       setState(() => {_nameController.text = _userName});
       return StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyFullName);
+          context, _appLocalizations.emptyFullName);
     }
 
     setState(() => {_userName = _nameController.text});
@@ -201,7 +202,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!isDialingCodeExist) {
       setState(() => {_countryCodeController.text = _countyCode});
       return StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.dialingCodeNotExist);
+          context, _appLocalizations.dialingCodeNotExist);
     }
     /* ----------------------------------------------------------------- */
 
@@ -326,7 +327,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.name,
+                  _appLocalizations.name,
                   textAlign: TextAlign.end,
                   style: titleTextStyle,
                 ),
@@ -375,10 +376,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         style: textFormFieldText,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
-          labelText: AppLocalizations.of(context)!.nameHint,
+          labelText: _appLocalizations.nameHint,
           labelStyle: formTitleHintStyle,
           alignLabelWithHint: true,
-          // hintText: AppLocalizations.of(context)!.nameHint,
+          // hintText: _appLocalizations.nameHint,
           // hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
@@ -408,7 +409,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.mobile,
+                  _appLocalizations.mobile,
                   textAlign: TextAlign.end,
                   style: titleTextStyle,
                 ),
@@ -480,7 +481,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       keyboardType: TextInputType.phone,
       style: textFormFieldText,
       decoration: InputDecoration(
-        hintText: '', // AppLocalizations.of(context)!.countryCodeHint,
+        hintText: '', // _appLocalizations.countryCodeHint,
         hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
@@ -515,10 +516,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.never,
-        labelText: AppLocalizations.of(context)!.phoneNumberHint,
+        labelText: _appLocalizations.phoneNumberHint,
         labelStyle: formTitleHintStyle,
         alignLabelWithHint: true,
-        // hintText: AppLocalizations.of(context)!.phoneNumberHint,
+        // hintText: _appLocalizations.phoneNumberHint,
         // hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
@@ -560,7 +561,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .onError((error, stackTrace) {
       print('Error: ${error.toString()}.');
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.updateGroupFailed);
+          context, _appLocalizations.updateGroupFailed);
     }).whenComplete(() {
       // Broadcast to sync the local changes with the server
     });
@@ -612,7 +613,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           height: 37.h,
           child: ElevatedButton(
             child: Text(
-              AppLocalizations.of(context)!.back,
+              _appLocalizations.back,
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),
@@ -640,6 +641,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    _appLocalizations = AppLocalizations.of(context)!;
     ProfileBloc profileBloc = new ProfileBloc();
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -653,7 +655,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: <Widget>[
               AppLogo(hight: 36.h, width: 37.w),
               Text(
-                AppLocalizations.of(context)!.settings,
+                _appLocalizations.settings,
                 style: dashboardNavigationTitle,
               ),
               Visibility(
@@ -691,7 +693,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: AppLocalizations.of(context)!.appLanguage,
+                          title: _appLocalizations.appLanguage,
                           align: TextAlign.left,
                         ),
                       ),
@@ -744,7 +746,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: AppLocalizations.of(context)!.myCountry,
+                          title: _appLocalizations.myCountry,
                           align: TextAlign.left,
                         ),
                       ),
@@ -757,10 +759,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             snapshot.data!
                                 .sort((a, b) => a.name.compareTo(b.name));
                             return SelectDropDown(
-                              navTitle:
-                                  AppLocalizations.of(context)!.selectCountry,
-                              placeholder:
-                                  AppLocalizations.of(context)!.selectCountry,
+                              navTitle: _appLocalizations.selectCountry,
+                              placeholder: _appLocalizations.selectCountry,
                               selectedValues: _selectedCountries,
                               dataSource: snapshot.data,
                               type: SelectType.multiple,
@@ -772,7 +772,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 if (!_isNetworkAvailable) {
                                   StarfishSnackbar.showErrorMessage(
                                       context,
-                                      AppLocalizations.of(context)!
+                                      _appLocalizations
                                           .internetRequiredToChangeCountriesOrLanguage);
                                   return;
                                 }
@@ -797,7 +797,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: AppLocalizations.of(context)!.myLanugages,
+                          title: _appLocalizations.myLanugages,
                           align: TextAlign.left,
                         ),
                       ),
@@ -812,10 +812,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
                               return SelectDropDown(
-                                navTitle: AppLocalizations.of(context)!
-                                    .selectLanugages,
-                                placeholder: AppLocalizations.of(context)!
-                                    .selectLanugages,
+                                navTitle: _appLocalizations.selectLanugages,
+                                placeholder: _appLocalizations.selectLanugages,
                                 selectedValues: _selectedLanguages,
                                 dataSource: snapshot.data,
                                 type: SelectType.multiple,
@@ -827,7 +825,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   if (!_isNetworkAvailable) {
                                     StarfishSnackbar.showErrorMessage(
                                         context,
-                                        AppLocalizations.of(context)!
+                                        _appLocalizations
                                             .internetRequiredToChangeCountriesOrLanguage);
                                     return;
                                   }
@@ -854,8 +852,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title:
-                              AppLocalizations.of(context)!.lastSuccessfullSync,
+                          title: _appLocalizations.lastSuccessfullSync,
                           align: TextAlign.left,
                         ),
                       ),
@@ -872,7 +869,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Text.rich(
                             TextSpan(
                               text:
-                                  "${AppLocalizations.of(context)!.lastSuccessfullSync}: ",
+                                  "${_appLocalizations.lastSuccessfullSync}: ",
                               style: TextStyle(
                                 color: AppColors.appTitle,
                                 fontWeight: FontWeight.normal,
@@ -938,7 +935,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Align(
           alignment: FractionalOffset.topLeft,
           child: TitleLabel(
-            title: AppLocalizations.of(context)!.forGroupAdmin,
+            title: _appLocalizations.forGroupAdmin,
             align: TextAlign.left,
           ),
         ),
@@ -954,7 +951,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.linkMyGroups,
+                  _appLocalizations.linkMyGroups,
                   textAlign: TextAlign.left,
                   style: titleTextStyle,
                 ),
@@ -985,7 +982,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Align(
             alignment: FractionalOffset.topLeft,
             child: TitleLabel(
-              title: AppLocalizations.of(context)!.myGroups,
+              title: _appLocalizations.myGroups,
               align: TextAlign.left,
             ),
           ),
@@ -1040,10 +1037,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       InkWell(
                           onTap: () {
                             setState(() {
-                             _groups[index]['email'] = _emailController.text;
-                             _groups[index]['confirm_email'] =
-                                 _confirmEmailController.text;
-                             });
+                              _groups[index]['email'] = _emailController.text;
+                              _groups[index]['confirm_email'] =
+                                  _confirmEmailController.text;
+                            });
                             if (item['is_editing'] == false) {
                               setState(() {
                                 item['is_editing'] = !item['is_editing'];
@@ -1052,58 +1049,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               if (_emailController.text == '') {
                                 Alerts.showMessageBox(
                                     context: context,
-                                    title: AppLocalizations.of(context)!
-                                        .dialogAlert,
-                                    message: AppLocalizations.of(context)!
-                                        .emptyEmail,
-                                    positiveButtonText:
-                                        AppLocalizations.of(context)!.ok,
+                                    title: _appLocalizations.dialogAlert,
+                                    message: _appLocalizations.emptyEmail,
+                                    positiveButtonText: _appLocalizations.ok,
                                     positiveActionCallback: () {});
                               } else if (!_emailController.text
                                   .isValidEmail()) {
                                 Alerts.showMessageBox(
                                     context: context,
-                                    title: AppLocalizations.of(context)!
-                                        .dialogAlert,
-                                    message: AppLocalizations.of(context)!
-                                        .alertInvalidEmaill,
-                                    positiveButtonText:
-                                        AppLocalizations.of(context)!.ok,
+                                    title: _appLocalizations.dialogAlert,
+                                    message:
+                                        _appLocalizations.alertInvalidEmaill,
+                                    positiveButtonText: _appLocalizations.ok,
                                     positiveActionCallback: () {});
-                              }else if (
-                                  _confirmEmailController.text.isEmpty) {
+                              } else if (_confirmEmailController.text.isEmpty) {
                                 Alerts.showMessageBox(
                                     context: context,
-                                    title: AppLocalizations.of(context)!
-                                        .dialogAlert,
-                                    message: AppLocalizations.of(context)!
-                                        .emptyEmail,
-                                    positiveButtonText:
-                                        AppLocalizations.of(context)!.ok,
+                                    title: _appLocalizations.dialogAlert,
+                                    message: _appLocalizations.emptyEmail,
+                                    positiveButtonText: _appLocalizations.ok,
                                     positiveActionCallback: () {});
-                              } 
-                              else if (
-                                  !_confirmEmailController.text.isValidEmail()) {
+                              } else if (!_confirmEmailController.text
+                                  .isValidEmail()) {
                                 Alerts.showMessageBox(
                                     context: context,
-                                    title: AppLocalizations.of(context)!
-                                        .dialogAlert,
-                                    message: AppLocalizations.of(context)!
-                                        .alertInvalidEmaill,
-                                    positiveButtonText:
-                                        AppLocalizations.of(context)!.ok,
+                                    title: _appLocalizations.dialogAlert,
+                                    message:
+                                        _appLocalizations.alertInvalidEmaill,
+                                    positiveButtonText: _appLocalizations.ok,
                                     positiveActionCallback: () {});
-                              } 
-                               else if (_emailController.text !=
+                              } else if (_emailController.text !=
                                   _confirmEmailController.text) {
                                 Alerts.showMessageBox(
                                     context: context,
-                                    title: AppLocalizations.of(context)!
-                                        .dialogAlert,
-                                    message: AppLocalizations.of(context)!
-                                        .alertEmailDoNotMatch,
-                                    positiveButtonText:
-                                        AppLocalizations.of(context)!.ok,
+                                    title: _appLocalizations.dialogAlert,
+                                    message:
+                                        _appLocalizations.alertEmailDoNotMatch,
+                                    positiveButtonText: _appLocalizations.ok,
                                     positiveActionCallback: () {});
                               } else {
                                 if (item['is_editing'] == true) {
@@ -1137,8 +1119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Align(
                       alignment: FractionalOffset.topLeft,
                       child: Text(
-                          AppLocalizations.of(context)!
-                              .projectAdminEmailSectionTitle,
+                          _appLocalizations.projectAdminEmailSectionTitle,
                           style: titleTextStyle),
                     ),
                   ),
@@ -1163,11 +1144,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         keyboardType: TextInputType.emailAddress,
                         style: textFormFieldText,
                         decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.emailHint,
+                          labelText: _appLocalizations.emailHint,
                           labelStyle: formTitleHintStyle,
                           floatingLabelBehavior: FloatingLabelBehavior.never,
 
-                          // hintText: AppLocalizations.of(context)!.emailHint,
+                          // hintText: _appLocalizations.emailHint,
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                           border: OutlineInputBorder(
@@ -1204,13 +1185,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           //     Alerts.showMessageBox(
                           //         context: context,
                           //         title:
-                          //             AppLocalizations.of(context)!.dialogAlert,
-                          //         message: AppLocalizations.of(context)!
+                          //             _appLocalizations.dialogAlert,
+                          //         message: _appLocalizations
                           //             .alertSaveAdminEmail,
                           //         negativeButtonText:
-                          //             AppLocalizations.of(context)!.no,
+                          //             _appLocalizations.no,
                           //         positiveButtonText:
-                          //             AppLocalizations.of(context)!.yes,
+                          //             _appLocalizations.yes,
                           //         negativeActionCallback: () {},
                           //         positiveActionCallback: () {
                           //           _updateGroupLinkedEmaill(
@@ -1222,11 +1203,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           //     Alerts.showMessageBox(
                           //         context: context,
                           //         title:
-                          //             AppLocalizations.of(context)!.dialogAlert,
-                          //         message: AppLocalizations.of(context)!
+                          //             _appLocalizations.dialogAlert,
+                          //         message: _appLocalizations
                           //             .alertEmailDoNotMatch,
                           //         positiveButtonText:
-                          //             AppLocalizations.of(context)!.ok,
+                          //             _appLocalizations.ok,
                           //         positiveActionCallback: () {});
                           //   }
                         },
@@ -1234,11 +1215,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: textFormFieldText,
                         decoration: InputDecoration(
                           floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText:
-                              AppLocalizations.of(context)!.confirmEmailHint,
+                          labelText: _appLocalizations.confirmEmailHint,
                           labelStyle: formTitleHintStyle,
                           // hintText:
-                          //     AppLocalizations.of(context)!.confirmEmailHint,
+                          //     _appLocalizations.confirmEmailHint,
                           contentPadding:
                               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                           border: OutlineInputBorder(
@@ -1296,7 +1276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             size: 18.r,
           ),
           Text(
-            AppLocalizations.of(context)!.edit,
+            _appLocalizations.edit,
             style: TextStyle(
               fontSize: 17.sp,
               color: Colors.blue,
@@ -1316,7 +1296,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: Center(
         child: Text(
-          AppLocalizations.of(context)!.save,
+          _appLocalizations.save,
           style: TextStyle(
             fontSize: 17.sp,
             color: Colors.white,
@@ -1335,7 +1315,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: Center(
         child: Text(
-          AppLocalizations.of(context)!.cancel,
+          _appLocalizations.cancel,
           style: TextStyle(
             fontSize: 17.sp,
             color: Colors.white,

@@ -82,6 +82,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   late List<HiveEvaluationCategory> _evaluationCategoryList;
 
   late AppBloc bloc;
+  late AppLocalizations _appLocalizations;
 
   @override
   void initState() {
@@ -155,12 +156,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   void _handleInvalidPermissions(PermissionStatus permissionStatus) {
     if (permissionStatus == PermissionStatus.denied) {
-      final snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context)!.contactAccessDenied));
+      final snackBar =
+          SnackBar(content: Text(_appLocalizations.contactAccessDenied));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
-      final snackBar = SnackBar(
-          content: Text(AppLocalizations.of(context)!.contactDataNotAvailable));
+      final snackBar =
+          SnackBar(content: Text(_appLocalizations.contactDataNotAvailable));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
@@ -204,7 +205,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               Widget? child) {
             if (snapshot == null) {
               return Center(
-                child: Text(AppLocalizations.of(context)!.loading),
+                child: Text(_appLocalizations.loading),
               );
             }
             List<InviteContact> _listToShow = [];
@@ -286,7 +287,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         widgets.Padding(
                           padding: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
                           child: Text(
-                            AppLocalizations.of(context)!.selectPropleToInvite,
+                            _appLocalizations.selectPropleToInvite,
                             textAlign: TextAlign.left,
                             style: titleTextStyle,
                           ),
@@ -331,7 +332,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text(AppLocalizations.of(context)!.cancel),
+                          child: Text(_appLocalizations.cancel),
                         ),
                       ),
                       SizedBox(width: 25.w),
@@ -344,7 +345,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                           style: ElevatedButton.styleFrom(
                             primary: AppColors.selectedButtonBG,
                           ),
-                          child: Text(AppLocalizations.of(context)!.invite),
+                          child: Text(_appLocalizations.invite),
                         ),
                       ),
                     ],
@@ -364,16 +365,16 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   _validateAndCreateUpdateGroup() {
     if (_titleController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyGroupTitle);
+          context, _appLocalizations.emptyGroupTitle);
     } else if (_descriptionController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyDescription);
+          context, _appLocalizations.emptyDescription);
     } /* else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptySelectLanguage);
+          context, _appLocalizations.emptySelectLanguage);
     } else if (_selectedEvaluationCategories.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyEvaluateProgress);
+          context, _appLocalizations.emptyEvaluateProgress);
     }*/
     else {
       _createUpdateGroup();
@@ -436,8 +437,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       } catch (error) {}
 
       if (_selectedContacts.length > 0) {
-        _sendInviteSMS(
-            AppLocalizations.of(context)!.inviteSMS, _selectedContacts);
+        _sendInviteSMS(_appLocalizations.inviteSMS, _selectedContacts);
       }
     });
 
@@ -479,10 +479,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
       Alerts.showMessageBox(
           context: context,
-          title: AppLocalizations.of(context)!.dialogInfo,
+          title: _appLocalizations.dialogInfo,
           message: _isEditMode
-              ? AppLocalizations.of(context)!.updateGroupSuccess
-              : AppLocalizations.of(context)!.createGroupSuccess,
+              ? _appLocalizations.updateGroupSuccess
+              : _appLocalizations.createGroupSuccess,
           callback: () {
             Navigator.of(context).pop();
           });
@@ -490,14 +490,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       StarfishSnackbar.showErrorMessage(
           context,
           _isEditMode
-              ? AppLocalizations.of(context)!.updateGroupFailed
-              : AppLocalizations.of(context)!.createGroupSuccess);
+              ? _appLocalizations.updateGroupFailed
+              : _appLocalizations.createGroupSuccess);
     }).whenComplete(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    _appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.groupScreenBG,
       appBar: AppBar(
@@ -511,8 +512,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               AppLogo(hight: 36.h, width: 37.w),
               Text(
                 _isEditMode
-                    ? AppLocalizations.of(context)!.editGroup
-                    : AppLocalizations.of(context)!.createGroup,
+                    ? _appLocalizations.editGroup
+                    : _appLocalizations.createGroup,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -544,7 +545,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.groupName,
+                    _appLocalizations.groupName,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -557,10 +558,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       style: formTitleTextStyle,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: AppLocalizations.of(context)!.hintGroupName,
+                        labelText: _appLocalizations.hintGroupName,
                         labelStyle: formTitleHintStyle,
                         alignLabelWithHint: true,
-                        // hintText: AppLocalizations.of(context)!.hintGroupName,
+                        // hintText: _appLocalizations.hintGroupName,
                         // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -580,7 +581,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Description
                   Text(
-                    AppLocalizations.of(context)!.descripton,
+                    _appLocalizations.descripton,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -593,12 +594,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText:
-                            AppLocalizations.of(context)!.hintGroupDescription,
+                        labelText: _appLocalizations.hintGroupDescription,
                         labelStyle: formTitleHintStyle,
                         alignLabelWithHint: true,
                         // hintText:
-                        //     AppLocalizations.of(context)!.hintGroupDescription,
+                        //     _appLocalizations.hintGroupDescription,
                         // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -618,16 +618,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Language(s) used
                   Text(
-                    AppLocalizations.of(context)!.lanugagesUsedOptional,
+                    _appLocalizations.lanugagesUsedOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: AppLocalizations.of(context)!.selectLanugages,
-                      placeholder:
-                          AppLocalizations.of(context)!.selectLanugages,
+                      navTitle: _appLocalizations.selectLanugages,
+                      placeholder: _appLocalizations.selectLanugages,
                       selectedValues: _selectedLanguages,
                       dataSource: _languageList,
                       type: SelectType.multiple,
@@ -644,17 +643,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Evaluate Progress
                   Text(
-                    AppLocalizations.of(context)!.evaluateProgressOptional,
+                    _appLocalizations.evaluateProgressOptional,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                        navTitle:
-                            AppLocalizations.of(context)!.selectCategories,
-                        placeholder:
-                            AppLocalizations.of(context)!.selectCategories,
+                        navTitle: _appLocalizations.selectCategories,
+                        placeholder: _appLocalizations.selectCategories,
                         selectedValues: _selectedEvaluationCategories,
                         dataSource: _evaluationCategoryList,
                         type: SelectType.multiple,
@@ -670,7 +667,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    AppLocalizations.of(context)!.hintEvaluateProgress,
+                    _appLocalizations.hintEvaluateProgress,
                     textAlign: TextAlign.left,
                     style: italicDetailTextTextStyle,
                   ),
@@ -678,7 +675,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
                   // Option 1.
                   Text(
-                    AppLocalizations.of(context)!.invitePeopleFromContactsList,
+                    _appLocalizations.invitePeopleFromContactsList,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -695,7 +692,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                           _checkPermissionsAndShowContact();
                         },
                         child: Text(
-                          AppLocalizations.of(context)!.inviteFromContactsList,
+                          _appLocalizations.inviteFromContactsList,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
                             fontSize: 17.sp,
@@ -715,7 +712,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   _invitedContactsContainer(),
                   // Option 2.
                   Text(
-                    AppLocalizations.of(context)!.addWithoutInvite,
+                    _appLocalizations.addWithoutInvite,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -739,12 +736,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                             decoration: InputDecoration(
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.never,
-                              labelText:
-                                  AppLocalizations.of(context)!.hintPersonName,
+                              labelText: _appLocalizations.hintPersonName,
                               labelStyle: formTitleHintStyle,
                               alignLabelWithHint: true,
                               // hintText:
-                              //     AppLocalizations.of(context)!.hintPersonName,
+                              //     _appLocalizations.hintPersonName,
                               // hintStyle: textFormFieldText,
                               contentPadding:
                                   EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
@@ -821,7 +817,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     _query = '';
                     Navigator.of(context).pop();
                   },
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                  child: Text(_appLocalizations.cancel),
                 ),
               ),
             ),
@@ -835,8 +831,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   },
                   child: Text(
                     _isEditMode
-                        ? AppLocalizations.of(context)!.update
-                        : AppLocalizations.of(context)!.create,
+                        ? _appLocalizations.update
+                        : _appLocalizations.create,
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,
@@ -863,7 +859,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<Widget>? _historyItems(HiveGroup group) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      AppLocalizations.of(context)!.history,
+      _appLocalizations.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
@@ -874,8 +870,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _widgetList.add(header);
 
     for (HiveEdit edit in group.editHistory ?? []) {
-      _widgetList.add(
-          HistoryItem(edit: edit, type: AppLocalizations.of(context)!.group));
+      _widgetList.add(HistoryItem(edit: edit, type: _appLocalizations.group));
     }
 
     return _widgetList;
@@ -929,9 +924,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               //show warning
               Alerts.showMessageBox(
                 context: context,
-                title: AppLocalizations.of(context)!.dialogAlert,
-                message: AppLocalizations.of(context)!
-                    .alertGroupCanNotBeWithoutAdmin,
+                title: _appLocalizations.dialogAlert,
+                message: _appLocalizations.alertGroupCanNotBeWithoutAdmin,
                 callback: () {
                   Navigator.of(context).pop();
                 },
@@ -953,9 +947,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               //show warning
               Alerts.showMessageBox(
                 context: context,
-                title: AppLocalizations.of(context)!.dialogAlert,
-                message: AppLocalizations.of(context)!
-                    .alertGroupCanNotBeWithoutAdmin,
+                title: _appLocalizations.dialogAlert,
+                message: _appLocalizations.alertGroupCanNotBeWithoutAdmin,
                 callback: () {
                   Navigator.of(context).pop();
                 },
@@ -1037,7 +1030,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           },
           onInvite: (HiveUser _user) {
             sendSms(
-                AppLocalizations.of(context)!.inviteSMS.insertTemplateValues({
+                _appLocalizations.inviteSMS.insertTemplateValues({
                   'receiver_first_name': _user.name ?? '',
                   'sender_name': CurrentUserProvider().user.name!
                 }),

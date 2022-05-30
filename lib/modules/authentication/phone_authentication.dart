@@ -45,6 +45,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  late AppLocalizations _appLocalizations;
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +60,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
     ProfileBloc _profileBloc = new ProfileBloc();
+    _appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -83,8 +86,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                         AppLogo(hight: 156.h, width: 163.w),
                         SizedBox(height: 50.h),
                         TitleLabel(
-                          title: AppLocalizations.of(context)!
-                              .phoneAuthenticationTitle,
+                          title: _appLocalizations.phoneAuthenticationTitle,
                           align: TextAlign.center,
                         ),
                         SizedBox(height: 30.h),
@@ -96,10 +98,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
                               return SelectDropDown(
-                                navTitle:
-                                    AppLocalizations.of(context)!.selectCountry,
-                                placeholder:
-                                    AppLocalizations.of(context)!.selectCountry,
+                                navTitle: _appLocalizations.selectCountry,
+                                placeholder: _appLocalizations.selectCountry,
                                 selectedValues: _selectedCountry,
                                 dataSource: snapshot.data,
                                 type: SelectType.single,
@@ -176,10 +176,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
       style: textFormFieldText,
       decoration: InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.never,
-        labelText: AppLocalizations.of(context)!.countryCodeHint,
+        labelText: _appLocalizations.countryCodeHint,
         labelStyle: formTitleHintStyle,
         alignLabelWithHint: true,
-        // hintText: AppLocalizations.of(context)!.countryCodeHint,
+        // hintText: _appLocalizations.countryCodeHint,
         // hintStyle: formTitleHintStyle,
         contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
         border: OutlineInputBorder(
@@ -233,7 +233,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           height: 37.h,
           child: ElevatedButton(
             child: Text(
-              AppLocalizations.of(context)!.next,
+              _appLocalizations.next,
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),
