@@ -374,7 +374,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                             if (result != null) {
                               // if single selected file is IMAGE, open image in Cropper
                               if (result.count == 1 &&
-                                  ['jpg', 'png'].contains(result.paths.first
+                                  ['jpg', 'jpeg', 'png'].contains(result
+                                      .paths.first
                                       ?.split("/")
                                       .last
                                       .split(".")
