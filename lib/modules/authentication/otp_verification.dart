@@ -429,24 +429,36 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               creatorId: user.creatorId);
 
           await CurrentUserProvider().createUpdate(_currentUser);
+          // if country and language is already selected by current user, navigate to dashboard.
+          bool isProfileUpdated = _currentUser.countryIds.length > 0 &&
+              _currentUser.languageIds.length > 0;
 
           if (_existingUser == null) {
-            _prepareAppAndNavigate();
+            _prepareAppAndNavigate(isProfileUpdated: isProfileUpdated);
             return;
           }
 
           if (_existingUser.id == user.id) {
-            Navigator.of(context).pushNamed(Routes.showProfile);
+            _navigateUserToNextScreen(isProfileUpdated: isProfileUpdated);
+            //  Navigator.of(context).pushNamed(Routes.showProfile);
           } else {
             SyncService().clearAll();
-            _prepareAppAndNavigate();
+            _prepareAppAndNavigate(isProfileUpdated: isProfileUpdated);
           }
         });
       }
     });
   }
 
-  _prepareAppAndNavigate() {
+  _navigateUserToNextScreen({isProfileUpdated = false}) {
+    if (isProfileUpdated) {
+      Navigator.of(context).pushNamed(Routes.dashboard);
+    } else {
+      Navigator.of(context).pushNamed(Routes.showProfile);
+    }
+  }
+
+  _prepareAppAndNavigate({isProfileUpdated = false}) {
     EasyLoading.show();
     Future.wait([
       //SyncService().syncCurrentUser(),
@@ -461,7 +473,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       SyncService().syncUsers(),
     ]).then((value) {
       SyncService().updateLastSyncDateTime();
-      Navigator.of(context).pushNamed(Routes.showProfile);
+      _navigateUserToNextScreen(isProfileUpdated: isProfileUpdated);
+      // Navigator.of(context).pushNamed(Routes.showProfile);
     }).onError((error, stackTrace) {
       _handleError(error);
     }).whenComplete(() {
