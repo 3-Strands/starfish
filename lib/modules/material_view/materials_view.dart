@@ -824,48 +824,59 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     SizedBox(
                       height: 30.h,
                     ),
-                    Text(
-                      _appLocalizations.thismaterialIsVisibleTo,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: Color(0xFF3475F0),
-                        fontFamily: 'OpenSans',
-                        fontSize: 19.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5.h,
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.remove_red_eye,
+                    if (((Material_Editability.valueOf(material.editability!) ==
+                                    Material_Editability.CREATOR_EDIT ||
+                                Material_Editability.valueOf(
+                                        material.editability!) ==
+                                    Material_Editability.GROUP_EDIT) &&
+                            material.creatorId ==
+                                CurrentUserProvider().user.id) ||
+                        (Material_Editability.valueOf(material.editability!) ==
+                                Material_Editability.GROUP_EDIT) &&
+                            material.isAssignedToGroupWithLeaderRole) ...[
+                      Text(
+                        _appLocalizations.thismaterialIsVisibleTo,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
                           color: Color(0xFF3475F0),
+                          fontFamily: 'OpenSans',
+                          fontSize: 19.sp,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Text(
-                          MaterialVisibility.valueOf(material.visibility!)
-                              .displayName!,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            //   color: Color(0xFF3475F0),
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
+                      ),
+                      SizedBox(
+                        height: 5.h,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.remove_red_eye,
+                            color: Color(0xFF3475F0),
                           ),
-                        ),
-                      ],
-                    ),
-                    Divider(
-                      color: Color(0xFF979797),
-                      thickness: 2,
-                    ),
-                    SizedBox(
-                      height: 30.h,
-                    ),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          Text(
+                            MaterialVisibility.valueOf(material.visibility!)
+                                .displayName!,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              //   color: Color(0xFF3475F0),
+                              fontFamily: 'OpenSans',
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        color: Color(0xFF979797),
+                        thickness: 2,
+                      ),
+                      SizedBox(
+                        height: 30.h,
+                      ),
+                    ],
                     Text(
                       _appLocalizations.lanugages,
                       textAlign: TextAlign.left,
