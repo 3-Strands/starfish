@@ -452,7 +452,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   _navigateUserToNextScreen({isProfileUpdated = false}) {
     if (isProfileUpdated) {
-      Navigator.of(context).pushNamed(Routes.dashboard);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.dashboard, (Route<dynamic> route) => false);
     } else {
       Navigator.of(context).pushNamed(Routes.showProfile);
     }
