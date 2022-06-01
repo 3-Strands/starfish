@@ -274,7 +274,7 @@ class MyGroupActionListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           _appLocalizations.voteByLearners
@@ -292,13 +292,16 @@ class MyGroupActionListItem extends StatelessWidget {
                         SizedBox(
                           width: 5.w,
                         ),
-                        SvgPicture.asset(
-                          'assets/images/thumbs_up_solid.svg',
+                        Transform.translate(
+                          offset: Offset(0, 1.sp),
+                          child: SvgPicture.asset(
+                            'assets/images/thumbs_up_solid.svg',
+                          ),
                         ),
                       ],
                     ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           _appLocalizations.voteByLearners
@@ -317,8 +320,11 @@ class MyGroupActionListItem extends StatelessWidget {
                         SizedBox(
                           width: 5.w,
                         ),
-                        SvgPicture.asset(
-                          'assets/images/thumbs_down_solid.svg',
+                        Transform.translate(
+                          offset: Offset(0, 2.sp),
+                          child: SvgPicture.asset(
+                            'assets/images/thumbs_down_solid.svg',
+                          ),
                         ),
                       ],
                     ),
