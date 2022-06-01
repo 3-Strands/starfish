@@ -4,6 +4,7 @@ import 'dart:html' show window, AnchorElement;
 // import 'dart:typed_data';
 
 import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/wrappers/file_system_web.dart';
 // import 'package:starfish/repository/materials_repository.dart';
 // import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
@@ -12,7 +13,11 @@ void removeSplashScreen() {
 }
 
 Future<void> triggerDownload(HiveFile hiveFile) async {
-  assert(hiveFile.content != null, 'The file has not actually been downloaded.');
+  if (hiveFile.content == null) {
+    await downloadMaterial(hiveFile);
+    hiveFile.isSynced = true;
+    await hiveFile.save();
+  }
 
   final content = base64Encode(hiveFile.content!);
   AnchorElement(
