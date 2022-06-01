@@ -37,13 +37,14 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
       ..files = (fields[9] as List?)?.cast<String>()
       ..feedbacks = (fields[13] as List?)?.cast<HiveMaterialFeedback>()
       ..dateCreated = fields[14] as HiveDate?
-      ..dateUpdated = fields[15] as HiveDate?;
+      ..dateUpdated = fields[15] as HiveDate?
+      ..languages = (fields[20] as Map).cast<String, String>();
   }
 
   @override
   void write(BinaryWriter writer, HiveMaterial obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -83,7 +84,9 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
       ..writeByte(18)
       ..write(obj.isDirty)
       ..writeByte(19)
-      ..write(obj.editHistory);
+      ..write(obj.editHistory)
+      ..writeByte(20)
+      ..write(obj.languages);
   }
 
   @override

@@ -53,6 +53,8 @@ class HiveGroup extends HiveObject {
   bool isDirty = false; //Deprecated
   @HiveField(14)
   bool isMe = false;
+  @HiveField(15)
+  Map<String, String> languages = Map();
 
   HiveGroup({
     this.id,
@@ -90,6 +92,7 @@ class HiveGroup extends HiveObject {
     //     .toList();
     this.editHistory =
         group.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
+    this.languages = group.languages;
   }
 
   Group toGroup() {

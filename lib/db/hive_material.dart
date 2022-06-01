@@ -57,6 +57,8 @@ class HiveMaterial extends HiveObject {
   bool isDirty = false;
   @HiveField(19)
   List<HiveEdit>? editHistory;
+  @HiveField(20)
+  Map<String, String> languages = Map();
 
   HiveMaterial({
     this.id,
@@ -97,6 +99,7 @@ class HiveMaterial extends HiveObject {
         material.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
     this.dateCreated = HiveDate.from(material.dateCreated);
     this.dateUpdated = HiveDate.from(material.dateUpdated);
+    this.languages = material.languages;
   }
 
   Material toMaterial() {

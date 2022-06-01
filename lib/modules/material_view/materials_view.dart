@@ -532,10 +532,14 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   Widget _buildLanguageList(HiveMaterial material) {
     List<Widget> languages = [];
-    material.languageIds?.forEach((String languageId) {
+    List<HiveLanguage> _languages = [];
+    material.languages.forEach((key, value) {
+      _languages.add(HiveLanguage(id: key, name: value));
+    });
+    _languages.sort((a, b) => a.name.compareTo(b.name));
+
+    _languages.forEach((HiveLanguage _language) {
       try {
-        HiveLanguage _language =
-            _languageList.firstWhere((element) => languageId == element.id);
         languages.add(
           Text(
             _language.name,

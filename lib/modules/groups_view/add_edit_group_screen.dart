@@ -76,7 +76,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
-  late Box<HiveUser> _userBox;
 
   late List<HiveLanguage> _languageList;
   late List<HiveEvaluationCategory> _evaluationCategoryList;
@@ -92,7 +91,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
     _evaluationCategoryBox = Hive.box<HiveEvaluationCategory>(
         HiveDatabase.EVALUATION_CATEGORIES_BOX);
-    _userBox = Hive.box<HiveUser>(HiveDatabase.USER_BOX);
 
     _getAllLanguages();
     _getAllEvaluationCategories();
@@ -109,10 +107,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _titleController.text = widget.group!.name ?? '';
       _descriptionController.text = widget.group!.description ?? '';
 
-      _selectedLanguages = _languageBox.values
-          .where((HiveLanguage language) =>
-              widget.group!.languageIds!.contains(language.id))
-          .toList();
+      widget.group!.languages.forEach((key, value) {
+        _selectedLanguages.add(HiveLanguage(id: key, name: value));
+      });
+      _selectedLanguages.sort((a, b) => a.name.compareTo(b.name));
 
       _selectedEvaluationCategories = _evaluationCategoryBox.values
           .where((HiveEvaluationCategory category) => widget.group != null
