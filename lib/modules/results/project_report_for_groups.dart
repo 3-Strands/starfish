@@ -1,4 +1,3 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,9 +9,10 @@ import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/modules/results/marker_statics.dart';
 
 class ProjectReporsForGroup extends StatefulWidget {
-  HiveGroup hiveGroup;
-  HiveDate hiveDate;
-  ProjectReporsForGroup(
+  final HiveGroup hiveGroup;
+  final HiveDate hiveDate;
+
+  const ProjectReporsForGroup(
       {Key? key, required this.hiveGroup, required this.hiveDate})
       : super(key: key);
 
@@ -23,7 +23,7 @@ class ProjectReporsForGroup extends StatefulWidget {
 class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
   @override
   Widget build(BuildContext context) {
-    //AppBloc bloc = Provider.of(context);
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -37,7 +37,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
             height: 10.h,
           ),
           Text(
-            "${AppLocalizations.of(context)!.projectReportFor} ${widget.hiveGroup.name ?? ''}",
+            "${_appLocalizations.projectReportFor} ${widget.hiveGroup.name ?? ''}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
@@ -51,7 +51,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${AppLocalizations.of(context)!.markers}",
+                "${_appLocalizations.markers}",
                 style: TextStyle(
                     fontSize: 17.sp,
                     fontFamily: "OpenSans",
@@ -59,7 +59,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
                     fontWeight: FontWeight.w600),
               ),
               Text(
-                "${AppLocalizations.of(context)!.actuals}",
+                "${_appLocalizations.actuals}",
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontFamily: "OpenSans",
@@ -87,7 +87,7 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
           //         shape: StadiumBorder(), primary: Colors.blue),
           //     onPressed: () {},
           //     child: Text(
-          //       "${AppLocalizations.of(context)!.addSignOfTransformation}",
+          //       "${_appLocalizations.addSignOfTransformation}",
           //       style: TextStyle(fontSize: 17.sp, fontFamily: "OpenSans"),
           //     ),
           //   ),
@@ -102,10 +102,8 @@ class _ProjectReporsForGroupState extends State<ProjectReporsForGroup> {
 
   Widget _buildMarkerStaticsList(
       BuildContext context, HiveGroup hiveGroup, HiveDate hiveDate) {
-    //AppBloc bloc = Provider.of(context);
     Map<HiveOutputMarker, String> _outputs =
         hiveGroup.getGroupOutputsForMonth(hiveDate);
-    //bloc.resultsBloc.fetchGroupOutputsForMonth();
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),

@@ -303,7 +303,7 @@
   "deleteActionMessage": "क्या आप वाकई इस समूह के लिए इस कार्रवाई और इसके डेटा को हटाना चाहते हैं?",
   "deleteGroupMessage":"क्या आप वाकई इस समूह और इसकी सभी कार्रवाइयों को हटाना चाहते हैं?",
   "deleteGroupTitle":"समूह हटाएं",
-  "deleteGroup":"Delete Group",
+  "deleteGroup":"समूह हटाएं",
   "deleteMaterialTitle": "सामग्री हटाएं",
   "areYouSureWantToDeleteThis":"क्या आप वाकई इसे हटाना चाहते हैं",
   "zeroOrOneMemberIsOverdue": "अतिदेय है",
@@ -417,5 +417,7 @@
   "howDoYouFeelAboutThisGroup":"आप इस समूह के बारे में कैसा महसूस करते हैं?",
   "voteByLearners": "{{votes}}% शिक्षार्थियों",
    "imageSizeValidation" : "छवि का आकार 5 एमबी से बड़ा है",
-  "dragToSelect": "चयन करने के लिए दाएं खींचें"
+  "dragToSelect": "चयन करने के लिए दाएं खींचें",
+  "learnerProfile": "शिक्षार्थी की प्रोफाइल",
+  "waitForSeconds": "कृप्या {{timeout}} सेकंड तक प्रतीक्षा करें"
 }

@@ -1,12 +1,9 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:fbroadcast/fbroadcast.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:intl/intl.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -17,13 +14,11 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/group_user_role.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
+import 'package:starfish/modules/groups_view/group_list_item.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
-import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
-import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,6 +36,7 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   late AppBloc bloc;
+  late AppLocalizations _appLocalizations;
 
   final Key _groupFocusDetectorKey = UniqueKey();
 
@@ -112,8 +108,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             ? GroupUser_Role.valueOf(user.role!)!.about
                             : user.isInvited
                                 ? "${GroupUser_Role.valueOf(user.role!)!.about} " +
-                                    AppLocalizations.of(context)!
-                                        .userStatusInvited
+                                    _appLocalizations.userStatusInvited
                                         .toUpperCase()
                                 : '',
                         textAlign: TextAlign.right,
@@ -231,7 +226,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   backgroundColor: MaterialStateProperty.all<Color>(
                       AppColors.selectedButtonBG),
                 ),
-                child: Text(AppLocalizations.of(context)!.close),
+                child: Text(_appLocalizations.close),
               ),
             ),
           ),
@@ -246,6 +241,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
+
     if (!_isInitialized) {
       bloc = Provider.of(context);
       _isInitialized = true;
@@ -267,7 +264,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               children: <Widget>[
                 AppLogo(hight: 36.h, width: 37.w),
                 Text(
-                  AppLocalizations.of(context)!.groupsTabItemText,
+                  _appLocalizations.groupsTabItemText,
                   style: dashboardNavigationTitle,
                 ),
                 IconButton(
@@ -404,16 +401,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     onLeaveGroupTap: (HiveGroup group) {
                                       Alerts.showMessageBox(
                                           context: context,
-                                          title: AppLocalizations.of(context)!
-                                              .dialogAlert,
-                                          message: AppLocalizations.of(context)!
+                                          title: _appLocalizations.dialogAlert,
+                                          message: _appLocalizations
                                               .alertLeaveThisGroup,
                                           negativeButtonText:
-                                              AppLocalizations.of(context)!
-                                                  .cancel,
+                                              _appLocalizations.cancel,
                                           positiveButtonText:
-                                              AppLocalizations.of(context)!
-                                                  .leave,
+                                              _appLocalizations.leave,
                                           negativeActionCallback: () {},
                                           positiveActionCallback: () {
                                             bloc.groupBloc.leaveGroup(
@@ -467,367 +461,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
           child: Icon(Icons.add),
         ),
       ),
-    );
-  }
-}
-
-class GroupListItem extends StatelessWidget {
-  final HiveGroup group;
-  final Function(HiveGroup group) onGroupTap;
-  final Function(HiveGroup group) onLeaveGroupTap;
-
-  GroupListItem(
-      {required this.group,
-      required this.onGroupTap,
-      required this.onLeaveGroupTap});
-
-  @override
-  Widget build(BuildContext context) {
-    int countActionsCompleted = group.actionsCompleted;
-    int countActionsNotDoneYet = group.actionsNotDoneYet;
-    int countActionsOverdue = group.actionsOverdue;
-    bool maintainSize =
-        (countActionsCompleted + countActionsNotDoneYet + countActionsOverdue) >
-            0;
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(15),
-        ),
-      ),
-      color: AppColors.txtFieldBackground,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            IntrinsicHeight(
-              //height: 20.h,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            right: 8.w,
-                          ),
-                          child: Text(
-                            '${group.name}',
-                            //overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontFamily: 'OpenSans',
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.txtFieldTextColor,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.h,
-                        ),
-                        Text(
-                          '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 14.5.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF797979),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Spacer(),
-                  if (group.currentUserRole! == GroupUser_Role.ADMIN)
-                    PopupMenuButton(
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Color(0xFF3475F0),
-                        size: 30,
-                      ),
-                      color: Colors.white,
-                      elevation: 20,
-                      shape: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                          borderRadius: BorderRadius.circular(12.r)),
-                      enabled: true,
-                      onSelected: (value) {
-                        switch (value) {
-                          case 0:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddEditGroupScreen(
-                                  group: group,
-                                ),
-                              ),
-                            ).then((value) => FocusScope.of(context)
-                                .requestFocus(new FocusNode()));
-                            break;
-                          case 1:
-                            _deleteGroup(context, group);
-
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          child: Text(
-                            AppLocalizations.of(context)!.editGroup,
-                            style: TextStyle(
-                                color: Color(0xFF3475F0),
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          value: 0,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            AppLocalizations.of(context)!.deleteGroup,
-                            style: TextStyle(
-                                color: Color(0xFF3475F0),
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          value: 1,
-                        ),
-                      ],
-                    ),
-
-                  // CustomIconButton(
-                  //   icon: Icon(
-                  //     Icons.edit,
-                  //     color: Colors.blue,
-                  //     size: 18.r,
-                  //   ),
-                  //   text: AppLocalizations.of(context)!.edit,
-                  //   onButtonTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => AddEditGroupScreen(
-                  //           group: group,
-                  //         ),
-                  //       ),
-                  //     ).then((value) => FocusScope.of(context)
-                  //         .requestFocus(new FocusNode()));
-                  //   },
-                  // ),
-                  if (group.currentUserRole! == GroupUser_Role.LEARNER ||
-                      group.currentUserRole! == GroupUser_Role.TEACHER)
-                    ElevatedButton(
-                      onPressed: () {
-                        this.onLeaveGroupTap(group);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.leaveThisGroup,
-                        style: TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 14.5.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          primary: AppColors.selectedButtonBG,
-                          fixedSize: Size(130.w, 20.h)),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10.h),
-            // Text(
-            //   '${AppLocalizations.of(context)!.adminNamePrifix}: ${group.adminName}',
-            //   textAlign: TextAlign.left,
-            //   style: TextStyle(
-            //     fontFamily: 'OpenSans',
-            //     fontSize: 14.5.sp,
-            //     fontWeight: FontWeight.w500,
-            //     color: Color(0xFF797979),
-            //   ),
-            // ),
-            SizedBox(height: 20.h),
-            if (group.currentUserRole == GroupUser_Role.ADMIN ||
-                group.currentUserRole == GroupUser_Role.TEACHER)
-              InkWell(
-                onTap: () {
-                  onGroupTap(group);
-                },
-                child: Container(
-                  height: 36.h,
-                  width: 326.w,
-                  decoration: BoxDecoration(
-                      color: Color(0xFFDDDDDD),
-                      borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-                    child: Text(
-                      AppLocalizations.of(context)!.viewTeachersAndLearners,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: 'Rubic',
-                        fontSize: 14.5.sp,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            SizedBox(height: 10.h),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Visibility(
-                    child: InkWell(
-                      onTap: () {
-                        _navigateToAction(group);
-                      },
-                      child: Container(
-                        width: 99.w,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF6DE26B),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.5.r))),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.h, horizontal: 10.w),
-                        child: Text(
-                          //"${group.actionsCompleted} ${AppLocalizations.of(context)!.actionsCompleted}",
-                          Intl.plural(countActionsCompleted,
-                              zero:
-                                  "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
-                              one: "$countActionsCompleted ${AppLocalizations.of(context)!.zeroOrOneActionCompleted}",
-                              other: "$countActionsCompleted ${AppLocalizations.of(context)!.moreThenOneActionCompleted}",
-                              args: [countActionsCompleted]),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Rubik",
-                            fontSize: 17.sp,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    maintainAnimation: maintainSize,
-                    maintainState: maintainSize,
-                    maintainSize: maintainSize,
-                    visible: countActionsCompleted > 0,
-                  ),
-                  Spacer(),
-                  Visibility(
-                    child: InkWell(
-                      onTap: () {
-                        _navigateToAction(group);
-                      },
-                      child: Container(
-                        width: 99.w,
-                        decoration: BoxDecoration(
-                            color: Color(0xFFFFBE4A),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.5.r))),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.h, horizontal: 10.w),
-                        child: Text(
-                          //"${group.actionsNotDoneYet} ${AppLocalizations.of(context)!.actionsIncompleted}",
-                          Intl.plural(countActionsNotDoneYet,
-                              zero:
-                                  "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
-                              one: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.zeroOrOneActionsIncompleted}",
-                              other: "$countActionsNotDoneYet ${AppLocalizations.of(context)!.moreThenOneActionsIncompleted}",
-                              args: [countActionsNotDoneYet]),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Rubik",
-                            fontSize: 17.sp,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    maintainAnimation: maintainSize,
-                    maintainState: maintainSize,
-                    maintainSize: maintainSize,
-                    visible: countActionsNotDoneYet > 0,
-                  ),
-                  Spacer(),
-                  Visibility(
-                    child: InkWell(
-                      onTap: () {
-                        _navigateToAction(group);
-                      },
-                      child: Container(
-                        width: 99.w,
-                        decoration: BoxDecoration(
-                            color: Color(0xFFFF5E4D),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.5.r))),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.h, horizontal: 10.w),
-                        child: Text(
-                          //"${group.actionsOverdue} ${AppLocalizations.of(context)!.actionsOverdue}",
-                          Intl.plural(countActionsOverdue,
-                              zero:
-                                  "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                              one: "$countActionsOverdue ${AppLocalizations.of(context)!.zeroOrOneActionsOverdue}",
-                              other: "$countActionsOverdue ${AppLocalizations.of(context)!.moreThenOneActionsOverdue}",
-                              args: [countActionsOverdue]),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Rubik",
-                            fontSize: 17.sp,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    maintainAnimation: maintainSize,
-                    maintainState: maintainSize,
-                    maintainSize: maintainSize,
-                    visible: countActionsOverdue > 0,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      elevation: 5,
-    );
-  }
-
-  _deleteGroup(BuildContext context, HiveGroup group) {
-    final bloc = Provider.of(context);
-    Alerts.showMessageBox(
-        context: context,
-        title: AppLocalizations.of(context)!.deleteGroupTitle,
-        message: AppLocalizations.of(context)!.deleteGroupMessage,
-        positiveButtonText: AppLocalizations.of(context)!.delete,
-        negativeButtonText: AppLocalizations.of(context)!.cancel,
-        positiveActionCallback: () {
-          // Mark this group for deletion
-          group.status = Group_Status.INACTIVE.value;
-          group.isUpdated = true;
-          bloc.groupBloc.addEditGroup(group).then((_) {
-            // Broadcast to sync the delete Group with the server
-            FBroadcast.instance().broadcast(
-              SyncService.kUpdateGroup,
-            );
-          });
-        },
-        negativeActionCallback: () {});
-  }
-
-  _navigateToAction(HiveGroup group) {
-    FBroadcast.instance().broadcast(
-      "switchToActionTab",
-      value: group,
     );
   }
 }

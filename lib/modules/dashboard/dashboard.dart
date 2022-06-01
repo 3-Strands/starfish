@@ -17,7 +17,6 @@ import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
-import 'package:starfish/modules/results/my_group_results.dart';
 import 'package:starfish/modules/results/results_views.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/field_mask.dart';
@@ -44,6 +43,7 @@ class _DashboardState extends State<Dashboard> {
   late List<HiveLanguage> _languageList;
   late Box<HiveLanguage> _languageBox;
   late HiveCurrentUser _user;
+  late AppLocalizations _appLocalizations;
 
   final cron = Cron();
 
@@ -148,6 +148,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       child: Stack(
         children: <Widget>[
@@ -164,22 +165,22 @@ class _DashboardState extends State<Dashboard> {
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.metericalsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.metericalsIcon),
-                  label: AppLocalizations.of(context)!.materialsTabItemText,
+                  label: _appLocalizations.materialsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.groupsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.groupsIcon),
-                  label: AppLocalizations.of(context)!.groupsTabItemText,
+                  label: _appLocalizations.groupsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.actionsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.actionsIcon),
-                  label: AppLocalizations.of(context)!.actionsTabItemText,
+                  label: _appLocalizations.actionsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.resultsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.resultsIcon),
-                  label: AppLocalizations.of(context)!.resultsTabItemText,
+                  label: _appLocalizations.resultsTabItemText,
                 ),
               ],
               currentIndex: _selectedIndex,
@@ -234,7 +235,7 @@ class _DashboardState extends State<Dashboard> {
 
   void handleUnauthentication() {
     StarfishSnackbar.showErrorMessage(
-        context, AppLocalizations.of(context)!.unauthenticated);
+        context, _appLocalizations.unauthenticated);
     StarfishSharedPreference().setLoginStatus(false);
     StarfishSharedPreference().setAccessToken('');
 

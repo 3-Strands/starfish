@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -15,10 +15,9 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -43,7 +42,7 @@ class _MyGroupState extends State<MyGroup> {
 
   bool _isInitialized = false;
   late AppBloc bloc;
-
+  late AppLocalizations _appLocalizations;
   @override
   void initState() {
     super.initState();
@@ -72,6 +71,7 @@ class _MyGroupState extends State<MyGroup> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
     if (!_isInitialized) {
       bloc = Provider.of(context);
       _isInitialized = true;
@@ -232,7 +232,7 @@ class _MyGroupState extends State<MyGroup> {
                   child: Align(
                     alignment: FractionalOffset.topLeft,
                     child: Text(
-                      AppLocalizations.of(context)!.statusOfActionForLearner,
+                      _appLocalizations.statusOfActionForLearner,
                       style: TextStyle(
                           fontSize: 19.sp,
                           color: Color(0xFF4F4F4F),
@@ -275,7 +275,7 @@ class _MyGroupState extends State<MyGroup> {
                           backgroundColor: MaterialStateProperty.all<Color>(
                               AppColors.selectedButtonBG),
                         ),
-                        child: Text(AppLocalizations.of(context)!.close),
+                        child: Text(_appLocalizations.close),
                       ),
                     ),
                   ),
@@ -333,7 +333,7 @@ class _MyGroupState extends State<MyGroup> {
                         ),
                       ),
                       Text(
-                        '${AppLocalizations.of(context)!.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                        '${_appLocalizations.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                         style: TextStyle(
                           fontSize: 17.sp,
                           fontWeight: FontWeight.w600,
@@ -464,7 +464,7 @@ class _MyGroupState extends State<MyGroup> {
                             ),
                             Center(
                               child: Text(
-                                '${AppLocalizations.of(context)!.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
+                                '${_appLocalizations.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
                                 style: TextStyle(
                                     fontSize: 19.sp,
                                     color: Color(0xFF3475F0),
@@ -581,7 +581,7 @@ class _MyGroupState extends State<MyGroup> {
                               padding: const EdgeInsets.only(
                                   left: 15.0, right: 15.0),
                               child: Text(
-                                '${AppLocalizations.of(context)!.instructions}: ${action.instructions}',
+                                '${_appLocalizations.instructions}: ${action.instructions}',
                                 maxLines: 5,
                                 style: TextStyle(
                                   fontSize: 17.sp,
@@ -596,7 +596,7 @@ class _MyGroupState extends State<MyGroup> {
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
+                        '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd, yyyy')}',
                         maxLines: 1,
                         style: TextStyle(
                             fontSize: 19.sp,
@@ -632,9 +632,8 @@ class _MyGroupState extends State<MyGroup> {
                                                 color: Colors.blue,
                                                 size: 18.r,
                                               ),
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .clickThisLinkToStart,
+                                              text: _appLocalizations
+                                                  .clickThisLinkToStart,
                                               onButtonTap: () {
                                                 GeneralFunctions.openUrl(
                                                     action.material!.url!);
@@ -645,7 +644,7 @@ class _MyGroupState extends State<MyGroup> {
                                       ),
                                     ),
                                     Text(
-                                      '${AppLocalizations.of(context)!.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                                      '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
                                       maxLines: 1,
                                       style: TextStyle(
                                           fontSize: 19.sp,
@@ -672,7 +671,7 @@ class _MyGroupState extends State<MyGroup> {
                                     child: Align(
                                       alignment: FractionalOffset.topLeft,
                                       child: Text(
-                                        AppLocalizations.of(context)!.question +
+                                        _appLocalizations.question +
                                             ': ${action.question}',
                                         style: TextStyle(
                                           fontSize: 19.sp,
@@ -692,7 +691,7 @@ class _MyGroupState extends State<MyGroup> {
                                         color: Color(0xFF797979),
                                       ),
                                       border: InputBorder.none,
-                                      hintText: AppLocalizations.of(context)!
+                                      hintText: _appLocalizations
                                           .questionTextEditHint,
                                     ),
                                     onSubmitted: (value) {
@@ -717,8 +716,7 @@ class _MyGroupState extends State<MyGroup> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  AppLocalizations.of(context)!
-                                      .howWasThisActionText,
+                                  _appLocalizations.howWasThisActionText,
                                   maxLines: 1,
                                   style: TextStyle(
                                       fontSize: 19.sp,
@@ -787,8 +785,7 @@ class _MyGroupState extends State<MyGroup> {
                                               width: 4.w,
                                             ),
                                             Text(
-                                              AppLocalizations.of(context)!
-                                                  .goodText,
+                                              _appLocalizations.goodText,
                                               maxLines: 1,
                                               style: TextStyle(
                                                 fontFamily: 'Rubik',
@@ -851,8 +848,7 @@ class _MyGroupState extends State<MyGroup> {
                                               width: 4.w,
                                             ),
                                             Text(
-                                              AppLocalizations.of(context)!
-                                                  .notSoGoodText,
+                                              _appLocalizations.notSoGoodText,
                                               maxLines: 1,
                                               style: TextStyle(
                                                 fontFamily: 'Rubik',
@@ -912,7 +908,7 @@ class _MyGroupState extends State<MyGroup> {
                           backgroundColor: MaterialStateProperty.all<Color>(
                               AppColors.selectedButtonBG),
                         ),
-                        child: Text(AppLocalizations.of(context)!.close),
+                        child: Text(_appLocalizations.close),
                       ),
                     ),
                   ),
@@ -942,8 +938,7 @@ class _MyGroupState extends State<MyGroup> {
             color: Colors.blue,
             size: 18.r,
           ),
-          text: AppLocalizations.of(context)!
-              .clickToDownload
+          text: _appLocalizations.clickToDownload
               .insertTemplateValues({'file_name': hiveFile.filename}),
           onButtonTap: () {
             if (Platform.isAndroid) {
@@ -963,6 +958,7 @@ class _MyGroupState extends State<MyGroup> {
   }
 }
 
+/*
 class MyGroupActionListItem extends StatelessWidget {
   final HiveAction action;
   final index;
@@ -973,6 +969,8 @@ class MyGroupActionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+
     int countActionStatusDone =
         action.memberCountByActionStatus(ActionStatus.DONE);
     int countActionStatusNotDone =
@@ -1075,8 +1073,7 @@ class MyGroupActionListItem extends StatelessWidget {
                           itemBuilder: (context) => [
                                 PopupMenuItem(
                                   child: Text(
-                                    AppLocalizations.of(context)!
-                                        .editActionText,
+                                    _appLocalizations.editActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 19.sp,
@@ -1086,8 +1083,7 @@ class MyGroupActionListItem extends StatelessWidget {
                                 ),
                                 PopupMenuItem(
                                   child: Text(
-                                    AppLocalizations.of(context)!
-                                        .deleteActionText,
+                                    _appLocalizations.deleteActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 19.sp,
@@ -1125,9 +1121,9 @@ class MyGroupActionListItem extends StatelessWidget {
                         child: Text(
                           Intl.plural(countActionStatusDone,
                               zero:
-                                  "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
-                              one: "$countActionStatusDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidIt}",
-                              other: "$countActionStatusDone ${AppLocalizations.of(context)!.moreThenOneMembersDidIt}",
+                                  "$countActionStatusDone ${_appLocalizations.zeroOrOneMemberDidIt}",
+                              one: "$countActionStatusDone ${_appLocalizations.zeroOrOneMemberDidIt}",
+                              other: "$countActionStatusDone ${_appLocalizations.moreThenOneMembersDidIt}",
                               args: [countActionStatusDone]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -1159,9 +1155,9 @@ class MyGroupActionListItem extends StatelessWidget {
                           child: Text(
                             Intl.plural(countActionStatusNotDone,
                                 zero:
-                                    "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
-                                one: "$countActionStatusNotDone ${AppLocalizations.of(context)!.zeroOrOneMemberDidNotDoItYet}",
-                                other: "$countActionStatusNotDone ${AppLocalizations.of(context)!.moreThenOneMembersDidNotDoItYet}",
+                                    "$countActionStatusNotDone ${_appLocalizations.zeroOrOneMemberDidNotDoItYet}",
+                                one: "$countActionStatusNotDone ${_appLocalizations.zeroOrOneMemberDidNotDoItYet}",
+                                other: "$countActionStatusNotDone ${_appLocalizations.moreThenOneMembersDidNotDoItYet}",
                                 args: [countActionStatusNotDone]),
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -1192,9 +1188,9 @@ class MyGroupActionListItem extends StatelessWidget {
                         child: Text(
                           Intl.plural(countActionStatusOverdue,
                               zero:
-                                  "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
-                              one: "$countActionStatusOverdue ${AppLocalizations.of(context)!.zeroOrOneMemberIsOverdue}",
-                              other: "$countActionStatusOverdue ${AppLocalizations.of(context)!.moreThenOneMembersIsOverdue}",
+                                  "$countActionStatusOverdue ${_appLocalizations.zeroOrOneMemberIsOverdue}",
+                              one: "$countActionStatusOverdue ${_appLocalizations.zeroOrOneMemberIsOverdue}",
+                              other: "$countActionStatusOverdue ${_appLocalizations.moreThenOneMembersIsOverdue}",
                               args: [countActionStatusOverdue]),
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -1227,8 +1223,7 @@ class MyGroupActionListItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!
-                              .voteByLearners
+                          _appLocalizations.voteByLearners
                               .insertTemplateValues({
                             'votes':
                                 ((_thumbsUp / _totalLearners) * 100).round()
@@ -1252,8 +1247,7 @@ class MyGroupActionListItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!
-                              .voteByLearners
+                          _appLocalizations.voteByLearners
                               .insertTemplateValues({
                             'votes':
                                 ((_thumbsDown / _totalLearners) * 100).round()
@@ -1285,7 +1279,7 @@ class MyGroupActionListItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                   child: Text(
-                    '${AppLocalizations.of(context)!.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -1304,12 +1298,13 @@ class MyGroupActionListItem extends StatelessWidget {
 
   _deleteAction(BuildContext context, HiveAction action) {
     final bloc = Provider.of(context);
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     Alerts.showMessageBox(
         context: context,
-        title: AppLocalizations.of(context)!.deleteActionTitle,
-        message: AppLocalizations.of(context)!.deleteActionMessage,
-        positiveButtonText: AppLocalizations.of(context)!.delete,
-        negativeButtonText: AppLocalizations.of(context)!.cancel,
+        title: _appLocalizations.deleteActionTitle,
+        message: _appLocalizations.deleteActionMessage,
+        positiveButtonText: _appLocalizations.delete,
+        negativeButtonText: _appLocalizations.cancel,
         positiveActionCallback: () {
           // Mark this action for deletion
           action.isDirty = true;
@@ -1317,4 +1312,4 @@ class MyGroupActionListItem extends StatelessWidget {
         },
         negativeActionCallback: () {});
   }
-}
+}*/

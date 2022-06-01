@@ -36,6 +36,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final FocusNode _nameFocus = FocusNode();
 
   late HiveCurrentUser _user;
+  late AppLocalizations _appLocalizations;
 
   late List<HiveCountry> _selectedCountries = [];
   late List<HiveLanguage> _selectedLanguages = [];
@@ -92,10 +93,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       return StarfishSnackbar.showErrorMessage(context, validationMsg);
     } else if (_selectedCountries.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptySelectCountry);
+          context, _appLocalizations.emptySelectCountry);
     } else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptySelectLanguage);
+          context, _appLocalizations.emptySelectLanguage);
     } else {
       _updateUserProfile();
     }
@@ -134,6 +135,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   @override
   Widget build(BuildContext context) {
     ProfileBloc profileBloc = new ProfileBloc();
+    _appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       //  resizeToAvoidBottomInset: false,
       body: GestureDetector(
@@ -158,7 +160,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: AppLocalizations.of(context)!.enterName,
+                          title: _appLocalizations.enterName,
                           align: TextAlign.left,
                         ),
                       ),
@@ -168,8 +170,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: ItalicitleLabel(
-                            title:
-                                AppLocalizations.of(context)!.enterNameDetail),
+                            title: _appLocalizations.enterNameDetail),
                       ),
                       //--------------------------
                       SizedBox(height: 30.h),
@@ -178,7 +179,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: AppLocalizations.of(context)!.selectCountry,
+                          title: _appLocalizations.selectCountry,
                           align: TextAlign.left,
                         ),
                       ),
@@ -194,9 +195,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                               _countrySelectDropDownController.items = snapshot.data!;
                               return SelectDropDown(
                                 navTitle:
-                                    AppLocalizations.of(context)!.selectCountry,
+                                    _appLocalizations.selectCountry,
                                 placeholder:
-                                    AppLocalizations.of(context)!.selectCountry,
+                                    _appLocalizations.selectCountry,
                                 controller: _countrySelectDropDownController,
                                 onDoneClicked: () {
                                   setState(() {
@@ -214,8 +215,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: ItalicitleLabel(
-                            title: AppLocalizations.of(context)!
-                                .selectCountryDetail),
+                            title: _appLocalizations.selectCountryDetail),
                       ),
                       //--------------------------
                       SizedBox(height: 30.h),
@@ -223,7 +223,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: TitleLabel(
-                          title: AppLocalizations.of(context)!.selectLanugages,
+                          title: _appLocalizations.selectLanugages,
                           align: TextAlign.left,
                         ),
                       ),
@@ -238,10 +238,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                                   .sort((a, b) => a.name.compareTo(b.name));
                               _languageSelectDropDownController.items = snapshot.data!;
                               return SelectDropDown(
-                                navTitle: AppLocalizations.of(context)!
-                                    .selectLanugages,
-                                placeholder: AppLocalizations.of(context)!
-                                    .selectLanugages,
+                                navTitle: _appLocalizations.selectLanugages,
+                                placeholder: _appLocalizations.selectLanugages,
                                 controller: _languageSelectDropDownController,
                                 onDoneClicked: () {
                                   setState(() {
@@ -258,8 +256,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       Align(
                         alignment: FractionalOffset.topLeft,
                         child: ItalicitleLabel(
-                            title: AppLocalizations.of(context)!
-                                .selectLanugagesDetail),
+                            title: _appLocalizations.selectLanugagesDetail),
                       ),
                       SizedBox(
                         height: 65.h,
@@ -295,9 +292,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         style: textFormFieldText,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
-          labelText: AppLocalizations.of(context)!.nameHint,
+          labelText: _appLocalizations.nameHint,
           labelStyle: formTitleHintStyle,
-          // hintText: AppLocalizations.of(context)!.nameHint,
+          // hintText: _appLocalizations.nameHint,
           // hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: OutlineInputBorder(
@@ -363,7 +360,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           height: 37.h,
           child: ElevatedButton(
             child: Text(
-              AppLocalizations.of(context)!.finish,
+              _appLocalizations.finish,
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),

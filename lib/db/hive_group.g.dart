@@ -32,13 +32,13 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       isUpdated: fields[12] as bool,
       isDirty: fields[13] as bool,
       isMe: fields[14] as bool,
-    );
+    )..languages = (fields[15] as Map).cast<String, String>();
   }
 
   @override
   void write(BinaryWriter writer, HiveGroup obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -68,7 +68,9 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       ..writeByte(13)
       ..write(obj.isDirty)
       ..writeByte(14)
-      ..write(obj.isMe);
+      ..write(obj.isMe)
+      ..writeByte(15)
+      ..write(obj.languages);
   }
 
   @override

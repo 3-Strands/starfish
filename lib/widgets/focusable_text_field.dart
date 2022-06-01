@@ -2,25 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class FocusableTextField extends HookWidget {
-  InputDecoration? decoration = InputDecoration();
-  int? maxLines = 1;
-  int? maxCharacters;
-  TextInputAction? textInputAction;
-  TextInputType? keyboardType;
-  TextEditingController? controller;
-  Function(bool)? onFocusChange;
-  Function(String)? onChange;
+  final InputDecoration? decoration;
+  final int? maxLines;
+  final int? maxCharacters;
+  final TextInputAction? textInputAction;
+  final TextInputType? keyboardType;
+  final TextEditingController? controller;
+  final Function(bool)? onFocusChange;
+  final Function(String)? onChange;
 
-  String? text;
-  FocusableTextField({
-    this.decoration,
+  final String? text;
+  const FocusableTextField({
+    this.decoration = const InputDecoration(),
     this.maxCharacters,
     this.keyboardType,
     this.textInputAction,
-    this.maxLines,
+    this.maxLines = 1,
     this.controller,
     this.onFocusChange,
     this.onChange,
+    this.text,
   });
 
   @override
@@ -29,12 +30,11 @@ class FocusableTextField extends HookWidget {
 
     useEffect(() {
       focusNode.addListener(() {
-        // print("Has focus: ${focusNode.hasFocus}");
         if (onFocusChange != null) {
           onFocusChange!(focusNode.hasFocus);
         }
       });
-      return; // You need this return if you have missing_return lint
+      return;
     }, [focusNode]);
 
     return TextField(

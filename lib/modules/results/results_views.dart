@@ -34,7 +34,7 @@ class _ResultsScreenState extends State<ResultsScreen>
 
   // For developement only
   // TODO: remove once 'For My Life' is released
-  bool hideMyLife = true;
+  bool hideMyLife = false;
 
   @override
   void initState() {

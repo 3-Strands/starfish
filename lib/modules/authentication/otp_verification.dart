@@ -6,7 +6,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_current_user.dart';
+import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -17,6 +20,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:template_string/template_string.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   OTPVerificationScreen(
@@ -56,6 +60,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   late int? _resendToken;
   late int _timeout;
   late ConfirmationResult? _confirmationResult;
+
+  late AppLocalizations _appLocalizations;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -99,6 +105,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -114,7 +122,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 AppLogo(hight: 156.h, width: 163.w),
                 SizedBox(height: 50.h),
                 TitleLabel(
-                  title: AppLocalizations.of(context)!.enterOneTimePassword,
+                  title: _appLocalizations.enterOneTimePassword,
                   align: TextAlign.center,
                 ),
                 SizedBox(height: 30.h),
@@ -215,6 +223,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         setState(() {
           _timeout = 60;
         });
+
+        _startResentOptTimer();
       },
       forceResendingToken: _resendToken,
       timeout: Duration(seconds: 60),
@@ -224,12 +234,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   _resentOTPOnWeb() async {
     var phoneNumber = _dialingCode + _phoneNumber;
-    await auth.signInWithPhoneNumber(phoneNumber).then((confirmationResult) => {
-          setState(() {
-            _confirmationResult = confirmationResult;
-            _timeout = 60;
-          })
-        });
+    await auth.signInWithPhoneNumber(phoneNumber).then((confirmationResult) {
+      setState(() {
+        _confirmationResult = confirmationResult;
+        _timeout = 60;
+      });
+      _startResentOptTimer();
+    });
   }
 
   _verfiyPhoneNumberWithOTP() async {
@@ -267,7 +278,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       color: Colors.transparent,
       child: (_timeout > 0)
           ? Text(
-              'Please wait for $_timeout seconds',
+              _appLocalizations.waitForSeconds
+                  .insertTemplateValues({'timeout': _timeout}),
               style: resentOTPTextStyle,
             )
           : TextButton(
@@ -279,7 +291,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 }
               },
               child: Text(
-                AppLocalizations.of(context)!.resentOTP,
+                _appLocalizations.resentOTP,
                 style: resentOTPTextStyle,
               ),
             ),
@@ -306,7 +318,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  AppLocalizations.of(context)!.back,
+                  _appLocalizations.back,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
@@ -335,7 +347,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               padding: EdgeInsets.all(0.0),
               child: ElevatedButton(
                 child: Text(
-                  AppLocalizations.of(context)!.next,
+                  _appLocalizations.next,
                   textAlign: TextAlign.start,
                   style: buttonTextStyle,
                 ),
@@ -383,35 +395,63 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         .then((AuthenticateResponse _currentUser) async {
       if (_currentUser.userToken.isNotEmpty) {
         StarfishSharedPreference().setLoginStatus(true);
-        _setAccessToken(_dialingCode, _phoneNumber, _currentUser);
+        await _setAccessToken(_dialingCode, _phoneNumber, _currentUser);
 
-        bool hasCurrentUser =
-            _currentUserRepository.dbProvider.hasCurrentUser();
+        HiveCurrentUser? _existingUser =
+            _currentUserRepository.dbProvider.getCurrentUserSync();
 
-        if (!hasCurrentUser) {
-          _prepareAppAndNavigate();
-          return;
-        }
+        CurrentUserRepository().apiProvider.getCurrentUser().then((user) async {
+          HiveCurrentUser _currentUser = HiveCurrentUser(
+              id: user.id,
+              name: user.name,
+              phone: user.phone,
+              linkGroups: user.linkGroups,
+              countryIds: user.countryIds,
+              languageIds: user.languageIds,
+              groups: user.groups.map((e) => HiveGroupUser.from(e)).toList(),
+              actions: user.actions.map((e) => HiveActionUser.from(e)).toList(),
+              diallingCode: user.diallingCode,
+              phoneCountryId: user.phoneCountryId,
+              selectedActionsTab: user.selectedActionsTab.value,
+              selectedResultsTab: user.selectedResultsTab.value,
+              status: user.status.value,
+              creatorId: user.creatorId);
 
-        HiveCurrentUser _existingUser =
-            await _currentUserRepository.dbProvider.getUser();
-        CurrentUserRepository().apiProvider.getCurrentUser().then((user) {
+          await CurrentUserProvider().createUpdate(_currentUser);
+          // if country and language is already selected by current user, navigate to dashboard.
+          bool isProfileUpdated = _currentUser.countryIds.length > 0 &&
+              _currentUser.languageIds.length > 0;
+
+          if (_existingUser == null) {
+            _prepareAppAndNavigate(isProfileUpdated: isProfileUpdated);
+            return;
+          }
+
           if (_existingUser.id == user.id) {
-            Navigator.of(context).pushNamed(Routes.showProfile);
+            _navigateUserToNextScreen(isProfileUpdated: isProfileUpdated);
+            //  Navigator.of(context).pushNamed(Routes.showProfile);
           } else {
-            _prepareAppAndNavigate();
+            SyncService().clearAll();
+            _prepareAppAndNavigate(isProfileUpdated: isProfileUpdated);
           }
         });
       }
     });
   }
 
-  _prepareAppAndNavigate() {
-    SyncService().clearAll();
+  _navigateUserToNextScreen({isProfileUpdated = false}) {
+    if (isProfileUpdated) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.dashboard, (Route<dynamic> route) => false);
+    } else {
+      Navigator.of(context).pushNamed(Routes.showProfile);
+    }
+  }
 
+  _prepareAppAndNavigate({isProfileUpdated = false}) {
     EasyLoading.show();
     Future.wait([
-      SyncService().syncCurrentUser(),
+      //SyncService().syncCurrentUser(),
       SyncService().syncCountries(),
       SyncService().syncLanguages(),
       SyncService().syncMaterialTopics(),
@@ -423,7 +463,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       SyncService().syncUsers(),
     ]).then((value) {
       SyncService().updateLastSyncDateTime();
-      Navigator.of(context).pushNamed(Routes.showProfile);
+      _navigateUserToNextScreen(isProfileUpdated: isProfileUpdated);
+      // Navigator.of(context).pushNamed(Routes.showProfile);
     }).onError((error, stackTrace) {
       _handleError(error);
     }).whenComplete(() {
@@ -432,7 +473,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   _setAccessToken(String dialingCode, String phoneNumnber,
-      AuthenticateResponse authenticateResponse) {
+      AuthenticateResponse authenticateResponse) async {
     /*if (FlavorConfig.isDevelopment()) {
       //SANDBOX
       StarfishSharedPreference().setAccessToken(_phoneNumber);
@@ -441,11 +482,13 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
     }*/
 
-    print("AuthenticationResponse: $authenticateResponse");
-    StarfishSharedPreference().setAccessToken(authenticateResponse.userToken);
-    StarfishSharedPreference()
+    debugPrint("AuthenticationResponse: $authenticateResponse");
+    await StarfishSharedPreference()
+        .setAccessToken(authenticateResponse.userToken);
+    await StarfishSharedPreference()
         .setRefreshToken(authenticateResponse.refreshToken);
-    StarfishSharedPreference().setSessionUserId(authenticateResponse.userId);
+    await StarfishSharedPreference()
+        .setSessionUserId(authenticateResponse.userId);
   }
 
   _handleError(dynamic e) {

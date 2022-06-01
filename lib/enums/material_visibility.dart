@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:starfish/constants/strings.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/navigation_service.dart';

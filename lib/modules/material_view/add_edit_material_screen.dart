@@ -40,6 +40,24 @@ import 'package:starfish/wrappers/file_system.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:starfish/wrappers/window.dart';
 
+const List<String> ALLOWED_FILE_TYPES = [
+  'doc',
+  'docx',
+  'rtf',
+  'txt',
+  'jpg',
+  'png',
+  'mp3',
+  'wav',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx',
+  'odt',
+  'odp',
+  'ods'
+];
+
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
 
@@ -82,6 +100,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       AppLocalizations.of(context)!.editedOrDeletedBy;
 
   late AppBloc bloc;
+  late AppLocalizations _appLocalizations;
 
   bool _isEditMode = false;
 
@@ -105,10 +124,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _descriptionController.text = widget.material!.description!;
       _webLinkController.text = widget.material!.url!;
 
-      _selectedLanguages = _languageBox.values
-          .where((HiveLanguage language) =>
-              widget.material!.languageIds!.contains(language.id))
-          .toList();
+      widget.material!.languages.forEach((key, value) {
+        _selectedLanguages.add(HiveLanguage(id: key, name: value));
+      });
+      _selectedLanguages.sort((a, b) => a.name.compareTo(b.name));
 
       _selectedTypes = _materialTypeBox.values
           .where((HiveMaterialType type) =>
@@ -123,12 +142,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _choiceSeenByText = widget.material!.visibility != null
           ? MaterialVisibility.valueOf(widget.material!.visibility!)
               .displayName!
-          : AppLocalizations.of(context)!.seenBy;
+          : _appLocalizations.seenBy;
 
       _choiceEditedByText = widget.material!.editability != null
           ? MaterialEditability.valueOf(widget.material!.editability!)
               .displayName!
-          : AppLocalizations.of(context)!.editedBy;
+          : _appLocalizations.editedBy;
 
       _visibleTo = MaterialVisibility.valueOf(widget.material!.visibility!);
       _editableBy = MaterialEditability.valueOf(widget.material!.editability!);
@@ -172,6 +191,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
+    _appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
@@ -186,8 +206,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               AppLogo(hight: 36.h, width: 37.w),
               Text(
                 _isEditMode
-                    ? AppLocalizations.of(context)!.editMaterial
-                    : AppLocalizations.of(context)!.addNewMaterial,
+                    ? _appLocalizations.editMaterial
+                    : _appLocalizations.addNewMaterial,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -217,7 +237,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.materialName,
+                    _appLocalizations.materialName,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -230,10 +250,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       style: formTitleTextStyle,
                       decoration: InputDecoration(
                         // hintText:
-                        //     AppLocalizations.of(context)!.hintMaterialName,
+                        //     _appLocalizations.hintMaterialName,
                         // hintStyle: formTitleHintStyle,
-                        labelText:
-                            AppLocalizations.of(context)!.hintMaterialName,
+                        labelText: _appLocalizations.hintMaterialName,
                         labelStyle: formTitleHintStyle,
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         alignLabelWithHint: true,
@@ -255,7 +274,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Description
                   Text(
-                    AppLocalizations.of(context)!.descripton,
+                    _appLocalizations.descripton,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -268,11 +287,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: AppLocalizations.of(context)!
-                            .hintMaterialDescription,
+                        labelText: _appLocalizations.hintMaterialDescription,
                         labelStyle: formTitleHintStyle,
                         alignLabelWithHint: true,
-                        // hintText: AppLocalizations.of(context)!
+                        // hintText: _appLocalizations
                         //     .hintMaterialDescription,
                         // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
@@ -293,7 +311,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Web Link
                   Text(
-                    AppLocalizations.of(context)!.addWebLink,
+                    _appLocalizations.addWebLink,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -321,7 +339,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Upload Material
                   Text(
-                    AppLocalizations.of(context)!.uploadAMaterial,
+                    _appLocalizations.uploadAMaterial,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -368,11 +386,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                                           (widget
                                               .material!.localFiles.length)) >=
                                       5)) {
-                            StarfishSnackbar.showErrorMessage(context,
-                                AppLocalizations.of(context)!.maxFilesSelected);
+                            StarfishSnackbar.showErrorMessage(
+                                context, _appLocalizations.maxFilesSelected);
                           } else {
-                            FilePickerResult? result = await FilePicker.platform
-                                .pickFiles(allowMultiple: false);
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              allowMultiple: false,
+                              type: FileType.custom,
+                              allowedExtensions: ALLOWED_FILE_TYPES,
+                            );
 
                             if (result != null) {
                               final files = await processPickerResult(context, result);
@@ -381,7 +403,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                           }
                         },
                         child: Text(
-                          AppLocalizations.of(context)!.addMaterials,
+                          _appLocalizations.addMaterials,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
                             fontSize: 17.sp,
@@ -399,16 +421,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Language Selection
                   Text(
-                    AppLocalizations.of(context)!.lanugages,
+                    _appLocalizations.lanugages,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: AppLocalizations.of(context)!.selectLanugages,
-                      placeholder:
-                          AppLocalizations.of(context)!.selectLanugages,
+                      navTitle: _appLocalizations.selectLanugages,
+                      placeholder: _appLocalizations.selectLanugages,
                       controller: _languageSelectDropDownController,
                       onDoneClicked: () {
                         setState(() {
@@ -421,15 +442,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Type Selection
                   Text(
-                    AppLocalizations.of(context)!.type,
+                    _appLocalizations.type,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: AppLocalizations.of(context)!.selectType,
-                      placeholder: AppLocalizations.of(context)!.selectType,
+                      navTitle: _appLocalizations.selectType,
+                      placeholder: _appLocalizations.selectType,
                       controller: _typeSelectDropDownController,
                       onDoneClicked: () {
                         setState(() {
@@ -442,15 +463,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Topic Selection
                   Text(
-                    AppLocalizations.of(context)!.topics,
+                    _appLocalizations.topics,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
                     child: SelectDropDown(
-                      navTitle: AppLocalizations.of(context)!.selectTopics,
-                      placeholder: AppLocalizations.of(context)!.selectTopics,
+                      navTitle: _appLocalizations.selectTopics,
+                      placeholder: _appLocalizations.selectTopics,
                       controller: _topicSelectDropDownController,
                       onDoneClicked: () {
                         setState(() {
@@ -463,7 +484,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Seen by
                   Text(
-                    AppLocalizations.of(context)!.seenBy,
+                    _appLocalizations.seenBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -523,7 +544,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Edited by
                   Text(
-                    AppLocalizations.of(context)!.editedOrDeletedBy,
+                    _appLocalizations.editedOrDeletedBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -593,7 +614,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
       floatingActionButton: Container(
         height: 75.h,
         padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
@@ -603,27 +625,27 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           children: [
             Expanded(
               child: Container(
-                 margin: EdgeInsets.only(left: 10.h ),
+                margin: EdgeInsets.only(left: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                  child: Text(_appLocalizations.cancel),
                 ),
               ),
             ),
             SizedBox(width: 25.w),
             Expanded(
               child: Container(
-                 margin: EdgeInsets.only(right: 10.h ),
+                margin: EdgeInsets.only(right: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
                     _validateInfo();
                   },
                   child: Text(
                     _isEditMode
-                        ? AppLocalizations.of(context)!.update
-                        : AppLocalizations.of(context)!.add,
+                        ? _appLocalizations.update
+                        : _appLocalizations.add,
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,
@@ -640,29 +662,29 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   _validateInfo() async {
     if (_titleController.text == '') {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyMaterialTitle);
+          context, _appLocalizations.emptyMaterialTitle);
     } else if (_descriptionController.text == '') {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptyDescription);
+          context, _appLocalizations.emptyDescription);
     } else if (_webLinkController.text.isEmpty &&
         ((!_isEditMode && _selectedFiles.length == 0) ||
             (_isEditMode &&
                 (_selectedFiles.length + widget.material!.localFiles.length ==
                     0)))) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.alertEmptyWebLinkWithNoFile);
+          context, _appLocalizations.alertEmptyWebLinkWithNoFile);
     } else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptySelectLanguage);
+          context, _appLocalizations.emptySelectLanguage);
     } else if (Platform.isWeb && _selectedFiles.isNotEmpty && !(await _isConnected())) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.youAreOfflineCannotUpload);
+          context, _appLocalizations.youAreOfflineCannotUpload);
     } /* else if (_selectedTypes.length == 0) {
       StarfishSnackbar.showErrorMessage(
-          context, AppLocalizations.of(context)!.emptySelectType);
+          context, _appLocalizations.emptySelectType);
     } else if (_selectedTopics.length == 0) {
        StarfishSnackbar.showErrorMessage(
-           context, AppLocalizations.of(context)!.emptySelectTopic);
+           context, _appLocalizations.emptySelectTopic);
      } */
     else {
       _addUpdateMaterial();
@@ -736,10 +758,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           .checkAndUpdateUserfollowedLangguages(_hiveMaterial.languageIds);
       Alerts.showMessageBox(
           context: context,
-          title: AppLocalizations.of(context)!.dialogInfo,
+          title: _appLocalizations.dialogInfo,
           message: _isEditMode
-              ? AppLocalizations.of(context)!.updateMaterialSuccess
-              : AppLocalizations.of(context)!.addMaterialSuccess,
+              ? _appLocalizations.updateMaterialSuccess
+              : _appLocalizations.addMaterialSuccess,
           callback: () {
             Navigator.of(context).pop();
           });
@@ -748,8 +770,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       StarfishSnackbar.showErrorMessage(
           context,
           _isEditMode
-              ? AppLocalizations.of(context)!.updateMaterialFailed
-              : AppLocalizations.of(context)!.addMaterialFailed);
+              ? _appLocalizations.updateMaterialFailed
+              : _appLocalizations.addMaterialFailed);
     }
   }
 
@@ -766,7 +788,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   List<Widget>? _historyItems(HiveMaterial material) {
     final List<Widget> _widgetList = [];
     final header = Text(
-      AppLocalizations.of(context)!.history,
+      _appLocalizations.history,
       style: TextStyle(
         fontFamily: 'OpenSans',
         fontWeight: FontWeight.bold,
@@ -779,7 +801,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     for (HiveEdit edit in material.editHistory ?? []) {
       _widgetList.add(HistoryItem(
         edit: edit,
-        type: AppLocalizations.of(context)!.material,
+        type: _appLocalizations.material,
       ));
     }
 
