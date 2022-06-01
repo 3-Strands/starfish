@@ -51,6 +51,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   String? userImpactStory;
 
   bool _isInitialized = false;
+  final Key _focusDetectorKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +64,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
 
     currentUser = CurrentUserProvider().getUserSync();
     return FocusDetector(
+      key: _focusDetectorKey,
       onFocusGained: () {},
       onFocusLost: () {},
       child: Scaffold(
@@ -133,7 +135,6 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                   element.userId == currentUser.id);
 
                           return Container(
-                            key: UniqueKey(),
                             margin: EdgeInsets.only(left: 15.w, right: 15.w),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
