@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/cupertino.dart' as app;
 import 'package:flutter/material.dart' as app;
@@ -1094,19 +1095,20 @@ class SyncService {
     StreamController<FileData> _controller = StreamController();
     _localFiles.forEach((hiveFile) {
       // TODO: Check existance of the the file before upload
-      uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!), _controller);
+      uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!),
+          EntityType.valueOf(hiveFile.entityType!)!, _controller);
     });
     _controller.done;
     _controller.close();
     //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
   }
 
-  uploadMaterial(String entityId, File file,
+  Future uploadMaterial(String entityId, File file, EntityType type,
       StreamController<FileData> _controller) async {
     FileMetaData metaData = FileMetaData(
       entityId: entityId,
       filename: file.path.split("/").last,
-      entityType: EntityType.MATERIAL,
+      entityType: type,
     );
     FileData fileMetaData = FileData(metaData: metaData);
 
@@ -1118,7 +1120,6 @@ class SyncService {
         .uploadFile(_controller.stream)
         .then((responseStream) {
       responseStream.listen((UploadStatus uploadStatus) {
-        //print("File UploadStatus: $uploadStatus");
         if (uploadStatus.status == UploadStatus_Status.OK) {
           List<HiveFile> _files = fileBox.values
               .where((element) =>
@@ -1139,7 +1140,7 @@ class SyncService {
 
     _controller.add(fileMetaData);
 
-    Stream<List<int>> inputStream = file.openRead();
+    /*Stream<List<int>> inputStream = file.openRead();
     inputStream.listen((event) {
       _controller.add(FileData(chunk: event));
     }, onDone: () {
@@ -1148,7 +1149,12 @@ class SyncService {
       _controller.close();
     }, onError: (error) {
       print("ERROR: $error");
-    });
+    });*/
+    Uint8List bytes = file.readAsBytesSync();
+    FileData fileData = FileData(chunk: bytes);
+    _controller.add(fileData);
+
+    return;
 
     /*final semicolon = ';'.codeUnitAt(0);
     RandomAccessFile randomAccessFile = file.openSync(mode: FileMode.read);
