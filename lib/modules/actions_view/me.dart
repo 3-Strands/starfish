@@ -661,7 +661,7 @@ class _MeState extends State<Me> {
           ),
           text: AppLocalizations.of(context)!
               .clickToDownload
-              .insertTemplateValues({'file_name': hiveFile.filename!}),
+              .insertTemplateValues({'file_name': hiveFile.filename}),
           onButtonTap: () {
             if (Platform.isAndroid) {
               if (hiveFile.filepath != null) {

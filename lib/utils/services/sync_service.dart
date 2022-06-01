@@ -56,6 +56,7 @@ import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/api_provider.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/wrappers/platform.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/src/generated/starfish.pb.dart' as starfish;
@@ -1082,74 +1083,47 @@ class SyncService {
     // upload files form `File Box` excluding those which are added from remote i.e. `filepath == null`
     List<HiveFile> _localFiles = fileBox.values
         .where(
-            (element) => element.filepath != null && false == element.isSynced)
+            (element) => false == element.isSynced && element.isLocallyAvailable)
         .toList();
 
     if (_localFiles.isEmpty) {
       return;
     }
 
-    StreamController<FileData> _controller = StreamController();
-    _localFiles.forEach((hiveFile) {
-      // TODO: Check existance of the the file before upload
-      uploadMaterial(hiveFile, _controller,
-        onDone: (fileMetaData) {
-          List<HiveFile> _files = fileBox.values
-            .where((element) =>
-                element.entityId == fileMetaData.entityId)
-            .toList();
-          _files.forEach((element) {
-            element.isSynced = true;
-            element.save();
-          });
-        },
-        onError: (error, stackTrace) {
-          Sentry.captureException(error, stackTrace: stackTrace);
-          handleError(error);
-        });
-      // uploadMaterial(hiveFile.entityId!, File(hiveFile.filepath!), _controller);
-    });
-    _controller.done;
-    _controller.close();
-    //uploadMaterial("1f21e210-a1fc-40d5-8fef-ad9d105fdbe7", File(fileBox.values.first.filepath!));
+    try {
+      await uploadMaterials(_localFiles);
+      await Future.wait(_localFiles.map(
+        (hiveFile) {
+          hiveFile.isSynced = true;
+          return hiveFile.save();
+        }
+      ));
+    } catch (error, stackTrace) {
+      Sentry.captureException(error, stackTrace: stackTrace);
+      handleError(error);
+    }
   }
 
   downloadFiles() async {
     print('============= START: SyncFiles FROM Remote =============');
-    // Filter items not downloaded yet
-    fileBox.values
-        .where((hiveFile) {
-          return false == hiveFile.isSynced && null == hiveFile.filepath;
-        })
-        .toList()
-        .forEach((HiveFile hiveFile) {
+    await Future.wait(
+      // Filter items not downloaded yet
+      fileBox.values
+        .where((hiveFile) =>
+          false == hiveFile.isSynced && !hiveFile.isLocallyAvailable)
+        .map((hiveFile) async {
           print(
               '=============DownloadMaterial: ${hiveFile.filename} =============');
-          downloadMaterial(hiveFile,
-            onDone: (filePath) {
-              // Update downloaded file info in `FILE_BOX`
-
-              int _currentIndex = -1;
-              fileBox.values.toList().asMap().forEach((key, _hiveFile) {
-                if (hiveFile.entityId == _hiveFile.entityId &&
-                    hiveFile.filename == _hiveFile.filename) {
-                  _currentIndex = key;
-                }
-              });
-
-              if (_currentIndex > -1) {
-                hiveFile.filepath = filePath;
-                hiveFile.isSynced = true;
-
-                fileBox.putAt(_currentIndex, hiveFile);
-              }
-            },
-            onError: (error, stackTrace) {
-              Sentry.captureException(error, stackTrace: stackTrace);
-              handleError(error);
-            }); //.entityId!, file.remoteFileName!);
-        });
-    //downloadMaterial(materialBox.values.first);
+          try {
+            await downloadMaterial(hiveFile);
+            hiveFile.isSynced = true;
+            await hiveFile.save();
+          } catch (error, stackTrace) {
+            Sentry.captureException(error, stackTrace: stackTrace);
+            handleError(error);
+          }
+        }),
+    );
   }
 
   Future syncLocalHiveActionUserToRemote() async {

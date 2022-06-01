@@ -25,7 +25,7 @@ class Starfish extends StatefulWidget {
 class _StarfishState extends State<Starfish> {
   bool _isInitialized = false;
   String? _initialRoute;
-  Locale _locale = Locale('en');
+  Locale _locale = const Locale('en');
 
   @override
   void initState() {
@@ -97,7 +97,10 @@ class _StarfishState extends State<Starfish> {
         theme: AppStyles.defaultTheme(),
         // home: SplashScreen(),
         initialRoute: _initialRoute,
-        routes: Routes.routes,
+        // routes: Routes.routes,
+        onGenerateRoute: Routes.onGenerateRoute,
+        onGenerateInitialRoutes: _initialRoute == null ? null : (String route) =>
+          [Routes.onGenerateRoute(RouteSettings(name: route))],
         builder: EasyLoading.init(
           builder: (context, widget) {
             ScreenUtil.setContext(context);

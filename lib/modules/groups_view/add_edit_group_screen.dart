@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -46,7 +47,7 @@ import 'package:template_string/template_string.dart';
 
 class AddEditGroupScreen extends StatefulWidget {
   final HiveGroup? group;
-  AddEditGroupScreen({
+  const AddEditGroupScreen({
     Key? key,
     this.group,
   }) : super(key: key);
@@ -493,11 +494,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => SettingsScreen(),
-                    ),
+                    Routes.settings,
                   );
                 },
               ),

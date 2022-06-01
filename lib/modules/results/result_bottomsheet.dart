@@ -40,6 +40,7 @@ import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
   HiveGroup hiveGroup;
@@ -68,7 +69,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
-  List<File> _selectedFiles = [];
+  List<PlatformFile> _selectedFiles = [];
   List<HiveFile> _hiveFiles = [];
 
   // @override
@@ -1254,7 +1255,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     });
   }
 
-  void _saveTransformation(String? _impactStory, List<File> _files) {
+  void _saveTransformation(String? _impactStory, List<PlatformFile> _files) {
     // _hiveTransformation = widget.hiveGroupUser
     //     .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
     if (_impactStory != null) {
@@ -1278,9 +1279,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       _transformationFiles.add(HiveFile(
         entityId: _hiveTransformation!.id,
         entityType: EntityType.TRANSFORMATION.value,
-        filepath: _file.path,
-        filename: _file.path.split("/").last,
-        isSynced: false,
+        filepath: Platform.isWeb ? null : _file.path,
+        filename: _file.name,
+        content: Platform.isWeb ? List<int>.from(_file.bytes!) : null,
       ));
     });
 
@@ -1445,43 +1446,21 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           //  allowedExtensions: ['jpg', 'png', 'jpeg'],
                         );
 
-                        if (result != null) {
-                          // if single selected file is IMAGE, open image in Cropper
-
-                          if (result.count == 1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ImageCropperScreen(
-                                    sourceImage: File(result.paths.first!),
-                                    onDone: (File? _newFile) {
-                                      if (_newFile == null) {
-                                        return;
-                                      }
-                                      var fileSize = _newFile
-                                          .readAsBytesSync()
-                                          .lengthInBytes;
-                                      if (fileSize > 5 * 1024 * 1024) {
-                                        Fluttertoast.showToast(
-                                            msg: AppLocalizations.of(context)!
-                                                .imageSizeValidation);
-                                      } else {
-                                        _selectedFiles.add(_newFile);
-                                        _saveTransformation(
-                                            _transformationController.text,
-                                            _selectedFiles);
-                                        _selectedFiles.clear();
-                                      }
-                                    }),
-                              ),
-                            ).then((value) => {
-                                  // Handle cropped image here
-                                });
+                        if (result != null && result.count > 0) {
+                          final files = await processPickerResult(context, result);
+                          final newFile = files.first;
+                          var fileSize = newFile.size;
+                          if (fileSize > 5 * 1024 * 1024) {
+                            Fluttertoast.showToast(
+                                msg: AppLocalizations.of(context)!
+                                    .imageSizeValidation);
                           } else {
                             setState(() {
-                              _selectedFiles.addAll(result.paths
-                                  .map((path) => File(path!))
-                                  .toList());
+                              _selectedFiles.add(newFile);
+                              _saveTransformation(
+                                  _transformationController.text,
+                                  _selectedFiles);
+                              _selectedFiles.clear();
                             });
                           }
                         } else {
@@ -1568,9 +1547,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
-    for (File file in _selectedFiles) {
+    for (final file in _selectedFiles) {
       _widgetList.add(_imagePreview(
-          file: file,
+          file: File(Platform.isWeb ? file.name : file.path!),
           onDelete: () {
             setState(() {
               _selectedFiles.remove(file);

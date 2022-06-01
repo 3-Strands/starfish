@@ -39,7 +39,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
-  SettingsScreen({Key? key, this.title = ''}) : super(key: key);
+  const SettingsScreen({Key? key, this.title = ''}) : super(key: key);
 
   final String title;
 
@@ -54,8 +54,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final FocusNode _nameFocus = FocusNode();
   final _phoneNumberController = TextEditingController();
   final FocusNode _phoneNumberFocus = FocusNode();
-  final _countrySelectDropDownController = MultiSelectDropDownController<HiveCountry>(items: []);
-  final _languageSelectDropDownController = MultiSelectDropDownController<HiveLanguage>(items: []);
+  late MultiSelectDropDownController<HiveCountry> _countrySelectDropDownController;
+  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
 
   late HiveCurrentUser _user;
 
@@ -77,9 +77,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   late AppBloc bloc;
 
-  late List<Map> _languages;
-  late Map _language = Map();
-  late List<DropdownMenuItem<Map>> _dropdownLanguagesItem;
+  late List<LanguageCode> _languages;
+  LanguageCode? _language;
+  late List<DropdownMenuItem<LanguageCode>> _dropdownLanguagesItem;
 
   List<Map<String, dynamic>> _groups = [];
 
@@ -96,27 +96,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _getAllLanguages();
     _getGroups();
     _isUserAdminAtleastInOneGroup();
+
+    _countrySelectDropDownController = MultiSelectDropDownController<HiveCountry>(
+      items: [],
+      selectedItems: _selectedCountries.toSet(),
+    );
+    _languageSelectDropDownController = MultiSelectDropDownController<HiveLanguage>(
+      items: [],
+      selectedItems: _selectedLanguages.toSet(),
+    );
   }
 
-  _populateAppLanguages(List<Map> languages) async {
+  _populateAppLanguages(List<LanguageCode> languages) async {
     _languages = languages;
     _dropdownLanguagesItem = _buildDropDownLanguageItems(_languages);
 
     String _deviceLanguage =
         await StarfishSharedPreference().getDeviceLanguage();
-    if (_deviceLanguage.isEmpty) {
-      setState(() {
-        _language = _dropdownLanguagesItem[0].value!;
-      });
-    } else {
-      _dropdownLanguagesItem.forEach((element) {
-        if (element.value!.values.last == _deviceLanguage) {
-          setState(() {
-            _language = element.value!;
-          });
-        }
-      });
-    }
+    setState(() {
+      _language = _languages.firstWhere(
+        (item) => item.code == _deviceLanguage,
+        orElse: () => _languages.first,
+      );
+    });
   }
 
   @override
@@ -126,17 +128,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  List<DropdownMenuItem<Map>> _buildDropDownLanguageItems(List listLanguage) {
-    List<DropdownMenuItem<Map>> items = [];
-    for (Map item in listLanguage) {
-      items.add(
-        DropdownMenuItem(
-          child: Text(item.values.first),
-          value: item,
-        ),
-      );
-    }
-    return items;
+  List<DropdownMenuItem<LanguageCode>> _buildDropDownLanguageItems(List<LanguageCode> listLanguage) {
+    return listLanguage.map(
+      (language) => DropdownMenuItem(
+        child: Text(language.name),
+        value: language,
+      ),
+    ).toList();
   }
 
   void _getCurrentUser() {
@@ -726,14 +724,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   fontSize: 19.sp,
                                   fontFamily: 'OpenSans',
                                 ),
-                                onChanged: (Map? value) {
+                                onChanged: (LanguageCode? value) {
                                   setState(() {
                                     _language = value!;
                                     StarfishSharedPreference()
-                                        .setDeviceLanguage(value.values.last);
+                                        .setDeviceLanguage(value.code);
                                     Starfish.of(context)!.setLocale(
                                         Locale.fromSubtags(
-                                            languageCode: value.values.last));
+                                            languageCode: value.code));
 
                                     reinitLanguageFilter();
                                   });

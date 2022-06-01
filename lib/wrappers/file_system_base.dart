@@ -4,15 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/src/generated/file_transfer.pb.dart';
 
-typedef void DoneCallback<T>(T filePath);
-typedef FutureOr<Null> ErrorCallback(Object error, StackTrace stackTrace);
+Future<void> downloadMaterial(HiveFile hiveFile) =>
+    Future.error(Exception("Download not supported"));
 
-downloadMaterial(HiveFile hiveFile, { required DoneCallback<String> onDone, required ErrorCallback onError })
-  => Future.error("Download not supported").catchError(onError);
-
-uploadMaterial(HiveFile hiveFile, StreamController<FileData> controller,
-  { required DoneCallback<FileMetaData> onDone, required ErrorCallback onError })
-  => Future.error("Upload not supported").catchError(onError);
+Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
+    Future.error(Exception("Upload not supported"));
 
 Future<void> openFile(String filepath) => Future.error("Open file not supported");
 
@@ -28,7 +24,22 @@ class File {
     BoxFit? fit,
     double? width,
     double? height,
-  }) => SizedBox();
+  }) {
+    final index = path.lastIndexOf('.');
+    final extension = index == -1 ? 'UNK' : path.substring(index + 1);
+    Widget widget = SizedBox(
+      width: width,
+      height: height,
+      child: Text(extension.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
+    );
+    if (fit != null) {
+      widget = FittedBox(
+        fit: fit,
+        child: widget,
+      );
+    }
+    return widget;
+  }
 
   Future<Uint8List> readAsBytes() => throw Exception('Cannot read file');
   Uint8List readAsBytesSync() => throw Exception('Cannot read file');

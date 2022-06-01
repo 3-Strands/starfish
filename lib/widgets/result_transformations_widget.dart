@@ -14,12 +14,13 @@ import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 class ResultTransformationsWidget extends StatefulWidget {
   HiveGroupUser groupUser;
   HiveDate month;
   HiveTransformation? hiveTransformation;
-  Function(String, List<File>) onChange;
+  Function(String, List<PlatformFile>) onChange;
 
   ResultTransformationsWidget({
     Key? key,
@@ -37,7 +38,7 @@ class ResultTransformationsWidget extends StatefulWidget {
 class _ResultTransformationsWidgetState
     extends State<ResultTransformationsWidget> {
   TextEditingController _transformationController = TextEditingController();
-  List<File> _selectedFiles = [];
+  List<PlatformFile> _selectedFiles = [];
   bool _isEditMode = false;
 
   
@@ -181,45 +182,22 @@ class _ResultTransformationsWidgetState
                           //  allowedExtensions: ['jpg', 'png', 'jpeg'],
                         );
 
-                        if (result != null) {
-                          // if single selected file is IMAGE, open image in Cropper
+                        if (result != null && result.count > 0) {
+                          final files = await processPickerResult(context, result);
+                          final newFile = files.first;
 
-                          if (result.count == 1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ImageCropperScreen(
-                                    sourceImage: File(result.paths.first!),
-                                    onDone: (File? _newFile) {
-                                      if (_newFile == null) {
-                                        return;
-                                      }
-                                      var fileSize = _newFile
-                                          .readAsBytesSync()
-                                          .lengthInBytes;
-                                      if (fileSize > 5 * 1024 * 1024) {
-                                        Fluttertoast.showToast(
-                                            msg: AppLocalizations.of(context)!
-                                                .imageSizeValidation);
-                                      } else {
-                                        setState(() {
-                                          _selectedFiles.add(_newFile);
-                                        });
-                                        widget.onChange(
-                                            _transformationController.text,
-                                            _selectedFiles);
-                                      }
-                                    }),
-                              ),
-                            ).then((value) => {
-                                  // Handle cropped image here
-                                });
+                          var fileSize = newFile.size;
+                          if (fileSize > 5 * 1024 * 1024) {
+                            Fluttertoast.showToast(
+                                msg: AppLocalizations.of(context)!
+                                    .imageSizeValidation);
                           } else {
                             setState(() {
-                              _selectedFiles.addAll(result.paths
-                                  .map((path) => File(path!))
-                                  .toList());
+                              _selectedFiles.add(newFile);
                             });
+                            widget.onChange(
+                                _transformationController.text,
+                                _selectedFiles);
                           }
                         } else {
                           // User canceled the picker
@@ -305,9 +283,9 @@ class _ResultTransformationsWidgetState
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
-    for (File file in _selectedFiles) {
+    for (final file in _selectedFiles) {
       _widgetList.add(_imagePreview(
-          file: file,
+          file: File(Platform.isWeb ? file.name : file.path!),
           onDelete: () {
             setState(() {
               _selectedFiles.remove(file);

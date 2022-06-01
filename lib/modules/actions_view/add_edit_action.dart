@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_svg/flutter_svg.dart';
@@ -160,11 +161,9 @@ class _AddEditActionState extends State<AddEditAction>
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => SettingsScreen(),
-                    ),
+                    Routes.settings,
                   );
                 },
               ),

@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 part 'hive_file.g.dart';
 
@@ -12,19 +13,22 @@ class HiveFile extends HiveObject {
   @HiveField(2)
   String? filepath; // local file path
   @HiveField(3)
-  String? filename;
+  String filename;
   @HiveField(4)
   String? md5Checksum;
   @HiveField(5)
-  bool? isSynced = false;
+  bool isSynced;
+  @HiveField(6)
+  List<int>? content;
 
   HiveFile({
     this.entityId,
     this.entityType,
     this.filepath,
-    this.filename,
+    required this.filename,
     this.md5Checksum,
-    this.isSynced,
+    this.isSynced = false,
+    this.content,
   });
 
   @override
@@ -47,6 +51,8 @@ class HiveFile extends HiveObject {
       filename: filename,
     );
   }
+
+  bool get isLocallyAvailable => Platform.isWeb ? content != null : filepath != null;
 
   @override
   String toString() {

@@ -1,20 +1,47 @@
 import 'dart:typed_data';
 
 import 'package:crop_your_image/crop_your_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:starfish/wrappers/file_system.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/wrappers/platform.dart';
+
+String _getMimeType(String file) {
+  final index = file.lastIndexOf('.');
+  return index == -1 ? '' : file.substring(index + 1);
+}
+
+Future<List<PlatformFile>> processPickerResult(BuildContext context, FilePickerResult result) async {
+  if (result.count == 1 &&
+    ['jpg', 'jpeg', 'png'].contains(_getMimeType(result.files.first.name))) {
+    final file = await Navigator.push<PlatformFile>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ImageCropperScreen(
+          sourceImage: result.files.first,
+          onDone: (PlatformFile newFile) {
+            Navigator.pop(context, newFile);
+          },
+        ),
+      ),
+    );
+    return [file!];
+  } else {
+    return result.files;
+  }
+}
 
 class ImageCropperScreen extends StatefulWidget {
-  final File? sourceImage;
-  final void Function(File?) onDone;
+  final PlatformFile sourceImage;
+  final void Function(PlatformFile) onDone;
 
   ImageCropperScreen({
     Key? key,
     required this.sourceImage,
     required this.onDone,
   }) : super(key: key);
+
   @override
   _ImageCropperScreenState createState() => _ImageCropperScreenState();
 }
@@ -29,9 +56,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
 
   final _cropController = CropController();
   //final _imageDataList = <Uint8List>[];
-  Uint8List? _imageData;
-
-  var _loadingImage = false;
+  late Uint8List _imageData;
   /*var _currentImage = 0;
   set currentImage(int value) {
     setState(() {
@@ -48,54 +73,45 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
 
   @override
   void initState() {
-    //_loadAllImages();
-    if (widget.sourceImage != null) {
-      _load(widget.sourceImage!);
-    }
+    _imageData = widget.sourceImage.bytes!;
     super.initState();
   }
 
   /*Future<void> _loadAllImages() async {
     setState(() {
-      _loadingImage = true;
+      _isLoaded = true;
     });
     for (final assetName in _images) {
       _imageDataList.add(await _load(assetName));
     }
     setState(() {
-      _loadingImage = false;
+      _isLoaded = false;
     });
   }*/
 
-  Future<void> _load(File _sourceImage) async {
-    //final assetData = await rootBundle.load(assetName);
-    //return assetData.buffer.asUint8List();
-    setState(() {
-      _loadingImage = true;
-    });
-    _imageData = await _sourceImage.readAsBytes();
-    setState(() {
-      _loadingImage = false;
-    });
-  }
-
-  Future<void> _saveCroppedFile(
-      String sourceFilePath, Uint8List croppedData) async {
-    String _filename = sourceFilePath.split("/").last;
-    String _targetFileName = _filename.replaceFirstMapped(
-        _filename.split(".").first,
+  Future<void> _saveCroppedFile(Uint8List croppedData) async {
+    final sourceFileName = widget.sourceImage.name;
+    String _targetFileName = sourceFileName.replaceFirstMapped(
+        sourceFileName.split(".").first,
         (match) =>
-            '${_filename.split(".").first}_${DateTime.now().millisecondsSinceEpoch}');
+            '${sourceFileName.split(".").first}_${DateTime.now().millisecondsSinceEpoch}');
 
-    String _destinationPath = sourceFilePath.replaceFirstMapped(
-        _filename, (match) => _targetFileName);
+    final sourceFilePath = Platform.isWeb ? null : widget.sourceImage.path;
+    String _destinationPath = sourceFileName.replaceFirstMapped(
+        sourceFileName, (match) => _targetFileName);
+    if (sourceFilePath != null) {
 
-    File _targetFile = File(_destinationPath);
-    
-    await _targetFile.createWithContent(croppedData.toList());
+      File _targetFile = File(_destinationPath);
+      
+      await _targetFile.createWithContent(croppedData.toList());
+    }
 
-    widget.onDone(_targetFile);
-    Navigator.pop(context);
+    widget.onDone(PlatformFile(
+      path: _destinationPath,
+      name: _targetFileName,
+      size: croppedData.lengthInBytes,
+      bytes: croppedData,
+    ));
   }
 
   @override
@@ -109,7 +125,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
         height: double.infinity,
         child: Center(
           child: Visibility(
-            visible: !_loadingImage && !_isCropping,
+            visible: !_isCropping,
             child: Column(
               children: [
                 Expanded(
@@ -119,10 +135,9 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
                       children: [
                         Crop(
                           controller: _cropController,
-                          image: _imageData!,
+                          image: _imageData,
                           onCropped: (croppedData) {
-                            _saveCroppedFile(
-                                widget.sourceImage!.path, croppedData);
+                            _saveCroppedFile(croppedData);
                             setState(() {
                               _croppedData = croppedData;
                               _isCropping = false;

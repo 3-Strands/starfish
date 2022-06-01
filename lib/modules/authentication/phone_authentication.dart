@@ -19,7 +19,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
-  PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
+  const PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
 
   final String title;
 

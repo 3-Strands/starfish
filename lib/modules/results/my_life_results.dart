@@ -35,6 +35,7 @@ import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/widgets/result_transformations_widget.dart';
 import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 class MyLifeResults extends StatefulWidget {
   const MyLifeResults({Key? key}) : super(key: key);
@@ -723,7 +724,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       required HiveDate month}) {
     TextEditingController _transformationController = TextEditingController();
     List<HiveFile> _hiveFiles = [];
-    List<File> _selectedFiles = [];
+    List<PlatformFile> _selectedFiles = [];
 
     HiveTransformation? _currentGroupUserTransformation =
         TransformationProvider()
@@ -857,47 +858,25 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                           //  allowedExtensions: ['jpg', 'png', 'jpeg'],
                         );
 
-                        if (result != null) {
+                        if (result != null && result.count > 0) {
+                          final files = await processPickerResult(context, result);
+                          final newFile = files.first;
                           // if single selected file is IMAGE, open image in Cropper
 
-                          if (result.count == 1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ImageCropperScreen(
-                                    sourceImage: File(result.paths.first!),
-                                    onDone: (File? _newFile) {
-                                      if (_newFile == null) {
-                                        return;
-                                      }
-                                      var fileSize = _newFile
-                                          .readAsBytesSync()
-                                          .lengthInBytes;
-                                      if (fileSize > 5 * 1024 * 1024) {
-                                        Fluttertoast.showToast(
-                                            msg: AppLocalizations.of(context)!
-                                                .imageSizeValidation);
-                                      } else {
-                                        setState(() {
-                                          _selectedFiles.add(_newFile);
-                                          _saveTransformation(
-                                              _transformationController.text,
-                                              _selectedFiles,
-                                              hiveGroupUser,
-                                              _currentGroupUserTransformation);
-                                          _selectedFiles.clear();
-                                        });
-                                      }
-                                    }),
-                              ),
-                            ).then((value) => {
-                                  // Handle cropped image here
-                                });
+                          var fileSize = newFile.size;
+                          if (fileSize > 5 * 1024 * 1024) {
+                            Fluttertoast.showToast(
+                                msg: AppLocalizations.of(context)!
+                                    .imageSizeValidation);
                           } else {
                             setState(() {
-                              _selectedFiles.addAll(result.paths
-                                  .map((path) => File(path!))
-                                  .toList());
+                              _selectedFiles.add(newFile);
+                              _saveTransformation(
+                                  _transformationController.text,
+                                  _selectedFiles,
+                                  hiveGroupUser,
+                                  _currentGroupUserTransformation);
+                              _selectedFiles.clear();
                             });
                           }
                         } else {
@@ -929,7 +908,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  void _saveTransformation(String? _impactStory, List<File> _files,
+  void _saveTransformation(String? _impactStory, List<PlatformFile> _files,
       HiveGroupUser hiveGroupUser, HiveTransformation? _hiveTransformation) {
     // _hiveTransformation = widget.hiveGroupUser
     //     .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
@@ -955,9 +934,9 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         _transformationFiles.add(HiveFile(
           entityId: _hiveTransformation!.id,
           entityType: EntityType.TRANSFORMATION.value,
-          filepath: _file.path,
-          filename: _file.path.split("/").last,
-          isSynced: false,
+          filepath: Platform.isWeb ? null : _file.path,
+          filename: _file.name,
+          content: Platform.isWeb ? List<int>.from(_file.bytes!) : null,
         ));
       });
     }
@@ -988,12 +967,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   }
 
   Widget _previewSelectedFiles(
-      List<HiveFile> _hiveFiles, List<File> _selectedFiles) {
+      List<HiveFile> _hiveFiles, List<PlatformFile> _selectedFiles) {
     final List<Widget> _widgetList = [];
 
-    for (File file in _selectedFiles) {
+    for (final file in _selectedFiles) {
       _widgetList.add(_imagePreview(
-          file: file,
+          file: File(Platform.isWeb ? file.name : file.path!),
           onDelete: () {
             setState(() {
               _selectedFiles.remove(file);

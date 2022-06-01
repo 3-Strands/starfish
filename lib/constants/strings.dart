@@ -1,7 +1,14 @@
+class LanguageCode {
+  final String name;
+  final String code;
+
+  const LanguageCode(this.name, this.code);
+}
+
 class Strings {
-  static const List<Map<String, String>> appLanguageList = [
-    {'name': 'English', 'code': 'en'},
-    {'name': 'हिन्दी', 'code': 'hi'}
+  static const List<LanguageCode> appLanguageList = [
+    LanguageCode('English', 'en'),
+    LanguageCode('हिन्दी', 'hi'),
   ];
 
   static const String ok = 'OK';

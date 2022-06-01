@@ -75,11 +75,9 @@ class _ActionsScreenState extends State<ActionsScreen>
                   onPressed: () {
                     setState(
                       () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => SettingsScreen(),
-                          ),
+                          Routes.settings,
                         );
                       },
                     );

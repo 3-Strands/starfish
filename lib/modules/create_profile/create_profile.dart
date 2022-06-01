@@ -20,7 +20,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreateProfileScreen extends StatefulWidget {
-  CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
+  const CreateProfileScreen({Key? key, this.title = ''}) : super(key: key);
 
   final String title;
 

@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -36,11 +38,12 @@ import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/wrappers/file_system.dart';
 import 'package:starfish/wrappers/platform.dart';
+import 'package:starfish/wrappers/window.dart';
 
 class AddEditMaterialScreen extends StatefulWidget {
   final HiveMaterial? material;
 
-  AddEditMaterialScreen({
+  const AddEditMaterialScreen({
     Key? key,
     this.material,
   }) : super(key: key);
@@ -61,7 +64,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
   List<HiveMaterialTopic> _selectedTopics = [];
-  List<File> _selectedFiles = [];
+  List<PlatformFile> _selectedFiles = [];
 
   MaterialVisibility? _visibleTo;
   MaterialEditability? _editableBy;
@@ -190,11 +193,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => SettingsScreen(),
-                    ),
+                    Routes.settings,
                   );
                 },
               ),
@@ -374,41 +375,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                                 .pickFiles(allowMultiple: false);
 
                             if (result != null) {
-                              // if single selected file is IMAGE, open image in Cropper
-                              if (result.count == 1 &&
-                                  ['jpg', 'jpeg', 'png'].contains(result
-                                      .paths.first
-                                      ?.split("/")
-                                      .last
-                                      .split(".")
-                                      .last)) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageCropperScreen(
-                                      sourceImage: File(result.paths.first!),
-                                      onDone: (File? _newFile) {
-                                        if (_newFile == null) {
-                                          return;
-                                        }
-                                        setState(() {
-                                          _selectedFiles.add(_newFile);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ).then((value) => {
-                                      // Handle cropped image here
-                                    });
-                              } else {
-                                setState(() {
-                                  _selectedFiles.addAll(result.paths
-                                      .map((path) => File(path!))
-                                      .toList());
-                                });
-                              }
-                            } else {
-                              // User canceled the picker
+                              final files = await processPickerResult(context, result);
+                              setState(() => _selectedFiles.addAll(files));
                             }
                           }
                         },
@@ -669,7 +637,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     );
   }
 
-  _validateInfo() {
+  _validateInfo() async {
     if (_titleController.text == '') {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptyMaterialTitle);
@@ -686,6 +654,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     } else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectLanguage);
+    } else if (Platform.isWeb && _selectedFiles.isNotEmpty && !(await _isConnected())) {
+      StarfishSnackbar.showErrorMessage(
+          context, AppLocalizations.of(context)!.youAreOfflineCannotUpload);
     } /* else if (_selectedTypes.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, AppLocalizations.of(context)!.emptySelectType);
@@ -698,10 +669,15 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     }
   }
 
-  _addUpdateMaterial() {
+  Future<bool> _isConnected() async {
+    final connectivity = await Connectivity().checkConnectivity();
+    return connectivity == ConnectivityResult.wifi || connectivity == ConnectivityResult.mobile;
+  }
+
+  _addUpdateMaterial() async {
     final bloc = Provider.of(context);
 
-    HiveMaterial? _hiveMaterial;
+    HiveMaterial _hiveMaterial;
 
     if (_isEditMode) {
       _hiveMaterial = widget.material!;
@@ -736,20 +712,20 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
     // check if there is any file is added, if yes, store them in HiveFile box
     List<HiveFile>? _files;
-    if (_selectedFiles.length > 0) {
+    if (_selectedFiles.isNotEmpty) {
       _files = _selectedFiles
           .map((file) => HiveFile(
-                entityId: _hiveMaterial!.id,
+                entityId: _hiveMaterial.id,
                 entityType: EntityType.MATERIAL.value,
-                filepath: file.path,
-                filename: file.path.split("/").last,
-                isSynced: false,
+                filepath: Platform.isWeb ? null : file.path,
+                filename: file.name,
+                content: Platform.isWeb ? List<int>.from(file.bytes!) : null,
               ))
           .toList();
     }
-    bloc.materialBloc
-        .createUpdateMaterial(_hiveMaterial, files: _files)
-        .then((value) {
+    try {
+      await bloc.materialBloc
+          .createUpdateMaterial(_hiveMaterial, files: _files);
       // Broadcast to sync the local changes with the server
       FBroadcast.instance().broadcast(
         SyncService.kUpdateMaterial,
@@ -757,7 +733,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       );
 
       bloc.materialBloc
-          .checkAndUpdateUserfollowedLangguages(_hiveMaterial?.languageIds);
+          .checkAndUpdateUserfollowedLangguages(_hiveMaterial.languageIds);
       Alerts.showMessageBox(
           context: context,
           title: AppLocalizations.of(context)!.dialogInfo,
@@ -767,13 +743,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           callback: () {
             Navigator.of(context).pop();
           });
-    }).onError((error, stackTrace) {
+    } catch (error) {
+      print(error);
       StarfishSnackbar.showErrorMessage(
           context,
           _isEditMode
               ? AppLocalizations.of(context)!.updateMaterialFailed
               : AppLocalizations.of(context)!.addMaterialFailed);
-    }).whenComplete(() {});
+    }
   }
 
   Widget _editHistoryContainer(HiveMaterial? material) {
@@ -824,7 +801,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 textAlign: TextAlign.start,
                 text: TextSpan(
                   //text: file.path.split("/").last,
-                  text: hiveFile.filename!,
+                  text: hiveFile.filename,
                   style: TextStyle(
                     color: AppColors.appTitle,
                     fontFamily: 'OpenSans',
@@ -837,7 +814,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 textAlign: TextAlign.start,
                 text: TextSpan(
                   //text: file.path.split("/").last,
-                  text: hiveFile.filename!,
+                  text: hiveFile.filename,
                   style: TextStyle(
                     color: AppColors.appTitle,
                     fontFamily: 'OpenSans',
@@ -898,13 +875,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   Widget _previewSelectedFiles() {
     final List<Widget> _widgetList = [];
 
-    for (File file in _selectedFiles) {
+    for (final file in _selectedFiles) {
       _widgetList.add(Container(
         height: 30.h,
         child: RichText(
           textAlign: TextAlign.start,
           text: TextSpan(
-            text: file.path.split("/").last,
+            text: file.name,
             style: TextStyle(
               color: Color(0xFF3475F0),
               fontFamily: 'OpenSans',
@@ -914,7 +891,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 if (Platform.isAndroid) {
-                  openFile(file.path);
+                  openFile(file.path!);
                 }
               },
           ),

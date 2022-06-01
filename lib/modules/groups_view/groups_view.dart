@@ -275,11 +275,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   onPressed: () {
                     setState(
                       () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => SettingsScreen(),
-                          ),
+                          Routes.settings,
                         );
                       },
                     );

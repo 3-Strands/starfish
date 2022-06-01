@@ -44,6 +44,7 @@ import 'package:starfish/widgets/task_status.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/wrappers/file_system.dart';
 import 'package:starfish/wrappers/platform.dart';
+import 'package:starfish/wrappers/window.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -281,11 +282,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   onPressed: () {
                     setState(
                       () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => SettingsScreen(),
-                          ),
+                          Routes.settings,
                         );
                       },
                     );
@@ -594,11 +593,13 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   if (hiveFile.filepath != null) {
                     openFile(hiveFile.filepath!);
                   }
+                } else if (Platform.isWeb) {
+                  triggerDownload(hiveFile);
                 }
               },
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.file_present,
                     color: Color(0xFF3475F0),
                   ),
@@ -617,20 +618,18 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      child: Text(
-                        hiveFile.filename!,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontFamily: 'OpenSans',
-                          //   fontSize: 17.sp,
-                          fontStyle: FontStyle.italic,
-                          //  fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                    child: Text(
+                      hiveFile.filename,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Color(0xFF434141),
+                        fontFamily: 'OpenSans',
+                        //   fontSize: 17.sp,
+                        fontStyle: FontStyle.italic,
+                        //  fontWeight: FontWeight.bold,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
                 ],

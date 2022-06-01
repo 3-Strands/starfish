@@ -944,7 +944,7 @@ class _MyGroupState extends State<MyGroup> {
           ),
           text: AppLocalizations.of(context)!
               .clickToDownload
-              .insertTemplateValues({'file_name': hiveFile.filename!}),
+              .insertTemplateValues({'file_name': hiveFile.filename}),
           onButtonTap: () {
             if (Platform.isAndroid) {
               if (hiveFile.filepath != null) {

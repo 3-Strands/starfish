@@ -369,6 +369,7 @@
   "tooManyNumbers": "Too many numbers, remove",
   "selectTheTypeOfAction": "Select the type of action",
   "alertEmptyWebLinkWithNoFile": "You must either add a web link to the file, or upload the files, in order to create this Material in Starfish",
+  "youAreOfflineCannotUpload": "You are offline. You can only upload files through starfishonline.app when you are online.",
   "noRecordFound": "No Record Found",
   "done" : "Done",
    "pending" : "Pending",
