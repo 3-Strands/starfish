@@ -6,7 +6,6 @@ import 'package:hive/hive.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:starfish/db/hive_file.dart';
-import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'file_system_shared.dart' as shared;
 

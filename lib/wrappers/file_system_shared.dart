@@ -42,7 +42,7 @@ Future<void> uploadFile({required FutureOr<void> Function(StreamController<FileD
     if (uploadStatus.status == UploadStatus_Status.OK) {
       return;
     } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
-      throw Exception('Download failed');
+      throw Exception('Upload failed');
     }
   }
 }
