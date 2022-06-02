@@ -143,7 +143,7 @@ class _ResultsScreenState extends State<ResultsScreen>
                                 _user.selectedResultsTab =
                                     ResultsTab.RESULTS_MINE.value;
                               }
-                              _user.save();
+                              CurrentUserProvider().createUpdate(_user);
                             },
                           )
                         : Container(),
