@@ -33,10 +33,10 @@ class HiveCurrentUser extends HiveObject {
   final List<HiveActionUser> actions;
 
   @HiveField(8)
-  final int selectedActionsTab;
+  int selectedActionsTab;
 
   @HiveField(9)
-  final int selectedResultsTab;
+  int selectedResultsTab;
 
   @HiveField(10)
   String diallingCode;
@@ -70,6 +70,16 @@ class HiveCurrentUser extends HiveObject {
     required this.creatorId,
     this.isUpdated = false,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveCurrentUser &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 
   User toUser() {
     return User(
