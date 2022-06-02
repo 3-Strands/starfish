@@ -748,16 +748,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                 : false)
             .firstOrNull;
 
-    if (_currentGroupUserTransformation != null &&
-        _currentGroupUserTransformation.impactStory != null) {
+    if (_currentGroupUserTransformation != null) {
       _transformationController.text =
-          _currentGroupUserTransformation.impactStory!;
-    }
-
-    if (_currentGroupUserTransformation != null &&
-        _currentGroupUserTransformation.localFiles.isNotEmpty) {
+          _currentGroupUserTransformation.impactStory ?? '';
       _hiveFiles = _currentGroupUserTransformation.localFiles;
     }
+
     return Card(
       color: Color(0xE6EFEFEF),
       elevation: 4,

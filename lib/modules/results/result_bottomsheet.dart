@@ -42,10 +42,10 @@ import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:starfish/widgets/shapes/slider_thumb.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
-  HiveGroup hiveGroup;
-  HiveGroupUser hiveGroupUser;
+  final HiveGroup hiveGroup;
+  final HiveGroupUser hiveGroupUser;
 
-  ResultWidgetBottomSheet(this.hiveGroup, this.hiveGroupUser, {Key? key})
+  const ResultWidgetBottomSheet(this.hiveGroup, this.hiveGroupUser, {Key? key})
       : super(key: key);
 
   @override
@@ -81,6 +81,17 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //   super.initState();
   // }
 
+  late HiveGroup hiveGroup;
+  late HiveGroupUser hiveGroupUser;
+
+  @override
+  void initState() {
+    super.initState();
+
+    hiveGroup = widget.hiveGroup;
+    hiveGroupUser = widget.hiveGroupUser;
+  }
+
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
@@ -89,17 +100,17 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     _hiveTransformation = widget.hiveGroupUser
         .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
     if (_hiveTransformation != null) {
-      _impactStory = _impactStory.isNotEmpty
-          ? _impactStory
-          : _hiveTransformation?.impactStory ?? '';
+      _impactStory = _hiveTransformation?.impactStory ?? '';
+    } else {
+      _impactStory = '';
     }
 
     _hiveTeacherResponse = widget.hiveGroupUser
         .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
     if (_hiveTeacherResponse != null) {
-      _teacherFeedback = _teacherFeedback.isNotEmpty
-          ? _teacherFeedback
-          : _hiveTeacherResponse?.response ?? '';
+      _teacherFeedback = _hiveTeacherResponse?.response ?? '';
+    } else {
+      _teacherFeedback = '';
     }
 
     _teacherFeedbackController.text = _teacherFeedback;
@@ -244,7 +255,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                 ),
                                 onChanged: (HiveGroupUser? value) {
                                   setState(() {
-                                    widget.hiveGroupUser = value!;
+                                    hiveGroupUser = value!;
                                     bloc.resultsBloc.hiveGroupUser = value;
                                     /*_hiveTransformation = widget.hiveGroupUser
                                         .getTransformationForMonth(
