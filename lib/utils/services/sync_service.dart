@@ -34,6 +34,7 @@ import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/db/providers/group_evaluation_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
@@ -313,7 +314,7 @@ class SyncService {
   }
 
   Future syncCurrentUser() async {
-    await CurrentUserRepository().getUser().then((User user) {
+    await CurrentUserRepository().getUser().then((User user) async {
       List<HiveGroupUser> groups = (user.groups
           .map((e) => HiveGroupUser(
               groupId: e.groupId, userId: e.userId, role: e.role.value))
@@ -337,7 +338,7 @@ class SyncService {
           status: user.status.value,
           creatorId: user.creatorId);
 
-      var filterData = currentUserBox.values
+      /*var filterData = currentUserBox.values
           .where((currentUser) => currentUser.id == user.id)
           .toList();
       if (filterData.length == 0) {
@@ -345,7 +346,9 @@ class SyncService {
       } else {
         //update record
         currentUserBox.putAt(0, _user);
-      }
+      }*/
+
+      await CurrentUserProvider().createUpdate(_user);
 
       //StarfishSharedPreference().setAccessToken(user.phone);
     }, onError: ((err) {
