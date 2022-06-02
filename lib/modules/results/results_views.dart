@@ -14,6 +14,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/modules/results/my_group_results.dart';
 import 'package:starfish/modules/results/my_life_results.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 
@@ -48,6 +50,7 @@ class _ResultsScreenState extends State<ResultsScreen>
       }
     });
     _user = CurrentUserProvider().getUserSync();
+
     _tabController = new TabController(
         length: hideMyLife
             ? 1
@@ -55,7 +58,10 @@ class _ResultsScreenState extends State<ResultsScreen>
                 ? 2
                 : 1,
         vsync: this,
-        initialIndex: 0);
+        initialIndex: ResultsTab.valueOf(_user.selectedResultsTab) ==
+                ResultsTab.RESULTS_MY_GROUPS
+            ? 1
+            : 0);
   }
 
   @override
@@ -129,6 +135,16 @@ class _ResultsScreenState extends State<ResultsScreen>
                                       : AppLocalizations.of(context)!
                                           .forGroupITeachTabText),
                             ),
+                            onTap: (index) {
+                              if (index == 1) {
+                                _user.selectedResultsTab =
+                                    ResultsTab.RESULTS_MY_GROUPS.value;
+                              } else {
+                                _user.selectedResultsTab =
+                                    ResultsTab.RESULTS_MINE.value;
+                              }
+                              _user.save();
+                            },
                           )
                         : Container(),
                 Expanded(
