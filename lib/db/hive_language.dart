@@ -4,12 +4,12 @@ import 'package:starfish/select_items/select_drop_down.dart';
 part 'hive_language.g.dart';
 
 @HiveType(typeId: 1)
-class HiveLanguage implements Named {
+class HiveLanguage extends HiveObject implements Named {
   @HiveField(0)
-  final String id;
+  String id;
 
   @HiveField(1)
-  final String name;
+  String name;
 
   HiveLanguage({required this.id, required this.name});
 

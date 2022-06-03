@@ -17,6 +17,8 @@ final List<String> kCurrentUserFieldMask = [
   'language_ids',
   'link_groups',
   'dialling_code',
+  'selected_actions_tab',
+  'selected_results_tab',
 ];
 
 final List<String> kGroupFieldMask = [
@@ -54,8 +56,8 @@ final List<String> kActionFieldMask = [
 
 final List<String> kActionUserFieldMask = [
   'status',
-  'teacherResponse',
-  'userResponse',
+  'teacher_response',
+  'user_response',
   'evaluation',
 ];
 

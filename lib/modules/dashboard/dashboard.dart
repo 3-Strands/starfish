@@ -40,7 +40,6 @@ class _DashboardState extends State<Dashboard> {
   late PageController _pageController;
 
   late AppBloc bloc;
-  late List<HiveLanguage> _languageList;
   late Box<HiveLanguage> _languageBox;
   late HiveCurrentUser _user;
   late AppLocalizations _appLocalizations;
@@ -104,7 +103,6 @@ class _DashboardState extends State<Dashboard> {
     SyncService().syncAll();
 
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _getAllLanguages();
     _getCurrentUser();
 
     var materialsWidget = MaterialsScreen();
@@ -121,10 +119,6 @@ class _DashboardState extends State<Dashboard> {
     _pageController = PageController(initialPage: _selectedIndex);
 
     super.initState();
-  }
-
-  void _getAllLanguages() {
-    _languageList = _languageBox.values.toList();
   }
 
   void _getCurrentUser() {
@@ -204,12 +198,13 @@ class _DashboardState extends State<Dashboard> {
   }
 
   _selectLanguage(AppBloc bloc) {
-    _getCurrentUser();
-    for (var languageId in _user.languageIds) {
-      _languageList.where((item) => item.id == languageId).forEach((item) {
-        bloc.materialBloc.selectedLanguages.add(item);
-      });
-    }
+    _user.languageIds.forEach((languageId) {
+      HiveLanguage? _langugage = _languageBox.values
+          .firstWhereOrNull((element) => element.id == languageId);
+      if (_langugage != null) {
+        bloc.materialBloc.selectedLanguages.add(_langugage);
+      }
+    });
   }
 
   void onPageChanged(int index) {
@@ -218,7 +213,6 @@ class _DashboardState extends State<Dashboard> {
     if (index != 0) {
       _cleanMaterialFilterValues();
     } else {
-      bloc.materialBloc.selectedLanguages.clear();
       _selectLanguage(bloc);
     }
 
