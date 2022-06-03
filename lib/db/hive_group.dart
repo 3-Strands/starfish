@@ -17,7 +17,7 @@ import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/select_list.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_group.g.dart';

@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/select_list.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 part 'hive_material_type.g.dart';

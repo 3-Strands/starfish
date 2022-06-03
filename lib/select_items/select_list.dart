@@ -2,62 +2,82 @@ import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MultiSelect<T extends Named> extends StatefulWidget {
+abstract class Named {
+  String getName();
+}
+
+abstract class SelectDropDownController<T> with ChangeNotifier {
+  bool get isSelectionComplete;
+  bool get hasSelected;
+  bool isSelected(T item);
+  bool isAllSelected(List<T> items);
+  String? toggleSelected(T item, bool isSelected) {
+    notifyListeners();
+    return null;
+  }
+  void setAllSelected(List<T> items, bool isSelected) {
+    notifyListeners();
+  }
+  String? getSummary();
+}
+
+class SelectList<T extends Named> extends StatefulWidget {
   final String navTitle;
   final bool enableSelectAllOption;
   final SelectDropDownController<T> controller;
+  final List<T> items;
 
-  MultiSelect({
+  SelectList({
     Key? key,
     required this.navTitle,
     required this.controller,
     required this.enableSelectAllOption,
+    required this.items,
   }) : super(key: key);
 
   @override
-  _MultiSelectState createState() => _MultiSelectState();
+  _SelectListState createState() => _SelectListState();
 }
 
-class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
-  // final Key _focusDetectorKey = UniqueKey();
-
-  // final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+class _SelectListState<T extends Named> extends State<SelectList<T>> {
   final _searchTextController = TextEditingController();
 
   bool _isSearching = false;
 
-  late List<T> _list;
-  List<T>? _filteredList;
+  late List<T> _items;
+  List<T>? _filteredItems;
 
-  List<T> get currentList => _filteredList ?? _list;
+  List<T> get currentList => _filteredItems ?? widget.items;
 
   void _rebuild() {
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
   }
 
   @override
   initState() {
     super.initState();
     final controller = widget.controller;
-    _list = controller.items;
+    _items = widget.items;
     // At the beginning, put the selected items on top.
     if (controller.hasSelected) {
       final selected = <T>[];
       final unselected = <T>[];
-      _list.forEach((item) {
+      _items.forEach((item) {
         (controller.isSelected(item) ? selected : unselected).add(item);
       });
-      _list = selected + unselected;
+      _items = selected + unselected;
     }
     _searchTextController.addListener(_onSearchTextChange);
     widget.controller.addListener(_rebuild);
+  }
+
+  @override
+  void didUpdateWidget(SelectList<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _items = widget.items;
   }
 
   @override
@@ -74,10 +94,10 @@ class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
 
     setState(() {
       if (text.isEmpty) {
-        _filteredList = null;
+        _filteredItems = null;
       } else {
         final searchString = text.toLowerCase();
-        _filteredList = widget.controller.items.where(
+        _filteredItems = _items.where(
           (item) => item.getName().toLowerCase().contains(searchString),
         ).toList();
       }
@@ -123,7 +143,7 @@ class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final isAllSelected = widget.controller.isAllSelected();
+    final isAllSelected = widget.controller.isAllSelected(_items);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -154,45 +174,22 @@ class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
                 ),
               ),
               isSelected: isAllSelected,
-              onTap: () => widget.controller.setAllSelected(!isAllSelected)
+              onTap: () => widget.controller.setAllSelected(_items, !isAllSelected),
             ),
-            // child: Card(
-            //   child: InkWell(
-            //     child: Container(
-            //       height: 40,
-            //       margin: EdgeInsets.only(left: 15.w, top: 5.h),
-            //       color: Colors.white,
-            //       child: Row(
-            //         children: [
-            //           Expanded(
-            //             child: Column(
-            //               mainAxisAlignment:
-            //                   MainAxisAlignment.spaceAround,
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: <Widget>[
-                            
-            //               ],
-            //             ),
-            //           ),
-            //           Icon(
-            //             isAllSelected
-            //                 ? Icons.check_box
-            //                 : Icons.check_box_outline_blank,
-            //             color: AppColors.selectedButtonBG,
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //     onTap: () => widget.controller.setAllSelected(!isAllSelected),
-            //   ),
-            // ),
             visible: widget.enableSelectAllOption,
           ),
           SizedBox(
             height: 5.h,
           ),
           Expanded(
-            child: _listBuilder(),
+            child: Scrollbar(
+              thickness: 5.w,
+              isAlwaysShown: false,
+              child: ListView.builder(
+                itemCount: currentList.length,
+                itemBuilder: _listItemBuilder,
+              ),
+            ),
           ),
         ],
       ),
@@ -220,41 +217,28 @@ class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
     );
   }
 
-  Widget _listBuilder() {
-    final list = currentList;
-
-    return Container(
-      child: Scrollbar(
-        thickness: 5.w,
-        isAlwaysShown: false,
-        child: ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            final item = list[index];
-            final isSelected = widget.controller.isSelected(item);
-            return _ListItem(
-              label: Text(
-                item.getName(),
-                maxLines: 2,
-                style: TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontWeight: FontWeight.normal,
-                  fontSize: 17.sp,
-                ),
-              ),
-              isSelected: isSelected,
-              onTap: () {
-                final errorMessage = widget.controller.toggleSelected(item, !isSelected);
-                if (errorMessage != null) {
-                  StarfishSnackbar.showErrorMessage(context, errorMessage);
-                } else if (widget.controller.isSelectionComplete) {
-                  Navigator.of(context).pop();
-                }
-              },
-            );
-          },
+  Widget _listItemBuilder(BuildContext context, int index) {
+    final item = currentList[index];
+    final isSelected = widget.controller.isSelected(item);
+    return _ListItem(
+      label: Text(
+        item.getName(),
+        maxLines: 2,
+        style: TextStyle(
+          fontFamily: 'OpenSans',
+          fontWeight: FontWeight.normal,
+          fontSize: 17.sp,
         ),
       ),
+      isSelected: isSelected,
+      onTap: () {
+        final errorMessage = widget.controller.toggleSelected(item, !isSelected);
+        if (errorMessage != null) {
+          StarfishSnackbar.showErrorMessage(context, errorMessage);
+        } else if (widget.controller.isSelectionComplete) {
+          Navigator.of(context).pop();
+        }
+      },
     );
   }
 }

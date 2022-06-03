@@ -2,37 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/select_items/generic_multi_select_widget.dart';
-
-abstract class Named {
-  String getName();
-}
-
-abstract class SelectDropDownController<T extends Named> with ChangeNotifier {
-  List<T> _items;
-
-  SelectDropDownController({ required List<T> items }) : _items = items;
-
-  bool get isSelectionComplete;
-  bool get hasSelected;
-  bool isSelected(T item);
-  bool isAllSelected();
-  String? toggleSelected(T item, bool isSelected) {
-    notifyListeners();
-    return null;
-  }
-  void setAllSelected(bool isSelected) {
-    notifyListeners();
-  }
-  List<T> get items => _items;
-  set items(List<T> items) {
-    if (_items != items) {
-      _items = items;
-      notifyListeners();
-    }
-  }
-  String? getSummary();
-}
+import 'package:starfish/select_items/select_list.dart';
 
 class MultiSelectDropDownController<T extends Named> extends SelectDropDownController<T> {
   Set<T> _selectedItems;
@@ -42,7 +12,7 @@ class MultiSelectDropDownController<T extends Named> extends SelectDropDownContr
     required List<T> items,
     Set<T>? selectedItems,
     this.maxSelectItemLimit,
-  }) : _selectedItems = selectedItems ?? {}, super(items: items);
+  }) : _selectedItems = selectedItems ?? {}, super();
 
   bool get hasMaxLimit => maxSelectItemLimit != null;
 
@@ -53,7 +23,7 @@ class MultiSelectDropDownController<T extends Named> extends SelectDropDownContr
   bool isSelected(T item) => _selectedItems.contains(item);
 
   @override
-  bool isAllSelected() => _selectedItems.length == items.length;
+  bool isAllSelected(List<T> items) => _selectedItems.length == items.length;
 
   @override
   String? toggleSelected(T item, bool isSelected) {
@@ -68,9 +38,9 @@ class MultiSelectDropDownController<T extends Named> extends SelectDropDownContr
     return super.toggleSelected(item, isSelected);
   }
 
-  void setAllSelected(bool isSelected) {
+  void setAllSelected(List<T> items, bool isSelected) {
     _selectedItems = isSelected ? items.toSet() : Set();
-    super.setAllSelected(isSelected);
+    super.setAllSelected(items, isSelected);
   }
 
   Set<T> get selectedItems => _selectedItems;
@@ -90,7 +60,7 @@ class SingleSelectDropDownController<T extends Named> extends SelectDropDownCont
   T? _selectedItem;
 
   SingleSelectDropDownController({required List<T> items, T? selectedItem})
-    : _selectedItem = selectedItem, super(items: items);
+    : _selectedItem = selectedItem, super();
 
   bool get hasSelected => _selectedItem != null;
   bool get isSelectionComplete => hasSelected;
@@ -99,7 +69,7 @@ class SingleSelectDropDownController<T extends Named> extends SelectDropDownCont
   bool isSelected(T item) => _selectedItem == item;
 
   @override
-  bool isAllSelected() => false;
+  bool isAllSelected(List<T> items) => false;
 
   @override
   String? toggleSelected(T item, bool isSelected) {
@@ -109,7 +79,7 @@ class SingleSelectDropDownController<T extends Named> extends SelectDropDownCont
 
   T? get selectedItem => _selectedItem;
 
-  void setAllSelected(bool isSelected) => throw Exception('Cannot select all in a single select.');
+  void setAllSelected(List<T> items, bool isSelected) => throw Exception('Cannot select all in a single select.');
 
   @override
   String? getSummary() => _selectedItem?.getName();
@@ -179,7 +149,7 @@ class _SelectDropDownState extends State<SelectDropDown> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MultiSelect(
+                builder: (context) => SelectList(
                   navTitle: widget.navTitle,
                   controller: widget.controller,
                   enableSelectAllOption: widget.enableSelectAllOption,

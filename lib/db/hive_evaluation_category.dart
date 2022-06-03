@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_evaluation_value_name.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/select_list.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_evaluation_category.g.dart';
