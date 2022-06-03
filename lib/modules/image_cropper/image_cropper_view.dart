@@ -56,7 +56,8 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
 
   final _cropController = CropController();
   //final _imageDataList = <Uint8List>[];
-  late Uint8List _imageData;
+  Uint8List? _imageData;
+  bool _loadingImage = false;
   /*var _currentImage = 0;
   set currentImage(int value) {
     setState(() {
@@ -73,8 +74,29 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
 
   @override
   void initState() {
-    _imageData = widget.sourceImage.bytes!;
+    final source = widget.sourceImage;
+    if (source.bytes != null) {
+      _imageData = source.bytes!;
+    } else {
+      _load(source);
+    }
     super.initState();
+  }
+
+  Future<void> _load(PlatformFile source) async {
+    //final assetData = await rootBundle.load(assetName);
+    //return assetData.buffer.asUint8List();
+    setState(() {
+      _loadingImage = true;
+    });
+    final buffer = <int>[];
+    await for (final chunk in source.readStream!) {
+      buffer.addAll(chunk);
+    }
+    _imageData = Uint8List.fromList(buffer);
+    setState(() {
+      _loadingImage = false;
+    });
   }
 
   /*Future<void> _loadAllImages() async {
@@ -125,7 +147,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
         height: double.infinity,
         child: Center(
           child: Visibility(
-            visible: !_isCropping,
+            visible: !_loadingImage && !_isCropping,
             child: Column(
               children: [
                 Expanded(
@@ -135,7 +157,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
                       children: [
                         Crop(
                           controller: _cropController,
-                          image: _imageData,
+                          image: _imageData ?? Uint8List(0),
                           onCropped: (croppedData) {
                             _saveCroppedFile(croppedData);
                             setState(() {
