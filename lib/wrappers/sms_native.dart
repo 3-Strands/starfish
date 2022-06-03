@@ -34,7 +34,10 @@ class SMS {
 }
 
 Future<List<InviteContact>> getAllContacts() async {
-  final contactList  = await ContactsService.getContacts();
+  final contactList  = await ContactsService.getContacts(
+    withThumbnails: false,
+    photoHighResolution: false,
+  );
   List<InviteContact> contactsWithNumber = [];
 
   await Future.wait(contactList.map((contact) async {

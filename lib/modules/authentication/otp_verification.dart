@@ -169,45 +169,47 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
-  Container _pinCodeContiner() {
-    return Container(
-      height: 48.h,
-      padding: EdgeInsets.only(left: 15.0.w, right: 15.w),
-      child: PinCodeTextField(
-        appContext: context,
-        pastedTextStyle: TextStyle(
-          color: Colors.green.shade600,
-          fontWeight: FontWeight.bold,
+  Widget _pinCodeContiner() {
+    return Center(
+      child: Container(
+        height: 48.h,
+        padding: EdgeInsets.only(left: 15.0.w, right: 15.w),
+        child: PinCodeTextField(
+          appContext: context,
+          pastedTextStyle: TextStyle(
+            color: Colors.green.shade600,
+            fontWeight: FontWeight.bold,
+          ),
+          length: 6,
+          keyboardType: TextInputType.number,
+          pinTheme: PinTheme(
+            shape: PinCodeFieldShape.box,
+            borderRadius: BorderRadius.circular(5),
+            fieldHeight: 48.h,
+            fieldWidth: 48.w,
+          ),
+          blinkWhenObscuring: true,
+          animationType: AnimationType.fade,
+          cursorColor: Colors.black,
+          boxShadows: [
+            BoxShadow(
+              offset: Offset(0, 1),
+              color: AppColors.txtFieldBackground,
+              blurRadius: 10,
+            )
+          ],
+          onCompleted: (value) {
+            setState(() {
+              _otpEmpty = false;
+            });
+            _smsCode = value;
+          },
+          onChanged: (value) {
+            setState(() {
+              _otpEmpty = true;
+            });
+          },
         ),
-        length: 6,
-        keyboardType: TextInputType.number,
-        pinTheme: PinTheme(
-          shape: PinCodeFieldShape.box,
-          borderRadius: BorderRadius.circular(5),
-          fieldHeight: 48.h,
-          fieldWidth: 48.w,
-        ),
-        blinkWhenObscuring: true,
-        animationType: AnimationType.fade,
-        cursorColor: Colors.black,
-        boxShadows: [
-          BoxShadow(
-            offset: Offset(0, 1),
-            color: AppColors.txtFieldBackground,
-            blurRadius: 10,
-          )
-        ],
-        onCompleted: (value) {
-          setState(() {
-            _otpEmpty = false;
-          });
-          _smsCode = value;
-        },
-        onChanged: (value) {
-          setState(() {
-            _otpEmpty = true;
-          });
-        },
       ),
     );
   }
@@ -272,29 +274,31 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     _getUserInfo(userCredential);
   }
 
-  Container _resendOTPContainer() {
-    return Container(
-      height: 46.h,
-      color: Colors.transparent,
-      child: (_timeout > 0)
-          ? Text(
-              _appLocalizations.waitForSeconds
-                  .insertTemplateValues({'timeout': _timeout}),
-              style: resentOTPTextStyle,
-            )
-          : TextButton(
-              onPressed: () {
-                if (kIsWeb) {
-                  _resentOTPOnWeb();
-                } else {
-                  _resentOTPOnPhone();
-                }
-              },
-              child: Text(
-                _appLocalizations.resentOTP,
+  Widget _resendOTPContainer() {
+    return Center(
+      child: Container(
+        height: 46.h,
+        color: Colors.transparent,
+        child: (_timeout > 0)
+            ? Text(
+                _appLocalizations.waitForSeconds
+                    .insertTemplateValues({'timeout': _timeout}),
                 style: resentOTPTextStyle,
+              )
+            : TextButton(
+                onPressed: () {
+                  if (kIsWeb) {
+                    _resentOTPOnWeb();
+                  } else {
+                    _resentOTPOnPhone();
+                  }
+                },
+                child: Text(
+                  _appLocalizations.resentOTP,
+                  style: resentOTPTextStyle,
+                ),
               ),
-            ),
+      ),
     );
   }
 

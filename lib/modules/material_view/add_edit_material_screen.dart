@@ -38,7 +38,6 @@ import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/wrappers/file_system.dart';
 import 'package:starfish/wrappers/platform.dart';
-import 'package:starfish/wrappers/window.dart';
 
 const List<String> ALLOWED_FILE_TYPES = [
   'doc',
@@ -389,16 +388,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                             StarfishSnackbar.showErrorMessage(
                                 context, _appLocalizations.maxFilesSelected);
                           } else {
-                            FilePickerResult? result =
-                                await FilePicker.platform.pickFiles(
-                              allowMultiple: false,
+                            final result =
+                                await getPickerFileWithCrop(context,
                               type: FileType.custom,
                               allowedExtensions: ALLOWED_FILE_TYPES,
                             );
 
                             if (result != null) {
-                              final files = await processPickerResult(context, result);
-                              setState(() => _selectedFiles.addAll(files));
+                              setState(() => _selectedFiles.add(result));
                             }
                           }
                         },
