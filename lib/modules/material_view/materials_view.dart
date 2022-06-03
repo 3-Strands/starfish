@@ -252,6 +252,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       bloc = Provider.of(context);
       _isInitialized = true;
     }
+    _languageSelectDropDownController.selectedItems =
+        bloc.materialBloc.selectedLanguages.toSet();
 
     return FocusDetector(
       key: _focusDetectorKey,
