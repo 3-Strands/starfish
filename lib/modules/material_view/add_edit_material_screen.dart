@@ -25,7 +25,7 @@ import 'package:starfish/enums/material_editability.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -73,10 +73,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _webLinkController = TextEditingController();
-
-  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
-  late MultiSelectDropDownController<HiveMaterialType> _typeSelectDropDownController;
-  late MultiSelectDropDownController<HiveMaterialTopic> _topicSelectDropDownController;
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
@@ -151,27 +147,6 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _visibleTo = MaterialVisibility.valueOf(widget.material!.visibility!);
       _editableBy = MaterialEditability.valueOf(widget.material!.editability!);
     }
-
-    _languageSelectDropDownController = MultiSelectDropDownController(
-      items: _languageList,
-      selectedItems: _selectedLanguages.toSet(),
-    );
-    _typeSelectDropDownController = MultiSelectDropDownController(
-      items: _typeList,
-      selectedItems: _selectedTypes.toSet(),
-    );
-    _topicSelectDropDownController = MultiSelectDropDownController(
-      items: _topicList,
-      selectedItems: _selectedTopics.toSet(),
-    );
-  }
-
-  @override
-  void dispose() {
-    _languageSelectDropDownController.dispose();
-    _typeSelectDropDownController.dispose();
-    _topicSelectDropDownController.dispose();
-    super.dispose();
   }
 
   void _getAllLanguages() {
@@ -424,13 +399,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: SelectDropDown(
+                    child: MultiSelect(
                       navTitle: _appLocalizations.selectLanugages,
                       placeholder: _appLocalizations.selectLanugages,
-                      controller: _languageSelectDropDownController,
-                      onDoneClicked: () {
+                      items: _languageList,
+                      initialSelection: _selectedLanguages.toSet(),
+                      onFinished: (Set<HiveLanguage> selectedLanguages) {
                         setState(() {
-                          _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
+                          _selectedLanguages = selectedLanguages.toList();
                         });
                       },
                     ),
@@ -445,13 +421,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: SelectDropDown(
+                    child: MultiSelect(
                       navTitle: _appLocalizations.selectType,
                       placeholder: _appLocalizations.selectType,
-                      controller: _typeSelectDropDownController,
-                      onDoneClicked: () {
+                      items: _typeList,
+                      initialSelection: _selectedTypes.toSet(),
+                      onFinished: (Set<HiveMaterialType> selectedTypes) {
                         setState(() {
-                          _selectedTypes = _typeSelectDropDownController.selectedItems.toList();
+                          _selectedTypes = selectedTypes.toList();
                         });
                       },
                     ),
@@ -466,13 +443,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: SelectDropDown(
+                    child: MultiSelect(
                       navTitle: _appLocalizations.selectTopics,
                       placeholder: _appLocalizations.selectTopics,
-                      controller: _topicSelectDropDownController,
-                      onDoneClicked: () {
+                      items: _topicList,
+                      initialSelection: _selectedTopics.toSet(),
+                      onFinished: (Set<HiveMaterialTopic> selectedTopics) {
                         setState(() {
-                          _selectedTopics = _topicSelectDropDownController.selectedItems.toList();
+                          _selectedTopics = selectedTopics.toList();
                         });
                       },
                     ),

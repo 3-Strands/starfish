@@ -5,7 +5,7 @@ import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/single_select.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -31,7 +31,6 @@ class PhoneAuthenticationScreen extends StatefulWidget {
 class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   final _countryCodeController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-  final _selectDropDownController = SingleSelectDropDownController<HiveCountry>(items: []);
 
   final FocusNode _countryCodeFocus = FocusNode();
   final FocusNode _phoneNumberFocus = FocusNode();
@@ -50,12 +49,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
     SyncService obj = SyncService();
     obj.syncAll();
-  }
-
-  @override
-  void dispose() {
-    _selectDropDownController.dispose();
-    super.dispose();
   }
 
   @override
@@ -91,15 +84,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                       if (snapshot.hasData) {
                         snapshot.data!
                             .sort((a, b) => a.name.compareTo(b.name));
-                        _selectDropDownController.items = snapshot.data!;
-                        return SelectDropDown(
+                        return SingleSelect(
                           navTitle:
                               _appLocalizations.selectCountry,
                           placeholder:
                               _appLocalizations.selectCountry,
-                          controller: _selectDropDownController,
-                          onDoneClicked: () {
-                            final diallingCode = _selectDropDownController.selectedItem?.diallingCode;
+                          items: snapshot.data!,
+                          onFinished: (HiveCountry? selectedCountry) {
+                            final diallingCode = selectedCountry?.diallingCode;
                             _countryCodeController
                                 .text = diallingCode == null ? ''
                                   : diallingCode.startsWith("+")

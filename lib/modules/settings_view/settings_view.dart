@@ -15,6 +15,7 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_strings.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_country.dart';
@@ -24,7 +25,6 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -55,8 +55,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final FocusNode _nameFocus = FocusNode();
   final _phoneNumberController = TextEditingController();
   final FocusNode _phoneNumberFocus = FocusNode();
-  late MultiSelectDropDownController<HiveCountry> _countrySelectDropDownController;
-  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
 
   late HiveCurrentUser _user;
 
@@ -98,15 +96,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _getAllLanguages();
     _getGroups();
     _isUserAdminAtleastInOneGroup();
-
-    _countrySelectDropDownController = MultiSelectDropDownController<HiveCountry>(
-      items: [],
-      selectedItems: _selectedCountries.toSet(),
-    );
-    _languageSelectDropDownController = MultiSelectDropDownController<HiveLanguage>(
-      items: [],
-      selectedItems: _selectedLanguages.toSet(),
-    );
   }
 
   _populateAppLanguages(List<LanguageCode> languages) async {
@@ -121,13 +110,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         orElse: () => _languages.first,
       );
     });
-  }
-
-  @override
-  void dispose() {
-    _countrySelectDropDownController.dispose();
-    _languageSelectDropDownController.dispose();
-    super.dispose();
   }
 
   List<DropdownMenuItem<LanguageCode>> _buildDropDownLanguageItems(List<LanguageCode> listLanguage) {
@@ -765,12 +747,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (snapshot.hasData) {
                             snapshot.data!
                                 .sort((a, b) => a.name.compareTo(b.name));
-                            _countrySelectDropDownController.items = snapshot.data!;
-                            return SelectDropDown(
+                            return MultiSelect(
                               navTitle: _appLocalizations.selectCountry,
                               placeholder: _appLocalizations.selectCountry,
-                              controller: _countrySelectDropDownController,
-                              onDoneClicked: () async {
+                              items: snapshot.data!,
+                              initialSelection: _selectedCountries.toSet(),
+                              onFinished: (Set<HiveCountry> selectedItems) async {
                                 bool _isNetworkAvailable =
                                     await GeneralFunctions()
                                         .isNetworkAvailable();
@@ -783,8 +765,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 }
 
                                 setState(() {
-                                  _selectedCountries =
-                                      _countrySelectDropDownController.selectedItems.toList();
+                                  _selectedCountries = selectedItems.toList();
                                   updateCountries();
                                 });
                               },
@@ -816,12 +797,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
-                              _languageSelectDropDownController.items = snapshot.data!;
-                              return SelectDropDown(
+                              return MultiSelect(
                                 navTitle: _appLocalizations.selectLanugages,
                                 placeholder: _appLocalizations.selectLanugages,
-                                controller: _languageSelectDropDownController,
-                                onDoneClicked: () async {
+                                items: snapshot.data!,
+                                initialSelection: _selectedLanguages.toSet(),
+                                onFinished: (Set<HiveLanguage> selectedLanguages) async {
                                   bool _isNetworkAvailable =
                                       await GeneralFunctions()
                                           .isNetworkAvailable();
@@ -834,8 +815,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   }
 
                                   setState(() {
-                                    _selectedLanguages =
-                                        _languageSelectDropDownController.selectedItems.toList();
+                                    _selectedLanguages = selectedLanguages.toList();
                                     updateLanguages(bloc);
                                   });
                                 },

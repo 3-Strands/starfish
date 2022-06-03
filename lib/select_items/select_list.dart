@@ -9,26 +9,23 @@ abstract class Named {
   String getName();
 }
 
-abstract class SelectDropDownController<T> with ChangeNotifier {
+abstract class SelectListController<Item, SelectionModel>
+    extends ValueNotifier<SelectionModel> {
+  SelectListController(SelectionModel value) : super(value);
+
   bool get isSelectionComplete;
   bool get hasSelected;
-  bool isSelected(T item);
-  bool isAllSelected(List<T> items);
-  String? toggleSelected(T item, bool isSelected) {
-    notifyListeners();
-    return null;
-  }
-  void setAllSelected(List<T> items, bool isSelected) {
-    notifyListeners();
-  }
-  String? getSummary();
+  bool isSelected(Item item);
+  bool isAllSelected(List<Item> items);
+  String? toggleSelected(Item item, bool isSelected);
+  void setAllSelected(List<Item> items, bool isSelected);
 }
 
-class SelectList<T extends Named> extends StatefulWidget {
+class SelectList<Item extends Named, SelectionModel> extends StatefulWidget {
   final String navTitle;
   final bool enableSelectAllOption;
-  final SelectDropDownController<T> controller;
-  final List<T> items;
+  final SelectListController<Item, SelectionModel> controller;
+  final List<Item> items;
 
   SelectList({
     Key? key,
@@ -42,15 +39,16 @@ class SelectList<T extends Named> extends StatefulWidget {
   _SelectListState createState() => _SelectListState();
 }
 
-class _SelectListState<T extends Named> extends State<SelectList<T>> {
+class _SelectListState<Item extends Named, SelectionModel>
+    extends State<SelectList<Item, SelectionModel>> {
   final _searchTextController = TextEditingController();
 
   bool _isSearching = false;
 
-  late List<T> _items;
-  List<T>? _filteredItems;
+  late List<Item> _items;
+  List<Item>? _filteredItems;
 
-  List<T> get currentList => _filteredItems ?? widget.items;
+  List<Item> get currentList => _filteredItems ?? widget.items;
 
   void _rebuild() {
     setState(() {});
@@ -59,12 +57,12 @@ class _SelectListState<T extends Named> extends State<SelectList<T>> {
   @override
   initState() {
     super.initState();
-    final controller = widget.controller;
     _items = widget.items;
+    final controller = widget.controller;
     // At the beginning, put the selected items on top.
     if (controller.hasSelected) {
-      final selected = <T>[];
-      final unselected = <T>[];
+      final selected = <Item>[];
+      final unselected = <Item>[];
       _items.forEach((item) {
         (controller.isSelected(item) ? selected : unselected).add(item);
       });
@@ -75,7 +73,7 @@ class _SelectListState<T extends Named> extends State<SelectList<T>> {
   }
 
   @override
-  void didUpdateWidget(SelectList<T> oldWidget) {
+  void didUpdateWidget(SelectList<Item, SelectionModel> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _items = widget.items;
   }

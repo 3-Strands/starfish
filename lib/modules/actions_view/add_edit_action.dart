@@ -22,7 +22,7 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/actions_view/action_type_selector.dart';
 import 'package:starfish/modules/actions_view/select_action.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -53,7 +53,6 @@ class _AddEditActionState extends State<AddEditAction>
   late HiveAction? _actionToBeReused;
 
   final TextEditingController _actionNameController = TextEditingController();
-  late MultiSelectDropDownController<HiveGroup> _selectDropDownController;
   //Action_Type? _selectedActionType = Action_Type.TEXT_INSTRUCTION;
   Action_Type? _selectedActionType;
 
@@ -105,11 +104,6 @@ class _AddEditActionState extends State<AddEditAction>
           : [_groupList[0]];
       _dueDate = widget.action!.dateDue?.toDateTime();
     }
-
-    _selectDropDownController = MultiSelectDropDownController(
-      items: _groupList,
-      selectedItems: _selectedGroups.toSet(),
-    );
     _controller = AnimationController(vsync: this);
     _actionToBeReused = null;
   }
@@ -118,7 +112,6 @@ class _AddEditActionState extends State<AddEditAction>
   void dispose() {
     super.dispose();
     _controller.dispose();
-    _selectDropDownController.dispose();
   }
 
   _selectDate(BuildContext context) async {
@@ -547,15 +540,16 @@ class _AddEditActionState extends State<AddEditAction>
   }
 
   Widget _selectDropDown() {
-    return SelectDropDown(
+    return MultiSelect(
       navTitle: _appLocalizations.assignActionTo,
       placeholder: _appLocalizations.selectOneOrMoreGroups,
-      controller: _selectDropDownController,
+      items: _groupList,
+      initialSelection: _selectedGroups.toSet(),
       enableSelectAllOption: false,
       enabled: !_isEditMode,
-      onDoneClicked: () {
+      onFinished: (Set<HiveGroup> selectedGroups) {
         setState(() {
-          _selectedGroups = List.from(_selectDropDownController.selectedItems);
+          _selectedGroups = selectedGroups.toList();
         });
       },
     );

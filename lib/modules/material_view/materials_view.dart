@@ -30,9 +30,9 @@ import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -58,9 +58,6 @@ class MaterialsScreen extends StatefulWidget {
 class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicList;
-
-  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
-  late MultiSelectDropDownController<HiveMaterialTopic> _topicSelectDropDownController;
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
@@ -99,9 +96,6 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               _scrollController.position.minScrollExtent &&
           !_scrollController.position.outOfRange) {}
     });
-
-    _languageSelectDropDownController = MultiSelectDropDownController(items: _languageList);
-    _topicSelectDropDownController = MultiSelectDropDownController(items: _topicList);
   }
 
   /*@override
@@ -481,21 +475,22 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 */
 
   Widget _buildLanguagesContainer(AppBloc bloc) {
-    return new Container(
+    return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      child: SelectDropDown(
+      child: MultiSelect(
         navTitle: _appLocalizations.selectLanugages,
         placeholder: _appLocalizations.selectLanugages,
-        controller: _languageSelectDropDownController,
-        isMovingNext: () {
+        items: _languageList,
+        initialSelection: bloc.materialBloc.selectedLanguages.toSet(),
+        onMoveNext: () {
           setState(() {
             _isSelectingLanguage = true;
           });
         },
-        onDoneClicked: () {
+        onFinished: (Set<HiveLanguage> selectedLanguages) {
           setState(() {
             _isSelectingLanguage = false;
-            final _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
+            final _selectedLanguages = selectedLanguages.toList();
             bloc.materialBloc.checkAndUpdateUserfollowedLangguages(
                 _selectedLanguages
                     .map((hiveLanguage) => hiveLanguage.id)
@@ -512,15 +507,16 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Container _buildTopicsContainer(AppBloc bloc) {
     return new Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      child: SelectDropDown(
+      child: MultiSelect(
         navTitle: _appLocalizations.selectTopics,
         placeholder: _appLocalizations.selectTopics,
         enableSelectAllOption: true,
-        controller: _topicSelectDropDownController,
-        onDoneClicked: () {
+        items: _topicList,
+        initialSelection: bloc.materialBloc.selectedTopics.toSet(),
+        onFinished: (Set<HiveMaterialTopic> selectedTopics) {
           setState(() {
             bloc.materialBloc.selectedTopics =
-                _topicSelectDropDownController.selectedItems.toList();
+                selectedTopics.toList();
             _firstLoad();
           });
         },

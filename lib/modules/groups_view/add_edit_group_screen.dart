@@ -25,7 +25,7 @@ import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -63,9 +63,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _personNameController = TextEditingController();
-
-  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
-  late MultiSelectDropDownController<HiveEvaluationCategory> _categorySelectDropDownController;
 
   bool _isEditMode = false;
   String _query = '';
@@ -119,23 +116,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               : false)
           .toList();
     }
-
-    _languageSelectDropDownController = MultiSelectDropDownController(
-      items: _languageList,
-      selectedItems: _selectedLanguages.toSet(),
-    );
-    _categorySelectDropDownController = MultiSelectDropDownController(
-      items: _evaluationCategoryList,
-      selectedItems: _selectedEvaluationCategories.toSet(),
-      maxSelectItemLimit: 3,
-    );
-  }
-
-  @override
-  void dispose() {
-    _languageSelectDropDownController.dispose();
-    _categorySelectDropDownController.dispose();
-    super.dispose();
   }
 
   void _getAllLanguages() {
@@ -596,14 +576,15 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: SelectDropDown(
+                    child: MultiSelect(
                       navTitle: _appLocalizations.selectLanugages,
                       placeholder:
                           _appLocalizations.selectLanugages,
-                      controller: _languageSelectDropDownController,
-                      onDoneClicked: () {
+                      items: _languageList,
+                      initialSelection: _selectedLanguages.toSet(),
+                      onFinished: (Set<HiveLanguage> selectedLanguages) {
                         setState(() {
-                          _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
+                          _selectedLanguages = selectedLanguages.toList();
                         });
                       },
                     ),
@@ -618,18 +599,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: SelectDropDown(
-                        navTitle:
-                            _appLocalizations.selectCategories,
-                        placeholder:
-                            _appLocalizations.selectCategories,
-                        controller: _categorySelectDropDownController,
-                        onDoneClicked: () {
-                          setState(() {
-                            _selectedEvaluationCategories = _categorySelectDropDownController.selectedItems.toList();
-                          });
-                        },
-                      ),
+                    child: MultiSelect(
+                      maxSelectItemLimit: 3,
+                      navTitle:
+                          _appLocalizations.selectCategories,
+                      placeholder:
+                          _appLocalizations.selectCategories,
+                      items: _evaluationCategoryList,
+                      initialSelection: _selectedEvaluationCategories.toSet(),
+                      onFinished: (Set<HiveEvaluationCategory> selectedEvaluationCategories) {
+                        setState(() {
+                          _selectedEvaluationCategories = selectedEvaluationCategories.toList();
+                        });
+                      },
+                    ),
                   ),
                   SizedBox(height: 10.h),
                   Text(

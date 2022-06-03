@@ -8,7 +8,7 @@ import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/select_items/select_drop_down.dart';
+import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -30,8 +30,6 @@ class CreateProfileScreen extends StatefulWidget {
 
 class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final _nameController = TextEditingController();
-  final _countrySelectDropDownController = MultiSelectDropDownController<HiveCountry>(items: []);
-  final _languageSelectDropDownController = MultiSelectDropDownController<HiveLanguage>(items: []);
 
   final FocusNode _nameFocus = FocusNode();
 
@@ -46,13 +44,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     super.initState();
 
     _getCurrentUser();
-  }
-
-  @override
-  void dispose() {
-    _countrySelectDropDownController.dispose();
-    _languageSelectDropDownController.dispose();
-    super.dispose();
   }
 
   void _getCurrentUser() {
@@ -192,16 +183,15 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
-                              _countrySelectDropDownController.items = snapshot.data!;
-                              return SelectDropDown(
+                              return MultiSelect(
                                 navTitle:
                                     _appLocalizations.selectCountry,
                                 placeholder:
                                     _appLocalizations.selectCountry,
-                                controller: _countrySelectDropDownController,
-                                onDoneClicked: () {
+                                items: snapshot.data!,
+                                onFinished: (Set<HiveCountry> selectedCountries) {
                                   setState(() {
-                                    _selectedCountries = _countrySelectDropDownController.selectedItems.toList();
+                                    _selectedCountries = selectedCountries.toList();
                                     _updateUserCountries();
                                   });
                                 },
@@ -236,14 +226,13 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
-                              _languageSelectDropDownController.items = snapshot.data!;
-                              return SelectDropDown(
+                              return MultiSelect(
                                 navTitle: _appLocalizations.selectLanugages,
                                 placeholder: _appLocalizations.selectLanugages,
-                                controller: _languageSelectDropDownController,
-                                onDoneClicked: () {
+                                items: snapshot.data!,
+                                onFinished: (Set<HiveLanguage> selectedLanguages) {
                                   setState(() {
-                                    _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
+                                    _selectedLanguages = selectedLanguages.toList();
                                   });
                                 },
                               );
