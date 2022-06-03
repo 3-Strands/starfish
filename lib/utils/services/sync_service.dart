@@ -427,32 +427,25 @@ class SyncService {
         .getAllLanguages()
         .then((ResponseStream<Language> stream) {
       stream.listen((language) {
-        var filterData = languageBox.values
-            .where((element) => element.id == language.id)
-            .toList();
-        if (filterData.length == 0) {
-          HiveLanguage _language =
-              HiveLanguage(id: language.id, name: language.name);
+        HiveLanguage _language =
+            HiveLanguage(id: language.id, name: language.name);
 
-          int _currentIndex = -1;
-          languageBox.values.toList().asMap().forEach((key, hiveLanguage) {
-            if (hiveLanguage.id == language.id) {
-              _currentIndex = key;
-            }
-          });
-
-          if (_currentIndex > -1) {
-            languageBox.put(_currentIndex, _language);
-          } else {
-            languageBox.add(_language);
+        int _currentIndex = -1;
+        languageBox.values.toList().asMap().forEach((key, hiveLanguage) {
+          if (hiveLanguage.id == language.id) {
+            _currentIndex = key;
           }
+        });
+
+        if (_currentIndex > -1) {
+          languageBox.put(_currentIndex, _language);
         } else {
-          //update record
+          languageBox.add(_language);
         }
       }, onError: ((err) {
         handleGrpcError(err);
       }), onDone: () {
-        print('Language Sync Done.');
+        debugPrint('Language Sync Done. ${languageBox.values.length}');
       });
     });
   }
