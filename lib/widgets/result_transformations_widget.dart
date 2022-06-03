@@ -175,25 +175,21 @@ class _ResultTransformationsWidgetState
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles(
-                          allowMultiple: false,
+                        final result =
+                            await getPickerFileWithCrop(context,
                           type: FileType.image,
                           //  allowedExtensions: ['jpg', 'png', 'jpeg'],
                         );
 
-                        if (result != null && result.count > 0) {
-                          final files = await processPickerResult(context, result);
-                          final newFile = files.first;
-
-                          var fileSize = newFile.size;
+                        if (result != null) {
+                          var fileSize = result.size;
                           if (fileSize > 5 * 1024 * 1024) {
                             Fluttertoast.showToast(
                                 msg: AppLocalizations.of(context)!
                                     .imageSizeValidation);
                           } else {
                             setState(() {
-                              _selectedFiles.add(newFile);
+                              _selectedFiles.add(result);
                             });
                             widget.onChange(
                                 _transformationController.text,

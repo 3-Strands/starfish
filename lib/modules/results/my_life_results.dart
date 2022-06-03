@@ -860,26 +860,22 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles(
-                          allowMultiple: false,
+                        final result =
+                            await getPickerFileWithCrop(context,
                           type: FileType.image,
-                          //  allowedExtensions: ['jpg', 'png', 'jpeg'],
                         );
 
-                        if (result != null && result.count > 0) {
-                          final files = await processPickerResult(context, result);
-                          final newFile = files.first;
+                        if (result != null) {
                           // if single selected file is IMAGE, open image in Cropper
 
-                          var fileSize = newFile.size;
+                          var fileSize = result.size;
                           if (fileSize > 5 * 1024 * 1024) {
                             Fluttertoast.showToast(
                                 msg: AppLocalizations.of(context)!
                                     .imageSizeValidation);
                           } else {
                             setState(() {
-                              _selectedFiles.add(newFile);
+                              _selectedFiles.add(result);
                               _saveTransformation(
                                   _transformationController.text,
                                   _selectedFiles,

@@ -274,29 +274,31 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     _getUserInfo(userCredential);
   }
 
-  Container _resendOTPContainer() {
-    return Container(
-      height: 46.h,
-      color: Colors.transparent,
-      child: (_timeout > 0)
-          ? Text(
-              _appLocalizations.waitForSeconds
-                  .insertTemplateValues({'timeout': _timeout}),
-              style: resentOTPTextStyle,
-            )
-          : TextButton(
-              onPressed: () {
-                if (kIsWeb) {
-                  _resentOTPOnWeb();
-                } else {
-                  _resentOTPOnPhone();
-                }
-              },
-              child: Text(
-                _appLocalizations.resentOTP,
+  Widget _resendOTPContainer() {
+    return Center(
+      child: Container(
+        height: 46.h,
+        color: Colors.transparent,
+        child: (_timeout > 0)
+            ? Text(
+                _appLocalizations.waitForSeconds
+                    .insertTemplateValues({'timeout': _timeout}),
                 style: resentOTPTextStyle,
+              )
+            : TextButton(
+                onPressed: () {
+                  if (kIsWeb) {
+                    _resentOTPOnWeb();
+                  } else {
+                    _resentOTPOnPhone();
+                  }
+                },
+                child: Text(
+                  _appLocalizations.resentOTP,
+                  style: resentOTPTextStyle,
+                ),
               ),
-            ),
+      ),
     );
   }
 

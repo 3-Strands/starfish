@@ -12,24 +12,34 @@ String _getMimeType(String file) {
   return index == -1 ? '' : file.substring(index + 1);
 }
 
-Future<List<PlatformFile>> processPickerResult(BuildContext context, FilePickerResult result) async {
-  if (result.count == 1 &&
-    ['jpg', 'jpeg', 'png'].contains(_getMimeType(result.files.first.name))) {
-    final file = await Navigator.push<PlatformFile>(
+Future<PlatformFile?> getPickerFileWithCrop(BuildContext context, {
+  FileType type = FileType.any,
+  List<String>? allowedExtensions,
+}) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    allowMultiple: false,
+    withReadStream: true,
+    type: type,
+    allowedExtensions: allowedExtensions,
+  );
+  PlatformFile? file = result?.files.single;
+  if (file != null && (
+    type == FileType.image ||
+    ['jpg', 'jpeg', 'png'].contains(_getMimeType(file.name))
+  )) {
+    return Navigator.push<PlatformFile>(
       context,
       MaterialPageRoute(
         builder: (context) => ImageCropperScreen(
-          sourceImage: result.files.first,
+          sourceImage: file,
           onDone: (PlatformFile newFile) {
             Navigator.pop(context, newFile);
           },
         ),
       ),
     );
-    return [file!];
-  } else {
-    return result.files;
   }
+  return file;
 }
 
 class ImageCropperScreen extends StatefulWidget {
@@ -74,12 +84,7 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
 
   @override
   void initState() {
-    final source = widget.sourceImage;
-    if (source.bytes != null) {
-      _imageData = source.bytes!;
-    } else {
-      _load(source);
-    }
+    _load(widget.sourceImage);
     super.initState();
   }
 
@@ -119,9 +124,9 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
             '${sourceFileName.split(".").first}_${DateTime.now().millisecondsSinceEpoch}');
 
     final sourceFilePath = Platform.isWeb ? null : widget.sourceImage.path;
-    String _destinationPath = sourceFileName.replaceFirstMapped(
+    final _destinationPath = sourceFilePath?.replaceFirstMapped(
         sourceFileName, (match) => _targetFileName);
-    if (sourceFilePath != null) {
+    if (_destinationPath != null) {
 
       File _targetFile = File(_destinationPath);
       

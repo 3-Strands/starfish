@@ -149,6 +149,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   Future<void> _checkPermissionsAndShowContact() async {
     if (await hasContactAccess(shouldAskIfUnknown: true)) {
+      await _loadContacts();
       _showContactList();
     } else {
       _handleInvalidPermissions();
@@ -227,7 +228,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     );
   }
 
-  void _loadContacts() async {
+  Future<void> _loadContacts() async {
     if (_contactsNotifier.value == null) {
       _contactsNotifier.value = await getAllContacts();
     }
@@ -658,7 +659,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                       child: Container(
                         width: double.infinity,
                         height: 50.h,
-                        child: ElevatedButton(
+                        child: TextButton(
                           onPressed: () {
                             _checkPermissionsAndShowContact();
                           },
