@@ -608,6 +608,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                   if (hiveFile.filepath != null) {
                     openFile(hiveFile.filepath!);
                   } else {
+                    bool _isNetworkAvailable =
+                        await GeneralFunctions().isNetworkAvailable();
+                    if (!_isNetworkAvailable) {
+                      return;
+                    }
                     EasyLoading.show();
                     downloadMaterial(hiveFile).then((value) async {
                       hiveFile.isSynced = true;
