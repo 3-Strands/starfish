@@ -1,14 +1,17 @@
 // ignore: import_of_legacy_library_into_null_safe
 
 import 'package:fbroadcast/fbroadcast.dart';
+import 'package:collection/collection.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:md5_file_checksum/md5_file_checksum.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -59,8 +62,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late List<HiveLanguage> _languageList;
   late List<HiveMaterialTopic> _topicList;
 
-  late MultiSelectDropDownController<HiveLanguage> _languageSelectDropDownController;
-  late MultiSelectDropDownController<HiveMaterialTopic> _topicSelectDropDownController;
+  late MultiSelectDropDownController<HiveLanguage>
+      _languageSelectDropDownController;
+  late MultiSelectDropDownController<HiveMaterialTopic>
+      _topicSelectDropDownController;
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveMaterialTopic> _topicBox;
@@ -100,8 +105,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           !_scrollController.position.outOfRange) {}
     });
 
-    _languageSelectDropDownController = MultiSelectDropDownController(items: _languageList);
-    _topicSelectDropDownController = MultiSelectDropDownController(items: _topicList);
+    _languageSelectDropDownController =
+        MultiSelectDropDownController(items: _languageList);
+    _topicSelectDropDownController =
+        MultiSelectDropDownController(items: _topicList);
   }
 
   /*@override
@@ -497,7 +504,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         onDoneClicked: () {
           setState(() {
             _isSelectingLanguage = false;
-            final _selectedLanguages = _languageSelectDropDownController.selectedItems.toList();
+            final _selectedLanguages =
+                _languageSelectDropDownController.selectedItems.toList();
             bloc.materialBloc.checkAndUpdateUserfollowedLangguages(
                 _selectedLanguages
                     .map((hiveLanguage) => hiveLanguage.id)
@@ -595,10 +603,19 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         widgetsBasic.Column(
           children: [
             InkWell(
-              onTap: () {
+              onTap: () async {
                 if (Platform.isAndroid) {
                   if (hiveFile.filepath != null) {
                     openFile(hiveFile.filepath!);
+                  } else {
+                    EasyLoading.show();
+                    downloadMaterial(hiveFile).then((value) async {
+                      hiveFile.isSynced = true;
+                      await hiveFile.save();
+                    }).whenComplete(() {
+                      EasyLoading.dismiss();
+                      openFile(hiveFile.filepath!);
+                    });
                   }
                 } else if (Platform.isWeb) {
                   triggerDownload(hiveFile);
@@ -606,8 +623,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               },
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.file_present,
+                  Icon(
+                    hiveFile.filepath != null
+                        ? Icons.file_present
+                        : Icons.download,
                     color: Color(0xFF3475F0),
                   ),
                   SizedBox(
