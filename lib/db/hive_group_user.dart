@@ -42,11 +42,14 @@ class HiveGroupUser extends HiveObject {
   bool isUpdated = false;
   @HiveField(5)
   bool isDirty = false;
+  @HiveField(6)
+  String? profile;
 
   HiveGroupUser({
     this.groupId,
     this.userId,
     this.role,
+    this.profile,
     this.isNew = false,
     this.isUpdated = false,
     this.isDirty = false,
@@ -67,6 +70,7 @@ class HiveGroupUser extends HiveObject {
     this.groupId = group.groupId;
     this.userId = group.userId;
     this.role = group.role.value;
+    this.profile = group.profile;
   }
 
   GroupUser toGroupUser() {
@@ -74,6 +78,7 @@ class HiveGroupUser extends HiveObject {
       userId: this.userId,
       groupId: this.groupId,
       role: GroupUser_Role.valueOf(this.role!),
+      profile: this.profile,
     );
   }
 
@@ -158,7 +163,7 @@ class HiveGroupUser extends HiveObject {
 
   String toString() {
     return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
-    user: ${this.user},  
+    profile: ${this.profile}, user: ${this.user},  
     isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDirty: ${this.isDirty}}''';
   }
 }
