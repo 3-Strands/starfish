@@ -26,7 +26,7 @@ class SingleSelectController<T> extends SelectListController<T, T?> {
   void setAllSelected(List<T> items, bool isSelected) => throw Exception('Cannot select all in a single select.');
 }
 
-class SingleSelect<T extends Named> extends StatefulWidget {
+class SingleSelect<T> extends StatefulWidget {
   final String navTitle;
   final String placeholder;
   final bool enabled;
@@ -34,12 +34,14 @@ class SingleSelect<T extends Named> extends StatefulWidget {
   final T? initialSelection;
   final void Function(T? selectedItems)? onFinished;
   final VoidCallback? onMoveNext;
+  final ToDisplay<T> toDisplay;
 
   SingleSelect({
     Key? key,
     required this.navTitle,
     required this.placeholder,
     required this.items,
+    required this.toDisplay,
     this.initialSelection,
     this.enabled = true,
     this.onFinished,
@@ -47,10 +49,10 @@ class SingleSelect<T extends Named> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SingleSelectState createState() => _SingleSelectState();
+  _SingleSelectState<T> createState() => _SingleSelectState<T>();
 }
 
-class _SingleSelectState<T extends Named> extends State<SingleSelect<T>> {
+class _SingleSelectState<T> extends State<SingleSelect<T>> {
   late SingleSelectController<T> _controller;
 
   @override
@@ -67,7 +69,7 @@ class _SingleSelectState<T extends Named> extends State<SingleSelect<T>> {
     super.dispose();
   }
 
-  String? get summary => _controller.value?.getName();
+  String? get summary => _controller.value == null ? null : widget.toDisplay(_controller.value!);
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +82,10 @@ class _SingleSelectState<T extends Named> extends State<SingleSelect<T>> {
       listBuilder: (BuildContext context) {
         return SelectList(
           navTitle: widget.navTitle,
-          controller: _controller,enableSelectAllOption: false,
+          controller: _controller,
+          enableSelectAllOption: false,
           items: widget.items,
+          toDisplay: widget.toDisplay,
         );
       },
     );

@@ -576,12 +576,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect(
+                    child: MultiSelect<HiveLanguage>(
                       navTitle: _appLocalizations.selectLanugages,
                       placeholder:
                           _appLocalizations.selectLanugages,
                       items: _languageList,
                       initialSelection: _selectedLanguages.toSet(),
+                      toDisplay: HiveLanguage.toDisplay,
                       onFinished: (Set<HiveLanguage> selectedLanguages) {
                         setState(() {
                           _selectedLanguages = selectedLanguages.toList();
@@ -599,7 +600,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect(
+                    child: MultiSelect<HiveEvaluationCategory>(
                       maxSelectItemLimit: 3,
                       navTitle:
                           _appLocalizations.selectCategories,
@@ -607,6 +608,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                           _appLocalizations.selectCategories,
                       items: _evaluationCategoryList,
                       initialSelection: _selectedEvaluationCategories.toSet(),
+                      toDisplay: HiveEvaluationCategory.toDisplay,
                       onFinished: (Set<HiveEvaluationCategory> selectedEvaluationCategories) {
                         setState(() {
                           _selectedEvaluationCategories = selectedEvaluationCategories.toList();

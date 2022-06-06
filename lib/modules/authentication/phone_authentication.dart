@@ -90,6 +90,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                           placeholder:
                               _appLocalizations.selectCountry,
                           items: snapshot.data!,
+                          toDisplay: HiveCountry.toDisplay,
                           onFinished: (HiveCountry? selectedCountry) {
                             final diallingCode = selectedCountry?.diallingCode;
                             _countryCodeController

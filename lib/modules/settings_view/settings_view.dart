@@ -747,11 +747,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (snapshot.hasData) {
                             snapshot.data!
                                 .sort((a, b) => a.name.compareTo(b.name));
-                            return MultiSelect(
+                            return MultiSelect<HiveCountry>(
                               navTitle: _appLocalizations.selectCountry,
                               placeholder: _appLocalizations.selectCountry,
                               items: snapshot.data!,
                               initialSelection: _selectedCountries.toSet(),
+                              toDisplay: HiveCountry.toDisplay,
                               onFinished: (Set<HiveCountry> selectedItems) async {
                                 bool _isNetworkAvailable =
                                     await GeneralFunctions()
@@ -797,11 +798,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
-                              return MultiSelect(
+                              return MultiSelect<HiveLanguage>(
                                 navTitle: _appLocalizations.selectLanugages,
                                 placeholder: _appLocalizations.selectLanugages,
                                 items: snapshot.data!,
                                 initialSelection: _selectedLanguages.toSet(),
+                                toDisplay: HiveLanguage.toDisplay,
                                 onFinished: (Set<HiveLanguage> selectedLanguages) async {
                                   bool _isNetworkAvailable =
                                       await GeneralFunctions()

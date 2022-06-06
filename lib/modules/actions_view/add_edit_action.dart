@@ -540,13 +540,14 @@ class _AddEditActionState extends State<AddEditAction>
   }
 
   Widget _selectDropDown() {
-    return MultiSelect(
+    return MultiSelect<HiveGroup>(
       navTitle: _appLocalizations.assignActionTo,
       placeholder: _appLocalizations.selectOneOrMoreGroups,
       items: _groupList,
       initialSelection: _selectedGroups.toSet(),
       enableSelectAllOption: false,
       enabled: !_isEditMode,
+      toDisplay: HiveGroup.toDisplay,
       onFinished: (Set<HiveGroup> selectedGroups) {
         setState(() {
           _selectedGroups = selectedGroups.toList();

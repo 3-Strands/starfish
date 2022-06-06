@@ -183,12 +183,13 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
-                              return MultiSelect(
+                              return MultiSelect<HiveCountry>(
                                 navTitle:
                                     _appLocalizations.selectCountry,
                                 placeholder:
                                     _appLocalizations.selectCountry,
                                 items: snapshot.data!,
+                                toDisplay: HiveCountry.toDisplay,
                                 onFinished: (Set<HiveCountry> selectedCountries) {
                                   setState(() {
                                     _selectedCountries = selectedCountries.toList();
@@ -226,10 +227,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                             if (snapshot.hasData) {
                               snapshot.data!
                                   .sort((a, b) => a.name.compareTo(b.name));
-                              return MultiSelect(
+                              return MultiSelect<HiveLanguage>(
                                 navTitle: _appLocalizations.selectLanugages,
                                 placeholder: _appLocalizations.selectLanugages,
                                 items: snapshot.data!,
+                                toDisplay: HiveLanguage.toDisplay,
                                 onFinished: (Set<HiveLanguage> selectedLanguages) {
                                   setState(() {
                                     _selectedLanguages = selectedLanguages.toList();

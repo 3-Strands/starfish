@@ -5,9 +5,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-abstract class Named {
-  String getName();
-}
+typedef String ToDisplay<T>(T item);
 
 abstract class SelectListController<Item, SelectionModel>
     extends ValueNotifier<SelectionModel> {
@@ -21,11 +19,12 @@ abstract class SelectListController<Item, SelectionModel>
   void setAllSelected(List<Item> items, bool isSelected);
 }
 
-class SelectList<Item extends Named, SelectionModel> extends StatefulWidget {
+class SelectList<Item, SelectionModel> extends StatefulWidget {
   final String navTitle;
   final bool enableSelectAllOption;
   final SelectListController<Item, SelectionModel> controller;
   final List<Item> items;
+  final ToDisplay<Item> toDisplay;
 
   SelectList({
     Key? key,
@@ -33,13 +32,14 @@ class SelectList<Item extends Named, SelectionModel> extends StatefulWidget {
     required this.controller,
     required this.enableSelectAllOption,
     required this.items,
+    required this.toDisplay,
   }) : super(key: key);
 
   @override
-  _SelectListState createState() => _SelectListState();
+  _SelectListState<Item, SelectionModel> createState() => _SelectListState<Item, SelectionModel>();
 }
 
-class _SelectListState<Item extends Named, SelectionModel>
+class _SelectListState<Item, SelectionModel>
     extends State<SelectList<Item, SelectionModel>> {
   final _searchTextController = TextEditingController();
 
@@ -48,26 +48,30 @@ class _SelectListState<Item extends Named, SelectionModel>
   late List<Item> _items;
   List<Item>? _filteredItems;
 
-  List<Item> get currentList => _filteredItems ?? widget.items;
+  List<Item> get currentList => _filteredItems ?? _items;
 
   void _rebuild() {
     setState(() {});
   }
 
-  @override
-  initState() {
-    super.initState();
-    _items = widget.items;
+  List<Item> _sortItemsBySelection(List<Item> items) {
     final controller = widget.controller;
-    // At the beginning, put the selected items on top.
+    // Put the selected items on top.
     if (controller.hasSelected) {
       final selected = <Item>[];
       final unselected = <Item>[];
-      _items.forEach((item) {
+      items.forEach((item) {
         (controller.isSelected(item) ? selected : unselected).add(item);
       });
-      _items = selected + unselected;
+      return selected + unselected;
     }
+    return items;
+  }
+
+  @override
+  initState() {
+    super.initState();
+    _items = _sortItemsBySelection(widget.items);
     _searchTextController.addListener(_onSearchTextChange);
     widget.controller.addListener(_rebuild);
   }
@@ -75,7 +79,9 @@ class _SelectListState<Item extends Named, SelectionModel>
   @override
   void didUpdateWidget(SelectList<Item, SelectionModel> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _items = widget.items;
+    if (oldWidget.items != widget.items) {
+      _items = _sortItemsBySelection(widget.items);
+    }
   }
 
   @override
@@ -96,7 +102,7 @@ class _SelectListState<Item extends Named, SelectionModel>
       } else {
         final searchString = text.toLowerCase();
         _filteredItems = _items.where(
-          (item) => item.getName().toLowerCase().contains(searchString),
+          (item) => widget.toDisplay(item).toLowerCase().contains(searchString),
         ).toList();
       }
     });
@@ -220,7 +226,7 @@ class _SelectListState<Item extends Named, SelectionModel>
     final isSelected = widget.controller.isSelected(item);
     return _ListItem(
       label: Text(
-        item.getName(),
+        widget.toDisplay(item),
         maxLines: 2,
         style: TextStyle(
           fontFamily: 'OpenSans',

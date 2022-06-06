@@ -1,10 +1,9 @@
 import 'package:hive/hive.dart';
-import 'package:starfish/select_items/select_list.dart';
 
 part 'hive_language.g.dart';
 
 @HiveType(typeId: 1)
-class HiveLanguage extends HiveObject implements Named {
+class HiveLanguage extends HiveObject {
   @HiveField(0)
   String id;
 
@@ -23,6 +22,5 @@ class HiveLanguage extends HiveObject implements Named {
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
 
-  @override
-  String getName() => name;
+ static String toDisplay(HiveLanguage item) => item.name;
 }

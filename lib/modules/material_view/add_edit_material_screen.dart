@@ -399,11 +399,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect(
+                    child: MultiSelect<HiveLanguage>(
                       navTitle: _appLocalizations.selectLanugages,
                       placeholder: _appLocalizations.selectLanugages,
                       items: _languageList,
                       initialSelection: _selectedLanguages.toSet(),
+                      toDisplay: HiveLanguage.toDisplay,
                       onFinished: (Set<HiveLanguage> selectedLanguages) {
                         setState(() {
                           _selectedLanguages = selectedLanguages.toList();
@@ -421,11 +422,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect(
+                    child: MultiSelect<HiveMaterialType>(
                       navTitle: _appLocalizations.selectType,
                       placeholder: _appLocalizations.selectType,
                       items: _typeList,
                       initialSelection: _selectedTypes.toSet(),
+                      toDisplay: HiveMaterialType.toDisplay,
                       onFinished: (Set<HiveMaterialType> selectedTypes) {
                         setState(() {
                           _selectedTypes = selectedTypes.toList();
@@ -443,11 +445,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect(
+                    child: MultiSelect<HiveMaterialTopic>(
                       navTitle: _appLocalizations.selectTopics,
                       placeholder: _appLocalizations.selectTopics,
                       items: _topicList,
                       initialSelection: _selectedTopics.toSet(),
+                      toDisplay: HiveMaterialTopic.toDisplay,
                       onFinished: (Set<HiveMaterialTopic> selectedTopics) {
                         setState(() {
                           _selectedTopics = selectedTopics.toList();

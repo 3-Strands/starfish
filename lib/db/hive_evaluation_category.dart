@@ -1,14 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/db/hive_evaluation_value_name.dart';
-import 'package:starfish/db/providers/evaluation_category_provider.dart';
-import 'package:starfish/select_items/select_list.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_evaluation_category.g.dart';
 
 @HiveType(typeId: 14)
-class HiveEvaluationCategory extends HiveObject implements Named {
+class HiveEvaluationCategory extends HiveObject {
   @HiveField(0)
   String? id;
   @HiveField(1)
@@ -29,8 +27,7 @@ class HiveEvaluationCategory extends HiveObject implements Named {
         .toList();
   }
 
-  @override
-  String getName() => name ?? '';
+  static String toDisplay(HiveEvaluationCategory item) => item.name ?? '';
 }
 
 extension HiveEvaluationCategoryExt on HiveEvaluationCategory {

@@ -477,11 +477,12 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Widget _buildLanguagesContainer(AppBloc bloc) {
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      child: MultiSelect(
+      child: MultiSelect<HiveLanguage>(
         navTitle: _appLocalizations.selectLanugages,
         placeholder: _appLocalizations.selectLanugages,
         items: _languageList,
         initialSelection: bloc.materialBloc.selectedLanguages.toSet(),
+        toDisplay: HiveLanguage.toDisplay,
         onMoveNext: () {
           setState(() {
             _isSelectingLanguage = true;
@@ -507,12 +508,13 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   Container _buildTopicsContainer(AppBloc bloc) {
     return new Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-      child: MultiSelect(
+      child: MultiSelect<HiveMaterialTopic>(
         navTitle: _appLocalizations.selectTopics,
         placeholder: _appLocalizations.selectTopics,
         enableSelectAllOption: true,
         items: _topicList,
         initialSelection: bloc.materialBloc.selectedTopics.toSet(),
+        toDisplay: HiveMaterialTopic.toDisplay,
         onFinished: (Set<HiveMaterialTopic> selectedTopics) {
           setState(() {
             bloc.materialBloc.selectedTopics =

@@ -33,6 +33,7 @@ class MultiSelectController<T> extends SelectListController<T, Set<T>> {
     } else {
       newValue.remove(item);
     }
+    value = newValue;
     return null;
   }
 
@@ -41,7 +42,7 @@ class MultiSelectController<T> extends SelectListController<T, Set<T>> {
   }
 }
 
-class MultiSelect<T extends Named> extends StatefulWidget {
+class MultiSelect<T> extends StatefulWidget {
   final String navTitle;
   final String placeholder;
   final int? maxSelectItemLimit;
@@ -51,6 +52,7 @@ class MultiSelect<T extends Named> extends StatefulWidget {
   final List<T> items;
   final void Function(Set<T> selectedItems)? onFinished;
   final VoidCallback? onMoveNext;
+  final ToDisplay<T> toDisplay;
 
   MultiSelect({
     Key? key,
@@ -63,13 +65,14 @@ class MultiSelect<T extends Named> extends StatefulWidget {
     this.enableSelectAllOption = false,
     this.onFinished,
     this.onMoveNext,
+    required this.toDisplay,
   }) : super(key: key);
 
   @override
-  _MultiSelectState createState() => _MultiSelectState();
+  _MultiSelectState<T> createState() => _MultiSelectState<T>();
 }
 
-class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
+class _MultiSelectState<T> extends State<MultiSelect<T>> {
   late MultiSelectController<T> _controller;
 
   @override
@@ -88,7 +91,7 @@ class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
   }
 
   String? get summary => _controller.hasSelected
-    ? _controller.value.map((item) => item.getName()).join(', ')
+    ? _controller.value.map((item) => widget.toDisplay(item)).join(', ')
     : null;
 
   @override
@@ -105,6 +108,7 @@ class _MultiSelectState<T extends Named> extends State<MultiSelect<T>> {
           controller: _controller,
           enableSelectAllOption: widget.enableSelectAllOption,
           items: widget.items,
+          toDisplay: widget.toDisplay,
         );
       },
     );

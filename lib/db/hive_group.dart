@@ -17,13 +17,12 @@ import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/select_items/select_list.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_group.g.dart';
 
 @HiveType(typeId: 12)
-class HiveGroup extends HiveObject implements Named {
+class HiveGroup extends HiveObject {
   @HiveField(0)
   String? id;
   @HiveField(1)
@@ -210,8 +209,7 @@ class HiveGroup extends HiveObject implements Named {
     editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole}, outputMarkers: ${this.outputMarkers} }''';
   }
 
-  @override
-  String getName() => name ?? '';
+  static String toDisplay(HiveGroup item) => item.name ?? '';
 }
 
 extension HiveGroupExt on HiveGroup {
