@@ -482,6 +482,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: MultiSelect<HiveLanguage>(
         navTitle: _appLocalizations.selectLanugages,
         placeholder: _appLocalizations.selectLanugages,
+        multilineSummary: true,
         items: _languageList,
         initialSelection: bloc.materialBloc.selectedLanguages.toSet(),
         toDisplay: HiveLanguage.toDisplay,
@@ -513,6 +514,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: MultiSelect<HiveMaterialTopic>(
         navTitle: _appLocalizations.selectTopics,
         placeholder: _appLocalizations.selectTopics,
+        multilineSummary: true,
         enableSelectAllOption: true,
         items: _topicList,
         initialSelection: bloc.materialBloc.selectedTopics.toSet(),
