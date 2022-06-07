@@ -90,14 +90,8 @@ class GroupBloc extends Object {
   }
 
   Future<void> createUpdateGroupUser(HiveGroupUser groupUser) async {
-    List<HiveGroup> _groups = await repository.dbProvider.getGroups();
-    HiveGroup? _group =
-        _groups.firstWhereOrNull((element) => element.id == groupUser.groupId);
-    if (_group == null) {
-      return;
-    }
     return repository
-        .createUpdateGroupUserInDB(group: _group, groupUser: groupUser)
+        .createUpdateGroupUserInDB(groupUser: groupUser)
         .then((value) => fetchAllGroupsByRole());
   }
 

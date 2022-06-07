@@ -26,6 +26,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
   $async.Future<$4.CreateUpdateGroupUsersResponse> createUpdateGroupUsers($pb.ServerContext ctx, $4.CreateUpdateGroupUsersRequest request);
   $async.Future<$4.CreateUpdateLearnerEvaluationResponse> createUpdateLearnerEvaluations($pb.ServerContext ctx, $4.CreateUpdateLearnerEvaluationRequest request);
   $async.Future<$4.CreateUpdateMaterialsResponse> createUpdateMaterials($pb.ServerContext ctx, $4.CreateUpdateMaterialsRequest request);
+  $async.Future<$4.CreateUpdateOutputResponse> createUpdateOutputs($pb.ServerContext ctx, $4.CreateUpdateOutputRequest request);
   $async.Future<$4.CreateUpdateTeacherResponseResponse> createUpdateTeacherResponses($pb.ServerContext ctx, $4.CreateUpdateTeacherResponseRequest request);
   $async.Future<$4.CreateUpdateTransformationResponse> createUpdateTransformations($pb.ServerContext ctx, $4.CreateUpdateTransformationRequest request);
   $async.Future<$4.CreateUpdateUserResponse> createUpdateUsers($pb.ServerContext ctx, $4.CreateUpdateUserRequest request);
@@ -43,6 +44,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
   $async.Future<$4.Material> listMaterials($pb.ServerContext ctx, $4.ListMaterialsRequest request);
   $async.Future<$4.MaterialTopic> listMaterialTopics($pb.ServerContext ctx, $4.ListMaterialTopicsRequest request);
   $async.Future<$4.MaterialType> listMaterialTypes($pb.ServerContext ctx, $4.ListMaterialTypesRequest request);
+  $async.Future<$4.Output> listOutputs($pb.ServerContext ctx, $4.ListOutputsRequest request);
   $async.Future<$4.TeacherResponse> listTeacherResponses($pb.ServerContext ctx, $4.ListTeacherResponsesRequest request);
   $async.Future<$4.Transformation> listTransformations($pb.ServerContext ctx, $4.ListTransformationsRequest request);
   $async.Future<$4.User> listUsers($pb.ServerContext ctx, $4.ListUsersRequest request);
@@ -60,6 +62,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'CreateUpdateGroupUsers': return $4.CreateUpdateGroupUsersRequest();
       case 'CreateUpdateLearnerEvaluations': return $4.CreateUpdateLearnerEvaluationRequest();
       case 'CreateUpdateMaterials': return $4.CreateUpdateMaterialsRequest();
+      case 'CreateUpdateOutputs': return $4.CreateUpdateOutputRequest();
       case 'CreateUpdateTeacherResponses': return $4.CreateUpdateTeacherResponseRequest();
       case 'CreateUpdateTransformations': return $4.CreateUpdateTransformationRequest();
       case 'CreateUpdateUsers': return $4.CreateUpdateUserRequest();
@@ -77,6 +80,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'ListMaterials': return $4.ListMaterialsRequest();
       case 'ListMaterialTopics': return $4.ListMaterialTopicsRequest();
       case 'ListMaterialTypes': return $4.ListMaterialTypesRequest();
+      case 'ListOutputs': return $4.ListOutputsRequest();
       case 'ListTeacherResponses': return $4.ListTeacherResponsesRequest();
       case 'ListTransformations': return $4.ListTransformationsRequest();
       case 'ListUsers': return $4.ListUsersRequest();
@@ -97,6 +101,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'CreateUpdateGroupUsers': return this.createUpdateGroupUsers(ctx, request as $4.CreateUpdateGroupUsersRequest);
       case 'CreateUpdateLearnerEvaluations': return this.createUpdateLearnerEvaluations(ctx, request as $4.CreateUpdateLearnerEvaluationRequest);
       case 'CreateUpdateMaterials': return this.createUpdateMaterials(ctx, request as $4.CreateUpdateMaterialsRequest);
+      case 'CreateUpdateOutputs': return this.createUpdateOutputs(ctx, request as $4.CreateUpdateOutputRequest);
       case 'CreateUpdateTeacherResponses': return this.createUpdateTeacherResponses(ctx, request as $4.CreateUpdateTeacherResponseRequest);
       case 'CreateUpdateTransformations': return this.createUpdateTransformations(ctx, request as $4.CreateUpdateTransformationRequest);
       case 'CreateUpdateUsers': return this.createUpdateUsers(ctx, request as $4.CreateUpdateUserRequest);
@@ -114,6 +119,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'ListMaterials': return this.listMaterials(ctx, request as $4.ListMaterialsRequest);
       case 'ListMaterialTopics': return this.listMaterialTopics(ctx, request as $4.ListMaterialTopicsRequest);
       case 'ListMaterialTypes': return this.listMaterialTypes(ctx, request as $4.ListMaterialTypesRequest);
+      case 'ListOutputs': return this.listOutputs(ctx, request as $4.ListOutputsRequest);
       case 'ListTeacherResponses': return this.listTeacherResponses(ctx, request as $4.ListTeacherResponsesRequest);
       case 'ListTransformations': return this.listTransformations(ctx, request as $4.ListTransformationsRequest);
       case 'ListUsers': return this.listUsers(ctx, request as $4.ListUsersRequest);
