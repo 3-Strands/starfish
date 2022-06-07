@@ -14,7 +14,8 @@ class MultiSelectController<T> extends SelectListController<T, Set<T>> {
   bool get hasMaxLimit => maxSelectItemLimit != null;
 
   bool get hasSelected => value.isNotEmpty;
-  bool get isSelectionComplete => hasMaxLimit && value.length > maxSelectItemLimit!;
+  bool get isSelectionComplete =>
+      hasMaxLimit && value.length > maxSelectItemLimit!;
 
   @override
   bool isSelected(T item) => value.contains(item);
@@ -49,6 +50,7 @@ class MultiSelect<T> extends StatefulWidget {
   final Set<T>? initialSelection;
   final bool enableSelectAllOption;
   final bool enabled;
+  final bool multilineSummary;
   final List<T> items;
   final void Function(Set<T> selectedItems)? onFinished;
   final VoidCallback? onMoveNext;
@@ -63,6 +65,7 @@ class MultiSelect<T> extends StatefulWidget {
     this.maxSelectItemLimit,
     this.enabled = true,
     this.enableSelectAllOption = false,
+    this.multilineSummary = false,
     this.onFinished,
     this.onMoveNext,
     required this.toDisplay,
@@ -91,13 +94,14 @@ class _MultiSelectState<T> extends State<MultiSelect<T>> {
   }
 
   String? get summary => _controller.hasSelected
-    ? _controller.value.map((item) => widget.toDisplay(item)).join(', ')
-    : null;
+      ? _controller.value.map((item) => widget.toDisplay(item)).join(', ')
+      : null;
 
   @override
   Widget build(BuildContext context) {
     return SelectListButton(
       enabled: widget.enabled,
+      multilineSummary: widget.multilineSummary,
       onFinished: () => widget.onFinished?.call(_controller.value),
       onMoveNext: widget.onMoveNext,
       summary: summary,

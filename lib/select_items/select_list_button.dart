@@ -5,6 +5,7 @@ import 'package:starfish/constants/text_styles.dart';
 
 class SelectListButton extends StatelessWidget {
   final bool enabled;
+  final bool multilineSummary;
   final String? summary;
   final String placeholder;
   final VoidCallback? onMoveNext;
@@ -14,6 +15,7 @@ class SelectListButton extends StatelessWidget {
   const SelectListButton({
     Key? key,
     this.enabled = true,
+    this.multilineSummary = false,
     this.summary,
     required this.placeholder,
     required this.listBuilder,
@@ -24,7 +26,7 @@ class SelectListButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 52.h,
+      constraints: BoxConstraints(minHeight: 52.h),
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.transparent,
@@ -54,12 +56,11 @@ class SelectListButton extends StatelessWidget {
               Expanded(
                 child: Text(
                   summary ?? placeholder,
-                  maxLines: 1,
+                  maxLines: multilineSummary ? null : 1,
                   overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: summary == null
-                      ? formTitleHintStyle
-                      : textFormFieldText,
+                  softWrap: true,
+                  style:
+                      summary == null ? formTitleHintStyle : textFormFieldText,
                 ),
               ),
               Icon(Icons.navigate_next_sharp, color: Colors.grey),
