@@ -49,7 +49,7 @@ class SelectListButton extends StatelessWidget {
           }
         },
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.w),
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,7 +57,7 @@ class SelectListButton extends StatelessWidget {
                 child: Text(
                   summary ?? placeholder,
                   maxLines: multilineSummary ? null : 1,
-                  overflow: TextOverflow.fade,
+                  overflow: multilineSummary ? null : TextOverflow.fade,
                   softWrap: true,
                   style:
                       summary == null ? formTitleHintStyle : textFormFieldText,
