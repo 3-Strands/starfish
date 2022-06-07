@@ -35,6 +35,7 @@ final List<String> kGroupUserFieldMask = [
   'group_id',
   'user_id',
   'role',
+  'profile',
 ];
 
 final List<String> kUserFieldMask = [

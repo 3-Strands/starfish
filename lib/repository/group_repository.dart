@@ -31,8 +31,7 @@ class GroupRepository {
       apiProvider.deleteGroupUsers(request);
 
   Future<void> createUpdateGroupUserInDB({
-    required HiveGroup group,
     required HiveGroupUser groupUser,
   }) =>
-      dbProvider.createUpdateGroupUser(group, groupUser);
+      dbProvider.createUpdateGroupUser(groupUser);
 }

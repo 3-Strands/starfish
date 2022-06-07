@@ -46,8 +46,7 @@ class GroupProvider {
     }
   }
 
-  Future<void> createUpdateGroupUser(
-      HiveGroup group, HiveGroupUser groupUser) async {
+  Future<void> createUpdateGroupUser(HiveGroupUser groupUser) async {
     int _currentIndex = -1;
     _groupUserBox.values.toList().asMap().forEach((key, element) {
       if (element.userId == groupUser.userId &&

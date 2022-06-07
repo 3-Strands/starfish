@@ -142,6 +142,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    StarfishSharedPreference()
+        .getAccessToken()
+        .then((value) => debugPrint("AccessToken: $value"));
     _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       child: Stack(

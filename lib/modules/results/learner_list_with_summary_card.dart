@@ -1,6 +1,8 @@
+import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
@@ -8,6 +10,7 @@ import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 
@@ -25,6 +28,9 @@ class LearnerSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _profileController = TextEditingController();
+    _profileController.text = hiveGroupUser.profile ?? '';
+
     final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Column(
       children: [
@@ -87,9 +93,9 @@ class LearnerSummary extends StatelessWidget {
                       Radius.circular(10),
                     ),
                   ),
-                  child: FocusableTextField(
-                    maxCharacters: 500,
-                    //   controller: _transformationController,
+                  child: TextField(
+                    maxLength: 500,
+                    controller: _profileController,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       // hintText:
@@ -102,16 +108,21 @@ class LearnerSummary extends StatelessWidget {
                     ),
                     maxLines: 3,
                     textInputAction: TextInputAction.done,
-                    onFocusChange: (isFocused) {
+                    onSubmitted: (String value) {
+                      _saveLearnerProfile(hiveGroupUser, value);
+                    },
+                    /*onFocusChange: (isFocused) {
                       if (isFocused) {
                         return;
                       }
+                      _saveLearnerProfile(
+                          hiveGroupUser, _profileController.text.trim());
                     },
-                    onChange: (String value) {
+                    onChanged: (String value) {
                       // userImpactStory = value.trim();
                       // _saveTransformation(userImpactStory, _selectedFiles,
                       //     hiveGroupUser, _currentGroupUserTransformation);
-                    },
+                    },*/
                   ),
                 ),
                 SizedBox(
@@ -311,6 +322,19 @@ class LearnerSummary extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _saveLearnerProfile(HiveGroupUser groupUser, String profile) async {
+    groupUser.profile = profile;
+    groupUser.isUpdated = true;
+    await GroupProvider().createUpdateGroupUser(groupUser);
+
+    // Broadcast to sync learner's profile, as it may a local learner assigned to local group,
+    // sync group and groupmembers
+    FBroadcast.instance().broadcast(
+      SyncService.kUpdateGroup,
+      value: groupUser,
     );
   }
 }
