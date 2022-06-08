@@ -418,7 +418,9 @@
   "imageSizeValidation" : "Image size is larger then 5 MB",
   "dragToSelect": "Drag Right to Select",
   "learnerProfile": "Learner's Profile",
-  "waitForSeconds": "Please wait for {{timeout}} seconds"
+  "waitForSeconds": "Please wait for {{timeout}} seconds",
+  
+  "invalidPhoneNumber": "Invalid phone number"
 
   
 }

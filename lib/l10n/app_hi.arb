@@ -419,5 +419,7 @@
    "imageSizeValidation" : "छवि का आकार 5 एमबी से बड़ा है",
   "dragToSelect": "चयन करने के लिए दाएं खींचें",
   "learnerProfile": "शिक्षार्थी की प्रोफाइल",
-  "waitForSeconds": "कृप्या {{timeout}} सेकंड तक प्रतीक्षा करें"
+  "waitForSeconds": "कृप्या {{timeout}} सेकंड तक प्रतीक्षा करें",
+
+  "invalidPhoneNumber": "अमान्य फोन नंबर"
 }
