@@ -26,6 +26,7 @@ class HiveActionAdapter extends TypeAdapter<HiveAction> {
       materialId: fields[6] as String?,
       question: fields[7] as String?,
       dateDue: fields[8] as HiveDate?,
+      createdDate: fields[13] as HiveDate?,
     )
       ..editHistory = (fields[9] as List?)?.cast<HiveEdit>()
       ..isNew = fields[10] as bool
@@ -36,7 +37,7 @@ class HiveActionAdapter extends TypeAdapter<HiveAction> {
   @override
   void write(BinaryWriter writer, HiveAction obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +63,9 @@ class HiveActionAdapter extends TypeAdapter<HiveAction> {
       ..writeByte(11)
       ..write(obj.isUpdated)
       ..writeByte(12)
-      ..write(obj.isDirty);
+      ..write(obj.isDirty)
+      ..writeByte(13)
+      ..write(obj.createdDate);
   }
 
   @override

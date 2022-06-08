@@ -99,13 +99,23 @@ class _SelectActionsState extends State<SelectActions>
                                       style: TextStyle(
                                           fontSize: 17.sp,
                                           color: Color(0xFF797979))),
-                                  Text(
-                                      _appLocalizations.createdDate +
-                                          ': ' +
-                                          "${_getCreatedDate(action)}",
-                                      style: TextStyle(
-                                          fontSize: 17.sp,
-                                          color: Color(0xFF797979))),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          _appLocalizations.createdDate +
+                                              ': ' +
+                                              "${_getCreatedDate(action)}",
+                                          style: TextStyle(
+                                              fontSize: 17.sp,
+                                              color: Color(0xFF797979))),
+                                      action.isNew
+                                          ? Text(" Not sync",
+                                              style: TextStyle(
+                                                  fontSize: 17.sp,
+                                                  color: Color(0xFF797979)))
+                                          : Container()
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -133,7 +143,12 @@ class _SelectActionsState extends State<SelectActions>
           action.editHistory!.where((element) => element.event == 1).first;
       return DateTimeUtils.formatDate(createdEvent.time!, 'dd-MMM-yyyy');
     } else {
-      return '';
+      if (action.isNew && action.createdDate != null) {
+        String actionCreatedDate =
+            DateTimeUtils.formatHiveDate(action.createdDate!);
+        return actionCreatedDate;
+      }
+      return "";
     }
   }
 
