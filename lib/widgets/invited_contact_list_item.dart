@@ -5,12 +5,18 @@ import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../src/generated/starfish.pb.dart';
+
 class InvitedContactListItem extends StatefulWidget {
   final InviteContact contact;
+  final Function(InviteContact, GroupUser_Role) onRoleChange;
+  final Function(InviteContact) onRemove;
 
   InvitedContactListItem({
     Key? key,
     required this.contact,
+    required this.onRoleChange,
+    required this.onRemove,
   }) : super(key: key);
 
   _InvitedContactListItemState createState() => _InvitedContactListItemState();
@@ -46,7 +52,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                     ),
                   ),
                 ),
-                Text(
+                /*Text(
                   AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
                   style: TextStyle(
                     fontFamily: 'OpenSans',
@@ -54,6 +60,59 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                     color: Color(0xFF3475F0),
                   ),
                   overflow: TextOverflow.ellipsis,
+                ),*/
+                PopupMenuButton(
+                  color: Colors.white,
+                  elevation: 20,
+                  shape: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Container(
+                    child: Text(
+                      AppLocalizations.of(context)!
+                          .userStatusInvited
+                          .toUpperCase(),
+                      style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 19.sp,
+                          color: Color(0xFF3475F0),
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: Text(
+                        AppLocalizations.of(context)!.makeTeacher,
+                        style: TextStyle(
+                            color: Color(0xFF3475F0),
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      value: 0,
+                    ),
+                    PopupMenuItem(
+                      child: Text(
+                        AppLocalizations.of(context)!.makeRemove,
+                        style: TextStyle(
+                            color: Color(0xFF3475F0),
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      value: 1,
+                    ),
+                  ],
+                  onSelected: (int value) {
+                    switch (value) {
+                      case 0:
+                        widget.onRoleChange(
+                            widget.contact, GroupUser_Role.TEACHER);
+                        break;
+                      case 1:
+                        widget.onRemove(widget.contact);
+                        break;
+                    }
+                  },
                 ),
               ],
             ),

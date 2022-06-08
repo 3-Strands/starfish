@@ -578,8 +578,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   Container(
                     child: MultiSelect<HiveLanguage>(
                       navTitle: _appLocalizations.selectLanugages,
-                      placeholder:
-                          _appLocalizations.selectLanugages,
+                      placeholder: _appLocalizations.selectLanugages,
                       items: _languageList,
                       initialSelection: _selectedLanguages.toSet(),
                       toDisplay: HiveLanguage.toDisplay,
@@ -836,7 +835,24 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         .toLowerCase()
         .compareTo((b.displayName ?? '').toLowerCase()));
     for (InviteContact inviteContact in _selectedContacts) {
-      _widgetList.add(InvitedContactListItem(contact: inviteContact));
+      _widgetList.add(InvitedContactListItem(
+        contact: inviteContact,
+        onRoleChange: (InviteContact contact, GroupUser_Role newRole) {
+          setState(() {
+            inviteContact.role = newRole;
+
+            _selectedContacts[_selectedContacts.indexWhere((element) =>
+                element.phoneNumber == contact.phoneNumber &&
+                element.dialCode == contact.dialCode)] = inviteContact;
+          });
+        },
+        onRemove: (InviteContact contact) {
+          setState(() {
+            inviteContact.isSelected = false;
+            _selectedContacts.remove(inviteContact);
+          });
+        },
+      ));
     }
     // Additional vertical spacing
     if (_widgetList.length > 0) {
@@ -974,10 +990,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _widgetList.add(
         UnInvitedGroupMemberListItem(
           groupUser: groupUser,
-          onRemove: (String person) {
-            if (_unInvitedPersonNames.contains(person)) {
+          onRemove: (HiveGroupUser hiveGroupUser) {
+            if (_groupUsers.contains(hiveGroupUser)) {
               setState(() {
-                _unInvitedPersonNames.remove(person);
+                _groupUsers.remove(hiveGroupUser);
               });
             }
           },
