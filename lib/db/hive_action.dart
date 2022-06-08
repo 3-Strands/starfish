@@ -49,18 +49,20 @@ class HiveAction extends HiveObject {
   bool isUpdated = false;
   @HiveField(12)
   bool isDirty = false;
+  @HiveField(13)
+  HiveDate? createdDate;
 
-  HiveAction({
-    this.id,
-    this.type,
-    this.name,
-    this.creatorId,
-    this.groupId,
-    this.instructions,
-    this.materialId,
-    this.question,
-    this.dateDue,
-  });
+  HiveAction(
+      {this.id,
+      this.type,
+      this.name,
+      this.creatorId,
+      this.groupId,
+      this.instructions,
+      this.materialId,
+      this.question,
+      this.dateDue,
+      this.createdDate});
 
   HiveAction.from(Action action) {
     this.id = action.id;
@@ -102,7 +104,7 @@ class HiveAction extends HiveObject {
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
     instructions: ${this.instructions?.toString()}, materialId: ${this.materialId?.toString()}, 
     question: ${this.question}, dateDue: ${this.dateDue}, isIndividualAction: ${this.isIndividualAction}
-    creator: ${this.creator}, group: ${this.group}, actionStatus: ${this.actionStatus}, material: ${this.material} }''';
+    creator: ${this.creator}, group: ${this.group}, actionStatus: ${this.actionStatus}, material: ${this.material}, createdDate: ${this.createdDate} }''';
   }
 }
 
