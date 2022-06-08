@@ -643,6 +643,7 @@ class _AddEditActionState extends State<AddEditAction>
       _hiveAction = HiveAction(
         id: UuidGenerator.uuid(),
       );
+      _hiveAction.createdDate = DateTimeUtils.toHiveDate(DateTime.now());
       _hiveAction.isNew = true;
     }
 
