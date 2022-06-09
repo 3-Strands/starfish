@@ -421,30 +421,24 @@ class SyncService {
 
   Future syncLanguages() async {
     await languageBox.clear();
-    await AppDataRepository()
-        .getAllLanguages()
-        .then((ResponseStream<Language> stream) {
-      stream.listen((language) {
-        HiveLanguage _language =
-            HiveLanguage(id: language.id, name: language.name);
+    ResponseStream<Language> stream =
+        await AppDataRepository().getAllLanguages();
+    return stream.forEach((language) {
+      HiveLanguage _language =
+          HiveLanguage(id: language.id, name: language.name);
 
-        int _currentIndex = -1;
-        languageBox.values.toList().asMap().forEach((key, hiveLanguage) {
-          if (hiveLanguage.id == language.id) {
-            _currentIndex = key;
-          }
-        });
-
-        if (_currentIndex > -1) {
-          languageBox.put(_currentIndex, _language);
-        } else {
-          languageBox.add(_language);
+      int _currentIndex = -1;
+      languageBox.values.toList().asMap().forEach((key, hiveLanguage) {
+        if (hiveLanguage.id == language.id) {
+          _currentIndex = key;
         }
-      }, onError: ((err) {
-        handleGrpcError(err);
-      }), onDone: () {
-        debugPrint('Language Sync Done. ${languageBox.values.length}');
       });
+
+      if (_currentIndex > -1) {
+        languageBox.put(_currentIndex, _language);
+      } else {
+        languageBox.add(_language);
+      }
     });
   }
 
@@ -1078,8 +1072,8 @@ class SyncService {
     print('============= START: Sync Local Files to Remote =============');
     // upload files form `File Box` excluding those which are added from remote i.e. `filepath == null`
     List<HiveFile> _localFiles = fileBox.values
-        .where(
-            (element) => false == element.isSynced && element.isLocallyAvailable)
+        .where((element) =>
+            false == element.isSynced && element.isLocallyAvailable)
         .toList();
 
     if (_localFiles.isEmpty) {
@@ -1088,12 +1082,10 @@ class SyncService {
 
     try {
       await uploadMaterials(_localFiles);
-      await Future.wait(_localFiles.map(
-        (hiveFile) {
-          hiveFile.isSynced = true;
-          return hiveFile.save();
-        }
-      ));
+      await Future.wait(_localFiles.map((hiveFile) {
+        hiveFile.isSynced = true;
+        return hiveFile.save();
+      }));
     } catch (error, stackTrace) {
       Sentry.captureException(error, stackTrace: stackTrace);
       handleError(error);
@@ -1105,20 +1097,20 @@ class SyncService {
     await Future.wait(
       // Filter items not downloaded yet
       fileBox.values
-        .where((hiveFile) =>
-          false == hiveFile.isSynced && !hiveFile.isLocallyAvailable)
-        .map((hiveFile) async {
-          print(
-              '=============DownloadMaterial: ${hiveFile.filename} =============');
-          try {
-            await downloadMaterial(hiveFile);
-            hiveFile.isSynced = true;
-            await hiveFile.save();
-          } catch (error, stackTrace) {
-            Sentry.captureException(error, stackTrace: stackTrace);
-            handleError(error);
-          }
-        }),
+          .where((hiveFile) =>
+              false == hiveFile.isSynced && !hiveFile.isLocallyAvailable)
+          .map((hiveFile) async {
+        print(
+            '=============DownloadMaterial: ${hiveFile.filename} =============');
+        try {
+          await downloadMaterial(hiveFile);
+          hiveFile.isSynced = true;
+          await hiveFile.save();
+        } catch (error, stackTrace) {
+          Sentry.captureException(error, stackTrace: stackTrace);
+          handleError(error);
+        }
+      }),
     );
   }
 
