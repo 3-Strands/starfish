@@ -13,7 +13,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UnInvitedGroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
-  final Function(String) onRemove;
+  final Function(HiveGroupUser) onRemove;
   final Function(HiveUser) onInvite;
 
   UnInvitedGroupMemberListItem({
@@ -121,7 +121,7 @@ class _UnInvitedGroupMemberListItemState
                       /// Mark this groupuser for deletion
                       widget.groupUser.isDirty = true;
                       bloc.groupBloc.createUpdateGroupUser(widget.groupUser);
-                      widget.onRemove(widget.groupUser.name);
+                      widget.onRemove(widget.groupUser);
                     },
                     icon: Icon(
                       Icons.close,

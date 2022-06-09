@@ -148,8 +148,11 @@ class SummaryForAllLearners extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.h),
-            _buildCategoryAverageWidget(groupLearnerEvaluationsByCategory,
-                hiveGroup.learners?.length ?? 1),
+            _buildCategoryAverageWidget(
+                groupLearnerEvaluationsByCategory,
+                (hiveGroup.learners != null && hiveGroup.learners!.length > 0)
+                    ? hiveGroup.learners!.length
+                    : 1),
             SizedBox(height: 20.h),
           ]
         ],

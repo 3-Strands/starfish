@@ -4,6 +4,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+@Deprecated('To be removed')
 class CustomPhoneNumber extends StatefulWidget {
   TextEditingController? controller;
   Function(String)? onChanged;
@@ -47,8 +48,8 @@ class _CustomPhoneNumberState extends State<CustomPhoneNumber> {
         style: textFormFieldText,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
-          labelText:AppLocalizations.of(context)!.phoneNumberHint ,
-          labelStyle:formTitleHintStyle,
+          labelText: AppLocalizations.of(context)!.phoneNumberHint,
+          labelStyle: formTitleHintStyle,
           // hintText: AppLocalizations.of(context)!.phoneNumberHint,
           // hintStyle: formTitleHintStyle,
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),

@@ -1,25 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:starfish/bloc/profile_bloc.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/modules/authentication/otp_verification.dart';
-import 'package:starfish/select_items/single_select.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/constrain_center.dart';
-import 'package:starfish/widgets/custom_phone_number.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
-  const PhoneAuthenticationScreen({Key? key, this.title = ''}) : super(key: key);
+  const PhoneAuthenticationScreen({Key? key, this.title = ''})
+      : super(key: key);
 
   final String title;
 
@@ -29,15 +27,11 @@ class PhoneAuthenticationScreen extends StatefulWidget {
 }
 
 class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
-  final _countryCodeController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
-
-  final FocusNode _countryCodeFocus = FocusNode();
-  final FocusNode _phoneNumberFocus = FocusNode();
-
-  bool _isPhoneNumberEmpty = true;
+  bool _isPhoneNumberValid = false;
 
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  PhoneNumber? _phoneNumber;
 
   late AppLocalizations _appLocalizations;
 
@@ -45,7 +39,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   void initState() {
     super.initState();
 
-    _isPhoneNumberEmpty = false;
+    _isPhoneNumberValid = false;
 
     SyncService obj = SyncService();
     obj.syncAll();
@@ -53,7 +47,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ProfileBloc _profileBloc = new ProfileBloc();
     _appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -76,37 +69,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
                   align: TextAlign.center,
                 ),
                 SizedBox(height: 30.h),
-                ConstrainCenter(
-                  child: StreamBuilder(
-                    stream: _profileBloc.countries,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<HiveCountry>?> snapshot) {
-                      if (snapshot.hasData) {
-                        snapshot.data!
-                            .sort((a, b) => a.name.compareTo(b.name));
-                        return SingleSelect(
-                          navTitle:
-                              _appLocalizations.selectCountry,
-                          placeholder:
-                              _appLocalizations.selectCountry,
-                          items: snapshot.data!,
-                          toDisplay: HiveCountry.toDisplay,
-                          onFinished: (HiveCountry? selectedCountry) {
-                            final diallingCode = selectedCountry?.diallingCode;
-                            _countryCodeController
-                                .text = diallingCode == null ? ''
-                                  : diallingCode.startsWith("+")
-                                    ? diallingCode
-                                    : "+$diallingCode";
-                          },
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(height: 30.h),
                 _phoneNumberContainer(),
               ],
             ),
@@ -120,62 +82,47 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   }
 
   Widget _phoneNumberContainer() {
-    return ConstrainCenter(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 87.w,
-            child: _countryCodeField(),
-          ),
-          SizedBox(width: 15.w),
-          Expanded(
-            flex: 1,
-            child: CustomPhoneNumber(
-              controller: _phoneNumberController,
-              onChanged: (text) {
-                setState(() {
-                  _isPhoneNumberEmpty = text.isEmpty;
-                });
-              },
-            ),
-          )
-        ],
+    OutlineInputBorder _outlineInputBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.r),
+      borderSide: BorderSide(
+        color: Colors.white,
       ),
     );
-  }
-
-  TextFormField _countryCodeField() {
-    return TextFormField(
-      controller: _countryCodeController,
-      focusNode: _countryCodeFocus,
-      onFieldSubmitted: (term) {
-        _fieldFocusChange(context, _countryCodeFocus, _phoneNumberFocus);
-      },
-      keyboardType: TextInputType.phone,
-      style: textFormFieldText,
-      decoration: InputDecoration(
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        labelText: _appLocalizations.countryCodeHint,
-        labelStyle: formTitleHintStyle,
-        alignLabelWithHint: true,
-        // hintText: _appLocalizations.countryCodeHint,
-        // hintStyle: formTitleHintStyle,
-        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.r),
-          borderSide: BorderSide(
-            color: Colors.blue,
-          ),
+    return ConstrainCenter(
+      child: InternationalPhoneNumberInput(
+        selectorConfig: SelectorConfig(
+          selectorType: PhoneInputSelectorType.DIALOG,
+          showFlags: true,
+          useEmoji: true,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.r),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
+        inputDecoration: InputDecoration(
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          labelStyle: formTitleHintStyle,
+          hintText: AppLocalizations.of(context)!.phoneNumberHint,
+          hintStyle: formTitleHintStyle,
+          contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+          border: _outlineInputBorder,
+          enabledBorder: _outlineInputBorder,
+          // errorBorder: _outlineInputBorder,
+          // focusedErrorBorder: _outlineInputBorder,
+          focusedBorder: _outlineInputBorder,
+          filled: true,
+          fillColor: AppColors.txtFieldBackground,
         ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
+        onInputChanged: ((value) {
+          setState(() {
+            _phoneNumber = value;
+          });
+        }),
+        onInputValidated: (isValid) {
+          setState(() {
+            _isPhoneNumberValid = isValid;
+          });
+        },
+        errorMessage: AppLocalizations.of(context)!.invalidPhoneNumber,
+        autoValidateMode: AutovalidateMode.onUserInteraction,
+        formatInput: false,
+        maxLength: 15,
       ),
     );
   }
@@ -216,8 +163,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () async {
-              String validationMsg =
-                  GeneralFunctions.validateMobile(_phoneNumberController.text);
+              String validationMsg = GeneralFunctions.validateMobile(
+                  _phoneNumber?.phoneNumber ?? '');
               if (validationMsg.isNotEmpty) {
                 return StarfishSnackbar.showErrorMessage(
                     context, validationMsg);
@@ -226,15 +173,15 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
                 if (kIsWeb) {
                   _authenticateOnWeb(
-                      _countryCodeController.text, _phoneNumberController.text);
+                      _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
                 } else {
                   _authenticateOnDevice(
-                      _countryCodeController.text, _phoneNumberController.text);
+                      _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
                 }
               }
             },
             style: ElevatedButton.styleFrom(
-              primary: (_isPhoneNumberEmpty)
+              primary: (!_isPhoneNumberValid)
                   ? Colors.grey
                   : AppColors.selectedButtonBG,
               shape: new RoundedRectangleBorder(
@@ -303,11 +250,5 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         .onError((error, stackTrace) => {
               EasyLoading.dismiss(),
             });
-  }
-
-  _fieldFocusChange(
-      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
-    currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus);
   }
 }
