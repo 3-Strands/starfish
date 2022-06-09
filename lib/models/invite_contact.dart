@@ -1,9 +1,9 @@
-import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/src/generated/starfish.pbenum.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 
 class InviteContact {
+  String? id = UuidGenerator.uuid();
   String? displayName;
   String? givenName;
   // Contact contact;
@@ -11,8 +11,6 @@ class InviteContact {
   bool isSelected;
   String phoneNumber;
   String? dialCode;
-
-  String get id => UuidGenerator.uuid();
 
   InviteContact(
       {this.displayName,
@@ -24,7 +22,7 @@ class InviteContact {
 
   HiveUser createHiveUser() {
     return HiveUser(
-      id: id,
+       id: this.id,
       name: this.displayName,
       phone: phoneNumber,
       diallingCode: dialCode,

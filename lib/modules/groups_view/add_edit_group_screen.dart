@@ -138,11 +138,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   void _handleInvalidPermissions() async {
     final snackbar = SnackBar(
-      content: Text(
-        (await canRequestContactAccess())
+      content: Text((await canRequestContactAccess())
           ? _appLocalizations.contactAccessDenied
-          : _appLocalizations.contactDataNotAvailable
-        ),
+          : _appLocalizations.contactDataNotAvailable),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
@@ -151,9 +149,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     recipents.forEach((element) {
       SMS.send(
           message.insertTemplateValues({
-            'receiver_first_name': element.displayName ??
-                element.givenName ??
-                '',
+            'receiver_first_name':
+                element.displayName ?? element.givenName ?? '',
             'sender_name': CurrentUserProvider().user.name!
           }),
           element.phoneNumber);
@@ -176,10 +173,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             if (_query.isNotEmpty) {
               final lowerCaseQuery = _query.toLowerCase();
               _listToShow = snapshot
-                  .where((data) =>
-                      (data.displayName ?? '')
-                          .toLowerCase()
-                          .contains(lowerCaseQuery))
+                  .where((data) => (data.displayName ?? '')
+                      .toLowerCase()
+                      .contains(lowerCaseQuery))
                   .toList();
             } else {
               _listToShow = snapshot;
@@ -342,25 +338,44 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     } else {
       _groupId = UuidGenerator.uuid(); // Assign UUID
     }
-    List<HiveUser> _newUsers = [];
-    _selectedContacts.forEach((element) {
+    //List<HiveUser> _newUsers = [];
+    List<HiveGroupUser> _newGroupUsers = [];
+
+    _selectedContacts.forEach((element) async {
       HiveUser _hiveUser = element.createHiveUser();
       // set dialing code of the current User
       //_hiveUser.diallingCode = CurrentUserProvider().getUserSync().diallingCode;
       _hiveUser.linkGroups = true;
       _hiveUser.isNew = true;
 
-      _newUsers.add(_hiveUser);
+      //_newUsers.add(_hiveUser);
+      await UserRepository().createUpdateUserInDB(_hiveUser);
+
+      _newGroupUsers.add(HiveGroupUser(
+        groupId: _groupId,
+        userId: _hiveUser.id,
+        role: element.role.value,
+        isNew: true,
+      ));
     });
-    _unInvitedPersonNames.forEach((element) {
-      _newUsers.add(HiveUser(
+
+    _unInvitedPersonNames.forEach((element) async {
+      HiveUser _hiveUser = HiveUser(
           id: UuidGenerator.uuid(),
           name: element,
           linkGroups: true,
-          isNew: true));
+          isNew: true);
+      await UserRepository().createUpdateUserInDB(_hiveUser);
+
+      _newGroupUsers.add(HiveGroupUser(
+        groupId: _groupId,
+        userId: _hiveUser.id,
+        role: GroupUser_Role.LEARNER.value,
+        isNew: true,
+      ));
     });
 
-    List<HiveGroupUser> _newGroupUsers = [];
+    // List<HiveGroupUser> _newGroupUsers = [];
     if (false == _isEditMode) {
       // Add self as Admin, without this local added records will not be filtered
       // based on role hence will not be visible
@@ -378,22 +393,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _currentUser.groups.add(_hiveGroupUser);
       CurrentUserRepository().dbProvider.updateUser(_currentUser);
     }
-    await Future.forEach(_newUsers, (HiveUser user) async {
-      try {
-        await UserRepository().createUpdateUserInDB(user);
-
-        _newGroupUsers.add(HiveGroupUser(
-          groupId: _groupId,
-          userId: user.id,
-          role: GroupUser_Role.LEARNER.value,
-          isNew: true,
-        ));
-      } catch (error) {}
-
-      if (_selectedContacts.length > 0) {
-        _sendInviteSMS(_appLocalizations.inviteSMS, _selectedContacts);
-      }
-    });
 
     HiveGroup? _hiveGroup;
 
@@ -446,7 +445,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           _isEditMode
               ? _appLocalizations.updateGroupFailed
               : _appLocalizations.createGroupSuccess);
-    }).whenComplete(() {});
+    }).whenComplete(() {
+      if (_selectedContacts.length > 0) {
+        _sendInviteSMS(_appLocalizations.inviteSMS, _selectedContacts);
+      }
+    });
   }
 
   @override
@@ -601,16 +604,16 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   Container(
                     child: MultiSelect<HiveEvaluationCategory>(
                       maxSelectItemLimit: 3,
-                      navTitle:
-                          _appLocalizations.selectCategories,
-                      placeholder:
-                          _appLocalizations.selectCategories,
+                      navTitle: _appLocalizations.selectCategories,
+                      placeholder: _appLocalizations.selectCategories,
                       items: _evaluationCategoryList,
                       initialSelection: _selectedEvaluationCategories.toSet(),
                       toDisplay: HiveEvaluationCategory.toDisplay,
-                      onFinished: (Set<HiveEvaluationCategory> selectedEvaluationCategories) {
+                      onFinished: (Set<HiveEvaluationCategory>
+                          selectedEvaluationCategories) {
                         setState(() {
-                          _selectedEvaluationCategories = selectedEvaluationCategories.toList();
+                          _selectedEvaluationCategories =
+                              selectedEvaluationCategories.toList();
                         });
                       },
                     ),
@@ -631,33 +634,33 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   ),
                   SizedBox(height: 20.h),
                   Platform.isWeb
-                    ? Text(
-                        _appLocalizations.featureOnlyAvailableOnWeb,
-                        style: warningTextStyle,
-                        textAlign: TextAlign.center,
-                      )
-                    : DottedBorder(
-                      borderType: BorderType.RRect,
-                      radius: Radius.circular(30.r),
-                      color: Color(0xFF3475F0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 50.h,
-                        child: TextButton(
-                          onPressed: () {
-                            _checkPermissionsAndShowContact();
-                          },
-                          child: Text(
-                            _appLocalizations.inviteFromContactsList,
-                            style: TextStyle(
-                              fontFamily: 'OpenSans',
-                              fontSize: 17.sp,
-                              color: Color(0xFF3475F0),
+                      ? Text(
+                          _appLocalizations.featureOnlyAvailableOnWeb,
+                          style: warningTextStyle,
+                          textAlign: TextAlign.center,
+                        )
+                      : DottedBorder(
+                          borderType: BorderType.RRect,
+                          radius: Radius.circular(30.r),
+                          color: Color(0xFF3475F0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 50.h,
+                            child: TextButton(
+                              onPressed: () {
+                                _checkPermissionsAndShowContact();
+                              },
+                              child: Text(
+                                _appLocalizations.inviteFromContactsList,
+                                style: TextStyle(
+                                  fontFamily: 'OpenSans',
+                                  fontSize: 17.sp,
+                                  color: Color(0xFF3475F0),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
                   SizedBox(height: 21.h),
 
                   _invitedGroupMembersContainer(),
