@@ -78,6 +78,8 @@ dependencies:
   fixnum: ^1.0.0
   fluttertoast: ^8.0.9
   intl_phone_number_input: ^0.7.0+2
+  dropdown_button2: ^1.4.0
+
 
 dev_dependencies:
   flutter_test:

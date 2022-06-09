@@ -1,4 +1,5 @@
 // ignore: implementation_imports
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -332,7 +333,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             child: DropdownButtonHideUnderline(
                               child: ButtonTheme(
                                 alignedDropdown: true,
-                                child: DropdownButton<UserGroupRoleFilter>(
+                                child: DropdownButton2<UserGroupRoleFilter>(
+                                  offset: Offset(0, -10),
+                                  dropdownMaxHeight: 350.h,
                                   isExpanded: true,
                                   iconSize: 35,
                                   style: TextStyle(

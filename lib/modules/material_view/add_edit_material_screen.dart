@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:file_picker/file_picker.dart';
@@ -363,8 +364,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                             StarfishSnackbar.showErrorMessage(
                                 context, _appLocalizations.maxFilesSelected);
                           } else {
-                            final result =
-                                await getPickerFileWithCrop(context,
+                            final result = await getPickerFileWithCrop(
+                              context,
                               type: FileType.custom,
                               allowedExtensions: ALLOWED_FILE_TYPES,
                             );
@@ -470,7 +471,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   Container(
                     height: 52.h,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                    //  padding: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
                       color: AppColors.txtFieldBackground,
                       borderRadius: BorderRadius.all(
@@ -478,23 +479,29 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       ),
                     ),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton<MaterialVisibility>(
+                      child: DropdownButton2<MaterialVisibility>(
+                        //   dropdownMaxHeight: 350.h,
+                        isExpanded: true,
+                        offset: Offset(0, -5),
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 19.sp,
                           fontFamily: 'OpenSans',
                         ),
-                        hint: Text(
-                          _choiceSeenByText,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 19.sp,
-                            fontFamily: 'OpenSans',
+                        hint: Padding(
+                          padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                          child: Text(
+                            _choiceSeenByText,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
                           ),
                         ),
-                        onTap: () {
-                          _dismissFieldFocus();
-                        },
+                        // onTap: () {
+                        //   _dismissFieldFocus();
+                        // },
                         onChanged: (MaterialVisibility? value) {
                           setState(() {
                             _visibleTo = value;
@@ -530,7 +537,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   Container(
                     height: 52.h,
                     width: double.infinity,
-                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                    //  padding: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
                       color: AppColors.txtFieldBackground,
                       borderRadius: BorderRadius.all(
@@ -538,23 +545,29 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       ),
                     ),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton<MaterialEditability>(
+                      child: DropdownButton2<MaterialEditability>(
+                        offset: Offset(0, -10),
+                        dropdownMaxHeight: 90.h,
+                        scrollbarAlwaysShow: true,
                         style: TextStyle(
                           color: Color(0xFF434141),
                           fontSize: 19.sp,
                           fontFamily: 'OpenSans',
                         ),
-                        hint: Text(
-                          _choiceEditedByText,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 19.sp,
-                            fontFamily: 'OpenSans',
+                        hint: Padding(
+                          padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                          child: Text(
+                            _choiceEditedByText,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
                           ),
                         ),
-                        onTap: () {
-                          _dismissFieldFocus();
-                        },
+                        // onTap: () {
+                        //   _dismissFieldFocus();
+                        // },
                         onChanged: (MaterialEditability? value) {
                           setState(() {
                             _editableBy = value;
@@ -566,12 +579,16 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                                 (MaterialEditability editability) {
                           return DropdownMenuItem<MaterialEditability>(
                             value: editability,
-                            child: Text(
-                              editability.displayName ?? editability.value.name,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 17.sp,
-                                fontFamily: 'OpenSans',
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                editability.displayName ??
+                                    editability.value.name,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 17.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
                               ),
                             ),
                           );
@@ -654,7 +671,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
     } else if (_selectedLanguages.length == 0) {
       StarfishSnackbar.showErrorMessage(
           context, _appLocalizations.emptySelectLanguage);
-    } else if (Platform.isWeb && _selectedFiles.isNotEmpty && !(await _isConnected())) {
+    } else if (Platform.isWeb &&
+        _selectedFiles.isNotEmpty &&
+        !(await _isConnected())) {
       StarfishSnackbar.showErrorMessage(
           context, _appLocalizations.youAreOfflineCannotUpload);
     } /* else if (_selectedTypes.length == 0) {
@@ -671,7 +690,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
   Future<bool> _isConnected() async {
     final connectivity = await Connectivity().checkConnectivity();
-    return connectivity == ConnectivityResult.wifi || connectivity == ConnectivityResult.mobile;
+    return connectivity == ConnectivityResult.wifi ||
+        connectivity == ConnectivityResult.mobile;
   }
 
   _addUpdateMaterial() async {

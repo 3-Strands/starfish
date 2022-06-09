@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -50,25 +51,24 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
     _questionController.text = widget.question ?? '';
 
     if (widget.selectedActionType != null) {
-      if(widget.selectedActionType == Action_Type.MATERIAL_INSTRUCTION || widget.selectedActionType == Action_Type.MATERIAL_RESPONSE){
-          if(widget.selectedMaterial != null){
-
-          if( widget.selectedMaterial!.isDirty){
-            _selectedActionType  = Action_Type.TEXT_INSTRUCTION;
-          }
-          else{
+      if (widget.selectedActionType == Action_Type.MATERIAL_INSTRUCTION ||
+          widget.selectedActionType == Action_Type.MATERIAL_RESPONSE) {
+        if (widget.selectedMaterial != null) {
+          if (widget.selectedMaterial!.isDirty) {
+            _selectedActionType = Action_Type.TEXT_INSTRUCTION;
+          } else {
             _selectedActionType = widget.selectedActionType!;
           }
         }
-      }else{
-      _selectedActionType = widget.selectedActionType!;
+      } else {
+        _selectedActionType = widget.selectedActionType!;
       }
     }
 
     if (widget.selectedActionType != null) {
-      if(widget.selectedMaterial !=null){
-      if(!widget.selectedMaterial!.isDirty ) 
-      _selectedMaterial = widget.selectedMaterial;
+      if (widget.selectedMaterial != null) {
+        if (!widget.selectedMaterial!.isDirty)
+          _selectedMaterial = widget.selectedMaterial;
       }
     }
   }
@@ -91,8 +91,11 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
             child: DropdownButtonHideUnderline(
               child: ButtonTheme(
                 alignedDropdown: true,
-                child: DropdownButton<Action_Type>(
+                child: DropdownButton2<Action_Type>(
+                  offset: Offset(0, -10),
                   isExpanded: true,
+                  dropdownMaxHeight: 250.h,
+                  scrollbarAlwaysShow: true,
                   iconSize: 35,
                   style: TextStyle(
                     color: Color(0xFF434141),

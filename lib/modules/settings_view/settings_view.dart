@@ -1,5 +1,6 @@
 import 'dart:async';
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -112,13 +113,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  List<DropdownMenuItem<LanguageCode>> _buildDropDownLanguageItems(List<LanguageCode> listLanguage) {
-    return listLanguage.map(
-      (language) => DropdownMenuItem(
-        child: Text(language.name),
-        value: language,
-      ),
-    ).toList();
+  List<DropdownMenuItem<LanguageCode>> _buildDropDownLanguageItems(
+      List<LanguageCode> listLanguage) {
+    return listLanguage
+        .map(
+          (language) => DropdownMenuItem(
+            child: Text(language.name),
+            value: language,
+          ),
+        )
+        .toList();
   }
 
   void _getCurrentUser() {
@@ -701,7 +705,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: DropdownButtonHideUnderline(
                             child: ButtonTheme(
                               alignedDropdown: true,
-                              child: DropdownButton(
+                              child: DropdownButton2(
+                                offset: Offset(0, -10),
+                                dropdownMaxHeight: 200.h,
                                 isExpanded: true,
                                 iconSize: 35,
                                 style: TextStyle(
@@ -753,7 +759,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               items: snapshot.data!,
                               initialSelection: _selectedCountries.toSet(),
                               toDisplay: HiveCountry.toDisplay,
-                              onFinished: (Set<HiveCountry> selectedItems) async {
+                              onFinished:
+                                  (Set<HiveCountry> selectedItems) async {
                                 bool _isNetworkAvailable =
                                     await GeneralFunctions()
                                         .isNetworkAvailable();
@@ -804,7 +811,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 items: snapshot.data!,
                                 initialSelection: _selectedLanguages.toSet(),
                                 toDisplay: HiveLanguage.toDisplay,
-                                onFinished: (Set<HiveLanguage> selectedLanguages) async {
+                                onFinished: (Set<HiveLanguage>
+                                    selectedLanguages) async {
                                   bool _isNetworkAvailable =
                                       await GeneralFunctions()
                                           .isNetworkAvailable();
@@ -817,7 +825,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   }
 
                                   setState(() {
-                                    _selectedLanguages = selectedLanguages.toList();
+                                    _selectedLanguages =
+                                        selectedLanguages.toList();
                                     updateLanguages(bloc);
                                   });
                                 },

@@ -1,5 +1,6 @@
 // ignore: import_of_legacy_library_into_null_safe
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:collection/collection.dart';
 // ignore: implementation_imports
@@ -346,7 +347,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                             child: DropdownButtonHideUnderline(
                               child: ButtonTheme(
                                 alignedDropdown: true,
-                                child: DropdownButton<MaterialFilter>(
+                                child: DropdownButton2<MaterialFilter>(
+                                  dropdownMaxHeight: 350.h,
+                                  offset: Offset(0, -5),
                                   isExpanded: true,
                                   iconSize: 35,
                                   style: TextStyle(
@@ -521,8 +524,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         toDisplay: HiveMaterialTopic.toDisplay,
         onFinished: (Set<HiveMaterialTopic> selectedTopics) {
           setState(() {
-            bloc.materialBloc.selectedTopics =
-                selectedTopics.toList();
+            bloc.materialBloc.selectedTopics = selectedTopics.toList();
             _firstLoad();
           });
         },

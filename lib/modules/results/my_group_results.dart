@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:starfish/bloc/app_bloc.dart';
@@ -78,7 +79,9 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                         child: DropdownButtonHideUnderline(
                           child: ButtonTheme(
                             alignedDropdown: true,
-                            child: DropdownButton<HiveGroup>(
+                            child: DropdownButton2<HiveGroup>(
+                                dropdownMaxHeight: 350.h,
+                                offset: Offset(0, -5),
                                 isExpanded: true,
                                 iconSize: 35,
                                 style: TextStyle(
@@ -132,6 +135,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 //   ),
                                 // );
                                 // }).toList(),
+
                                 ),
                           ),
                         ),
@@ -225,12 +229,11 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                         height: 0.0,
                                       ),
                                 LearnerSummary(
-                                  hiveGroupUser: _hiveGroupUser,
-                                  month: bloc.resultsBloc.hiveDate!,
-                                  leanerEvaluationForGroup : _hiveGroupUser
+                                    hiveGroupUser: _hiveGroupUser,
+                                    month: bloc.resultsBloc.hiveDate!,
+                                    leanerEvaluationForGroup: _hiveGroupUser
                                         .getGroupEvaluationForMonth(
-                                            bloc.resultsBloc.hiveDate!)
-                                ),
+                                            bloc.resultsBloc.hiveDate!)),
                               ],
                             ),
                           );

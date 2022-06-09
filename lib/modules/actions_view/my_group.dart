@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
@@ -105,8 +106,11 @@ class _MyGroupState extends State<MyGroup> {
                   child: DropdownButtonHideUnderline(
                     child: ButtonTheme(
                       alignedDropdown: true,
-                      child: DropdownButton<ActionFilter>(
+                      child: DropdownButton2<ActionFilter>(
                         isExpanded: true,
+                        offset: Offset(0, -10),
+                        dropdownMaxHeight: 350.h,
+
                         // icon: Icon(Icons.arrow_drop_down),
                         iconSize: 35,
                         style: TextStyle(

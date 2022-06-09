@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/src/widgets/basic.dart' as widgets;
 import 'package:file_picker/file_picker.dart';
@@ -235,7 +236,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           child: DropdownButtonHideUnderline(
                             child: ButtonTheme(
                               alignedDropdown: true,
-                              child: DropdownButton<HiveGroupUser>(
+                              child: DropdownButton2<HiveGroupUser>(
+                                offset: Offset(0, -10),
+                                dropdownMaxHeight: 200.h,
+                                scrollbarAlwaysShow: true,
                                 isExpanded: true,
                                 iconSize: 35,
                                 style: TextStyle(
@@ -1474,8 +1478,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
-                        final result =
-                            await getPickerFileWithCrop(context,
+                        final result = await getPickerFileWithCrop(
+                          context,
                           type: FileType.image,
                         );
 
