@@ -31,7 +31,7 @@ class HiveLastSyncDateTime {
 extension HiveLastSyncDateTimeExt on HiveLastSyncDateTime {
   DateTime toDateTime() {
     String dateString =
-        '${this.day}-${this.month}-${this.year} ${this.hour}:${this.minute}';
-    return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy HH:mm');
+        '${this.day}-${this.month}-${this.year} ${this.hour}:${this.minute}:${this.second}';
+    return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy HH:mm:ssZ');
   }
 }

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_last_sync_date_time.dart';
@@ -19,15 +21,13 @@ class SyncTime {
   }
 
   Date? lastSyncDateTime() {
-    return null;
-  //   if (_lastSyncDataTimeBox.values.length == 0) {
-  //     return null;
-  //   }
-  //   HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
+    HiveLastSyncDateTime? _lastSyncDateTime =
+        _lastSyncDataTimeBox.values.firstOrNull;
+    if (_lastSyncDateTime == null) {
+      return null;
+    }
 
-  //   return Date(
-  //       year: _lastSyncDateTime.year,
-  //       month: _lastSyncDateTime.month,
-  //       day: _lastSyncDateTime.day);
-   }
+    DateTime _utc = _lastSyncDateTime.toDateTime().toUtc();
+    return Date(year: _utc.year, month: _utc.month, day: _utc.day);
+  }
 }
