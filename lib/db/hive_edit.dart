@@ -24,3 +24,9 @@ class HiveEdit extends HiveObject {
     return '{ username: ${this.username}, time: ${this.time.toString()}, event: ${this.event} } }';
   }
 }
+
+extension HiveEditExt on HiveEdit {
+  DateTime? get localTime {
+    return time?.toLocal();
+  }
+}
