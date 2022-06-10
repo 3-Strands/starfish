@@ -72,6 +72,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<InviteContact> _selectedContacts = [];
   List<String> _unInvitedPersonNames = [];
 
+  List<HiveGroupUser> _updatedGroupUsers = [];
+
   late Box<HiveLanguage> _languageBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
 
@@ -399,6 +401,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     if (_isEditMode) {
       _hiveGroup = widget.group!;
       //_hiveGroup.users?.addAll(_newGroupUsers);
+      _updatedGroupUsers.forEach((element) {
+        bloc.groupBloc.createUpdateGroupUser(element);
+      });
 
       _hiveGroup.isUpdated = true;
     } else {
@@ -906,7 +911,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               _groupUser.isUpdated = true;
               _groupUser.role = _groupUserRole.value;
 
-              bloc.groupBloc.createUpdateGroupUser(_groupUser);
+              //bloc.groupBloc.createUpdateGroupUser(_groupUser);
+              if (!_updatedGroupUsers.contains(_groupUser)) {
+                _updatedGroupUsers.add(_groupUser);
+              }
               setState(() {});
             }
           },
