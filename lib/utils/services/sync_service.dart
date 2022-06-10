@@ -225,6 +225,7 @@ class SyncService {
     // Synchronize the syncing of users, groups and group users, sequentily to avoid failure.
     await lock.synchronized(() => syncLocalUsersAndGroups());
 
+    await lock.synchronized(() => syncLocalDeletedActionsToRemote());
     await lock.synchronized(() => syncLocalActionsToRemote());
 
     await lock.synchronized(() => syncLocalHiveActionUserToRemote());
@@ -364,7 +365,24 @@ class SyncService {
       });
     }
 
-    await UserRepository().getUsers().then((ResponseStream<User> stream) {
+    ResponseStream<User> stream = await UserRepository().getUsers();
+    return stream.forEach((user) {
+      HiveUser _hiveUser = HiveUser.from(user);
+
+      int _currentIndex = -1;
+      userBox.values.toList().asMap().forEach((key, hiveUser) {
+        if (hiveUser.id == user.id) {
+          _currentIndex = key;
+        }
+      });
+
+      if (_currentIndex > -1) {
+        userBox.put(_currentIndex, _hiveUser);
+      } else {
+        userBox.add(_hiveUser);
+      }
+    });
+    /*.then((ResponseStream<User> stream) {
       stream.listen((user) {
         HiveUser _hiveUser = HiveUser.from(user);
 
@@ -386,13 +404,32 @@ class SyncService {
         print('Users Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncCountries() async {
-    await AppDataRepository()
-        .getAllCountries()
-        .then((ResponseStream<Country> country) {
+    ResponseStream<Country> stream =
+        await AppDataRepository().getAllCountries();
+    return stream.forEach((country) {
+      int _currentIndex = -1;
+      countryBox.values.toList().asMap().forEach((key, hiveCountry) {
+        if (hiveCountry.id == country.id) {
+          _currentIndex = key;
+        }
+      });
+
+      HiveCountry _hiveCountry = HiveCountry(
+          id: country.id,
+          name: country.name,
+          diallingCode: country.diallingCode);
+
+      if (_currentIndex > -1) {
+        countryBox.put(_currentIndex, _hiveCountry);
+      } else {
+        countryBox.add(_hiveCountry);
+      }
+    });
+    /* .then((ResponseStream<Country> country) {
       country.listen((country) {
         int _currentIndex = -1;
         countryBox.values.toList().asMap().forEach((key, hiveCountry) {
@@ -416,7 +453,7 @@ class SyncService {
       }), onDone: () {
         print('Country Sync Done.');
       });
-    });
+    });*/
   }
 
   Future syncLanguages() async {
@@ -475,9 +512,31 @@ class SyncService {
       });
     }
 
-    await MaterialRepository()
-        .getMaterials()
-        .then((ResponseStream<Material> stream) {
+    ResponseStream<Material> stream = await MaterialRepository().getMaterials();
+    return stream.forEach((material) async {
+      HiveMaterial _hiveMaterial = HiveMaterial.from(material);
+
+      if (_hiveMaterial.files != null && _hiveMaterial.files!.length > 0) {
+        addEntityFilesToLocalDB(
+            entityId: _hiveMaterial.id!,
+            entityType: EntityType.MATERIAL,
+            files: _hiveMaterial.files!);
+      }
+
+      int _currentIndex = -1;
+      materialBox.values.toList().asMap().forEach((key, hiveMaterial) {
+        if (hiveMaterial.id == material.id) {
+          _currentIndex = key;
+        }
+      });
+
+      if (_currentIndex > -1) {
+        materialBox.putAt(_currentIndex, _hiveMaterial);
+      } else {
+        materialBox.add(_hiveMaterial);
+      }
+    });
+    /*  .then((ResponseStream<Material> stream) {
       stream.listen((material) async {
         HiveMaterial _hiveMaterial = HiveMaterial.from(material);
 
@@ -506,7 +565,7 @@ class SyncService {
         print('Material Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncMaterialTopics() async {
@@ -519,9 +578,28 @@ class SyncService {
       });
     }
 
-    await MaterialRepository()
-        .getMaterialTopics()
-        .then((ResponseStream<MaterialTopic> stream) {
+    ResponseStream<MaterialTopic> stream =
+        await MaterialRepository().getMaterialTopics();
+    return stream.forEach((topic) {
+      HiveMaterialTopic _materialTopic = HiveMaterialTopic.from(topic);
+
+      int _currentIndex = -1;
+      materialTopicBox.values
+          .toList()
+          .asMap()
+          .forEach((key, hiveMaterialTopic) {
+        if (hiveMaterialTopic.id == topic.id) {
+          _currentIndex = key;
+        }
+      });
+
+      if (_currentIndex > -1) {
+        materialTopicBox.put(_currentIndex, _materialTopic);
+      } else {
+        materialTopicBox.add(_materialTopic);
+      }
+    });
+    /*.then((ResponseStream<MaterialTopic> stream) {
       stream.listen((topic) {
         HiveMaterialTopic _materialTopic = HiveMaterialTopic.from(topic);
 
@@ -546,7 +624,7 @@ class SyncService {
         print('MaterialTopic Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncMaterialTypes() async {
@@ -559,9 +637,25 @@ class SyncService {
       });
     }
 
-    await MaterialRepository()
-        .getMaterialTypes()
-        .then((ResponseStream<MaterialType> topics) {
+    ResponseStream<MaterialType> stream =
+        await MaterialRepository().getMaterialTypes();
+    return stream.forEach((materialType) {
+      HiveMaterialType _materialType = HiveMaterialType.from(materialType);
+
+      int _currentIndex = -1;
+      materialTypeBox.values.toList().asMap().forEach((key, hiveMaterialType) {
+        if (hiveMaterialType.id == materialType.id) {
+          _currentIndex = key;
+        }
+      });
+
+      if (_currentIndex > -1) {
+        materialTypeBox.put(_currentIndex, _materialType);
+      } else {
+        materialTypeBox.add(_materialType);
+      }
+    });
+    /* .then((ResponseStream<MaterialType> topics) {
       topics.listen((materialType) {
         HiveMaterialType _materialType = HiveMaterialType.from(materialType);
 
@@ -586,7 +680,7 @@ class SyncService {
         print('MaterialType Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncLocalDeletedMaterialsToRemote() async {
@@ -620,7 +714,7 @@ class SyncService {
       });
       _controller.close();
 
-      await responseStram.forEach((response) {
+      return await responseStram.forEach((response) {
         print('Delete Material: ${response.status}');
         if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
           // this entry should be removed from the box
@@ -668,7 +762,7 @@ class SyncService {
       });
       _controller.close();
 
-      await responseStram.forEach((response) {
+      return await responseStram.forEach((response) {
         //print('Remote Material: ${response.material}');
         if (response.status == CreateUpdateGroupsResponse_Status.SUCCESS) {
           // update flag(s) isNew and/or isUpdated to false
@@ -695,9 +789,12 @@ class SyncService {
       });
     }
 
-    await GroupRepository()
-        .getGroups()
-        .then((ResponseStream<Group> stream) {
+    ResponseStream<Group> stream = await GroupRepository().getGroups();
+    return stream.forEach((group) {
+      debugPrint('==>>syncGroup: ${group}');
+      GroupRepository().addEditGroup(HiveGroup.from(group));
+    });
+    /*.then((ResponseStream<Group> stream) {
           stream.listen((group) {
             print('==>>syncGroup: ${group}');
             GroupRepository().addEditGroup(HiveGroup.from(group));
@@ -712,7 +809,7 @@ class SyncService {
         .catchError(handleError)
         .whenComplete(() {
           print('==>> END SyncGroup');
-        });
+        });*/
   }
 
   Future syncEvaluationCategories() async {
@@ -725,9 +822,26 @@ class SyncService {
       });
     }
 
-    await GroupRepository()
-        .getEvaluationCategories()
-        .then((ResponseStream<EvaluationCategory> stream) {
+    ResponseStream<EvaluationCategory> stream =
+        await GroupRepository().getEvaluationCategories();
+    return stream.forEach((evaluationCategory) {
+      HiveEvaluationCategory _category =
+          HiveEvaluationCategory.from(evaluationCategory);
+
+      int _currentIndex = -1;
+      evaluationCategoryBox.values.toList().asMap().forEach((key, value) {
+        if (value.id == evaluationCategory.id) {
+          _currentIndex = key;
+        }
+      });
+
+      if (_currentIndex > -1) {
+        evaluationCategoryBox.put(_currentIndex, _category);
+      } else {
+        evaluationCategoryBox.add(_category);
+      }
+    });
+    /*.then((ResponseStream<EvaluationCategory> stream) {
       stream.listen((evaluationCategory) {
         HiveEvaluationCategory _category =
             HiveEvaluationCategory.from(evaluationCategory);
@@ -750,7 +864,7 @@ class SyncService {
         print('EvaluationCategory Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   // Upward Sync Task
@@ -896,10 +1010,7 @@ class SyncService {
         StreamController();
     try {
       ResponseStream<CreateUpdateGroupUsersResponse> responseStream =
-          await GroupRepository()
-              .createUpdateGroupUser(_controller.stream)
-              // ignore: invalid_return_type_for_catch_error
-              .catchError(handleError);
+          await GroupRepository().createUpdateGroupUser(_controller.stream);
       groupUserBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((HiveGroupUser _hiveGroupUser) {
@@ -973,9 +1084,26 @@ class SyncService {
       });
     }
 
-    await ActionRepository()
-        .getActions()
-        .then((ResponseStream<starfish.Action> stream) {
+    ResponseStream<starfish.Action> stream =
+        await ActionRepository().getActions();
+
+    return stream.forEach((action) {
+      HiveAction _hiveAction = HiveAction.from(action);
+
+      int _currentIndex = -1;
+      actionBox.values.toList().asMap().forEach((key, hiveAction) {
+        if (hiveAction.id == action.id) {
+          _currentIndex = key;
+        }
+      });
+
+      if (_currentIndex > -1) {
+        actionBox.put(_currentIndex, _hiveAction);
+      } else {
+        actionBox.add(_hiveAction);
+      }
+    });
+    /*.then((ResponseStream<starfish.Action> stream) {
       stream.listen((action) {
         HiveAction _hiveAction = HiveAction.from(action);
 
@@ -997,13 +1125,38 @@ class SyncService {
         print('Action Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
-  syncLocalActionsToRemote() async {
+  Future syncLocalDeletedActionsToRemote() async {
+    if (actionBox.values.where((element) => element.isDirty).isEmpty) {
+      return;
+    }
+    debugPrint(
+        '============= START: Sync Local Deleted Actions to Remote =============');
+
+    actionBox.values
+        .where((element) => element.isDirty)
+        .forEach((HiveAction _hiveAction) async {
+      if (_hiveAction.isNew) {
+        // this is a local record not yet synced with remote, now marked for deletion
+        ActionRepository().deleteActionInDB(_hiveAction);
+      } else {
+        ResponseStream<DeleteActionResponse> responseStream =
+            await ActionRepository().deleteAction(_hiveAction.toAction());
+        return responseStream.forEach((element) {
+          ActionRepository().deleteActionInDB(_hiveAction);
+        });
+      }
+    });
+    debugPrint(
+        '============= END: Sync Local Deleted Actions to Remote ===============');
+  }
+
+  Future syncLocalActionsToRemote() async {
     if (actionBox.values
         .where((element) =>
-            (element.isNew || element.isUpdated || element.isDirty))
+            ((element.isNew || element.isUpdated) && !element.isDirty))
         .isEmpty) {
       return;
     }
@@ -1015,48 +1168,44 @@ class SyncService {
     try {
       actionBox.values
           .where((element) =>
-              (element.isNew || element.isUpdated || element.isDirty))
-          .forEach((HiveAction _hiveAction) {
-        if (_hiveAction.isNew ||
-            _hiveAction.isUpdated && !_hiveAction.isDirty) {
-          var request = CreateUpdateActionsRequest.create();
-          request.action = _hiveAction.toAction();
+              ((element.isNew || element.isUpdated) && !element.isDirty))
+          .forEach((HiveAction _hiveAction) async {
+        var request = CreateUpdateActionsRequest.create();
+        request.action = _hiveAction.toAction();
 
-          if (_hiveAction.isUpdated) {
-            FieldMask mask = FieldMask(paths: kActionFieldMask);
-            request.updateMask = mask;
-          }
-
-          _controller.add(request);
-
-          ActionRepository()
-              .createUpdateAction(_controller.stream)
-              .then((onValue) {
-            onValue.listen((value) {
-              // update flag(s) isNew and/or isUpdated to false
-              _hiveAction.isNew = false;
-              _hiveAction.isUpdated = false;
-
-              ActionRepository().createUpdateActionInDB(_hiveAction);
-            });
-          }).onError((error, stackTrace) {
-            Sentry.captureException(error, stackTrace: stackTrace);
-            // ignore: invalid_return_type_for_catch_error
-            handleError(error);
-            print('============= Error: ${error.toString()} ===============');
-          }).whenComplete(() {
-            print(
-                '============= END: Sync Local Actions to Remote ===============');
-          });
-        } else if (_hiveAction.isDirty) {
-          ActionRepository().deleteAction(_hiveAction.toAction()).then((value) {
-            _hiveAction.isDirty = false;
-
-            ActionRepository().deleteActionInDB(_hiveAction);
-          }).onError((error, stackTrace) {
-            print('============= Error: ${error.toString()} ===============');
-          }).whenComplete(() {});
+        if (_hiveAction.isUpdated) {
+          FieldMask mask = FieldMask(paths: kActionFieldMask);
+          request.updateMask = mask;
         }
+
+        _controller.add(request);
+
+        ResponseStream<CreateUpdateActionsResponse> responseStream =
+            await ActionRepository().createUpdateAction(_controller.stream);
+        return responseStream.forEach((value) {
+          // update flag(s) isNew and/or isUpdated to false
+          _hiveAction.isNew = false;
+          _hiveAction.isUpdated = false;
+
+          ActionRepository().createUpdateActionInDB(_hiveAction);
+        });
+        /* .then((onValue) {
+          onValue.listen((value) {
+            // update flag(s) isNew and/or isUpdated to false
+            _hiveAction.isNew = false;
+            _hiveAction.isUpdated = false;
+
+            ActionRepository().createUpdateActionInDB(_hiveAction);
+          });
+        }).onError((error, stackTrace) {
+          Sentry.captureException(error, stackTrace: stackTrace);
+          // ignore: invalid_return_type_for_catch_error
+          handleError(error);
+          print('============= Error: ${error.toString()} ===============');
+        }).whenComplete(() {
+          print(
+              '============= END: Sync Local Actions to Remote ===============');
+        });*/
       });
     } catch (error, stackTrace) {
       Sentry.captureException(error, stackTrace: stackTrace);
@@ -1402,9 +1551,15 @@ class SyncService {
       learnerEvaluationBox.values.forEach((element) {});
     }
 
-    await ResultsRepository()
-        .listLearnerEvaluations()
-        .then((ResponseStream<LearnerEvaluation> stream) {
+    ResponseStream<LearnerEvaluation> stream =
+        await ResultsRepository().listLearnerEvaluations();
+    return stream.forEach((learnerEvaluation) {
+      HiveLearnerEvaluation _hiveLearnerEvaluation =
+          HiveLearnerEvaluation.from(learnerEvaluation);
+
+      ResultsProvider().createUpdateLearnerEvaluation(_hiveLearnerEvaluation);
+    });
+    /*.then((ResponseStream<LearnerEvaluation> stream) {
       stream.listen((learnerEvaluation) {
         HiveLearnerEvaluation _hiveLearnerEvaluation =
             HiveLearnerEvaluation.from(learnerEvaluation);
@@ -1416,7 +1571,7 @@ class SyncService {
         print('LearnerEvaluation Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncGroupEvaluations() async {
@@ -1427,9 +1582,15 @@ class SyncService {
       groupEvaluationBox.values.forEach((element) {});
     }
 
-    await ResultsRepository()
-        .listGroupEvaluations()
-        .then((ResponseStream<GroupEvaluation> stream) {
+    ResponseStream<GroupEvaluation> stream =
+        await ResultsRepository().listGroupEvaluations();
+    return stream.forEach((groupEvaluation) {
+      HiveGroupEvaluation _hiveGroupEvaluation =
+          HiveGroupEvaluation.from(groupEvaluation);
+
+      ResultsProvider().createUpdateGroupEvaluation(_hiveGroupEvaluation);
+    });
+    /*.then((ResponseStream<GroupEvaluation> stream) {
       stream.listen((groupEvaluation) {
         HiveGroupEvaluation _hiveGroupEvaluation =
             HiveGroupEvaluation.from(groupEvaluation);
@@ -1441,7 +1602,7 @@ class SyncService {
         print('GroupEvaluations Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncTransformaitons() async {
@@ -1452,9 +1613,23 @@ class SyncService {
       transformationBox.values.forEach((element) {});
     }
 
-    await ResultsRepository()
-        .listTransformations()
-        .then((ResponseStream<Transformation> stream) {
+    ResponseStream<Transformation> stream =
+        await ResultsRepository().listTransformations();
+    return stream.forEach((transformaiton) {
+      HiveTransformation _hiveTransformation =
+          HiveTransformation.from(transformaiton);
+
+      if (_hiveTransformation.files != null &&
+          _hiveTransformation.files!.length > 0) {
+        addEntityFilesToLocalDB(
+            entityId: _hiveTransformation.id!,
+            entityType: EntityType.TRANSFORMATION,
+            files: _hiveTransformation.files!);
+      }
+
+      ResultsProvider().createUpdateTransformation(_hiveTransformation);
+    });
+    /*.then((ResponseStream<Transformation> stream) {
       stream.listen((transformaiton) {
         HiveTransformation _hiveTransformation =
             HiveTransformation.from(transformaiton);
@@ -1474,7 +1649,7 @@ class SyncService {
         print('Transformaitons Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncTeacherResponses() async {
@@ -1485,9 +1660,15 @@ class SyncService {
       teacherResponseBox.values.forEach((element) {});
     }
 
-    await ResultsRepository()
-        .listTeacherResponses()
-        .then((ResponseStream<TeacherResponse> stream) {
+    ResponseStream<TeacherResponse> stream =
+        await ResultsRepository().listTeacherResponses();
+    return stream.forEach((teacherResponse) {
+      HiveTeacherResponse _hiveTeacherResponse =
+          HiveTeacherResponse.from(teacherResponse);
+
+      ResultsProvider().createUpdateTeacherResponse(_hiveTeacherResponse);
+    });
+    /*.then((ResponseStream<TeacherResponse> stream) {
       stream.listen((teacherResponse) {
         HiveTeacherResponse _hiveTeacherResponse =
             HiveTeacherResponse.from(teacherResponse);
@@ -1499,7 +1680,7 @@ class SyncService {
         print('TeacherResponse Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   Future syncOutputs() async {
@@ -1510,9 +1691,13 @@ class SyncService {
       outputBox.values.forEach((element) {});
     }
 
-    await ResultsRepository()
-        .listOutputs()
-        .then((ResponseStream<Output> stream) {
+    ResponseStream<Output> stream = await ResultsRepository().listOutputs();
+    return stream.forEach((output) {
+      HiveOutput _hiveOutput = HiveOutput.from(output);
+
+      OutputProvider().createUpdateOutput(_hiveOutput);
+    });
+    /*.then((ResponseStream<Output> stream) {
       stream.listen((output) {
         HiveOutput _hiveOutput = HiveOutput.from(output);
 
@@ -1523,7 +1708,7 @@ class SyncService {
         print('Output Sync Done.');
       });
       // ignore: invalid_return_type_for_catch_error
-    }).catchError(handleError);
+    }).catchError(handleError);*/
   }
 
   void handleError(error) {
