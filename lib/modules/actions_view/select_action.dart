@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/bloc/action_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/enums/action_type.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -139,9 +140,12 @@ class _SelectActionsState extends State<SelectActions>
 
   String _getCreatedDate(HiveAction action) {
     if (action.editHistory != null && action.editHistory!.length > 0) {
-      var createdEvent =
-          action.editHistory!.where((element) => element.event == 1).first;
-      return DateTimeUtils.formatDate(createdEvent.time!, 'dd-MMM-yyyy');
+      var createdEvent = action.editHistory!
+          .where((element) =>
+              Edit_Event.valueOf(element.event ?? 0) == Edit_Event.CREATE)
+          .first;
+      print(createdEvent.time!.toLocal());
+      return DateTimeUtils.formatDate(createdEvent.localTime!, 'dd-MMM-yyyy');
     } else {
       if (action.isNew && action.createdDate != null) {
         String actionCreatedDate =
