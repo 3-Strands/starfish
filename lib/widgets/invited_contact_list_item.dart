@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/widgets/edit_invite_user_bottomsheet.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -83,7 +84,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                   itemBuilder: (context) => [
                     PopupMenuItem(
                       child: Text(
-                        AppLocalizations.of(context)!.makeTeacher,
+                        AppLocalizations.of(context)!.editInvite,
                         style: TextStyle(
                             color: Color(0xFF3475F0),
                             fontSize: 19.sp,
@@ -105,8 +106,9 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                   onSelected: (int value) {
                     switch (value) {
                       case 0:
-                        widget.onRoleChange(
-                            widget.contact, GroupUser_Role.TEACHER);
+                        _onUserInviteRole(widget.contact);
+                        // widget.onRoleChange(
+                        //     widget.contact, GroupUser_Role.TEACHER);
                         break;
                       case 1:
                         widget.onRemove(widget.contact);
@@ -138,5 +140,25 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
         ),
       ),
     );
+  }
+
+  void _onUserInviteRole(contact) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(34.r),
+          topRight: Radius.circular(34.r),
+        ),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return EditInviteUserBottomSheet(contact!);
+      },
+    ).whenComplete(() {
+      setState(() {});
+    });
   }
 }
