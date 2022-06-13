@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
@@ -21,6 +23,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
@@ -72,6 +75,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   List<InviteContact> _selectedContacts = [];
   List<String> _unInvitedPersonNames = [];
 
+  List<HiveGroupUser> _groupUsers = [];
   List<HiveGroupUser> _updatedGroupUsers = [];
 
   late Box<HiveLanguage> _languageBox;
@@ -104,6 +108,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     if (widget.group != null) {
       _isEditMode = true;
 
+      _groupUsers = List.from(widget.group?.activeUsers
+              ?.where((element) =>
+                  (element.isInvited || element.isActive) &&
+                  element.phone.isNotEmpty)
+              .toList() ??
+          []);
       _titleController.text = widget.group!.name ?? '';
       _descriptionController.text = widget.group!.description ?? '';
 
@@ -772,6 +782,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 margin: EdgeInsets.only(left: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
+                    // Discard any change in local group user roles i.e. HiveGroupUser box
                     // _filteredContactList.clear();
                     // _loadContacts();
                     _query = '';
@@ -875,14 +886,25 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   // Widget for the group members invited with phone numbers
   Widget _invitedGroupMembersContainer() {
-    List<HiveGroupUser>? _groupUsers = widget.group?.activeUsers
-        ?.where((element) =>
-            (element.isInvited || element.isActive) && element.phone.isNotEmpty)
-        .toList();
+    // List<HiveGroupUser> _groupUsers = List.from(widget.group?.activeUsers
+    //         ?.where((element) =>
+    //             (element.isInvited || element.isActive) &&
+    //             element.phone.isNotEmpty)
+    //         .toList() ??
+    //     []);
 
-    if (_groupUsers == null) {
+    if (_groupUsers.isEmpty) {
       return Container();
     }
+
+    _updatedGroupUsers.forEach((element) {
+      if (_groupUsers.contains(element)) {
+        _groupUsers.remove(element);
+        _groupUsers.add(element);
+      } else {
+        _groupUsers.add(element);
+      }
+    });
 
     final List<Widget> _widgetList = [];
 
@@ -908,13 +930,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 },
               );
             } else {
-              _groupUser.isUpdated = true;
-              _groupUser.role = _groupUserRole.value;
+              // _groupUser.isUpdated = true;
+              // _groupUser.role = _groupUserRole.value;
 
               //bloc.groupBloc.createUpdateGroupUser(_groupUser);
-              if (!_updatedGroupUsers.contains(_groupUser)) {
-                _updatedGroupUsers.add(_groupUser);
+              HiveGroupUser _updatedGroupUser = HiveGroupUser(
+                groupId: _groupUser.groupId,
+                userId: _groupUser.userId,
+                role: _groupUserRole.value,
+                isUpdated: true,
+              );
+              if (_updatedGroupUsers.contains(_groupUser)) {
+                _updatedGroupUsers.remove(_updatedGroupUser);
               }
+              _updatedGroupUsers.add(_updatedGroupUser);
               setState(() {});
             }
           },

@@ -110,6 +110,9 @@ class GroupProvider {
   }
 
   Future addGroupUsers(List<HiveGroupUser> groupUsers) async {
-    return _groupUserBox.addAll(groupUsers);
+    groupUsers.forEach((element) async {
+      await createUpdateGroupUser(element);
+    });
+    //return _groupUserBox.addAll(groupUsers);
   }
 }
