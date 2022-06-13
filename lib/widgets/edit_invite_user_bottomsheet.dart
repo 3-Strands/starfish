@@ -175,7 +175,7 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                   child: DropdownButton2<GroupUser_Role>(
                                     onChanged: (value) {},
                                     //   offset: Offset(0, -10),
-                                    dropdownMaxHeight: 70.h,
+                                    dropdownMaxHeight: 150.h,
                                     scrollbarAlwaysShow: true,
                                     isExpanded: true,
                                     iconSize: 35,
@@ -184,19 +184,9 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                       fontSize: 19.sp,
                                       fontFamily: 'OpenSans',
                                     ),
-                                    hint: Text(
-                                      "Text",
-                                      // "${AppLocalizations.of(context)!.learner}: ${widget.hiveGroupUser.name}",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Color(0xFF434141),
-                                        fontSize: 19.sp,
-                                        fontFamily: 'OpenSans',
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+
                                     items: GroupUser_Role.values
+                                        .where((element) => false)
                                         .map<DropdownMenuItem<GroupUser_Role>>(
                                             (value) {
                                       return DropdownMenuItem<GroupUser_Role>(
