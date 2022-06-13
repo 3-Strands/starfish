@@ -421,5 +421,8 @@
   "learnerProfile": "शिक्षार्थी की प्रोफाइल",
   "waitForSeconds": "कृप्या {{timeout}} सेकंड तक प्रतीक्षा करें",
 
-  "invalidPhoneNumber": "अमान्य फोन नंबर"
+  "invalidPhoneNumber": "अमान्य फोन नंबर",
+  "editInvite" : "संपादित करें आमंत्रित करें",
+  "contactNumber": "संपर्क संख्या",
+  "role" : "भूमिका"
 }

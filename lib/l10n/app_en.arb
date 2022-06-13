@@ -420,7 +420,10 @@
   "learnerProfile": "Learner's Profile",
   "waitForSeconds": "Please wait for {{timeout}} seconds",
   
-  "invalidPhoneNumber": "Invalid phone number"
+  "invalidPhoneNumber": "Invalid phone number",
+  "editInvite" : "Edit Invite",
+  "contactNumber": "Contact Number",
+  "role" : "Role"
 
   
 }
