@@ -1014,8 +1014,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
           DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
               requiredDateFormat: "dd-MMM-yyyy"),
           "dd-MMM-yyyy"),
-      firstDate: DateTime(2011),
-      lastDate: DateTime.now(),
+      firstDate: DateTime(DateTime.now().year - 10),
+      lastDate: DateTime(DateTime.now().year + 10),
       hideActions: true,
     );
   }
