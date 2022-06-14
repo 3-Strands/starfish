@@ -888,6 +888,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       SizedBox(height: 50.h),
                       //--> Group admin section
                       _getGroupAdminsSections(),
+                      SizedBox(height: 75.h),
                       //--------------------------
                       // SizedBox(height: 10.h),
                     ],
@@ -903,7 +904,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _footer(),
+      // bottomNavigationBar: _footer(),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: SizedBox(
+        height: 75.h,
+        child: Stack(
+          children: [
+            Positioned(
+              child: new Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      color: AppColors.txtFieldBackground,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: _backButton(),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

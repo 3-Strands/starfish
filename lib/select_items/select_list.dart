@@ -36,7 +36,8 @@ class SelectList<Item, SelectionModel> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SelectListState<Item, SelectionModel> createState() => _SelectListState<Item, SelectionModel>();
+  _SelectListState<Item, SelectionModel> createState() =>
+      _SelectListState<Item, SelectionModel>();
 }
 
 class _SelectListState<Item, SelectionModel>
@@ -101,56 +102,58 @@ class _SelectListState<Item, SelectionModel>
         _filteredItems = null;
       } else {
         final searchString = text.toLowerCase();
-        _filteredItems = _items.where(
-          (item) => widget.toDisplay(item).toLowerCase().contains(searchString),
-        ).toList();
+        _filteredItems = _items
+            .where(
+              (item) =>
+                  widget.toDisplay(item).toLowerCase().contains(searchString),
+            )
+            .toList();
       }
     });
   }
 
   Widget get _appBarTitle => _isSearching
-    ? TextField(
-      controller: _searchTextController,
-      cursorColor: Colors.white,
-      autofocus: true,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 19.sp,
-      ),
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search, color: Colors.white),
-        hintText: AppLocalizations.of(context)!.searchBarHint,
-        hintStyle: TextStyle(color: Colors.white),
-        border: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-      ),
-    )
-    : Text(
-      widget.navTitle,
-      style: TextStyle(color: Colors.white, fontSize: 19.sp),
-    );
+      ? TextField(
+          controller: _searchTextController,
+          cursorColor: Colors.white,
+          autofocus: true,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 19.sp,
+          ),
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.search, color: Colors.white),
+            hintText: AppLocalizations.of(context)!.searchBarHint,
+            hintStyle: TextStyle(color: Colors.white),
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+          ),
+        )
+      : Text(
+          widget.navTitle,
+          style: TextStyle(color: Colors.white, fontSize: 19.sp),
+        );
 
-  Widget get _navigationSearchBar =>
-    IconButton(
-      icon: _isSearching ? const Icon(Icons.close) : const Icon(Icons.search),
-      onPressed: () {
-        setState(() {
-          _isSearching = !_isSearching;
-          if (!_isSearching) {
-            _searchTextController.clear();
-          }
-        });
-      },
-    );
+  Widget get _navigationSearchBar => IconButton(
+        icon: _isSearching ? const Icon(Icons.close) : const Icon(Icons.search),
+        onPressed: () {
+          setState(() {
+            _isSearching = !_isSearching;
+            if (!_isSearching) {
+              _searchTextController.clear();
+            }
+          });
+        },
+      );
 
   @override
   Widget build(BuildContext context) {
     final isAllSelected = widget.controller.isAllSelected(_items);
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      //  resizeToAvoidBottomInset: false,
       // key: _scaffoldKey,
       appBar: AppBar(
         title: _appBarTitle,
@@ -165,61 +168,75 @@ class _SelectListState<Item, SelectionModel>
           child: Icon(Icons.arrow_back_ios_rounded, size: 32.r),
         ),
       ),
-      body: Column(
-        children: [
-          Visibility(
-            child: _ListItem(
-              label: Text(
-                AppLocalizations.of(context)!.selectAll,
-                style: TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 21.5.sp,
+      body: Padding(
+        padding: EdgeInsets.only(bottom: _bottomHeight),
+        child: Column(
+          children: [
+            Visibility(
+              child: _ListItem(
+                label: Text(
+                  AppLocalizations.of(context)!.selectAll,
+                  style: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21.5.sp,
+                  ),
+                ),
+                isSelected: isAllSelected,
+                onTap: () =>
+                    widget.controller.setAllSelected(_items, !isAllSelected),
+              ),
+              visible: widget.enableSelectAllOption,
+            ),
+            SizedBox(
+              height: 5.h,
+            ),
+            Expanded(
+              child: Scrollbar(
+                thickness: 5.w,
+                isAlwaysShown: false,
+                child: ListView.builder(
+                  itemCount: currentList.length,
+                  itemBuilder: _listItemBuilder,
                 ),
               ),
-              isSelected: isAllSelected,
-              onTap: () => widget.controller.setAllSelected(_items, !isAllSelected),
             ),
-            visible: widget.enableSelectAllOption,
-          ),
-          SizedBox(
-            height: 5.h,
-          ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Row(
+        children: [
           Expanded(
-            child: Scrollbar(
-              thickness: 5.w,
-              isAlwaysShown: false,
-              child: ListView.builder(
-                itemCount: currentList.length,
-                itemBuilder: _listItemBuilder,
+            child: Container(
+              height: _bottomHeight,
+              padding:
+                  EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
+              color: AppColors.txtFieldBackground,
+              child: ElevatedButton(
+                child: Text(
+                  AppLocalizations.of(context)!.back,
+                  textAlign: TextAlign.start,
+                  style: buttonTextStyle,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: AppColors.unselectedButtonBG,
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(20.0),
+                  ),
+                ),
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        height: 75.h,
-        padding: EdgeInsets.symmetric(vertical: 18.75.h, horizontal: 30.w),
-        color: AppColors.txtFieldBackground,
-        child: ElevatedButton(
-          child: Text(
-            AppLocalizations.of(context)!.back,
-            textAlign: TextAlign.start,
-            style: buttonTextStyle,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            primary: AppColors.unselectedButtonBG,
-            shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(20.0),
-            ),
-          ),
-        ),
-      ),
     );
   }
+
+  double get _bottomHeight => 75.h;
 
   Widget _listItemBuilder(BuildContext context, int index) {
     final item = currentList[index];
@@ -236,7 +253,8 @@ class _SelectListState<Item, SelectionModel>
       ),
       isSelected: isSelected,
       onTap: () {
-        final errorMessage = widget.controller.toggleSelected(item, !isSelected);
+        final errorMessage =
+            widget.controller.toggleSelected(item, !isSelected);
         if (errorMessage != null) {
           StarfishSnackbar.showErrorMessage(context, errorMessage);
         } else if (widget.controller.isSelectionComplete) {
@@ -252,8 +270,12 @@ class _ListItem extends StatelessWidget {
   final bool isSelected;
   final Widget label;
 
-  const _ListItem({ Key? key, required this.onTap,
-      required this.isSelected, required this.label }) : super(key: key);
+  const _ListItem(
+      {Key? key,
+      required this.onTap,
+      required this.isSelected,
+      required this.label})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -269,9 +291,7 @@ class _ListItem extends StatelessWidget {
               children: <Widget>[
                 Expanded(child: label),
                 Icon(
-                  isSelected
-                      ? Icons.check_box
-                      : Icons.check_box_outline_blank,
+                  isSelected ? Icons.check_box : Icons.check_box_outline_blank,
                   color: AppColors.selectedButtonBG,
                 ),
               ],
