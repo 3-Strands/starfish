@@ -76,6 +76,55 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               ? SingleChildScrollView(
                   child: Column(
                     children: [
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          DateTime? selected = await _selectMonth(bloc);
+
+                          if (selected != null) {
+                            HiveDate _hiveDate = HiveDate.create(
+                                selected.year, selected.month, 0);
+
+                            setState(() {
+                              bloc.resultsBloc.hiveDate = _hiveDate;
+                            });
+                          }
+                        },
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          height: 52.h,
+                          //width: 345.w,
+                          padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+                          margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                          decoration: BoxDecoration(
+                            color: AppColors.txtFieldBackground,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: Text(
+                              DateTimeUtils.formatHiveDate(
+                                  bloc.resultsBloc.hiveDate!,
+                                  requiredDateFormat: "MMMM yyyy"),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
                       ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -860,8 +909,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
                       } else {
-                        final result =
-                            await getPickerFileWithCrop(context,
+                        final result = await getPickerFileWithCrop(
+                          context,
                           type: FileType.image,
                         );
 
