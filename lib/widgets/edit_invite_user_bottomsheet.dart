@@ -148,6 +148,12 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                     width: 60.w,
                                     child: TextFormField(
                                       controller: _dialingController,
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        color: Color(0xFF000000),
+                                        fontFamily: 'OpenSans',
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.fromLTRB(
