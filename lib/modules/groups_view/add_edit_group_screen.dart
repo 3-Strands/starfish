@@ -180,8 +180,31 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             'receiver_first_name': element.name ?? '',
             'sender_name': CurrentUserProvider().user.name!
           }),
-          element.phone!);
+          element.phoneWithDialingCode);
     });
+  }
+
+  bool _checkIfUserPhonenumberAlreadySelected(HiveUser contact) {
+    bool _alreadySelected = _newInvitedUsers
+            .where((element) =>
+                element.diallingCode == contact.diallingCode &&
+                element.phone == contact.phone)
+            .length >
+        0;
+
+    bool _alreadyGroupMember = false;
+    if (_isEditMode &&
+        _hiveGroup!.activeUsers != null &&
+        _hiveGroup!.activeUsers!
+                .where((element) =>
+                    element.diallingCode == contact.diallingCode &&
+                    element.phone == contact.phone)
+                .length >
+            0) {
+      _alreadyGroupMember = true;
+    }
+
+    return _alreadySelected || _alreadyGroupMember;
   }
 
   Widget _buildSlidingUpPanel() {
@@ -215,6 +238,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                     return ContactListItem(
                         contact: _listToShow.elementAt(index),
                         onTap: (HiveUser contact) {
+                          //TODO: check if contact number already registered/selected for any other group member
+
+                          if (_checkIfUserPhonenumberAlreadySelected(contact)) {
+                            StarfishSnackbar.showErrorMessage(context,
+                                _appLocalizations.phonenumberAlreadyAdded);
+                            return;
+                          }
+
                           HiveGroupUser _groupUser = HiveGroupUser(
                               groupId: _hiveGroup!.id,
                               userId: contact.id,
@@ -1186,6 +1217,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             }
           },
           onInvite: (HiveUser _user) {
+            if (_checkIfUserPhonenumberAlreadySelected(_user)) {
+              StarfishSnackbar.showErrorMessage(
+                  context, _appLocalizations.phonenumberAlreadyAdded);
+              return;
+            }
             SMS.send(
                 _appLocalizations.inviteSMS.insertTemplateValues({
                   'receiver_first_name': _user.name ?? '',
