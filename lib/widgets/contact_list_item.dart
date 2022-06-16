@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 
 class ContactListItem extends StatefulWidget {
-  final InviteContact contact;
-  final Function(InviteContact) onTap;
+  final HiveUser contact;
+  final Function(HiveUser) onTap;
 
   ContactListItem({
     Key? key,
@@ -42,7 +42,7 @@ class _ContactListItemState extends State<ContactListItem> {
                 Container(
                   width: MediaQuery.of(context).size.width - 70.0,
                   child: Text(
-                    widget.contact.displayName ?? '',
+                    widget.contact.name ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -66,7 +66,7 @@ class _ContactListItemState extends State<ContactListItem> {
               height: 10.h,
             ),
             Text(
-              '${widget.contact.createHiveUser().diallingCode ?? ''} ${widget.contact.createHiveUser().phone ?? ''} ',
+              '${widget.contact.diallingCode ?? ''} ${widget.contact.phone ?? ''} ',
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 21.5.sp,

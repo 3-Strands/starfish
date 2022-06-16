@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/models/invite_contact.dart';
-import 'package:starfish/widgets/edit_invite_user_bottomsheet.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../src/generated/starfish.pb.dart';
 
 class InvitedContactListItem extends StatefulWidget {
-  final InviteContact contact;
-  final Function(InviteContact, GroupUser_Role) onRoleChange;
-  final Function(InviteContact) onRemove;
+  final HiveUser contact;
+  final Function(HiveUser, GroupUser_Role) onRoleChange;
+  final Function(HiveUser) onRemove;
+  final Function(HiveUser) onEditUserInvite;
 
-  InvitedContactListItem({
+  const InvitedContactListItem({
     Key? key,
     required this.contact,
     required this.onRoleChange,
     required this.onRemove,
+    required this.onEditUserInvite,
   }) : super(key: key);
 
   _InvitedContactListItemState createState() => _InvitedContactListItemState();
@@ -42,7 +42,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                 Container(
                   width: MediaQuery.of(context).size.width / 2,
                   child: Text(
-                    widget.contact.displayName ?? '',
+                    widget.contact.name ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -106,7 +106,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
                   onSelected: (int value) {
                     switch (value) {
                       case 0:
-                        _onUserInviteRole(widget.contact);
+                        widget.onEditUserInvite(widget.contact);
                         // widget.onRoleChange(
                         //     widget.contact, GroupUser_Role.TEACHER);
                         break;
@@ -122,7 +122,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
               height: 10.h,
             ),
             Text(
-              '${widget.contact.createHiveUser().phoneWithDialingCode} ',
+              '${widget.contact.phoneWithDialingCode} ',
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 21.5.sp,
@@ -140,25 +140,5 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
         ),
       ),
     );
-  }
-
-  void _onUserInviteRole(contact) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(34.r),
-          topRight: Radius.circular(34.r),
-        ),
-      ),
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      builder: (BuildContext context) {
-        return EditInviteUserBottomSheet(contact!);
-      },
-    ).whenComplete(() {
-      setState(() {});
-    });
   }
 }
