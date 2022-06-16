@@ -424,5 +424,6 @@
   "editInvite" : "Edit Invite",
   "contactNumber": "Contact Number",
   "role" : "Role",
-  "userNameAlreadyAdded": "user with this name already added"  
+  "userNameAlreadyAdded": "User with this name already added",
+  "phonenumberAlreadyAdded": "User with this phonenumber already added"  
 }
