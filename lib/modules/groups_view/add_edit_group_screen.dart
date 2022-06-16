@@ -1035,7 +1035,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           onRemoveUser: (HiveGroupUser contact) {
             setState(() {
               inviteContact.isSelected = false;
-              _newInvitedUsers.remove(inviteContact);
+              _newInvitedUsers
+                  .removeWhere((element) => element.id == inviteContact.id);
               _newInvitedGroupUsers.remove(contact);
             });
           },
@@ -1136,7 +1137,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             } else {
               _groupUser.isDirty = true;
               bloc.groupBloc.createUpdateGroupUser(_groupUser).then((value) {
-                setState(() {});
+                setState(() {
+                  _groupUsers.remove(_groupUser);
+                });
               });
             }
           },
