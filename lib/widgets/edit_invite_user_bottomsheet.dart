@@ -24,6 +24,7 @@ class EditInviteUserBottomSheet extends StatefulWidget {
 class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _contactNumberController = TextEditingController();
+  TextEditingController _dialingController = TextEditingController();
   late AppLocalizations _appLocalizations;
 
   late HiveGroupUser _groupUser;
@@ -41,6 +42,7 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
 
     _nameController.text = _hiveUser.name!;
     _contactNumberController.text = _hiveUser.phone ?? '';
+    _dialingController.text = _hiveUser.diallingCodeWithPlus;
   }
 
   @override
@@ -64,178 +66,212 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
               ),
               child: Container(
                 //  margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Text(
-                            _appLocalizations.editInvite,
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              color: Color(0xFF316FE3),
-                              fontFamily: 'OpenSans',
-                              fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 10.h,
                             ),
-                          ),
-                          SizedBox(
-                            height: 30.h,
-                          ),
-                          Text(
-                            _appLocalizations.name,
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Color(0xFF434141),
-                              fontFamily: 'OpenSans',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          TextFormField(
-                            controller: _nameController,
-                            style: TextStyle(
-                              fontSize: 20.sp,
-                              color: Color(0xFF000000),
-                              fontFamily: 'OpenSans',
-                              fontWeight: FontWeight.bold,
-                            ),
-                            keyboardType: TextInputType.url,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                            Text(
+                              _appLocalizations.editInvite,
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: Color(0xFF316FE3),
+                                fontFamily: 'OpenSans',
+                                fontWeight: FontWeight.bold,
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
+                            ),
+                            SizedBox(
+                              height: 30.h,
+                            ),
+                            Text(
+                              _appLocalizations.name,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Color(0xFF434141),
+                                fontFamily: 'OpenSans',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            TextFormField(
+                              controller: _nameController,
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                color: Color(0xFF000000),
+                                fontFamily: 'OpenSans',
+                                fontWeight: FontWeight.bold,
+                              ),
+                              keyboardType: TextInputType.url,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(
+                                    15.0.w, 0.0, 5.0.w, 0.0),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                              ),
-                              filled: true,
-                              fillColor: AppColors.txtFieldBackground,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20.h,
-                          ),
-                          Text(
-                            _appLocalizations.contactNumber,
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Color(0xFF434141),
-                              fontFamily: 'OpenSans',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          TextFormField(
-                            controller: _contactNumberController,
-                            style: TextStyle(
-                              fontSize: 20.sp,
-                              color: Color(0xFF000000),
-                              fontFamily: 'OpenSans',
-                              fontWeight: FontWeight.bold,
-                            ),
-                            keyboardType: TextInputType.url,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
+                                filled: true,
+                                fillColor: AppColors.txtFieldBackground,
                               ),
-                              filled: true,
-                              fillColor: AppColors.txtFieldBackground,
                             ),
-                          ),
-                          SizedBox(
-                            height: 20.h,
-                          ),
-                          Text(
-                            _appLocalizations.role,
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Color(0xFF434141),
-                              fontFamily: 'OpenSans',
-                              fontWeight: FontWeight.bold,
+                            SizedBox(
+                              height: 20.h,
                             ),
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFEFEFEF),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.5.r))),
-                              child: DropdownButtonHideUnderline(
-                                child: ButtonTheme(
-                                  alignedDropdown: true,
-                                  child: DropdownButton2<GroupUser_Role>(
-                                    onChanged: (GroupUser_Role? value) {
-                                      setState(() {
-                                        _selectedGroupUserRole =
-                                            value ?? GroupUser_Role.LEARNER;
-                                      });
-                                    },
-                                    //   offset: Offset(0, -10),
-                                    dropdownMaxHeight: 150.h,
-                                    scrollbarAlwaysShow: true,
-                                    isExpanded: true,
-                                    iconSize: 35,
-                                    style: TextStyle(
-                                      color: Color(0xFFEFEFEF),
-                                      fontSize: 19.sp,
-                                      fontFamily: 'OpenSans',
-                                    ),
-                                    value: _selectedGroupUserRole,
-                                    items: [
-                                      GroupUser_Role.TEACHER,
-                                      GroupUser_Role.LEARNER
-                                    ].map<DropdownMenuItem<GroupUser_Role>>(
-                                        (value) {
-                                      return DropdownMenuItem<GroupUser_Role>(
-                                        value: value,
-                                        child: Text(
-                                          value.name,
-                                          style: TextStyle(
-                                            color: Color(0xFF434141),
-                                            fontSize: 17.sp,
-                                            fontFamily: 'OpenSans',
+                            Text(
+                              _appLocalizations.contactNumber,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Color(0xFF434141),
+                                fontFamily: 'OpenSans',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                    width: 60.w,
+                                    child: TextFormField(
+                                      controller: _dialingController,
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                            15.0.w, 0.0, 5.0.w, 0.0),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
                                           ),
                                         ),
-                                      );
-                                    }).toList(),
+                                        filled: true,
+                                        fillColor: AppColors.txtFieldBackground,
+                                      ),
+                                    )),
+                                SizedBox(
+                                  width: 15.w,
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _contactNumberController,
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      color: Color(0xFF000000),
+                                      fontFamily: 'OpenSans',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.fromLTRB(
+                                          15.0.w, 0.0, 5.0.w, 0.0),
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                        ),
+                                      ),
+                                      filled: true,
+                                      fillColor: AppColors.txtFieldBackground,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20.h,
+                            ),
+                            Text(
+                              _appLocalizations.role,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Color(0xFF434141),
+                                fontFamily: 'OpenSans',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0xFFEFEFEF),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(8.5.r))),
+                                child: DropdownButtonHideUnderline(
+                                  child: ButtonTheme(
+                                    alignedDropdown: true,
+                                    child: DropdownButton2<GroupUser_Role>(
+                                      onChanged: (GroupUser_Role? value) {
+                                        setState(() {
+                                          _selectedGroupUserRole =
+                                              value ?? GroupUser_Role.LEARNER;
+                                        });
+                                      },
+                                      //   offset: Offset(0, -10),
+                                      dropdownMaxHeight: 150.h,
+                                      scrollbarAlwaysShow: true,
+                                      isExpanded: true,
+                                      iconSize: 35,
+                                      style: TextStyle(
+                                        color: Color(0xFFEFEFEF),
+                                        fontSize: 19.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
+                                      value: _selectedGroupUserRole,
+                                      items: [
+                                        GroupUser_Role.TEACHER,
+                                        GroupUser_Role.LEARNER
+                                      ].map<DropdownMenuItem<GroupUser_Role>>(
+                                          (value) {
+                                        return DropdownMenuItem<GroupUser_Role>(
+                                          value: value,
+                                          child: Text(
+                                            value.name,
+                                            style: TextStyle(
+                                              color: Color(0xFF434141),
+                                              fontSize: 17.sp,
+                                              fontFamily: 'OpenSans',
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 30.h,
-                          ),
-                        ],
+                            SizedBox(
+                              height: 30.h,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Align(
+                      Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
@@ -267,6 +303,8 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                     onPressed: () {
                                       //   _validateAndCreateUpdateGroup();
                                       _hiveUser.name = _nameController.text;
+                                      _hiveUser.diallingCode =
+                                          _dialingController.text;
                                       _hiveUser.phone =
                                           _contactNumberController.text;
 
@@ -288,8 +326,8 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
