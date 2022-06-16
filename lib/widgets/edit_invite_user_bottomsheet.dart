@@ -2,13 +2,19 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 class EditInviteUserBottomSheet extends StatefulWidget {
-  final InviteContact contact;
-  EditInviteUserBottomSheet(this.contact, {Key? key}) : super(key: key);
+  final HiveGroupUser groupUser;
+  final HiveUser contact;
+  final Function(HiveUser, HiveGroupUser) onDone;
+
+  const EditInviteUserBottomSheet(this.contact, this.groupUser,
+      {Key? key, required this.onDone})
+      : super(key: key);
 
   @override
   State<EditInviteUserBottomSheet> createState() =>
@@ -20,11 +26,21 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
   TextEditingController _contactNumberController = TextEditingController();
   late AppLocalizations _appLocalizations;
 
+  late HiveGroupUser _groupUser;
+  late HiveUser _hiveUser;
+  late GroupUser_Role _selectedGroupUserRole;
+
   @override
   void initState() {
-    _nameController.text = widget.contact.displayName!;
-    _contactNumberController.text = widget.contact.phoneNumber;
     super.initState();
+    _groupUser = widget.groupUser;
+    _hiveUser = widget.contact;
+
+    _selectedGroupUserRole = GroupUser_Role.valueOf(widget.groupUser.role!) ??
+        GroupUser_Role.LEARNER;
+
+    _nameController.text = _hiveUser.name!;
+    _contactNumberController.text = _hiveUser.phone ?? '';
   }
 
   @override
@@ -173,7 +189,12 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                 child: ButtonTheme(
                                   alignedDropdown: true,
                                   child: DropdownButton2<GroupUser_Role>(
-                                    onChanged: (value) {},
+                                    onChanged: (GroupUser_Role? value) {
+                                      setState(() {
+                                        _selectedGroupUserRole =
+                                            value ?? GroupUser_Role.LEARNER;
+                                      });
+                                    },
                                     //   offset: Offset(0, -10),
                                     dropdownMaxHeight: 150.h,
                                     scrollbarAlwaysShow: true,
@@ -184,11 +205,12 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                       fontSize: 19.sp,
                                       fontFamily: 'OpenSans',
                                     ),
-
-                                    items: GroupUser_Role.values
-                                        .where((element) => false)
-                                        .map<DropdownMenuItem<GroupUser_Role>>(
-                                            (value) {
+                                    value: _selectedGroupUserRole,
+                                    items: [
+                                      GroupUser_Role.TEACHER,
+                                      GroupUser_Role.LEARNER
+                                    ].map<DropdownMenuItem<GroupUser_Role>>(
+                                        (value) {
                                       return DropdownMenuItem<GroupUser_Role>(
                                         value: value,
                                         child: Text(
@@ -244,6 +266,16 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       //   _validateAndCreateUpdateGroup();
+                                      _hiveUser.name = _nameController.text;
+                                      _hiveUser.phone =
+                                          _contactNumberController.text;
+
+                                      _groupUser.role =
+                                          _selectedGroupUserRole.value;
+
+                                      widget.onDone(_hiveUser, _groupUser);
+
+                                      Navigator.of(context).pop();
                                     },
                                     child: Text(_appLocalizations.update),
                                     style: ElevatedButton.styleFrom(

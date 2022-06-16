@@ -166,7 +166,9 @@ extension HiveActionExt on HiveAction {
     }
     List<HiveUser> _learners = [];
     this.group!.learners!.forEach((HiveGroupUser groupUser) {
-      _learners.add(groupUser.user!);
+      if (groupUser.user != null) {
+        _learners.add(groupUser.user!);
+      }
     });
 
     return _learners;
