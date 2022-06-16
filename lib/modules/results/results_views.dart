@@ -156,6 +156,7 @@ class _ResultsScreenState extends State<ResultsScreen>
                     controller: _tabController,
                   ),
                 ),
+                LastSyncBottomWidget()
               ],
             ),
 
