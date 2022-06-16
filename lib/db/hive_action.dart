@@ -188,7 +188,9 @@ extension HiveActionExt on HiveAction {
                 GroupUser_Role.ADMIN ||
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER))
         .forEach((groupUser) {
-      _leaders.add(groupUser.user!);
+      if (groupUser.user != null) {
+        _leaders.add(groupUser.user!);
+      }
     });
     return _leaders;
   }
