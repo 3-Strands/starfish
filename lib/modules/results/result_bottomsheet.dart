@@ -97,18 +97,18 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   @override
   Widget build(BuildContext context) {
     bloc = Provider.of(context);
-    bloc.resultsBloc.hiveGroupUser = widget.hiveGroupUser;
+    bloc.resultsBloc.hiveGroupUser = hiveGroupUser;
 
-    _hiveTransformation = widget.hiveGroupUser
-        .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+    _hiveTransformation =
+        hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
     if (_hiveTransformation != null) {
       _impactStory = _hiveTransformation?.impactStory ?? '';
     } else {
       _impactStory = '';
     }
 
-    _hiveTeacherResponse = widget.hiveGroupUser
-        .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
+    _hiveTeacherResponse =
+        hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
     if (_hiveTeacherResponse != null) {
       _teacherFeedback = _hiveTeacherResponse?.response ?? '';
     } else {
@@ -248,7 +248,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                   fontFamily: 'OpenSans',
                                 ),
                                 hint: Text(
-                                  "${AppLocalizations.of(context)!.learner}: ${widget.hiveGroupUser.name}",
+                                  "${AppLocalizations.of(context)!.learner}: ${hiveGroupUser.name}",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -262,10 +262,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                   setState(() {
                                     hiveGroupUser = value!;
                                     bloc.resultsBloc.hiveGroupUser = value;
-                                    /*_hiveTransformation = widget.hiveGroupUser
+                                    /*_hiveTransformation = hiveGroupUser
                                         .getTransformationForMonth(
                                             bloc.resultsBloc.hiveDate!);
-                                    _hiveTeacherResponse = widget.hiveGroupUser
+                                    _hiveTeacherResponse = hiveGroupUser
                                         .getTeacherResponseForMonth(
                                             bloc.resultsBloc.hiveDate!);*/
                                   });
@@ -827,9 +827,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   Widget _buildCategorySlider(HiveEvaluationCategory _evaluationCategory) {
-    HiveLearnerEvaluation? _evaluation = widget.hiveGroupUser
-        .getLearnerEvaluation(bloc.resultsBloc.hiveDate!,
-            _evaluationCategory.id!, CurrentUserProvider().getUserSync().id);
+    HiveLearnerEvaluation? _evaluation = hiveGroupUser.getLearnerEvaluation(
+        bloc.resultsBloc.hiveDate!,
+        _evaluationCategory.id!,
+        CurrentUserProvider().getUserSync().id);
 
     double _value = _evaluation != null &&
             0 <= _evaluation.evaluation! &&
@@ -935,11 +936,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
               height: 10.h,
             ),
             _buildMonthlyActionWidget(
-                widget.hiveGroupUser
+                hiveGroupUser
                     .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
-                widget.hiveGroupUser
+                hiveGroupUser
                     .getActionsNotCompletedInMonth(bloc.resultsBloc.hiveDate!),
-                widget.hiveGroupUser
+                hiveGroupUser
                     .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),
             SizedBox(
@@ -1040,11 +1041,11 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   height: 10.h,
                 ),
                 _buildMonthlyActionWidget(
-                    widget.hiveGroupUser
+                    hiveGroupUser
                         .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
-                    widget.hiveGroupUser.getActionsNotCompletedInMonth(
+                    hiveGroupUser.getActionsNotCompletedInMonth(
                         bloc.resultsBloc.hiveDate!),
-                    widget.hiveGroupUser
+                    hiveGroupUser
                         .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
                 SizedBox(
                   height: 10.h,
@@ -1260,14 +1261,14 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   }
 
   void _saveTeacherFeedback(String feedback) {
-    // HiveTeacherResponse? _teacherResponse = widget.hiveGroupUser
+    // HiveTeacherResponse? _teacherResponse = hiveGroupUser
     //     .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
 
     if (_hiveTeacherResponse == null) {
       _hiveTeacherResponse = HiveTeacherResponse();
       _hiveTeacherResponse!.id = UuidGenerator.uuid();
-      _hiveTeacherResponse!.groupId = widget.hiveGroupUser.groupId;
-      _hiveTeacherResponse!.learnerId = widget.hiveGroupUser.userId;
+      _hiveTeacherResponse!.groupId = hiveGroupUser.groupId;
+      _hiveTeacherResponse!.learnerId = hiveGroupUser.userId;
       _hiveTeacherResponse!.teacherId = CurrentUserProvider().getUserSync().id;
       _hiveTeacherResponse!.month = bloc.resultsBloc.hiveDate!.toMonth;
       _hiveTeacherResponse!.isNew = true;
@@ -1298,8 +1299,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       if (_hiveTransformation == null) {
         _hiveTransformation = HiveTransformation();
         _hiveTransformation!.id = UuidGenerator.uuid();
-        _hiveTransformation!.groupId = widget.hiveGroupUser.groupId;
-        _hiveTransformation!.userId = widget.hiveGroupUser.userId;
+        _hiveTransformation!.groupId = hiveGroupUser.groupId;
+        _hiveTransformation!.userId = hiveGroupUser.userId;
         _hiveTransformation!.month = bloc.resultsBloc.hiveDate!;
         _hiveTransformation!.isNew = true;
       } else {
@@ -1340,15 +1341,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
         "LearnerEvaluation saved for Month: ${bloc.resultsBloc.hiveDate}");
     debugPrint(
         "LearnerEvaluation saved for PreviousDate: ${bloc.resultsBloc.hivePreviousDate}");
-    HiveLearnerEvaluation? _learnerEvaluation = widget.hiveGroupUser
-        .getLearnerEvaluation(
+    HiveLearnerEvaluation? _learnerEvaluation =
+        hiveGroupUser.getLearnerEvaluation(
             bloc.resultsBloc.hiveDate!, categoryId, evaluatorId);
 
     if (_learnerEvaluation == null) {
       _learnerEvaluation = HiveLearnerEvaluation();
       _learnerEvaluation.id = UuidGenerator.uuid();
-      _learnerEvaluation.learnerId = widget.hiveGroupUser.userId;
-      _learnerEvaluation.groupId = widget.hiveGroupUser.groupId;
+      _learnerEvaluation.learnerId = hiveGroupUser.userId;
+      _learnerEvaluation.groupId = hiveGroupUser.groupId;
       _learnerEvaluation.evaluatorId = evaluatorId;
       _learnerEvaluation.month = bloc.resultsBloc.hiveDate!.toMonth;
       _learnerEvaluation.categoryId = categoryId;
