@@ -9,17 +9,9 @@ import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'file_system_shared.dart' as shared;
 
-// TODO:
-Future<String> _getFilePath(String filename) async {
-  final appDocumentsPath = await getApplicationDocumentsDirectory();
-  String filePath = '${appDocumentsPath.path}/$filename';
-  print("FILE PATH: $filePath");
-  return filePath;
-}
-
 // TODO: don't download the file again if already downloaded.
 downloadMaterial(HiveFile hiveFile) async {
-  String filePath = await _getFilePath(hiveFile.filename);
+  String filePath = await File._filepathFromFilename(hiveFile.filename);
 
   io.File file = io.File(filePath);
   await file.create();
@@ -67,6 +59,15 @@ class File {
 
   File(String path) : _ioFile = io.File(path);
 
+  static Future<String> _filepathFromFilename(String filename) async {
+    final appDocumentsPath = await getApplicationDocumentsDirectory();
+    return '${appDocumentsPath.path}/$filename';
+  }
+
+  static Future<File> fromFilename(String filename) async {
+    return File(await _filepathFromFilename(filename));
+  }
+
   String get path => _ioFile.path;
 
   Widget getImagePreview({
@@ -80,18 +81,16 @@ class File {
     height: height,
   );
 
-  Future<Uint8List> readAsBytes() => _ioFile.readAsBytes();
+  int get size => _ioFile.statSync().size;
 
-  Uint8List readAsBytesSync() => _ioFile.readAsBytesSync();
-
-  Future<void> createWithContent(List<int> buffer) async {
+  Future<void> createWithContent(Uint8List buffer) async {
      _ioFile.create(recursive: true);
 
     final _randomAccessFile =
         await _ioFile.open(mode: io.FileMode.write);
 
-    _randomAccessFile.writeFromSync(buffer);
+    await _randomAccessFile.writeFrom(buffer);
 
-    _randomAccessFile.closeSync();
+    await _randomAccessFile.close();
   }
 }

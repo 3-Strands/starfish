@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:starfish/db/hive_file.dart';
-import 'package:starfish/src/generated/file_transfer.pb.dart';
 
 Future<void> downloadMaterial(HiveFile hiveFile) =>
     Future.error(Exception("Download not supported"));
@@ -20,31 +19,19 @@ class File {
 
   File(this.path);
 
+  static Future<File> fromFilename(String filename) async {
+    return File(filename);
+  }
+
   Widget getImagePreview({
     BoxFit? fit,
     double? width,
     double? height,
-  }) {
-    final index = path.lastIndexOf('.');
-    final extension = index == -1 ? 'UNK' : path.substring(index + 1);
-    Widget widget = SizedBox(
-      width: width,
-      height: height,
-      child: Text(extension.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
-    );
-    if (fit != null) {
-      widget = FittedBox(
-        fit: fit,
-        child: widget,
-      );
-    }
-    return widget;
-  }
+  }) => SizedBox(height: height, width: width);
 
-  Future<Uint8List> readAsBytes() => throw Exception('Cannot read file');
-  Uint8List readAsBytesSync() => throw Exception('Cannot read file');
+  int get size => 0;
 
-  Future<void> createWithContent(List<int> buffer) async {
+  Future<void> createWithContent(Uint8List buffer) async {
     throw Exception('Cannot create/write file');
   }
 }

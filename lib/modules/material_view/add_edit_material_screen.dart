@@ -30,6 +30,7 @@ import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/utils/services/sync_service.dart';
@@ -78,7 +79,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveMaterialType> _selectedTypes = [];
   List<HiveMaterialTopic> _selectedTopics = [];
-  List<PlatformFile> _selectedFiles = [];
+  List<File> _selectedFiles = [];
 
   MaterialVisibility? _visibleTo;
   MaterialEditability? _editableBy;
@@ -737,9 +738,8 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           .map((file) => HiveFile(
                 entityId: _hiveMaterial.id,
                 entityType: EntityType.MATERIAL.value,
-                filepath: Platform.isWeb ? null : file.path,
-                filename: file.name,
-                content: Platform.isWeb ? List<int>.from(file.bytes!) : null,
+                filepath: file.path,
+                filename: file.path.split("/").last,
               ))
           .toList();
     }
@@ -842,20 +842,12 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      if (Platform.isAndroid) {
-                        if (hiveFile.filepath != null) {
-                          openFile(hiveFile.filepath!);
-                        }
+                    ..onTap = () async {
+                      try {
+                        await GeneralFunctions.openFile(hiveFile);
+                      } on NetworkUnavailableException {
+                        // TODO: show message to user
                       }
-                      /*_copyFileToDownloads(file).then((value) {
-                  StarfishSnackbar.showSuccessMessage(
-                      context, 'File downloaded successfully.');
-                }, onError: (error) {
-                  print('Download Error $error');
-                  StarfishSnackbar.showErrorMessage(
-                      context, 'File downloaded failed.');
-                });*/
                     },
                 ),
               ),
@@ -901,7 +893,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
         child: RichText(
           textAlign: TextAlign.start,
           text: TextSpan(
-            text: file.name,
+            text: file.path.split("/").last,
             style: TextStyle(
               color: Color(0xFF3475F0),
               fontFamily: 'OpenSans',
@@ -910,9 +902,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                if (Platform.isAndroid) {
-                  openFile(file.path!);
-                }
+                openFile(file.path);
               },
           ),
         ),

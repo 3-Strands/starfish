@@ -22,6 +22,7 @@ import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/field_mask.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
+import 'package:starfish/wrappers/platform.dart';
 import '../material_view/materials_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -48,12 +49,14 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
-    // Sync every 15 mins
-    // TODO: Check Connectivity before starting sync
-    cron.schedule(Schedule.parse('*/15 * * * *'), () async {
-      debugPrint('================ START SYNC =====================');
-      SyncService().syncAll();
-    });
+    if (!Platform.isWeb) {
+      // Sync every 15 mins
+      // TODO: Check Connectivity before starting sync
+      cron.schedule(Schedule.parse('*/15 * * * *'), () async {
+        debugPrint('================ START SYNC =====================');
+        SyncService().syncAll();
+      });
+    }
     FBroadcast.instance().register(SyncService.kUpdateMaterial,
         (hiveMaterial, __) {
       debugPrint('Boradcast Receiver: kUpdateMaterial');

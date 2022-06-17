@@ -786,7 +786,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       required HiveDate month}) {
     TextEditingController _transformationController = TextEditingController();
     List<HiveFile> _hiveFiles = [];
-    List<PlatformFile> _selectedFiles = [];
+    List<File> _selectedFiles = [];
 
     HiveTransformation? _currentGroupUserTransformation =
         TransformationProvider()
@@ -962,7 +962,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  void _saveTransformation(String? _impactStory, List<PlatformFile> _files,
+  void _saveTransformation(String? _impactStory, List<File> _files,
       HiveGroupUser hiveGroupUser, HiveTransformation? _hiveTransformation) {
     // _hiveTransformation = widget.hiveGroupUser
     //     .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
@@ -984,13 +984,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     List<HiveFile> _transformationFiles = [];
 
     if (_files.isNotEmpty) {
-      _files.forEach((_file) {
+      _files.forEach((file) {
         _transformationFiles.add(HiveFile(
           entityId: _hiveTransformation!.id,
           entityType: EntityType.TRANSFORMATION.value,
-          filepath: Platform.isWeb ? null : _file.path,
-          filename: _file.name,
-          content: Platform.isWeb ? List<int>.from(_file.bytes!) : null,
+          filepath: file.path,
+          filename: file.path.split("/").last,
         ));
       });
     }
@@ -1021,12 +1020,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   }
 
   Widget _previewSelectedFiles(
-      List<HiveFile> _hiveFiles, List<PlatformFile> _selectedFiles) {
+      List<HiveFile> _hiveFiles, List<File> _selectedFiles) {
     final List<Widget> _widgetList = [];
 
     for (final file in _selectedFiles) {
       _widgetList.add(_imagePreview(
-          file: File(Platform.isWeb ? file.name : file.path!),
+          file: File(file.path),
           onDelete: () {
             setState(() {
               _selectedFiles.remove(file);

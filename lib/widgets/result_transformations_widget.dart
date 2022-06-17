@@ -20,7 +20,7 @@ class ResultTransformationsWidget extends StatefulWidget {
   HiveGroupUser groupUser;
   HiveDate month;
   HiveTransformation? hiveTransformation;
-  Function(String, List<PlatformFile>) onChange;
+  Function(String, List<File>) onChange;
 
   ResultTransformationsWidget({
     Key? key,
@@ -38,7 +38,7 @@ class ResultTransformationsWidget extends StatefulWidget {
 class _ResultTransformationsWidgetState
     extends State<ResultTransformationsWidget> {
   TextEditingController _transformationController = TextEditingController();
-  List<PlatformFile> _selectedFiles = [];
+  List<File> _selectedFiles = [];
   bool _isEditMode = false;
 
   
@@ -281,7 +281,7 @@ class _ResultTransformationsWidgetState
 
     for (final file in _selectedFiles) {
       _widgetList.add(_imagePreview(
-          file: File(Platform.isWeb ? file.name : file.path!),
+          file: File(file.path),
           onDelete: () {
             setState(() {
               _selectedFiles.remove(file);

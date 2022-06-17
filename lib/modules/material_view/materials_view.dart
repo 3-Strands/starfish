@@ -45,9 +45,7 @@ import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/task_status.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/wrappers/file_system.dart';
-import 'package:starfish/wrappers/platform.dart';
-import 'package:starfish/wrappers/window.dart';
+// import 'package:starfish/wrappers/file_system.dart';
 
 class MaterialsScreen extends StatefulWidget {
   MaterialsScreen({Key? key, this.title = ''}) : super(key: key);
@@ -598,26 +596,10 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
           children: [
             InkWell(
               onTap: () async {
-                if (Platform.isAndroid) {
-                  if (hiveFile.filepath != null) {
-                    openFile(hiveFile.filepath!);
-                  } else {
-                    bool _isNetworkAvailable =
-                        await GeneralFunctions().isNetworkAvailable();
-                    if (!_isNetworkAvailable) {
-                      return;
-                    }
-                    EasyLoading.show();
-                    downloadMaterial(hiveFile).then((value) async {
-                      hiveFile.isSynced = true;
-                      await hiveFile.save();
-                    }).whenComplete(() {
-                      EasyLoading.dismiss();
-                      openFile(hiveFile.filepath!);
-                    });
-                  }
-                } else if (Platform.isWeb) {
-                  triggerDownload(hiveFile);
+                try {
+                  await GeneralFunctions.openFile(hiveFile);
+                } on NetworkUnavailableException {
+                  // TODO: show message to user
                 }
               },
               child: Row(

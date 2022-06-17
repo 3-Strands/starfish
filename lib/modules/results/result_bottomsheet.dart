@@ -70,7 +70,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
-  List<PlatformFile> _selectedFiles = [];
+  List<File> _selectedFiles = [];
   List<HiveFile> _hiveFiles = [];
 
   String _impactStory = '';
@@ -1291,7 +1291,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     });
   }
 
-  void _saveTransformation(String? _impactStory, List<PlatformFile> _files) {
+  void _saveTransformation(String? _impactStory, List<File> _files) {
     // _hiveTransformation = widget.hiveGroupUser
     //     .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
     if (_impactStory != null) {
@@ -1311,13 +1311,12 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
     List<HiveFile> _transformationFiles = [];
 
-    _files.forEach((_file) {
+    _files.forEach((file) {
       _transformationFiles.add(HiveFile(
         entityId: _hiveTransformation!.id,
         entityType: EntityType.TRANSFORMATION.value,
-        filepath: Platform.isWeb ? null : _file.path,
-        filename: _file.name,
-        content: Platform.isWeb ? List<int>.from(_file.bytes!) : null,
+        filepath: file.path,
+        filename: file.path.split("/").last,
       ));
     });
 
@@ -1584,7 +1583,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
     for (final file in _selectedFiles) {
       _widgetList.add(_imagePreview(
-          file: File(Platform.isWeb ? file.name : file.path!),
+          file: File(file.path),
           onDelete: () {
             setState(() {
               _selectedFiles.remove(file);

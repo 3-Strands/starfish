@@ -650,7 +650,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   SizedBox(height: 20.h),
                   Platform.isWeb
                       ? Text(
-                          _appLocalizations.featureOnlyAvailableOnWeb,
+                          _appLocalizations.featureOnlyAvailableOnNative,
                           style: warningTextStyle,
                           textAlign: TextAlign.center,
                         )

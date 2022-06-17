@@ -205,7 +205,7 @@ class SyncService {
   }
 
   void syncAll() async {
-    bool _isNetworkAvailable = await GeneralFunctions().isNetworkAvailable();
+    bool _isNetworkAvailable = await GeneralFunctions.isNetworkAvailable();
     if (!_isNetworkAvailable) {
       return;
     }
@@ -243,7 +243,9 @@ class SyncService {
     await lock.synchronized(() => syncLocalMaterialsToRemote());
     await lock.synchronized(() => syncLocalFiles());
     await lock.synchronized(() => syncMaterial()); // Upload local files
-    await lock.synchronized(() => downloadFiles()); // Download remote files
+    if (!Platform.isWeb) {
+      await lock.synchronized(() => downloadFiles()); // Download remote files
+    }
 
     Future.wait(
       [
