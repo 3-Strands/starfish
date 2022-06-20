@@ -232,7 +232,8 @@ class GroupListItem extends StatelessWidget {
                   Visibility(
                     child: InkWell(
                       onTap: () {
-                        _navigateToAction(group);
+                        if (GroupUser_Role.valueOf(group.userRole!.value) !=
+                            GroupUser_Role.LEARNER) _navigateToAction(group);
                       },
                       child: Container(
                         width: 99.w,
@@ -268,7 +269,8 @@ class GroupListItem extends StatelessWidget {
                   Visibility(
                     child: InkWell(
                       onTap: () {
-                        _navigateToAction(group);
+                        if (GroupUser_Role.valueOf(group.userRole!.value) !=
+                            GroupUser_Role.LEARNER) _navigateToAction(group);
                       },
                       child: Container(
                         width: 99.w,
@@ -304,7 +306,8 @@ class GroupListItem extends StatelessWidget {
                   Visibility(
                     child: InkWell(
                       onTap: () {
-                        _navigateToAction(group);
+                        if (GroupUser_Role.valueOf(group.userRole!.value) !=
+                            GroupUser_Role.LEARNER) _navigateToAction(group);
                       },
                       child: Container(
                         width: 99.w,

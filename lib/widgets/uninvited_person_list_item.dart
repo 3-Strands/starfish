@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 
 class UnInvitedPersonListItem extends StatefulWidget {
-  final String personName;
-  final Function(String) onRemove;
+  final HiveUser personName;
+  final Function(HiveUser) onRemove;
 
   UnInvitedPersonListItem({
     Key? key,
@@ -34,7 +35,7 @@ class _UnInvitedPersonListItemState extends State<UnInvitedPersonListItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.personName,
+                  widget.personName.name ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

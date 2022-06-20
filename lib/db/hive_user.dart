@@ -51,6 +51,8 @@ class HiveUser extends HiveObject {
   @HiveField(16)
   bool isDeleted = false;
 
+  bool isSelected = false;
+
   HiveUser({
     required this.id,
     required this.name,

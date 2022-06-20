@@ -161,27 +161,29 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                   SizedBox(
                                     height: 10.h,
                                   ),
-                                  _buildTransformationWidget(
-                                      hiveGroupUser: _hiveGroupUser!,
-                                      learnerId: currentUser.id,
-                                      groupId: _hiveGroup.id!,
-                                      month: bloc.resultsBloc.hiveDate!),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  _buildFeedbackFromTeachers(
-                                      hiveGroupUser: _hiveGroupUser,
-                                      learnerId: currentUser.id,
-                                      groupId: _hiveGroup.id!,
-                                      month: bloc.resultsBloc.hiveDate!),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  _buildFeelingAboutGroupCard(
-                                      hiveGroupUser: _hiveGroupUser,
-                                      learnerId: currentUser.id,
-                                      groupId: _hiveGroup.id!,
-                                      month: bloc.resultsBloc.hiveDate!)
+                                  if (_hiveGroupUser != null) ...[
+                                    _buildTransformationWidget(
+                                        hiveGroupUser: _hiveGroupUser,
+                                        learnerId: currentUser.id,
+                                        groupId: _hiveGroup.id!,
+                                        month: bloc.resultsBloc.hiveDate!),
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    _buildFeedbackFromTeachers(
+                                        hiveGroupUser: _hiveGroupUser,
+                                        learnerId: currentUser.id,
+                                        groupId: _hiveGroup.id!,
+                                        month: bloc.resultsBloc.hiveDate!),
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    _buildFeelingAboutGroupCard(
+                                        hiveGroupUser: _hiveGroupUser,
+                                        learnerId: currentUser.id,
+                                        groupId: _hiveGroup.id!,
+                                        month: bloc.resultsBloc.hiveDate!),
+                                  ]
                                 ],
                               ),
                             );

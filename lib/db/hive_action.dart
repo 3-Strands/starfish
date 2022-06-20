@@ -99,6 +99,16 @@ class HiveAction extends HiveObject {
     return dateDue!.year == hiveDate.year && dateDue!.month == hiveDate.month;
   }
 
+  bool dueDateIsOrAfterMonth(HiveDate hiveDate) {
+    if (dateDue == null) {
+      return false;
+    }
+    return dateDue!.year >= hiveDate.year &&
+        dateDue!.month >= hiveDate.month &&
+        createdOn!.year <= hiveDate.year &&
+        createdOn!.month <= hiveDate.month;
+  }
+
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, type: ${this.type}, 
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
@@ -113,6 +123,17 @@ extension HiveActionExt on HiveAction {
     return this.dateDue!.year != 0 &&
         this.dateDue!.month != 0 &&
         this.dateDue!.day != 0;
+  }
+
+  HiveDate? get createdOn {
+    if (editHistory == null) {
+      return createdDate;
+    } else {
+      HiveEdit? _edit = editHistory?.firstWhereOrNull((HiveEdit element) =>
+          Edit_Event.valueOf(element.event!) == Edit_Event.CREATE);
+
+      return _edit != null ? DateTimeUtils.toHiveDate(_edit.time!) : null;
+    }
   }
 
   HiveMaterial? get material {
@@ -145,7 +166,9 @@ extension HiveActionExt on HiveAction {
     }
     List<HiveUser> _learners = [];
     this.group!.learners!.forEach((HiveGroupUser groupUser) {
-      _learners.add(groupUser.user!);
+      if (groupUser.user != null) {
+        _learners.add(groupUser.user!);
+      }
     });
 
     return _learners;
@@ -165,7 +188,9 @@ extension HiveActionExt on HiveAction {
                 GroupUser_Role.ADMIN ||
             GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER))
         .forEach((groupUser) {
-      _leaders.add(groupUser.user!);
+      if (groupUser.user != null) {
+        _leaders.add(groupUser.user!);
+      }
     });
     return _leaders;
   }

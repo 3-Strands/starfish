@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
@@ -23,10 +21,8 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/db/providers/group_provider.dart';
-import 'package:starfish/models/invite_contact.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repository/current_user_repository.dart';
+import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -37,9 +33,9 @@ import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
+import 'package:starfish/widgets/edit_invite_user_bottomsheet.dart';
 import 'package:starfish/widgets/group_member_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
-import 'package:starfish/widgets/invited_contact_list_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
 import 'package:starfish/widgets/uninvited_person_list_item.dart';
@@ -60,8 +56,7 @@ class AddEditGroupScreen extends StatefulWidget {
 }
 
 class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
-  final ValueNotifier<List<InviteContact>?> _contactsNotifier =
-      ValueNotifier(null);
+  final ValueNotifier<List<HiveUser>?> _contactsNotifier = ValueNotifier(null);
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -72,11 +67,16 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   List<HiveLanguage> _selectedLanguages = [];
   List<HiveEvaluationCategory> _selectedEvaluationCategories = [];
-  List<InviteContact> _selectedContacts = [];
-  List<String> _unInvitedPersonNames = [];
+  //List<InviteContact> _selectedContacts = [];
+  List<HiveUser> _newInvitedUsers = [];
+  List<HiveGroupUser> _newInvitedGroupUsers = [];
+
+  //List<String> _unInvitedPersonNames = [];
 
   List<HiveGroupUser> _groupUsers = [];
   List<HiveGroupUser> _updatedGroupUsers = [];
+
+  HiveGroup? _hiveGroup;
 
   late Box<HiveLanguage> _languageBox;
   late Box<HiveEvaluationCategory> _evaluationCategoryBox;
@@ -106,6 +106,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     });
 
     if (widget.group != null) {
+      _hiveGroup = widget.group;
+
       _isEditMode = true;
 
       _groupUsers = List.from(widget.group?.activeUsers
@@ -127,6 +129,20 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               ? widget.group!.evaluationCategoryIds!.contains(category.id)
               : false)
           .toList();
+    } else {
+      _hiveGroup = HiveGroup(id: UuidGenerator.uuid(), isNew: true);
+
+      HiveCurrentUser _currentUser =
+          CurrentUserRepository().getUserSyncFromDB();
+
+      HiveGroupUser _hiveGroupUser = HiveGroupUser(
+        groupId: _hiveGroup!.id,
+        userId: _currentUser.id,
+        role: GroupUser_Role.ADMIN.value,
+        isNew: true,
+      );
+
+      _hiveGroup!.users = [_hiveGroupUser];
     }
   }
 
@@ -157,37 +173,58 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  void _sendInviteSMS(String message, List<InviteContact> recipents) async {
+  void _sendInviteSMS(String message, List<HiveUser> recipents) async {
     recipents.forEach((element) {
       SMS.send(
           message.insertTemplateValues({
-            'receiver_first_name':
-                element.displayName ?? element.givenName ?? '',
+            'receiver_first_name': element.name ?? '',
             'sender_name': CurrentUserProvider().user.name!
           }),
-          element.phoneNumber);
+          element.phoneWithDialingCode);
     });
+  }
+
+  bool _checkIfUserPhonenumberAlreadySelected(HiveUser contact) {
+    bool _alreadySelected = _newInvitedUsers
+            .where((element) =>
+                element.diallingCode == contact.diallingCode &&
+                element.phone == contact.phone)
+            .length >
+        0;
+
+    bool _alreadyGroupMember = false;
+    if (_isEditMode &&
+        _hiveGroup!.activeUsers != null &&
+        _hiveGroup!.activeUsers!
+                .where((element) =>
+                    element.diallingCode == contact.diallingCode &&
+                    element.phone == contact.phone)
+                .length >
+            0) {
+      _alreadyGroupMember = true;
+    }
+
+    return _alreadySelected || _alreadyGroupMember;
   }
 
   Widget _buildSlidingUpPanel() {
     return Container(
-      child: ValueListenableBuilder<List<InviteContact>?>(
+      child: ValueListenableBuilder<List<HiveUser>?>(
           valueListenable: _contactsNotifier,
-          builder: (BuildContext context, List<InviteContact>? snapshot,
-              Widget? child) {
+          builder:
+              (BuildContext context, List<HiveUser>? snapshot, Widget? child) {
             if (snapshot == null) {
               return Center(
                 child: Text(_appLocalizations.loading),
               );
             }
-            List<InviteContact> _listToShow = [];
+            List<HiveUser> _listToShow = [];
 
             if (_query.isNotEmpty) {
               final lowerCaseQuery = _query.toLowerCase();
               _listToShow = snapshot
-                  .where((data) => (data.displayName ?? '')
-                      .toLowerCase()
-                      .contains(lowerCaseQuery))
+                  .where((data) =>
+                      (data.name ?? '').toLowerCase().contains(lowerCaseQuery))
                   .toList();
             } else {
               _listToShow = snapshot;
@@ -200,13 +237,29 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return ContactListItem(
                         contact: _listToShow.elementAt(index),
-                        onTap: (InviteContact contact) {
+                        onTap: (HiveUser contact) {
+                          //TODO: check if contact number already registered/selected for any other group member
+
+                          if (_checkIfUserPhonenumberAlreadySelected(contact)) {
+                            StarfishSnackbar.showErrorMessage(context,
+                                _appLocalizations.phonenumberAlreadyAdded);
+                            return;
+                          }
+
+                          HiveGroupUser _groupUser = HiveGroupUser(
+                              groupId: _hiveGroup!.id,
+                              userId: contact.id,
+                              role: GroupUser_Role.LEARNER.value,
+                              isNew: true);
                           setState(() {
                             if (!contact.isSelected &&
-                                _selectedContacts.contains(contact)) {
-                              _selectedContacts.remove(contact);
+                                _newInvitedUsers.contains(contact)) {
+                              _newInvitedUsers.remove(contact);
+                              _newInvitedGroupUsers.remove(_groupUser);
                             } else {
-                              _selectedContacts.add(contact);
+                              contact.isNew = true;
+                              _newInvitedUsers.add(contact);
+                              _newInvitedGroupUsers.add(_groupUser);
                             }
                           });
                         });
@@ -324,7 +377,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     });
   }
 
-  _validateAndCreateUpdateGroup() {
+  void _validateAndCreateUpdateGroup() {
     if (_titleController.text.isEmpty) {
       StarfishSnackbar.showErrorMessage(
           context, _appLocalizations.emptyGroupTitle);
@@ -343,18 +396,83 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
   }
 
-  _createUpdateGroup() async {
-    String? _groupId;
+  void _createUpdateGroup() {
+    // Step 1: save/update group
+
     if (_isEditMode) {
-      _groupId = widget.group?.id;
+      _hiveGroup!.isNew = true;
     } else {
-      _groupId = UuidGenerator.uuid(); // Assign UUID
+      _hiveGroup!.isUpdated = true;
     }
+    _hiveGroup!.name = _titleController.text;
+    _hiveGroup!.description = _descriptionController.text;
+    _hiveGroup!.languageIds =
+        _selectedLanguages.map((HiveLanguage language) => language.id).toList();
+    _hiveGroup!.evaluationCategoryIds = _selectedEvaluationCategories
+        .map((HiveEvaluationCategory category) => category.id!)
+        .toList();
+
+    bloc.groupBloc.addEditGroup(_hiveGroup!).then((value) {
+      // Step 2: save/update user
+      _newInvitedUsers.forEach((element) async {
+        await UserRepository().createUpdateUserInDB(element);
+      });
+
+      // Step 3: createUpdate group members in the group
+      _newInvitedGroupUsers.forEach((element) async {
+        await GroupRepository().createUpdateGroupUserInDB(groupUser: element);
+      });
+
+      // TODO: _updatedGroupUsers to be removed
+      _updatedGroupUsers.forEach((element) {
+        bloc.groupBloc.createUpdateGroupUser(element);
+      });
+
+      // Step 4: send SMS
+      List<HiveUser> _usersWithPhone = _newInvitedUsers
+          .where(
+              (element) => element.phone != null && element.phone!.isNotEmpty)
+          .toList();
+      if (_usersWithPhone.length > 0) {
+        _sendInviteSMS(_appLocalizations.inviteSMS, _usersWithPhone);
+      }
+
+      FBroadcast.instance().broadcast(
+        SyncService.kUpdateGroup,
+        value: _hiveGroup,
+      );
+
+      Alerts.showMessageBox(
+          context: context,
+          title: _appLocalizations.dialogInfo,
+          message: _isEditMode
+              ? _appLocalizations.updateGroupSuccess
+              : _appLocalizations.createGroupSuccess,
+          callback: () {
+            Navigator.of(context).pop();
+          });
+    }).onError((error, stackTrace) {
+      StarfishSnackbar.showErrorMessage(
+          context,
+          _isEditMode
+              ? _appLocalizations.updateGroupFailed
+              : _appLocalizations.createGroupSuccess);
+    }).whenComplete(() {});
+  }
+
+/*
+  _createUpdateGroup() async {
+    // String? _groupId;
+    // if (_isEditMode) {
+    //   _groupId = widget.group?.id;
+    // } else {
+    //   _groupId = UuidGenerator.uuid(); // Assign UUID
+    // }
     //List<HiveUser> _newUsers = [];
     List<HiveGroupUser> _newGroupUsers = [];
 
-    _selectedContacts.forEach((element) async {
-      HiveUser _hiveUser = element.createHiveUser();
+    _newInvitedUsers.forEach((element) async {
+      HiveUser _hiveUser = element;
       // set dialing code of the current User
       //_hiveUser.diallingCode = CurrentUserProvider().getUserSync().diallingCode;
       _hiveUser.linkGroups = true;
@@ -461,9 +579,30 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               ? _appLocalizations.updateGroupFailed
               : _appLocalizations.createGroupSuccess);
     }).whenComplete(() {
-      if (_selectedContacts.length > 0) {
-        _sendInviteSMS(_appLocalizations.inviteSMS, _selectedContacts);
+      if (_newInvitedUsers.length > 0) {
+        //_sendInviteSMS(_appLocalizations.inviteSMS, _newInvitedUsers);
       }
+    });
+  }
+*/
+  void _onEditUserInvite(HiveUser user, HiveGroupUser groupUser) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(34.r),
+          topRight: Radius.circular(34.r),
+        ),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return EditInviteUserBottomSheet(user, groupUser,
+            onDone: (hiveUser, hiveGroupUser) {});
+      },
+    ).whenComplete(() {
+      setState(() {});
     });
   }
 
@@ -741,8 +880,36 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                           onPressed: () {
                             if (_personNameController.text.isNotEmpty) {
                               setState(() {
-                                _unInvitedPersonNames
-                                    .add(_personNameController.text);
+                                // _unInvitedPersonNames
+                                //     .add(_personNameController.text);
+                                if (_newInvitedUsers
+                                        .where((element) =>
+                                            element.phone == null ||
+                                            (element.phone != null &&
+                                                element.phone!.isEmpty))
+                                        .where((element) =>
+                                            element.name!.toLowerCase() ==
+                                            _personNameController.text)
+                                        .length >
+                                    0) {
+                                  // TODO: user with this name already added, also check in the already added group members
+                                  StarfishSnackbar.showErrorMessage(context,
+                                      _appLocalizations.userNameAlreadyAdded);
+                                  return;
+                                }
+                                HiveUser _hiveUser = HiveUser(
+                                  id: UuidGenerator.uuid(),
+                                  name: _personNameController.text,
+                                  isNew: true,
+                                );
+                                HiveGroupUser _hiveGroupUser = HiveGroupUser(
+                                  groupId: _hiveGroup!.id,
+                                  userId: _hiveUser.id,
+                                  role: GroupUser_Role.LEARNER.value,
+                                  isNew: true,
+                                );
+                                _newInvitedUsers.add(_hiveUser);
+                                _newInvitedGroupUsers.add(_hiveGroupUser);
 
                                 _personNameController.text = '';
                               });
@@ -850,28 +1017,32 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   Widget _invitedContactsContainer() {
     final List<Widget> _widgetList = [];
 
-    _selectedContacts.sort((a, b) => (a.displayName ?? '')
-        .toLowerCase()
-        .compareTo((b.displayName ?? '').toLowerCase()));
-    for (InviteContact inviteContact in _selectedContacts) {
-      _widgetList.add(InvitedContactListItem(
-        contact: inviteContact,
-        onRoleChange: (InviteContact contact, GroupUser_Role newRole) {
-          setState(() {
-            inviteContact.role = newRole;
+    List<HiveUser> _usersWithPhone = _newInvitedUsers
+        .where((element) => element.phone != null && element.phone!.isNotEmpty)
+        .toList();
 
-            _selectedContacts[_selectedContacts.indexWhere((element) =>
-                element.phoneNumber == contact.phoneNumber &&
-                element.dialCode == contact.dialCode)] = inviteContact;
-          });
-        },
-        onRemove: (InviteContact contact) {
-          setState(() {
-            inviteContact.isSelected = false;
-            _selectedContacts.remove(inviteContact);
-          });
-        },
-      ));
+    _usersWithPhone.sort(
+        (a, b) => (a.name!.toLowerCase().compareTo((b.name!).toLowerCase())));
+    for (HiveUser inviteContact in _usersWithPhone) {
+      HiveGroupUser _groupUser = HiveGroupUser(
+          userId: inviteContact.id,
+          groupId: _hiveGroup!.id,
+          role: GroupUser_Role.LEARNER.value);
+      _widgetList.add(GroupMemberListItem(
+          groupUser: _groupUser,
+          user: inviteContact,
+          onChangeUserRole: (HiveGroupUser contact, GroupUser_Role newRole) {},
+          onRemoveUser: (HiveGroupUser contact) {
+            setState(() {
+              inviteContact.isSelected = false;
+              _newInvitedUsers
+                  .removeWhere((element) => element.id == inviteContact.id);
+              _newInvitedGroupUsers.remove(contact);
+            });
+          },
+          onEditUserInvite: (HiveGroupUser groupUser, HiveUser contact) {
+            _onEditUserInvite(contact, groupUser);
+          }));
     }
     // Additional vertical spacing
     if (_widgetList.length > 0) {
@@ -914,6 +1085,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _widgetList.add(
         GroupMemberListItem(
           groupUser: groupUser,
+          user: groupUser.user!,
           onChangeUserRole: (HiveGroupUser _groupUser, _groupUserRole) {
             // Check if the removed user is the only ADMIN in the group, if so, display alert else delete it
             if (GroupUser_Role.valueOf(_groupUser.role!) ==
@@ -965,9 +1137,14 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             } else {
               _groupUser.isDirty = true;
               bloc.groupBloc.createUpdateGroupUser(_groupUser).then((value) {
-                setState(() {});
+                setState(() {
+                  _groupUsers.remove(_groupUser);
+                });
               });
             }
+          },
+          onEditUserInvite: (HiveGroupUser _groupUser, HiveUser _user) {
+            _onEditUserInvite(_user, _groupUser);
           },
         ),
       );
@@ -985,17 +1162,22 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   Widget _unInvitedContactsContainer() {
     final List<Widget> _widgetList = [];
-    _unInvitedPersonNames
-        .sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    List<HiveUser> _usersWithoutPhone = _newInvitedUsers
+        .where((element) =>
+            element.phone == null ||
+            (element.phone != null && element.phone!.isEmpty))
+        .toList();
+    _usersWithoutPhone
+        .sort((a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
-    for (String person in _unInvitedPersonNames) {
+    for (HiveUser person in _usersWithoutPhone) {
       _widgetList.add(
         UnInvitedPersonListItem(
           personName: person,
-          onRemove: (String person) {
-            if (_unInvitedPersonNames.contains(person)) {
+          onRemove: (HiveUser person) {
+            if (_newInvitedUsers.contains(person)) {
               setState(() {
-                _unInvitedPersonNames.remove(person);
+                _newInvitedUsers.remove(person);
               });
             }
           },
@@ -1038,6 +1220,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
             }
           },
           onInvite: (HiveUser _user) {
+            if (_checkIfUserPhonenumberAlreadySelected(_user)) {
+              StarfishSnackbar.showErrorMessage(
+                  context, _appLocalizations.phonenumberAlreadyAdded);
+              return;
+            }
             SMS.send(
                 _appLocalizations.inviteSMS.insertTemplateValues({
                   'receiver_first_name': _user.name ?? '',

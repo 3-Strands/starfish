@@ -424,5 +424,7 @@
   "invalidPhoneNumber": "अमान्य फोन नंबर",
   "editInvite" : "संपादित करें आमंत्रित करें",
   "contactNumber": "संपर्क संख्या",
-  "role" : "भूमिका"
+  "role" : "भूमिका",
+  "userNameAlreadyAdded": "इस नाम का उपयोगकर्ता पहले ही जोड़ा जा चुका है",
+  "phonenumberAlreadyAdded": "इस फ़ोन नंबर वाला उपयोगकर्ता पहले ही जोड़ा जा चुका है"
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collection/collection.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fbroadcast/fbroadcast.dart';
@@ -285,10 +286,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     CurrentUserRepository()
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then(
-      (value) {
+      (value) async {
         bloc.materialBloc.selectedLanguages = _selectedLanguages;
         _user.languageIds = value.languageIds;
-        CurrentUserProvider().updateUser(_user);
+        await CurrentUserProvider().createUpdate(_user);
       },
     ).onError((GrpcError error, stackTrace) {
       SyncService().handleGrpcError(error, callback: () {
@@ -531,15 +532,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String getGroupName(String groupId) {
-    return _groupList.where((element) => element.id == groupId).first.name ??
+    return _groupList
+            .firstWhereOrNull((element) => element.id == groupId)
+            ?.name ??
         '';
   }
 
   String getGroupLinkedEmaill(String groupId) {
     return _groupList
-            .where((element) => element.id == groupId)
-            .first
-            .linkEmail ??
+            .firstWhereOrNull((element) => element.id == groupId)
+            ?.linkEmail ??
         '';
   }
 

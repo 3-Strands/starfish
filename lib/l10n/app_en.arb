@@ -423,7 +423,7 @@
   "invalidPhoneNumber": "Invalid phone number",
   "editInvite" : "Edit Invite",
   "contactNumber": "Contact Number",
-  "role" : "Role"
-
-  
+  "role" : "Role",
+  "userNameAlreadyAdded": "User with this name already added",
+  "phonenumberAlreadyAdded": "User with this phonenumber already added"  
 }

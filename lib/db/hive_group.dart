@@ -249,7 +249,7 @@ extension HiveGroupExt on HiveGroup {
     int count = 0;
     this
         .groupActionList
-        ?.where((element) => element.isDueInMonth(month))
+        ?.where((element) => element.dueDateIsOrAfterMonth(month))
         .forEach((hiveAction) =>
             count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
 
@@ -260,7 +260,7 @@ extension HiveGroupExt on HiveGroup {
     int count = 0;
     this
         .groupActionList
-        ?.where((element) => element.isDueInMonth(month))
+        ?.where((element) => element.dueDateIsOrAfterMonth(month))
         .forEach((hiveAction) => count +=
             hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
 
