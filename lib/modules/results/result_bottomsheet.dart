@@ -34,6 +34,7 @@ import 'package:starfish/src/generated/file_transfer.pb.dart';
 
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
@@ -46,8 +47,11 @@ import 'package:starfish/wrappers/platform.dart';
 class ResultWidgetBottomSheet extends StatefulWidget {
   final HiveGroup hiveGroup;
   final HiveGroupUser hiveGroupUser;
+  final HiveGroupEvaluation? leanerEvaluationForGroup;
 
-  const ResultWidgetBottomSheet(this.hiveGroup, this.hiveGroupUser, {Key? key})
+  const ResultWidgetBottomSheet(
+      this.hiveGroup, this.hiveGroupUser, this.leanerEvaluationForGroup,
+      {Key? key})
       : super(key: key);
 
   @override
@@ -85,6 +89,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
   late HiveGroup hiveGroup;
   late HiveGroupUser hiveGroupUser;
+  late HiveGroupEvaluation? leanerEvaluationForGroup;
 
   @override
   void initState() {
@@ -92,6 +97,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
     hiveGroup = widget.hiveGroup;
     hiveGroupUser = widget.hiveGroupUser;
+    leanerEvaluationForGroup = widget.leanerEvaluationForGroup;
   }
 
   @override
@@ -190,6 +196,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 
                             setState(() {
                               bloc.resultsBloc.hiveDate = _hiveDate;
+                              leanerEvaluationForGroup =
+                                  hiveGroupUser.getGroupEvaluationForMonth(
+                                      bloc.resultsBloc.hiveDate!);
                             });
 
                             //_updateLearnerSummary();
@@ -262,6 +271,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                                   setState(() {
                                     hiveGroupUser = value!;
                                     bloc.resultsBloc.hiveGroupUser = value;
+                                    leanerEvaluationForGroup = hiveGroupUser
+                                        .getGroupEvaluationForMonth(
+                                            bloc.resultsBloc.hiveDate!);
                                     /*_hiveTransformation = hiveGroupUser
                                         .getTransformationForMonth(
                                             bloc.resultsBloc.hiveDate!);
@@ -296,6 +308,58 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           ),
                         ),
                       ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
+                            style: TextStyle(
+                                fontSize: 17.sp,
+                                fontFamily: "OpenSans",
+                                fontStyle: FontStyle.normal,
+                                color: Color(0xFF4F4F4F),
+                                fontWeight: FontWeight.w600),
+                          ),
+                          if (leanerEvaluationForGroup != null)
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    GroupEvaluation_Evaluation.valueOf(
+                                                leanerEvaluationForGroup!
+                                                    .evaluation!) ==
+                                            GroupEvaluation_Evaluation.GOOD
+                                        ? Image.asset(
+                                            AssetsPath.thumbsUp,
+                                            color: Color(0xFF797979),
+                                            height: 15.sp,
+                                          )
+                                        : Image.asset(
+                                            AssetsPath.thumbsDown,
+                                            color: Color(0xFF797979),
+                                            height: 15.sp,
+                                          ),
+                                    SizedBox(
+                                      width: 5.w,
+                                    ),
+                                    Text(
+                                      "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
+                                      style: TextStyle(
+                                        fontFamily: "Rubik",
+                                        fontSize: 15.sp,
+                                        color: Color(0xFF797979),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                        ],
+                      ),
                       /*SizedBox(
                           height: 20.h,
                         ),
@@ -317,7 +381,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           ],
                         ),*/
                       SizedBox(
-                        height: 30.h,
+                        height: 20.h,
                       ),
                       _buildActionCard(),
                       SizedBox(

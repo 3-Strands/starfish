@@ -280,7 +280,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
       enableDrag: true,
       builder: (BuildContext context) {
         return ResultWidgetBottomSheet(
-            bloc.resultsBloc.hiveGroup!, hiveGroupUser);
+            bloc.resultsBloc.hiveGroup!,
+            hiveGroupUser,
+            hiveGroupUser
+                .getGroupEvaluationForMonth(bloc.resultsBloc.hiveDate!));
       },
     ).whenComplete(() {
       setState(() {});
