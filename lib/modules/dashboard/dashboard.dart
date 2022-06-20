@@ -42,7 +42,7 @@ class _DashboardState extends State<Dashboard> {
 
   late AppBloc bloc;
   late Box<HiveLanguage> _languageBox;
-  late HiveCurrentUser _user;
+  HiveCurrentUser? _user;
   late AppLocalizations _appLocalizations;
 
   final cron = Cron();
@@ -103,10 +103,9 @@ class _DashboardState extends State<Dashboard> {
       }
     }, context: this);
 
-    SyncService().syncAll();
+    SyncService().syncAll().whenComplete(_getCurrentUser);
 
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _getCurrentUser();
 
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
@@ -125,7 +124,9 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getCurrentUser() {
-    _user = CurrentUserProvider().getUserSync();
+    setState(() {
+      _user = CurrentUserProvider().getUserSync();
+    });
   }
 
   @override
@@ -145,6 +146,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    if (_user == null) {
+      return const SizedBox();
+    }
     StarfishSharedPreference()
         .getAccessToken()
         .then((value) => debugPrint("AccessToken: $value"));
@@ -204,7 +208,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   _selectLanguage(AppBloc bloc) {
-    _user.languageIds.forEach((languageId) {
+    _user?.languageIds.forEach((languageId) {
       HiveLanguage? _langugage = _languageBox.values
           .firstWhereOrNull((element) => element.id == languageId);
       if (_langugage != null) {

@@ -78,6 +78,8 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   List<HiveMaterial> _materials = [];
 
+  late MultiSelectController<HiveLanguage> _languageSelectController;
+
   @override
   void initState() {
     super.initState();
@@ -245,6 +247,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     _appLocalizations = AppLocalizations.of(context)!;
     if (!_isInitialized) {
       bloc = Provider.of(context);
+      _languageSelectController = MultiSelectController(
+        initialSelection: bloc.materialBloc.selectedLanguages.toSet(),
+      );
       _isInitialized = true;
     }
 
@@ -483,9 +488,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
       child: MultiSelect<HiveLanguage>(
         navTitle: _appLocalizations.selectLanugages,
         placeholder: _appLocalizations.selectLanugages,
+        controller: _languageSelectController,
         multilineSummary: true,
         items: _languageList,
-        initialSelection: bloc.materialBloc.selectedLanguages.toSet(),
         toDisplay: HiveLanguage.toDisplay,
         onMoveNext: () {
           setState(() {

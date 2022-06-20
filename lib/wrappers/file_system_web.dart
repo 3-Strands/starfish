@@ -36,13 +36,13 @@ Future<Uint8List> _fetchData(String url) async {
 }
 
 Future<void> downloadMaterial(HiveFile hiveFile) async {
-  final buffer = <int>[];
+  final buffer = <List<int>>[];
 
-  await shared.downloadFile(hiveFile, onData: (chunk) => buffer.addAll(chunk));
+  await shared.downloadFile(hiveFile, onData: (chunk) => buffer.add(chunk));
 
   final file = await File.fromFilename(hiveFile.filename);
 
-  await file.createWithContent(Uint8List.fromList(buffer));
+  await file._createFromBlob(html.Blob(buffer));
 
   hiveFile.filepath = file.path;
 }
@@ -109,5 +109,10 @@ class File {
   Future<void> createWithContent(Uint8List buffer) async {
     _size = buffer.lengthInBytes;
     _fs[path] = html.Url.createObjectUrlFromBlob(html.Blob([buffer]));
+  }
+
+  Future<void> _createFromBlob(html.Blob blob) async {
+    _size = blob.size;
+    _fs[path] = html.Url.createObjectUrlFromBlob(blob);
   }
 }

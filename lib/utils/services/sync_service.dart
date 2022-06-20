@@ -204,7 +204,7 @@ class SyncService {
         });
   }
 
-  void syncAll() async {
+  Future<void> syncAll() async {
     bool _isNetworkAvailable = await GeneralFunctions.isNetworkAvailable();
     if (!_isNetworkAvailable) {
       return;
@@ -247,33 +247,34 @@ class SyncService {
       await lock.synchronized(() => downloadFiles()); // Download remote files
     }
 
-    Future.wait(
-      [
-        syncCurrentUser(),
-        syncUsers(),
-        //syncCountries(),
-        syncLanguages(),
-        syncActions(),
-        syncMaterialTopics(),
-        syncMaterialTypes(),
-        //syncMaterial(),
-        syncEvaluationCategories(),
-        syncGroup(),
-        syncLearnerEvaluations(),
-        syncGroupEvaluations(),
-        syncTeacherResponses(),
-        syncTransformaitons(),
-        syncOutputs(),
-      ],
-      eagerError: true,
-    ).then((value) {
+    try {
+      await Future.wait(
+        [
+          syncCurrentUser(),
+          syncUsers(),
+          //syncCountries(),
+          syncLanguages(),
+          syncActions(),
+          syncMaterialTopics(),
+          syncMaterialTypes(),
+          //syncMaterial(),
+          syncEvaluationCategories(),
+          syncGroup(),
+          syncLearnerEvaluations(),
+          syncGroupEvaluations(),
+          syncTeacherResponses(),
+          syncTransformaitons(),
+          syncOutputs(),
+        ],
+        eagerError: true,
+      );
       updateLastSyncDateTime();
-    }).onError((error, stackTrace) {
+    } catch (error, stackTrace) {
       Sentry.captureException(error, stackTrace: stackTrace);
       handleError(error);
-    }).whenComplete(() {
+    } finally {
       hideAlert();
-    });
+    }
   }
 
   Future syncLocalUsersAndGroups() async {
