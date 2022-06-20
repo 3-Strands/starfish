@@ -120,9 +120,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       _descriptionController.text = widget.material!.description!;
       _webLinkController.text = widget.material!.url!;
 
-      widget.material!.languages.forEach((key, value) {
-        _selectedLanguages.add(HiveLanguage(id: key, name: value));
-      });
+      _selectedLanguages = widget.material?.allLanguages ?? [];
       _selectedLanguages.sort((a, b) => a.name.compareTo(b.name));
 
       _selectedTypes = _materialTypeBox.values

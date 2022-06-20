@@ -4,8 +4,10 @@ import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/db/providers/action_provider.dart';
+import 'package:starfish/db/providers/language_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -204,5 +206,26 @@ extension HiveMaterialExt on HiveMaterial {
             .contains(_file.filepath!.split("/").last.split(".").last));
 
     return _hiveFile?.filepath!;
+  }
+
+  List<HiveLanguage> get allLanguages {
+    List<HiveLanguage> _languages = [];
+    this.languageIds!.forEach((id) {
+      HiveLanguage? _language = LanguageProvider().getById(id);
+
+      // There may be case the material language is not available in the Natiations followed by this user,
+      // so get the name of language in `this.languages`
+      if (_language == null) {
+        this.languages.forEach((key, value) {
+          if (key == id) {
+            _language = HiveLanguage(id: key, name: value);
+          }
+        });
+      }
+      if (_language != null) {
+        _languages.add(_language!);
+      }
+    });
+    return _languages;
   }
 }

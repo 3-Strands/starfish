@@ -2,7 +2,6 @@
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fbroadcast/fbroadcast.dart';
-import 'package:collection/collection.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/gestures.dart';
@@ -19,7 +18,6 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
@@ -32,7 +30,6 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
@@ -196,7 +193,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(34.r)),
                 color: Color(0xFFEFEFEF),
               ),
-              child: _buildSlidingUpPanel(material));
+              child: _buildSlidingUpPanel(material, setState));
         });
       },
     ).then((value) {
@@ -533,11 +530,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 
   Widget _buildLanguageList(HiveMaterial material) {
+    if (material.languageIds == null) {
+      return Container();
+    }
     List<Widget> languages = [];
-    List<HiveLanguage> _languages = [];
-    material.languages.forEach((key, value) {
-      _languages.add(HiveLanguage(id: key, name: value));
-    });
+    List<HiveLanguage> _languages = material.allLanguages;
     _languages.sort((a, b) => a.name.compareTo(b.name));
 
     _languages.forEach((HiveLanguage _language) {
@@ -675,7 +672,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  Widget _buildSlidingUpPanel(HiveMaterial material) {
+  Widget _buildSlidingUpPanel(HiveMaterial material, StateSetter setState) {
     return Column(
       children: [
         Expanded(
@@ -750,7 +747,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
                                           material: material,
                                         ),
                                       ),
-                                    );
+                                    ).then((value) {
+                                      setState(() {});
+                                    });
 
                                     break;
                                   case 1:

@@ -22,5 +22,9 @@ class HiveLanguage extends HiveObject {
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
 
- static String toDisplay(HiveLanguage item) => item.name;
+  static String toDisplay(HiveLanguage item) => item.name;
+
+  String toString() {
+    return '{id: ${this.id}, name: ${this.name}}';
+  }
 }
