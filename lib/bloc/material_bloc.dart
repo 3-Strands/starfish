@@ -32,7 +32,9 @@ class MaterialBloc extends Object {
 
   int count = 0;
 
-  MaterialBloc() {
+  static final MaterialBloc _singleton = MaterialBloc._internal();
+
+  MaterialBloc._internal() {
     _materials = new BehaviorSubject<List<HiveMaterial>>();
     _fileData = new BehaviorSubject<FileData>();
 
@@ -41,9 +43,12 @@ class MaterialBloc extends Object {
         return;
       }
     });
-
     _allMaterials = MaterialProvider().getMateialsSync();
     count = _allMaterials.length;
+  }
+
+  factory MaterialBloc() {
+    return _singleton;
   }
 
   // Add data to Stream
@@ -209,18 +214,18 @@ class MaterialBloc extends Object {
 
   _changeActionTypeIfHasMaterial(HiveMaterial hiveMaterial) {
     ActionProvider()
-      .getAllActiveActions()
-      .where(
-        (HiveAction hiveAction) => hiveAction.materialId == hiveMaterial.id)
+        .getAllActiveActions()
+        .where(
+            (HiveAction hiveAction) => hiveAction.materialId == hiveMaterial.id)
         .forEach((HiveAction action) {
-          // As action type is output only value, so changing the action type is totally
-          // depends on value associated with respected action type, i.e. quesion and materialId
+      // As action type is output only value, so changing the action type is totally
+      // depends on value associated with respected action type, i.e. quesion and materialId
 
-          action.materialId = "";
-          action.question = "";
-          action.type = Action_Type.TEXT_INSTRUCTION.value;
-          action.isUpdated = true;
-        });
+      action.materialId = "";
+      action.question = "";
+      action.type = Action_Type.TEXT_INSTRUCTION.value;
+      action.isUpdated = true;
+    });
   }
 
   void checkAndUpdateUserfollowedLangguages(List<String>? languageIds) {
