@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
@@ -25,6 +27,7 @@ import 'package:starfish/db/hive_transformation.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/wrappers/platform.dart';
 import 'hive_country.dart';
 
 class HiveDatabase {
@@ -97,45 +100,47 @@ class HiveDatabase {
   openBoxes() async {
     final encryptionKey = await StarfishSharedPreference().getEncryptionKey();
 
+    final bytes = Platform.isWeb ? Uint8List(0) : null;
+
     await Hive.openBox<HiveLastSyncDateTime>(LAST_SYNC_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveCountry>(COUNTRY_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveGroupUser>(GROUP_USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveAction>(ACTIONS_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveMaterial>(MATERIAL_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveMaterialFeedback>(MATERIAL_FEEDBACK_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveMaterialTopic>(MATERIAL_TOPIC_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveMaterialType>(MATERIAL_TYPE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveGroup>(GROUP_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveEvaluationCategory>(EVALUATION_CATEGORIES_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveActionUser>(ACTION_USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveUser>(USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveFile>(FILE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveLearnerEvaluation>(LEARNER_EVALUATION_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveTeacherResponse>(TEACHER_RESPONSE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveGroupEvaluation>(GROUP_EVALUATION_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveTransformation>(TRANSFORMATION_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveOutput>(OUTPUT_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey));
+        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
   }
 }

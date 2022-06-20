@@ -1,17 +1,17 @@
-import 'dart:typed_data';
+// import 'dart:typed_data';
 
-import 'package:starfish/db/hive_file.dart';
+// import 'package:starfish/db/hive_file.dart';
 // import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
-void removeSplashScreen() {}
+void removeSplashScreen() { /* noop */ }
 
-Future<void> triggerDownload(HiveFile hiveFile) =>
-  Future.error(Exception('Cannot trigger a download.'));
+// Future<void> triggerDownload(HiveFile hiveFile) =>
+//   Future.error(Exception('Cannot trigger a download.'));
 
-abstract class Uploader {
-  void addFile(HiveFile hiveFile, Uint8List bytes);
-  Future<void> get done;
-}
+// abstract class Uploader {
+//   void addFile(HiveFile hiveFile, Uint8List bytes);
+//   Future<void> get done;
+// }
 
 // Future<FileMetaData> triggerUpload(HiveFile hiveFile, Uint8List bytes) =>
 //   Future.error(Exception('Cannot trigger an upload.'));

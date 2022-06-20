@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/wrappers/file_system.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/wrappers/platform.dart';
@@ -12,7 +13,7 @@ String _getMimeType(String file) {
   return index == -1 ? '' : file.substring(index + 1);
 }
 
-Future<PlatformFile?> getPickerFileWithCrop(BuildContext context, {
+Future<File?> getPickerFileWithCrop(BuildContext context, {
   FileType type = FileType.any,
   List<String>? allowedExtensions,
 }) async {
@@ -22,29 +23,41 @@ Future<PlatformFile?> getPickerFileWithCrop(BuildContext context, {
     type: type,
     allowedExtensions: allowedExtensions,
   );
-  PlatformFile? file = result?.files.single;
-  if (file != null && (
+  PlatformFile? platformFile = result?.files.single;
+  if (platformFile != null && (
     type == FileType.image ||
-    ['jpg', 'jpeg', 'png'].contains(_getMimeType(file.name))
+    ['jpg', 'jpeg', 'png'].contains(_getMimeType(platformFile.name))
   )) {
-    return Navigator.push<PlatformFile>(
+    return Navigator.push<File>(
       context,
       MaterialPageRoute(
         builder: (context) => ImageCropperScreen(
-          sourceImage: file,
-          onDone: (PlatformFile newFile) {
+          sourceImage: platformFile,
+          onDone: (File newFile) {
             Navigator.pop(context, newFile);
           },
         ),
       ),
     );
   }
+
+  if (platformFile == null) {
+    return null;
+  }
+
+  File file;
+  if (Platform.isWeb) {
+    file = File('${UuidGenerator.uuid()}/${platformFile.name}');
+    await file.createWithContent(platformFile.bytes!);
+  } else {
+    file = File(platformFile.path!);
+  }
   return file;
 }
 
 class ImageCropperScreen extends StatefulWidget {
   final PlatformFile sourceImage;
-  final void Function(PlatformFile) onDone;
+  final void Function(File) onDone;
 
   ImageCropperScreen({
     Key? key,
@@ -123,22 +136,16 @@ class _ImageCropperScreenState extends State<ImageCropperScreen> {
         (match) =>
             '${sourceFileName.split(".").first}_${DateTime.now().millisecondsSinceEpoch}');
 
-    final sourceFilePath = Platform.isWeb ? null : widget.sourceImage.path;
-    final _destinationPath = sourceFilePath?.replaceFirstMapped(
-        sourceFileName, (match) => _targetFileName);
-    if (_destinationPath != null) {
+    final _destinationPath = Platform.isWeb
+      ? '${UuidGenerator.uuid()}/$_targetFileName'
+      : widget.sourceImage.path!.replaceFirstMapped(
+          sourceFileName, (match) => _targetFileName);
 
-      File _targetFile = File(_destinationPath);
-      
-      await _targetFile.createWithContent(croppedData.toList());
-    }
+    final _targetFile = File(_destinationPath);
+    
+    await _targetFile.createWithContent(croppedData);
 
-    widget.onDone(PlatformFile(
-      path: _destinationPath,
-      name: _targetFileName,
-      size: croppedData.lengthInBytes,
-      bytes: croppedData,
-    ));
+    widget.onDone(_targetFile);
   }
 
   @override

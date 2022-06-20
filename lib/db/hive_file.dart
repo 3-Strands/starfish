@@ -18,8 +18,6 @@ class HiveFile extends HiveObject {
   String? md5Checksum;
   @HiveField(5)
   bool isSynced;
-  @HiveField(6)
-  List<int>? content;
 
   HiveFile({
     this.entityId,
@@ -28,7 +26,6 @@ class HiveFile extends HiveObject {
     required this.filename,
     this.md5Checksum,
     this.isSynced = false,
-    this.content,
   });
 
   @override
@@ -52,7 +49,7 @@ class HiveFile extends HiveObject {
     );
   }
 
-  bool get isLocallyAvailable => Platform.isWeb ? content != null : filepath != null;
+  bool get isLocallyAvailable => filepath != null;
 
   @override
   String toString() {

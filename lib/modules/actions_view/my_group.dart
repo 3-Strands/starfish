@@ -944,11 +944,11 @@ class _MyGroupState extends State<MyGroup> {
           ),
           text: _appLocalizations.clickToDownload
               .insertTemplateValues({'file_name': hiveFile.filename}),
-          onButtonTap: () {
-            if (Platform.isAndroid) {
-              if (hiveFile.filepath != null) {
-                openFile(hiveFile.filepath!);
-              }
+          onButtonTap: () async {
+            try {
+              await GeneralFunctions.openFile(hiveFile);
+            } on NetworkUnavailableException {
+              // TODO: show message to user
             }
           },
         ),

@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/navigation_service.dart';
+import 'package:starfish/wrappers/file_system.dart' as fs;
+
+class NetworkUnavailableException implements Exception {
+  String toString() => "NetworkUnavailableException";
+}
 
 class GeneralFunctions {
   static void configLoading() {
@@ -17,7 +23,7 @@ class GeneralFunctions {
       ..dismissOnTap = false;
   }
 
-  Future<bool> isNetworkAvailable() async {
+  static Future<bool> isNetworkAvailable() async {
     ConnectivityResult _connectivityResult =
         await (Connectivity().checkConnectivity());
 
@@ -28,6 +34,25 @@ class GeneralFunctions {
     } else {
       // _connectivityResult == ConnectivityResult.none
       return false;
+    }
+  }
+
+  static Future<void> openFile(HiveFile file) async {
+    if (file.filepath != null) {
+      await fs.openFile(file.filepath!);
+    } else {
+      if (!(await isNetworkAvailable())) {
+        throw NetworkUnavailableException();
+      }
+      EasyLoading.show();
+      try {
+        await fs.downloadMaterial(file);
+        file.isSynced = true;
+        await file.save();
+        await fs.openFile(file.filepath!);
+      } finally {
+        EasyLoading.dismiss();
+      }
     }
   }
 

@@ -764,7 +764,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               onFinished:
                                   (Set<HiveCountry> selectedItems) async {
                                 bool _isNetworkAvailable =
-                                    await GeneralFunctions()
+                                    await GeneralFunctions
                                         .isNetworkAvailable();
                                 if (!_isNetworkAvailable) {
                                   StarfishSnackbar.showErrorMessage(
@@ -816,7 +816,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 onFinished: (Set<HiveLanguage>
                                     selectedLanguages) async {
                                   bool _isNetworkAvailable =
-                                      await GeneralFunctions()
+                                      await GeneralFunctions
                                           .isNetworkAvailable();
                                   if (!_isNetworkAvailable) {
                                     StarfishSnackbar.showErrorMessage(

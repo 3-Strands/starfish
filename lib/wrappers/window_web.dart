@@ -1,10 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:html' show window, AnchorElement;
+// import 'dart:async';
+// import 'dart:convert';
+import 'dart:html' show window;
 // import 'dart:typed_data';
 
-import 'package:starfish/db/hive_file.dart';
-import 'package:starfish/wrappers/file_system_web.dart';
+// import 'package:starfish/db/hive_file.dart';
+// import 'package:starfish/wrappers/file_system_web.dart';
 // import 'package:starfish/repository/materials_repository.dart';
 // import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
@@ -12,19 +12,19 @@ void removeSplashScreen() {
   window.document.getElementById('splash-img')?.remove();
 }
 
-Future<void> triggerDownload(HiveFile hiveFile) async {
-  if (hiveFile.content == null) {
-    await downloadMaterial(hiveFile);
-    hiveFile.isSynced = true;
-    await hiveFile.save();
-  }
+// Future<void> triggerDownload(HiveFile hiveFile) async {
+//   if (hiveFile.content == null) {
+//     await downloadMaterial(hiveFile);
+//     hiveFile.isSynced = true;
+//     await hiveFile.save();
+//   }
 
-  final content = base64Encode(hiveFile.content!);
-  AnchorElement(
-      href: "data:application/octet-stream;charset=utf-16le;base64,$content")
-    ..setAttribute("download", hiveFile.filename)
-    ..click();
-}
+//   final content = base64Encode(hiveFile.content!);
+//   AnchorElement(
+//       href: "data:application/octet-stream;charset=utf-16le;base64,$content")
+//     ..setAttribute("download", hiveFile.filename)
+//     ..click();
+// }
 
 // Future<FileMetaData> triggerUpload(HiveFile hiveFile, Uint8List bytes) async {
 //   final metaData = FileMetaData(

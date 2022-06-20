@@ -52,6 +52,7 @@ class MultiSelect<T> extends StatefulWidget {
   final bool enabled;
   final bool multilineSummary;
   final List<T> items;
+  final MultiSelectController<T>? controller;
   final void Function(Set<T> selectedItems)? onFinished;
   final VoidCallback? onMoveNext;
   final ToDisplay<T> toDisplay;
@@ -61,6 +62,7 @@ class MultiSelect<T> extends StatefulWidget {
     required this.navTitle,
     required this.placeholder,
     required this.items,
+    this.controller,
     this.initialSelection,
     this.maxSelectItemLimit,
     this.enabled = true,
@@ -69,32 +71,52 @@ class MultiSelect<T> extends StatefulWidget {
     this.onFinished,
     this.onMoveNext,
     required this.toDisplay,
-  }) : super(key: key);
+  }) : assert(controller == null || (maxSelectItemLimit == null && initialSelection == null)), super(key: key);
 
   @override
-  _MultiSelectState<T> createState() => _MultiSelectState<T>();
+  MultiSelectState<T> createState() => MultiSelectState<T>();
 }
 
-class _MultiSelectState<T> extends State<MultiSelect<T>> {
-  late MultiSelectController<T> _controller;
+class MultiSelectState<T> extends State<MultiSelect<T>> {
+  MultiSelectController<T>? _localController;
+
+  MultiSelectController<T> get _effectiveController => widget.controller ?? _localController!;
 
   @override
   void initState() {
-    _controller = MultiSelectController<T>(
-      initialSelection: widget.initialSelection,
-      maxSelectItemLimit: widget.maxSelectItemLimit,
-    );
+    if (widget.controller == null) {
+      _localController = MultiSelectController<T>(
+        initialSelection: widget.initialSelection,
+        maxSelectItemLimit: widget.maxSelectItemLimit,
+      );
+    }
     super.initState();
   }
 
   @override
+  void didUpdateWidget(covariant MultiSelect<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldController = oldWidget.controller;
+    final controller = widget.controller;
+    if (oldController != null && controller == null) {
+      _localController = MultiSelectController<T>(
+        initialSelection: widget.initialSelection,
+        maxSelectItemLimit: widget.maxSelectItemLimit,
+      );
+      _localController!.value = oldController.value;
+    } else if (controller != null && oldController == null) {
+      _localController = null;
+    }
+  }
+
+  @override
   void dispose() {
-    _controller.dispose();
+    _localController?.dispose();
     super.dispose();
   }
 
-  String? get summary => _controller.hasSelected
-      ? _controller.value.map((item) => widget.toDisplay(item)).join(', ')
+  String? get summary => _effectiveController.hasSelected
+      ? _effectiveController.value.map((item) => widget.toDisplay(item)).join(', ')
       : null;
 
   @override
@@ -102,14 +124,14 @@ class _MultiSelectState<T> extends State<MultiSelect<T>> {
     return SelectListButton(
       enabled: widget.enabled,
       multilineSummary: widget.multilineSummary,
-      onFinished: () => widget.onFinished?.call(_controller.value),
+      onFinished: () => widget.onFinished?.call(_effectiveController.value),
       onMoveNext: widget.onMoveNext,
       summary: summary,
       placeholder: widget.placeholder,
       listBuilder: (BuildContext context) {
         return SelectList(
           navTitle: widget.navTitle,
-          controller: _controller,
+          controller: _effectiveController,
           enableSelectAllOption: widget.enableSelectAllOption,
           items: widget.items,
           toDisplay: widget.toDisplay,

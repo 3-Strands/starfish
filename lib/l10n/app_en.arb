@@ -32,7 +32,7 @@
   "copyAllCodes": "Copy all codes",
   "inviteFromContactsList":
       "Invite people from your contacts list",
-  "featureOnlyAvailableOnWeb":
+  "featureOnlyAvailableOnNative":
       "This feature is only available in the Android and iOS Starfish apps.",
   "create": "Create",
   "invite": "Invite",

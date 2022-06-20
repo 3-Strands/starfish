@@ -83,6 +83,10 @@ class _SelectListState<Item, SelectionModel>
     if (oldWidget.items != widget.items) {
       _items = _sortItemsBySelection(widget.items);
     }
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_onSearchTextChange);
+      widget.controller.addListener(_onSearchTextChange);
+    }
   }
 
   @override
