@@ -163,21 +163,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () async {
-              String validationMsg = GeneralFunctions.validateMobile(
-                  _phoneNumber?.phoneNumber ?? '');
-              if (validationMsg.isNotEmpty) {
-                return StarfishSnackbar.showErrorMessage(
-                    context, validationMsg);
-              } else {
-                EasyLoading.show();
+              EasyLoading.show();
 
-                if (kIsWeb) {
-                  _authenticateOnWeb(
-                      _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
-                } else {
-                  _authenticateOnDevice(
-                      _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
-                }
+              if (kIsWeb) {
+                _authenticateOnWeb(
+                    _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
+              } else {
+                _authenticateOnDevice(
+                    _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
               }
             },
             style: ElevatedButton.styleFrom(
