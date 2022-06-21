@@ -261,6 +261,9 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         if (!_isFirstLoad) {
           _firstLoad();
         }
+
+        _languageSelectController.value =
+            bloc.materialBloc.selectedLanguages.toSet();
       },
       onFocusLost: () {},
       child: Scaffold(
