@@ -90,7 +90,7 @@ class GroupBloc extends Object {
   }
 
   Future<void> createUpdateGroupUser(HiveGroupUser groupUser) async {
-    return repository
+    return await repository
         .createUpdateGroupUserInDB(groupUser: groupUser)
         .then((value) => fetchAllGroupsByRole());
   }

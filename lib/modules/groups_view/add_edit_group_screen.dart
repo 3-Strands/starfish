@@ -146,6 +146,11 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     }
   }
 
+  // ignore: must_call_super
+  void dispose() {
+    super.initState();
+  }
+
   void _getAllLanguages() {
     _languageList = _languageBox.values.toList();
     _languageList.sort((a, b) => a.name.compareTo(b.name));
@@ -424,8 +429,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       });
 
       // TODO: _updatedGroupUsers to be removed
-      _updatedGroupUsers.forEach((element) {
-        bloc.groupBloc.createUpdateGroupUser(element);
+      _updatedGroupUsers.forEach((element) async {
+        await bloc.groupBloc.createUpdateGroupUser(element);
       });
 
       // Step 4: send SMS
