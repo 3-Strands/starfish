@@ -59,7 +59,9 @@ Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
 
         controller.add(FileData(metaData: metaData));
         final objectUrl = _fs[hiveFile.filepath]!;
-        controller.add(FileData(chunk: await _fetchData(objectUrl)));
+        final chunk = await _fetchData(objectUrl);
+        debugPrint("Uploading file of size: ${chunk.length}");
+        controller.add(FileData(chunk: chunk));
       }
     }
   );
