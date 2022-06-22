@@ -10,7 +10,7 @@ class LanguageProvider {
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
   }
 
-  List<HiveLanguage> getAll(String userId, String groupId) {
+  List<HiveLanguage> getAll() {
     return _languageBox.values.toList();
   }
 

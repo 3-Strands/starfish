@@ -4,17 +4,16 @@ import 'package:collection/collection.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_current_user.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/db/providers/language_provider.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/results/results_views.dart';
@@ -41,7 +40,6 @@ class _DashboardState extends State<Dashboard> {
   late PageController _pageController;
 
   late AppBloc bloc;
-  late Box<HiveLanguage> _languageBox;
   HiveCurrentUser? _user;
   late AppLocalizations _appLocalizations;
 
@@ -51,7 +49,6 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     if (!Platform.isWeb) {
       // Sync every 15 mins
-      // TODO: Check Connectivity before starting sync
       cron.schedule(Schedule.parse('*/15 * * * *'), () async {
         debugPrint('================ START SYNC =====================');
         SyncService().syncAll();
@@ -103,9 +100,7 @@ class _DashboardState extends State<Dashboard> {
       }
     }, context: this);
 
-    SyncService().syncAll().whenComplete(_getCurrentUser);
-
-    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
+    SyncService().syncAll();
 
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
@@ -120,12 +115,13 @@ class _DashboardState extends State<Dashboard> {
     ];
     _pageController = PageController(initialPage: _selectedIndex);
 
+    _getCurrentUser();
     super.initState();
   }
 
   void _getCurrentUser() {
     setState(() {
-      _user = CurrentUserProvider().getUserSync();
+      _user = CurrentUserProvider().getCurrentUserSync();
     });
   }
 
@@ -149,9 +145,9 @@ class _DashboardState extends State<Dashboard> {
     if (_user == null) {
       return const SizedBox();
     }
-    StarfishSharedPreference()
-        .getAccessToken()
-        .then((value) => debugPrint("AccessToken: $value"));
+    // StarfishSharedPreference()
+    //     .getAccessToken()
+    //     .then((value) => debugPrint("AccessToken: $value"));
     _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       child: Stack(
@@ -209,7 +205,8 @@ class _DashboardState extends State<Dashboard> {
 
   _selectLanguage(AppBloc bloc) {
     _user?.languageIds.forEach((languageId) {
-      HiveLanguage? _langugage = _languageBox.values
+      HiveLanguage? _langugage = LanguageProvider()
+          .getAll()
           .firstWhereOrNull((element) => element.id == languageId);
       if (_langugage != null) {
         bloc.materialBloc.selectedLanguages.add(_langugage);
