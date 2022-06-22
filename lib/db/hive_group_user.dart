@@ -245,7 +245,7 @@ extension HiveGroupUserExt on HiveGroupUser {
     int count = 0;
     this
         .actions
-        ?.where((element) => element.isDueInMonth(month))
+        ?.where((element) => element.dueDateIsOrAfterMonth(month))
         .forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
@@ -264,7 +264,7 @@ extension HiveGroupUserExt on HiveGroupUser {
     int count = 0;
     this.actions?.where((element) {
       //debugPrint("Action: ${element}");
-      return element.isDueInMonth(month);
+      return element.dueDateIsOrAfterMonth(month);
     }).forEach((hiveAction) {
       HiveActionUser? _hiveActionUser =
           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
