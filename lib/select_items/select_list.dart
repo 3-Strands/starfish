@@ -32,7 +32,7 @@ class SelectList<Item, SelectionModel> extends StatefulWidget {
     required this.navTitle,
     required this.controller,
     required this.enableSelectAllOption,
-    required this.inverseSelectAll,
+    this.inverseSelectAll = false,
     required this.items,
     required this.toDisplay,
   }) : super(key: key);

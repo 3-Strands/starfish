@@ -842,7 +842,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
                       try {
-                        await GeneralFunctions.openFile(hiveFile);
+                        await GeneralFunctions.openFile(hiveFile, context);
                       } on NetworkUnavailableException {
                         // TODO: show message to user
                       }

@@ -662,7 +662,7 @@ class _MeState extends State<Me> {
               .insertTemplateValues({'file_name': hiveFile.filename}),
           onButtonTap: () async {
             try {
-              await GeneralFunctions.openFile(hiveFile);
+              await GeneralFunctions.openFile(hiveFile, context);
             } on NetworkUnavailableException {
               // TODO: show message to user
             }
