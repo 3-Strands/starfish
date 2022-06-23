@@ -148,7 +148,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   // ignore: must_call_super
   void dispose() {
-    super.initState();
+    super.dispose();
   }
 
   void _getAllLanguages() {
