@@ -1,6 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
+import 'package:starfish/wrappers/platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/db/hive_file.dart';
@@ -37,7 +40,7 @@ class GeneralFunctions {
     }
   }
 
-  static Future<void> openFile(HiveFile file) async {
+  static Future<void> openFile(HiveFile file, BuildContext context) async {
     if (file.filepath != null) {
       await fs.openFile(file.filepath!);
     } else {
@@ -53,6 +56,31 @@ class GeneralFunctions {
       } finally {
         EasyLoading.dismiss();
       }
+    }
+
+    if (Platform.isWeb &&
+        !(await StarfishSharedPreference().hasBeenRemindedToDeleteFiles())) {
+      final l18n = AppLocalizations.of(context)!;
+      final dialog = CupertinoAlertDialog(
+        title: Text(
+          l18n.warning,
+          style: TextStyle(color: const Color(0xFF030303)),
+        ),
+        content: Text(l18n.rememberToRemoveDownloadedFiles),
+        actions: <Widget>[
+          CupertinoDialogAction(
+            child: Text(l18n.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+      showCupertinoDialog(
+        context: context,
+        builder: (_) => dialog,
+      );
+      StarfishSharedPreference().setHasBeenRemindedToDeleteFiles();
     }
   }
 

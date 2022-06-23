@@ -603,7 +603,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             InkWell(
               onTap: () async {
                 try {
-                  await GeneralFunctions.openFile(hiveFile);
+                  await GeneralFunctions.openFile(hiveFile, context);
                 } on NetworkUnavailableException {
                   // TODO: show message to user
                 }

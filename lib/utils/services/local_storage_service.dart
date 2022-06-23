@@ -8,6 +8,7 @@ class StarfishSharedPreference {
 
   static final String _kUserLoggedIn = "isUserLoggedIn";
   static final String _kIsSyncingFirstTime = "isSyncingFirstTime";
+  static final String _kHasBeenRemindedToDeleteFiles = "hasBeenRemindedToDeleteFiles";
   static final String _kAccessToken = "accessToken";
   static final String _kDeviceLanguage = "deviceLanguage";
   static final String _kRefreshToken = "refreshToken";
@@ -20,6 +21,14 @@ class StarfishSharedPreference {
 
   Future<bool> setIsSyncingFirstTime(bool value) {
     return _storage.setBool(_kIsSyncingFirstTime, value);
+  }
+
+  Future<bool> setHasBeenRemindedToDeleteFiles() {
+    return _storage.setBool(_kHasBeenRemindedToDeleteFiles, true);
+  }
+
+  Future<bool> hasBeenRemindedToDeleteFiles() async {
+    return (await _storage.getBool(_kHasBeenRemindedToDeleteFiles)) ?? false;
   }
 
   Future<bool> setAccessToken(String value) {
