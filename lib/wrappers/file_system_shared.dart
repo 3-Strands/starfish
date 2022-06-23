@@ -36,10 +36,11 @@ Future<void> uploadFile({required FutureOr<void> Function(StreamController<FileD
 
   await readStream(controller);
 
-  await controller.close();
+  // await controller.close();
 
   await for (final uploadStatus in responseStream) {
     if (uploadStatus.status == UploadStatus_Status.OK) {
+      await controller.close();
       return;
     } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
       throw Exception('Upload failed');
