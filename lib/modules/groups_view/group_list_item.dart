@@ -180,7 +180,7 @@ class GroupListItem extends StatelessWidget {
                       ),
                       style: ElevatedButton.styleFrom(
                           primary: AppColors.selectedButtonBG,
-                          fixedSize: Size(130.w, 20.h)),
+                      ),
                     ),
                 ],
               ),

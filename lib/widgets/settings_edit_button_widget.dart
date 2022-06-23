@@ -29,7 +29,6 @@ class _EditButtonState extends State<EditButton> {
         widget.onButtonClicked(isEditable);
       },
       child: Container(
-        width: 48.w,
         height: 44.h,
         color: Colors.white,
         child: Row(
