@@ -522,6 +522,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         placeholder: _appLocalizations.selectTopics,
         multilineSummary: true,
         enableSelectAllOption: true,
+        inverseSelectAll: true,
         items: _topicList,
         initialSelection: bloc.materialBloc.selectedTopics.toSet(),
         toDisplay: HiveMaterialTopic.toDisplay,

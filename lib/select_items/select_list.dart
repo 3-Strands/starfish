@@ -22,6 +22,7 @@ abstract class SelectListController<Item, SelectionModel>
 class SelectList<Item, SelectionModel> extends StatefulWidget {
   final String navTitle;
   final bool enableSelectAllOption;
+  final bool inverseSelectAll;
   final SelectListController<Item, SelectionModel> controller;
   final List<Item> items;
   final ToDisplay<Item> toDisplay;
@@ -31,6 +32,7 @@ class SelectList<Item, SelectionModel> extends StatefulWidget {
     required this.navTitle,
     required this.controller,
     required this.enableSelectAllOption,
+    required this.inverseSelectAll,
     required this.items,
     required this.toDisplay,
   }) : super(key: key);
@@ -154,7 +156,9 @@ class _SelectListState<Item, SelectionModel>
 
   @override
   Widget build(BuildContext context) {
-    final isAllSelected = widget.controller.isAllSelected(_items);
+    final isAllSelected = widget.inverseSelectAll
+        ? !widget.controller.hasSelected
+        : widget.controller.isAllSelected(_items);
 
     return Scaffold(
       //  resizeToAvoidBottomInset: false,
@@ -187,8 +191,8 @@ class _SelectListState<Item, SelectionModel>
                   ),
                 ),
                 isSelected: isAllSelected,
-                onTap: () =>
-                    widget.controller.setAllSelected(_items, !isAllSelected),
+                onTap: () => widget.controller.setAllSelected(_items,
+                    (widget.inverseSelectAll ? isAllSelected : !isAllSelected)),
               ),
               visible: widget.enableSelectAllOption,
             ),

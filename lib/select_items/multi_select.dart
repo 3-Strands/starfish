@@ -49,6 +49,7 @@ class MultiSelect<T> extends StatefulWidget {
   final int? maxSelectItemLimit;
   final Set<T>? initialSelection;
   final bool enableSelectAllOption;
+  final bool inverseSelectAll;
   final bool enabled;
   final bool multilineSummary;
   final List<T> items;
@@ -67,11 +68,14 @@ class MultiSelect<T> extends StatefulWidget {
     this.maxSelectItemLimit,
     this.enabled = true,
     this.enableSelectAllOption = false,
+    this.inverseSelectAll = false, // Inverse the behaviour of selectAll
     this.multilineSummary = false,
     this.onFinished,
     this.onMoveNext,
     required this.toDisplay,
-  }) : assert(controller == null || (maxSelectItemLimit == null && initialSelection == null)), super(key: key);
+  })  : assert(controller == null ||
+            (maxSelectItemLimit == null && initialSelection == null)),
+        super(key: key);
 
   @override
   MultiSelectState<T> createState() => MultiSelectState<T>();
@@ -80,7 +84,8 @@ class MultiSelect<T> extends StatefulWidget {
 class MultiSelectState<T> extends State<MultiSelect<T>> {
   MultiSelectController<T>? _localController;
 
-  MultiSelectController<T> get _effectiveController => widget.controller ?? _localController!;
+  MultiSelectController<T> get _effectiveController =>
+      widget.controller ?? _localController!;
 
   @override
   void initState() {
@@ -116,7 +121,9 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
   }
 
   String? get summary => _effectiveController.hasSelected
-      ? _effectiveController.value.map((item) => widget.toDisplay(item)).join(', ')
+      ? _effectiveController.value
+          .map((item) => widget.toDisplay(item))
+          .join(', ')
       : null;
 
   @override
@@ -133,6 +140,7 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
           navTitle: widget.navTitle,
           controller: _effectiveController,
           enableSelectAllOption: widget.enableSelectAllOption,
+          inverseSelectAll: widget.inverseSelectAll,
           items: widget.items,
           toDisplay: widget.toDisplay,
         );
