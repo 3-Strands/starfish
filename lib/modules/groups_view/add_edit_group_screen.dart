@@ -1,5 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgets;
 // ignore: import_of_legacy_library_into_null_safe
@@ -276,7 +277,22 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   Future<void> _loadContacts() async {
     if (_contactsNotifier.value == null) {
-      _contactsNotifier.value = await getAllContacts();
+      List<HiveUser> _allContacts = await getAllContacts();
+
+      // remove current user's phonenumber from contact list
+      HiveCurrentUser? _currentUser =
+          CurrentUserProvider().getCurrentUserSync();
+      if (_currentUser != null) {
+        HiveUser? _user = _allContacts.firstWhereOrNull((element) {
+          return element.diallingCode == _currentUser.diallingCode &&
+              element.phone == _currentUser.phone;
+        });
+
+        if (_user != null) {
+          _allContacts.remove(_user);
+        }
+      }
+      _contactsNotifier.value = _allContacts;
     }
   }
 
