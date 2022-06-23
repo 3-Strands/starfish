@@ -86,9 +86,9 @@ class _SingleSelectState<T> extends State<SingleSelect<T>> {
           enableSelectAllOption: false,
           items: widget.items,
           toDisplay: widget.toDisplay,
+          inverseSelectAll: false,
         );
       },
     );
   }
 }
-
