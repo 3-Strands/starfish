@@ -14,7 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class UnInvitedGroupMemberListItem extends StatefulWidget {
   final HiveGroupUser groupUser;
   final Function(HiveGroupUser) onRemove;
-  final Function(HiveUser) onInvite;
+  final Function(HiveUser, String _diallingCode, String phonenumber) onInvite;
 
   UnInvitedGroupMemberListItem({
     Key? key,
@@ -38,7 +38,7 @@ class _UnInvitedGroupMemberListItemState
   void initState() {
     super.initState();
     _dialingCodeController.text =
-        CurrentUserProvider().getUserSync().diallingCodeWithPlus;
+        CurrentUserProvider().getCurrentUserSync()?.diallingCodeWithPlus ?? '';
   }
 
   @override
@@ -82,19 +82,6 @@ class _UnInvitedGroupMemberListItemState
                         setState(() {
                           isEditMode = !isEditMode;
                         });
-                        /*if (widget.groupUser.user != null) {
-                          widget.groupUser.user!.phone =
-                              _phoneNumberController.text;
-                          widget.groupUser.user!.diallingCode =
-                              _dialingCodeController.text.isNotEmpty &&
-                                      _dialingCodeController.text
-                                          .startsWith("+")
-                                  ? _dialingCodeController.text.substring(1)
-                                  : _dialingCodeController.text;
-
-                          widget.groupUser.user!.save();
-                          widget.onInvite(widget.groupUser.user!);
-                        }*/
                       },
                       child: Text(
                         AppLocalizations.of(context)!.inviteGroupUser,
@@ -224,17 +211,13 @@ class _UnInvitedGroupMemberListItemState
                           } else {
                             //invite this user by sending SMS
                             if (widget.groupUser.user != null) {
-                              widget.groupUser.user!.diallingCode =
+                              widget.onInvite(
+                                  widget.groupUser.user!,
                                   _dialingCode.startsWith("+")
                                       ? _dialingCode.substring(
-                                          1) // Remove '+' from dialing code
-                                      : _dialingCode;
-                              widget.groupUser.user!.phone = _phoneNumber;
-                              widget.groupUser.user!.isUpdated = true;
-                              bloc.userBloc
-                                  .createUpdateUser(widget.groupUser.user!)
-                                  .then((value) =>
-                                      widget.onInvite(widget.groupUser.user!));
+                                          1) // Remove '+' from dialling code
+                                      : _dialingCode,
+                                  _phoneNumber);
                             }
                           }
                         },
