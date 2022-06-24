@@ -172,7 +172,8 @@ class HiveGroup extends HiveObject {
     if (this.users != null) {
       // filter out the duplicate record.
       List<HiveGroupUser> _users =
-          this.users!; // + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+          this.users?.where((element) => element.user != null).toList() ??
+              []; // + GroupProvider().getGroupUsersByGroupIdSync(this.id);
 
       GroupProvider().getGroupUsersByGroupIdSync(this.id).forEach((element) {
         if (this.users!.contains(element) && (element.isUpdated)) {
