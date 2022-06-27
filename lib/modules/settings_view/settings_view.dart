@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:collection/collection.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:starfish/app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
@@ -77,6 +79,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isNameEditable = false;
 
   late AppBloc bloc;
+  bool _isPhoneNumberValid = false;
+  PhoneNumber? _phoneNumber;
 
   late List<LanguageCode> _languages;
   LanguageCode? _language;
@@ -88,6 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    _isPhoneNumberValid = false;
     _countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
@@ -209,38 +214,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _updatePhoneNumber() async {
-    _validatePhoneNumber();
+    /// _validatePhoneNumber();
+    if (_isPhoneNumberValid) {
+      var _phoneCountryId = _countryBox.values
+          .where((item) => item.diallingCode == _countryCodeController.text)
+          .first
+          .id;
 
-    setState(() => {
-          _mobileNumber = _phoneNumberController.text,
-          _countyCode = _countryCodeController.text
-        });
+      var fieldMaskPaths = ['dialling_code', 'phone_country_id', 'phone'];
 
-    var _phoneCountryId = _countryBox.values
-        .where((item) => item.diallingCode == _countryCodeController.text)
-        .first
-        .id;
+      HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
+      _user.phone = _phoneNumber!.parseNumber();
+      _user.diallingCode = _phoneNumber!.dialCode!;
+      _user.phoneCountryId = _phoneCountryId;
+      _user.isUpdated = true;
 
-    var fieldMaskPaths = ['dialling_code', 'phone_country_id', 'phone'];
-
-    HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
-    _user.phone = _phoneNumberController.text;
-    _user.diallingCode = _countryCodeController.text;
-    _user.phoneCountryId = _phoneCountryId;
-    _user.isUpdated = true;
-
-    await CurrentUserRepository()
-        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
-        .then(
-          (value) => {
-            CurrentUserProvider().updateUser(_user),
-          },
-        )
-        .whenComplete(() {
-      StarfishSharedPreference().setLoginStatus(false);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.phoneAuthentication, (Route<dynamic> route) => false);
-    });
+      await CurrentUserRepository()
+          .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
+          .then(
+            (value) => {
+              CurrentUserProvider().updateUser(_user),
+            },
+          )
+          .whenComplete(() {
+        StarfishSharedPreference().setLoginStatus(false);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.phoneAuthentication, (Route<dynamic> route) => false);
+      });
+    }
   }
 
   void updateLinkGroupStatus() async {
@@ -442,94 +443,137 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Container _phoneNumberContainer() {
+    OutlineInputBorder _outlineInputBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.r),
+      borderSide: BorderSide(
+        color: Colors.white,
+      ),
+    );
     return Container(
-      //   height: 52.h,
-      child: Row(
-        children: [
-          Container(
-            //        height: 52.h,
-            width: 87.w,
-            child: _countryCodeField(),
-          ),
-          SizedBox(width: 15.w),
-          Container(
-            ///       height: 52.h,
-            width: 243.w,
-            child: _phoneNumberField(),
-          )
-        ],
-      ),
-    );
+        //   height: 52.h,
+        child: InternationalPhoneNumberInput(
+            textFieldController: _phoneNumberController,
+            inputDecoration: InputDecoration(
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelStyle: formTitleHintStyle,
+              hintText: AppLocalizations.of(context)!.phoneNumberHint,
+              hintStyle: formTitleHintStyle,
+              contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+              border: _outlineInputBorder,
+              enabledBorder: _outlineInputBorder,
+              // errorBorder: _outlineInputBorder,
+              // focusedErrorBorder: _outlineInputBorder,
+              focusedBorder: _outlineInputBorder,
+              filled: true,
+              fillColor: AppColors.txtFieldBackground,
+            ),
+            selectorConfig: SelectorConfig(
+              selectorType: PhoneInputSelectorType.DIALOG,
+              showFlags: true,
+              useEmoji: true,
+            ),
+            onInputChanged: ((value) {
+              _phoneNumber = value;
+              print(_phoneNumber);
+            }),
+            onInputValidated: (isValid) {
+              _isPhoneNumberValid = isValid;
+            },
+            initialValue: PhoneNumber(
+              dialCode: _user.diallingCode,
+              phoneNumber: _phoneNumberController.text,
+              isoCode: PhoneNumber.getISO2CodeByPrefix(_user.diallingCode),
+            ),
+            errorMessage: AppLocalizations.of(context)!.invalidPhoneNumber,
+            autoValidateMode: AutovalidateMode.onUserInteraction,
+            formatInput: false,
+            maxLength: 15)
+        // child: Row(
+        //   children: [
+        //     Container(
+        //       //        height: 52.h,
+        //       width: 87.w,
+        //       child: _countryCodeField(),
+        //     ),
+        //     SizedBox(width: 15.w),
+        //     Container(
+        //       ///       height: 52.h,
+        //       width: 243.w,
+        //       child: _phoneNumberField(),
+        //     )
+        //   ],
+        // ),
+        );
   }
 
-  TextFormField _countryCodeField() {
-    return TextFormField(
-      inputFormatters: [
-        new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-      ],
-      controller: _countryCodeController,
-      focusNode: _countryCodeFocus,
-      onFieldSubmitted: (term) {
-        _fieldFocusChange(context, _countryCodeFocus, _phoneNumberFocus);
-      },
-      keyboardType: TextInputType.phone,
-      style: textFormFieldText,
-      decoration: InputDecoration(
-        hintText: '', // _appLocalizations.countryCodeHint,
-        hintStyle: formTitleHintStyle,
-        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.blue,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
-      ),
-    );
-  }
+  // TextFormField _countryCodeField() {
+  //   return TextFormField(
+  //     inputFormatters: [
+  //       new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+  //     ],
+  //     controller: _countryCodeController,
+  //     focusNode: _countryCodeFocus,
+  //     onFieldSubmitted: (term) {
+  //       _fieldFocusChange(context, _countryCodeFocus, _phoneNumberFocus);
+  //     },
+  //     keyboardType: TextInputType.phone,
+  //     style: textFormFieldText,
+  //     decoration: InputDecoration(
+  //       hintText: '', // _appLocalizations.countryCodeHint,
+  //       hintStyle: formTitleHintStyle,
+  //       contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //         borderSide: BorderSide(
+  //           color: Colors.blue,
+  //         ),
+  //       ),
+  //       enabledBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //         borderSide: BorderSide(
+  //           color: Colors.white,
+  //         ),
+  //       ),
+  //       filled: true,
+  //       fillColor: AppColors.txtFieldBackground,
+  //     ),
+  //   );
+  // }
 
-  TextFormField _phoneNumberField() {
-    return TextFormField(
-      inputFormatters: [
-        new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-      ],
-      controller: _phoneNumberController,
-      focusNode: _phoneNumberFocus,
-      onFieldSubmitted: (term) {
-        _phoneNumberFocus.unfocus();
-      },
-      keyboardType: TextInputType.phone,
-      style: textFormFieldText,
-      decoration: InputDecoration(
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        labelText: _appLocalizations.phoneNumberHint,
-        labelStyle: formTitleHintStyle,
-        alignLabelWithHint: true,
-        // hintText: _appLocalizations.phoneNumberHint,
-        // hintStyle: formTitleHintStyle,
-        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        filled: true,
-        fillColor: AppColors.txtFieldBackground,
-      ),
-    );
-  }
+  // TextFormField _phoneNumberField() {
+  //   return TextFormField(
+  //     inputFormatters: [
+  //       new FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+  //     ],
+  //     controller: _phoneNumberController,
+  //     focusNode: _phoneNumberFocus,
+  //     onFieldSubmitted: (term) {
+  //       _phoneNumberFocus.unfocus();
+  //     },
+  //     keyboardType: TextInputType.phone,
+  //     style: textFormFieldText,
+  //     decoration: InputDecoration(
+  //       floatingLabelBehavior: FloatingLabelBehavior.never,
+  //       labelText: _appLocalizations.phoneNumberHint,
+  //       labelStyle: formTitleHintStyle,
+  //       alignLabelWithHint: true,
+  //       // hintText: _appLocalizations.phoneNumberHint,
+  //       // hintStyle: formTitleHintStyle,
+  //       contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //       ),
+  //       enabledBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(10.0),
+  //         borderSide: BorderSide(
+  //           color: Colors.white,
+  //         ),
+  //       ),
+  //       filled: true,
+  //       fillColor: AppColors.txtFieldBackground,
+  //     ),
+  //   );
+  // }
 
   String getGroupName(String groupId) {
     return _groupList
@@ -764,8 +808,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               onFinished:
                                   (Set<HiveCountry> selectedItems) async {
                                 bool _isNetworkAvailable =
-                                    await GeneralFunctions
-                                        .isNetworkAvailable();
+                                    await GeneralFunctions.isNetworkAvailable();
                                 if (!_isNetworkAvailable) {
                                   StarfishSnackbar.showErrorMessage(
                                       context,
