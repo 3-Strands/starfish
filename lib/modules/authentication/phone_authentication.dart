@@ -95,6 +95,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           showFlags: true,
           useEmoji: true,
         ),
+        initialValue: PhoneNumber(isoCode: "IN"),
         inputDecoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelStyle: formTitleHintStyle,
@@ -110,14 +111,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           fillColor: AppColors.txtFieldBackground,
         ),
         onInputChanged: ((value) {
-          setState(() {
-            _phoneNumber = value;
-          });
+          _phoneNumber = value;
         }),
         onInputValidated: (isValid) {
-          setState(() {
-            _isPhoneNumberValid = isValid;
-          });
+          _isPhoneNumberValid = isValid;
         },
         errorMessage: AppLocalizations.of(context)!.invalidPhoneNumber,
         autoValidateMode: AutovalidateMode.onUserInteraction,
