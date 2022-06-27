@@ -34,6 +34,9 @@
       "Invite people from your contacts list",
   "featureOnlyAvailableOnNative":
       "This feature is only available in the Android and iOS Starfish apps.",
+  "warning": "Warning",
+  "rememberToRemoveDownloadedFiles":
+      "If you are on a shared or public computer, remember to delete your downloaded files at the end of your session.",
   "create": "Create",
   "invite": "Invite",
   "leaveThisGroup": "Leave this group",

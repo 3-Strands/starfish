@@ -1,5 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/widgets/basic.dart' as widgets;
 // ignore: import_of_legacy_library_into_null_safe
@@ -148,7 +149,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   // ignore: must_call_super
   void dispose() {
-    super.initState();
+    super.dispose();
   }
 
   void _getAllLanguages() {
@@ -189,11 +190,12 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     });
   }
 
-  bool _checkIfUserPhonenumberAlreadySelected(HiveUser contact) {
+  bool _checkIfUserPhonenumberAlreadySelected(
+      String diallingCode, String phonenumber) {
     bool _alreadySelected = _newInvitedUsers
             .where((element) =>
-                element.diallingCode == contact.diallingCode &&
-                element.phone == contact.phone)
+                element.diallingCode == diallingCode &&
+                element.phone == phonenumber)
             .length >
         0;
 
@@ -202,8 +204,8 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         _hiveGroup!.activeUsers != null &&
         _hiveGroup!.activeUsers!
                 .where((element) =>
-                    element.diallingCode == contact.diallingCode &&
-                    element.phone == contact.phone)
+                    element.diallingCode == diallingCode &&
+                    element.phone == phonenumber)
                 .length >
             0) {
       _alreadyGroupMember = true;
@@ -245,7 +247,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                         onTap: (HiveUser contact) {
                           //TODO: check if contact number already registered/selected for any other group member
 
-                          if (_checkIfUserPhonenumberAlreadySelected(contact)) {
+                          if (_checkIfUserPhonenumberAlreadySelected(
+                              contact.diallingCode ?? '',
+                              contact.phone ?? '')) {
                             StarfishSnackbar.showErrorMessage(context,
                                 _appLocalizations.phonenumberAlreadyAdded);
                             return;
@@ -276,7 +280,22 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   Future<void> _loadContacts() async {
     if (_contactsNotifier.value == null) {
-      _contactsNotifier.value = await getAllContacts();
+      List<HiveUser> _allContacts = await getAllContacts();
+
+      // remove current user's phonenumber from contact list
+      HiveCurrentUser? _currentUser =
+          CurrentUserProvider().getCurrentUserSync();
+      if (_currentUser != null) {
+        HiveUser? _user = _allContacts.firstWhereOrNull((element) {
+          return element.diallingCode == _currentUser.diallingCode &&
+              element.phone == _currentUser.phone;
+        });
+
+        if (_user != null) {
+          _allContacts.remove(_user);
+        }
+      }
+      _contactsNotifier.value = _allContacts;
     }
   }
 
@@ -603,8 +622,40 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return EditInviteUserBottomSheet(user, groupUser,
-            onDone: (hiveUser, hiveGroupUser) {});
+        return EditInviteUserBottomSheet(user, groupUser, onDone:
+            (String contactName, String diallingCode, String phonenumber,
+                GroupUser_Role role) {
+          if (contactName.isEmpty) {
+            StarfishSnackbar.showErrorMessage(
+                context, AppLocalizations.of(context)!.emptyFullName);
+            return;
+          } else if (diallingCode.isEmpty) {
+            StarfishSnackbar.showErrorMessage(
+                context, AppLocalizations.of(context)!.emptyDialingCode);
+            return;
+          } else if (phonenumber.isEmpty) {
+            StarfishSnackbar.showErrorMessage(
+                context, AppLocalizations.of(context)!.emptyMobileNumbers);
+            return;
+          } else if ((user.phone != phonenumber ||
+                  user.diallingCode != diallingCode) &&
+              _checkIfUserPhonenumberAlreadySelected(
+                  diallingCode, phonenumber)) { //check if there is any change in dialling code or in phone number
+            StarfishSnackbar.showErrorMessage(
+                context, _appLocalizations.phonenumberAlreadyAdded);
+            return;
+          } else {
+            user.name = contactName;
+            user.diallingCode = diallingCode;
+            user.phone = phonenumber;
+            user.isUpdated = true;
+
+            groupUser.role = role.value;
+            groupUser.isUpdated = true;
+
+            Navigator.of(context).pop();
+          }
+        });
       },
     ).whenComplete(() {
       setState(() {});
@@ -1224,18 +1275,34 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
               });
             }
           },
-          onInvite: (HiveUser _user) {
-            if (_checkIfUserPhonenumberAlreadySelected(_user)) {
+          onInvite: (HiveUser _user, String diallingCode, String phonenumber) {
+            if (diallingCode.isEmpty) {
+              StarfishSnackbar.showErrorMessage(
+                  context, AppLocalizations.of(context)!.emptyDialingCode);
+              return;
+            } else if (phonenumber.isEmpty) {
+              StarfishSnackbar.showErrorMessage(
+                  context, AppLocalizations.of(context)!.emptyMobileNumbers);
+              return;
+            } else if (_checkIfUserPhonenumberAlreadySelected(
+                diallingCode, phonenumber)) {
               StarfishSnackbar.showErrorMessage(
                   context, _appLocalizations.phonenumberAlreadyAdded);
               return;
+            } else {
+              _user.phone = phonenumber;
+              _user.diallingCode = diallingCode;
+              _user.isUpdated = true;
+              bloc.userBloc.createUpdateUser(_user).then((value) {
+                setState(() {});
+                SMS.send(
+                    _appLocalizations.inviteSMS.insertTemplateValues({
+                      'receiver_first_name': _user.name ?? '',
+                      'sender_name': CurrentUserProvider().user.name!
+                    }),
+                    _user.phoneWithDialingCode);
+              });
             }
-            SMS.send(
-                _appLocalizations.inviteSMS.insertTemplateValues({
-                  'receiver_first_name': _user.name ?? '',
-                  'sender_name': CurrentUserProvider().user.name!
-                }),
-                _user.phoneWithDialingCode);
           },
         ),
       );

@@ -83,8 +83,6 @@ class SyncService {
   var lock = new Lock(reentrant: false);
   var _refreshSessionLock = new Lock();
 
-  static syncNow() {}
-
   late Box<HiveLastSyncDateTime> lastSyncBox;
   late Box<HiveCountry> countryBox;
   late Box<HiveLanguage> languageBox;
@@ -106,7 +104,9 @@ class SyncService {
   late Box<HiveTransformation> transformationBox;
   late Box<HiveOutput> outputBox;
 
-  SyncService() {
+  static final SyncService _singleton = SyncService._internal();
+
+  SyncService._internal() {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
@@ -135,6 +135,10 @@ class SyncService {
     transformationBox =
         Hive.box<HiveTransformation>(HiveDatabase.TRANSFORMATION_BOX);
     outputBox = Hive.box<HiveOutput>(HiveDatabase.OUTPUT_BOX);
+  }
+
+  factory SyncService() {
+    return _singleton;
   }
 
   void showAlert(BuildContext context) async {

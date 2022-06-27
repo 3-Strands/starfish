@@ -522,6 +522,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
         placeholder: _appLocalizations.selectTopics,
         multilineSummary: true,
         enableSelectAllOption: true,
+        inverseSelectAll: true,
         items: _topicList,
         initialSelection: bloc.materialBloc.selectedTopics.toSet(),
         toDisplay: HiveMaterialTopic.toDisplay,
@@ -602,7 +603,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
             InkWell(
               onTap: () async {
                 try {
-                  await GeneralFunctions.openFile(hiveFile);
+                  await GeneralFunctions.openFile(hiveFile, context);
                 } on NetworkUnavailableException {
                   // TODO: show message to user
                 }

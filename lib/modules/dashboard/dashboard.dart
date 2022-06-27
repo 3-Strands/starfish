@@ -100,7 +100,12 @@ class _DashboardState extends State<Dashboard> {
       }
     }, context: this);
 
-    SyncService().syncAll();
+    _user = CurrentUserProvider().getCurrentUserSync();
+    SyncService().syncAll().whenComplete(() {
+      if (_user == null) {
+        _getCurrentUser();
+      }
+    });
 
     var materialsWidget = MaterialsScreen();
     var groupsWidget = GroupsScreen();
@@ -115,7 +120,6 @@ class _DashboardState extends State<Dashboard> {
     ];
     _pageController = PageController(initialPage: _selectedIndex);
 
-    _getCurrentUser();
     super.initState();
   }
 

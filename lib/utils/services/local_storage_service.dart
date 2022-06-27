@@ -1,85 +1,82 @@
 import 'dart:convert';
 
-import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:starfish/wrappers/platform_storage.dart';
 
 class StarfishSharedPreference {
-  final String _kUserLoggedIn = "isUserLoggedIn";
-  final String _kIsSyncingFirstTime = "isSyncingFirstTime";
-  final String _kAccessToken = "accessToken";
-  final String _kDeviceLanguage = "deviceLanguage";
-  final String _kRefreshToken = "refreshToken";
-  final String _kSessionUserId = "sessionUserId";
-  final String _kEncryptionKey = "encryptionKey";
+  static final PlatformStorage _storage = PlatformStorage();
 
-  setLoginStatus(bool value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kUserLoggedIn, value);
+  static final String _kUserLoggedIn = "isUserLoggedIn";
+  static final String _kIsSyncingFirstTime = "isSyncingFirstTime";
+  static final String _kHasBeenRemindedToDeleteFiles = "hasBeenRemindedToDeleteFiles";
+  static final String _kAccessToken = "accessToken";
+  static final String _kDeviceLanguage = "deviceLanguage";
+  static final String _kRefreshToken = "refreshToken";
+  static final String _kSessionUserId = "sessionUserId";
+  static final String _kEncryptionKey = "encryptionKey";
+
+  Future<bool> setLoginStatus(bool value) {
+    return _storage.setBool(_kUserLoggedIn, value);
   }
 
-  setIsSyncingFirstTime(bool value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kIsSyncingFirstTime, value);
+  Future<bool> setIsSyncingFirstTime(bool value) {
+    return _storage.setBool(_kIsSyncingFirstTime, value);
   }
 
-  Future<bool> setAccessToken(String value) async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.setString(_kAccessToken, value);
+  Future<bool> setHasBeenRemindedToDeleteFiles() {
+    return _storage.setBool(_kHasBeenRemindedToDeleteFiles, true);
   }
 
-  Future<bool> setDeviceLanguage(String value) async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.setString(_kDeviceLanguage, value);
+  Future<bool> hasBeenRemindedToDeleteFiles() async {
+    return (await _storage.getBool(_kHasBeenRemindedToDeleteFiles)) ?? false;
+  }
+
+  Future<bool> setAccessToken(String value) {
+    return _storage.setEncryptedString(_kAccessToken, value);
+  }
+
+  Future<bool> setDeviceLanguage(String value) {
+    return _storage.setEncryptedString(_kDeviceLanguage, value);
   }
 
   Future<bool> isUserLoggedIn() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_kUserLoggedIn) ?? false;
+    return (await _storage.getBool(_kUserLoggedIn)) ?? false;
   }
 
   Future<bool> isSyncingFirstTimeDone() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_kIsSyncingFirstTime) ?? false;
+    return (await _storage.getBool(_kIsSyncingFirstTime)) ?? false;
   }
 
-  Future<String> getAccessToken() async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.getString(_kAccessToken);
+  Future<String> getAccessToken() {
+    return _storage.getEncryptedString(_kAccessToken);
   }
 
-  Future<String> getDeviceLanguage() async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.getString(_kDeviceLanguage);
+  Future<String> getDeviceLanguage() {
+    return _storage.getEncryptedString(_kDeviceLanguage);
   }
 
-  Future<bool> setRefreshToken(String value) async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.setString(_kRefreshToken, value);
+  Future<bool> setRefreshToken(String value) {
+    return _storage.setEncryptedString(_kRefreshToken, value);
   }
 
-  Future<String> getRefreshToken() async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.getString(_kRefreshToken);
+  Future<String> getRefreshToken() {
+    return _storage.getEncryptedString(_kRefreshToken);
   }
 
-  Future<bool> setSessionUserId(String value) async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.setString(_kSessionUserId, value);
+  Future<bool> setSessionUserId(String value) {
+    return _storage.setEncryptedString(_kSessionUserId, value);
   }
 
-  Future<String> getSessionUserId() async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    return prefs.getString(_kSessionUserId);
+  Future<String> getSessionUserId() {
+    return _storage.getEncryptedString(_kSessionUserId);
   }
 
   Future<List<int>> getEncryptionKey() async {
-    final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-    String _encryptionKey = await prefs.getString(_kEncryptionKey);
+    String _encryptionKey = await _storage.getEncryptedString(_kEncryptionKey);
     if (_encryptionKey.isEmpty) {
       final key = Hive.generateSecureKey();
       _encryptionKey = base64UrlEncode(key);
-      await prefs.setString(_kEncryptionKey, _encryptionKey);
+      await _storage.setEncryptedString(_kEncryptionKey, _encryptionKey);
     }
     return base64Url.decode(_encryptionKey);
   }

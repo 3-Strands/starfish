@@ -32,6 +32,11 @@
   "copyAllCodes": "सभी कोड कॉपी करें",
   "inviteFromContactsList":
       "अपनी संपर्क सूची से लोगों को आमंत्रित करें",
+  "featureOnlyAvailableOnNative":
+      "यह सुविधा केवल Android और iOS Starfish ऐप्स में उपलब्ध है।",
+  "warning": "चेतावनी",
+  "rememberToRemoveDownloadedFiles":
+      "यदि आप किसी साझा या सार्वजनिक कंप्यूटर पर हैं, तो अपने सत्र के अंत में अपनी डाउनलोड की गई फ़ाइलों को हटाना याद रखें।",
   "create": "बनाएं",
   "invite": "आमंत्रण",
   "leaveThisGroup": "इस समूह को छोड़ दें",

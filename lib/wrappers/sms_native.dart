@@ -46,27 +46,32 @@ Future<List<HiveUser>> getAllContacts() async {
 
   await Future.wait(contactList.map((contact) async {
     final phones = contact.phones;
-    final rawNumber =
-        (phones != null && phones.isEmpty) ? null : phones!.first.value;
-    if (rawNumber != null) {
-      var dialCode, phoneNumber;
-      try {
-        final parsedNumber =
-            await PhoneNumberUtil().parse(rawNumber, regionCode: null);
-        dialCode = parsedNumber.countryCode;
-        phoneNumber = parsedNumber.nationalNumber;
-      } catch (e) {
-        dialCode = null;
-        phoneNumber = rawNumber.replaceAll(RegExp("[-()\\s]"), "");
-      }
-      contactsWithNumber.add(HiveUser(
-          id: UuidGenerator.uuid(),
-          diallingCode: dialCode,
-          phone: phoneNumber,
-          name: contact.displayName,
-          //givenName: contact.givenName,
-          status: User_Status.STATUS_UNSPECIFIED.value));
+    if (phones == null) {
+      return contactsWithNumber;
     }
+
+    phones.forEach((element) async {
+      final rawNumber = element.value;
+      if (rawNumber != null) {
+        var dialCode, phoneNumber;
+        try {
+          final parsedNumber =
+              await PhoneNumberUtil().parse(rawNumber, regionCode: null);
+          dialCode = parsedNumber.countryCode;
+          phoneNumber = parsedNumber.nationalNumber;
+        } catch (e) {
+          dialCode = null;
+          phoneNumber = rawNumber.replaceAll(RegExp("[-()\\s]"), "");
+        }
+        contactsWithNumber.add(HiveUser(
+            id: UuidGenerator.uuid(),
+            diallingCode: dialCode,
+            phone: phoneNumber,
+            name: contact.displayName,
+            //givenName: contact.givenName,
+            status: User_Status.STATUS_UNSPECIFIED.value));
+      }
+    });
   }));
 
   return contactsWithNumber;
