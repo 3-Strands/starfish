@@ -76,6 +76,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
   List<HiveGroupUser> _groupUsers = [];
   List<HiveGroupUser> _updatedGroupUsers = [];
+  List<HiveUser> _updatedUsers = [];
 
   HiveGroup? _hiveGroup;
 
@@ -447,7 +448,10 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
         await GroupRepository().createUpdateGroupUserInDB(groupUser: element);
       });
 
-      // TODO: _updatedGroupUsers to be removed
+      _updatedUsers.forEach((element) async {
+        await bloc.userBloc.createUpdateUser(element);
+      });
+
       _updatedGroupUsers.forEach((element) async {
         await bloc.groupBloc.createUpdateGroupUser(element);
       });
@@ -640,18 +644,37 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
           } else if ((user.phone != phonenumber ||
                   user.diallingCode != diallingCode) &&
               _checkIfUserPhonenumberAlreadySelected(
-                  diallingCode, phonenumber)) { //check if there is any change in dialling code or in phone number
+                  diallingCode, phonenumber)) {
+            //check if there is any change in dialling code or in phone number
             StarfishSnackbar.showErrorMessage(
                 context, _appLocalizations.phonenumberAlreadyAdded);
             return;
           } else {
-            user.name = contactName;
-            user.diallingCode = diallingCode;
-            user.phone = phonenumber;
-            user.isUpdated = true;
+            // Store these changes in list `HiveUser` and `HiveGroupUser`,
+            // once the user selects `Update` save them in DB
+            HiveUser _updatedUser = HiveUser(
+              id: user.id,
+              name: contactName,
+              diallingCode: diallingCode,
+              phone: phonenumber,
+              status: user.status,
+              isUpdated: true,
+            );
+            if (_updatedUsers.contains(_updatedUser)) {
+              _updatedUsers.remove(_updatedUser);
+            }
+            _updatedUsers.add(_updatedUser);
 
-            groupUser.role = role.value;
-            groupUser.isUpdated = true;
+            HiveGroupUser _updatedGroupUser = HiveGroupUser(
+              groupId: groupUser.groupId,
+              userId: groupUser.userId,
+              role: role.value,
+              isUpdated: true,
+            );
+            if (_updatedGroupUsers.contains(_updatedGroupUser)) {
+              _updatedGroupUsers.remove(_updatedGroupUser);
+            }
+            _updatedGroupUsers.add(_updatedGroupUser);
 
             Navigator.of(context).pop();
           }
@@ -1127,7 +1150,9 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _updatedGroupUsers.forEach((element) {
       if (_groupUsers.contains(element)) {
         _groupUsers.remove(element);
-        _groupUsers.add(element);
+        if (!element.isDirty) {
+          _groupUsers.add(element);
+        }
       } else {
         _groupUsers.add(element);
       }
@@ -1138,10 +1163,19 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
     _groupUsers
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     for (HiveGroupUser groupUser in _groupUsers) {
+      HiveUser? _localUserChange = _updatedUsers
+          .firstWhereOrNull((element) => element.id == groupUser.userId);
+      HiveGroupUser? _localGroupChange = _updatedGroupUsers.firstWhereOrNull(
+          (element) =>
+              element.userId == groupUser.userId &&
+              element.groupId == groupUser.groupId);
+
       _widgetList.add(
         GroupMemberListItem(
-          groupUser: groupUser,
-          user: groupUser.user!,
+          groupUser: _localGroupChange != null ? _localGroupChange : groupUser,
+          user: _localUserChange != null
+              ? _localUserChange
+              : groupUser.user!, // Check in local changes List first
           onChangeUserRole: (HiveGroupUser _groupUser, _groupUserRole) {
             // Check if the removed user is the only ADMIN in the group, if so, display alert else delete it
             if (GroupUser_Role.valueOf(_groupUser.role!) ==
@@ -1191,12 +1225,25 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                 },
               );
             } else {
-              _groupUser.isDirty = true;
-              bloc.groupBloc.createUpdateGroupUser(_groupUser).then((value) {
-                setState(() {
-                  _groupUsers.remove(_groupUser);
-                });
+              HiveGroupUser _updatedGroupUser = HiveGroupUser(
+                groupId: _groupUser.groupId,
+                userId: _groupUser.userId,
+                role: _groupUser.role,
+                isDirty: true,
+              );
+
+              setState(() {
+                if (_updatedGroupUsers.contains(_groupUser)) {
+                  _updatedGroupUsers.remove(_updatedGroupUser);
+                }
+                _updatedGroupUsers.add(_updatedGroupUser);
               });
+              // _groupUser.isDirty = true;
+              // bloc.groupBloc.createUpdateGroupUser(_groupUser).then((value) {
+              //   setState(() {
+              //     _groupUsers.remove(_groupUser);
+              //   });
+              // });
             }
           },
           onEditUserInvite: (HiveGroupUser _groupUser, HiveUser _user) {
@@ -1290,18 +1337,30 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
                   context, _appLocalizations.phonenumberAlreadyAdded);
               return;
             } else {
-              _user.phone = phonenumber;
-              _user.diallingCode = diallingCode;
-              _user.isUpdated = true;
-              bloc.userBloc.createUpdateUser(_user).then((value) {
-                setState(() {});
-                SMS.send(
-                    _appLocalizations.inviteSMS.insertTemplateValues({
-                      'receiver_first_name': _user.name ?? '',
-                      'sender_name': CurrentUserProvider().user.name!
-                    }),
-                    _user.phoneWithDialingCode);
-              });
+              // _user.phone = phonenumber;
+              // _user.diallingCode = diallingCode;
+              // _user.isUpdated = true;
+              // bloc.userBloc.createUpdateUser(_user).then((value) {
+              //   setState(() {});
+              //   SMS.send(
+              //       _appLocalizations.inviteSMS.insertTemplateValues({
+              //         'receiver_first_name': _user.name ?? '',
+              //         'sender_name': CurrentUserProvider().user.name!
+              //       }),
+              //       _user.phoneWithDialingCode);
+              // });
+              HiveUser _updatedUser = HiveUser(
+                id: _user.id,
+                name: _user.name,
+                phone: phonenumber,
+                diallingCode: diallingCode,
+                status: _user.status,
+                isUpdated: true,
+              );
+              if (_updatedUsers.contains(_updatedUser)) {
+                _updatedUsers.remove(_updatedUser);
+              }
+              _updatedUsers.add(_updatedUser);
             }
           },
         ),

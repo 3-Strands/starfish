@@ -111,8 +111,8 @@ class _UnInvitedGroupMemberListItemState
                       widget.onRemove(widget.groupUser);
                     },
                     icon: Icon(
-                      Icons.close,
-                      color: AppColors.selectedButtonBG,
+                      Icons.delete,
+                      color: Colors.red,
                     ),
                   ),
                 ],
@@ -209,6 +209,7 @@ class _UnInvitedGroupMemberListItemState
                                 AppLocalizations.of(context)!
                                     .emptyMobileNumbers);
                           } else {
+                            FocusScope.of(context).unfocus();
                             //invite this user by sending SMS
                             if (widget.groupUser.user != null) {
                               widget.onInvite(
@@ -222,7 +223,7 @@ class _UnInvitedGroupMemberListItemState
                           }
                         },
                         child: Text(
-                          AppLocalizations.of(context)!.invite,
+                          AppLocalizations.of(context)!.done,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
                             fontSize: 14.5.sp,

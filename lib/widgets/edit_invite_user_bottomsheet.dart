@@ -336,7 +336,7 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
 
                                         // Navigator.of(context).pop();
                                       },
-                                      child: Text(_appLocalizations.update),
+                                      child: Text(_appLocalizations.done),
                                       style: ElevatedButton.styleFrom(
                                         primary: AppColors.selectedButtonBG,
                                       ),
