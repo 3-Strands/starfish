@@ -73,6 +73,16 @@ class HiveUser extends HiveObject {
     this.isDeleted = false,
   });
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HiveUser &&
+          runtimeType == other.runtimeType &&
+          this.id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
   HiveUser.from(User user) {
     this.id = user.id;
     this.name = user.name;
@@ -116,7 +126,7 @@ class HiveUser extends HiveObject {
     return User(
       id: this.id,
       name: this.name,
-      phone: this.phone,
+      phone: this.phone ?? '',
       linkGroups: this.linkGroups,
       countryIds: this.countryIds,
       languageIds: this.languageIds,
@@ -129,32 +139,7 @@ class HiveUser extends HiveObject {
           ? ResultsTab.valueOf(this.selectedResultsTab!)
           : ResultsTab.RESULTS_UNSPECIFIED,
       phoneCountryId: this.phoneCountryId,
-      diallingCode: this.diallingCode,
-      status: this.status != null
-          ? User_Status.valueOf(this.status!)
-          : User_Status.STATUS_UNSPECIFIED,
-      creatorId: this.creatorId,
-    );
-  }
-
-  User createRequestUser() {
-    return User(
-      id: this.id,
-      name: this.name,
-      phone: '${this.diallingCodeWithPlus}${this.phone}',
-      linkGroups: this.linkGroups,
-      countryIds: this.countryIds,
-      languageIds: this.languageIds,
-      groups: this.groups?.map((e) => e.toGroupUser()),
-      actions: this.actions?.map((e) => e.toActionUser()),
-      selectedActionsTab: this.selectedActionsTab != null
-          ? ActionTab.valueOf(this.selectedActionsTab!)
-          : ActionTab.ACTIONS_UNSPECIFIED,
-      selectedResultsTab: this.selectedResultsTab != null
-          ? ResultsTab.valueOf(this.selectedResultsTab!)
-          : ResultsTab.RESULTS_UNSPECIFIED,
-      phoneCountryId: this.phoneCountryId,
-      diallingCode: this.diallingCode,
+      diallingCode: this.diallingCode ?? '',
       status: this.status != null
           ? User_Status.valueOf(this.status!)
           : User_Status.STATUS_UNSPECIFIED,

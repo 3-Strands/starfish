@@ -160,6 +160,9 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               style: buttonTextStyle,
             ),
             onPressed: () async {
+              if (!_isPhoneNumberValid) {
+                return;
+              }
               EasyLoading.show();
 
               if (kIsWeb) {
