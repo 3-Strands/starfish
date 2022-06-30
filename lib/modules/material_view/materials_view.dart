@@ -11,7 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -61,7 +61,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   late Box<HiveMaterialTopic> _topicBox;
 
   final Key _focusDetectorKey = UniqueKey();
-  late AppBloc bloc;
+  late DataBloc bloc;
   late ScrollController _scrollController;
   late AppLocalizations _appLocalizations;
 
@@ -429,7 +429,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  Widget _materialsList(AppBloc bloc) {
+  Widget _materialsList(DataBloc bloc) {
     if (_materials.isEmpty) {
       return Container(
         margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
@@ -482,7 +482,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
   }
 */
 
-  Widget _buildLanguagesContainer(AppBloc bloc) {
+  Widget _buildLanguagesContainer(DataBloc bloc) {
     return Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: MultiSelect<HiveLanguage>(
@@ -514,7 +514,7 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
     );
   }
 
-  Container _buildTopicsContainer(AppBloc bloc) {
+  Container _buildTopicsContainer(DataBloc bloc) {
     return new Container(
       margin: EdgeInsets.only(left: 15.w, right: 15.w),
       child: MultiSelect<HiveMaterialTopic>(

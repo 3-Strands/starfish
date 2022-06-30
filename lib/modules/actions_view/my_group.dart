@@ -6,7 +6,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_action.dart';
@@ -42,7 +42,7 @@ class _MyGroupState extends State<MyGroup> {
   final Map<String, GlobalKey<State<StatefulWidget>>> _groupItemKeys = Map();
 
   bool _isInitialized = false;
-  late AppBloc bloc;
+  late DataBloc bloc;
   late AppLocalizations _appLocalizations;
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _MyGroupState extends State<MyGroup> {
     });
   }
 
-  _getActions(AppBloc bloc) async {
+  _getActions(DataBloc bloc) async {
     bloc.actionBloc.fetchGroupActionsFromDB();
   }
 
@@ -292,7 +292,7 @@ class _MyGroupState extends State<MyGroup> {
     );
   }
 
-  Widget actionsList(AppBloc bloc) {
+  Widget actionsList(DataBloc bloc) {
     return StreamBuilder(
         stream: bloc.actionBloc.actionsForGroup,
         builder: (BuildContext context,

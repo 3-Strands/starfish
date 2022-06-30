@@ -7,28 +7,28 @@ import 'package:starfish/utils/services/api_provider.dart';
 
 class GroupRepository {
   final dbProvider = GroupProvider();
-  final apiProvider = ApiProvider();
+  // final apiProvider = ApiProvider();
 
-  Future<ResponseStream<Group>> getGroups() => apiProvider.getGroups();
+  // Future<ResponseStream<Group>> getGroups() => apiProvider.getGroups();
 
-  Future<ResponseStream<EvaluationCategory>> getEvaluationCategories() =>
-      apiProvider.getEvaluationCategories();
+  // Future<ResponseStream<EvaluationCategory>> getEvaluationCategories() =>
+  //     apiProvider.getEvaluationCategories();
 
   Future<List<HiveGroup>> fetchGroupsFromDB() => dbProvider.getGroups();
 
   Future<void> addEditGroup(HiveGroup group) => dbProvider.addEditGroup(group);
 
-  Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup(
-          Stream<CreateUpdateGroupsRequest> request) =>
-      apiProvider.createUpdateGroup(request);
+  // Future<ResponseStream<CreateUpdateGroupsResponse>> createUpdateGroup(
+  //         Stream<CreateUpdateGroupsRequest> request) =>
+  //     apiProvider.createUpdateGroup(request);
 
-  Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
-          Stream<CreateUpdateGroupUsersRequest> request) =>
-      apiProvider.createUpdateGroupUser(request);
+  // Future<ResponseStream<CreateUpdateGroupUsersResponse>> createUpdateGroupUser(
+  //         Stream<CreateUpdateGroupUsersRequest> request) =>
+  //     apiProvider.createUpdateGroupUser(request);
 
-  Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
-          Stream<GroupUser> request) =>
-      apiProvider.deleteGroupUsers(request);
+  // Future<ResponseStream<DeleteGroupUsersResponse>> deleteGroupUsers(
+  //         Stream<GroupUser> request) =>
+  //     apiProvider.deleteGroupUsers(request);
 
   Future<void> createUpdateGroupUserInDB({
     required HiveGroupUser groupUser,

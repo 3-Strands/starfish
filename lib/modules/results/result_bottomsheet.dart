@@ -10,7 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -60,7 +60,7 @@ class ResultWidgetBottomSheet extends StatefulWidget {
 }
 
 class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
-  late AppBloc bloc;
+  late DataBloc bloc;
   List<File>? imageFiles;
 
   HiveTransformation? _hiveTransformation;
@@ -1268,7 +1268,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
     }
   }
 
-  Future<DateTime?> _selectMonth(AppBloc bloc) async {
+  Future<DateTime?> _selectMonth(DataBloc bloc) async {
     // reference for the MonthYearPickerLocalizations is add in app.dart
     return await showMonthYearPicker(
       context: context,

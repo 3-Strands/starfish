@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -30,7 +30,7 @@ class ResultsScreen extends StatefulWidget {
 
 class _ResultsScreenState extends State<ResultsScreen>
     with TickerProviderStateMixin {
-  late AppBloc bloc;
+  late DataBloc bloc;
   late TabController _tabController;
   late HiveCurrentUser _user;
 

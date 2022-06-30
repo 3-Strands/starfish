@@ -5,12 +5,12 @@ import 'package:starfish/utils/services/api_provider.dart';
 
 class CurrentUserRepository {
   final dbProvider = CurrentUserProvider();
-  final apiProvider = ApiProvider();
+  // final apiProvider = ApiProvider();
 
-  Future<User> getUser() => apiProvider.getCurrentUser();
+  // Future<User> getUser() => apiProvider.getCurrentUser();
 
-  Future<User> updateCurrentUser(User user, List<String> fieldMaskPaths) =>
-      apiProvider.updateCurrentUser(user, fieldMaskPaths);
+  // Future<User> updateCurrentUser(User user, List<String> fieldMaskPaths) =>
+  //     apiProvider.updateCurrentUser(user, fieldMaskPaths);
 
   Future<HiveCurrentUser> getUserFromDB() => dbProvider.getUser();
 

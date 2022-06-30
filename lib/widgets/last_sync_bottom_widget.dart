@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/utils/sync_time.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,7 +15,7 @@ class LastSyncBottomWidget extends StatefulWidget {
 }
 
 class _LastSyncBottomWidgetState extends State<LastSyncBottomWidget> {
-  late AppBloc bloc;
+  late DataBloc bloc;
 
   @override
   Widget build(BuildContext context) {

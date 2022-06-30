@@ -7,7 +7,7 @@ import 'package:flutter/src/widgets/basic.dart' as widgets;
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -85,7 +85,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
   late List<HiveLanguage> _languageList;
   late List<HiveEvaluationCategory> _evaluationCategoryList;
 
-  late AppBloc bloc;
+  late DataBloc bloc;
   late AppLocalizations _appLocalizations;
 
   @override

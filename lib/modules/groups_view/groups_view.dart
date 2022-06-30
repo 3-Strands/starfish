@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -36,7 +36,7 @@ class GroupsScreen extends StatefulWidget {
 }
 
 class _GroupsScreenState extends State<GroupsScreen> {
-  late AppBloc bloc;
+  late DataBloc bloc;
   late AppLocalizations _appLocalizations;
 
   final Key _groupFocusDetectorKey = UniqueKey();
@@ -236,7 +236,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  _fetchAllGroupsByRole(AppBloc bloc) async {
+  _fetchAllGroupsByRole(DataBloc bloc) async {
     bloc.groupBloc.fetchAllGroupsByRole();
   }
 

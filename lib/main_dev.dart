@@ -1,10 +1,13 @@
-import 'package:cron/cron.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:starfish/apis/local_storage_api.dart';
+import 'package:starfish/repositories/session_repository.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/utils/services/grpc_client.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'app.dart';
 import 'config/app_config.dart';
@@ -22,35 +25,53 @@ void main() async {
   }
 
   await HiveDatabase().init();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) async {
-    await ConfigReader.initialize();
-    FlavorConfig(
-      flavor: Flavor.DEV,
-      values: FlavorValues(
-        baseUrl: ConfigReader.getDevURL(),
-        apiKey: ConfigReader.getDevAPIKey(),
-      ),
-    );
-    //return runApp(Starfish());
-    return SentryFlutter.init(
-      (options) {
-        options.dsn = _dsn;
-        options.tracesSampleRate = 1.0;
-        options.reportPackages = false;
-        options.addInAppInclude('DEV');
-        options.considerInAppFramesByDefault = false;
-      },
-      // Init your App.
-      appRunner: () => runApp(
-        DefaultAssetBundle(
-          bundle: SentryAssetBundle(
-            enableStructuredDataTracing: true,
-          ),
-          child: Starfish(),
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await ConfigReader.initialize();
+  FlavorConfig(
+    flavor: Flavor.DEV,
+    values: FlavorValues(
+      baseUrl: ConfigReader.getDevURL(),
+      apiKey: ConfigReader.getDevAPIKey(),
+    ),
+  );
+  GeneralFunctions.configLoading();
+  final localStorageApi = LocalStorageApi();
+  final sessionRepository = SessionRepository(
+    client: makeUnauthenticatedClient(),
+    localStorageApi: localStorageApi,
+  );
+  EasyLoading.instance
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..userInteractions = false
+    ..dismissOnTap = false
+    ..backgroundColor = Colors.transparent
+    ..indicatorColor = Colors.blue
+    ..textColor = Colors.black45
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..boxShadow = <BoxShadow>[];
+
+  final session = await sessionRepository.retrieveCurrentSession();
+  //return runApp(Starfish());
+  return SentryFlutter.init(
+    (options) {
+      options.dsn = _dsn;
+      options.tracesSampleRate = 1.0;
+      options.reportPackages = false;
+      options.addInAppInclude('DEV');
+      options.considerInAppFramesByDefault = false;
+    },
+    // Init your App.
+    appRunner: () => runApp(
+      DefaultAssetBundle(
+        bundle: SentryAssetBundle(
+          enableStructuredDataTracing: true,
+        ),
+        child: App(
+          sessionRepository: sessionRepository,
+          localStorageApi: localStorageApi,
+          session: session,
         ),
       ),
-    );
-  });
-  GeneralFunctions.configLoading();
+    ),
+  );
 }

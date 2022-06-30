@@ -4,55 +4,39 @@ import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 
-class Singleton {
-  static Singleton? _instance;
-  StarfishClient? client;
-  FileTransferClient? fileTransferClient;
+final _channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
+    host: FlavorConfig.instance!.values.baseUrl,
+    port: 443,
+    transportSecure: true);
 
-  Singleton._();
+CallOptions _makeCallOptions([String? token]) =>
+  CallOptions(
+    metadata: {
+      if (token != null) 'authentication': token,
+      'x-api-key': FlavorConfig.instance!.values.apiKey
+    },
+  );
 
-  static Singleton get instance => _instance ??= Singleton._();
+StarfishClient makeUnauthenticatedClient() =>
+  StarfishClient(
+    _channel,
+    options: _makeCallOptions(),
+  );
 
-  final channel = GrpcOrGrpcWebClientChannel.toSingleEndpoint(
-      host: FlavorConfig.instance!.values.baseUrl,
-      port: 443,
-      transportSecure: true);
+StarfishClient makeAuthenticatedClient(String token) =>
+  StarfishClient(
+    _channel,
+    options: _makeCallOptions(token),
+  );
 
-  Future<Map<String, String>> initMetaData() async {
-    String token = await StarfishSharedPreference().getAccessToken();
+FileTransferClient makeUnauthenticatedFileTransferClient() =>
+  FileTransferClient(
+    _channel,
+    options: _makeCallOptions(),
+  );
 
-    Map<String, String>? metadata;
-    if (token.isEmpty) {
-      metadata = {
-        'authorization': '',
-        'x-api-key': FlavorConfig.instance!.values.apiKey
-      };
-    } else {
-      metadata = {
-        'authorization': token,
-        'x-api-key': FlavorConfig.instance!.values.apiKey
-      };
-    }
-    return metadata;
-  }
-
-  Future initGprcClient() async {
-    /* 
-      debugPrint("FlavorConfig.instance!.values.baseUrl ==>>");
-      debugPrint(FlavorConfig.instance!.values.baseUrl);
-      debugPrint(FlavorConfig.instance!.values.apiKey);
-     */
-
-    client = StarfishClient(
-      channel,
-      options: CallOptions(metadata: await initMetaData()),
-    );
-  }
-
-  Future initFileTransferClient() async {
-    fileTransferClient = FileTransferClient(
-      channel,
-      options: CallOptions(metadata: await initMetaData()),
-    );
-  }
-}
+FileTransferClient makeAuthenticatedFileTransferClient(String token) =>
+  FileTransferClient(
+    _channel,
+    options: _makeCallOptions(token),
+  );

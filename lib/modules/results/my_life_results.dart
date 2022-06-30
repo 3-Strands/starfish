@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -45,7 +45,7 @@ class MyLifeResults extends StatefulWidget {
 }
 
 class _MyLifeResultsState extends State<MyLifeResults> {
-  late AppBloc bloc;
+  late DataBloc bloc;
   late HiveCurrentUser currentUser;
   List<File>? imageFiles;
   String? userImpactStory;
@@ -1007,7 +1007,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     });
   }
 
-  Future<DateTime?> _selectMonth(AppBloc bloc) async {
+  Future<DateTime?> _selectMonth(DataBloc bloc) async {
     // reference for the MonthYearPickerLocalizations is add in app.dart
     return await showMonthYearPicker(
       context: context,

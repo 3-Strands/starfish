@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'app_bloc.dart';
+import 'data_bloc.dart';
 
 class Provider extends InheritedWidget {
-  final AppBloc bloc;
+  final DataBloc bloc;
 
   Provider({Key? key, required Widget child})
-      : bloc = AppBloc(),
+      : bloc = DataBloc(),
         super(key: key, child: child);
 
   @override
   bool updateShouldNotify(_) => true;
 
-  static AppBloc of(BuildContext context) {
+  static DataBloc of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<Provider>()!.bloc;
   }
 }

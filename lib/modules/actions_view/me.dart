@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -42,12 +42,12 @@ class _MeState extends State<Me> {
 
   bool _isInitialized = false;
 
-  late AppBloc bloc;
+  late DataBloc bloc;
   late AppLocalizations _appLocalizations;
 
   Dashboard obj = new Dashboard();
 
-  _getActions(AppBloc bloc) async {
+  _getActions(DataBloc bloc) async {
     bloc.actionBloc.fetchMyActionsFromDB();
   }
 
@@ -677,7 +677,7 @@ class _MeState extends State<Me> {
     );
   }
 
-  Widget actionsList(AppBloc bloc) {
+  Widget actionsList(DataBloc bloc) {
     return StreamBuilder(
         stream: bloc.actionBloc.actionsForMe,
         builder: (BuildContext context,

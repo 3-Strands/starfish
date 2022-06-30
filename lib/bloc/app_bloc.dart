@@ -1,59 +1,38 @@
-import 'package:collection/collection.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:rxdart/subjects.dart';
-import 'package:starfish/bloc/action_bloc.dart';
-import 'package:starfish/bloc/group_bloc.dart';
-import 'package:starfish/bloc/material_bloc.dart';
-import 'package:starfish/bloc/results_bloc.dart';
-import 'package:starfish/bloc/user_bloc.dart';
-import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_last_sync_date_time.dart';
-import 'package:starfish/utils/date_time_utils.dart';
+import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:starfish/apis/local_storage_api.dart';
+import 'package:starfish/wrappers/platform.dart';
 
-class AppBloc {
-  late MaterialBloc _materialBloc;
-  late GroupBloc _groupBloc;
-  late ActionBloc _actionBloc;
-  late ResultsBloc _resultsBloc;
-  late UserBloc _userBloc;
+part 'app_event.dart';
+part 'app_state.dart';
 
-  BehaviorSubject<String> _lastSyncTime = new BehaviorSubject<String>();
-
-  Stream<String> get lastSyncTime => _lastSyncTime.stream;
-
-  AppBloc() {
-    _materialBloc = MaterialBloc();
-    _groupBloc = GroupBloc();
-    _actionBloc = ActionBloc();
-    _resultsBloc = ResultsBloc();
-    _userBloc = UserBloc();
-
-    Box<HiveLastSyncDateTime> _lastSyncBox =
-        Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
-
-    if (_lastSyncBox.values.firstOrNull != null) {
-      _lastSyncTime.sink.add(DateTimeUtils.formatDate(
-          _lastSyncBox.values.first.toDateTime(), "dd-MMM-yyyy HH:mm"));
-    } else {
-      _lastSyncTime.sink.add("");
-    }
-    _lastSyncBox.watch().listen((event) {
-      if (event.value == null) {
-      } else {
-        _lastSyncTime.sink.add(DateTimeUtils.formatDate(
-            (event.value as HiveLastSyncDateTime).toDateTime(),
-            "dd-MMM-yyyy HH:mm"));
-      }
+class AppBloc extends Bloc<AppEvent, AppState> {
+  AppBloc({
+    required this.localStorageApi,
+  }) : super(const AppBooting()) {
+    on<AppInitialized>((event, emit) {
+      emit(AppReady(locale: event.initialLocale));
     });
+    on<LocaleChanged>((event, emit) {
+      localStorageApi.setDeviceLanguage(event.locale);
+      emit(AppReady(locale: event.locale));
+    });
+    _load();
   }
 
-  MaterialBloc get materialBloc => _materialBloc;
-  GroupBloc get groupBloc => _groupBloc;
-  ActionBloc get actionBloc => _actionBloc;
-  ResultsBloc get resultsBloc => _resultsBloc;
-  UserBloc get userBloc => _userBloc;
+  final LocalStorageApi localStorageApi;
 
-  void dispose() {
-    _lastSyncTime.close();
+  Future<void> _load() async {
+    final savedLocale = await localStorageApi.getDeviceLanguage();
+    final deviceLanguage = Platform.localeName.substring(0, 2);
+    final locale = (savedLocale == '')
+      ? (
+        deviceLanguage == 'hi'
+          ? deviceLanguage
+          : 'en'
+      )
+      : savedLocale;
+
+    add(AppInitialized(initialLocale: locale));
   }
 }

@@ -3,9 +3,11 @@ import 'package:collection/collection.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
+import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -39,7 +41,7 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> _widgetOptions = [];
   late PageController _pageController;
 
-  late AppBloc bloc;
+  late DataBloc bloc;
   HiveCurrentUser? _user;
   late AppLocalizations _appLocalizations;
 
@@ -207,7 +209,7 @@ class _DashboardState extends State<Dashboard> {
     bloc.materialBloc.selectedTopics.clear();
   }
 
-  _selectLanguage(AppBloc bloc) {
+  _selectLanguage(DataBloc bloc) {
     _user?.languageIds.forEach((languageId) {
       HiveLanguage? _langugage = LanguageProvider()
           .getAll()
@@ -241,11 +243,7 @@ class _DashboardState extends State<Dashboard> {
   void handleUnauthentication() {
     StarfishSnackbar.showErrorMessage(
         context, _appLocalizations.unauthenticated);
-    StarfishSharedPreference().setLoginStatus(false);
-    StarfishSharedPreference().setAccessToken('');
-
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        Routes.phoneAuthentication, (Route<dynamic> route) => false);
+    BlocProvider.of<SessionBloc>(context).add(const SignOutRequested());
   }
 
   Color _selectedTabColor(int _selectedIndex) {

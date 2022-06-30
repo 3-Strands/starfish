@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_current_user.dart';
@@ -32,7 +32,7 @@ class _UnInvitedGroupMemberListItemState
   bool isEditMode = false;
   TextEditingController _dialingCodeController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
-  late AppBloc bloc;
+  late DataBloc bloc;
 
   @override
   void initState() {

@@ -1,7 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_date.dart';
@@ -26,7 +26,7 @@ class MyGroupResults extends StatefulWidget {
 }
 
 class _MyGroupResultsState extends State<MyGroupResults> {
-  late AppBloc bloc;
+  late DataBloc bloc;
 
   bool _isEditMode = false;
   bool _isInitialized = false;
@@ -290,7 +290,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     });
   }
 
-  Future<DateTime?> _selectMonth(AppBloc bloc) async {
+  Future<DateTime?> _selectMonth(DataBloc bloc) async {
     // reference for the MonthYearPickerLocalizations is add in app.dart
     return await showMonthYearPicker(
       context: context,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_user.dart';
@@ -29,7 +29,7 @@ class GroupMemberListItem extends StatefulWidget {
 }
 
 class _GroupMemberListItemState extends State<GroupMemberListItem> {
-  late AppBloc bloc;
+  late DataBloc bloc;
 
   @override
   void initState() {

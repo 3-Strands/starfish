@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -49,7 +49,7 @@ class AddEditAction extends StatefulWidget {
 class _AddEditActionState extends State<AddEditAction>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late AppBloc bloc;
+  late DataBloc bloc;
   late HiveAction? _actionToBeReused;
 
   final TextEditingController _actionNameController = TextEditingController();

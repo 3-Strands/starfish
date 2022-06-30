@@ -5,18 +5,22 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
+import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_strings.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/repositories/grpc_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
@@ -76,11 +80,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isMobileEditable = false;
   bool isNameEditable = false;
 
-  late AppBloc bloc;
+  late DataBloc bloc;
 
-  late List<LanguageCode> _languages;
-  LanguageCode? _language;
-  late List<DropdownMenuItem<LanguageCode>> _dropdownLanguagesItem;
   late AppLocalizations _appLocalizations;
 
   List<Map<String, dynamic>> _groups = [];
@@ -92,38 +93,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
     _groupBox = Hive.box<HiveGroup>(HiveDatabase.GROUP_BOX);
 
-    _populateAppLanguages(AppStrings.appLanguageList);
     _getCurrentUser();
     _getAllCountries();
     _getAllLanguages();
     _getGroups();
     _isUserAdminAtleastInOneGroup();
-  }
-
-  _populateAppLanguages(List<LanguageCode> languages) async {
-    _languages = languages;
-    _dropdownLanguagesItem = _buildDropDownLanguageItems(_languages);
-
-    String _deviceLanguage =
-        await StarfishSharedPreference().getDeviceLanguage();
-    setState(() {
-      _language = _languages.firstWhere(
-        (item) => item.code == _deviceLanguage,
-        orElse: () => _languages.first,
-      );
-    });
-  }
-
-  List<DropdownMenuItem<LanguageCode>> _buildDropDownLanguageItems(
-      List<LanguageCode> listLanguage) {
-    return listLanguage
-        .map(
-          (language) => DropdownMenuItem(
-            child: Text(language.name),
-            value: language,
-          ),
-        )
-        .toList();
   }
 
   void _getCurrentUser() {
@@ -229,18 +203,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _user.phoneCountryId = _phoneCountryId;
     _user.isUpdated = true;
 
-    await CurrentUserRepository()
-        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
-        .then(
-          (value) => {
-            CurrentUserProvider().updateUser(_user),
-          },
-        )
-        .whenComplete(() {
-      StarfishSharedPreference().setLoginStatus(false);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.phoneAuthentication, (Route<dynamic> route) => false);
-    });
+    try {
+      RepositoryProvider.of<GrpcRepository>(context)
+        .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths);
+      CurrentUserProvider().updateUser(_user);
+    } finally {
+      BlocProvider.of<SessionBloc>(context).add(const SignOutRequested());
+    }
   }
 
   void updateLinkGroupStatus() async {
@@ -259,7 +228,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     EasyLoading.show();
 
-    CurrentUserRepository()
+    RepositoryProvider.of<GrpcRepository>(context)
         .updateCurrentUser(_currentUser.toUser(), fieldMaskPaths)
         .then((value) async {
       await SyncService().syncLanguages();
@@ -274,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  void updateLanguages(AppBloc bloc) {
+  void updateLanguages(DataBloc bloc) {
     var fieldMaskPaths = ['language_ids'];
     List<String> _selectedLanguageIds =
         _selectedLanguages.map((e) => e.id).toList();
@@ -283,7 +252,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     EasyLoading.show();
 
-    CurrentUserRepository()
+    RepositoryProvider.of<GrpcRepository>(context)
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then(
       (value) async {
@@ -707,30 +676,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: DropdownButtonHideUnderline(
                             child: ButtonTheme(
                               alignedDropdown: true,
-                              child: DropdownButton2(
-                                offset: Offset(0, -10),
-                                dropdownMaxHeight: 200.h,
-                                isExpanded: true,
-                                iconSize: 35,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 19.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
-                                onChanged: (LanguageCode? value) {
-                                  setState(() {
-                                    _language = value!;
-                                    StarfishSharedPreference()
-                                        .setDeviceLanguage(value.code);
-                                    Starfish.of(context)!.setLocale(
-                                        Locale.fromSubtags(
-                                            languageCode: value.code));
-
-                                    reinitLanguageFilter();
-                                  });
-                                },
-                                value: _language,
-                                items: _dropdownLanguagesItem,
+                              child: BlocBuilder<AppBloc, AppState>(
+                                builder: (context, state) {
+                                  final locale = (state as AppReady).locale;
+                                  return DropdownButton2(
+                                    offset: Offset(0, -10),
+                                    dropdownMaxHeight: 200.h,
+                                    isExpanded: true,
+                                    iconSize: 35,
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 19.sp,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                    onChanged: (LanguageCode? value) {
+                                      BlocProvider.of<AppBloc>(context).add(LocaleChanged(value!.code));
+                                      reinitLanguageFilter();
+                                    },
+                                    value: AppStrings.appLanguageList.firstWhere(
+                                      (item) => item.code == locale,
+                                      orElse: () => AppStrings.appLanguageList.first,
+                                    ),
+                                    items: AppStrings.appLanguageList.map(
+                                      (language) => DropdownMenuItem(
+                                        child: Text(language.name),
+                                        value: language,
+                                      ),
+                                    ).toList(),
+                                  );
+                                }
                               ),
                             ),
                           ),

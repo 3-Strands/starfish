@@ -7,16 +7,16 @@ import 'package:starfish/utils/services/api_provider.dart';
 
 class ActionRepository {
   final dbProvider = ActionProvider();
-  final apiProvider = ApiProvider();
+  // final apiProvider = ApiProvider();
 
-  Future<ResponseStream<Action>> getActions() => apiProvider.getActions();
+  // Future<ResponseStream<Action>> getActions() => apiProvider.getActions();
 
-  Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction(
-          Stream<CreateUpdateActionsRequest> request) =>
-      apiProvider.createUpdateActionWithStream(request);
+  // Future<ResponseStream<CreateUpdateActionsResponse>> createUpdateAction(
+  //         Stream<CreateUpdateActionsRequest> request) =>
+  //     apiProvider.createUpdateActionWithStream(request);
 
-  Future<ResponseStream<DeleteActionResponse>> deleteAction(Action action) =>
-      apiProvider.deleteAction(action);
+  // Future<ResponseStream<DeleteActionResponse>> deleteAction(Action action) =>
+  //     apiProvider.deleteAction(action);
 
   Future<List<HiveAction>> fetchAllActionsForGroupFromDB(
           List<String> groupIds) =>
@@ -39,7 +39,7 @@ class ActionRepository {
   Future<void> createUpdateActionUserInDB(HiveActionUser actionUser) =>
       dbProvider.createUpdateActionUser(actionUser);
 
-  Future<ResponseStream<CreateUpdateActionUserResponse>>
-      createUpdateActionUsers(Stream<CreateUpdateActionUserRequest> request) =>
-          apiProvider.createUpdateActionUsers(request);
+  // Future<ResponseStream<CreateUpdateActionUserResponse>>
+  //     createUpdateActionUsers(Stream<CreateUpdateActionUserRequest> request) =>
+  //         apiProvider.createUpdateActionUsers(request);
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:starfish/bloc/profile_bloc.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -7,6 +8,7 @@ import 'package:starfish/db/hive_country.dart';
 import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/repositories/grpc_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -65,7 +67,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _user.languageIds = _selectedLanguageIds;
 
     EasyLoading.show();
-    CurrentUserRepository()
+    RepositoryProvider.of<GrpcRepository>(context)
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then((value) async {
       await SyncService().syncLanguages();
@@ -108,7 +110,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     _user.languageIds = _selectedLanguageIds;
 
     EasyLoading.show();
-    CurrentUserRepository()
+    RepositoryProvider.of<GrpcRepository>(context)
         .updateCurrentUser(_user.toUser(), fieldMaskPaths)
         .then((value) {
       _user.name = value.name;

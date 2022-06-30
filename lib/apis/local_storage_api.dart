@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/wrappers/platform_storage.dart';
 
-class StarfishSharedPreference {
+class LocalStorageApi {
   static final String _kUserLoggedIn = "isUserLoggedIn";
   static final String _kIsSyncingFirstTime = "isSyncingFirstTime";
   static final String _kHasBeenRemindedToDeleteFiles = "hasBeenRemindedToDeleteFiles";
@@ -13,14 +13,14 @@ class StarfishSharedPreference {
   static final String _kSessionUserId = "sessionUserId";
   static final String _kEncryptionKey = "encryptionKey";
 
-  static StarfishSharedPreference? _instance;
+  static LocalStorageApi? _instance;
 
   final PlatformStorage _storage;
 
-  StarfishSharedPreference._(this._storage);
+  LocalStorageApi._(this._storage);
 
-  factory StarfishSharedPreference() {
-    _instance = _instance ?? StarfishSharedPreference._(PlatformStorage());
+  factory LocalStorageApi() {
+    _instance = _instance ?? LocalStorageApi._(PlatformStorage());
     return _instance!;
   }
 

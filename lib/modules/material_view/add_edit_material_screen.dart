@@ -8,7 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-import 'package:starfish/bloc/app_bloc.dart';
+import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
@@ -96,7 +96,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
   late String _choiceEditedByText =
       AppLocalizations.of(context)!.editedOrDeletedBy;
 
-  late AppBloc bloc;
+  late DataBloc bloc;
   late AppLocalizations _appLocalizations;
 
   bool _isEditMode = false;
