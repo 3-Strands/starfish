@@ -227,8 +227,8 @@ extension HiveActionExt on HiveAction {
       return currentUser.id == creatorId ? currentUser : null;
     } else {
       return this
-          .group!
-          .activeUsers
+          .group
+          ?.activeUsers
           ?.firstWhereOrNull((element) =>
               element.groupId == groupId && element.userId == creatorId)
           //?.map((HiveGroupUser groupUser) => groupUser.user!)
