@@ -37,6 +37,7 @@ import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
+import 'package:starfish/widgets/group_email_widget.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:starfish/widgets/settings_edit_button_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
@@ -1084,233 +1085,242 @@ class _SettingsScreenState extends State<SettingsScreen> {
             final _confirmEmailController = TextEditingController();
             //      final FocusNode _confirmEmailFocus = FocusNode();
             _confirmEmailController.text = item['confirm_email'];
-
-            return Container(
-              //height: (item['is_editing'] == false) ? 200.h : 240.h,
-              margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        //width: 200.w,
-                        //height: 25.h,
-                        child: Align(
-                          alignment: FractionalOffset.topLeft,
-                          child: Text(getGroupName(item['id']),
-                              style: titleTextStyle),
-                        ),
-                      ),
-                      InkWell(
-                          onTap: () {
-                            setState(() {
-                              _groups[index]['email'] = _emailController.text;
-                              _groups[index]['confirm_email'] =
-                                  _confirmEmailController.text;
-                            });
-                            if (item['is_editing'] == false) {
-                              setState(() {
-                                item['is_editing'] = !item['is_editing'];
-                              });
-                            } else {
-                              if (_emailController.text == '') {
-                                Alerts.showMessageBox(
-                                    context: context,
-                                    title: _appLocalizations.dialogAlert,
-                                    message: _appLocalizations.emptyEmail,
-                                    positiveButtonText: _appLocalizations.ok,
-                                    positiveActionCallback: () {});
-                              } else if (!_emailController.text
-                                  .isValidEmail()) {
-                                Alerts.showMessageBox(
-                                    context: context,
-                                    title: _appLocalizations.dialogAlert,
-                                    message:
-                                        _appLocalizations.alertInvalidEmaill,
-                                    positiveButtonText: _appLocalizations.ok,
-                                    positiveActionCallback: () {});
-                              } else if (_confirmEmailController.text.isEmpty) {
-                                Alerts.showMessageBox(
-                                    context: context,
-                                    title: _appLocalizations.dialogAlert,
-                                    message: _appLocalizations.emptyEmail,
-                                    positiveButtonText: _appLocalizations.ok,
-                                    positiveActionCallback: () {});
-                              } else if (!_confirmEmailController.text
-                                  .isValidEmail()) {
-                                Alerts.showMessageBox(
-                                    context: context,
-                                    title: _appLocalizations.dialogAlert,
-                                    message:
-                                        _appLocalizations.alertInvalidEmaill,
-                                    positiveButtonText: _appLocalizations.ok,
-                                    positiveActionCallback: () {});
-                              } else if (_emailController.text !=
-                                  _confirmEmailController.text) {
-                                Alerts.showMessageBox(
-                                    context: context,
-                                    title: _appLocalizations.dialogAlert,
-                                    message:
-                                        _appLocalizations.alertEmailDoNotMatch,
-                                    positiveButtonText: _appLocalizations.ok,
-                                    positiveActionCallback: () {});
-                              } else {
-                                if (item['is_editing'] == true) {
-                                  _updateGroupLinkedEmaill(_groups[index]['id'],
-                                      _groups[index]['email']);
-                                }
-                                setState(() {
-                                  item['is_editing'] = !item['is_editing'];
-                                });
-                              }
-                            }
-                          },
-                          child: (item['is_editing'] == false)
-                              ? editButton()
-                              : saveButton()),
-                      SizedBox(width: 5),
-                      if (item["is_editing"] == true)
-                        InkWell(
-                          child: cancelButton(),
-                          onTap: () => setState(() {
-                            item["is_editing"] = false;
-                          }),
-                        ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Container(
-                    //height: 45.h,
-                    child: Align(
-                      alignment: FractionalOffset.topLeft,
-                      child: Text(
-                          _appLocalizations.projectAdminEmailSectionTitle,
-                          style: titleTextStyle),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Container(
-                    //height: 52.h,
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          item['is_editing'] = true;
-                        });
-                      },
-                      child: TextFormField(
-                        enabled: item['is_editing'],
-                        controller: _emailController,
-                        // focusNode: _emailFocus,
-                        onFieldSubmitted: (term) {
-                          _groups[index]['email'] = term;
-                          _emailController.text = term;
-                          //  _emailFocus.unfocus();
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        style: textFormFieldText,
-                        decoration: InputDecoration(
-                          labelText: _appLocalizations.emailHint,
-                          labelStyle: formTitleHintStyle,
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-
-                          // hintText: _appLocalizations.emailHint,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: AppColors.txtFieldBackground,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Visibility(
-                    visible: item['is_editing'],
-                    child: Container(
-                      //height: 52.h,
-                      child: TextFormField(
-                        enabled: item['is_editing'],
-                        controller: _confirmEmailController,
-                        //   focusNode: _confirmEmailFocus,
-                        onFieldSubmitted: (term) {
-                          _groups[index]['confirm_email'] = term;
-                          _confirmEmailController.text = term;
-                          // _confirmEmailController.text = term;
-                          // if (_emailController.text.isValidEmail() &&
-                          //     _emailController.text ==
-                          //         _confirmEmailController.text) {
-                          //     Alerts.showMessageBox(
-                          //         context: context,
-                          //         title:
-                          //             _appLocalizations.dialogAlert,
-                          //         message: _appLocalizations
-                          //             .alertSaveAdminEmail,
-                          //         negativeButtonText:
-                          //             _appLocalizations.no,
-                          //         positiveButtonText:
-                          //             _appLocalizations.yes,
-                          //         negativeActionCallback: () {},
-                          //         positiveActionCallback: () {
-                          //           _updateGroupLinkedEmaill(
-                          //               item['id'], _emailController.text);
-                          //         });
-
-                          //  //  _confirmEmailFocus.unfocus();
-                          //   } else {
-                          //     Alerts.showMessageBox(
-                          //         context: context,
-                          //         title:
-                          //             _appLocalizations.dialogAlert,
-                          //         message: _appLocalizations
-                          //             .alertEmailDoNotMatch,
-                          //         positiveButtonText:
-                          //             _appLocalizations.ok,
-                          //         positiveActionCallback: () {});
-                          //   }
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        style: textFormFieldText,
-                        decoration: InputDecoration(
-                          floatingLabelBehavior: FloatingLabelBehavior.never,
-                          labelText: _appLocalizations.confirmEmailHint,
-                          labelStyle: formTitleHintStyle,
-                          // hintText:
-                          //     _appLocalizations.confirmEmailHint,
-                          contentPadding:
-                              EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: AppColors.txtFieldBackground,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15.h),
-                  SepratorLine(
-                      hight: .5.h,
-                      edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
-                ],
-              ),
+            return GroupEmailWidget(
+              _groups[index],
+              (String groupID, String email) {
+                setState(() {
+                  _updateGroupLinkedEmaill(groupID, email);
+                  _groups[index]['email'] = email;
+                });
+              },
             );
+
+            // return Container(
+            //   //height: (item['is_editing'] == false) ? 200.h : 240.h,
+            //   margin: EdgeInsets.only(left: 5.0, top: 10.0, right: 5.0),
+            //   child: Column(
+            //     children: <Widget>[
+            //       Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           Expanded(
+            //             //width: 200.w,
+            //             //height: 25.h,
+            //             child: Align(
+            //               alignment: FractionalOffset.topLeft,
+            //               child: Text(getGroupName(item['id']),
+            //                   style: titleTextStyle),
+            //             ),
+            //           ),
+            //           InkWell(
+            //               onTap: () {
+            //                 setState(() {
+            //                   _groups[index]['email'] = _emailController.text;
+            //                   _groups[index]['confirm_email'] =
+            //                       _confirmEmailController.text;
+            //                 });
+            //                 if (item['is_editing'] == false) {
+            //                   setState(() {
+            //                     item['is_editing'] = !item['is_editing'];
+            //                   });
+            //                 } else {
+            //                   if (_emailController.text == '') {
+            //                     Alerts.showMessageBox(
+            //                         context: context,
+            //                         title: _appLocalizations.dialogAlert,
+            //                         message: _appLocalizations.emptyEmail,
+            //                         positiveButtonText: _appLocalizations.ok,
+            //                         positiveActionCallback: () {});
+            //                   } else if (!_emailController.text
+            //                       .isValidEmail()) {
+            //                     Alerts.showMessageBox(
+            //                         context: context,
+            //                         title: _appLocalizations.dialogAlert,
+            //                         message:
+            //                             _appLocalizations.alertInvalidEmaill,
+            //                         positiveButtonText: _appLocalizations.ok,
+            //                         positiveActionCallback: () {});
+            //                   } else if (_confirmEmailController.text.isEmpty) {
+            //                     Alerts.showMessageBox(
+            //                         context: context,
+            //                         title: _appLocalizations.dialogAlert,
+            //                         message: _appLocalizations.emptyEmail,
+            //                         positiveButtonText: _appLocalizations.ok,
+            //                         positiveActionCallback: () {});
+            //                   } else if (!_confirmEmailController.text
+            //                       .isValidEmail()) {
+            //                     Alerts.showMessageBox(
+            //                         context: context,
+            //                         title: _appLocalizations.dialogAlert,
+            //                         message:
+            //                             _appLocalizations.alertInvalidEmaill,
+            //                         positiveButtonText: _appLocalizations.ok,
+            //                         positiveActionCallback: () {});
+            //                   } else if (_emailController.text !=
+            //                       _confirmEmailController.text) {
+            //                     Alerts.showMessageBox(
+            //                         context: context,
+            //                         title: _appLocalizations.dialogAlert,
+            //                         message:
+            //                             _appLocalizations.alertEmailDoNotMatch,
+            //                         positiveButtonText: _appLocalizations.ok,
+            //                         positiveActionCallback: () {});
+            //                   } else {
+            //                     if (item['is_editing'] == true) {
+            //                       _updateGroupLinkedEmaill(_groups[index]['id'],
+            //                           _groups[index]['email']);
+            //                     }
+            //                     setState(() {
+            //                       item['is_editing'] = !item['is_editing'];
+            //                     });
+            //                   }
+            //                 }
+            //               },
+            //               child: (item['is_editing'] == false)
+            //                   ? editButton()
+            //                   : saveButton()),
+            //           SizedBox(width: 5),
+            //           if (item["is_editing"] == true)
+            //             InkWell(
+            //               child: cancelButton(),
+            //               onTap: () => setState(() {
+            //                 item["is_editing"] = false;
+            //               }),
+            //             ),
+            //         ],
+            //       ),
+            //       SizedBox(
+            //         height: 20.h,
+            //       ),
+            //       Container(
+            //         //height: 45.h,
+            //         child: Align(
+            //           alignment: FractionalOffset.topLeft,
+            //           child: Text(
+            //               _appLocalizations.projectAdminEmailSectionTitle,
+            //               style: titleTextStyle),
+            //         ),
+            //       ),
+            //       SizedBox(height: 10.h),
+            //       Container(
+            //         //height: 52.h,
+            //         child: InkWell(
+            //           onTap: () {
+            //             setState(() {
+            //               item['is_editing'] = true;
+            //             });
+            //           },
+            //           child: TextFormField(
+            //             enabled: item['is_editing'],
+            //             controller: _emailController,
+            //             // focusNode: _emailFocus,
+            //             onFieldSubmitted: (term) {
+            //               _groups[index]['email'] = term;
+            //               _emailController.text = term;
+            //               //  _emailFocus.unfocus();
+            //             },
+            //             keyboardType: TextInputType.emailAddress,
+            //             style: textFormFieldText,
+            //             decoration: InputDecoration(
+            //               labelText: _appLocalizations.emailHint,
+            //               labelStyle: formTitleHintStyle,
+            //               floatingLabelBehavior: FloatingLabelBehavior.never,
+
+            //               // hintText: _appLocalizations.emailHint,
+            //               contentPadding:
+            //                   EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+            //               border: OutlineInputBorder(
+            //                 borderRadius: BorderRadius.circular(10.0),
+            //               ),
+            //               enabledBorder: OutlineInputBorder(
+            //                 borderRadius: BorderRadius.circular(10.0),
+            //                 borderSide: BorderSide(
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //               filled: true,
+            //               fillColor: AppColors.txtFieldBackground,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(height: 10.h),
+            //       Visibility(
+            //         visible: item['is_editing'],
+            //         child: Container(
+            //           //height: 52.h,
+            //           child: TextFormField(
+            //             enabled: item['is_editing'],
+            //             controller: _confirmEmailController,
+            //             //   focusNode: _confirmEmailFocus,
+            //             onFieldSubmitted: (term) {
+            //               _groups[index]['confirm_email'] = term;
+            //               _confirmEmailController.text = term;
+            //               // _confirmEmailController.text = term;
+            //               // if (_emailController.text.isValidEmail() &&
+            //               //     _emailController.text ==
+            //               //         _confirmEmailController.text) {
+            //               //     Alerts.showMessageBox(
+            //               //         context: context,
+            //               //         title:
+            //               //             _appLocalizations.dialogAlert,
+            //               //         message: _appLocalizations
+            //               //             .alertSaveAdminEmail,
+            //               //         negativeButtonText:
+            //               //             _appLocalizations.no,
+            //               //         positiveButtonText:
+            //               //             _appLocalizations.yes,
+            //               //         negativeActionCallback: () {},
+            //               //         positiveActionCallback: () {
+            //               //           _updateGroupLinkedEmaill(
+            //               //               item['id'], _emailController.text);
+            //               //         });
+
+            //               //  //  _confirmEmailFocus.unfocus();
+            //               //   } else {
+            //               //     Alerts.showMessageBox(
+            //               //         context: context,
+            //               //         title:
+            //               //             _appLocalizations.dialogAlert,
+            //               //         message: _appLocalizations
+            //               //             .alertEmailDoNotMatch,
+            //               //         positiveButtonText:
+            //               //             _appLocalizations.ok,
+            //               //         positiveActionCallback: () {});
+            //               //   }
+            //             },
+            //             keyboardType: TextInputType.emailAddress,
+            //             style: textFormFieldText,
+            //             decoration: InputDecoration(
+            //               floatingLabelBehavior: FloatingLabelBehavior.never,
+            //               labelText: _appLocalizations.confirmEmailHint,
+            //               labelStyle: formTitleHintStyle,
+            //               // hintText:
+            //               //     _appLocalizations.confirmEmailHint,
+            //               contentPadding:
+            //                   EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+            //               border: OutlineInputBorder(
+            //                 borderRadius: BorderRadius.circular(10.0),
+            //               ),
+            //               enabledBorder: OutlineInputBorder(
+            //                 borderRadius: BorderRadius.circular(10.0),
+            //                 borderSide: BorderSide(
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //               filled: true,
+            //               fillColor: AppColors.txtFieldBackground,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(height: 15.h),
+            //       SepratorLine(
+            //           hight: .5.h,
+            //           edgeInsets: EdgeInsets.only(left: 10.w, right: 10.w))
+            //     ],
+            //   ),
+            // );
           },
         ),
       ],
