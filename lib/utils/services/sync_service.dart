@@ -270,7 +270,7 @@ class SyncService {
           syncTransformaitons(),
           syncOutputs(),
         ],
-        eagerError: true,
+        eagerError: false,
       );
       updateLastSyncDateTime();
     } catch (error, stackTrace) {
@@ -375,7 +375,7 @@ class SyncService {
     ResponseStream<User> stream = await UserRepository().getUsers();
     return stream.forEach((user) {
       HiveUser _hiveUser = HiveUser.from(user);
-
+      debugPrint("INCOMING: User: $_hiveUser");
       int _currentIndex = -1;
       userBox.values.toList().asMap().forEach((key, hiveUser) {
         if (hiveUser.id == user.id) {
@@ -786,7 +786,7 @@ class SyncService {
   }
 
   Future syncGroup() async {
-    print('==>> START syncGroup');
+    debugPrint('============= START syncGroup =============');
     /**
      * TODO: fetch only records updated after last sync and update in local DB.
      */
@@ -798,7 +798,7 @@ class SyncService {
 
     ResponseStream<Group> stream = await GroupRepository().getGroups();
     return stream.forEach((group) {
-      debugPrint('==>>syncGroup: ${group}');
+      debugPrint('INCOMING: Group: ${HiveGroup.from(group)}');
       GroupRepository().addEditGroup(HiveGroup.from(group));
     });
     /*.then((ResponseStream<Group> stream) {
@@ -904,8 +904,9 @@ class SyncService {
       userBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((_hiveUser) {
+        debugPrint('Local User: $_hiveUser');
         var request = CreateUpdateUserRequest.create();
-        request.user = _hiveUser.createRequestUser();
+        request.user = _hiveUser.toUser();
 
         if (_hiveUser.isUpdated) {
           FieldMask mask = FieldMask(paths: kUserFieldMask);
@@ -1090,12 +1091,13 @@ class SyncService {
         // element.delete();
       });
     }
-
+    debugPrint('============== START: syncActions ===============');
     ResponseStream<starfish.Action> stream =
         await ActionRepository().getActions();
 
     return stream.forEach((action) {
       HiveAction _hiveAction = HiveAction.from(action);
+      debugPrint('INCOMING Remote Action: $_hiveAction');
 
       int _currentIndex = -1;
       actionBox.values.toList().asMap().forEach((key, hiveAction) {
@@ -1732,19 +1734,24 @@ class SyncService {
 
     if (error.code == StatusCode.unauthenticated) {
       // StatusCode 16
+      if (_refreshSessionRequestSent) {
+        return;
+      }
       // Refresh Session
       await _refreshSessionLock.synchronized(() async {
         try {
           AuthenticateResponse authenticateResponse =
               await _refreshSession(callback: callback);
 
-          StarfishSharedPreference().setLoginStatus(true);
-          StarfishSharedPreference()
+          await StarfishSharedPreference().setLoginStatus(true);
+          await StarfishSharedPreference()
               .setAccessToken(authenticateResponse.userToken);
-          StarfishSharedPreference()
+          await StarfishSharedPreference()
               .setRefreshToken(authenticateResponse.refreshToken);
-          StarfishSharedPreference()
+          await StarfishSharedPreference()
               .setSessionUserId(authenticateResponse.userId);
+
+          _refreshSessionRequestSent = false;
 
           if (callback != null) {
             callback();
@@ -1753,7 +1760,7 @@ class SyncService {
         } catch (error, stackTrace) {
           Sentry.captureMessage("ERROR Failed to refresh token");
           Sentry.captureException(error, stackTrace: stackTrace);
-          debugPrint("Failed to refresh token");
+          debugPrint("Failed to refresh token: $error");
           if (error.runtimeType == GrpcError) {
             if (FlavorConfig.isDevelopment()) {
               StarfishSnackbar.showErrorMessage(
@@ -1777,12 +1784,17 @@ class SyncService {
     }
   }
 
+  bool _refreshSessionRequestSent = false;
+  // Do not accept any further `refreshSession` request untill the previous is
+  // either SUCCESS or FAILED
   Future<AuthenticateResponse> _refreshSession({Function()? callback}) async {
     debugPrint("refreshSession called");
     String _refreshToken = await StarfishSharedPreference().getRefreshToken();
     String _userId = await StarfishSharedPreference().getSessionUserId();
     debugPrint("REfresh Session: $_refreshToken");
+    debugPrint("Session UserID : $_userId");
     Sentry.captureMessage("REfresh Session: " + _refreshToken);
+    _refreshSessionRequestSent = true;
     return ApiProvider().refreshSession(_refreshToken, _userId); //
   }
 }
