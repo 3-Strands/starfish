@@ -15,7 +15,11 @@ class SyncTime {
   }
 
   String lastSyncDateTimeString() {
-    HiveLastSyncDateTime _lastSyncDateTime = _lastSyncDataTimeBox.values.first;
+    HiveLastSyncDateTime? _lastSyncDateTime =
+        _lastSyncDataTimeBox.values.firstOrNull;
+    if (_lastSyncDateTime == null) {
+      return '';
+    }
     return DateTimeUtils.formatDate(
         _lastSyncDateTime.toDateTime(), "dd-MMM-yyyy HH:mm");
   }
