@@ -251,34 +251,33 @@ class SyncService {
       await lock.synchronized(() => downloadFiles()); // Download remote files
     }
 
-    try {
-      await Future.wait(
-        [
-          syncCurrentUser(),
-          syncUsers(),
-          //syncCountries(),
-          syncLanguages(),
-          syncActions(),
-          syncMaterialTopics(),
-          syncMaterialTypes(),
-          //syncMaterial(),
-          syncEvaluationCategories(),
-          syncGroup(),
-          syncLearnerEvaluations(),
-          syncGroupEvaluations(),
-          syncTeacherResponses(),
-          syncTransformaitons(),
-          syncOutputs(),
-        ],
-        eagerError: false,
-      );
+    await Future.wait(
+      [
+        syncCurrentUser(),
+        syncUsers(),
+        //syncCountries(),
+        syncLanguages(),
+        syncActions(),
+        syncMaterialTopics(),
+        syncMaterialTypes(),
+        //syncMaterial(),
+        syncEvaluationCategories(),
+        syncGroup(),
+        syncLearnerEvaluations(),
+        syncGroupEvaluations(),
+        syncTeacherResponses(),
+        syncTransformaitons(),
+        syncOutputs(),
+      ],
+      eagerError: false,
+    ).then((value) {
       updateLastSyncDateTime();
-    } catch (error, stackTrace) {
+    }).onError((error, stackTrace) {
       Sentry.captureException(error, stackTrace: stackTrace);
       handleError(error);
-    } finally {
+    }).whenComplete(() {
       hideAlert();
-    }
+    });
   }
 
   Future syncLocalUsersAndGroups() async {
