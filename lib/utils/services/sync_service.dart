@@ -248,36 +248,37 @@ class SyncService {
     await lock.synchronized(() => syncLocalFiles());
     await lock.synchronized(() => syncMaterial()); // Upload local files
     if (!Platform.isWeb) {
-      await lock.synchronized(() => downloadFiles()); // Download remote files
+      downloadFiles(); // Download remote files
     }
 
-    await Future.wait(
-      [
-        syncCurrentUser(),
-        syncUsers(),
-        //syncCountries(),
-        syncLanguages(),
-        syncActions(),
-        syncMaterialTopics(),
-        syncMaterialTypes(),
-        //syncMaterial(),
-        syncEvaluationCategories(),
-        syncGroup(),
-        syncLearnerEvaluations(),
-        syncGroupEvaluations(),
-        syncTeacherResponses(),
-        syncTransformaitons(),
-        syncOutputs(),
-      ],
-      eagerError: false,
-    ).then((value) {
+    try {
+      await Future.wait(
+        [
+          syncCurrentUser(),
+          syncUsers(),
+          //syncCountries(),
+          syncLanguages(),
+          syncActions(),
+          syncMaterialTopics(),
+          syncMaterialTypes(),
+          //syncMaterial(),
+          syncEvaluationCategories(),
+          syncGroup(),
+          syncLearnerEvaluations(),
+          syncGroupEvaluations(),
+          syncTeacherResponses(),
+          syncTransformaitons(),
+          syncOutputs(),
+        ],
+        eagerError: false,
+      );
       updateLastSyncDateTime();
-    }).onError((error, stackTrace) {
+    } catch (error, stackTrace) {
       Sentry.captureException(error, stackTrace: stackTrace);
       handleError(error);
-    }).whenComplete(() {
+    } finally {
       hideAlert();
-    });
+    }
   }
 
   Future syncLocalUsersAndGroups() async {
@@ -463,10 +464,13 @@ class SyncService {
   }
 
   Future syncLanguages() async {
+    debugPrint('============== START: syncLanguages ===============');
+
     await languageBox.clear();
     ResponseStream<Language> stream =
         await AppDataRepository().getAllLanguages();
     return stream.forEach((language) {
+      debugPrint('INCOMING Language: $language');
       HiveLanguage _language =
           HiveLanguage(id: language.id, name: language.name);
 
@@ -584,6 +588,7 @@ class SyncService {
       });
     }
 
+    debugPrint('============== START: syncMaterialTopics ===============');
     ResponseStream<MaterialTopic> stream =
         await MaterialRepository().getMaterialTopics();
     return stream.forEach((topic) {
@@ -643,11 +648,12 @@ class SyncService {
       });
     }
 
+    debugPrint('============== START: syncMaterialTypes ===============');
     ResponseStream<MaterialType> stream =
         await MaterialRepository().getMaterialTypes();
     return stream.forEach((materialType) {
       HiveMaterialType _materialType = HiveMaterialType.from(materialType);
-
+      debugPrint('INCOMING: Material Type: $_materialType');
       int _currentIndex = -1;
       materialTypeBox.values.toList().asMap().forEach((key, hiveMaterialType) {
         if (hiveMaterialType.id == materialType.id) {
@@ -696,7 +702,7 @@ class SyncService {
       return;
     }
 
-    print(
+    debugPrint(
         '============= START: Sync Local Deleted Materials to Remote =============');
 
     StreamController<DeleteMaterialRequest> _controller = StreamController();
@@ -827,7 +833,8 @@ class SyncService {
         element.delete();
       });
     }
-
+    debugPrint(
+        '============== START: syncEvaluationCategories ===============');
     ResponseStream<EvaluationCategory> stream =
         await GroupRepository().getEvaluationCategories();
     return stream.forEach((evaluationCategory) {
@@ -1047,6 +1054,8 @@ class SyncService {
 
   // DELETE GROUP USERS
   Future syncLocalDeletedGroupUsersToRemote() async {
+    debugPrint(
+        '============== START: syncLocalDeletedGroupUsersToRemote ===============');
     if (groupUserBox.values.where((element) => element.isDirty).isEmpty) {
       return;
     }
@@ -1257,13 +1266,13 @@ class SyncService {
           .where((hiveFile) =>
               false == hiveFile.isSynced && !hiveFile.isLocallyAvailable)
           .map((hiveFile) async {
-        print(
-            '=============DownloadMaterial: ${hiveFile.filename} =============');
+        print('=============DownloadMaterial: ${hiveFile} =============');
         try {
           await downloadMaterial(hiveFile);
           hiveFile.isSynced = true;
           await hiveFile.save();
         } catch (error, stackTrace) {
+          print('============= DownloadMaterial: ERROR $error=============');
           Sentry.captureException(error, stackTrace: stackTrace);
           handleError(error);
         }
@@ -1558,12 +1567,14 @@ class SyncService {
     if (DEBUG) {
       learnerEvaluationBox.values.forEach((element) {});
     }
+    debugPrint('============== START: syncLearnerEvaluations ===============');
 
     ResponseStream<LearnerEvaluation> stream =
         await ResultsRepository().listLearnerEvaluations();
     return stream.forEach((learnerEvaluation) {
       HiveLearnerEvaluation _hiveLearnerEvaluation =
           HiveLearnerEvaluation.from(learnerEvaluation);
+      debugPrint('INCOMING Evaluation: $_hiveLearnerEvaluation');
 
       ResultsProvider().createUpdateLearnerEvaluation(_hiveLearnerEvaluation);
     });
@@ -1589,12 +1600,13 @@ class SyncService {
     if (DEBUG) {
       groupEvaluationBox.values.forEach((element) {});
     }
-
+    debugPrint('============== START: syncGroupEvaluations ===============');
     ResponseStream<GroupEvaluation> stream =
         await ResultsRepository().listGroupEvaluations();
     return stream.forEach((groupEvaluation) {
       HiveGroupEvaluation _hiveGroupEvaluation =
           HiveGroupEvaluation.from(groupEvaluation);
+      debugPrint('INCOMING GroupEvaluation: $_hiveGroupEvaluation');
 
       ResultsProvider().createUpdateGroupEvaluation(_hiveGroupEvaluation);
     });
@@ -1620,12 +1632,13 @@ class SyncService {
     if (DEBUG) {
       transformationBox.values.forEach((element) {});
     }
-
+    debugPrint('============== START: syncTransformaitons ===============');
     ResponseStream<Transformation> stream =
         await ResultsRepository().listTransformations();
     return stream.forEach((transformaiton) {
       HiveTransformation _hiveTransformation =
           HiveTransformation.from(transformaiton);
+      debugPrint('INCOMING Transformation: $_hiveTransformation');
 
       if (_hiveTransformation.files != null &&
           _hiveTransformation.files!.length > 0) {
@@ -1667,13 +1680,14 @@ class SyncService {
     if (DEBUG) {
       teacherResponseBox.values.forEach((element) {});
     }
+    debugPrint('============== START: syncTeacherResponses ===============');
 
     ResponseStream<TeacherResponse> stream =
         await ResultsRepository().listTeacherResponses();
     return stream.forEach((teacherResponse) {
       HiveTeacherResponse _hiveTeacherResponse =
           HiveTeacherResponse.from(teacherResponse);
-
+      debugPrint('INCOMING TeacherResponses: $_hiveTeacherResponse');
       ResultsProvider().createUpdateTeacherResponse(_hiveTeacherResponse);
     });
     /*.then((ResponseStream<TeacherResponse> stream) {
@@ -1698,11 +1712,11 @@ class SyncService {
     if (DEBUG) {
       outputBox.values.forEach((element) {});
     }
-
+    debugPrint('============== START: syncOutputs ===============');
     ResponseStream<Output> stream = await ResultsRepository().listOutputs();
     return stream.forEach((output) {
       HiveOutput _hiveOutput = HiveOutput.from(output);
-
+      debugPrint('INCOMING Output: $_hiveOutput');
       OutputProvider().createUpdateOutput(_hiveOutput);
     });
     /*.then((ResponseStream<Output> stream) {
