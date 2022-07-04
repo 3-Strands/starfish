@@ -66,7 +66,7 @@ class _ContactListItemState extends State<ContactListItem> {
               height: 10.h,
             ),
             Text(
-              '${widget.contact.diallingCode ?? ''} ${widget.contact.phone ?? ''} ',
+              '${widget.contact.diallingCodeWithPlus} ${widget.contact.phone ?? ''} ',
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 21.5.sp,
