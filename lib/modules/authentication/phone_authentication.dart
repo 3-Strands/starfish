@@ -132,7 +132,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   bool get _isPhoneNumberValid =>
       _isPhoneNumberValidAccordingToPicker ??
-      (_phoneNumber?.parseNumber().length ?? 0) >= 10;
+      (_phoneNumber?.parseNumber().length ?? 0) >= 3;
 
   Container _footer() {
     return Container(
