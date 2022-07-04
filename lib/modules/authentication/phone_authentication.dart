@@ -14,6 +14,7 @@ import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/wrappers/platform.dart';
 
 class PhoneAuthenticationScreen extends StatefulWidget {
   const PhoneAuthenticationScreen({Key? key, this.title = ''})
@@ -27,7 +28,7 @@ class PhoneAuthenticationScreen extends StatefulWidget {
 }
 
 class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
-  bool _isPhoneNumberValid = false;
+  bool? _isPhoneNumberValidAccordingToPicker = Platform.isWeb ? null : false;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -38,8 +39,6 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   @override
   void initState() {
     super.initState();
-
-    _isPhoneNumberValid = false;
 
     SyncService obj = SyncService();
     obj.syncAll();
@@ -104,8 +103,8 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
           border: _outlineInputBorder,
           enabledBorder: _outlineInputBorder,
-          // errorBorder: _outlineInputBorder,
-          // focusedErrorBorder: _outlineInputBorder,
+          errorBorder: Platform.isWeb ? _outlineInputBorder : null,
+          focusedErrorBorder: Platform.isWeb ? _outlineInputBorder : null,
           focusedBorder: _outlineInputBorder,
           filled: true,
           fillColor: AppColors.txtFieldBackground,
@@ -114,9 +113,14 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           _phoneNumber = value;
         }),
         onInputValidated: (isValid) {
-          _isPhoneNumberValid = isValid;
+          setState(() {
+            _isPhoneNumberValidAccordingToPicker =
+                Platform.isWeb ? null : isValid;
+          });
         },
-        errorMessage: AppLocalizations.of(context)!.invalidPhoneNumber,
+        errorMessage: Platform.isWeb
+            ? null
+            : AppLocalizations.of(context)!.invalidPhoneNumber,
         autoValidateMode: AutovalidateMode.onUserInteraction,
         formatInput: false,
         maxLength: 15,
@@ -125,6 +129,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
   }
 
   get footerHeight => 75.h;
+
+  bool get _isPhoneNumberValid =>
+      _isPhoneNumberValidAccordingToPicker ??
+      (_phoneNumber?.parseNumber().length ?? 0) >= 10;
 
   Container _footer() {
     return Container(
@@ -146,7 +154,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
         borderRadius: BorderRadius.all(
           Radius.circular(20.r),
         ),
-        color: AppColors.selectedButtonBG,
+        //  color: AppColors.selectedButtonBG,
       ),
       child: Padding(
         padding: EdgeInsets.all(0.0),
@@ -159,20 +167,20 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
               textAlign: TextAlign.start,
               style: buttonTextStyle,
             ),
-            onPressed: () async {
-              if (!_isPhoneNumberValid) {
-                return;
-              }
-              EasyLoading.show();
+            onPressed: _isPhoneNumberValid
+                ? () async {
+                    print(_isPhoneNumberValid);
+                    EasyLoading.show();
 
-              if (kIsWeb) {
-                _authenticateOnWeb(
-                    _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
-              } else {
-                _authenticateOnDevice(
-                    _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
-              }
-            },
+                    if (kIsWeb) {
+                      _authenticateOnWeb(
+                          _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
+                    } else {
+                      _authenticateOnDevice(
+                          _phoneNumber!.dialCode!, _phoneNumber!.parseNumber());
+                    }
+                  }
+                : null,
             style: ElevatedButton.styleFrom(
               primary: (!_isPhoneNumberValid)
                   ? Colors.grey
