@@ -7,7 +7,8 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/wrappers/platform_native.dart';
 import 'package:telephony/telephony.dart';
-import 'package:contacts_service/contacts_service.dart';
+//import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 class SMS {
   static bool? _permissionGranted;
@@ -38,39 +39,38 @@ class SMS {
 }
 
 Future<List<HiveUser>> getAllContacts() async {
-  final contactList = await ContactsService.getContacts(
-    withThumbnails: false,
-    photoHighResolution: false,
+  final contactList = await FlutterContacts.getContacts(
+    withThumbnail: false,
+    withPhoto: false,
+    withProperties: true,
   );
   List<HiveUser> contactsWithNumber = [];
 
   await Future.wait(contactList.map((contact) async {
     final phones = contact.phones;
-    if (phones == null) {
+    if (phones.isEmpty) {
       return contactsWithNumber;
     }
 
-    phones.forEach((element) async {
-      final rawNumber = element.value;
-      if (rawNumber != null) {
-        var dialCode, phoneNumber;
-        try {
-          final parsedNumber =
-              await PhoneNumberUtil().parse(rawNumber, regionCode: null);
-          dialCode = parsedNumber.countryCode;
-          phoneNumber = parsedNumber.nationalNumber;
-        } catch (e) {
-          dialCode = null;
-          phoneNumber = rawNumber.replaceAll(RegExp("[-()\\s]"), "");
-        }
-        contactsWithNumber.add(HiveUser(
-            id: UuidGenerator.uuid(),
-            diallingCode: dialCode,
-            phone: phoneNumber,
-            name: contact.displayName,
-            //givenName: contact.givenName,
-            status: User_Status.STATUS_UNSPECIFIED.value));
+    phones.forEach((Phone element) async {
+      final rawNumber = element.number;
+      var dialCode, phoneNumber;
+      try {
+        final parsedNumber =
+            await PhoneNumberUtil().parse(rawNumber, regionCode: null);
+        dialCode = parsedNumber.countryCode;
+        phoneNumber = parsedNumber.nationalNumber;
+      } catch (e) {
+        dialCode = null;
+        phoneNumber = rawNumber.replaceAll(RegExp("[-()\\s]"), "");
       }
+      contactsWithNumber.add(HiveUser(
+          id: UuidGenerator.uuid(),
+          diallingCode: dialCode,
+          phone: phoneNumber,
+          name: contact.displayName,
+          //givenName: contact.givenName,
+          status: User_Status.STATUS_UNSPECIFIED.value));
     });
   }));
 
