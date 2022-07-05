@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:phone_number/phone_number.dart';
+
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/wrappers/platform_native.dart';
 import 'package:telephony/telephony.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 //import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
@@ -56,10 +57,9 @@ Future<List<HiveUser>> getAllContacts() async {
       final rawNumber = element.number;
       var dialCode, phoneNumber;
       try {
-        final parsedNumber =
-            await PhoneNumberUtil().parse(rawNumber, regionCode: null);
+        final parsedNumber = PhoneNumber.fromRaw(rawNumber);
         dialCode = parsedNumber.countryCode;
-        phoneNumber = parsedNumber.nationalNumber;
+        phoneNumber = parsedNumber.nsn;
       } catch (e) {
         dialCode = null;
         phoneNumber = rawNumber.replaceAll(RegExp("[-()\\s]"), "");
