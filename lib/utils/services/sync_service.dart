@@ -806,7 +806,7 @@ class SyncService {
           .forEach((_hiveUser) {
         debugPrint('Local User: $_hiveUser');
         var request = CreateUpdateUserRequest.create();
-        request.user = _hiveUser.toUser();
+        request.user = _hiveUser.createRequestUser();
 
         if (_hiveUser.isUpdated) {
           FieldMask mask = FieldMask(paths: kUserFieldMask);
@@ -1175,7 +1175,7 @@ class SyncService {
       response.listen((value) {
         // delete this actionuser form `ACTION_USER_BOX`
         HiveActionUser _hiveActionUser = HiveActionUser.from(value.actionUser);
-
+        debugPrint("Remote ActionUser: $value");
         ActionProvider().deleteActionUser(_hiveActionUser);
       });
     }).onError((error, stackTrace) {
@@ -1187,6 +1187,7 @@ class SyncService {
     actionUserBox.values
         .where((element) => (element.isNew || element.isUpdated))
         .forEach((HiveActionUser _hiveActionUser) {
+      debugPrint("Local ActionUser: $_hiveActionUser");
       if (_hiveActionUser.isNew || _hiveActionUser.isUpdated) {
         var request = CreateUpdateActionUserRequest.create();
         request.actionUser = _hiveActionUser.toActionUser();
@@ -1314,6 +1315,7 @@ class SyncService {
       transformationBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((_hivetransformation) {
+        //debugPrint("LocalTransformation: $_hivetransformation");
         var request = CreateUpdateTransformationRequest.create();
 
         request.transformation = _hivetransformation.toTransformation();
