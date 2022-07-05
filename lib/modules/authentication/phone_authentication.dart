@@ -32,6 +32,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  String _isoCode = "IN";
   PhoneNumber? _phoneNumber;
 
   late AppLocalizations _appLocalizations;
@@ -94,7 +95,7 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           showFlags: true,
           useEmoji: true,
         ),
-        initialValue: PhoneNumber(isoCode: "IN"),
+        initialValue: PhoneNumber(isoCode: _isoCode),
         inputDecoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelStyle: formTitleHintStyle,
@@ -110,7 +111,10 @@ class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
           fillColor: AppColors.txtFieldBackground,
         ),
         onInputChanged: ((value) {
-          _phoneNumber = value;
+          setState(() {
+            _isoCode = value.isoCode ?? '';
+            _phoneNumber = value;
+          });
         }),
         onInputValidated: (isValid) {
           setState(() {
