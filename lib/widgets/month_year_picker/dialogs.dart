@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart' hide YearPicker, MonthPicker;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'pickers.dart';
 import 'utils.dart';
@@ -8,11 +9,13 @@ import 'utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ################################# CONSTANTS #################################
-const _portraitDialogSize = Size(320.0, 480.0);
-const _landscapeDialogSize = Size(496.0, 344.0);
+Size _portraitDialogSize =
+    Size(ScreenUtil().setWidth(320.0), ScreenUtil().setHeight(480.0));
+Size _landscapeDialogSize =
+    Size(ScreenUtil().setWidth(496.0), ScreenUtil().setHeight(344.0));
 const _dialogSizeAnimationDuration = Duration(milliseconds: 200);
-const _datePickerHeaderLandscapeWidth = 192.0;
-const _datePickerHeaderPortraitHeight = 120.0;
+double _datePickerHeaderLandscapeWidth = ScreenUtil().setWidth(192.0);
+double _datePickerHeaderPortraitHeight = ScreenUtil().setHeight(120.0);
 const _headerPaddingLandscape = 16.0;
 
 // ################################# FUNCTIONS #################################
@@ -178,8 +181,8 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
 
     final Widget actions = Container(
       alignment: AlignmentDirectional.centerEnd,
-      constraints: const BoxConstraints(minHeight: 52.0),
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      constraints: BoxConstraints(minHeight: 52.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: OverflowBar(
         spacing: 8.0,
         children: <Widget>[
@@ -206,11 +209,11 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
       children: [
         TextButton(
           style: TextButton.styleFrom(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              32.0,
-              24.0,
-              8.0,
-              24.0,
+            padding: EdgeInsetsDirectional.fromSTEB(
+              32.w,
+              24.h,
+              8.w,
+              24.h,
             ),
             primary: Theme.of(context).textTheme.caption?.color,
           ),
@@ -494,9 +497,9 @@ class _Header extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16.0),
+                  SizedBox(height: 16.h),
                   help,
-                  const Flexible(child: SizedBox(height: 38.0)),
+                  Flexible(child: SizedBox(height: 38.h)),
                   title,
                 ],
               ),
@@ -511,14 +514,14 @@ class _Header extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16.0),
+                SizedBox(height: 16.h),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: _headerPaddingLandscape,
                   ),
                   child: help,
                 ),
-                const SizedBox(height: 56.0),
+                SizedBox(height: 56.h),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
