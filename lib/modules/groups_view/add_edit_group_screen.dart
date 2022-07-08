@@ -1147,17 +1147,6 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       return Container();
     }
 
-    _updatedGroupUsers.forEach((element) {
-      if (_groupUsers.contains(element)) {
-        _groupUsers.remove(element);
-        if (!element.isDirty) {
-          _groupUsers.add(element);
-        }
-      } else {
-        _groupUsers.add(element);
-      }
-    });
-
     final List<Widget> _widgetList = [];
 
     _groupUsers
@@ -1234,9 +1223,13 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
 
               setState(() {
                 if (_updatedGroupUsers.contains(_groupUser)) {
-                  _updatedGroupUsers.remove(_updatedGroupUser);
+                  _updatedGroupUsers.remove(_groupUser);
                 }
                 _updatedGroupUsers.add(_updatedGroupUser);
+
+                if (_groupUsers.contains(_groupUser)) {
+                  _groupUsers.remove(_groupUser);
+                }
               });
               // _groupUser.isDirty = true;
               // bloc.groupBloc.createUpdateGroupUser(_groupUser).then((value) {
