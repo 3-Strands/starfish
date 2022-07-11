@@ -8,12 +8,14 @@ import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group_action.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_output_marker.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/db/providers/language_provider.dart';
 import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
@@ -337,5 +339,13 @@ extension HiveGroupExt on HiveGroup {
     this.groupActionList?.forEach((hiveAction) => count +=
         hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.BAD));
     return count;
+  }
+
+  List<HiveLanguage> get allLanguages {
+    if (this.languageIds == null) {
+      return [];
+    }
+    return LanguageProvider()
+        .getAllByIds(this.languageIds!, languages: this.languages);
   }
 }

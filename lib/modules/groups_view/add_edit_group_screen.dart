@@ -121,9 +121,7 @@ class _AddEditGroupScreenState extends State<AddEditGroupScreen> {
       _titleController.text = widget.group!.name ?? '';
       _descriptionController.text = widget.group!.description ?? '';
 
-      widget.group!.languages.forEach((key, value) {
-        _selectedLanguages.add(HiveLanguage(id: key, name: value));
-      });
+      _selectedLanguages = widget.group?.allLanguages ?? [];
       _selectedLanguages.sort((a, b) => a.name.compareTo(b.name));
 
       _selectedEvaluationCategories = _evaluationCategoryBox.values

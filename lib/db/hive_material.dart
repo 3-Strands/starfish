@@ -209,23 +209,10 @@ extension HiveMaterialExt on HiveMaterial {
   }
 
   List<HiveLanguage> get allLanguages {
-    List<HiveLanguage> _languages = [];
-    this.languageIds!.forEach((id) {
-      HiveLanguage? _language = LanguageProvider().getById(id);
-
-      // There may be case the material language is not available in the Natiations followed by this user,
-      // so get the name of language in `this.languages`
-      if (_language == null) {
-        this.languages.forEach((key, value) {
-          if (key == id) {
-            _language = HiveLanguage(id: key, name: value);
-          }
-        });
-      }
-      if (_language != null) {
-        _languages.add(_language!);
-      }
-    });
-    return _languages;
+    if (this.languageIds == null) {
+      return [];
+    }
+    return LanguageProvider()
+        .getAllByIds(this.languageIds!, languages: this.languages);
   }
 }
