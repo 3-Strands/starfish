@@ -29,6 +29,7 @@ import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/widgets/feeling_about_group_widget.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
@@ -49,6 +50,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   late HiveCurrentUser currentUser;
   List<File>? imageFiles;
   String? userImpactStory;
+  late HiveGroupEvaluation? _hiveGroupEvalution;
 
   bool _isInitialized = false;
   final Key _focusDetectorKey = UniqueKey();
@@ -280,7 +282,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
       required String learnerId,
       required String groupId,
       required HiveDate month}) {
-    HiveGroupEvaluation? _hiveGroupEvalution = GroupEvaluationProvider()
+    _hiveGroupEvalution = GroupEvaluationProvider()
         .getGroupUserGroupEvaluation(learnerId, groupId)
         .where((element) => element.month != null
             ? (element.month!.year == month.year &&
@@ -288,150 +290,14 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             : false)
         .firstOrNull;
 
-    return Card(
-        //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-        color: Color(0xFFEFEFEF),
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-          Radius.circular(
-            10,
-          ),
-        )),
-        child: Container(
-          padding: EdgeInsets.only(left: 15.w, right: 15.w),
-          child: Column(children: [
-            SizedBox(
-              height: 5.h,
-            ),
-            Text(
-              '${AppLocalizations.of(context)!.howDoYouFeelAboutThisGroup}',
-              style: TextStyle(
-                color: Color(0xFF4F4F4F),
-                fontFamily: "OpenSans",
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: Container(
-                      //   height: 45.h,
-                      decoration: BoxDecoration(),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _saveGroupEvaluations(
-                                hiveGroupUser, _hiveGroupEvalution,
-                                evaluation: GroupEvaluation_Evaluation.GOOD);
-                          });
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                            ),
-                            backgroundColor: (_hiveGroupEvalution != null &&
-                                    GroupEvaluation_Evaluation.valueOf(
-                                            _hiveGroupEvalution.evaluation!) ==
-                                        GroupEvaluation_Evaluation.GOOD)
-                                ? MaterialStateProperty.all<Color>(
-                                    Color(0xFF6DE26B))
-                                : MaterialStateProperty.all<Color>(
-                                    Color(0xFFC9C9C9))),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              AssetsPath.thumbsUp,
-                              width: 15.w,
-                            ),
-                            SizedBox(
-                              width: 3.w,
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.goodText,
-                              style: TextStyle(
-                                  fontSize: 17.sp,
-                                  fontFamily: "Rubik",
-                                  color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Expanded(
-                    child: Container(
-                      //   height: 45.h,
-                      decoration: BoxDecoration(),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _saveGroupEvaluations(
-                                hiveGroupUser, _hiveGroupEvalution,
-                                evaluation: GroupEvaluation_Evaluation.BAD);
-                          });
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                            ),
-                            backgroundColor: (_hiveGroupEvalution != null &&
-                                    GroupEvaluation_Evaluation.valueOf(
-                                            _hiveGroupEvalution.evaluation!) ==
-                                        GroupEvaluation_Evaluation.BAD)
-                                ? MaterialStateProperty.all<Color>(
-                                    Color(0xFFFFBE4A))
-                                : MaterialStateProperty.all<Color>(
-                                    Color(0xFFC9C9C9))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              AssetsPath.thumbsDown,
-                              width: 15.w,
-                            ),
-                            SizedBox(
-                              width: 3.w,
-                            ),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(context)!.notSoGoodText,
-                                style: TextStyle(
-                                    fontSize: 17.sp,
-                                    fontFamily: "Rubik",
-                                    color: Colors.black),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 15.h,
-            ),
-          ]),
-        ));
+    return FeelingAboutGroupCard(
+        saveGroupEvaluation: (leanerEvaluationForGroup, evaluation) {
+          setState(() {
+            _saveGroupEvaluations(hiveGroupUser, leanerEvaluationForGroup,
+                evaluation: evaluation);
+          });
+        },
+        leanerEvaluationForGroup: _hiveGroupEvalution);
   }
 
   Widget _buildFeedbackFromTeachers(
@@ -1132,6 +998,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         .createUpdateGroupEvaluation(_hiveGroupEvalution)
         .then((value) {
       debugPrint("Evaluaitons saved.");
+      setState(() {});
       // save files also
     }).onError((error, stackTrace) {
       debugPrint("Evaluations to save Transformation");

@@ -37,6 +37,7 @@ import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/utils/services/sync_service.dart';
+import 'package:starfish/widgets/feeling_about_group_widget.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
@@ -311,75 +312,23 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       SizedBox(
                         height: 20.h,
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
-                            style: TextStyle(
-                                fontSize: 17.sp,
-                                fontFamily: "OpenSans",
-                                fontStyle: FontStyle.normal,
-                                color: Color(0xFF4F4F4F),
-                                fontWeight: FontWeight.w600),
-                          ),
-                          if (leanerEvaluationForGroup != null)
-                            Expanded(
-                              child: Container(
-                                child: Row(
-                                  children: [
-                                    GroupEvaluation_Evaluation.valueOf(
-                                                leanerEvaluationForGroup!
-                                                    .evaluation!) ==
-                                            GroupEvaluation_Evaluation.GOOD
-                                        ? Image.asset(
-                                            AssetsPath.thumbsUp,
-                                            color: Color(0xFF797979),
-                                            height: 15.sp,
-                                          )
-                                        : Image.asset(
-                                            AssetsPath.thumbsDown,
-                                            color: Color(0xFF797979),
-                                            height: 15.sp,
-                                          ),
-                                    SizedBox(
-                                      width: 5.w,
-                                    ),
-                                    Text(
-                                      "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
-                                      style: TextStyle(
-                                        fontFamily: "Rubik",
-                                        fontSize: 15.sp,
-                                        color: Color(0xFF797979),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                        ],
-                      ),
-                      /*SizedBox(
-                          height: 20.h,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 19.sp,
-                                fontFamily: "OpenSans",
-                                color: Color(0xFF4F4F4F),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            _buildGroupEvaluationWidget(),
-                          ],
-                        ),*/
+                      FeelingAboutGroupCard(
+                          leanerEvaluationForGroup: leanerEvaluationForGroup,
+                          saveGroupEvaluation:
+                              (leanerEvaluationForGroup, evaluation) {
+                            setState(() {
+                              print(leanerEvaluationForGroup);
+                              print(evaluation);
+
+                              _saveGroupEvaluations(
+                                  hiveGroupUser, leanerEvaluationForGroup,
+                                  evaluation: evaluation);
+
+                              print(
+                                  'this is learnerE$leanerEvaluationForGroup');
+                            });
+                          }),
+
                       SizedBox(
                         height: 20.h,
                       ),
@@ -1682,5 +1631,36 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       childAspectRatio: 1,
       children: _widgetList,
     );
+  }
+
+  void _saveGroupEvaluations(
+      HiveGroupUser hiveGroupUser, HiveGroupEvaluation? _hiveGroupEvalution,
+      {required GroupEvaluation_Evaluation evaluation}) {
+    if (_hiveGroupEvalution == null) {
+      _hiveGroupEvalution = HiveGroupEvaluation();
+      _hiveGroupEvalution.id = UuidGenerator.uuid();
+      _hiveGroupEvalution.groupId = hiveGroupUser.groupId;
+      _hiveGroupEvalution.userId = hiveGroupUser.userId;
+      _hiveGroupEvalution.month = bloc.resultsBloc.hiveDate!;
+      _hiveGroupEvalution.isNew = true;
+    } else {
+      _hiveGroupEvalution.isUpdated = true;
+    }
+
+    _hiveGroupEvalution.evaluation = evaluation.value;
+
+    GroupEvaluationProvider()
+        .createUpdateGroupEvaluation(_hiveGroupEvalution)
+        .then((value) {
+      debugPrint("Evaluaitons saved.");
+      setState(() {
+        leanerEvaluationForGroup = hiveGroupUser
+            .getGroupEvaluationForMonth(bloc.resultsBloc.hiveDate!);
+      });
+
+      // save files also
+    }).onError((error, stackTrace) {
+      debugPrint("Evaluations to save Transformation");
+    });
   }
 }
