@@ -1,7 +1,4 @@
-import 'package:collection/collection.dart';
-
 import 'package:hive/hive.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
@@ -9,6 +6,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
+import 'package:starfish/models/user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
@@ -87,25 +85,6 @@ class HiveUser extends HiveObject {
     this.phoneCountryId = user.phoneCountryId;
     this.diallingCode = user.diallingCode;
     this.status = user.status.value;
-    this.creatorId = user.creatorId;
-    this.isNew = false;
-    this.isUpdated = false;
-    this.isDeleted = false;
-  }
-
-  HiveUser.fromCurrentUser(HiveCurrentUser user) {
-    this.id = user.id;
-    this.name = user.name;
-    this.phone = user.phone;
-    this.linkGroups = user.linkGroups;
-    this.countryIds = user.countryIds;
-    this.groups = user.groups;
-    this.actions = user.actions;
-    this.selectedActionsTab = user.selectedActionsTab;
-    this.selectedResultsTab = user.selectedResultsTab;
-    this.phoneCountryId = user.phoneCountryId;
-    this.diallingCode = user.diallingCode;
-    this.status = user.status;
     this.creatorId = user.creatorId;
     this.isNew = false;
     this.isUpdated = false;

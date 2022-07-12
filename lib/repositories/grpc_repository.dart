@@ -4,7 +4,6 @@ import 'package:starfish/src/generated/google/protobuf/empty.pb.dart';
 import 'package:starfish/src/generated/google/protobuf/field_mask.pb.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
-import 'package:starfish/utils/sync_time.dart';
 
 class GrpcRepository {
   final StarfishClient client;
@@ -38,30 +37,18 @@ class GrpcRepository {
     return client.updateCurrentUser(request);
   }
 
-  ResponseStream<Material> getMaterials() {
-    var request = ListMaterialsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<Material> getMaterials({Date? updatedSince}) {
+    var request = ListMaterialsRequest(updatedSince: updatedSince);
     return client.listMaterials(request);
   }
 
-  ResponseStream<MaterialTopic> getMaterialTopics() {
-    var request = ListMaterialTopicsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<MaterialTopic> getMaterialTopics({Date? updatedSince}) {
+    var request = ListMaterialTopicsRequest(updatedSince: updatedSince);
     return client.listMaterialTopics(request);
   }
 
-  ResponseStream<MaterialType> getMaterialTypes() {
-    var request = ListMaterialTypesRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<MaterialType> getMaterialTypes({Date? updatedSince}) {
+    var request = ListMaterialTypesRequest(updatedSince: updatedSince);
     return client.listMaterialTypes(request);
   }
 
@@ -75,30 +62,18 @@ class GrpcRepository {
     return client.deleteMaterials(request);
   }
 
-  ResponseStream<Group> getGroups() {
-    var request = ListGroupsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<Group> getGroups({Date? updatedSince}) {
+    var request = ListGroupsRequest(updatedSince: updatedSince);
     return client.listGroups(request);
   }
 
-  ResponseStream<Action> getActions() {
-    var request = ListActionsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<Action> getActions({Date? updatedSince}) {
+    var request = ListActionsRequest(updatedSince: updatedSince);
     return client.listActions(request);
   }
 
-  ResponseStream<EvaluationCategory> getEvaluationCategories() {
-    var request = ListEvaluationCategoriesRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<EvaluationCategory> getEvaluationCategories({Date? updatedSince}) {
+    var request = ListEvaluationCategoriesRequest(updatedSince: updatedSince);
     return client.listEvaluationCategories(request);
   }
 
@@ -117,12 +92,8 @@ class GrpcRepository {
     return client.deleteGroupUsers(groupUser);
   }
 
-  ResponseStream<User> getUsers() {
-    var request = ListUsersRequest();
-    Date? date = SyncTime().lastSyncDateTime();
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<User> getUsers({Date? updatedSince}) {
+    var request = ListUsersRequest(updatedSince: updatedSince);
     return client.listUsers(request);
   }
 
@@ -191,53 +162,28 @@ class GrpcRepository {
     return client.createUpdateOutputs(request);
   }
 
-  ResponseStream<LearnerEvaluation> listLearnerEvaluations() {
-    var request = ListLearnerEvaluationsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<LearnerEvaluation> listLearnerEvaluations({Date? updatedSince}) {
+    var request = ListLearnerEvaluationsRequest(updatedSince: updatedSince);
     return client.listLearnerEvaluations(request);
   }
 
-  ResponseStream<TeacherResponse> listTeacherResponses() {
-    var request = ListTeacherResponsesRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<TeacherResponse> listTeacherResponses({Date? updatedSince}) {
+    var request = ListTeacherResponsesRequest(updatedSince: updatedSince);
     return client.listTeacherResponses(request);
   }
 
-  ResponseStream<GroupEvaluation> listGroupEvaluations() {
-    var request = ListGroupEvaluationsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<GroupEvaluation> listGroupEvaluations({Date? updatedSince}) {
+    var request = ListGroupEvaluationsRequest(updatedSince: updatedSince);
     return client.listGroupEvaluations(request);
   }
 
-  ResponseStream<Transformation> listTransformations() {
-    var request = ListTransformationsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<Transformation> listTransformations({Date? updatedSince}) {
+    var request = ListTransformationsRequest(updatedSince: updatedSince);
     return client.listTransformations(request);
   }
 
-  ResponseStream<Output> listOutputs() {
-    var request = ListOutputsRequest.create();
-    Date? date = SyncTime().lastSyncDateTime();
-
-    if (date != null) {
-      request.updatedSince = date;
-    }
+  ResponseStream<Output> listOutputs({Date? updatedSince}) {
+    var request = ListOutputsRequest(updatedSince: updatedSince);
     return client.listOutputs(request);
   }
 }

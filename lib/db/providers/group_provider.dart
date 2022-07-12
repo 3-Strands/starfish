@@ -95,19 +95,19 @@ class GroupProvider {
         .firstWhereOrNull((element) => element.id == groupId);
   }
 
-  List<HiveGroup>? userGroupsWithRole(
-      String userId, List<GroupUser_Role> groupUserRoleList) {
-    List<HiveGroup> _groupList = _groupBox.values
-        .where((element) =>
-            Group_Status.valueOf(element.status ?? 0) == Group_Status.ACTIVE)
-        .toList();
-    if (_groupList.length == 0) {
-      return null;
-    }
-    return _groupList.where((element) {
-      return groupUserRoleList.contains(element.getMyRole(userId));
-    }).toList();
-  }
+  // List<HiveGroup>? userGroupsWithRole(
+  //     String userId, List<GroupUser_Role> groupUserRoleList) {
+  //   List<HiveGroup> _groupList = _groupBox.values
+  //       .where((element) =>
+  //           Group_Status.valueOf(element.status ?? 0) == Group_Status.ACTIVE)
+  //       .toList();
+  //   if (_groupList.length == 0) {
+  //     return null;
+  //   }
+  //   return _groupList.where((element) {
+  //     return groupUserRoleList.contains(element.getMyRole(userId));
+  //   }).toList();
+  // }
 
   Future addGroupUsers(List<HiveGroupUser> groupUsers) async {
     groupUsers.forEach((element) async {

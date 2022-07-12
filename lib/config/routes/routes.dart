@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/bloc/session_bloc.dart';
-import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/authentication/phone_authentication.dart';
-import 'package:starfish/modules/create_profile/create_profile.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
-import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
-import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
 
 class Routes {
   Routes._(); //this is to prevent anyone from instantiate this object
@@ -41,13 +36,12 @@ class Routes {
 
   static Widget _getPageFromRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
-      // case phoneAuthentication: return const PhoneAuthenticationScreen();
-      case showProfile: return const CreateProfileScreen();
+      // case showProfile: return const CreateProfileScreen();
       case dashboard: return const Dashboard();
-      case settings: return const SettingsScreen();
-      case addNewMaterial: return const AddEditMaterialScreen();
-      case addActions: return const AddEditAction();
-      case createNewGroup: return const AddEditGroupScreen();
+      // case settings: return const SettingsScreen();
+      // case addNewMaterial: return const AddEditMaterialScreen();
+      // case addActions: return const AddEditAction();
+      // case createNewGroup: return const AddEditGroupScreen();
       default: return const Center(child: Text('404: Unknown Route'));
     }
   }

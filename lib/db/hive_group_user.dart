@@ -82,237 +82,237 @@ class HiveGroupUser extends HiveObject {
     );
   }
 
-  HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
-    return this.transformations.firstWhereOrNull((element) {
-      if (element.month == null) {
-        return false;
-      }
-      return element.month!.year == hiveDate.year &&
-          element.month!.month == hiveDate.month;
-    });
-  }
+  // HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
+  //   return this.transformations.firstWhereOrNull((element) {
+  //     if (element.month == null) {
+  //       return false;
+  //     }
+  //     return element.month!.year == hiveDate.year &&
+  //         element.month!.month == hiveDate.month;
+  //   });
+  // }
 
-  Map<HiveEvaluationCategory, Map<String, int>>
-      getLearnerEvaluationsByCategoryForMoth(HiveDate hiveDate) {
-    Map<HiveEvaluationCategory, Map<String, int>> _map = Map();
-    group?.evaluationCategoryIds?.forEach((categoryId) {
-      HiveEvaluationCategory? _evaluationCategory =
-          EvaluationCategoryProvider().getCategoryById(categoryId);
-      if (_evaluationCategory != null) {
-        Map<String, int> _countByMonth = Map();
-        _countByMonth["this-month"] =
-            _categoryLearnerEvaluationsForMonth(categoryId, hiveDate);
-        _countByMonth["last-month"] = _categoryLearnerEvaluationsForMonth(
-            categoryId, hiveDate.previousMonth);
+  // Map<HiveEvaluationCategory, Map<String, int>>
+  //     getLearnerEvaluationsByCategoryForMoth(HiveDate hiveDate) {
+  //   Map<HiveEvaluationCategory, Map<String, int>> _map = Map();
+  //   group?.evaluationCategoryIds?.forEach((categoryId) {
+  //     HiveEvaluationCategory? _evaluationCategory =
+  //         EvaluationCategoryProvider().getCategoryById(categoryId);
+  //     if (_evaluationCategory != null) {
+  //       Map<String, int> _countByMonth = Map();
+  //       _countByMonth["this-month"] =
+  //           _categoryLearnerEvaluationsForMonth(categoryId, hiveDate);
+  //       _countByMonth["last-month"] = _categoryLearnerEvaluationsForMonth(
+  //           categoryId, hiveDate.previousMonth);
 
-        _map[_evaluationCategory] = _countByMonth;
-      }
-    });
+  //       _map[_evaluationCategory] = _countByMonth;
+  //     }
+  //   });
 
-    return _map;
-  }
+  //   return _map;
+  // }
 
-  int _categoryLearnerEvaluationsForMonth(
-      String categoryId, HiveDate hiveDate) {
-    HiveLearnerEvaluation? _learnerEvaluation = this
-        .learnerEvaluations
-        .where((element) => element.categoryId == categoryId)
-        .where((element) {
-      if (element.month == null) {
-        return false;
-      }
-      return element.month!.year == hiveDate.year &&
-          element.month!.month == hiveDate.month;
-    }).firstOrNull;
+  // int _categoryLearnerEvaluationsForMonth(
+  //     String categoryId, HiveDate hiveDate) {
+  //   HiveLearnerEvaluation? _learnerEvaluation = this
+  //       .learnerEvaluations
+  //       .where((element) => element.categoryId == categoryId)
+  //       .where((element) {
+  //     if (element.month == null) {
+  //       return false;
+  //     }
+  //     return element.month!.year == hiveDate.year &&
+  //         element.month!.month == hiveDate.month;
+  //   }).firstOrNull;
 
-    return _learnerEvaluation == null ? 0 : _learnerEvaluation.evaluation!;
-  }
+  //   return _learnerEvaluation == null ? 0 : _learnerEvaluation.evaluation!;
+  // }
 
-  HiveGroupEvaluation? getGroupEvaluationForMonth(HiveDate hiveDate) {
-    return this.groupEvaluations.firstWhereOrNull((element) {
-      if (element.month == null) {
-        return false;
-      }
-      return element.month!.year == hiveDate.year &&
-          element.month!.month == hiveDate.month;
-    });
-  }
+  // HiveGroupEvaluation? getGroupEvaluationForMonth(HiveDate hiveDate) {
+  //   return this.groupEvaluations.firstWhereOrNull((element) {
+  //     if (element.month == null) {
+  //       return false;
+  //     }
+  //     return element.month!.year == hiveDate.year &&
+  //         element.month!.month == hiveDate.month;
+  //   });
+  // }
 
-  HiveTeacherResponse? getTeacherResponseForMonth(HiveDate hiveDate) {
-    return this.teacherResponses.firstWhereOrNull((element) {
-      if (element.month == null) {
-        return false;
-      }
-      return element.month!.year == hiveDate.year &&
-          element.month!.month == hiveDate.month;
-    });
-  }
+  // HiveTeacherResponse? getTeacherResponseForMonth(HiveDate hiveDate) {
+  //   return this.teacherResponses.firstWhereOrNull((element) {
+  //     if (element.month == null) {
+  //       return false;
+  //     }
+  //     return element.month!.year == hiveDate.year &&
+  //         element.month!.month == hiveDate.month;
+  //   });
+  // }
 
-  HiveLearnerEvaluation? getLearnerEvaluation(
-      HiveDate hiveDate, String categoryId, String evaluatorId) {
-    return this.learnerEvaluations.firstWhereOrNull((element) {
-      if (element.month == null) {
-        return false;
-      }
-      return element.month!.year == hiveDate.year &&
-          element.month!.month == hiveDate.month &&
-          element.evaluatorId == evaluatorId &&
-          element.categoryId == categoryId;
-    });
-  }
+  // HiveLearnerEvaluation? getLearnerEvaluation(
+  //     HiveDate hiveDate, String categoryId, String evaluatorId) {
+  //   return this.learnerEvaluations.firstWhereOrNull((element) {
+  //     if (element.month == null) {
+  //       return false;
+  //     }
+  //     return element.month!.year == hiveDate.year &&
+  //         element.month!.month == hiveDate.month &&
+  //         element.evaluatorId == evaluatorId &&
+  //         element.categoryId == categoryId;
+  //   });
+  // }
 
   String toString() {
     return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
-    profile: ${this.profile}, user: ${this.user},  
+    profile: ${this.profile},  
     isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDirty: ${this.isDirty}}''';
   }
 }
 
-extension HiveGroupUserExt on HiveGroupUser {
-  HiveUser? get user {
-    HiveUser? _user = CurrentUserRepository().dbProvider.user;
+// extension HiveGroupUserExt on HiveGroupUser {
+//   HiveUser? get user {
+//     HiveUser? _user = CurrentUserRepository().dbProvider.user;
 
-    if (_user.id == this.userId) {
-      return _user;
-    }
+//     if (_user.id == this.userId) {
+//       return _user;
+//     }
 
-    _user = UserRepository().dbProvider.getUserById(this.userId!);
+//     _user = UserRepository().dbProvider.getUserById(this.userId!);
 
-    return _user;
-  }
+//     return _user;
+//   }
 
-  HiveGroup? get group {
-    return GroupRepository().dbProvider.getGroupById(this.groupId!);
-  }
+//   HiveGroup? get group {
+//     return GroupRepository().dbProvider.getGroupById(this.groupId!);
+//   }
 
-  String get name {
-    return user != null ? user!.name! : 'Unknown User';
-  }
+//   String get name {
+//     return user != null ? user!.name! : 'Unknown User';
+//   }
 
-  String get phone {
-    return user != null && user!.phone != null ? user!.phone! : '';
-  }
+//   String get phone {
+//     return user != null && user!.phone != null ? user!.phone! : '';
+//   }
 
-  String get diallingCode {
-    return user != null && user!.diallingCode != null
-        ? user!.diallingCode!
-        : '';
-  }
+//   String get diallingCode {
+//     return user != null && user!.diallingCode != null
+//         ? user!.diallingCode!
+//         : '';
+//   }
 
-  bool get isInvited {
-    return user != null &&
-        (user!.phone != null && user!.phone!.isNotEmpty) &&
-        User_Status.valueOf(user!.status!)! != User_Status.ACTIVE;
-  }
+//   bool get isInvited {
+//     return user != null &&
+//         (user!.phone != null && user!.phone!.isNotEmpty) &&
+//         User_Status.valueOf(user!.status!)! != User_Status.ACTIVE;
+//   }
 
-  bool get isActive {
-    return user != null &&
-        User_Status.valueOf(user!.status!)! == User_Status.ACTIVE;
-  }
+//   bool get isActive {
+//     return user != null &&
+//         User_Status.valueOf(user!.status!)! == User_Status.ACTIVE;
+//   }
 
-  String get phoneWithDialingCode {
-    return user != null ? user!.phoneWithDialingCode : '';
-  }
+//   String get phoneWithDialingCode {
+//     return user != null ? user!.phoneWithDialingCode : '';
+//   }
 
-  List<HiveLearnerEvaluation> get learnerEvaluations {
-    return LearnerEvaluationProvider()
-        .getGroupUserLearnerEvaluations(this.userId!, this.groupId!);
-  }
+//   List<HiveLearnerEvaluation> get learnerEvaluations {
+//     return LearnerEvaluationProvider()
+//         .getGroupUserLearnerEvaluations(this.userId!, this.groupId!);
+//   }
 
-  // returns transformations for this 'GroupUser' for all the months
-  List<HiveTransformation> get transformations {
-    return TransformationProvider()
-        .getGroupUserTransformations(this.userId!, this.groupId!);
-  }
+//   // returns transformations for this 'GroupUser' for all the months
+//   List<HiveTransformation> get transformations {
+//     return TransformationProvider()
+//         .getGroupUserTransformations(this.userId!, this.groupId!);
+//   }
 
-  // returns groupEvaluations for this 'GroupUser' for all the months
-  List<HiveGroupEvaluation> get groupEvaluations {
-    return GroupEvaluationProvider()
-        .getGroupUserGroupEvaluation(this.userId!, this.groupId!);
-  }
+//   // returns groupEvaluations for this 'GroupUser' for all the months
+//   List<HiveGroupEvaluation> get groupEvaluations {
+//     return GroupEvaluationProvider()
+//         .getGroupUserGroupEvaluation(this.userId!, this.groupId!);
+//   }
 
-  // returns teacherResponses for this 'GroupUser' for all the months
-  List<HiveTeacherResponse> get teacherResponses {
-    return TeacherResponseProvider()
-        .getGroupUserTeacherResponse(this.userId!, this.groupId!);
-  }
+//   // returns teacherResponses for this 'GroupUser' for all the months
+//   List<HiveTeacherResponse> get teacherResponses {
+//     return TeacherResponseProvider()
+//         .getGroupUserTeacherResponse(this.userId!, this.groupId!);
+//   }
 
-  List<HiveAction>? get actions {
-    return ActionProvider().getGroupActions(this.groupId!);
-  }
+//   List<HiveAction>? get actions {
+//     return ActionProvider().getGroupActions(this.groupId!);
+//   }
 
-  int getActionsCompletedInMonth(HiveDate month) {
-    int count = 0;
-    this
-        .actions
-        ?.where((element) => element.dueDateIsOrAfterMonth(month))
-        .forEach((hiveAction) {
-      HiveActionUser? _hiveActionUser =
-          ActionProvider().getActionUser(this.userId!, hiveAction.id!);
+//   int getActionsCompletedInMonth(HiveDate month) {
+//     int count = 0;
+//     this
+//         .actions
+//         ?.where((element) => element.dueDateIsOrAfterMonth(month))
+//         .forEach((hiveAction) {
+//       HiveActionUser? _hiveActionUser =
+//           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
-      if (_hiveActionUser != null &&
-          ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.DONE) {
-        count++;
-      }
-    });
+//       if (_hiveActionUser != null &&
+//           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
+//               ActionStatus.DONE) {
+//         count++;
+//       }
+//     });
 
-    return count;
-  }
+//     return count;
+//   }
 
-  int getActionsNotCompletedInMonth(HiveDate month) {
-    int count = 0;
-    this.actions?.where((element) {
-      //debugPrint("Action: ${element}");
-      return element.dueDateIsOrAfterMonth(month);
-    }).forEach((hiveAction) {
-      HiveActionUser? _hiveActionUser =
-          ActionProvider().getActionUser(this.userId!, hiveAction.id!);
+//   int getActionsNotCompletedInMonth(HiveDate month) {
+//     int count = 0;
+//     this.actions?.where((element) {
+//       //debugPrint("Action: ${element}");
+//       return element.dueDateIsOrAfterMonth(month);
+//     }).forEach((hiveAction) {
+//       HiveActionUser? _hiveActionUser =
+//           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
-      // These are the 'UserActions' for which user have not actully made input yet,
-      // but as the action is already assigned, we are considering them NOT_DONE,
-      // if due date is not yet over
-      if (_hiveActionUser == null &&
-          hiveAction.dateDue!
-              .isOnOrAfter(DateTimeUtils.toHiveDate(DateTime.now()))) {
-        count++;
-      } else if (_hiveActionUser != null &&
-          ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.NOT_DONE &&
-          hiveAction.dateDue!
-              .isOnOrAfter(DateTimeUtils.toHiveDate(DateTime.now()))) {
-        count++;
-      }
-    });
+//       // These are the 'UserActions' for which user have not actully made input yet,
+//       // but as the action is already assigned, we are considering them NOT_DONE,
+//       // if due date is not yet over
+//       if (_hiveActionUser == null &&
+//           hiveAction.dateDue!
+//               .isOnOrAfter(DateTimeUtils.toHiveDate(DateTime.now()))) {
+//         count++;
+//       } else if (_hiveActionUser != null &&
+//           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
+//               ActionStatus.NOT_DONE &&
+//           hiveAction.dateDue!
+//               .isOnOrAfter(DateTimeUtils.toHiveDate(DateTime.now()))) {
+//         count++;
+//       }
+//     });
 
-    return count;
-  }
+//     return count;
+//   }
 
-  int getActionsOverdueInMonth(HiveDate month) {
-    int count = 0;
-    this
-        .actions
-        ?.where((element) => element.isDueInMonth(month))
-        .forEach((hiveAction) {
-      HiveActionUser? _hiveActionUser =
-          ActionProvider().getActionUser(this.userId!, hiveAction.id!);
+//   int getActionsOverdueInMonth(HiveDate month) {
+//     int count = 0;
+//     this
+//         .actions
+//         ?.where((element) => element.isDueInMonth(month))
+//         .forEach((hiveAction) {
+//       HiveActionUser? _hiveActionUser =
+//           ActionProvider().getActionUser(this.userId!, hiveAction.id!);
 
-      // These are the 'UserActions' for which user have not actully made input yet,
-      // but as the action is already assigned, we are considering them NOT_DONE,
-      // if due date is not yet over
-      if (_hiveActionUser == null &&
-          hiveAction.dateDue!
-              .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
-        count++;
-      } else if (_hiveActionUser != null &&
-          ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
-              ActionStatus.NOT_DONE &&
-          hiveAction.dateDue!
-              .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
-        count++;
-      }
-    });
+//       // These are the 'UserActions' for which user have not actully made input yet,
+//       // but as the action is already assigned, we are considering them NOT_DONE,
+//       // if due date is not yet over
+//       if (_hiveActionUser == null &&
+//           hiveAction.dateDue!
+//               .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
+//         count++;
+//       } else if (_hiveActionUser != null &&
+//           ActionUser_Status.valueOf(_hiveActionUser.status!)!.convertTo() ==
+//               ActionStatus.NOT_DONE &&
+//           hiveAction.dateDue!
+//               .isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
+//         count++;
+//       }
+//     });
 
-    return count;
-  }
-}
+//     return count;
+//   }
+// }

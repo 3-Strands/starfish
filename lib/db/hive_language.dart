@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_language.g.dart';
 
@@ -21,6 +22,13 @@ class HiveLanguage extends HiveObject {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
+
+  factory HiveLanguage.fromGrpcLanguage(Language language) {
+    return HiveLanguage(
+      id: language.id,
+      name: language.name,
+    );
+  }
 
   static String toDisplay(HiveLanguage item) => item.name;
 

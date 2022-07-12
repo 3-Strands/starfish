@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
@@ -71,7 +70,6 @@ class HiveDatabase {
     Hive.registerAdapter(HiveLastSyncDateTimeAdapter());
     Hive.registerAdapter(HiveCountryAdapter());
     Hive.registerAdapter(HiveLanguageAdapter());
-    Hive.registerAdapter(HiveCurrentUserAdapter()); //TODO: to be replaced
     Hive.registerAdapter(HiveUserAdapter());
     Hive.registerAdapter(HiveGroupUserAdapter());
     Hive.registerAdapter(HiveActionUserAdapter());
@@ -107,8 +105,6 @@ class HiveDatabase {
     await Hive.openBox<HiveCountry>(COUNTRY_BOX,
         encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveLanguage>(LANGUAGE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
-    await Hive.openBox<HiveCurrentUser>(CURRENT_USER_BOX,
         encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
     await Hive.openBox<HiveGroupUser>(GROUP_USER_BOX,
         encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);

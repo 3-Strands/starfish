@@ -24,24 +24,24 @@ class ActionProvider {
     }).toList();
   }
 
-  List<HiveAction> getAllActiveActions() {
-    return _actionBox.values.where((element) {
-      if (element.isDirty) {
-        return false;
-      } else {
-        if (element.group == null) {
-          return true;
-        } else {
-          if (Group_Status.valueOf(element.group!.status!) ==
-              Group_Status.INACTIVE) {
-            return false;
-          } else {
-            return true;
-          }
-        }
-      }
-    }).toList();
-  }
+  // List<HiveAction> getAllActiveActions() {
+  //   return _actionBox.values.where((element) {
+  //     if (element.isDirty) {
+  //       return false;
+  //     } else {
+  //       if (element.group == null) {
+  //         return true;
+  //       } else {
+  //         if (Group_Status.valueOf(element.group!.status!) ==
+  //             Group_Status.INACTIVE) {
+  //           return false;
+  //         } else {
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //   }).toList();
+  // }
 
   /*List<HiveAction> getAllActions() {
     return _actionBox.values.toList();

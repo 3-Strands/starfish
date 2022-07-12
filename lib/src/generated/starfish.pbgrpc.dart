@@ -435,7 +435,7 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
-  $grpc.ResponseFuture<$0.AuthenticateResponse> refreshSession(
+  $grpc.ResponseFuture<$0.AuthenticateResponse> refreshTokens(
       $0.RefreshSessionRequest request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$refreshSession, request, options: options);

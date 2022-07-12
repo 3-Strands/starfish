@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:starfish/models/tokens.dart';
+import 'package:starfish/models/user.dart';
 import 'package:starfish/wrappers/platform_storage.dart';
 
 class LocalStorageApi {
@@ -11,6 +13,7 @@ class LocalStorageApi {
   static final String _kDeviceLanguage = "deviceLanguage";
   static final String _kRefreshToken = "refreshToken";
   static final String _kSessionUserId = "sessionUserId";
+  static final String _kUser = "user";
   static final String _kEncryptionKey = "encryptionKey";
 
   static LocalStorageApi? _instance;
@@ -24,7 +27,7 @@ class LocalStorageApi {
     return _instance!;
   }
 
-  Future<bool> setLoginStatus(bool value) {
+  Future<bool> _setLoginStatus(bool value) {
     return _storage.setBool(_kUserLoggedIn, value);
   }
 
@@ -40,7 +43,7 @@ class LocalStorageApi {
     return (await _storage.getBool(_kHasBeenRemindedToDeleteFiles)) ?? false;
   }
 
-  Future<bool> setAccessToken(String value) {
+  Future<bool> _setAccessToken(String value) {
     return _storage.setEncryptedString(_kAccessToken, value);
   }
 
@@ -56,7 +59,58 @@ class LocalStorageApi {
     return (await _storage.getBool(_kIsSyncingFirstTime)) ?? false;
   }
 
-  Future<String> getAccessToken() {
+  Future<bool> saveUser(AppUser user) {
+    return _storage.setString(_kUser, jsonEncode(user.toJson()));
+  }
+
+  Future<AppUser?> getUser() async {
+    final userData = await _storage.getString(_kUser);
+    if (userData != null) {
+      return AppUser.fromJson(jsonDecode(userData));
+    }
+    return null;
+  }
+
+  Future<bool> clearUser(AppUser user) =>
+    _storage.setString(_kUser, '');
+
+  Future<void> saveTokens(Tokens session) async {
+    await Future.wait([
+      _setLoginStatus(true),
+      _setAccessToken(session.accessToken),
+      _setRefreshToken(session.refreshToken),
+      _setSessionUserId(session.userId),
+    ]);
+  }
+
+  Future<void> clearTokens() async {
+    await Future.wait([
+      _setLoginStatus(false),
+      _setAccessToken(''),
+      _setRefreshToken(''),
+      _setSessionUserId(''),
+    ]);
+  }
+
+  Future<Tokens?> getTokens() async {
+    final items = await Future.wait<dynamic>([
+      isUserLoggedIn(),
+      _getAccessToken(),
+      _getRefreshToken(),
+      _getSessionUserId(),
+    ]);
+    final bool isLoggedIn = items[0];
+    if (isLoggedIn) {
+      return Tokens(
+        accessToken: items[1],
+        refreshToken: items[2],
+        userId: items[3],
+      );
+    }
+    return null;
+  }
+
+  Future<String> _getAccessToken() {
     return _storage.getEncryptedString(_kAccessToken);
   }
 
@@ -64,19 +118,19 @@ class LocalStorageApi {
     return _storage.getEncryptedString(_kDeviceLanguage);
   }
 
-  Future<bool> setRefreshToken(String value) {
+  Future<bool> _setRefreshToken(String value) {
     return _storage.setEncryptedString(_kRefreshToken, value);
   }
 
-  Future<String> getRefreshToken() {
+  Future<String> _getRefreshToken() {
     return _storage.getEncryptedString(_kRefreshToken);
   }
 
-  Future<bool> setSessionUserId(String value) {
+  Future<bool> _setSessionUserId(String value) {
     return _storage.setEncryptedString(_kSessionUserId, value);
   }
 
-  Future<String> getSessionUserId() {
+  Future<String> _getSessionUserId() {
     return _storage.getEncryptedString(_kSessionUserId);
   }
 

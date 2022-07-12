@@ -1,6 +1,5 @@
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_action_user.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_group.dart';
@@ -18,6 +17,7 @@ import 'package:starfish/db/providers/learner_evaluation_provider.dart';
 import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
+import 'package:starfish/models/user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
@@ -43,7 +43,7 @@ class ResultsBloc extends Object {
   }
 
   init() {
-    final HiveCurrentUser _currentUser = CurrentUserProvider().getUserSync();
+    final AppUser _currentUser = CurrentUserProvider().getUserSync();
 
     groupsWithAdminAndTeacherRole = GroupProvider().userGroupsWithRole(
             _currentUser.id, [GroupUser_Role.ADMIN, GroupUser_Role.TEACHER]) ??

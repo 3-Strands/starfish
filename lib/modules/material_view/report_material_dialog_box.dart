@@ -1,14 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -30,8 +28,6 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
 
   late Box<HiveMaterialFeedback> _materialFeedbackBox;
 
-  late HiveCurrentUser _user;
-
   late AppLocalizations _appLocalizations;
 
   bool isDetailEmpty = true;
@@ -42,12 +38,6 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
 
     _materialFeedbackBox =
         Hive.box<HiveMaterialFeedback>(HiveDatabase.MATERIAL_FEEDBACK_BOX);
-
-    _getCurrentUser();
-  }
-
-  void _getCurrentUser() {
-    _user = CurrentUserProvider().getUserSync();
   }
 
   @override
@@ -63,7 +53,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
     );
   }
 
-  contentBox(context) {
+  contentBox(BuildContext context) {
     return Container(
       //height: 264.h,
       width: 315.w,
@@ -173,7 +163,7 @@ class _ReportMaterialDialogBoxState extends State<ReportMaterialDialogBox> {
 
                       _materialFeedback.isNew = true;
                       _materialFeedback.type = '1';
-                      _materialFeedback.reporterId = _user.id;
+                      _materialFeedback.reporterId = context.currentUser.id;
                       _materialFeedback.report = _reportTextController.text;
                       _materialFeedback.materialId = widget.material.id!;
                       _materialFeedbackBox.add(_materialFeedback).then((value) {

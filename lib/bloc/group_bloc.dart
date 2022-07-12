@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 
 import 'package:rxdart/rxdart.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
+import 'package:starfish/models/user.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -32,7 +32,7 @@ class GroupBloc extends Object {
     _roleGroupMap[UserGroupRoleFilter.FILTER_LEARNER] = [];
 
     final CurrentUserRepository currentUserRepository = CurrentUserRepository();
-    HiveCurrentUser currentUser = await currentUserRepository.getUserFromDB();
+    AppUser currentUser = await currentUserRepository.getUserFromDB();
 
     List<HiveGroup> groups = await repository.fetchGroupsFromDB();
     groups.forEach((element) {
@@ -76,7 +76,7 @@ class GroupBloc extends Object {
   }
 
   leaveGroup(HiveGroup group) async {
-    HiveCurrentUser _currentUser =
+    AppUser _currentUser =
         await CurrentUserRepository().getUserFromDB();
 
     HiveGroupUser? _groupUser = group.users

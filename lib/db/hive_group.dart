@@ -119,222 +119,222 @@ class HiveGroup extends HiveObject {
     return currentUserRole;
   }
 
-  HiveGroupUser? get admin {
-    /*return this.activeUsers?.firstWhereOrNull((groupUser) =>
-        GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);*/
-    return this.admins?.firstOrNull;
-  }
+  // HiveGroupUser? get admin {
+  //   /*return this.activeUsers?.firstWhereOrNull((groupUser) =>
+  //       GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN);*/
+  //   return this.admins?.firstOrNull;
+  // }
 
-  List<HiveGroupUser>? get admins {
-    return this
-        .activeUsers
-        ?.where((groupUser) =>
-            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN)
-        .toList();
-  }
+  // List<HiveGroupUser>? get admins {
+  //   return this
+  //       .activeUsers
+  //       ?.where((groupUser) =>
+  //           GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN)
+  //       .toList();
+  // }
 
-  List<HiveGroupUser>? get teachers {
-    return this
-        .activeUsers
-        ?.where((groupUser) =>
-            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
-        .toList();
-  }
+  // List<HiveGroupUser>? get teachers {
+  //   return this
+  //       .activeUsers
+  //       ?.where((groupUser) =>
+  //           GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
+  //       .toList();
+  // }
 
-  List<HiveGroupUser>? get learners {
-    return this
-        .activeUsers
-        ?.where((groupUser) =>
-            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.LEARNER)
-        .toList();
-  }
+  // List<HiveGroupUser>? get learners {
+  //   return this
+  //       .activeUsers
+  //       ?.where((groupUser) =>
+  //           GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.LEARNER)
+  //       .toList();
+  // }
 
-  List<String>? get teachersName {
-    return this
-        .activeUsers
-        ?.where((groupUser) =>
-            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN ||
-            GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
-        .map((e) => e.name)
-        .toList();
-  }
+  // List<String>? get teachersName {
+  //   return this
+  //       .activeUsers
+  //       ?.where((groupUser) =>
+  //           GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.ADMIN ||
+  //           GroupUser_Role.valueOf(groupUser.role!) == GroupUser_Role.TEACHER)
+  //       .map((e) => e.name)
+  //       .toList();
+  // }
 
   /// Returns all 'HiveGroupUser' where 'isDirty' is false
-  List<HiveGroupUser>? get activeUsers {
-    return this
-        .allGroupUsers
-        ?.where((groupUser) => groupUser.isDirty == false)
-        .toList();
-  }
+  // List<HiveGroupUser>? get activeUsers {
+  //   return this
+  //       .allGroupUsers
+  //       ?.where((groupUser) => groupUser.isDirty == false)
+  //       .toList();
+  // }
 
   // Gives all groupUser i.e. remote user + local users from
-  List<HiveGroupUser>? get allGroupUsers {
-    if (this.users != null) {
-      // filter out the duplicate record.
-      List<HiveGroupUser> _users =
-          this.users!; // + GroupProvider().getGroupUsersByGroupIdSync(this.id);
+//   List<HiveGroupUser>? get allGroupUsers {
+//     if (this.users != null) {
+//       // filter out the duplicate record.
+//       List<HiveGroupUser> _users =
+//           this.users!; // + GroupProvider().getGroupUsersByGroupIdSync(this.id);
 
-      GroupProvider().getGroupUsersByGroupIdSync(this.id).forEach((element) {
-        if (this.users!.contains(element) && (element.isUpdated)) {
-          _users.firstWhere((hiveUser) => hiveUser == element).role =
-              element.role;
-        } else if (this.users!.contains(element) && element.isDirty) {
-          _users.remove(element);
-        } else if (!this.users!.contains(element) &&
-            (element.isNew && element.user != null)) {
-          // TODO: replace '(element.isNew && element.user != null)' hack to prevend 'Unknown Users'
-          _users.add(element);
-        }
-      });
-      return _users;
-    }
-    return this.users;
-  }
+//       GroupProvider().getGroupUsersByGroupIdSync(this.id).forEach((element) {
+//         if (this.users!.contains(element) && (element.isUpdated)) {
+//           _users.firstWhere((hiveUser) => hiveUser == element).role =
+//               element.role;
+//         } else if (this.users!.contains(element) && element.isDirty) {
+//           _users.remove(element);
+//         } else if (!this.users!.contains(element) &&
+//             (element.isNew && element.user != null)) {
+//           // TODO: replace '(element.isNew && element.user != null)' hack to prevend 'Unknown Users'
+//           _users.add(element);
+//         }
+//       });
+//       return _users;
+//     }
+//     return this.users;
+//   }
 
-  Map<HiveOutputMarker, String> getGroupOutputsForMonth(HiveDate hiveDate) {
-    Map<HiveOutputMarker, String> _map = Map();
-    this.outputMarkers?.forEach((HiveOutputMarker element) {
-      HiveOutput? _output =
-          OutputProvider().getGroupOutputForMonth(this.id!, element, hiveDate);
-      String _markerValue = _output != null ? _output.value!.toString() : '';
-      _map[element] = _markerValue;
-    });
+//   Map<HiveOutputMarker, String> getGroupOutputsForMonth(HiveDate hiveDate) {
+//     Map<HiveOutputMarker, String> _map = Map();
+//     this.outputMarkers?.forEach((HiveOutputMarker element) {
+//       HiveOutput? _output =
+//           OutputProvider().getGroupOutputForMonth(this.id!, element, hiveDate);
+//       String _markerValue = _output != null ? _output.value!.toString() : '';
+//       _map[element] = _markerValue;
+//     });
 
-    return _map;
-  }
+//     return _map;
+//   }
 
-  String toString() {
-    return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
-    languageIds: ${this.languageIds?.toString()}, status: ${this.status}, users: ${this.users?.toString()},
-    editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole}, outputMarkers: ${this.outputMarkers} }''';
-  }
+//   String toString() {
+//     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
+//     languageIds: ${this.languageIds?.toString()}, status: ${this.status}, users: ${this.users?.toString()},
+//     editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole}, outputMarkers: ${this.outputMarkers} }''';
+//   }
 
-  static String toDisplay(HiveGroup item) => item.name ?? '';
-}
+//   static String toDisplay(HiveGroup item) => item.name ?? '';
+// }
 
-extension HiveGroupExt on HiveGroup {
-  String get adminName {
-    if (this.currentUserRole == GroupUser_Role.ADMIN) {
-      return 'Me';
-    } else {
-      return this.admin != null
-          ? (this.admin!.user != null ? this.admin!.user!.name! : 'Unknown')
-          : 'NA';
-    }
-  }
+// extension HiveGroupExt on HiveGroup {
+//   String get adminName {
+//     if (this.currentUserRole == GroupUser_Role.ADMIN) {
+//       return 'Me';
+//     } else {
+//       return this.admin != null
+//           ? (this.admin!.user != null ? this.admin!.user!.name! : 'Unknown')
+//           : 'NA';
+//     }
+//   }
 
-  GroupUser_Role getMyRole(String userId) {
-    if (this.users == null) {
-      return GroupUser_Role.UNSPECIFIED_ROLE;
-    }
-    HiveGroupUser? _groupUser = this.users!.firstWhereOrNull(
-        (element) => element.userId == userId && !element.isDirty);
-    return _groupUser != null
-        ? GroupUser_Role.valueOf(_groupUser.role!)!
-        : GroupUser_Role.UNSPECIFIED_ROLE;
-  }
+//   GroupUser_Role getMyRole(String userId) {
+//     if (this.users == null) {
+//       return GroupUser_Role.UNSPECIFIED_ROLE;
+//     }
+//     HiveGroupUser? _groupUser = this.users!.firstWhereOrNull(
+//         (element) => element.userId == userId && !element.isDirty);
+//     return _groupUser != null
+//         ? GroupUser_Role.valueOf(_groupUser.role!)!
+//         : GroupUser_Role.UNSPECIFIED_ROLE;
+//   }
 
-  bool containsUserName(String query) {
-    if (this.activeUsers == null) {
-      return false;
-    }
-    return this
-            .activeUsers!
-            .where((element) => element.name.toLowerCase().contains(query))
-            .length >
-        0;
-  }
+//   bool containsUserName(String query) {
+//     if (this.activeUsers == null) {
+//       return false;
+//     }
+//     return this
+//             .activeUsers!
+//             .where((element) => element.name.toLowerCase().contains(query))
+//             .length >
+//         0;
+//   }
 
-  int getActionsCompletedInMonth(HiveDate month) {
-    int count = 0;
-    this
-        .groupActionList
-        ?.where((element) => element.dueDateIsOrAfterMonth(month))
-        .forEach((hiveAction) =>
-            count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
+  // int getActionsCompletedInMonth(HiveDate month) {
+  //   int count = 0;
+  //   this
+  //       .groupActionList
+  //       ?.where((element) => element.dueDateIsOrAfterMonth(month))
+  //       .forEach((hiveAction) =>
+  //           count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
 
-    return count;
-  }
+  //   return count;
+  // }
 
-  int getActionsNotYetCompletedInMonth(HiveDate month) {
-    int count = 0;
-    this
-        .groupActionList
-        ?.where((element) => element.dueDateIsOrAfterMonth(month))
-        .forEach((hiveAction) => count +=
-            hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
+  // int getActionsNotYetCompletedInMonth(HiveDate month) {
+  //   int count = 0;
+  //   this
+  //       .groupActionList
+  //       ?.where((element) => element.dueDateIsOrAfterMonth(month))
+  //       .forEach((hiveAction) => count +=
+  //           hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
 
-    return count;
-  }
+  //   return count;
+  // }
 
-  int getActionsOverdueInMonth(HiveDate month) {
-    int count = 0;
-    this
-        .groupActionList
-        ?.where((element) => element.isDueInMonth(month))
-        .forEach((hiveAction) => count +=
-            hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
+  // int getActionsOverdueInMonth(HiveDate month) {
+  //   int count = 0;
+  //   this
+  //       .groupActionList
+  //       ?.where((element) => element.isDueInMonth(month))
+  //       .forEach((hiveAction) => count +=
+  //           hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
 
-    return count;
-  }
+  //   return count;
+  // }
 
-  List<HiveAction>? get groupActionList {
-    return ActionProvider().getGroupActions(this.id!);
-  }
+  // List<HiveAction>? get groupActionList {
+  //   return ActionProvider().getGroupActions(this.id!);
+  // }
 
-  List<HiveEvaluationCategory> get groupEvaluationCategories {
-    List<HiveEvaluationCategory> _categoryies = [];
-    this.evaluationCategoryIds?.forEach((e) {
-      HiveEvaluationCategory? _category =
-          EvaluationCategoryProvider().getCategoryById(e);
-      if (_category != null) {
-        _categoryies.add(_category);
-      }
-    });
-    return _categoryies;
-  }
+  // List<HiveEvaluationCategory> get groupEvaluationCategories {
+  //   List<HiveEvaluationCategory> _categoryies = [];
+  //   this.evaluationCategoryIds?.forEach((e) {
+  //     HiveEvaluationCategory? _category =
+  //         EvaluationCategoryProvider().getCategoryById(e);
+  //     if (_category != null) {
+  //       _categoryies.add(_category);
+  //     }
+  //   });
+  //   return _categoryies;
+  // }
 
-  List<HiveLearnerEvaluation> get groupLearnerEvaluations {
-    return LearnerEvaluationProvider().getGroupLearnerEvaluations(this.id!);
-  }
+  // List<HiveLearnerEvaluation> get groupLearnerEvaluations {
+  //   return LearnerEvaluationProvider().getGroupLearnerEvaluations(this.id!);
+  // }
 
-  int get actionsCompleted {
-    int count = 0;
-    this.groupActionList?.forEach((hiveAction) =>
-        count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
+  // int get actionsCompleted {
+  //   int count = 0;
+  //   this.groupActionList?.forEach((hiveAction) =>
+  //       count += hiveAction.memberCountByActionStatus(ActionStatus.DONE));
 
-    return count;
-  }
+  //   return count;
+  // }
 
-  int get actionsNotDoneYet {
-    int count = 0;
-    this.groupActionList?.forEach((hiveAction) =>
-        count += hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
+  // int get actionsNotDoneYet {
+  //   int count = 0;
+  //   this.groupActionList?.forEach((hiveAction) =>
+  //       count += hiveAction.memberCountByActionStatus(ActionStatus.NOT_DONE));
 
-    return count;
-  }
+  //   return count;
+  // }
 
-  int get actionsOverdue {
-    int count = 0;
-    this.groupActionList?.forEach((hiveAction) =>
-        count += hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
+  // int get actionsOverdue {
+  //   int count = 0;
+  //   this.groupActionList?.forEach((hiveAction) =>
+  //       count += hiveAction.memberCountByActionStatus(ActionStatus.OVERDUE));
 
-    return count;
-  }
+  //   return count;
+  // }
 
   // TODO: check if this is needed or not
-  int get learnersEvaluationGood {
-    int count = 0;
-    this.groupActionList?.forEach((hiveAction) => count +=
-        hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.GOOD));
-    return count;
-  }
+  // int get learnersEvaluationGood {
+  //   int count = 0;
+  //   this.groupActionList?.forEach((hiveAction) => count +=
+  //       hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.GOOD));
+  //   return count;
+  // }
 
 // TODO: check if this is needed or not
-  int get learnersEvaluationNotGood {
-    int count = 0;
-    this.groupActionList?.forEach((hiveAction) => count +=
-        hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.BAD));
-    return count;
-  }
+  // int get learnersEvaluationNotGood {
+  //   int count = 0;
+  //   this.groupActionList?.forEach((hiveAction) => count +=
+  //       hiveAction.learnerCountByEvaluation(ActionUser_Evaluation.BAD));
+  //   return count;
+  // }
 }

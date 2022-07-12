@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/apis/local_storage_api.dart';
-import 'package:starfish/repositories/session_repository.dart';
+import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/utils/services/grpc_client.dart';
-import 'package:starfish/utils/services/sync_service.dart';
 import 'app.dart';
 import 'config/app_config.dart';
 import 'config/config_reader.dart';
@@ -36,10 +35,6 @@ void main() async {
   );
   GeneralFunctions.configLoading();
   final localStorageApi = LocalStorageApi();
-  final sessionRepository = SessionRepository(
-    client: makeUnauthenticatedClient(),
-    localStorageApi: localStorageApi,
-  );
   EasyLoading.instance
     ..loadingStyle = EasyLoadingStyle.custom
     ..userInteractions = false
@@ -50,7 +45,6 @@ void main() async {
     ..maskColor = Colors.blue.withOpacity(0.5)
     ..boxShadow = <BoxShadow>[];
 
-  final session = await sessionRepository.retrieveCurrentSession();
   //return runApp(Starfish());
   return SentryFlutter.init(
     (options) {
@@ -67,9 +61,8 @@ void main() async {
           enableStructuredDataTracing: true,
         ),
         child: App(
-          sessionRepository: sessionRepository,
+          authenticationRepository: AuthenticationRepository(),
           localStorageApi: localStorageApi,
-          session: session,
         ),
       ),
     ),

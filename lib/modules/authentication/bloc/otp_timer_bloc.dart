@@ -10,7 +10,7 @@ class OtpTimerBloc extends Bloc<OtpTimerEvent, OtpTimerState> {
       final state = this.state;
       if (state is TimerTicking) {
         final secondsRemaining = state.secondsRemaining;
-        if (secondsRemaining <= 0) {
+        if (secondsRemaining <= 1) {
           emit(const TimerComplete());
         } else {
           emit(TimerTicking(secondsRemaining - 1));

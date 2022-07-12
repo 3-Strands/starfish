@@ -1,7 +1,10 @@
-class Session {
-  final String userId;
-  final String accessToken;
-  final String refreshToken;
+import 'tokens.dart';
+import 'user.dart';
 
-  Session({required this.userId, required this.accessToken, required this.refreshToken});
+class Session {
+  final Tokens tokens;
+  final AppUser user;
+  final bool needsProfileCreation;
+
+  const Session(this.tokens, this.user, {this.needsProfileCreation = false});
 }

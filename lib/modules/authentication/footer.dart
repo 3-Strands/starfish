@@ -16,23 +16,10 @@ class Footer extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
       child: Align(
         alignment: FractionalOffset.bottomCenter,
-        child: Container(
+        child: SizedBox(
           width: 319.w,
           height: 37.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20.r),
-            ),
-            color: AppColors.selectedButtonBG,
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(0.0),
-            child: SizedBox(
-              width: 319.w,
-              height: 37.h,
-              child: child,
-            ),
-          ),
+          child: child,
         ),
       ),
     );

@@ -12,10 +12,13 @@ import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
+import 'hive_concrete.dart';
+import 'hive_syncable.dart';
+
 part 'hive_material.g.dart';
 
 @HiveType(typeId: 5)
-class HiveMaterial extends HiveObject {
+class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
   @HiveField(0)
   String? id;
   @HiveField(1)
@@ -101,7 +104,7 @@ class HiveMaterial extends HiveObject {
     this.languages = material.languages;
   }
 
-  Material toMaterial() {
+  Material toGrpcCompatible() {
     return Material(
       id: this.id,
       creatorId: this.creatorId,
@@ -129,67 +132,79 @@ class HiveMaterial extends HiveObject {
   }
 }
 
+class MaterialWithAssignedStatus {
+  const MaterialWithAssignedStatus({
+    required this.material,
+    this.status,
+    this.isAssignedToGroupWithLeaderRole = false,
+  });
+
+  final HiveMaterial material;
+  final ActionStatus? status;
+  final bool isAssignedToGroupWithLeaderRole;
+}
+
 extension HiveMaterialExt on HiveMaterial {
-  bool get isAssignedToMe {
-    bool isAssigned = false;
-    ActionProvider().getAllActiveActions().forEach((action) {
-      if ((action.materialId != null && action.materialId!.isNotEmpty) &&
-          action.isIndividualAction &&
-          action.materialId == this.id) {
-        isAssigned = true;
-      }
-    });
+  // bool get isAssignedToMe {
+  //   bool isAssigned = false;
+  //   ActionProvider().getAllActiveActions().forEach((action) {
+  //     if ((action.materialId != null && action.materialId!.isNotEmpty) &&
+  //         action.isIndividualAction &&
+  //         action.materialId == this.id) {
+  //       isAssigned = true;
+  //     }
+  //   });
 
-    return isAssigned;
-  }
+  //   return isAssigned;
+  // }
 
-  bool get isAssignedToGroupWithLeaderRole {
-    bool isAssigned = false;
-    ActionProvider().getAllActiveActions().forEach((action) {
-      if ((action.materialId != null && action.materialId!.isNotEmpty) &&
-          !action.isIndividualAction &&
-          (action.leaders != null && action.leaders!.length > 0) &&
-          action.materialId == this.id) {
-        isAssigned = true;
-      }
-    });
+  // bool get isAssignedToGroupWithLeaderRole {
+  //   bool isAssigned = false;
+  //   ActionProvider().getAllActiveActions().forEach((action) {
+  //     if ((action.materialId != null && action.materialId!.isNotEmpty) &&
+  //         !action.isIndividualAction &&
+  //         (action.leaders != null && action.leaders!.length > 0) &&
+  //         action.materialId == this.id) {
+  //       isAssigned = true;
+  //     }
+  //   });
 
-    return isAssigned;
-  }
+  //   return isAssigned;
+  // }
 
-  ActionStatus get myActionStatus {
-    bool statusOverdue = false;
-    bool statusNotDone = false;
-    bool statusDone = false;
-    ActionProvider().getAllActiveActions().forEach((action) {
-      if ((action.materialId != null && action.materialId!.isNotEmpty) &&
-          action.isIndividualAction &&
-          action.materialId == this.id) {
-        if (action.actionStatus == ActionStatus.OVERDUE) {
-          statusOverdue = true;
-          statusDone = false;
-        } else if (action.actionStatus == ActionStatus.NOT_DONE) {
-          statusNotDone = true;
-          statusDone = false;
-        } else if (action.actionStatus == ActionStatus.DONE) {
-          statusDone = true;
-        } else {
-          statusDone = false;
-        }
-      }
-    });
+  // ActionStatus get myActionStatus {
+  //   bool statusOverdue = false;
+  //   bool statusNotDone = false;
+  //   bool statusDone = false;
+  //   ActionProvider().getAllActiveActions().forEach((action) {
+  //     if ((action.materialId != null && action.materialId!.isNotEmpty) &&
+  //         action.isIndividualAction &&
+  //         action.materialId == this.id) {
+  //       if (action.actionStatus == ActionStatus.OVERDUE) {
+  //         statusOverdue = true;
+  //         statusDone = false;
+  //       } else if (action.actionStatus == ActionStatus.NOT_DONE) {
+  //         statusNotDone = true;
+  //         statusDone = false;
+  //       } else if (action.actionStatus == ActionStatus.DONE) {
+  //         statusDone = true;
+  //       } else {
+  //         statusDone = false;
+  //       }
+  //     }
+  //   });
 
-    if (statusDone) {
-      return ActionStatus.DONE;
-    }
-    if (statusNotDone) {
-      return ActionStatus.NOT_DONE;
-    }
-    if (statusOverdue) {
-      return ActionStatus.OVERDUE;
-    }
-    return ActionStatus.NOT_DONE;
-  }
+  //   if (statusDone) {
+  //     return ActionStatus.DONE;
+  //   }
+  //   if (statusNotDone) {
+  //     return ActionStatus.NOT_DONE;
+  //   }
+  //   if (statusOverdue) {
+  //     return ActionStatus.OVERDUE;
+  //   }
+  //   return ActionStatus.NOT_DONE;
+  // }
 
   List<HiveFile> get localFiles {
     return MaterialProvider()

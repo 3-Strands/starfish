@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/modules/authentication/bloc/phone_bloc.dart';
 import 'package:starfish/modules/authentication/footer.dart';
-import 'package:starfish/modules/authentication/otp_verification.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'authentication_error_handler.dart';
+import 'bloc/login_flow_bloc.dart';
 
 class PhoneAuthentication extends StatelessWidget {
   const PhoneAuthentication({ Key? key }) : super(key: key);
@@ -41,30 +41,7 @@ class PhoneAuthenticationView extends StatelessWidget {
     );
 
     return Scaffold(
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<SessionBloc, SessionState>(
-            listener: (context, state) {
-              if (state.isPendingState && !EasyLoading.isShow) {
-                EasyLoading.show();
-              } else if (!state.isPendingState && EasyLoading.isShow) {
-                EasyLoading.dismiss();
-              }
-            },
-          ),
-          // Push the OTP page when the state changes to [CodeNeededFromUser]
-          BlocListener<SessionBloc, SessionState>(
-            listenWhen: (previous, current) => current is CodeNeededFromUser && !(previous is CodeNeededFromUser),
-            listener: (context, state) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const OTPVerification(),
-                ),
-              );
-            },
-          ),
-        ],
+      body: AuthenticationErrorHandler(
         child: Padding(
           padding: EdgeInsets.only(bottom: footerHeight),
           child: Center(
@@ -81,8 +58,6 @@ class PhoneAuthenticationView extends StatelessWidget {
                 SizedBox(height: 30.h),
                 BlocBuilder<PhoneBloc, PhoneState>(
                   builder: (context, state) {
-                    final phoneBloc = BlocProvider.of<PhoneBloc>(context);
-
                     return InternationalPhoneNumberInput(
                       selectorConfig: SelectorConfig(
                         selectorType: PhoneInputSelectorType.DIALOG,
@@ -103,10 +78,12 @@ class PhoneAuthenticationView extends StatelessWidget {
                         filled: true,
                         fillColor: AppColors.txtFieldBackground,
                       ),
-                      onInputChanged: (value) => phoneBloc.add(NumberChanged(value.dialCode! + value.phoneNumber!)),
-                      onInputValidated: (isValid) => phoneBloc.add(ValidityChanged(isValid)),
+                      onInputChanged: (value) =>
+                        context.read<PhoneBloc>().add(NumberChanged(value.phoneNumber!)),
+                      onInputValidated: (isValid) =>
+                        context.read<PhoneBloc>().add(ValidityChanged(isValid)),
                       onFieldSubmitted: (_) =>
-                        BlocProvider.of<SessionBloc>(context).add(SignInRequested(state.number)),
+                        context.read<LoginFlowBloc>().add(SignInRequested(state.number)),
                       errorMessage: appLocalizations.invalidPhoneNumber,
                       autoValidateMode: AutovalidateMode.onUserInteraction,
                       formatInput: false,
@@ -130,7 +107,7 @@ class PhoneAuthenticationView extends StatelessWidget {
                 style: buttonTextStyle,
               ),
               onPressed: () =>
-                BlocProvider.of<SessionBloc>(context).add(SignInRequested(state.number)),
+                context.read<LoginFlowBloc>().add(SignInRequested(state.number)),
               style: ElevatedButton.styleFrom(
                 primary: (!state.isValid)
                     ? Colors.grey

@@ -745,10 +745,10 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       await bloc.materialBloc
           .createUpdateMaterial(_hiveMaterial, files: _files);
       // Broadcast to sync the local changes with the server
-      FBroadcast.instance().broadcast(
-        SyncService.kUpdateMaterial,
-        value: _hiveMaterial,
-      );
+      // FBroadcast.instance().broadcast(
+      //   SyncService.kUpdateMaterial,
+      //   value: _hiveMaterial,
+      // );
 
       bloc.materialBloc
           .checkAndUpdateUserfollowedLangguages(_hiveMaterial.languageIds);

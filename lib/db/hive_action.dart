@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/db/hive_action_user.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
@@ -14,15 +13,19 @@ import 'package:starfish/db/providers/group_provider.dart';
 import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/action_user_status.dart';
+import 'package:starfish/models/user.dart';
 import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 
+import 'hive_concrete.dart';
+import 'hive_syncable.dart';
+
 part 'hive_action.g.dart';
 
 @HiveType(typeId: 4)
-class HiveAction extends HiveObject {
+class HiveAction extends HiveConcrete implements HiveSyncable<Action> {
   @HiveField(0)
   String? id;
   @HiveField(1)
@@ -78,20 +81,6 @@ class HiveAction extends HiveObject {
         action.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
   }
 
-  Action toAction() {
-    return Action(
-      id: this.id,
-      type: Action_Type.valueOf(this.type!),
-      name: this.name,
-      creatorId: this.creatorId,
-      groupId: this.groupId,
-      instructions: this.instructions,
-      materialId: this.materialId,
-      question: this.question,
-      dateDue: this.dateDue!.toDate(),
-    );
-  }
-
   bool isDueInMonth(HiveDate hiveDate) {
     if (dateDue == null) {
       return false;
@@ -114,7 +103,22 @@ class HiveAction extends HiveObject {
     creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
     instructions: ${this.instructions?.toString()}, materialId: ${this.materialId?.toString()}, 
     question: ${this.question}, dateDue: ${this.dateDue}, isIndividualAction: ${this.isIndividualAction}
-    creator: ${this.creator}, group: ${this.group}, actionStatus: ${this.actionStatus}, material: ${this.material}, createdDate: ${this.createdDate} }''';
+    group: ${this.group}, actionStatus: ${this.actionStatus}, material: ${this.material}, createdDate: ${this.createdDate} }''';
+  }
+
+  @override
+  Action toGrpcCompatible() {
+    return Action(
+      id: this.id,
+      type: Action_Type.valueOf(this.type!),
+      name: this.name,
+      creatorId: this.creatorId,
+      groupId: this.groupId,
+      instructions: this.instructions,
+      materialId: this.materialId,
+      question: this.question,
+      dateDue: this.dateDue!.toDate(),
+    );
   }
 }
 
@@ -148,93 +152,92 @@ extension HiveActionExt on HiveAction {
         : null;
   }
 
-  List<HiveUser>? get users {
-    if (this.group == null || this.group!.activeUsers == null) {
-      return null;
-    }
-    List<HiveUser> _users = [];
-    this.group!.activeUsers!.forEach((HiveGroupUser groupUser) {
-      _users.add(groupUser.user!);
-    });
+  // List<HiveUser>? get users {
+  //   if (this.group == null || this.group!.activeUsers == null) {
+  //     return null;
+  //   }
+  //   List<HiveUser> _users = [];
+  //   this.group!.activeUsers!.forEach((HiveGroupUser groupUser) {
+  //     _users.add(groupUser.user!);
+  //   });
 
-    return _users;
-  }
+  //   return _users;
+  // }
 
-  List<HiveUser>? get learners {
-    if (this.group == null || this.group?.learners == null) {
-      return null;
-    }
-    List<HiveUser> _learners = [];
-    this.group!.learners!.forEach((HiveGroupUser groupUser) {
-      if (groupUser.user != null) {
-        _learners.add(groupUser.user!);
-      }
-    });
+  // List<HiveUser>? get learners {
+  //   if (this.group == null || this.group?.learners == null) {
+  //     return null;
+  //   }
+  //   List<HiveUser> _learners = [];
+  //   this.group!.learners!.forEach((HiveGroupUser groupUser) {
+  //     if (groupUser.user != null) {
+  //       _learners.add(groupUser.user!);
+  //     }
+  //   });
 
-    return _learners;
-  }
+  //   return _learners;
+  // }
 
-  List<HiveUser>? get leaders {
-    // Admin and Teachers
-    if (this.group == null || this.group!.activeUsers == null) {
-      return null;
-    }
-    List<HiveUser> _leaders = [];
+  // List<HiveUser>? get leaders {
+  //   // Admin and Teachers
+  //   if (this.group == null || this.group!.activeUsers == null) {
+  //     return null;
+  //   }
+  //   List<HiveUser> _leaders = [];
 
-    this
-        .group!
-        .activeUsers
-        ?.where((element) => (GroupUser_Role.valueOf(element.role!) ==
-                GroupUser_Role.ADMIN ||
-            GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER))
-        .forEach((groupUser) {
-      if (groupUser.user != null) {
-        _leaders.add(groupUser.user!);
-      }
-    });
-    return _leaders;
-  }
+  //   this
+  //       .group!
+  //       .activeUsers
+  //       ?.where((element) => (GroupUser_Role.valueOf(element.role!) ==
+  //               GroupUser_Role.ADMIN ||
+  //           GroupUser_Role.valueOf(element.role!) == GroupUser_Role.TEACHER))
+  //       .forEach((groupUser) {
+  //     if (groupUser.user != null) {
+  //       _leaders.add(groupUser.user!);
+  //     }
+  //   });
+  //   return _leaders;
+  // }
 
   bool get isIndividualAction {
-    // action created individual action i.e. for me
-    return (groupId == null || groupId!.isEmpty) ? true : false;
+    return groupId?.isEmpty ?? true;
   }
 
-  int memberCountByActionStatus(ActionStatus actionStatus) {
-    int i = 0;
-    this.learners?.forEach((element) {
-      if (element.actionStatusbyId(this) == actionStatus) {
-        i++;
-      }
-    });
-    return i;
-  }
+  // int memberCountByActionStatus(ActionStatus actionStatus) {
+  //   int i = 0;
+  //   this.learners?.forEach((element) {
+  //     if (element.actionStatusbyId(this) == actionStatus) {
+  //       i++;
+  //     }
+  //   });
+  //   return i;
+  // }
 
-  int learnerCountByEvaluation(ActionUser_Evaluation actionUserEvaluation) {
-    int i = 0;
-    this.learners?.forEach((element) {
-      if (element.actionUserEvaluationById(this) == actionUserEvaluation) {
-        i++;
-      }
-    });
-    return i;
-  }
+  // int learnerCountByEvaluation(ActionUser_Evaluation actionUserEvaluation) {
+  //   int i = 0;
+  //   this.learners?.forEach((element) {
+  //     if (element.actionUserEvaluationById(this) == actionUserEvaluation) {
+  //       i++;
+  //     }
+  //   });
+  //   return i;
+  // }
 
-  HiveUser? get creator {
-    // user created individual action i.e. for me
-    HiveUser currentUser = CurrentUserProvider().user;
-    if (this.isIndividualAction) {
-      return currentUser.id == creatorId ? currentUser : null;
-    } else {
-      return this
-          .group!
-          .activeUsers
-          ?.firstWhereOrNull((element) =>
-              element.groupId == groupId && element.userId == creatorId)
-          //?.map((HiveGroupUser groupUser) => groupUser.user!)
-          ?.user!;
-    }
-  }
+  // HiveUser? get creator {
+  //   // user created individual action i.e. for me
+  //   HiveUser currentUser = CurrentUserProvider().user;
+  //   if (this.isIndividualAction) {
+  //     return currentUser.id == creatorId ? currentUser : null;
+  //   } else {
+  //     return this
+  //         .group!
+  //         .activeUsers
+  //         ?.firstWhereOrNull((element) =>
+  //             element.groupId == groupId && element.userId == creatorId)
+  //         //?.map((HiveGroupUser groupUser) => groupUser.user!)
+  //         ?.user!;
+  //   }
+  // }
 
   ActionStatus get actionStatus {
     HiveActionUser? actionUser = this.mineAction;
@@ -265,18 +268,20 @@ extension HiveActionExt on HiveAction {
   }
 
   HiveActionUser? get mineAction {
-    HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
-    HiveActionUser? hiveActionUser = _currentUser.actions
-        .firstWhereOrNull((element) => element.actionId == this.id);
+    // TODO
+    return null;
+    // AppUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
+    // HiveActionUser? hiveActionUser = _currentUser.actions
+    //     .firstWhereOrNull((element) => element.actionId == this.id);
 
-    // Check if action is only in local DB
-    if (hiveActionUser == null) {
-      hiveActionUser = ActionRepository()
-          .getAllActionsUser()
-          .firstWhereOrNull((element) => element.actionId == this.id);
-    }
+    // // Check if action is only in local DB
+    // if (hiveActionUser == null) {
+    //   hiveActionUser = ActionRepository()
+    //       .getAllActionsUser()
+    //       .firstWhereOrNull((element) => element.actionId == this.id);
+    // }
 
-    return hiveActionUser;
+    // return hiveActionUser;
   }
 
   List<HiveActionUser>? get actionsUsers {

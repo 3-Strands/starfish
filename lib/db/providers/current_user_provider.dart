@@ -1,26 +1,26 @@
 import 'package:hive/hive.dart';
 import 'package:collection/collection.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/models/user.dart';
 
 class CurrentUserProvider {
-  late Box<HiveCurrentUser> _currentUserBox;
+  late Box<AppUser> _currentUserBox;
 
   CurrentUserProvider() {
-    _currentUserBox = Hive.box<HiveCurrentUser>(HiveDatabase.CURRENT_USER_BOX);
+    _currentUserBox = Hive.box<AppUser>(HiveDatabase.CURRENT_USER_BOX);
   }
 
-  Future<HiveCurrentUser> getUser() async {
+  Future<AppUser> getUser() async {
     return _currentUserBox.values.first;
   }
 
   @Deprecated("Use 'getCurrentUserSync' instead")
-  HiveCurrentUser getUserSync() {
+  AppUser getUserSync() {
     return _currentUserBox.values.first;
   }
 
-  HiveCurrentUser? getCurrentUserSync() {
+  AppUser? getCurrentUserSync() {
     return _currentUserBox.values.firstOrNull;
   }
 
@@ -28,24 +28,24 @@ class CurrentUserProvider {
     return _currentUserBox.values.firstOrNull != null;
   }
 
-  /*Future<int> updateUser(HiveCurrentUser user) async {
+  /*Future<int> updateUser(AppUser user) async {
     return _currentUserBox.add(user);
   }*/
 
   @Deprecated("Use 'createUpdate' instead")
-  void updateUser(HiveCurrentUser _hiveCurrentUser) {
-    _currentUserBox.putAt(0, _hiveCurrentUser);
+  void updateUser(AppUser _AppUser) {
+    _currentUserBox.putAt(0, _AppUser);
   }
 
-  Future<void> createUpdate(HiveCurrentUser _hiveCurrentUser) {
+  Future<void> createUpdate(AppUser _AppUser) {
     return _currentUserBox.isEmpty
-        ? _currentUserBox.add(_hiveCurrentUser)
-        : _currentUserBox.putAt(0, _hiveCurrentUser);
+        ? _currentUserBox.add(_AppUser)
+        : _currentUserBox.putAt(0, _AppUser);
   }
 }
 
-extension CurrentUserProviderExt on CurrentUserProvider {
-  HiveUser get user {
-    return HiveUser.fromCurrentUser(_currentUserBox.values.first);
-  }
-}
+// extension CurrentUserProviderExt on CurrentUserProvider {
+//   HiveUser get user {
+//     return HiveUser.fromCurrentUser(_currentUserBox.values.first);
+//   }
+// }

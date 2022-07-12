@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_country.g.dart';
 
@@ -25,6 +26,14 @@ class HiveCountry {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
+
+  factory HiveCountry.fromGrpcCountry(Country country) {
+    return HiveCountry(
+      id: country.id,
+      name: country.name,
+      diallingCode: country.diallingCode,
+    );
+  }
 
   static String toDisplay(HiveCountry item) => item.name;
 }

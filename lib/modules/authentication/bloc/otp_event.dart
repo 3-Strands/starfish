@@ -1,8 +1,8 @@
 part of 'otp_bloc.dart';
 
 @immutable
-class OtpEvent {
-  const OtpEvent(this.code);
+class OtpChanged {
+  const OtpChanged(this.code);
 
   final String code;
 }
