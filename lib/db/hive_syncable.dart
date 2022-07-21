@@ -6,6 +6,4 @@ abstract class HiveSyncable<T> implements HiveGrpcCompatible<T> {
   bool get isDirty;
 
   T toGrpcCompatible();
-
-  bool matches(Object other);
 }

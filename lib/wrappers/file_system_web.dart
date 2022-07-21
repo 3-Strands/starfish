@@ -52,7 +52,7 @@ Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
     readStream: (controller) async {
       for (final hiveFile in hiveFiles) {
         final metaData = FileMetaData(
-          entityId: hiveFile.entityId!,
+          entityId: hiveFile.entityId,
           filename: hiveFile.filename,
           entityType: EntityType.MATERIAL,
         );

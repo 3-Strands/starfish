@@ -1,10 +1,12 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/apis/hive_api.dart';
+import 'package:starfish/db/hive_concrete.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_country.g.dart';
 
 @HiveType(typeId: 0)
-class HiveCountry {
+class HiveCountry extends HiveConcrete {
   @HiveField(0)
   final String id;
 
@@ -27,7 +29,7 @@ class HiveCountry {
   @override
   int get hashCode => id.hashCode ^ name.hashCode;
 
-  factory HiveCountry.fromGrpcCountry(Country country) {
+  factory HiveCountry.from(Country country) {
     return HiveCountry(
       id: country.id,
       name: country.name,

@@ -1,30 +1,27 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_keyed.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
-import 'package:starfish/wrappers/platform.dart';
 
 part 'hive_file.g.dart';
 
 @HiveType(typeId: 17)
-class HiveFile extends HiveObject {
+class HiveFile extends HiveObject implements HiveKeyed {
   @HiveField(0)
-  String? entityId;
+  final String entityId;
   @HiveField(1)
-  int? entityType;
+  final int entityType;
   @HiveField(2)
   String? filepath; // local file path
   @HiveField(3)
-  String filename;
+  final String filename;
   @HiveField(4)
-  String? md5Checksum;
-  @HiveField(5)
   bool isSynced;
 
   HiveFile({
-    this.entityId,
-    this.entityType,
+    required this.entityId,
+    required this.entityType,
     this.filepath,
     required this.filename,
-    this.md5Checksum,
     this.isSynced = false,
   });
 
@@ -43,8 +40,8 @@ class HiveFile extends HiveObject {
 
   FileMetaData toFileMetaData() {
     return FileMetaData(
-      entityId: this.entityId,
-      entityType: EntityType.valueOf(this.entityType ?? 0),
+      entityId: entityId,
+      entityType: EntityType.valueOf(entityType),
       filename: filename,
     );
   }
@@ -53,12 +50,10 @@ class HiveFile extends HiveObject {
 
   @override
   String toString() {
-    return '{entityId: ${this.entityId}, entityType: ${this.entityType}, filepath: ${this.filepath}, filename: ${this.filename}, md5Checksum: ${this.md5Checksum}, isSynced: ${this.isSynced}}';
+    return '{entityId: $entityId, entityType: $entityType, filepath: $filepath, filename: $filename, isSynced: $isSynced}';
   }
-}
 
-/*extension HiveFileExt on HiveFile {
-  String get filename {
-    return filepath!.split("/").last;
-  }
-}*/
+  static String keyFrom(String entityId, String filename) => '$entityId:$filename';
+
+  get key => keyFrom(entityId, filename);
+}

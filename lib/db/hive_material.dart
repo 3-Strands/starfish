@@ -1,18 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_action.dart';
 import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material_feedback.dart';
-import 'package:starfish/db/providers/action_provider.dart';
-import 'package:starfish/db/providers/language_provider.dart';
-import 'package:starfish/db/providers/material_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 import 'hive_concrete.dart';
+import 'hive_material_topic.dart';
+import 'hive_material_type.dart';
 import 'hive_syncable.dart';
 
 part 'hive_material.g.dart';
@@ -20,37 +20,37 @@ part 'hive_material.g.dart';
 @HiveType(typeId: 5)
 class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
   @HiveField(0)
-  String? id;
+  final String id;
   @HiveField(1)
-  String? creatorId;
+  final String creatorId;
   @HiveField(2)
-  int? status;
+  int status;
   @HiveField(3)
-  int? visibility;
+  int visibility;
   @HiveField(4)
-  int? editability;
+  int editability;
   @HiveField(5)
-  String? title;
+  String title;
   @HiveField(6)
-  String? description;
+  String description;
   @HiveField(7)
-  String? targetAudience;
+  String targetAudience;
   @HiveField(8)
-  String? url;
+  String url;
   @HiveField(9)
-  List<String>? files;
+  List<String> fileNames;
   @HiveField(10)
-  List<String>? languageIds;
+  List<String> languageIds;
   @HiveField(11)
-  List<String>? typeIds;
+  List<String> typeIds;
   @HiveField(12)
-  List<String>? topics;
+  List<String> topicIds;
   @HiveField(13)
-  List<HiveMaterialFeedback>? feedbacks;
+  HiveList<HiveMaterialFeedback> feedbacks = HiveList(globalHiveApi.materialFeedback);
   @HiveField(14)
-  HiveDate? dateCreated;
+  HiveDate dateCreated;
   @HiveField(15)
-  HiveDate? dateUpdated;
+  HiveDate dateUpdated;
   @HiveField(16)
   bool isNew = false;
   @HiveField(17)
@@ -58,93 +58,92 @@ class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
   @HiveField(18)
   bool isDirty = false;
   @HiveField(19)
-  List<HiveEdit>? editHistory;
+  List<HiveEdit> editHistory;
   @HiveField(20)
-  Map<String, String> languages = Map();
+  Map<String, String> languages;
 
   HiveMaterial({
-    this.id,
-    this.creatorId,
+    required this.id,
+    required this.creatorId,
     this.status = 0,
-    this.title,
-    this.description,
-    this.url,
-    this.languageIds,
-    this.typeIds,
-    this.topics,
-    this.visibility,
-    this.editability,
-    this.editHistory,
+    required this.title,
+    required this.description,
+    required this.url,
+    required this.targetAudience,
+    this.fileNames = const[],
+    this.languageIds = const [],
+    this.typeIds = const [],
+    this.topicIds = const [],
+    required this.visibility,
+    required this.editability,
+    this.editHistory = const [],
+    required this.dateCreated,
+    required this.dateUpdated,
     this.isNew = false,
     this.isUpdated = false,
     this.isDirty = false,
+    this.languages = const {},
   });
 
-  HiveMaterial.from(Material material) {
-    this.id = material.id;
-    this.creatorId = material.creatorId;
-    this.status = material.status.value; // Material_Status
-    this.visibility = material.visibility.value; // Material_Visibility
-    this.editability = material.editability.value; // Material_Editability
-    this.title = material.title;
-    this.description = material.description;
-    this.targetAudience = material.targetAudience;
-    this.url = material.url;
-    this.files = material.files;
-    this.languageIds = material.languageIds;
-    this.typeIds = material.typeIds;
-    this.topics = material.topics;
-    this.feedbacks = material.feedbacks.map((MaterialFeedback feedback) {
-      return HiveMaterialFeedback.from(feedback);
-    }).toList();
-    this.editHistory =
-        material.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
-    this.dateCreated = HiveDate.from(material.dateCreated);
-    this.dateUpdated = HiveDate.from(material.dateUpdated);
-    this.languages = material.languages;
+  HiveMaterial.from(Material material) :
+    id = material.id,
+    creatorId = material.creatorId,
+    status = material.status.value, // Material_Status
+    visibility = material.visibility.value, // Material_Visibility
+    editability = material.editability.value, // Material_Editability
+    title = material.title,
+    description = material.description,
+    targetAudience = material.targetAudience,
+    url = material.url,
+    fileNames = material.files,
+    languageIds = material.languageIds,
+    typeIds = material.typeIds,
+    topicIds = material.topics,
+    // feedbacks = HiveList(Hive.box(HiveDatabase.MATERIAL_FEEDBACK_BOX)),
+    editHistory =
+        material.editHistory.map((Edit e) => HiveEdit.from(e)).toList(),
+    dateCreated = HiveDate.from(material.dateCreated),
+    dateUpdated = HiveDate.from(material.dateUpdated),
+    languages = material.languages;
+  
+  static void populateBox(Material material) {
+    final hiveMaterial = HiveMaterial.from(material);
+    globalHiveApi.material.put(hiveMaterial.key, hiveMaterial);
+    material.feedbacks.map(HiveMaterialFeedback.from).forEach(hiveMaterial.addFeedback);
+  }
+
+  void addFeedback(HiveMaterialFeedback feedback) {
+    globalHiveApi.materialFeedback.put(feedback.key, feedback);
+    feedbacks.add(feedback);
   }
 
   Material toGrpcCompatible() {
     return Material(
       id: this.id,
       creatorId: this.creatorId,
-      status: Material_Status.valueOf(this.status ?? 0),
-      visibility: Material_Visibility.valueOf(this.visibility ?? 0),
-      editability: Material_Editability.valueOf(this.editability ?? 0),
+      status: Material_Status.valueOf(this.status),
+      visibility: Material_Visibility.valueOf(this.visibility),
+      editability: Material_Editability.valueOf(this.editability),
       title: this.title,
       description: this.description,
       targetAudience: this.targetAudience,
       url: this.url,
-      files: this.files,
+      files: this.fileNames,
       languageIds: this.languageIds,
       typeIds: this.typeIds,
-      topics: this.topics,
+      topics: this.topicIds,
       //feedbacks: this.feedbacks,
       //editHistory: this.editHistory?.map((HiveEdit e) => e.toEdit()).toList(),
-      dateCreated: this.dateCreated?.toDate(),
-      dateUpdated: this.dateUpdated?.toDate(),
+      dateCreated: this.dateCreated.toDate(),
+      dateUpdated: this.dateUpdated.toDate(),
     );
   }
 
   @override
   String toString() {
-    return '{id: ${this.id}, creatorId: ${this.creatorId}, status: ${this.status}, visibility: ${this.visibility}, editability: ${this.editability}, title: ${this.title}, description: ${this.description}, targetAudience: ${this.targetAudience}, files: ${this.files}, }';
+    return '{id: ${this.id}, creatorId: ${this.creatorId}, status: ${this.status}, visibility: ${this.visibility}, editability: ${this.editability}, title: ${this.title}, description: ${this.description}, targetAudience: ${this.targetAudience}, files: ${this.fileNames}, }';
   }
-}
 
-class MaterialWithAssignedStatus {
-  const MaterialWithAssignedStatus({
-    required this.material,
-    this.status,
-    this.isAssignedToGroupWithLeaderRole = false,
-  });
-
-  final HiveMaterial material;
-  final ActionStatus? status;
-  final bool isAssignedToGroupWithLeaderRole;
-}
-
-extension HiveMaterialExt on HiveMaterial {
   // bool get isAssignedToMe {
   //   bool isAssigned = false;
   //   ActionProvider().getAllActiveActions().forEach((action) {
@@ -206,41 +205,34 @@ extension HiveMaterialExt on HiveMaterial {
   //   return ActionStatus.NOT_DONE;
   // }
 
-  List<HiveFile> get localFiles {
-    return MaterialProvider()
-        .getFiles()
-        .where((element) => element.entityId == this.id)
-        .toList();
+  List<HiveFile> get files {
+    return fileNames.map(
+      (filename) => globalHiveApi.file.get(HiveFile.keyFrom(id, filename))!,
+    ).toList();
   }
 
-  String? get localImageFilepath {
-    HiveFile? _hiveFile = this.localFiles.firstWhereOrNull((_file) =>
-        _file.filepath != null &&
-        ['jpg', 'png']
-            .toList()
-            .contains(_file.filepath!.split("/").last.split(".").last));
+  List<String> get languageNames => languageIds.map(
+    (languageId) => globalHiveApi.language.get(languageId)?.name ?? languages[languageId] ?? '',
+  ).toList();
 
-    return _hiveFile?.filepath!;
-  }
+  // List<HiveLanguage> get allLanguages {
+  //   List<HiveLanguage> _languages = [];
+  //   this.languageIds.forEach((id) {
+  //     HiveLanguage? _language = LanguageProvider().getById(id);
 
-  List<HiveLanguage> get allLanguages {
-    List<HiveLanguage> _languages = [];
-    this.languageIds!.forEach((id) {
-      HiveLanguage? _language = LanguageProvider().getById(id);
-
-      // There may be case the material language is not available in the Natiations followed by this user,
-      // so get the name of language in `this.languages`
-      if (_language == null) {
-        this.languages.forEach((key, value) {
-          if (key == id) {
-            _language = HiveLanguage(id: key, name: value);
-          }
-        });
-      }
-      if (_language != null) {
-        _languages.add(_language!);
-      }
-    });
-    return _languages;
-  }
+  //     // There may be case the material language is not available in the Natiations followed by this user,
+  //     // so get the name of language in `this.languages`
+  //     if (_language == null) {
+  //       this.languages.forEach((key, value) {
+  //         if (key == id) {
+  //           _language = HiveLanguage(id: key, name: value);
+  //         }
+  //       });
+  //     }
+  //     if (_language != null) {
+  //       _languages.add(_language!);
+  //     }
+  //   });
+  //   return _languages;
+  // }
 }

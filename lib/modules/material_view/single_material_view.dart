@@ -7,8 +7,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/enums/material_visibility.dart';
-import 'package:starfish/modules/material_view/action_view.dart';
+import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -74,14 +73,14 @@ class SingleMaterialView extends StatelessWidget {
                             ),
                           ),
                           if (((Material_Editability.valueOf(
-                                              material.editability!) ==
+                                              material.editability) ==
                                           Material_Editability.CREATOR_EDIT ||
                                       Material_Editability.valueOf(
-                                              material.editability!) ==
+                                              material.editability) ==
                                           Material_Editability.GROUP_EDIT) &&
                                   material.creatorId == user.id) ||
                               (Material_Editability.valueOf(
-                                          material.editability!) ==
+                                          material.editability) ==
                                       Material_Editability.GROUP_EDIT) &&
                                   isAssignedToGroupWithLeaderRole)
                             PopupMenuButton(
@@ -114,12 +113,18 @@ class SingleMaterialView extends StatelessWidget {
                                   case 1:
                                     Alerts.showMessageBox(
                                       context: context,
-                                      title: appLocalizations.deleteMaterialTitle,
-                                      message: appLocalizations.areYouSureWantToDeleteThis,
-                                      positiveButtonText: appLocalizations.delete,
-                                      negativeButtonText: appLocalizations.cancel,
+                                      title:
+                                          appLocalizations.deleteMaterialTitle,
+                                      message: appLocalizations
+                                          .areYouSureWantToDeleteThis,
+                                      positiveButtonText:
+                                          appLocalizations.delete,
+                                      negativeButtonText:
+                                          appLocalizations.cancel,
                                       positiveActionCallback: () {
-                                        RepositoryProvider.of<DataRepository>(context).deleteMaterial(material);
+                                        RepositoryProvider.of<DataRepository>(
+                                                context)
+                                            .deleteMaterial(material);
                                         Navigator.of(context).pop();
                                       },
                                       negativeActionCallback: () {
@@ -162,9 +167,9 @@ class SingleMaterialView extends StatelessWidget {
                       TaskStatus(
                         height: 30.h,
                         color: actionStatus!.color,
-                        label: actionStatus!.localeLabel(context),
+                        label: actionStatus!.toLocaleString(context),
                       ),
-                    ], 
+                    ],
                     if (isAssignedToGroupWithLeaderRole) ...[
                       SizedBox(
                         height: 10.h,
@@ -183,7 +188,7 @@ class SingleMaterialView extends StatelessWidget {
                     SizedBox(
                       height: 30.h,
                     ),
-                    if (material.url != null && material.url!.isNotEmpty)
+                    if (material.url.isNotEmpty)
                       CustomIconButton(
                         icon: Icon(
                           Icons.open_in_new,
@@ -199,83 +204,87 @@ class SingleMaterialView extends StatelessWidget {
                           // fontWeight: FontWeight.bold,
                         ),
                         onButtonTap: () {
-                          GeneralFunctions.openUrl(material.url!);
+                          GeneralFunctions.openUrl(material.url);
                         },
                       ),
-                    if (material.url != null && material.url!.isNotEmpty)
+                    if (material.url.isNotEmpty)
                       Divider(
                         color: Color(0xFF979797),
                         thickness: 2,
                       ),
-                    if (material.localFiles.isNotEmpty)
+                    if (material.fileNames.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: material.localFiles.map((hiveFile) =>
-                          Column(
-                            children: [
-                              InkWell(
-                                onTap: () async {
-                                  try {
-                                    await GeneralFunctions.openFile(hiveFile, context);
-                                  } on NetworkUnavailableException {
-                                    // TODO: show message to user
-                                  }
-                                },
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      hiveFile.filepath != null
-                                          ? Icons.file_present
-                                          : Icons.download,
-                                      color: Color(0xFF3475F0),
-                                    ),
-                                    SizedBox(
-                                      width: 5.w,
-                                    ),
-                                    Text(
-                                      appLocalizations.openAttachment + ": ",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        color: Color(0xFF3475F0),
-                                        fontFamily: 'OpenSans',
-                                        // fontSize: 17.sp,
-                                        fontStyle: FontStyle.italic,
-                                        // fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        hiveFile.filename,
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          color: Color(0xFF434141),
-                                          fontFamily: 'OpenSans',
-                                          //   fontSize: 17.sp,
-                                          fontStyle: FontStyle.italic,
-                                          //  fontWeight: FontWeight.bold,
+                        children: material.files
+                            .map(
+                              (hiveFile) => Column(
+                                children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      try {
+                                        await GeneralFunctions.openFile(
+                                            hiveFile, context);
+                                      } on NetworkUnavailableException {
+                                        // TODO: show message to user
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          hiveFile.filepath != null
+                                              ? Icons.file_present
+                                              : Icons.download,
+                                          color: Color(0xFF3475F0),
                                         ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
+                                        SizedBox(
+                                          width: 5.w,
+                                        ),
+                                        Text(
+                                          appLocalizations.openAttachment +
+                                              ": ",
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                            color: Color(0xFF3475F0),
+                                            fontFamily: 'OpenSans',
+                                            // fontSize: 17.sp,
+                                            fontStyle: FontStyle.italic,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            hiveFile.filename,
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              color: Color(0xFF434141),
+                                              fontFamily: 'OpenSans',
+                                              //   fontSize: 17.sp,
+                                              fontStyle: FontStyle.italic,
+                                              //  fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  Divider(
+                                    color: Color(0xFF979797),
+                                    thickness: 2,
+                                  ),
+                                ],
                               ),
-                              Divider(
-                                color: Color(0xFF979797),
-                                thickness: 2,
-                              ),
-                            ],
-                          ),
-                        ).toList(),
+                            )
+                            .toList(),
                       ),
                     SizedBox(
                       height: 30.h,
                     ),
-                    if (material.creatorId == user.id || (
-                        material.editability ==
+                    if (material.creatorId == user.id ||
+                        (material.editability ==
                                 Material_Editability.GROUP_EDIT.value &&
-                           isAssignedToGroupWithLeaderRole)) ...[
+                            isAssignedToGroupWithLeaderRole)) ...[
                       Text(
                         appLocalizations.thismaterialIsVisibleTo,
                         textAlign: TextAlign.left,
@@ -299,8 +308,8 @@ class SingleMaterialView extends StatelessWidget {
                             width: 5.w,
                           ),
                           Text(
-                            MaterialVisibility.valueOf(material.visibility!)
-                                .displayName!,
+                            Material_Visibility.valueOf(material.visibility)!
+                                .toLocaleString(context),
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               //   color: Color(0xFF3475F0),
@@ -329,7 +338,7 @@ class SingleMaterialView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (material.languageIds!.isNotEmpty)
+                    if (material.languageIds.isNotEmpty)
                       SizedBox(
                         height: 5.h,
                       ),
@@ -351,24 +360,26 @@ class SingleMaterialView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (material.topics!.isNotEmpty)
+                    if (material.topicIds.isNotEmpty)
                       SizedBox(
                         height: 5.h,
                       ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: material.topics?.map((topic) =>
-                        Text(
-                          topic,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            //   color: Color(0xFF3475F0),
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ).toList() ?? [],
+                      children: material.topicIds
+                          .map(
+                            (topic) => Text(
+                              topic,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                //   color: Color(0xFF3475F0),
+                                fontFamily: 'OpenSans',
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                     SizedBox(
                       height: 63.h,
@@ -459,32 +470,35 @@ class SingleMaterialView extends StatelessWidget {
 }
 
 class _MaterialLanguages extends StatelessWidget {
-  const _MaterialLanguages({ Key? key, required this.material }) : super(key: key);
+  const _MaterialLanguages({Key? key, required this.material})
+      : super(key: key);
 
   final HiveMaterial material;
 
   @override
   Widget build(BuildContext context) {
-    if (material.languageIds?.isEmpty ?? true) {
+    if (material.languageIds.isEmpty) {
       return const SizedBox();
     }
-    List<HiveLanguage> languages = material.allLanguages;
-    languages.sort((a, b) => a.name.compareTo(b.name));
+    final languages = material.languageNames;
+    languages.sort();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: languages.map((language) =>
-        Text(
-          language.name,
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            //  color: Color(0xFF3475F0),
-            fontFamily: 'OpenSans',
-            fontSize: 17.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ).toList(),
+      children: languages
+          .map(
+            (languageName) => Text(
+              languageName,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                //  color: Color(0xFF3475F0),
+                fontFamily: 'OpenSans',
+                fontSize: 17.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 }

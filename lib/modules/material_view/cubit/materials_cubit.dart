@@ -8,6 +8,7 @@ import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/model_wrappers/material_with_assigned_status.dart';
 
 part 'materials_state.dart';
 

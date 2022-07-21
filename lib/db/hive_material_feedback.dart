@@ -1,22 +1,23 @@
 import 'package:hive/hive.dart';
+import 'package:starfish/db/hive_concrete.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'hive_material_feedback.g.dart';
 
 @HiveType(typeId: 6)
-class HiveMaterialFeedback extends HiveObject {
+class HiveMaterialFeedback extends HiveConcrete {
   @HiveField(0)
-  String id = '';
+  final String id;
   @HiveField(1)
-  String type = '';
+  final int type;
   @HiveField(2)
-  String reporterId = '';
+  final String reporterId;
   @HiveField(3)
-  String report = '';
+  final String report;
   @HiveField(4)
-  String response = '';
+  String response;
   @HiveField(5)
-  String materialId = '';
+  final String materialId;
 
   @HiveField(14)
   bool isNew = false;
@@ -25,14 +26,20 @@ class HiveMaterialFeedback extends HiveObject {
   @HiveField(16)
   bool isDirty = false;
 
-  HiveMaterialFeedback();
+  HiveMaterialFeedback({
+    required this.id,
+    required this.type,
+    required this.reporterId,
+    required this.report,
+    this.response = '',
+    required this.materialId,
+  });
 
-  HiveMaterialFeedback.from(MaterialFeedback feedback) {
-    this.id = feedback.id;
-    this.type = feedback.type.toString();
-    this.reporterId = feedback.reporterId;
-    this.report = feedback.report;
-    this.response = feedback.response;
-    this.materialId = feedback.materialId;
-  }
+  HiveMaterialFeedback.from(MaterialFeedback feedback) :
+    id = feedback.id,
+    type = feedback.type.value,
+    reporterId = feedback.reporterId,
+    report = feedback.report,
+    response = feedback.response,
+    materialId = feedback.materialId;
 }

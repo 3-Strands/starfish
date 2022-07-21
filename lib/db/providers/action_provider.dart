@@ -141,7 +141,7 @@ class ActionProvider {
 
   HiveAction? getActionbyId(String actionId) {
     return _actionBox.values
-        .firstWhereOrNull((HiveAction action) => action.id! == actionId);
+        .firstWhereOrNull((HiveAction action) => action.id == actionId);
   }
 
   List<HiveAction>? getGroupActions(String groupId) {

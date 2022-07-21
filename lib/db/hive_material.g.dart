@@ -17,28 +17,27 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return HiveMaterial(
-      id: fields[0] as String?,
-      creatorId: fields[1] as String?,
-      status: fields[2] as int?,
-      title: fields[5] as String?,
-      description: fields[6] as String?,
-      url: fields[8] as String?,
-      languageIds: (fields[10] as List?)?.cast<String>(),
-      typeIds: (fields[11] as List?)?.cast<String>(),
-      topics: (fields[12] as List?)?.cast<String>(),
-      visibility: fields[3] as int?,
-      editability: fields[4] as int?,
-      editHistory: (fields[19] as List?)?.cast<HiveEdit>(),
+      id: fields[0] as String,
+      creatorId: fields[1] as String,
+      status: fields[2] as int,
+      title: fields[5] as String,
+      description: fields[6] as String,
+      url: fields[8] as String,
+      targetAudience: fields[7] as String,
+      fileNames: (fields[9] as List).cast<String>(),
+      languageIds: (fields[10] as List).cast<String>(),
+      typeIds: (fields[11] as List).cast<String>(),
+      topicIds: (fields[12] as List).cast<String>(),
+      visibility: fields[3] as int,
+      editability: fields[4] as int,
+      editHistory: (fields[19] as List).cast<HiveEdit>(),
+      dateCreated: fields[14] as HiveDate,
+      dateUpdated: fields[15] as HiveDate,
       isNew: fields[16] as bool,
       isUpdated: fields[17] as bool,
       isDirty: fields[18] as bool,
-    )
-      ..targetAudience = fields[7] as String?
-      ..files = (fields[9] as List?)?.cast<String>()
-      ..feedbacks = (fields[13] as List?)?.cast<HiveMaterialFeedback>()
-      ..dateCreated = fields[14] as HiveDate?
-      ..dateUpdated = fields[15] as HiveDate?
-      ..languages = (fields[20] as Map).cast<String, String>();
+      languages: (fields[20] as Map).cast<String, String>(),
+    )..feedbacks = (fields[13] as HiveList).castHiveList();
   }
 
   @override
@@ -64,13 +63,13 @@ class HiveMaterialAdapter extends TypeAdapter<HiveMaterial> {
       ..writeByte(8)
       ..write(obj.url)
       ..writeByte(9)
-      ..write(obj.files)
+      ..write(obj.fileNames)
       ..writeByte(10)
       ..write(obj.languageIds)
       ..writeByte(11)
       ..write(obj.typeIds)
       ..writeByte(12)
-      ..write(obj.topics)
+      ..write(obj.topicIds)
       ..writeByte(13)
       ..write(obj.feedbacks)
       ..writeByte(14)

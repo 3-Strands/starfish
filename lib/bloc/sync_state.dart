@@ -8,11 +8,11 @@ class SyncState {
   });
 
   final bool isSyncing;
-  final Option<HiveLastSyncDateTime> lastSync;
+  final Option<DateTime> lastSync;
 
   copyWith({
     bool? isSyncing,
-    Option<HiveLastSyncDateTime>? lastSync,
+    Option<DateTime>? lastSync,
   }) => SyncState(
     isSyncing: isSyncing ?? this.isSyncing,
     lastSync: lastSync ?? this.lastSync,

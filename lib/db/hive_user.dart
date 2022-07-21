@@ -182,7 +182,7 @@ extension HiveUserExt on HiveUser {
         element.actionId! == action.id! && element.userId! == this.id);*/
 
     HiveActionUser? actionUser =
-        ActionProvider().getActionUser(this.id!, action.id!);
+        ActionProvider().getActionUser(this.id!, action.id);
 
     if (actionUser != null) {
       ActionStatus? actionStatus = actionUser.status != null
@@ -199,7 +199,7 @@ extension HiveUserExt on HiveUser {
     if (action.dateDue == null || !action.hasValidDueDate) {
       return ActionStatus.NOT_DONE;
     } else if (action.dateDue != null &&
-        action.dateDue!.isBefore(DateTimeUtils.toHiveDate(DateTime.now()))) {
+        action.dateDue.isBefore(HiveDate.fromDateTime(DateTime.now()))) {
       return ActionStatus.OVERDUE;
     } else {
       return ActionStatus.NOT_DONE;
@@ -208,7 +208,7 @@ extension HiveUserExt on HiveUser {
 
   ActionUser_Evaluation actionUserEvaluationById(HiveAction action) {
     HiveActionUser? actionUser =
-        ActionProvider().getActionUser(this.id!, action.id!);
+        ActionProvider().getActionUser(this.id!, action.id);
 
     if (actionUser != null) {
       ActionUser_Evaluation actionUserEvaluation = actionUser.evaluation != null
@@ -221,6 +221,6 @@ extension HiveUserExt on HiveUser {
   }
 
   HiveActionUser? actionUser(HiveAction action) {
-    return ActionProvider().getActionUser(this.id!, action.id!);
+    return ActionProvider().getActionUser(this.id!, action.id);
   }
 }

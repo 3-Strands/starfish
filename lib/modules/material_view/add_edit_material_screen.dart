@@ -6,8 +6,10 @@ import 'package:fbroadcast/fbroadcast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
@@ -22,10 +24,12 @@ import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/enums/material_editability.dart';
-import 'package:starfish/enums/material_visibility.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
+import 'package:starfish/modules/material_view/cubit/add_edit_material_cubit.dart';
+import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/repositories/authentication_repository.dart';
+import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -59,113 +63,34 @@ const List<String> ALLOWED_FILE_TYPES = [
   'ods'
 ];
 
-class AddEditMaterialScreen extends StatefulWidget {
+class AddEditMaterial extends StatelessWidget {
+  const AddEditMaterial({Key? key, this.material}) : super(key: key);
+
   final HiveMaterial? material;
-
-  const AddEditMaterialScreen({
-    Key? key,
-    this.material,
-  }) : super(key: key);
-
-  @override
-  _AddEditMaterialScreenState createState() => _AddEditMaterialScreenState();
-}
-
-class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _webLinkController = TextEditingController();
-
-  List<HiveLanguage> _selectedLanguages = [];
-  List<HiveMaterialType> _selectedTypes = [];
-  List<HiveMaterialTopic> _selectedTopics = [];
-  List<File> _selectedFiles = [];
-
-  MaterialVisibility? _visibleTo;
-  MaterialEditability? _editableBy;
-
-  late Box<HiveLanguage> _languageBox;
-  late Box<HiveMaterialType> _materialTypeBox;
-  late Box<HiveMaterialTopic> _materialTopicBox;
-
-  late List<HiveLanguage> _languageList;
-  late List<HiveMaterialType> _typeList;
-  late List<HiveMaterialTopic> _topicList;
-
-  late String _choiceSeenByText = AppLocalizations.of(context)!.seenBy;
-  late String _choiceEditedByText =
-      AppLocalizations.of(context)!.editedOrDeletedBy;
-
-  late DataBloc bloc;
-  late AppLocalizations _appLocalizations;
-
-  bool _isEditMode = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
-    _materialTypeBox =
-        Hive.box<HiveMaterialType>(HiveDatabase.MATERIAL_TYPE_BOX);
-    _materialTopicBox =
-        Hive.box<HiveMaterialTopic>(HiveDatabase.MATERIAL_TOPIC_BOX);
-
-    _getAllLanguages();
-    _getAllMaterialTypes();
-    _getAllMaterialTopics();
-
-    if (widget.material != null) {
-      _isEditMode = true;
-
-      _titleController.text = widget.material!.title!;
-      _descriptionController.text = widget.material!.description!;
-      _webLinkController.text = widget.material!.url!;
-
-      _selectedLanguages = widget.material?.allLanguages ?? [];
-      _selectedLanguages.sort((a, b) => a.name.compareTo(b.name));
-
-      _selectedTypes = _materialTypeBox.values
-          .where((HiveMaterialType type) =>
-              widget.material!.typeIds!.contains(type.id))
-          .toList();
-
-      _selectedTopics = _materialTopicBox.values
-          .where((HiveMaterialTopic topic) =>
-              widget.material!.topics!.contains(topic.name))
-          .toList();
-
-      _choiceSeenByText = widget.material!.visibility != null
-          ? MaterialVisibility.valueOf(widget.material!.visibility!)
-              .displayName!
-          : _appLocalizations.seenBy;
-
-      _choiceEditedByText = widget.material!.editability != null
-          ? MaterialEditability.valueOf(widget.material!.editability!)
-              .displayName!
-          : _appLocalizations.editedBy;
-
-      _visibleTo = MaterialVisibility.valueOf(widget.material!.visibility!);
-      _editableBy = MaterialEditability.valueOf(widget.material!.editability!);
-    }
-  }
-
-  void _getAllLanguages() {
-    _languageList = _languageBox.values.toList();
-    _languageList.sort((a, b) => a.name.compareTo(b.name));
-  }
-
-  void _getAllMaterialTypes() {
-    _typeList = _materialTypeBox.values.toList();
-  }
-
-  void _getAllMaterialTopics() {
-    _topicList = _materialTopicBox.values.toList();
-  }
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
-    _appLocalizations = AppLocalizations.of(context)!;
+    return BlocProvider(
+      create: (context) => AddEditMaterialCubit(
+        dataRepository: context.read<DataRepository>(),
+        authenticationRepository: context.read<AuthenticationRepository>(),
+        material: material,
+      ),
+      child: AddEditMaterialView(isEditMode: material != null),
+    );
+  }
+}
+
+class AddEditMaterialView extends StatelessWidget {
+  const AddEditMaterialView({Key? key, required this.isEditMode})
+      : super(key: key);
+
+  final bool isEditMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    final cubit = context.read<AddEditMaterialCubit>();
 
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
@@ -179,9 +104,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
             children: <Widget>[
               AppLogo(hight: 36.h, width: 37.w),
               Text(
-                _isEditMode
-                    ? _appLocalizations.editMaterial
-                    : _appLocalizations.addNewMaterial,
+                isEditMode
+                    ? appLocalizations.editMaterial
+                    : appLocalizations.addNewMaterial,
                 style: dashboardNavigationTitle,
               ),
               IconButton(
@@ -197,9 +122,25 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
           ),
         ),
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
+      body: BlocListener<AddEditMaterialCubit, AddEditMaterialState>(
+        listenWhen: (previous, current) => current.error != null,
+        listener: (context, state) {
+          String errorMessage;
+          switch (state.error!) {
+            case MaterialError.noTitle:
+              errorMessage = appLocalizations.emptyMaterialTitle;
+              break;
+            case MaterialError.noDescription:
+              errorMessage = appLocalizations.emptyDescription;
+              break;
+            case MaterialError.noWebLinkOrFile:
+              errorMessage = appLocalizations.alertEmptyWebLinkWithNoFile;
+              break;
+            case MaterialError.noLanguage:
+              errorMessage = appLocalizations.emptySelectLanguage;
+              break;
+          }
+          StarfishSnackbar.showErrorMessage(context, errorMessage);
         },
         child: Scrollbar(
           thickness: 5.w,
@@ -211,7 +152,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _appLocalizations.materialName,
+                    appLocalizations.materialName,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -220,13 +161,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     child: TextFormField(
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      controller: _titleController,
                       style: formTitleTextStyle,
+                      onChanged: cubit.setTitle,
                       decoration: InputDecoration(
                         // hintText:
-                        //     _appLocalizations.hintMaterialName,
+                        //     appLocalizations.hintMaterialName,
                         // hintStyle: formTitleHintStyle,
-                        labelText: _appLocalizations.hintMaterialName,
+                        labelText: appLocalizations.hintMaterialName,
                         labelStyle: formTitleHintStyle,
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         alignLabelWithHint: true,
@@ -248,7 +189,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Description
                   Text(
-                    _appLocalizations.descripton,
+                    appLocalizations.descripton,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -257,14 +198,14 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                     child: TextFormField(
                       maxLines: 4,
                       maxLength: 200,
-                      controller: _descriptionController,
+                      onChanged: cubit.setDescription,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: _appLocalizations.hintMaterialDescription,
+                        labelText: appLocalizations.hintMaterialDescription,
                         labelStyle: formTitleHintStyle,
                         alignLabelWithHint: true,
-                        // hintText: _appLocalizations
+                        // hintText: appLocalizations
                         //     .hintMaterialDescription,
                         // hintStyle: formTitleHintStyle,
                         border: OutlineInputBorder(
@@ -285,13 +226,13 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Web Link
                   Text(
-                    _appLocalizations.addWebLink,
+                    appLocalizations.addWebLink,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   TextFormField(
-                    controller: _webLinkController,
+                    onChanged: cubit.setUrl,
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       contentPadding:
@@ -313,36 +254,29 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Upload Material
                   Text(
-                    _appLocalizations.uploadAMaterial,
+                    appLocalizations.uploadAMaterial,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
 
-                  // (widget.material?.localFiles == null)
-                  //     ? TextFormField(
-                  //         decoration: InputDecoration(
-                  //           contentPadding:
-                  //               EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
-                  //           border: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(10.0),
-                  //           ),
-                  //           enabledBorder: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(10.0),
-                  //             borderSide: BorderSide(
-                  //               color: Colors.transparent,
-                  //             ),
-                  //           ),
-                  //           filled: true,
-                  //           fillColor: AppColors.txtFieldBackground,
-                  //         ),
-                  //       )
-                  //     : Container(),
-                  if (_isEditMode) _previewFiles(widget.material!),
+                  BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                    buildWhen: (previous, current) =>
+                        previous.previouslySelectedFiles !=
+                        current.previouslySelectedFiles,
+                    builder: (context, state) =>
+                        _PreviewOldFiles(files: state.previouslySelectedFiles),
+                  ),
+
                   SizedBox(height: 10.h),
 
-                  // Selected files (Not uploaded)
-                  _previewSelectedFiles(),
+                  BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                    buildWhen: (previous, current) =>
+                        previous.newlySelectedFiles !=
+                        current.newlySelectedFiles,
+                    builder: (context, state) =>
+                        _PreviewNewFiles(files: state.newlySelectedFiles),
+                  ),
 
                   // Add Materials
                   DottedBorder(
@@ -354,28 +288,25 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       height: 50.h,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if ((!_isEditMode && _selectedFiles.length >= 5) ||
-                              (_isEditMode &&
-                                  (_selectedFiles.length +
-                                          (widget
-                                              .material!.localFiles.length)) >=
-                                      5)) {
+                          final cubit = context.read<AddEditMaterialCubit>();
+
+                          if (cubit.state.hasMaxFilesSelected) {
                             StarfishSnackbar.showErrorMessage(
-                                context, _appLocalizations.maxFilesSelected);
+                                context, appLocalizations.maxFilesSelected);
                           } else {
-                            final result = await getPickerFileWithCrop(
+                            final file = await getPickerFileWithCrop(
                               context,
                               type: FileType.custom,
                               allowedExtensions: ALLOWED_FILE_TYPES,
                             );
 
-                            if (result != null) {
-                              setState(() => _selectedFiles.add(result));
+                            if (file != null) {
+                              cubit.addFile(file);
                             }
                           }
                         },
                         child: Text(
-                          _appLocalizations.addMaterials,
+                          appLocalizations.addMaterials,
                           style: TextStyle(
                             fontFamily: 'OpenSans',
                             fontSize: 17.sp,
@@ -393,22 +324,31 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Language Selection
                   Text(
-                    _appLocalizations.lanugages,
+                    appLocalizations.lanugages,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect<HiveLanguage>(
-                      navTitle: _appLocalizations.selectLanugages,
-                      placeholder: _appLocalizations.selectLanugages,
-                      items: _languageList,
-                      initialSelection: _selectedLanguages.toSet(),
-                      toDisplay: HiveLanguage.toDisplay,
-                      onFinished: (Set<HiveLanguage> selectedLanguages) {
-                        setState(() {
-                          _selectedLanguages = selectedLanguages.toList();
-                        });
+                    child:
+                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      builder: (context, state) {
+                        return MultiSelect<HiveLanguage>(
+                          navTitle: appLocalizations.selectLanugages,
+                          placeholder: appLocalizations.selectLanugages,
+                          items: state.languages,
+                          initialSelection: state.selectedLanguages
+                              .map((languageId) =>
+                                  globalHiveApi.language.get(languageId)!)
+                              .toSet(),
+                          toDisplay: HiveLanguage.toDisplay,
+                          onFinished: (selectedLanguages) {
+                            context
+                                .read<AddEditMaterialCubit>()
+                                .setSelectedLanguages(
+                                    selectedLanguages.map((l) => l.id).toSet());
+                          },
+                        );
                       },
                     ),
                   ),
@@ -416,22 +356,30 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Type Selection
                   Text(
-                    _appLocalizations.type,
+                    appLocalizations.type,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect<HiveMaterialType>(
-                      navTitle: _appLocalizations.selectType,
-                      placeholder: _appLocalizations.selectType,
-                      items: _typeList,
-                      initialSelection: _selectedTypes.toSet(),
-                      toDisplay: HiveMaterialType.toDisplay,
-                      onFinished: (Set<HiveMaterialType> selectedTypes) {
-                        setState(() {
-                          _selectedTypes = selectedTypes.toList();
-                        });
+                    child:
+                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      builder: (context, state) {
+                        return MultiSelect<HiveMaterialType>(
+                          navTitle: appLocalizations.selectType,
+                          placeholder: appLocalizations.selectType,
+                          items: state.types,
+                          initialSelection: state.selectedTypes
+                              .map((id) => globalHiveApi.materialType.get(id)!)
+                              .toSet(),
+                          toDisplay: HiveMaterialType.toDisplay,
+                          onFinished: (selectedTypes) {
+                            context
+                                .read<AddEditMaterialCubit>()
+                                .setSelectedTypes(
+                                    selectedTypes.map((l) => l.id).toSet());
+                          },
+                        );
                       },
                     ),
                   ),
@@ -439,22 +387,30 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   // Topic Selection
                   Text(
-                    _appLocalizations.topics,
+                    appLocalizations.topics,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 11.h),
                   Container(
-                    child: MultiSelect<HiveMaterialTopic>(
-                      navTitle: _appLocalizations.selectTopics,
-                      placeholder: _appLocalizations.selectTopics,
-                      items: _topicList,
-                      initialSelection: _selectedTopics.toSet(),
-                      toDisplay: HiveMaterialTopic.toDisplay,
-                      onFinished: (Set<HiveMaterialTopic> selectedTopics) {
-                        setState(() {
-                          _selectedTopics = selectedTopics.toList();
-                        });
+                    child:
+                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      builder: (context, state) {
+                        return MultiSelect<HiveMaterialTopic>(
+                          navTitle: appLocalizations.selectTopics,
+                          placeholder: appLocalizations.selectTopics,
+                          items: state.topics,
+                          initialSelection: state.selectedTopics
+                              .map((id) => globalHiveApi.materialTopic.get(id)!)
+                              .toSet(),
+                          toDisplay: HiveMaterialTopic.toDisplay,
+                          onFinished: (selectedTopics) {
+                            context
+                                .read<AddEditMaterialCubit>()
+                                .setSelectedTopics(
+                                    selectedTopics.map((l) => l.id).toSet());
+                          },
+                        );
                       },
                     ),
                   ),
@@ -462,7 +418,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Seen by
                   Text(
-                    _appLocalizations.seenBy,
+                    appLocalizations.seenBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -478,49 +434,52 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       ),
                     ),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<MaterialVisibility>(
-                        //   dropdownMaxHeight: 350.h,
-                        isExpanded: true,
-                        offset: Offset(0, -5),
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontSize: 19.sp,
-                          fontFamily: 'OpenSans',
-                        ),
-                        hint: Padding(
-                          padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                          child: Text(
-                            _choiceSeenByText,
+                      child: BlocBuilder<AddEditMaterialCubit,
+                          AddEditMaterialState>(
+                        builder: (context, state) {
+                          return DropdownButton2<Material_Visibility>(
+                            //   dropdownMaxHeight: 350.h,
+                            isExpanded: true,
+                            offset: Offset(0, -5),
                             style: TextStyle(
                               color: Color(0xFF434141),
                               fontSize: 19.sp,
                               fontFamily: 'OpenSans',
                             ),
-                          ),
-                        ),
-                        // onTap: () {
-                        //   _dismissFieldFocus();
-                        // },
-                        onChanged: (MaterialVisibility? value) {
-                          setState(() {
-                            _visibleTo = value;
-                            _choiceSeenByText = _visibleTo!.displayName!;
-                          });
-                        },
-                        items: MaterialVisibility.values()
-                            .map((MaterialVisibility visibility) {
-                          return DropdownMenuItem<MaterialVisibility>(
-                            value: visibility,
-                            child: Text(
-                              visibility.displayName ?? visibility.value.name,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 17.sp,
-                                fontFamily: 'OpenSans',
+                            value: state.visibility ==
+                                    Material_Visibility.UNSPECIFIED_VISIBILITY
+                                ? null
+                                : state.visibility,
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                              child: Text(
+                                appLocalizations.seenBy,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
                               ),
                             ),
+                            onChanged: cubit.setVisibility,
+                            items: VisibilityDisplay.displayList
+                                .map(
+                                  (visibility) =>
+                                      DropdownMenuItem<Material_Visibility>(
+                                    value: visibility,
+                                    child: Text(
+                                      visibility.toLocaleString(context),
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 17.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                           );
-                        }).toList(),
+                        },
                       ),
                     ),
                   ),
@@ -528,7 +487,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
 
                   //Edited by
                   Text(
-                    _appLocalizations.editedOrDeletedBy,
+                    appLocalizations.editedOrDeletedBy,
                     textAlign: TextAlign.left,
                     style: titleTextStyle,
                   ),
@@ -544,62 +503,72 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                       ),
                     ),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<MaterialEditability>(
-                        offset: Offset(0, -10),
-                        dropdownMaxHeight: 90.h,
-                        scrollbarAlwaysShow: true,
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontSize: 19.sp,
-                          fontFamily: 'OpenSans',
-                        ),
-                        hint: Padding(
-                          padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                          child: Text(
-                            _choiceEditedByText,
+                      child: BlocBuilder<AddEditMaterialCubit,
+                          AddEditMaterialState>(
+                        builder: (context, state) {
+                          return DropdownButton2<Material_Editability>(
+                            offset: Offset(0, -10),
+                            dropdownMaxHeight: 90.h,
+                            scrollbarAlwaysShow: true,
                             style: TextStyle(
                               color: Color(0xFF434141),
                               fontSize: 19.sp,
                               fontFamily: 'OpenSans',
                             ),
-                          ),
-                        ),
-                        // onTap: () {
-                        //   _dismissFieldFocus();
-                        // },
-                        onChanged: (MaterialEditability? value) {
-                          setState(() {
-                            _editableBy = value;
-                            _choiceEditedByText = _editableBy!.displayName!;
-                          });
-                        },
-                        items: MaterialEditability.values()
-                            .map<DropdownMenuItem<MaterialEditability>>(
-                                (MaterialEditability editability) {
-                          return DropdownMenuItem<MaterialEditability>(
-                            value: editability,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            hint: Padding(
+                              padding: EdgeInsets.only(left: 15.w, right: 15.w),
                               child: Text(
-                                editability.displayName ??
-                                    editability.value.name,
+                                appLocalizations.editedOrDeletedBy,
                                 style: TextStyle(
                                   color: Color(0xFF434141),
-                                  fontSize: 17.sp,
+                                  fontSize: 19.sp,
                                   fontFamily: 'OpenSans',
                                 ),
                               ),
                             ),
+                            value: state.editability ==
+                                    Material_Editability.UNSPECIFIED_EDITABILITY
+                                ? null
+                                : state.editability,
+                            // onTap: () {
+                            //   _dismissFieldFocus();
+                            // },
+                            onChanged: cubit.setEditability,
+                            items: EditabilityDisplay.displayList
+                                .map((editability) {
+                              return DropdownMenuItem<Material_Editability>(
+                                value: editability,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    editability.toLocaleString(context),
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 17.sp,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           );
-                        }).toList(),
+                        },
                       ),
                     ),
                   ),
 
                   SizedBox(height: 21.h),
 
-                  if (widget.material?.editHistory != null)
-                    _editHistoryContainer(widget.material),
+                  BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                    builder: (context, state) {
+                      if (state.history.isEmpty) {
+                        return const SizedBox();
+                      }
+                      return EditHistory(
+                        history: state.history,
+                      );
+                    },
+                  ),
 
                   SizedBox(height: 75.h),
                 ],
@@ -624,7 +593,7 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text(_appLocalizations.cancel),
+                  child: Text(appLocalizations.cancel),
                 ),
               ),
             ),
@@ -633,13 +602,9 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
               child: Container(
                 margin: EdgeInsets.only(right: 10.h),
                 child: ElevatedButton(
-                  onPressed: () {
-                    _validateInfo();
-                  },
+                  onPressed: cubit.submitRequested,
                   child: Text(
-                    _isEditMode
-                        ? _appLocalizations.update
-                        : _appLocalizations.add,
+                    isEditMode ? appLocalizations.update : appLocalizations.add,
                   ),
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,
@@ -652,279 +617,149 @@ class _AddEditMaterialScreenState extends State<AddEditMaterialScreen> {
       ),
     );
   }
+}
 
-  _validateInfo() async {
-    if (_titleController.text == '') {
-      StarfishSnackbar.showErrorMessage(
-          context, _appLocalizations.emptyMaterialTitle);
-    } else if (_descriptionController.text == '') {
-      StarfishSnackbar.showErrorMessage(
-          context, _appLocalizations.emptyDescription);
-    } else if (_webLinkController.text.isEmpty &&
-        ((!_isEditMode && _selectedFiles.length == 0) ||
-            (_isEditMode &&
-                (_selectedFiles.length + widget.material!.localFiles.length ==
-                    0)))) {
-      StarfishSnackbar.showErrorMessage(
-          context, _appLocalizations.alertEmptyWebLinkWithNoFile);
-    } else if (_selectedLanguages.length == 0) {
-      StarfishSnackbar.showErrorMessage(
-          context, _appLocalizations.emptySelectLanguage);
-    } else if (Platform.isWeb &&
-        _selectedFiles.isNotEmpty &&
-        !(await _isConnected())) {
-      StarfishSnackbar.showErrorMessage(
-          context, _appLocalizations.youAreOfflineCannotUpload);
-    } /* else if (_selectedTypes.length == 0) {
-      StarfishSnackbar.showErrorMessage(
-          context, _appLocalizations.emptySelectType);
-    } else if (_selectedTopics.length == 0) {
-       StarfishSnackbar.showErrorMessage(
-           context, _appLocalizations.emptySelectTopic);
-     } */
-    else {
-      _addUpdateMaterial();
-    }
-  }
+class _PreviewOldFiles extends StatelessWidget {
+  const _PreviewOldFiles({Key? key, required this.files}) : super(key: key);
 
-  Future<bool> _isConnected() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    return connectivity == ConnectivityResult.wifi ||
-        connectivity == ConnectivityResult.mobile;
-  }
+  final List<HiveFile> files;
 
-  _addUpdateMaterial() async {
-    final bloc = Provider.of(context);
-
-    HiveMaterial _hiveMaterial;
-
-    if (_isEditMode) {
-      _hiveMaterial = widget.material!;
-
-      _hiveMaterial.id = widget.material?.id;
-      _hiveMaterial.creatorId = widget.material?.creatorId;
-      _hiveMaterial.status = widget.material?.status;
-
-      _hiveMaterial.isUpdated = true;
-    } else {
-      _hiveMaterial = HiveMaterial(
-        id: UuidGenerator.uuid(),
-        isNew: true,
-        creatorId: CurrentUserProvider().user.id,
-      );
-    }
-    _hiveMaterial.title = _titleController.text;
-    _hiveMaterial.url = _webLinkController.text;
-    _hiveMaterial.description = _descriptionController.text;
-    _hiveMaterial.languageIds =
-        _selectedLanguages.map((HiveLanguage language) => language.id).toList();
-    _hiveMaterial.typeIds =
-        _selectedTypes.map((HiveMaterialType type) => type.id).toList();
-    _hiveMaterial.topics =
-        _selectedTopics.map((HiveMaterialTopic topic) => topic.name).toList();
-    _hiveMaterial.visibility = _visibleTo != null
-        ? _visibleTo!.value.value
-        : Material_Visibility.GROUP_VIEW.value;
-    _hiveMaterial.editability = _editableBy != null
-        ? _editableBy!.value.value
-        : Material_Editability.CREATOR_EDIT.value;
-
-    // check if there is any file is added, if yes, store them in HiveFile box
-    List<HiveFile>? _files;
-    if (_selectedFiles.isNotEmpty) {
-      _files = _selectedFiles
-          .map((file) => HiveFile(
-                entityId: _hiveMaterial.id,
-                entityType: EntityType.MATERIAL.value,
-                filepath: file.path,
-                filename: file.path.split("/").last,
-              ))
-          .toList();
-    }
-    try {
-      await bloc.materialBloc
-          .createUpdateMaterial(_hiveMaterial, files: _files);
-      // Broadcast to sync the local changes with the server
-      // FBroadcast.instance().broadcast(
-      //   SyncService.kUpdateMaterial,
-      //   value: _hiveMaterial,
-      // );
-
-      bloc.materialBloc
-          .checkAndUpdateUserfollowedLangguages(_hiveMaterial.languageIds);
-      Alerts.showMessageBox(
-          context: context,
-          title: _appLocalizations.dialogInfo,
-          message: _isEditMode
-              ? _appLocalizations.updateMaterialSuccess
-              : _appLocalizations.addMaterialSuccess,
-          callback: () {
-            Navigator.of(context).pop();
-          });
-    } catch (error) {
-      print(error);
-      StarfishSnackbar.showErrorMessage(
-          context,
-          _isEditMode
-              ? _appLocalizations.updateMaterialFailed
-              : _appLocalizations.addMaterialFailed);
-    }
-  }
-
-  Widget _editHistoryContainer(HiveMaterial? material) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _historyItems(material!)!,
-      ),
-    );
-  }
-
-  List<Widget>? _historyItems(HiveMaterial material) {
-    final List<Widget> _widgetList = [];
-    final header = Text(
-      _appLocalizations.history,
-      style: TextStyle(
-        fontFamily: 'OpenSans',
-        fontWeight: FontWeight.bold,
-        fontSize: 21.5.sp,
-        color: Color(0xFF3475F0),
-      ),
-    );
-    _widgetList.add(header);
-
-    for (HiveEdit edit in material.editHistory ?? []) {
-      _widgetList.add(HistoryItem(
-        edit: edit,
-        type: _appLocalizations.material,
-      ));
+  @override
+  Widget build(BuildContext context) {
+    if (files.isEmpty) {
+      return const SizedBox();
     }
 
-    return _widgetList;
-  }
+    final imagePaths = <String>[];
 
-  Widget _previewFiles(HiveMaterial _hiveMaterial) {
-    if (_hiveMaterial.localFiles.length == 0) {
-      return Container();
-    }
-
-    final List<Widget> _widgetList = [];
-
-    for (HiveFile hiveFile in _hiveMaterial.localFiles) {
-      _widgetList.add(Container(
-        height: 30.h,
-        child: (hiveFile.filepath != null)
-            ? RichText(
-                textAlign: TextAlign.start,
-                text: TextSpan(
-                  //text: file.path.split("/").last,
-                  text: hiveFile.filename,
-                  style: TextStyle(
-                    color: AppColors.appTitle,
-                    fontFamily: 'OpenSans',
-                    fontSize: 19.sp,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              )
-            : RichText(
-                textAlign: TextAlign.start,
-                text: TextSpan(
-                  //text: file.path.split("/").last,
-                  text: hiveFile.filename,
-                  style: TextStyle(
-                    color: AppColors.appTitle,
-                    fontFamily: 'OpenSans',
-                    fontSize: 19.sp,
-                    decoration: TextDecoration.underline,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      try {
-                        await GeneralFunctions.openFile(hiveFile, context);
-                      } on NetworkUnavailableException {
-                        // TODO: show message to user
-                      }
-                    },
-                ),
-              ),
-      ));
-    }
-    final filepath = _hiveMaterial.localImageFilepath;
-    if (filepath != null) {
-      final imagePreview = Card(
-        margin: EdgeInsets.only(top: 10.h),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-          height: 150.h,
-          alignment: Alignment.center,
-          child: File(filepath).getImagePreview(
-            fit: BoxFit.fill,
-          ),
-        ),
-        elevation: 4,
-      );
-
-      _widgetList.add(imagePreview);
-      _widgetList.add(SizedBox(
-        height: 10.h,
-      ));
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: _widgetList,
-    );
-  }
-
-  Widget _previewSelectedFiles() {
-    final List<Widget> _widgetList = [];
-
-    for (final file in _selectedFiles) {
-      _widgetList.add(Container(
+    final widgetList = files.map<Widget>((hiveFile) {
+      final filepath = hiveFile.filepath;
+      if (filepath != null &&
+          const {'jpg', 'png'}
+              .contains(filepath.split("/").last.split(".").last)) {
+        imagePaths.add(filepath);
+      }
+      return Container(
         height: 30.h,
         child: RichText(
           textAlign: TextAlign.start,
           text: TextSpan(
-            text: file.path.split("/").last,
+            //text: file.path.split("/").last,
+            text: hiveFile.filename,
             style: TextStyle(
-              color: Color(0xFF3475F0),
+              color: AppColors.appTitle,
               fontFamily: 'OpenSans',
-              fontSize: 17.sp,
+              fontSize: 19.sp,
               decoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                openFile(file.path);
+              ..onTap = () async {
+                try {
+                  await GeneralFunctions.openFile(hiveFile, context);
+                } on NetworkUnavailableException {
+                  // TODO: show message to user
+                }
               },
           ),
         ),
-      ));
+      );
+    }).toList();
+
+    if (imagePaths.isNotEmpty) {
+      // Right now we only add the first image preview
+      widgetList
+        ..add(Card(
+          margin: EdgeInsets.only(top: 10.h),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            height: 150.h,
+            alignment: Alignment.center,
+            child: File(imagePaths[0]).getImagePreview(
+              fit: BoxFit.fill,
+            ),
+          ),
+          elevation: 4,
+        ))
+        ..add(SizedBox(
+          height: 10.h,
+        ));
     }
 
     return Column(
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: _widgetList,
+      children: widgetList,
     );
   }
+}
 
-  /*Future<File> _copyFileToDownloads(File _sourceFile) async {
-    Directory? _destination = await getDownloadsDirectory();
-    String _destinationPath =
-        _destination!.path + _sourceFile.path.split("/").last;
-    return _sourceFile.copy(_destinationPath);
-  }*/
+class _PreviewNewFiles extends StatelessWidget {
+  const _PreviewNewFiles({Key? key, required this.files}) : super(key: key);
 
-  _dismissFieldFocus() {
-    FocusScopeNode currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
+  final List<File> files;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: files
+          .map((file) => Container(
+                height: 30.h,
+                child: RichText(
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    text: file.path.split("/").last,
+                    style: TextStyle(
+                      color: Color(0xFF3475F0),
+                      fontFamily: 'OpenSans',
+                      fontSize: 17.sp,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        openFile(file.path);
+                      },
+                  ),
+                ),
+              ))
+          .toList(),
+    );
+  }
+}
+
+class EditHistory extends StatelessWidget {
+  const EditHistory({Key? key, required this.history}) : super(key: key);
+
+  final List<HiveEdit> history;
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            appLocalizations.history,
+            style: TextStyle(
+              fontFamily: 'OpenSans',
+              fontWeight: FontWeight.bold,
+              fontSize: 21.5.sp,
+              color: Color(0xFF3475F0),
+            ),
+          ),
+          ...history.map((edit) => HistoryItem(
+                edit: edit,
+                type: appLocalizations.material,
+              )),
+        ],
+      ),
+    );
   }
 }

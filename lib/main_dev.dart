@@ -11,7 +11,6 @@ import 'package:starfish/utils/helpers/general_functions.dart';
 import 'app.dart';
 import 'config/app_config.dart';
 import 'config/config_reader.dart';
-import 'db/hive_database.dart';
 
 const String _dsn =
     'https://47b741149b0a493b9823c47085d69e1c@o1167952.ingest.sentry.io/6259436';
@@ -23,7 +22,7 @@ void main() async {
     Firebase.initializeApp();
   }
 
-  await HiveDatabase().init();
+  await HiveApiInterface.init();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await ConfigReader.initialize();
   FlavorConfig(

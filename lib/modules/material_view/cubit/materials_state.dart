@@ -38,21 +38,21 @@ class MaterialsState {
 
     if (_selectedLanguages.isNotEmpty) {
       materials = materials.where((material) =>
-        (material.languageIds?.toSet().intersection(_selectedLanguages).length ?? 0) > 0
+        material.languageIds.toSet().intersection(_selectedLanguages).length > 0
       ).toList();
     }
 
     if (_selectedTopics.isNotEmpty) {
       materials = materials.where((material) =>
-        (material.topics?.toSet().intersection(_selectedTopics).length ?? 0) > 0
+        material.topicIds.toSet().intersection(_selectedTopics).length > 0
       ).toList();
     }
 
     if (_query.isNotEmpty) {
       final lowerCaseQuery = _query.toLowerCase();
       materials = materials.where((material) =>
-        (material.title?.toLowerCase().contains(lowerCaseQuery) ?? false)
-        || (material.description?.toLowerCase().contains(lowerCaseQuery) ?? false)
+        material.title.toLowerCase().contains(lowerCaseQuery)
+        || material.description.toLowerCase().contains(lowerCaseQuery)
       ).toList();
     }
 
@@ -97,7 +97,7 @@ class MaterialsState {
       case MaterialFilter.ASSIGNED_AND_COMPLETED:
         return material.status == ActionStatus.DONE;
       case MaterialFilter.ASSIGNED_AND_INCOMPLETED:
-        return material.status == ActionStatus.NOT_DONE;
+        return material.status == ActionStatus.NOT_DONE || material.status == ActionStatus.OVERDUE;
       case MaterialFilter.ASSIGNED_TO_GROUP_I_LEAD:
         return material.isAssignedToGroupWithLeaderRole;
       default:

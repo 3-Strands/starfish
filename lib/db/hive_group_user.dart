@@ -1,41 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:collection/collection.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_action_user.dart';
-import 'package:starfish/db/hive_date.dart';
-import 'package:starfish/db/hive_evaluation_category.dart';
-import 'package:starfish/db/hive_group_evaluation.dart';
-import 'package:starfish/db/hive_learner_evaluation.dart';
-import 'package:starfish/db/hive_teacher_response.dart';
-import 'package:starfish/db/hive_transformation.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/providers/action_provider.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/db/providers/evaluation_category_provider.dart';
-import 'package:starfish/db/providers/group_evaluation_provider.dart';
-import 'package:starfish/db/providers/learner_evaluation_provider.dart';
-import 'package:starfish/db/providers/teacher_response_provider.dart';
-import 'package:starfish/db/providers/transformation_provider.dart';
-import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/enums/action_user_status.dart';
-import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/repository/group_repository.dart';
-import 'package:starfish/repository/user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/date_time_utils.dart';
 
 part 'hive_group_user.g.dart';
 
 @HiveType(typeId: 3)
 class HiveGroupUser extends HiveObject {
   @HiveField(0)
-  String? groupId;
+  final String groupId;
   @HiveField(1)
-  String? userId;
+  final String userId;
   @HiveField(2)
-  int? role;
+  int role;
   @HiveField(3)
   bool isNew = false;
   @HiveField(4)
@@ -43,13 +21,13 @@ class HiveGroupUser extends HiveObject {
   @HiveField(5)
   bool isDirty = false;
   @HiveField(6)
-  String? profile;
+  String profile;
 
   HiveGroupUser({
-    this.groupId,
-    this.userId,
-    this.role,
-    this.profile,
+    required this.groupId,
+    required this.userId,
+    this.role = 0, // UNSPECIFIED
+    this.profile = '',
     this.isNew = false,
     this.isUpdated = false,
     this.isDirty = false,
@@ -66,21 +44,24 @@ class HiveGroupUser extends HiveObject {
   @override
   int get hashCode => userId.hashCode ^ groupId.hashCode;
 
-  HiveGroupUser.from(GroupUser group) {
-    this.groupId = group.groupId;
-    this.userId = group.userId;
-    this.role = group.role.value;
-    this.profile = group.profile;
-  }
+  HiveGroupUser.from(GroupUser group)
+      : groupId = group.groupId,
+        userId = group.userId,
+        role = group.role.value,
+        profile = group.profile;
 
   GroupUser toGroupUser() {
     return GroupUser(
-      userId: this.userId,
-      groupId: this.groupId,
-      role: GroupUser_Role.valueOf(this.role!),
-      profile: this.profile,
+      userId: userId,
+      groupId: groupId,
+      role: GroupUser_Role.valueOf(role),
+      profile: profile,
     );
   }
+
+  HiveUser get user => globalHiveApi.user.get(userId)!;
+
+  HiveGroup get group => globalHiveApi.group.get(groupId)!;
 
   // HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
   //   return this.transformations.firstWhereOrNull((element) {
@@ -162,9 +143,9 @@ class HiveGroupUser extends HiveObject {
   // }
 
   String toString() {
-    return '''{groupId: ${this.groupId}, userId: ${this.userId}, role: ${GroupUser_Role.valueOf(this.role!)},
-    profile: ${this.profile},  
-    isNew: ${this.isNew}, isUpdated: ${this.isUpdated}, isDirty: ${this.isDirty}}''';
+    return '''{groupId: $groupId, userId: $userId, role: ${GroupUser_Role.valueOf(role)},
+    profile: $profile,  
+    isNew: $isNew, isUpdated: $isUpdated, isDirty: $isDirty}''';
   }
 }
 

@@ -2,7 +2,9 @@ import 'dart:core';
 import 'package:collection/collection.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/db/hive_action.dart';
+import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
@@ -11,6 +13,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_learner_evaluation.dart';
 import 'package:starfish/db/hive_output.dart';
 import 'package:starfish/db/hive_output_marker.dart';
+import 'package:starfish/db/hive_syncable.dart';
 import 'package:starfish/db/providers/action_provider.dart';
 import 'package:starfish/db/providers/evaluation_category_provider.dart';
 import 'package:starfish/db/providers/group_provider.dart';
@@ -19,12 +22,14 @@ import 'package:starfish/db/providers/output_provider.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
+import 'hive_concrete.dart';
+
 part 'hive_group.g.dart';
 
 @HiveType(typeId: 12)
-class HiveGroup extends HiveObject {
+class HiveGroup extends HiveConcrete implements HiveSyncable<Group> {
   @HiveField(0)
-  String? id;
+  final String id;
   @HiveField(1)
   String? name;
   @HiveField(2)
@@ -34,15 +39,15 @@ class HiveGroup extends HiveObject {
   @HiveField(4)
   List<String>? languageIds;
   @HiveField(5)
-  List<HiveGroupUser>? users;
+  final HiveList<HiveGroupUser> users = HiveList(globalHiveApi.groupUser);
   @HiveField(6)
   List<String>? evaluationCategoryIds;
-  @HiveField(7)
-  List<HiveGroupAction>? actions;
+  // @HiveField(7)
+  // final List<HiveGroupAction> actions;
   @HiveField(8)
   int? status;
   @HiveField(9)
-  List<HiveOutputMarker>? outputMarkers;
+  final List<HiveOutputMarker> outputMarkers;
   @HiveField(10)
   List<HiveEdit>? editHistory;
   @HiveField(11)
@@ -57,16 +62,15 @@ class HiveGroup extends HiveObject {
   Map<String, String> languages = Map();
 
   HiveGroup({
-    this.id,
+    required this.id,
     this.name,
     this.description,
     this.linkEmail,
     this.languageIds,
-    this.users,
     this.evaluationCategoryIds,
-    this.actions,
+    // this.actions = const [],
     this.status = 0, // Group_Status.ACTIVE,
-    this.outputMarkers,
+    this.outputMarkers = const [],
     this.editHistory,
     this.isNew = false,
     this.isUpdated = false,
@@ -74,19 +78,19 @@ class HiveGroup extends HiveObject {
     this.isMe = false,
   });
 
-  HiveGroup.from(Group group) {
-    this.id = group.id;
+  HiveGroup.from(Group group) :
+      id = group.id,
+      outputMarkers = group.outputMarkers
+        .map(HiveOutputMarker.from)
+        .toList() {
     this.name = group.name;
     this.description = group.description;
     this.linkEmail = group.linkEmail;
     this.languageIds = group.languageIds;
-    this.users =
-        group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
+    // this.users =
+    //     group.users.map((GroupUser user) => HiveGroupUser.from(user)).toList();
     this.evaluationCategoryIds = group.evaluationCategoryIds;
     this.status = group.status.value;
-    this.outputMarkers = group.outputMarkers
-        .map((OutputMarker outputMarker) => HiveOutputMarker.from(outputMarker))
-        .toList();
     // this.actions = group.actions
     //     .map((GroupAction action) => HiveGroupAction.from(action))
     //     .toList();
@@ -95,18 +99,14 @@ class HiveGroup extends HiveObject {
     this.languages = group.languages;
   }
 
-  Group toGroup() {
-    return Group(
-        id: this.id,
-        name: this.name,
-        description: this.description,
-        linkEmail: this.linkEmail,
-        languageIds: this.languageIds,
-        //users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
-        evaluationCategoryIds: this.evaluationCategoryIds,
-        // actions:
-        //     this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
-        status: Group_Status.valueOf(this.status ?? 0));
+  static void populateBox(Group group) {
+    final hiveGroup = HiveGroup.from(group);
+    globalHiveApi.group.put(hiveGroup.key, hiveGroup);
+    for (final groupUser in group.users) {
+      final hiveGroupUser = HiveGroupUser.from(groupUser);
+      globalHiveApi.groupUser.put(hiveGroupUser.key, hiveGroupUser);
+      hiveGroup.users.add(hiveGroupUser);
+    }
   }
 
   GroupUser_Role? currentUserRole;
@@ -117,6 +117,22 @@ class HiveGroup extends HiveObject {
 
   GroupUser_Role? get userRole {
     return currentUserRole;
+  }
+
+  @override
+  Group toGrpcCompatible() {
+    return Group(
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      linkEmail: this.linkEmail,
+      languageIds: this.languageIds,
+      //users: this.users?.map((HiveGroupUser user) => user.toGroupUser()),
+      evaluationCategoryIds: this.evaluationCategoryIds,
+      // actions:
+      //     this.actions?.map((HiveGroupAction action) => action.toGroupAction()),
+      status: Group_Status.valueOf(this.status ?? 0),
+    );
   }
 
   // HiveGroupUser? get admin {

@@ -17,16 +17,14 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return HiveGroup(
-      id: fields[0] as String?,
+      id: fields[0] as String,
       name: fields[1] as String?,
       description: fields[2] as String?,
       linkEmail: fields[3] as String?,
       languageIds: (fields[4] as List?)?.cast<String>(),
-      users: (fields[5] as List?)?.cast<HiveGroupUser>(),
       evaluationCategoryIds: (fields[6] as List?)?.cast<String>(),
-      actions: (fields[7] as List?)?.cast<HiveGroupAction>(),
       status: fields[8] as int?,
-      outputMarkers: (fields[9] as List?)?.cast<HiveOutputMarker>(),
+      outputMarkers: (fields[9] as List).cast<HiveOutputMarker>(),
       editHistory: (fields[10] as List?)?.cast<HiveEdit>(),
       isNew: fields[11] as bool,
       isUpdated: fields[12] as bool,
@@ -38,7 +36,7 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
   @override
   void write(BinaryWriter writer, HiveGroup obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,8 +51,6 @@ class HiveGroupAdapter extends TypeAdapter<HiveGroup> {
       ..write(obj.users)
       ..writeByte(6)
       ..write(obj.evaluationCategoryIds)
-      ..writeByte(7)
-      ..write(obj.actions)
       ..writeByte(8)
       ..write(obj.status)
       ..writeByte(9)

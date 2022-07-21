@@ -34,7 +34,7 @@ class ResultsBloc extends Object {
   static final ResultsBloc _singleton = ResultsBloc._internal();
 
   ResultsBloc._internal() {
-    hiveDate = DateTimeUtils.toHiveDate(DateTime.now()).toMonth;
+    hiveDate = HiveDate.fromDateTime(DateTime.now()).toMonth;
     hivePreviousDate = hiveDate?.previousMonth;
   }
 
@@ -164,7 +164,7 @@ class ResultsBloc extends Object {
       return [];
     }
     List<HiveDate> _listMonth = [];
-    HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
+    HiveDate _currentMonth = HiveDate.fromDateTime(DateTime.now());
     _currentMonth.day = 0;
     LearnerEvaluationProvider()
         .getGroupUserLearnerEvaluations(

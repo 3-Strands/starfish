@@ -17,18 +17,18 @@ class HiveActionAdapter extends TypeAdapter<HiveAction> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return HiveAction(
-      id: fields[0] as String?,
-      type: fields[1] as int?,
-      name: fields[2] as String?,
-      creatorId: fields[3] as String?,
-      groupId: fields[4] as String?,
-      instructions: fields[5] as String?,
-      materialId: fields[6] as String?,
-      question: fields[7] as String?,
-      dateDue: fields[8] as HiveDate?,
+      id: fields[0] as String,
+      type: fields[1] as int,
+      name: fields[2] as String,
+      creatorId: fields[3] as String,
+      groupId: fields[4] as String,
+      instructions: fields[5] as String,
+      materialId: fields[6] as String,
+      question: fields[7] as String,
+      dateDue: fields[8] as HiveDate,
       createdDate: fields[13] as HiveDate?,
+      editHistory: (fields[9] as List).cast<HiveEdit>(),
     )
-      ..editHistory = (fields[9] as List?)?.cast<HiveEdit>()
       ..isNew = fields[10] as bool
       ..isUpdated = fields[11] as bool
       ..isDirty = fields[12] as bool;

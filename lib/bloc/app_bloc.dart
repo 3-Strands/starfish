@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:meta/meta.dart';
 import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
@@ -44,5 +45,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       print(stackTrace);
       add(AppInitialized(initialLocale: 'en'));
     }
+  }
+
+  @override
+  void onChange(Change<AppState> change) {
+    super.onChange(change);
+
   }
 }

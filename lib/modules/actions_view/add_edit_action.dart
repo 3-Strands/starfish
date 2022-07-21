@@ -643,7 +643,7 @@ class _AddEditActionState extends State<AddEditAction>
       _hiveAction = HiveAction(
         id: UuidGenerator.uuid(),
       );
-      _hiveAction.createdDate = DateTimeUtils.toHiveDate(DateTime.now());
+      _hiveAction.createdDate = HiveDate.fromDateTime(DateTime.now());
       _hiveAction.isNew = true;
     }
 
@@ -658,7 +658,7 @@ class _AddEditActionState extends State<AddEditAction>
     _hiveAction.instructions = _instructions;
     _hiveAction.question = _question;
     _hiveAction.dateDue =
-        _dueDate != null ? DateTimeUtils.toHiveDate(_dueDate!) : null;
+        _dueDate != null ? HiveDate.fromDateTime(_dueDate!) : null;
 
     bloc.actionBloc.createUpdateAction(_hiveAction).then((value) {
       // Broadcast to sync the local changes with the server

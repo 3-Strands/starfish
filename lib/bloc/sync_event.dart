@@ -17,14 +17,6 @@ class CountriesAndLanguagesRequested extends SyncEvent {
   const CountriesAndLanguagesRequested();
 }
 
-class SyncAll extends SyncEvent {
-  const SyncAll();
-}
-
-class SyncToRemote extends SyncEvent {
-  const SyncToRemote();
-}
-
-class ScheduleSyncToRemote extends SyncEvent {
-  const ScheduleSyncToRemote();
+class SyncAllRequested extends SyncEvent {
+  const SyncAllRequested();
 }

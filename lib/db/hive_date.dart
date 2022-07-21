@@ -5,30 +5,32 @@ import 'package:starfish/utils/date_time_utils.dart';
 part 'hive_date.g.dart';
 
 @HiveType(typeId: 7)
-class HiveDate extends Comparable {
+class HiveDate implements Comparable {
   @HiveField(0)
-  late int year;
+  final int year;
   @HiveField(1)
-  late int month;
+  final int month;
   @HiveField(2)
-  late int day;
+  final int day;
 
-  HiveDate();
+  const HiveDate({required this.year, required this.month, required this.day});
 
-  HiveDate.from(Date date) {
-    this.year = date.year;
-    this.month = date.month;
-    this.day = date.day;
-  }
+  static const none = const HiveDate(year: 0, month: 0, day: 0);
 
-  HiveDate.create(int year, int month, int day) {
-    this.year = year;
-    this.month = month;
-    this.day = day;
-  }
+  HiveDate.from(Date date) :
+    year = date.year,
+    month = date.month,
+    day = date.day;
+
+  HiveDate.fromDateTime(DateTime dateTime) :
+    year = dateTime.year,
+    month = dateTime.month,
+    day = dateTime.day;
+
+  HiveDate.create(this.year, this.month, this.day);
 
   Date toDate() {
-    return Date(year: this.year, month: this.month, day: this.day);
+    return Date(year: year, month: month, day: day);
   }
 
   @override
@@ -43,25 +45,31 @@ class HiveDate extends Comparable {
   @override
   int get hashCode => year.hashCode ^ month.hashCode ^ day.hashCode;
 
+  /// Gets a number representation of this date for comparison purposes.
+  /// Years are weighted more than months, which are weighted more than days.
+  int get _numberRepresentation => day + month * 100 + year * 1000;
+
   @override
   int compareTo(other) {
-    if (year == other.year && month == other.month && day == other.day) {
-      return 0;
-    } else if (year > other.year ||
-        (year == other.year && month > other.month) ||
-        (year == other.year && month == other.month && day > other.day)) {
-      return 1;
-    } else {
-      return -1;
+    if (other is HiveDate) {
+      return _numberRepresentation.compareTo(other._numberRepresentation);
+      // if (year == other.year && month == other.month && day == other.day) {
+      //   return 0;
+      // } else if (year > other.year ||
+      //     (year == other.year && month > other.month) ||
+      //     (year == other.year && month == other.month && day > other.day)) {
+      //   return 1;
+      // } else {
+      //   return -1;
+      // }
     }
+    throw TypeError();
   }
 
   String toString() {
     return '{ year: ${this.year}, month: ${this.month}, day: ${this.day} }';
   }
-}
 
-extension HiveDateExt on HiveDate {
   DateTime toDateTime() {
     String dateString = '${this.day}-${this.month}-${this.year}';
     return DateTimeUtils.toDateTime(dateString, 'dd-MM-yyyy');

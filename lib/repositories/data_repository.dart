@@ -7,6 +7,7 @@ import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_material_topic.dart';
+import 'package:starfish/db/hive_material_type.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -16,23 +17,33 @@ extension AsList<T> on Box<T> {
 
 class DataRepository {
   DataRepository({
-    HiveApi? hiveApi,
-  }) : _hiveApi = hiveApi ?? HiveApi();
+    HiveApiInterface hiveApi = globalHiveApi,
+  }) : _hiveApi = hiveApi;
 
-  final HiveApi _hiveApi;
+  final HiveApiInterface _hiveApi;
 
-  Stream<List<T>> _streamBox<T>(Box<T> box) => box.watch().map((_) => box.asList());
+  Stream<List<T>> _streamBox<T>(Box<T> box) =>
+      box.watch().map((_) => box.asList());
 
   // ------------------- Materials -------------------
 
   Stream<List<HiveMaterial>> get materials => _streamBox(_hiveApi.material);
   List<HiveMaterial> get currentMaterials => _hiveApi.material.asList();
 
-  Stream<List<HiveMaterialTopic>> get materialTopics => _streamBox(_hiveApi.materialTopic);
+  Stream<List<HiveMaterialTopic>> get materialTopics =>
+      _streamBox(_hiveApi.materialTopic);
+  List<HiveMaterialTopic> get currentMaterialTopics =>
+      _hiveApi.materialTopic.asList();
+
+  Stream<List<HiveMaterialType>> get materialTypes =>
+      _streamBox(_hiveApi.materialType);
+  List<HiveMaterialType> get currentMaterialTypes =>
+      _hiveApi.materialType.asList();
 
   void updateMaterial(HiveMaterial material, {required List<HiveFile> files}) {
     throw UnimplementedError();
   }
+
   void deleteMaterial(HiveMaterial material) {
     throw UnimplementedError();
   }
@@ -70,7 +81,7 @@ class DataRepository {
     final materialsAssignedToGroupWithLeaderRole = <String>{};
     for (final action in getMyActions()) {
       final materialId = action.materialId;
-      if (materialId != null) {
+      if (materialId.isNotEmpty) {
         if (action.isIndividualAction) {
           materialsAssignedToMe[materialId] = action.actionStatus;
         } else {
@@ -78,7 +89,8 @@ class DataRepository {
         }
       }
     }
-    return RelatedMaterials(materialsAssignedToMe, materialsAssignedToGroupWithLeaderRole);
+    return RelatedMaterials(
+        materialsAssignedToMe, materialsAssignedToGroupWithLeaderRole);
   }
 
   // bool isMaterialAssignedToMe(HiveMaterial material) =>
@@ -118,7 +130,8 @@ class DataRepository {
 }
 
 class RelatedMaterials {
-  RelatedMaterials(this.materialsAssignedToMe, this.materialsAssignedToGroupWithLeaderRole);
+  RelatedMaterials(
+      this.materialsAssignedToMe, this.materialsAssignedToGroupWithLeaderRole);
 
   final Map<String, ActionStatus> materialsAssignedToMe;
   final Set<String> materialsAssignedToGroupWithLeaderRole;

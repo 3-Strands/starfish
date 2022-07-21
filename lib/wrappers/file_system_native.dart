@@ -30,7 +30,7 @@ Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
       for (final hiveFile in hiveFiles) {
         final file = io.File(hiveFile.filepath!);
         final metaData = FileMetaData(
-          entityId: hiveFile.entityId!,
+          entityId: hiveFile.entityId,
           filename: hiveFile.filename,
           entityType: EntityType.MATERIAL,
         );

@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
@@ -27,25 +28,25 @@ part 'hive_action.g.dart';
 @HiveType(typeId: 4)
 class HiveAction extends HiveConcrete implements HiveSyncable<Action> {
   @HiveField(0)
-  String? id;
+  final String id;
   @HiveField(1)
-  int? type;
+  final int type;
   @HiveField(2)
-  String? name;
+  final String name;
   @HiveField(3)
-  String? creatorId;
+  final String creatorId;
   @HiveField(4)
-  String? groupId;
+  final String groupId;
   @HiveField(5)
-  String? instructions;
+  final String instructions;
   @HiveField(6)
-  String? materialId;
+  final String materialId;
   @HiveField(7)
-  String? question;
+  final String question;
   @HiveField(8)
-  HiveDate? dateDue;
+  final HiveDate dateDue;
   @HiveField(9)
-  List<HiveEdit>? editHistory;
+  List<HiveEdit> editHistory;
   @HiveField(10)
   bool isNew = false;
   @HiveField(11)
@@ -55,53 +56,58 @@ class HiveAction extends HiveConcrete implements HiveSyncable<Action> {
   @HiveField(13)
   HiveDate? createdDate;
 
-  HiveAction(
-      {this.id,
-      this.type,
-      this.name,
-      this.creatorId,
-      this.groupId,
-      this.instructions,
-      this.materialId,
-      this.question,
-      this.dateDue,
-      this.createdDate});
+  HiveAction({
+    required this.id,
+    required this.type,
+    required this.name,
+    required this.creatorId,
+    this.groupId = '',
+    this.instructions = '',
+    this.materialId = '',
+    this.question = '',
+    this.dateDue = HiveDate.none,
+    this.createdDate,
+    this.editHistory = const [],
+  });
 
-  HiveAction.from(Action action) {
-    this.id = action.id;
-    this.type = action.type.value;
-    this.name = action.name;
-    this.creatorId = action.creatorId;
-    this.groupId = action.groupId;
-    this.instructions = action.instructions;
-    this.materialId = action.materialId;
-    this.question = action.question;
-    this.dateDue = HiveDate.from(action.dateDue);
-    this.editHistory =
-        action.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
+  HiveAction.from(Action action)
+      : id = action.id,
+        type = action.type.value,
+        name = action.name,
+        creatorId = action.creatorId,
+        groupId = action.groupId,
+        instructions = action.instructions,
+        materialId = action.materialId,
+        question = action.question,
+        dateDue = HiveDate.from(action.dateDue),
+        editHistory = action.editHistory.map(HiveEdit.from).toList();
+
+  static void populateBox(Action action) {
+    final hiveAction = HiveAction.from(action);
+    globalHiveApi.action.put(hiveAction.key, hiveAction);
   }
 
   bool isDueInMonth(HiveDate hiveDate) {
-    if (dateDue == null) {
-      return false;
-    }
-    return dateDue!.year == hiveDate.year && dateDue!.month == hiveDate.month;
+    return dateDue.year == hiveDate.year && dateDue.month == hiveDate.month;
   }
 
   bool dueDateIsOrAfterMonth(HiveDate hiveDate) {
-    if (dateDue == null) {
-      return false;
-    }
-    return dateDue!.year >= hiveDate.year &&
-        dateDue!.month >= hiveDate.month &&
-        createdOn!.year <= hiveDate.year &&
-        createdOn!.month <= hiveDate.month;
+    return dateDue.year >= hiveDate.year &&
+        dateDue.month >= hiveDate.month &&
+        createdOn.year <= hiveDate.year &&
+        createdOn.month <= hiveDate.month;
   }
+
+  HiveGroup? get group =>
+      groupId.isNotEmpty ? globalHiveApi.group.get(groupId) : null;
+
+  HiveMaterial? get material =>
+      materialId.isNotEmpty ? globalHiveApi.material.get(materialId) : null;
 
   String toString() {
     return '''{id: ${this.id}, name: ${this.name}, type: ${this.type}, 
-    creatorId: ${this.creatorId?.toString()}, groupId: ${this.groupId?.toString()}, 
-    instructions: ${this.instructions?.toString()}, materialId: ${this.materialId?.toString()}, 
+    creatorId: ${this.creatorId.toString()}, groupId: ${this.groupId.toString()}, 
+    instructions: ${this.instructions.toString()}, materialId: ${this.materialId.toString()}, 
     question: ${this.question}, dateDue: ${this.dateDue}, isIndividualAction: ${this.isIndividualAction}
     group: ${this.group}, actionStatus: ${this.actionStatus}, material: ${this.material}, createdDate: ${this.createdDate} }''';
   }
@@ -110,45 +116,39 @@ class HiveAction extends HiveConcrete implements HiveSyncable<Action> {
   Action toGrpcCompatible() {
     return Action(
       id: this.id,
-      type: Action_Type.valueOf(this.type!),
+      type: Action_Type.valueOf(this.type),
       name: this.name,
       creatorId: this.creatorId,
       groupId: this.groupId,
       instructions: this.instructions,
       materialId: this.materialId,
       question: this.question,
-      dateDue: this.dateDue!.toDate(),
+      dateDue: this.dateDue.toDate(),
     );
   }
 }
 
 extension HiveActionExt on HiveAction {
   bool get hasValidDueDate {
-    return this.dateDue!.year != 0 &&
-        this.dateDue!.month != 0 &&
-        this.dateDue!.day != 0;
+    return this.dateDue.year != 0 &&
+        this.dateDue.month != 0 &&
+        this.dateDue.day != 0;
   }
 
-  HiveDate? get createdOn {
-    if (editHistory == null) {
-      return createdDate;
-    } else {
-      HiveEdit? _edit = editHistory?.firstWhereOrNull((HiveEdit element) =>
-          Edit_Event.valueOf(element.event!) == Edit_Event.CREATE);
+  HiveDate get createdOn {
+    HiveEdit? _edit = editHistory.firstWhereOrNull((HiveEdit element) =>
+        Edit_Event.valueOf(element.event!) == Edit_Event.CREATE);
 
-      return _edit != null ? DateTimeUtils.toHiveDate(_edit.time!) : null;
-    }
+    return _edit != null ? HiveDate.fromDateTime(_edit.time!) : createdDate!;
   }
 
   HiveMaterial? get material {
-    return this.materialId != null
-        ? MaterialProvider().getMaterialById(this.materialId!)
-        : null;
+    return MaterialProvider().getMaterialById(this.materialId);
   }
 
   HiveGroup? get group {
     return this.groupId != null
-        ? GroupProvider().getGroupById(this.groupId!)
+        ? GroupProvider().getGroupById(this.groupId)
         : null;
   }
 
@@ -200,7 +200,7 @@ extension HiveActionExt on HiveAction {
   // }
 
   bool get isIndividualAction {
-    return groupId?.isEmpty ?? true;
+    return groupId.isEmpty;
   }
 
   // int memberCountByActionStatus(ActionStatus actionStatus) {
@@ -258,9 +258,9 @@ extension HiveActionExt on HiveAction {
       return ActionStatus.NOT_DONE;
     } else if (this.dateDue != null &&
         this
-            .dateDue!
+            .dateDue
             .toDateTime()
-            .isBefore(DateTimeUtils.toHiveDate(DateTime.now()).toDateTime())) {
+            .isBefore(HiveDate.fromDateTime(DateTime.now()).toDateTime())) {
       return ActionStatus.OVERDUE;
     } else {
       return ActionStatus.NOT_DONE;

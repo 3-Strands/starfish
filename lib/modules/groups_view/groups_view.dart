@@ -26,6 +26,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'group_users_list.dart';
+
 class GroupsScreen extends StatefulWidget {
   GroupsScreen({Key? key, this.title = ''}) : super(key: key);
 
@@ -36,12 +38,7 @@ class GroupsScreen extends StatefulWidget {
 }
 
 class _GroupsScreenState extends State<GroupsScreen> {
-  late DataBloc bloc;
-  late AppLocalizations _appLocalizations;
-
-  final Key _groupFocusDetectorKey = UniqueKey();
-
-  bool _isInitialized = false;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -71,89 +68,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
           );
         });
       },
-    );
-  }
-
-  Widget _buildUsersList(List<HiveGroupUser> users) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          final user = users[index];
-          return Container(
-            height: 96.h,
-            width: MediaQuery.of(context).size.width - 10.0,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        user.name,
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: AppColors.appTitle,
-                          fontFamily: 'OpenSans',
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 10.w),
-                      child: Text(
-                        user.isActive
-                            ? GroupUser_Role.valueOf(user.role!)!.about
-                            : user.isInvited
-                                ? "${GroupUser_Role.valueOf(user.role!)!.about} " +
-                                    _appLocalizations.userStatusInvited
-                                        .toUpperCase()
-                                : '',
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: AppColors.appTitle,
-                          fontFamily: 'OpenSans',
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Align(
-                  alignment: FractionalOffset.topLeft,
-                  child: Text(
-                    '${user.phoneWithDialingCode}',
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: AppColors.appTitle,
-                      fontFamily: 'OpenSans',
-                      fontSize: 19.sp,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                SepratorLine(
-                  hight: 1.h,
-                  edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-                ),
-                SizedBox(
-                  height: 10.h,
-                )
-              ],
-            ),
-          );
-        },
-      ),
     );
   }
 
@@ -193,7 +107,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   SizedBox(
                     height: 36.h,
                   ),
-                  _buildUsersList(group.activeUsers!),
+                  Expanded(
+                    child: GroupUsersList(users: group.activeUsers!),
+                  ),
                   SizedBox(
                     height: 20.h,
                   ),
@@ -227,7 +143,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   backgroundColor: MaterialStateProperty.all<Color>(
                       AppColors.selectedButtonBG),
                 ),
-                child: Text(_appLocalizations.close),
+                child: Text(appLocalizations.close),
               ),
             ),
           ),
@@ -236,233 +152,210 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  _fetchAllGroupsByRole(DataBloc bloc) async {
-    bloc.groupBloc.fetchAllGroupsByRole();
-  }
-
   @override
   Widget build(BuildContext context) {
-    _appLocalizations = AppLocalizations.of(context)!;
+    appLocalizations = AppLocalizations.of(context)!;
 
-    if (!_isInitialized) {
-      bloc = Provider.of(context);
-      _isInitialized = true;
-    }
-
-    return FocusDetector(
-      key: _groupFocusDetectorKey,
-      onFocusGained: () {
-        _fetchAllGroupsByRole(bloc);
-      },
-      onFocusLost: () {},
-      child: Scaffold(
-        backgroundColor: AppColors.groupScreenBG,
-        appBar: AppBar(
-          title: Container(
-            height: 64.h,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                AppLogo(hight: 36.h, width: 37.w),
-                Text(
-                  _appLocalizations.groupsTabItemText,
-                  style: dashboardNavigationTitle,
-                ),
-                IconButton(
-                  icon: SvgPicture.asset(AssetsPath.settings),
-                  onPressed: () {
-                    setState(
-                      () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.settings,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          backgroundColor: AppColors.groupScreenBG,
-          elevation: 0.0,
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: Column(
-            children: [
-              Expanded(
-                child: Scrollbar(
-                  thickness: 5.sp,
-                  isAlwaysShown: false,
-                  child: SingleChildScrollView(
-                    physics: ScrollPhysics(),
-                    child: Column(
-                      children: <Widget>[
-                        SearchBar(
-                          initialValue: bloc.groupBloc.query,
-                          onValueChanged: (value) {
-                            setState(() {
-                              bloc.groupBloc.query = value;
-                              _fetchAllGroupsByRole(bloc);
-                            });
-                          },
-                          onDone: (value) {
-                            setState(() {
-                              bloc.groupBloc.query = value;
-                              _fetchAllGroupsByRole(bloc);
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Container(
-                          height: 60.h,
-                          // width: 345.w,
-                          margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.txtFieldBackground,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: DropdownButtonHideUnderline(
-                              child: ButtonTheme(
-                                alignedDropdown: true,
-                                child: DropdownButton2<UserGroupRoleFilter>(
-                                  offset: Offset(0, -10),
-                                  dropdownMaxHeight: 350.h,
-                                  isExpanded: true,
-                                  iconSize: 35,
-                                  style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 19.sp,
-                                    fontFamily: 'OpenSans',
-                                  ),
-                                  value: bloc.groupBloc.groupRoleFilter,
-                                  onChanged: (UserGroupRoleFilter? value) {
-                                    setState(() {
-                                      bloc.groupBloc.groupRoleFilter = value!;
-                                      _fetchAllGroupsByRole(bloc);
-                                    });
-                                  },
-                                  items: UserGroupRoleFilter.values.map<
-                                          DropdownMenuItem<
-                                              UserGroupRoleFilter>>(
-                                      (UserGroupRoleFilter value) {
-                                    return DropdownMenuItem<
-                                        UserGroupRoleFilter>(
-                                      value: value,
-                                      child: Text(
-                                        value.filterLabel,
-                                        style: TextStyle(
-                                          color: Color(0xFF434141),
-                                          fontSize: 17.sp,
-                                          fontFamily: 'OpenSans',
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        StreamBuilder(
-                          stream: bloc.groupBloc.groups,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<
-                                      Map<UserGroupRoleFilter, List<HiveGroup>>>
-                                  snapshot) {
-                            if (snapshot.hasData) {
-                              return GroupListView(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                padding: EdgeInsets.only(
-                                    left: 10.0.w, right: 10.0.w),
-                                sectionsCount:
-                                    snapshot.data!.keys.toList().length,
-                                countOfItemInSection: (int section) {
-                                  return snapshot.data!.values
-                                      .toList()[section]
-                                      .length;
-                                },
-                                itemBuilder: (BuildContext context,
-                                    IndexPath indexPath) {
-                                  return GroupListItem(
-                                    group: snapshot.data!.values
-                                            .toList()[indexPath.section]
-                                        [indexPath.index],
-                                    onGroupTap: _onGroupSelection,
-                                    onLeaveGroupTap: (HiveGroup group) {
-                                      Alerts.showMessageBox(
-                                          context: context,
-                                          title: _appLocalizations.dialogAlert,
-                                          message: _appLocalizations
-                                              .alertLeaveThisGroup,
-                                          negativeButtonText:
-                                              _appLocalizations.cancel,
-                                          positiveButtonText:
-                                              _appLocalizations.leave,
-                                          negativeActionCallback: () {},
-                                          positiveActionCallback: () {
-                                            bloc.groupBloc.leaveGroup(
-                                              group,
-                                            );
-                                          });
-                                    },
-                                  );
-                                },
-                                groupHeaderBuilder:
-                                    (BuildContext context, int section) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10.w, vertical: 8.h),
-                                    child: Text(
-                                      '${snapshot.data!.keys.toList()[section].about}',
-                                      style: TextStyle(
-                                          fontSize: 19.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF434141)),
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(height: 10),
-                                sectionSeparatorBuilder: (context, section) =>
-                                    SizedBox(height: 10),
-                              );
-                            } else {
-                              return Container(
-                                color: AppColors.groupScreenBG,
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+    return Scaffold(
+      backgroundColor: AppColors.groupScreenBG,
+      appBar: AppBar(
+        title: Container(
+          height: 64.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              AppLogo(hight: 36.h, width: 37.w),
+              Text(
+                appLocalizations.groupsTabItemText,
+                style: dashboardNavigationTitle,
               ),
-              LastSyncBottomWidget()
+              IconButton(
+                icon: SvgPicture.asset(AssetsPath.settings),
+                onPressed: () {
+                  setState(
+                    () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.settings,
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(Routes.createNewGroup).then(
-                (value) =>
-                    FocusScope.of(context).requestFocus(new FocusNode()));
-          },
-          child: Icon(Icons.add),
-        ),
+        backgroundColor: AppColors.groupScreenBG,
+        elevation: 0.0,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Scrollbar(
+              thickness: 5.sp,
+              isAlwaysShown: false,
+              child: SingleChildScrollView(
+                physics: ScrollPhysics(),
+                child: Column(
+                  children: <Widget>[
+                    SearchBar(
+                      initialValue: bloc.groupBloc.query,
+                      onValueChanged: (value) {
+                        setState(() {
+                          bloc.groupBloc.query = value;
+                          _fetchAllGroupsByRole(bloc);
+                        });
+                      },
+                      onDone: (value) {
+                        setState(() {
+                          bloc.groupBloc.query = value;
+                          _fetchAllGroupsByRole(bloc);
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Container(
+                      height: 60.h,
+                      // width: 345.w,
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: Center(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton2<UserGroupRoleFilter>(
+                              offset: Offset(0, -10),
+                              dropdownMaxHeight: 350.h,
+                              isExpanded: true,
+                              iconSize: 35,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              value: bloc.groupBloc.groupRoleFilter,
+                              onChanged: (UserGroupRoleFilter? value) {
+                                setState(() {
+                                  bloc.groupBloc.groupRoleFilter = value!;
+                                  _fetchAllGroupsByRole(bloc);
+                                });
+                              },
+                              items: UserGroupRoleFilter.values.map<
+                                      DropdownMenuItem<
+                                          UserGroupRoleFilter>>(
+                                  (UserGroupRoleFilter value) {
+                                return DropdownMenuItem<
+                                    UserGroupRoleFilter>(
+                                  value: value,
+                                  child: Text(
+                                    value.filterLabel,
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 17.sp,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    StreamBuilder(
+                      stream: bloc.groupBloc.groups,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<
+                                  Map<UserGroupRoleFilter, List<HiveGroup>>>
+                              snapshot) {
+                        if (snapshot.hasData) {
+                          return GroupListView(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            padding: EdgeInsets.only(
+                                left: 10.0.w, right: 10.0.w),
+                            sectionsCount:
+                                snapshot.data!.keys.toList().length,
+                            countOfItemInSection: (int section) {
+                              return snapshot.data!.values
+                                  .toList()[section]
+                                  .length;
+                            },
+                            itemBuilder: (BuildContext context,
+                                IndexPath indexPath) {
+                              return GroupListItem(
+                                group: snapshot.data!.values
+                                        .toList()[indexPath.section]
+                                    [indexPath.index],
+                                onGroupTap: _onGroupSelection,
+                                onLeaveGroupTap: (HiveGroup group) {
+                                  Alerts.showMessageBox(
+                                      context: context,
+                                      title: appLocalizations.dialogAlert,
+                                      message: appLocalizations
+                                          .alertLeaveThisGroup,
+                                      negativeButtonText:
+                                          appLocalizations.cancel,
+                                      positiveButtonText:
+                                          appLocalizations.leave,
+                                      negativeActionCallback: () {},
+                                      positiveActionCallback: () {
+                                        bloc.groupBloc.leaveGroup(
+                                          group,
+                                        );
+                                      });
+                                },
+                              );
+                            },
+                            groupHeaderBuilder:
+                                (BuildContext context, int section) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10.w, vertical: 8.h),
+                                child: Text(
+                                  '${snapshot.data!.keys.toList()[section].about}',
+                                  style: TextStyle(
+                                      fontSize: 19.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF434141)),
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 10),
+                            sectionSeparatorBuilder: (context, section) =>
+                                SizedBox(height: 10),
+                          );
+                        } else {
+                          return Container(
+                            color: AppColors.groupScreenBG,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const LastSyncBottomWidget(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(Routes.createNewGroup);
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

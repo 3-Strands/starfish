@@ -61,8 +61,7 @@ class TransformationProvider {
   List<HiveFile> getFiles() {
     return _fileBox.values
         .where((element) =>
-            EntityType.valueOf(element.entityType!) ==
-            EntityType.TRANSFORMATION)
+            EntityType.valueOf(element.entityType) == EntityType.TRANSFORMATION)
         .toList();
   }
 }

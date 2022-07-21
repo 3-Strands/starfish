@@ -16,10 +16,11 @@ class HiveDateAdapter extends TypeAdapter<HiveDate> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HiveDate()
-      ..year = fields[0] as int
-      ..month = fields[1] as int
-      ..day = fields[2] as int;
+    return HiveDate(
+      year: fields[0] as int,
+      month: fields[1] as int,
+      day: fields[2] as int,
+    );
   }
 
   @override

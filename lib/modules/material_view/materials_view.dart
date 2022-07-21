@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
-import 'package:starfish/modules/material_view/action_view.dart';
+import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/single_material_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
@@ -32,19 +32,20 @@ import 'cubit/materials_cubit.dart';
 // import 'package:starfish/wrappers/file_system.dart';
 
 class Materials extends StatelessWidget {
-  const Materials({ Key? key }) : super(key: key);
+  const Materials({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MaterialsCubit(RepositoryProvider.of<DataRepository>(context)),
+      create: (context) =>
+          MaterialsCubit(RepositoryProvider.of<DataRepository>(context)),
       child: const MaterialsView(),
     );
   }
 }
 
 class MaterialsView extends StatefulWidget {
-  const MaterialsView({ Key? key }) : super(key: key);
+  const MaterialsView({Key? key}) : super(key: key);
 
   @override
   State<MaterialsView> createState() => _MaterialsViewState();
@@ -75,7 +76,8 @@ class _MaterialsViewState extends State<MaterialsView> {
     }
   }
 
-  void _onMaterialSelection(HiveMaterial material, ActionStatus? status, bool isAssignedToGroupWithLeaderRole) {
+  void _onMaterialSelection(HiveMaterial material, ActionStatus? status,
+      bool isAssignedToGroupWithLeaderRole) {
     final singleMaterialView = Container(
       height: MediaQuery.of(context).size.height * 0.70,
       decoration: BoxDecoration(
@@ -150,43 +152,49 @@ class _MaterialsViewState extends State<MaterialsView> {
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       child: StreamBuilder<List<HiveLanguage>>(
-                        stream: RepositoryProvider.of<DataRepository>(context).languages,
-                        builder: (context, snapshot) {
-                          return MultiSelect<HiveLanguage>(
-                            navTitle: _appLocalizations.selectLanugages,
-                            placeholder: _appLocalizations.selectLanugages,
-                            // controller: _languageSelectController,
-                            multilineSummary: true,
-                            items: snapshot.data ?? [],
-                            toDisplay: HiveLanguage.toDisplay,
-                            onFinished: (Set<HiveLanguage> selectedLanguages) {
-                              context.read<MaterialsCubit>().updateSelectedLanguages(selectedLanguages);
-                            },
-                          );
-                        }
-                      ),
+                          stream: RepositoryProvider.of<DataRepository>(context)
+                              .languages,
+                          builder: (context, snapshot) {
+                            return MultiSelect<HiveLanguage>(
+                              navTitle: _appLocalizations.selectLanugages,
+                              placeholder: _appLocalizations.selectLanugages,
+                              // controller: _languageSelectController,
+                              multilineSummary: true,
+                              items: snapshot.data ?? [],
+                              toDisplay: HiveLanguage.toDisplay,
+                              onFinished:
+                                  (Set<HiveLanguage> selectedLanguages) {
+                                context
+                                    .read<MaterialsCubit>()
+                                    .updateSelectedLanguages(selectedLanguages);
+                              },
+                            );
+                          }),
                     ),
                     SizedBox(height: 10.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       child: StreamBuilder<List<HiveMaterialTopic>>(
-                        stream: RepositoryProvider.of<DataRepository>(context).materialTopics,
-                        builder: (context, snapshot) {
-                          return MultiSelect<HiveMaterialTopic>(
-                            navTitle: _appLocalizations.selectTopics,
-                            placeholder: _appLocalizations.selectTopics,
-                            multilineSummary: true,
-                            enableSelectAllOption: true,
-                            inverseSelectAll: true,
-                            items: snapshot.data ?? [],
-                            // initialSelection: bloc.materialBloc.selectedTopics.toSet(),
-                            toDisplay: HiveMaterialTopic.toDisplay,
-                            onFinished: (Set<HiveMaterialTopic> selectedTopics) {
-                              context.read<MaterialsCubit>().updateSelectedTopics(selectedTopics);
-                            },
-                          );
-                        }
-                      ),
+                          stream: RepositoryProvider.of<DataRepository>(context)
+                              .materialTopics,
+                          builder: (context, snapshot) {
+                            return MultiSelect<HiveMaterialTopic>(
+                              navTitle: _appLocalizations.selectTopics,
+                              placeholder: _appLocalizations.selectTopics,
+                              multilineSummary: true,
+                              enableSelectAllOption: true,
+                              inverseSelectAll: true,
+                              items: snapshot.data ?? [],
+                              // initialSelection: bloc.materialBloc.selectedTopics.toSet(),
+                              toDisplay: HiveMaterialTopic.toDisplay,
+                              onFinished:
+                                  (Set<HiveMaterialTopic> selectedTopics) {
+                                context
+                                    .read<MaterialsCubit>()
+                                    .updateSelectedTopics(selectedTopics);
+                              },
+                            );
+                          }),
                     ),
                     SizedBox(height: 10.h),
                     SearchBar(
@@ -213,54 +221,56 @@ class _MaterialsViewState extends State<MaterialsView> {
                           child: ButtonTheme(
                             alignedDropdown: true,
                             child: BlocBuilder<MaterialsCubit, MaterialsState>(
-                              buildWhen: (previous, current) => previous.actions != current.actions,
-                              builder: (context, state) {
-                                return DropdownButton2<MaterialFilter>(
-                                  dropdownMaxHeight: 350.h,
-                                  offset: Offset(0, -5),
-                                  isExpanded: true,
-                                  iconSize: 35,
-                                  style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 19.sp,
-                                    fontFamily: 'OpenSans',
-                                  ),
-                                  hint: Text(
-                                    _appLocalizations.materialActionPrefix +
-                                        '' +
-                                        state.actions.about,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                buildWhen: (previous, current) =>
+                                    previous.actions != current.actions,
+                                builder: (context, state) {
+                                  return DropdownButton2<MaterialFilter>(
+                                    dropdownMaxHeight: 350.h,
+                                    offset: Offset(0, -5),
+                                    isExpanded: true,
+                                    iconSize: 35,
                                     style: TextStyle(
                                       color: Color(0xFF434141),
                                       fontSize: 19.sp,
                                       fontFamily: 'OpenSans',
                                     ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  onChanged: (MaterialFilter? actions) {
-                                    if (actions != null) {
-                                      context.read<MaterialsCubit>().updateActions(actions);
-                                    }
-                                  },
-                                  items: MaterialFilter.values
-                                      .map<DropdownMenuItem<MaterialFilter>>(
-                                          (MaterialFilter value) {
-                                    return DropdownMenuItem<MaterialFilter>(
-                                      value: value,
-                                      child: Text(
-                                        value.about,
-                                        style: TextStyle(
-                                          color: Color(0xFF434141),
-                                          fontSize: 17.sp,
-                                          fontFamily: 'OpenSans',
-                                        ),
+                                    hint: Text(
+                                      _appLocalizations.materialActionPrefix +
+                                          '' +
+                                          state.actions.about,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 19.sp,
+                                        fontFamily: 'OpenSans',
                                       ),
-                                    );
-                                  }).toList(),
-                                );
-                              }
-                            ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    onChanged: (MaterialFilter? actions) {
+                                      if (actions != null) {
+                                        context
+                                            .read<MaterialsCubit>()
+                                            .updateActions(actions);
+                                      }
+                                    },
+                                    items: MaterialFilter.values
+                                        .map<DropdownMenuItem<MaterialFilter>>(
+                                            (MaterialFilter value) {
+                                      return DropdownMenuItem<MaterialFilter>(
+                                        value: value,
+                                        child: Text(
+                                          value.about,
+                                          style: TextStyle(
+                                            color: Color(0xFF434141),
+                                            fontSize: 17.sp,
+                                            fontFamily: 'OpenSans',
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  );
+                                }),
                           ),
                         ),
                       ),
@@ -269,54 +279,56 @@ class _MaterialsViewState extends State<MaterialsView> {
                       height: 20.h,
                     ),
                     BlocBuilder<MaterialsCubit, MaterialsState>(
-                      builder: (context, state) {
-                        final materialsToShow = state.materialsToShow;
-                        final materials = materialsToShow.materials;
-                        final hasMore = materialsToShow.hasMore;
-                        if (materials.isEmpty) {
-                          return Container(
-                            margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                            padding: EdgeInsets.symmetric(vertical: 8.h),
-                            child: Text(
-                              '${_appLocalizations.noRecordFound}',
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 17.sp,
-                                fontFamily: 'OpenSans',
-                              ),
+                        builder: (context, state) {
+                      final materialsToShow = state.materialsToShow;
+                      final materials = materialsToShow.materials;
+                      final hasMore = materialsToShow.hasMore;
+                      if (materials.isEmpty) {
+                        return Container(
+                          margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          child: Text(
+                            '${_appLocalizations.noRecordFound}',
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 17.sp,
+                              fontFamily: 'OpenSans',
                             ),
-                          );
-                        }
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: hasMore ? materials.length + 1 : materials.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            if (index >= materials.length) {
-                              return Container(
-                                margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                                padding: EdgeInsets.symmetric(vertical: 8.h),
-                                child: Center(
-                                  child: SizedBox(
-                                    child: CircularProgressIndicator(),
-                                    height: 24,
-                                    width: 24,
-                                  ),
-                                ),
-                              );
-                            }
-                            final materialWithStatus = materials[index];
-                            return MaterialListItem(
-                              material: materialWithStatus.material,
-                              onMaterialTap: _onMaterialSelection,
-                              actionStatus: materialWithStatus.status,
-                              isAssignedToGroupWithLeaderRole: materialWithStatus.isAssignedToGroupWithLeaderRole,
-                            );
-                          },
+                          ),
                         );
                       }
-                    ),
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount:
+                            hasMore ? materials.length + 1 : materials.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          if (index >= materials.length) {
+                            return Container(
+                              margin:
+                                  EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Center(
+                                child: SizedBox(
+                                  child: CircularProgressIndicator(),
+                                  height: 24,
+                                  width: 24,
+                                ),
+                              ),
+                            );
+                          }
+                          final materialWithStatus = materials[index];
+                          return MaterialListItem(
+                            material: materialWithStatus.material,
+                            onMaterialTap: _onMaterialSelection,
+                            actionStatus: materialWithStatus.status,
+                            isAssignedToGroupWithLeaderRole: materialWithStatus
+                                .isAssignedToGroupWithLeaderRole,
+                          );
+                        },
+                      );
+                    }),
                     SizedBox(
                       height: 10.h,
                     ),
@@ -367,7 +379,8 @@ class MaterialListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          onMaterialTap(material, actionStatus, isAssignedToGroupWithLeaderRole);
+          onMaterialTap(
+              material, actionStatus, isAssignedToGroupWithLeaderRole);
         },
         child: Container(
           margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
@@ -401,7 +414,7 @@ class MaterialListItem extends StatelessWidget {
                       ),
                     ),
                     //Spacer(),
-                    if (material.url != null && material.url!.isNotEmpty)
+                    if (material.url.isNotEmpty)
                       CustomIconButton(
                         icon: Icon(
                           Icons.open_in_new,
@@ -410,14 +423,13 @@ class MaterialListItem extends StatelessWidget {
                         ),
                         text: _appLocalizations.open,
                         onButtonTap: () {
-                          GeneralFunctions.openUrl(material.url!);
+                          GeneralFunctions.openUrl(material.url);
                         },
                       ),
                   ],
                 ),
               ),
-              if (actionStatus != null ||
-                  isAssignedToGroupWithLeaderRole) ...[
+              if (actionStatus != null || isAssignedToGroupWithLeaderRole) ...[
                 SizedBox(
                   height: 16.h,
                 ),
@@ -425,7 +437,7 @@ class MaterialListItem extends StatelessWidget {
                   TaskStatus(
                     height: 17.h,
                     color: actionStatus!.color,
-                    label: actionStatus!.localeLabel(context),
+                    label: actionStatus!.toLocaleString(context),
                   ),
                   SizedBox(
                     height: 10.h,
@@ -441,14 +453,13 @@ class MaterialListItem extends StatelessWidget {
               SizedBox(
                 height: 10.h,
               ),
-              material.localFiles.length > 0
+              material.fileNames.isNotEmpty
                   ? Text(
-                      Intl.plural(material.localFiles.length,
-                          zero:
-                              "${material.localFiles.length} ${_appLocalizations.attachment}",
-                          one: "${material.localFiles.length} ${_appLocalizations.attachment}",
-                          other: "${material.localFiles.length} ${_appLocalizations.attachments}",
-                          args: [material.localFiles.length]),
+                      Intl.plural(material.fileNames.length,
+                          one:
+                              "${material.fileNames.length} ${_appLocalizations.attachment}",
+                          other: "${material.fileNames.length} ${_appLocalizations.attachments}",
+                          args: [material.fileNames.length]),
                       style: TextStyle(
                           color: Color(0xFF3475F0),
                           fontFamily: 'OpenSans',

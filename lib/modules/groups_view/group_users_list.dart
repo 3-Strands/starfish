@@ -1,0 +1,98 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+class GroupUsersList extends StatelessWidget {
+  const GroupUsersList({ Key? key, required this.users }) : super(key: key);
+
+  final List<HiveUser> users;
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
+    return ListView.builder(
+      itemCount: users.length,
+      itemBuilder: (context, index) {
+        final user = users[index];
+        return Container(
+          height: 96.h,
+          width: MediaQuery.of(context).size.width - 10.0,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Text(
+                      // TODO: When can the name be null?
+                      user.name ?? '',
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: AppColors.appTitle,
+                        fontFamily: 'OpenSans',
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 10.w),
+                    child: Text(
+                      user.status == User_Status.ACTIVE.value
+                          ? GroupUser_Role.valueOf(user.role!)!.about
+                          : user.isInvited
+                              ? "${GroupUser_Role.valueOf(user.role!)!.about} " +
+                                  appLocalizations.userStatusInvited
+                                      .toUpperCase()
+                              : '',
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: AppColors.appTitle,
+                        fontFamily: 'OpenSans',
+                        fontSize: 19.sp,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              Align(
+                alignment: FractionalOffset.topLeft,
+                child: Text(
+                  '${user.phoneWithDialingCode}',
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: AppColors.appTitle,
+                    fontFamily: 'OpenSans',
+                    fontSize: 19.sp,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              SepratorLine(
+                hight: 1.h,
+                edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
+              ),
+              SizedBox(
+                height: 10.h,
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

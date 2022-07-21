@@ -17,10 +17,10 @@ class HiveGroupUserAdapter extends TypeAdapter<HiveGroupUser> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return HiveGroupUser(
-      groupId: fields[0] as String?,
-      userId: fields[1] as String?,
-      role: fields[2] as int?,
-      profile: fields[6] as String?,
+      groupId: fields[0] as String,
+      userId: fields[1] as String,
+      role: fields[2] as int,
+      profile: fields[6] as String,
       isNew: fields[3] as bool,
       isUpdated: fields[4] as bool,
       isDirty: fields[5] as bool,

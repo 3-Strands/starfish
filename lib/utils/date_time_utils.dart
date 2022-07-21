@@ -9,11 +9,12 @@ class DateTimeUtils {
 
   static String formatHiveDate(HiveDate hiveDate,
       {String requiredDateFormat = 'dd-MMM-yyyy'}) {
-    // Handle special case where day is set as 0 to indicate monthly data    
-    if (hiveDate.day == 0) {
-      hiveDate.day = 1;
+    // Handle special case where day is set as 0 to indicate monthly data
+    var day = hiveDate.day;
+    if (day == 0) {
+      day = 1;
     }
-    String dateString = '${hiveDate.day}-${hiveDate.month}-${hiveDate.year}';
+    String dateString = '$day-${hiveDate.month}-${hiveDate.year}';
     return formatDate(toDateTime(dateString, 'dd-MM-yyyy'), requiredDateFormat);
   }
 
@@ -24,15 +25,5 @@ class DateTimeUtils {
 
   static DateTime toDateTime(String dateTimeString, String dateFormat) {
     return new DateFormat(dateFormat).parse(dateTimeString);
-  }
-
-  static HiveDate toHiveDate(DateTime dateTime) {
-    HiveDate _hiveDate = HiveDate();
-
-    _hiveDate.year = dateTime.year;
-    _hiveDate.month = dateTime.month;
-    _hiveDate.day = dateTime.day;
-
-    return _hiveDate;
   }
 }

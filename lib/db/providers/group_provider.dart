@@ -66,7 +66,7 @@ class GroupProvider {
     _groupUserBox.values
         .where((element) => element.userId == localUserId)
         .forEach((_hiveGroupUser) {
-      _hiveGroupUser.userId = remoteUserId;
+      // _hiveGroupUser.userId = remoteUserId;
 
       _hiveGroupUser.save();
     });

@@ -16,13 +16,14 @@ class HiveMaterialFeedbackAdapter extends TypeAdapter<HiveMaterialFeedback> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return HiveMaterialFeedback()
-      ..id = fields[0] as String
-      ..type = fields[1] as String
-      ..reporterId = fields[2] as String
-      ..report = fields[3] as String
-      ..response = fields[4] as String
-      ..materialId = fields[5] as String
+    return HiveMaterialFeedback(
+      id: fields[0] as String,
+      type: fields[1] as int,
+      reporterId: fields[2] as String,
+      report: fields[3] as String,
+      response: fields[4] as String,
+      materialId: fields[5] as String,
+    )
       ..isNew = fields[14] as bool
       ..isUpdated = fields[15] as bool
       ..isDirty = fields[16] as bool;
