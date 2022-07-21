@@ -94,16 +94,6 @@ class AddEditMaterialCubit extends Cubit<AddEditMaterialState> {
     if (error != null) {
       emit(state.copyWith(error: error));
     } else {
-      _material!
-        ..title = state.title
-        ..description = state.description
-        ..save();
-      dataRepository.addDelta(MaterialMutation(
-        id: _material.id,
-        title: state.title,
-        description: state.description,
-        //...
-      ));
       // TODO: Add/update material
       // TODO: Add new files
       // final material = _material;
