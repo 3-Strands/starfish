@@ -1,0 +1,17 @@
+name: starfish_gen
+description: Dart package generates data models
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=2.16.0 <3.0.0"
+
+dependencies:
+  build: 
+  source_gen:
+  analyzer:
+  starfish_annotations:
+    path: ../starfish_annotations/
+
+dev_dependencies:
+  

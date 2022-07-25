@@ -1,0 +1,8 @@
+builders:
+  starfish_gen:
+    import: "package:starfish_gen/starfish_gen.dart"
+    builder_factories: ["getBuilder"]
+    build_extensions: {".dart": ["starfish_gen.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

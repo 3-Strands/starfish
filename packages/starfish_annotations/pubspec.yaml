@@ -1,0 +1,12 @@
+name: starfish_annotations
+description: Annotations for Starfish
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=2.16.0 <3.0.0"
+
+dependencies:
+
+dev_dependencies:
+  

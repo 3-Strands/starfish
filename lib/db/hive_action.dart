@@ -19,32 +19,35 @@ import 'package:starfish/repository/action_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+// import 'package:starfish_annotations/starfish_annotations.dart';
 
 import 'hive_concrete.dart';
 import 'hive_syncable.dart';
 
 part 'hive_action.g.dart';
 
+// @starfishGen
 @HiveType(typeId: 4)
 class HiveAction extends HiveConcrete implements HiveSyncable<Action> {
+  // @primary
   @HiveField(0)
   final String id;
   @HiveField(1)
-  final int type;
+  int type;
   @HiveField(2)
-  final String name;
+  String name;
   @HiveField(3)
   final String creatorId;
   @HiveField(4)
-  final String groupId;
+  String groupId;
   @HiveField(5)
-  final String instructions;
+  String instructions;
   @HiveField(6)
-  final String materialId;
+  String materialId;
   @HiveField(7)
-  final String question;
+  String question;
   @HiveField(8)
-  final HiveDate dateDue;
+  HiveDate dateDue;
   @HiveField(9)
   List<HiveEdit> editHistory;
   @HiveField(10)

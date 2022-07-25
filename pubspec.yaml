@@ -88,6 +88,8 @@ dev_dependencies:
     sdk: flutter
 
   hive_generator: ^1.1.0
+  # starfish_gen:
+  #   path: ./packages/starfish_gen/
   build_runner:
 
 # For information on the generic Dart part of this file, see the
