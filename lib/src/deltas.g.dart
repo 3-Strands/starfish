@@ -2,6 +2,12 @@
 
 part of 'deltas.dart';
 
+// Country is not creatable
+
+// Country is not updatable
+
+// Country is not deletable
+
 // Language is not creatable
 
 // Language is not updatable

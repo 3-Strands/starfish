@@ -2,6 +2,14 @@
 
 part of 'grpc_adapters.dart';
 
+class CountryAdapter extends _GrpcAdapter<Country> {
+  @override
+  int get typeId => 0;
+
+  @override
+  Country create() => Country.create();
+}
+
 class LanguageAdapter extends _GrpcAdapter<Language> {
   @override
   int get typeId => 1;

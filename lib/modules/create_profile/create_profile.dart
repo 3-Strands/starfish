@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/authenticated_app/bloc/profile_creation_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_country.dart';
-import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -20,7 +19,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'bloc/profile_bloc.dart';
 
 class CreateProfile extends StatelessWidget {
-  const CreateProfile({ Key? key }) : super(key: key);
+  const CreateProfile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class CreateProfile extends StatelessWidget {
 }
 
 class CreateProfileView extends StatelessWidget {
-  const CreateProfileView({ Key? key }) : super(key: key);
+  const CreateProfileView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,15 +46,17 @@ class CreateProfileView extends StatelessWidget {
         listener: (context, state) {
           final error = state.error;
           if (error != null) {
-            StarfishSnackbar.showErrorMessage(context, error.toLocaleString(context));
+            StarfishSnackbar.showErrorMessage(
+                context, error.toLocaleString(context));
             context.read<ProfileBloc>().add(const StateFoundInvalid());
           } else {
-            context.read<ProfileCreationBloc>().add(const ProfileSetupCompleted());
+            context
+                .read<ProfileCreationBloc>()
+                .add(const ProfileSetupCompleted());
           }
         },
         child: ListView(
-          padding:
-              EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
           children: <Widget>[
             SizedBox(height: 118.h),
             AppLogo(hight: 156.h, width: 163.w),
@@ -102,12 +103,11 @@ class CreateProfileView extends StatelessWidget {
             SizedBox(height: 10.h),
             Align(
               alignment: FractionalOffset.topLeft,
-              child: ItalicitleLabel(
-                  title: appLocalizations.enterNameDetail),
+              child: ItalicitleLabel(title: appLocalizations.enterNameDetail),
             ),
             //--------------------------
             SizedBox(height: 30.h),
-      
+
             //--> Select country section
             Align(
               alignment: FractionalOffset.topLeft,
@@ -117,9 +117,10 @@ class CreateProfileView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.h),
-      
+
             BlocBuilder<ProfileBloc, ProfileState>(
-              buildWhen: (previous, current) => previous.countries != current.countries,
+              buildWhen: (previous, current) =>
+                  previous.countries != current.countries,
               builder: (context, state) {
                 if (!state.hasCountries) {
                   return const Loading();
@@ -128,31 +129,33 @@ class CreateProfileView extends StatelessWidget {
                 items.sort((a, b) => a.name.compareTo(b.name));
 
                 final selectedCountries = state.selectedCountries.toSet();
-                final initialSelection = selectedCountries.isEmpty ? null
-                    : items.where(
-                        (country) => selectedCountries.contains(country.id)
-                      ).toSet();
-      
-                return MultiSelect<HiveCountry>(
-                  navTitle:
-                      appLocalizations.selectCountry,
-                  placeholder:
-                      appLocalizations.selectCountry,
+                final initialSelection = selectedCountries.isEmpty
+                    ? null
+                    : items
+                        .where(
+                            (country) => selectedCountries.contains(country.id))
+                        .toSet();
+
+                return MultiSelect<Country>(
+                  navTitle: appLocalizations.selectCountry,
+                  placeholder: appLocalizations.selectCountry,
                   items: items,
                   initialSelection: initialSelection,
-                  toDisplay: HiveCountry.toDisplay,
-                  onFinished: (Set<HiveCountry> selectedCountries) {
-                    context.read<ProfileBloc>().add(CountrySelectionChanged(selectedCountries));
+                  toDisplay: (country) => country.name,
+                  onFinished: (Set<Country> selectedCountries) {
+                    context
+                        .read<ProfileBloc>()
+                        .add(CountrySelectionChanged(selectedCountries));
                   },
                 );
               },
             ),
-      
+
             SizedBox(height: 10.h),
             Align(
               alignment: FractionalOffset.topLeft,
-              child: ItalicitleLabel(
-                  title: appLocalizations.selectCountryDetail),
+              child:
+                  ItalicitleLabel(title: appLocalizations.selectCountryDetail),
             ),
             //--------------------------
             SizedBox(height: 30.h),
@@ -165,9 +168,10 @@ class CreateProfileView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.h),
-      
+
             BlocBuilder<ProfileBloc, ProfileState>(
-              buildWhen:(previous, current) => previous.languages != current.languages,
+              buildWhen: (previous, current) =>
+                  previous.languages != current.languages,
               builder: (context, state) {
                 if (!state.hasLanguages) {
                   return const Loading();
@@ -176,24 +180,28 @@ class CreateProfileView extends StatelessWidget {
                 items.sort((a, b) => a.name.compareTo(b.name));
 
                 final selectedLanguages = state.selectedLanguages.toSet();
-                final initialSelection = selectedLanguages.isEmpty ? null
-                    : items.where(
-                        (country) => selectedLanguages.contains(country.id)
-                      ).toSet();
-      
-                return MultiSelect<HiveLanguage>(
+                final initialSelection = selectedLanguages.isEmpty
+                    ? null
+                    : items
+                        .where(
+                            (country) => selectedLanguages.contains(country.id))
+                        .toSet();
+
+                return MultiSelect<Language>(
                   navTitle: appLocalizations.selectLanugages,
                   placeholder: appLocalizations.selectLanugages,
                   items: items,
                   initialSelection: initialSelection,
-                  toDisplay: HiveLanguage.toDisplay,
-                  onFinished: (Set<HiveLanguage> selectedLanguages) {
-                    context.read<ProfileBloc>().add(LanguageSelectionChanged(selectedLanguages));
+                  toDisplay: (language) => language.name,
+                  onFinished: (Set<Language> selectedLanguages) {
+                    context
+                        .read<ProfileBloc>()
+                        .add(LanguageSelectionChanged(selectedLanguages));
                   },
                 );
               },
             ),
-      
+
             SizedBox(height: 10.h),
             Align(
               alignment: FractionalOffset.topLeft,
@@ -238,25 +246,27 @@ class CreateProfileView extends StatelessWidget {
                                 width: 319.w,
                                 height: 37.h,
                                 child: BlocBuilder<ProfileBloc, ProfileState>(
-                                  builder: (context, state) {
-                                    return ElevatedButton(
-                                      child: Text(
-                                        appLocalizations.finish,
-                                        textAlign: TextAlign.start,
-                                        style: buttonTextStyle,
+                                    builder: (context, state) {
+                                  return ElevatedButton(
+                                    child: Text(
+                                      appLocalizations.finish,
+                                      textAlign: TextAlign.start,
+                                      style: buttonTextStyle,
+                                    ),
+                                    onPressed: () {
+                                      context
+                                          .read<ProfileBloc>()
+                                          .add(const FinishClicked());
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: AppColors.selectedButtonBG,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
                                       ),
-                                      onPressed: () {
-                                        context.read<ProfileBloc>().add(const FinishClicked());
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: AppColors.selectedButtonBG,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20.0),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                ),
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
                           ),
@@ -279,10 +289,14 @@ extension ToLocaleString on ProfileError {
     final appLocalizations = AppLocalizations.of(context)!;
 
     switch (this) {
-      case ProfileError.missingName: return appLocalizations.emptyFullName;
-      case ProfileError.invalidName: return appLocalizations.invalidFullName;
-      case ProfileError.missingCountries: return appLocalizations.emptySelectCountry;
-      case ProfileError.missingLanguages: return appLocalizations.emptySelectLanguage;
+      case ProfileError.missingName:
+        return appLocalizations.emptyFullName;
+      case ProfileError.invalidName:
+        return appLocalizations.invalidFullName;
+      case ProfileError.missingCountries:
+        return appLocalizations.emptySelectCountry;
+      case ProfileError.missingLanguages:
+        return appLocalizations.emptySelectLanguage;
     }
   }
 }

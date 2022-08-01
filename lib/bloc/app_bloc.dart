@@ -32,12 +32,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final savedLocale = await localStorageApi.getDeviceLanguage();
       final deviceLanguage = Platform.localeName.substring(0, 2);
       final locale = (savedLocale == '')
-        ? (
-          deviceLanguage == 'hi'
-            ? deviceLanguage
-            : 'en'
-        )
-        : savedLocale;
+          ? (deviceLanguage == 'hi' ? deviceLanguage : 'en')
+          : savedLocale;
 
       add(AppInitialized(initialLocale: locale));
     } catch (error, stackTrace) {
@@ -50,6 +46,5 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   @override
   void onChange(Change<AppState> change) {
     super.onChange(change);
-
   }
 }

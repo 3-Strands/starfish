@@ -1,8 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:starfish/apis/hive_api.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_file.dart';
-import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/models/user.dart';
 import 'package:starfish/src/deltas.dart';
@@ -45,14 +42,6 @@ class DataRepository {
   Stream<List<MaterialType>> get materialTypes =>
       _streamBox(_hiveApi.materialType);
   List<MaterialType> get currentMaterialTypes => _hiveApi.materialType.asList();
-
-  void updateMaterial(Material material, {required List<HiveFile> files}) {
-    throw UnimplementedError();
-  }
-
-  void deleteMaterial(Material material) {
-    throw UnimplementedError();
-  }
 
   List<Action> getAllActiveActions() {
     return _hiveApi.action.values.where((action) {
@@ -138,7 +127,7 @@ class DataRepository {
 
   // ------------------- Actions -------------------
 
-  Stream<List<HiveAction>> getActionsByGroup(HiveGroup group) {
+  Stream<List<Action>> getActionsByGroup(Group group) {
     throw UnimplementedError();
   }
 

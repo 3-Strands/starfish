@@ -6,6 +6,7 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/model_wrappers/material_with_assigned_status.dart';
+import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
 part 'materials_state.dart';
@@ -59,6 +60,10 @@ class MaterialsCubit extends Cubit<MaterialsState> {
     emit(state.copyWith(
       query: query,
     ));
+  }
+
+  void materialDeleted(Material material) {
+    _dataRepository.addDelta(MaterialDeleteDelta(material));
   }
 
   @override

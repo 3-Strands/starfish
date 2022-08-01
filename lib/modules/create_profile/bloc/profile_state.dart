@@ -9,7 +9,8 @@ enum ProfileError {
 
 @immutable
 class ProfileState {
-  static RegExp _nameValidator = RegExp(r"^[\p{L} ,.'-]*$", caseSensitive: false, unicode: true, dotAll: true);
+  static RegExp _nameValidator = RegExp(r"^[\p{L} ,.'-]*$",
+      caseSensitive: false, unicode: true, dotAll: true);
 
   ProfileState({
     this.name = '',
@@ -23,15 +24,19 @@ class ProfileState {
   final String name;
   final Set<String> selectedCountries;
   final Set<String> selectedLanguages;
-  final List<HiveCountry> countries;
-  final List<HiveLanguage> languages;
+  final List<Country> countries;
+  final List<Language> languages;
   final bool isSubmissionCandidate;
 
-  ProfileError? get error => name.isEmpty ? ProfileError.missingName
-      : !_nameValidator.hasMatch(name) ? ProfileError.invalidName
-      : selectedCountries.isEmpty ? ProfileError.missingCountries
-      : selectedCountries.isEmpty ? ProfileError.missingLanguages
-      : null;
+  ProfileError? get error => name.isEmpty
+      ? ProfileError.missingName
+      : !_nameValidator.hasMatch(name)
+          ? ProfileError.invalidName
+          : selectedCountries.isEmpty
+              ? ProfileError.missingCountries
+              : selectedCountries.isEmpty
+                  ? ProfileError.missingLanguages
+                  : null;
 
   bool get hasCountries => countries.isNotEmpty;
   bool get hasLanguages => languages.isNotEmpty;
@@ -40,15 +45,17 @@ class ProfileState {
     String? name,
     Set<String>? selectedCountries,
     Set<String>? selectedLanguages,
-    List<HiveCountry>? countries,
-    List<HiveLanguage>? languages,
+    List<Country>? countries,
+    List<Language>? languages,
     bool? isSubmissionCandidate,
-  }) => ProfileState(
-    name: name ?? this.name,
-    selectedCountries: selectedCountries ?? this.selectedCountries,
-    selectedLanguages: selectedLanguages ?? this.selectedLanguages,
-    countries: countries ?? this.countries,
-    languages: languages ?? this.languages,
-    isSubmissionCandidate: isSubmissionCandidate ?? this.isSubmissionCandidate,
-  );
+  }) =>
+      ProfileState(
+        name: name ?? this.name,
+        selectedCountries: selectedCountries ?? this.selectedCountries,
+        selectedLanguages: selectedLanguages ?? this.selectedLanguages,
+        countries: countries ?? this.countries,
+        languages: languages ?? this.languages,
+        isSubmissionCandidate:
+            isSubmissionCandidate ?? this.isSubmissionCandidate,
+      );
 }

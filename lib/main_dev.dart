@@ -19,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (!kIsWeb) {
-    Firebase.initializeApp();
+    await Firebase.initializeApp();
   }
 
   await HiveApiInterface.init();
@@ -44,26 +44,31 @@ void main() async {
     ..maskColor = Colors.blue.withOpacity(0.5)
     ..boxShadow = <BoxShadow>[];
 
-  //return runApp(Starfish());
-  return SentryFlutter.init(
-    (options) {
-      options.dsn = _dsn;
-      options.tracesSampleRate = 1.0;
-      options.reportPackages = false;
-      options.addInAppInclude('DEV');
-      options.considerInAppFramesByDefault = false;
-    },
-    // Init your App.
-    appRunner: () => runApp(
-      DefaultAssetBundle(
-        bundle: SentryAssetBundle(
-          enableStructuredDataTracing: true,
-        ),
-        child: App(
-          authenticationRepository: AuthenticationRepository(),
-          localStorageApi: localStorageApi,
-        ),
-      ),
-    ),
-  );
+  return runApp(App(
+    authenticationRepository: AuthenticationRepository(),
+    localStorageApi: localStorageApi,
+  ));
+  // return SentryFlutter.init(
+  //   (options) {
+  //     options.dsn = _dsn;
+  //     options.tracesSampleRate = 1.0;
+  //     options.reportPackages = false;
+  //     options.addInAppInclude('DEV');
+  //     options.considerInAppFramesByDefault = false;
+  //   },
+  //   // Init your App.
+  //   appRunner: () {
+  //     runApp(
+  //       DefaultAssetBundle(
+  //         bundle: SentryAssetBundle(
+  //           enableStructuredDataTracing: true,
+  //         ),
+  //         child: App(
+  //           authenticationRepository: AuthenticationRepository(),
+  //           localStorageApi: localStorageApi,
+  //         ),
+  //       ),
+  //     );
+  //   },
+  // );
 }

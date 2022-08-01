@@ -436,6 +436,13 @@ void main() {
 
   final models = <Model>[
     Model(
+      Country(),
+      key: ModelKey.id,
+      typeId: 0,
+      storage: BoxStorage('country'),
+    ),
+
+    Model(
       Language(),
       key: ModelKey.id,
       typeId: 1,

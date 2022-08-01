@@ -98,7 +98,6 @@ class AddEditMaterialCubit extends Cubit<AddEditMaterialState> {
     if (error != null) {
       emit(state.copyWith(error: error));
     } else {
-      // TODO: Add new files
       final material = _material;
       final id = material?.id ?? UuidGenerator.uuid();
       _dataRepository.addDelta(
