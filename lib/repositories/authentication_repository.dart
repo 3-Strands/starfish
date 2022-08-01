@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:rxdart/subjects.dart';
 import 'package:starfish/apis/grpc_authentication_api.dart';
 import 'package:starfish/apis/grpc_current_user_api.dart';
 import 'package:starfish/apis/local_storage_api.dart';
@@ -56,16 +57,15 @@ class AuthenticationRepository {
     LocalStorageApi? localStorageApi,
     MakeCurrentUserApi? makeCurrentUserApi,
   })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-        _grpcAuthenticationApi = grpcAuthenticationApi ?? GrpcAuthenticationApi(client: makeUnauthenticatedClient()),
+        _grpcAuthenticationApi = grpcAuthenticationApi ??
+            GrpcAuthenticationApi(client: makeUnauthenticatedClient()),
         _localStorageApi = localStorageApi ?? LocalStorageApi(),
         _makeCurrentUserApi = makeCurrentUserApi ??
-          ((Tokens tokens) => GrpcCurrentUserApi(client: makeAuthenticatedClient(tokens.accessToken)))
-  {
-    _sessionController.stream.listen((session) {
-      final previousSession = _currentSession;
-      _currentSession = session;
+            ((Tokens tokens) => GrpcCurrentUserApi(
+                client: makeAuthenticatedClient(tokens.accessToken))) {
+    _session.stream.listen((session) {
       if (session != null) {
-        _cacheSession(previousSession, session);
+        _cacheSession(session);
       }
     });
   }
@@ -74,38 +74,33 @@ class AuthenticationRepository {
   final GrpcAuthenticationApi _grpcAuthenticationApi;
   final LocalStorageApi _localStorageApi;
   final MakeCurrentUserApi _makeCurrentUserApi;
-  final StreamController<Session?> _sessionController = StreamController.broadcast();
+  final BehaviorSubject<Session?> _session = BehaviorSubject.seeded(null);
 
-  Future<void> _cacheSession(Session? previousSession, Session session) async {
-    if (session.tokens != previousSession?.tokens) {
-      await _localStorageApi.saveTokens(session.tokens);
-    }
-    if (session.user != previousSession?.user) {
-      await _localStorageApi.saveUser(session.user);
-    }
-  }
+  Future<void> _cacheSession(Session session) => Future.wait([
+        _localStorageApi.saveTokens(session.tokens),
+        _localStorageApi.saveUser(session.user),
+      ]);
 
   Future<void> loadCurrentSessionIfExists() async {
     final tokens = await _localStorageApi.getTokens();
     if (tokens != null) {
       // TODO: sync user?
-      final user = (await _localStorageApi.getUser())
-          ?? AppUser.fromUser(await _retrieveUserUsingTokens(tokens));
-      _sessionController.add(Session(tokens, user));
+      final user = (await _localStorageApi.getUser()) ??
+          AppUser.fromUser(await _retrieveUserUsingTokens(tokens));
+      _session.value = Session(tokens, user);
     }
   }
-  
-  Session? _currentSession;
 
   /// Stream of [Session] which will emit the current session and user when
   /// the authentication state changes.
   ///
   /// Emits [null] if the user is not authenticated.
-  Stream<Session?> get session  => _sessionController.stream;
+  Stream<Session?> get session => _session.stream;
 
-  Session? get currentSession => _currentSession;
+  Session? get currentSession => _session.value;
 
-  OtpHandler makeOtpHandler(Future<void> Function(String code) authenticateWithCode, {
+  OtpHandler makeOtpHandler(
+    Future<void> Function(String code) authenticateWithCode, {
     required String phoneNumber,
     int? resendToken,
   }) {
@@ -116,36 +111,42 @@ class AuthenticationRepository {
   }
 
   Future<OtpHandler?> authenticate(String phoneNumber, {int? resendToken}) =>
-    kIsWeb ? _authenticateOnWeb(phoneNumber) : _authenticateOnDevice(phoneNumber, resendToken: resendToken);
+      kIsWeb
+          ? _authenticateOnWeb(phoneNumber)
+          : _authenticateOnDevice(phoneNumber, resendToken: resendToken);
 
-  Future<OtpHandler?> _authenticateOnDevice(String phoneNumber, {int? resendToken}) async {
+  Future<OtpHandler?> _authenticateOnDevice(String phoneNumber,
+      {int? resendToken}) async {
     final completer = Completer<OtpHandler?>();
     _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential phoneAuthCredential) async {
         try {
-          final credential = await _firebaseAuth.signInWithCredential(phoneAuthCredential);
+          final credential =
+              await _firebaseAuth.signInWithCredential(phoneAuthCredential);
           await _initializeSessionFromUserCredential(credential);
         } catch (error, stackTrace) {
           completer.completeError(error, stackTrace);
         }
       },
-      verificationFailed: (firebaseException) => completer.completeError(AuthenticationException(firebaseException.code)),
+      verificationFailed: (firebaseException) => completer
+          .completeError(AuthenticationException(firebaseException.code)),
       codeSent: (String verificationId, int? resendToken) {
         completer.complete(makeOtpHandler((code) async {
-            final phoneAuthCredential = PhoneAuthProvider.credential(
-              verificationId: verificationId,
-              smsCode: code,
-            );
-            final userCredential = await _firebaseAuth
-              .signInWithCredential(phoneAuthCredential);
-            await _initializeSessionFromUserCredential(userCredential);
-          }, phoneNumber: phoneNumber, resendToken: resendToken));
+          final phoneAuthCredential = PhoneAuthProvider.credential(
+            verificationId: verificationId,
+            smsCode: code,
+          );
+          final userCredential =
+              await _firebaseAuth.signInWithCredential(phoneAuthCredential);
+          await _initializeSessionFromUserCredential(userCredential);
+        }, phoneNumber: phoneNumber, resendToken: resendToken));
       },
       timeout: const Duration(seconds: 60),
       forceResendingToken: resendToken,
       codeAutoRetrievalTimeout: (String verificationId) {
-        completer.completeError(AuthenticationException('code-auto-retrieval-timeout'));
+        completer.completeError(
+            AuthenticationException('code-auto-retrieval-timeout'));
       },
     );
 
@@ -160,26 +161,28 @@ class AuthenticationRepository {
     }, phoneNumber: phoneNumber);
   }
 
-  Future<void> _initializeSessionFromUserCredential(firebase_auth.UserCredential credential) async {
+  Future<void> _initializeSessionFromUserCredential(
+      firebase_auth.UserCredential credential) async {
     final firebaseUser = credential.user!;
     // Authenticate with GRPC
     final tokens = await _grpcAuthenticationApi.authenticate(
         await firebaseUser.getIdToken(), firebaseUser.phoneNumber!);
     // Initialize HiveCurrentUser
     final grpcUser = await _retrieveUserUsingTokens(tokens);
-    _sessionController.add(Session(tokens, AppUser.fromUser(grpcUser),
-        needsProfileCreation: grpcUser.languageIds.isEmpty && grpcUser.countryIds.isEmpty));
+    _session.value = Session(tokens, AppUser.fromUser(grpcUser),
+        needsProfileCreation:
+            grpcUser.languageIds.isEmpty && grpcUser.countryIds.isEmpty);
   }
 
   Future<User> _retrieveUserUsingTokens(Tokens tokens) =>
-    _makeCurrentUserApi(tokens).getCurrentUser();
+      _makeCurrentUserApi(tokens).getCurrentUser();
 
   Future<Session> refreshSession() async {
-    assert(_currentSession != null, 'Attempting to refresh a non-existent session');
-    final currentSession = _currentSession!;
-    final newTokens = await _grpcAuthenticationApi.refreshTokens(currentSession.tokens);
+    final currentSession = this.currentSession!;
+    final newTokens =
+        await _grpcAuthenticationApi.refreshTokens(currentSession.tokens);
     final session = Session(newTokens, currentSession.user);
-    _sessionController.add(session);
+    _session.value = session;
     return session;
   }
 
@@ -204,8 +207,9 @@ class AuthenticationRepository {
         countryIds: countryIds,
         languageIds: languageIds,
       );
-      _sessionController.add(Session(session.tokens, newUser));
-      _makeCurrentUserApi(session.tokens).updateCurrentUser(newUser.toUser(), fieldMaskPaths);
+      _session.value = Session(session.tokens, newUser);
+      _makeCurrentUserApi(session.tokens)
+          .updateCurrentUser(newUser.toUser(), fieldMaskPaths);
     }
   }
 }

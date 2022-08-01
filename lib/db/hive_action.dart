@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/db/hive_date.dart';

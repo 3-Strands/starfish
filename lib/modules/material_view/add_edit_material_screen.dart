@@ -1,49 +1,30 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:fbroadcast/fbroadcast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Material, MaterialType;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hive/hive.dart';
 import 'package:starfish/apis/hive_api.dart';
-import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_edit.dart';
-import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_material.dart';
-import 'package:starfish/db/hive_file.dart';
-import 'package:starfish/db/hive_material_topic.dart';
-import 'package:starfish/db/hive_material_type.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/material_view/cubit/add_edit_material_cubit.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
-import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
-import 'package:starfish/utils/helpers/uuid_generator.dart';
-import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/wrappers/file_system.dart';
-import 'package:starfish/wrappers/platform.dart';
 
 const List<String> ALLOWED_FILE_TYPES = [
   'doc',
@@ -66,7 +47,7 @@ const List<String> ALLOWED_FILE_TYPES = [
 class AddEditMaterial extends StatelessWidget {
   const AddEditMaterial({Key? key, this.material}) : super(key: key);
 
-  final HiveMaterial? material;
+  final Material? material;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +143,7 @@ class AddEditMaterialView extends StatelessWidget {
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       style: formTitleTextStyle,
-                      onChanged: cubit.setTitle,
+                      onChanged: cubit.titleChanged,
                       decoration: InputDecoration(
                         // hintText:
                         //     appLocalizations.hintMaterialName,
@@ -198,7 +179,7 @@ class AddEditMaterialView extends StatelessWidget {
                     child: TextFormField(
                       maxLines: 4,
                       maxLength: 200,
-                      onChanged: cubit.setDescription,
+                      onChanged: cubit.descriptionChanged,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -232,7 +213,7 @@ class AddEditMaterialView extends StatelessWidget {
                   ),
                   SizedBox(height: 11.h),
                   TextFormField(
-                    onChanged: cubit.setUrl,
+                    onChanged: cubit.urlChanged,
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       contentPadding:
@@ -333,7 +314,7 @@ class AddEditMaterialView extends StatelessWidget {
                     child:
                         BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
                       builder: (context, state) {
-                        return MultiSelect<HiveLanguage>(
+                        return MultiSelect<Language>(
                           navTitle: appLocalizations.selectLanugages,
                           placeholder: appLocalizations.selectLanugages,
                           items: state.languages,
@@ -341,11 +322,11 @@ class AddEditMaterialView extends StatelessWidget {
                               .map((languageId) =>
                                   globalHiveApi.language.get(languageId)!)
                               .toSet(),
-                          toDisplay: HiveLanguage.toDisplay,
+                          toDisplay: (language) => language.name,
                           onFinished: (selectedLanguages) {
                             context
                                 .read<AddEditMaterialCubit>()
-                                .setSelectedLanguages(
+                                .selectedLanguagesChanged(
                                     selectedLanguages.map((l) => l.id).toSet());
                           },
                         );
@@ -365,18 +346,18 @@ class AddEditMaterialView extends StatelessWidget {
                     child:
                         BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
                       builder: (context, state) {
-                        return MultiSelect<HiveMaterialType>(
+                        return MultiSelect<MaterialType>(
                           navTitle: appLocalizations.selectType,
                           placeholder: appLocalizations.selectType,
                           items: state.types,
                           initialSelection: state.selectedTypes
                               .map((id) => globalHiveApi.materialType.get(id)!)
                               .toSet(),
-                          toDisplay: HiveMaterialType.toDisplay,
+                          toDisplay: (type) => type.name,
                           onFinished: (selectedTypes) {
                             context
                                 .read<AddEditMaterialCubit>()
-                                .setSelectedTypes(
+                                .selectedTypesChanged(
                                     selectedTypes.map((l) => l.id).toSet());
                           },
                         );
@@ -396,18 +377,18 @@ class AddEditMaterialView extends StatelessWidget {
                     child:
                         BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
                       builder: (context, state) {
-                        return MultiSelect<HiveMaterialTopic>(
+                        return MultiSelect<MaterialTopic>(
                           navTitle: appLocalizations.selectTopics,
                           placeholder: appLocalizations.selectTopics,
                           items: state.topics,
                           initialSelection: state.selectedTopics
                               .map((id) => globalHiveApi.materialTopic.get(id)!)
                               .toSet(),
-                          toDisplay: HiveMaterialTopic.toDisplay,
+                          toDisplay: (topic) => topic.name,
                           onFinished: (selectedTopics) {
                             context
                                 .read<AddEditMaterialCubit>()
-                                .setSelectedTopics(
+                                .selectedLanguagesChanged(
                                     selectedTopics.map((l) => l.id).toSet());
                           },
                         );
@@ -461,7 +442,7 @@ class AddEditMaterialView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            onChanged: cubit.setVisibility,
+                            onChanged: cubit.visibilityChanged,
                             items: VisibilityDisplay.displayList
                                 .map(
                                   (visibility) =>
@@ -533,7 +514,7 @@ class AddEditMaterialView extends StatelessWidget {
                             // onTap: () {
                             //   _dismissFieldFocus();
                             // },
-                            onChanged: cubit.setEditability,
+                            onChanged: cubit.editabilityChanged,
                             items: EditabilityDisplay.displayList
                                 .map((editability) {
                               return DropdownMenuItem<Material_Editability>(
@@ -622,7 +603,7 @@ class AddEditMaterialView extends StatelessWidget {
 class _PreviewOldFiles extends StatelessWidget {
   const _PreviewOldFiles({Key? key, required this.files}) : super(key: key);
 
-  final List<HiveFile> files;
+  final List<FileReference> files;
 
   @override
   Widget build(BuildContext context) {
@@ -632,8 +613,8 @@ class _PreviewOldFiles extends StatelessWidget {
 
     final imagePaths = <String>[];
 
-    final widgetList = files.map<Widget>((hiveFile) {
-      final filepath = hiveFile.filepath;
+    final widgetList = files.map<Widget>((fileReference) {
+      final filepath = fileReference.filepath;
       if (filepath != null &&
           const {'jpg', 'png'}
               .contains(filepath.split("/").last.split(".").last)) {
@@ -645,7 +626,7 @@ class _PreviewOldFiles extends StatelessWidget {
           textAlign: TextAlign.start,
           text: TextSpan(
             //text: file.path.split("/").last,
-            text: hiveFile.filename,
+            text: fileReference.filename,
             style: TextStyle(
               color: AppColors.appTitle,
               fontFamily: 'OpenSans',
@@ -655,7 +636,7 @@ class _PreviewOldFiles extends StatelessWidget {
             recognizer: TapGestureRecognizer()
               ..onTap = () async {
                 try {
-                  await GeneralFunctions.openFile(hiveFile, context);
+                  await GeneralFunctions.openFile(fileReference, context);
                 } on NetworkUnavailableException {
                   // TODO: show message to user
                 }
@@ -734,7 +715,7 @@ class _PreviewNewFiles extends StatelessWidget {
 class EditHistory extends StatelessWidget {
   const EditHistory({Key? key, required this.history}) : super(key: key);
 
-  final List<HiveEdit> history;
+  final List<Edit> history;
 
   @override
   Widget build(BuildContext context) {

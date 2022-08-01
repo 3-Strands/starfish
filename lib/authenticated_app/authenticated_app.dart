@@ -9,6 +9,7 @@ import 'package:starfish/modules/create_profile/create_profile.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/utils/currentUser.dart';
 
 import '../models/session.dart';
 
@@ -23,24 +24,28 @@ class AuthenticatedApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) {
-        return DataRepository();
-      },
+      create: (context) => DataRepository(user: context.currentUser),
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             lazy: false,
             create: (context) {
               return SyncBloc(
-                authenticationRepository: context.read<AuthenticationRepository>(),
+                authenticationRepository:
+                    context.read<AuthenticationRepository>(),
               );
             },
           ),
           BlocProvider(
             create: (context) {
-              final needsProfileCreation = context.read<AuthenticationRepository>().currentSession!.needsProfileCreation;
+              final needsProfileCreation = context
+                  .read<AuthenticationRepository>()
+                  .currentSession!
+                  .needsProfileCreation;
               return ProfileCreationBloc(
-                needsProfileCreation ? const ProfileNeedsSetup() : const ProfileReady(),
+                needsProfileCreation
+                    ? const ProfileNeedsSetup()
+                    : const ProfileReady(),
               );
             },
           ),
@@ -52,63 +57,59 @@ class AuthenticatedApp extends StatelessWidget {
 }
 
 class AuthenticatedAppView extends StatelessWidget {
-  const AuthenticatedAppView({ Key? key }) : super(key: key);
+  const AuthenticatedAppView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCreationBloc, ProfileCreationState>(
-      listener: (context, state) {
-        if (state is ProfileReady && state.cameFromSetup) {
-          final appLocalizations = AppLocalizations.of(context)!;
-          final dialog = CupertinoAlertDialog(
-            title: Text(
-              appLocalizations.syncAlertTitleText,
-              style: TextStyle(color: Color(0xFF030303)),
-            ),
-            content: Column(
-              children: [
-                Text(appLocalizations
-                    .syncAlertContentText),
-                SizedBox(
-                  width: 20.w,
-                  height: 20.h,
-                  child: CircularProgressIndicator(),
-                ),
-                Text(
-                  appLocalizations.syncText,
-                  style: TextStyle(
-                      color: Color(0xFF030303), fontSize: 12.sp),
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: Text(appLocalizations.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+        listener: (context, state) {
+      if (state is ProfileReady && state.cameFromSetup) {
+        final appLocalizations = AppLocalizations.of(context)!;
+        final dialog = CupertinoAlertDialog(
+          title: Text(
+            appLocalizations.syncAlertTitleText,
+            style: TextStyle(color: Color(0xFF030303)),
+          ),
+          content: Column(
+            children: [
+              Text(appLocalizations.syncAlertContentText),
+              SizedBox(
+                width: 20.w,
+                height: 20.h,
+                child: CircularProgressIndicator(),
+              ),
+              Text(
+                appLocalizations.syncText,
+                style: TextStyle(color: Color(0xFF030303), fontSize: 12.sp),
               ),
             ],
-          );
-          showDialog(
-            context: context,
-            builder: (context) => dialog,
-          );
-        }
-      },
-      builder: (context, state) {
-        if (state is ProfileNeedsSetup) {
-          return const CreateProfile();
-        }
-        return Navigator(
-          onGenerateRoute: (settings) {
-            return MaterialPageRoute<void>(
-              settings: settings,
-              builder: (BuildContext context) => const Dashboard(),
-            );
-          },
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(appLocalizations.close),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+        showDialog(
+          context: context,
+          builder: (context) => dialog,
         );
       }
-    );
+    }, builder: (context, state) {
+      if (state is ProfileNeedsSetup) {
+        return const CreateProfile();
+      }
+      return Navigator(
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: (BuildContext context) => const Dashboard(),
+          );
+        },
+      );
+    });
   }
 }

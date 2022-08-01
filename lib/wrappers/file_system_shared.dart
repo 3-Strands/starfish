@@ -1,18 +1,19 @@
 import 'dart:async';
 
-import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/models/file_reference.dart';
 // import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
-Future<void> downloadFile(HiveFile hiveFile, {required void Function(List<int> chunk) onData}) async {
+Future<void> downloadFile(FileReference file,
+    {required void Function(List<int> chunk) onData}) async {
   // final responseStream = await MaterialRepository()
   //   .apiProvider
   //   .downloadFile(
   //     Stream.value(
   //       DownloadRequest(
-  //         entityId: hiveFile.entityId,
-  //         entityType: EntityType.valueOf(hiveFile.entityType!),
-  //         filenames: <String>[hiveFile.filename],
+  //         entityId: file.entityId,
+  //         entityType: EntityType.valueOf(file.entityType!),
+  //         filenames: <String>[file.filename],
   //       ),
   //     ),
   //   );
@@ -27,7 +28,9 @@ Future<void> downloadFile(HiveFile hiveFile, {required void Function(List<int> c
   // }
 }
 
-Future<void> uploadFile({required FutureOr<void> Function(StreamController<FileData> controller) readStream}) async {
+Future<void> uploadFile(
+    {required FutureOr<void> Function(StreamController<FileData> controller)
+        readStream}) async {
   // final controller = StreamController<FileData>();
 
   // final responseStream = await MaterialRepository()

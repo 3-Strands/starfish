@@ -5,33 +5,33 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'file_system_shared.dart' as shared;
 
 // TODO: don't download the file again if already downloaded.
-downloadMaterial(HiveFile hiveFile) async {
-  String filePath = await File._filepathFromFilename(hiveFile.filename);
+downloadMaterial(FileReference fileReference) async {
+  String filePath = await File._filepathFromFilename(fileReference.filename);
 
   io.File file = io.File(filePath);
   await file.create();
-  io.RandomAccessFile randomAccessFile = await file.open(mode: io.FileMode.write);
+  io.RandomAccessFile randomAccessFile =
+      await file.open(mode: io.FileMode.write);
 
-  await shared.downloadFile(hiveFile,
-    onData: (chunk) => randomAccessFile.writeFromSync(chunk));
+  await shared.downloadFile(fileReference,
+      onData: (chunk) => randomAccessFile.writeFromSync(chunk));
   await randomAccessFile.close();
 
-  hiveFile.filepath = file.path;
+  fileReference.filepath = file.path;
 }
 
-Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
-  shared.uploadFile(
-    readStream: (controller) async {
-      for (final hiveFile in hiveFiles) {
-        final file = io.File(hiveFile.filepath!);
+Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
+    shared.uploadFile(readStream: (controller) async {
+      for (final fileReference in fileReferences) {
+        final file = io.File(fileReference.filepath!);
         final metaData = FileMetaData(
-          entityId: hiveFile.entityId,
-          filename: hiveFile.filename,
+          entityId: fileReference.entityId,
+          filename: fileReference.filename,
           entityType: EntityType.MATERIAL,
         );
 
@@ -42,8 +42,7 @@ Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
           controller.add(FileData(chunk: data));
         }
       }
-    }
-  );
+    });
 
 Future<void> openFile(String filepath) async {
   await OpenFile.open(filepath);
@@ -74,20 +73,20 @@ class File {
     BoxFit? fit,
     double? width,
     double? height,
-  }) => Image.file(
-    _ioFile,
-    fit: fit,
-    width: width,
-    height: height,
-  );
+  }) =>
+      Image.file(
+        _ioFile,
+        fit: fit,
+        width: width,
+        height: height,
+      );
 
   int get size => _ioFile.statSync().size;
 
   Future<void> createWithContent(Uint8List buffer) async {
-     _ioFile.create(recursive: true);
+    _ioFile.create(recursive: true);
 
-    final _randomAccessFile =
-        await _ioFile.open(mode: io.FileMode.write);
+    final _randomAccessFile = await _ioFile.open(mode: io.FileMode.write);
 
     await _randomAccessFile.writeFrom(buffer);
 

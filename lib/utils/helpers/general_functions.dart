@@ -2,11 +2,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/db/hive_file.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/wrappers/file_system.dart' as fs;
 
@@ -40,7 +40,7 @@ class GeneralFunctions {
     }
   }
 
-  static Future<void> openFile(HiveFile file, BuildContext context) async {
+  static Future<void> openFile(FileReference file, BuildContext context) async {
     if (file.filepath != null) {
       await fs.openFile(file.filepath!);
     } else {

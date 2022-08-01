@@ -1,5 +1,5 @@
-import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
 class MaterialWithAssignedStatus {
   const MaterialWithAssignedStatus({
@@ -8,7 +8,7 @@ class MaterialWithAssignedStatus {
     this.isAssignedToGroupWithLeaderRole = false,
   });
 
-  final HiveMaterial material;
+  final Material material;
   final ActionStatus? status;
   final bool isAssignedToGroupWithLeaderRole;
 }

@@ -35,13 +35,15 @@ class App extends StatelessWidget {
       value: authenticationRepository,
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => AppBloc(
-            localStorageApi: localStorageApi,
-            authenticationRepository: authenticationRepository,
-          )),
-          BlocProvider(create: (_) => SessionBloc(
-            authenticationRepository: authenticationRepository,
-          )),
+          BlocProvider(
+              create: (_) => AppBloc(
+                    localStorageApi: localStorageApi,
+                    authenticationRepository: authenticationRepository,
+                  )),
+          BlocProvider(
+              create: (_) => SessionBloc(
+                    authenticationRepository: authenticationRepository,
+                  )),
         ],
         child: const AppView(),
       ),
@@ -50,7 +52,7 @@ class App extends StatelessWidget {
 }
 
 class AppView extends StatelessWidget {
-  const AppView({ Key? key }) : super(key: key);
+  const AppView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +114,11 @@ class AppView extends StatelessWidget {
             );
           }
           return MaterialApp(
-            onGenerateRoute: (_) =>
-              MaterialPageRoute(
-                builder: (_) => Platform.isWeb ? const SizedBox.shrink() : const SplashScreen(),
-              ),
+            onGenerateRoute: (_) => MaterialPageRoute(
+              builder: (_) => Platform.isWeb
+                  ? const SizedBox.shrink()
+                  : const SplashScreen(),
+            ),
           );
         },
       ),
