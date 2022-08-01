@@ -1,20 +1,16 @@
-// ignore: implementation_imports
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/src/widgets/basic.dart' as widgetsBasic;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/group_user_role.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/db/hive_group_user.dart';
+import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/modules/groups_view/group_list_item.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -45,7 +41,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     super.initState();
   }
 
-  void _onGroupSelection(HiveGroup group) {
+  void _onGroupSelection(Group group) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -56,7 +52,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return widgetsBasic.StatefulBuilder(
+        return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.70,
@@ -71,7 +67,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     );
   }
 
-  Widget _buildSlidingUpPanel(HiveGroup group) {
+  Widget _buildSlidingUpPanel(Group group) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,157 +190,133 @@ class _GroupsScreenState extends State<GroupsScreen> {
             child: Scrollbar(
               thickness: 5.sp,
               isAlwaysShown: false,
-              child: SingleChildScrollView(
+              child: ListView(
                 physics: ScrollPhysics(),
-                child: Column(
-                  children: <Widget>[
-                    SearchBar(
-                      initialValue: bloc.groupBloc.query,
-                      onValueChanged: (value) {
-                        setState(() {
-                          bloc.groupBloc.query = value;
-                          _fetchAllGroupsByRole(bloc);
-                        });
-                      },
-                      onDone: (value) {
-                        setState(() {
-                          bloc.groupBloc.query = value;
-                          _fetchAllGroupsByRole(bloc);
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Container(
-                      height: 60.h,
-                      // width: 345.w,
-                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.txtFieldBackground,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
+                children: <Widget>[
+                  SearchBar(
+                    initialValue: "",
+                    onValueChanged: (query) {
+                      context.read<GroupsCubit>().queryChanged(query);
+                    },
+                    // TODO: This is actually unnecessary, since we update the query on every change.
+                    onDone: (_) {},
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Container(
+                    height: 60.h,
+                    // width: 345.w,
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
                       ),
-                      child: Center(
-                        child: DropdownButtonHideUnderline(
-                          child: ButtonTheme(
-                            alignedDropdown: true,
-                            child: DropdownButton2<UserGroupRoleFilter>(
-                              offset: Offset(0, -10),
-                              dropdownMaxHeight: 350.h,
-                              isExpanded: true,
-                              iconSize: 35,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              value: bloc.groupBloc.groupRoleFilter,
-                              onChanged: (UserGroupRoleFilter? value) {
-                                setState(() {
-                                  bloc.groupBloc.groupRoleFilter = value!;
-                                  _fetchAllGroupsByRole(bloc);
-                                });
-                              },
-                              items: UserGroupRoleFilter.values.map<
-                                      DropdownMenuItem<
-                                          UserGroupRoleFilter>>(
-                                  (UserGroupRoleFilter value) {
-                                return DropdownMenuItem<
-                                    UserGroupRoleFilter>(
-                                  value: value,
-                                  child: Text(
-                                    value.filterLabel,
-                                    style: TextStyle(
-                                      color: Color(0xFF434141),
-                                      fontSize: 17.sp,
-                                      fontFamily: 'OpenSans',
+                    ),
+                    child: Center(
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: BlocBuilder<GroupsCubit, GroupsState>(
+                            builder: (context, state) {
+                              return DropdownButton2<UserGroupRoleFilter>(
+                                offset: Offset(0, -10),
+                                dropdownMaxHeight: 350.h,
+                                isExpanded: true,
+                                iconSize: 35,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                value: state.userRoleFilter,
+                                onChanged: (UserGroupRoleFilter? value) {
+                                  if (value != null) {
+                                    context
+                                        .read<GroupsCubit>()
+                                        .userRoleFilterChanged(value);
+                                  }
+                                },
+                                items: UserGroupRoleFilter.values
+                                    .map<DropdownMenuItem<UserGroupRoleFilter>>(
+                                        (UserGroupRoleFilter value) {
+                                  return DropdownMenuItem<UserGroupRoleFilter>(
+                                    value: value,
+                                    child: Text(
+                                      value.filterLabel,
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 17.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
+                                  );
+                                }).toList(),
+                              );
+                            },
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    StreamBuilder(
-                      stream: bloc.groupBloc.groups,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<
-                                  Map<UserGroupRoleFilter, List<HiveGroup>>>
-                              snapshot) {
-                        if (snapshot.hasData) {
-                          return GroupListView(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(
-                                left: 10.0.w, right: 10.0.w),
-                            sectionsCount:
-                                snapshot.data!.keys.toList().length,
-                            countOfItemInSection: (int section) {
-                              return snapshot.data!.values
-                                  .toList()[section]
-                                  .length;
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  BlocBuilder<GroupsCubit, GroupsState>(
+                    builder: (context, state) {
+                      final map = state.groupsToShow;
+                      final keys = map.keys.toList();
+                      final sections = map.values.toList();
+
+                      return GroupListView(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                        sectionsCount: keys.length,
+                        countOfItemInSection: (int section) =>
+                            sections[section].length,
+                        itemBuilder: (context, indexPath) {
+                          return GroupListItem(
+                            group: sections[indexPath.section][indexPath.index],
+                            onGroupTap: _onGroupSelection,
+                            onLeaveGroupTap: (Group group) {
+                              Alerts.showMessageBox(
+                                  context: context,
+                                  title: appLocalizations.dialogAlert,
+                                  message: appLocalizations.alertLeaveThisGroup,
+                                  negativeButtonText: appLocalizations.cancel,
+                                  positiveButtonText: appLocalizations.leave,
+                                  negativeActionCallback: () {},
+                                  positiveActionCallback: () {
+                                    context
+                                        .read<GroupsCubit>()
+                                        .leaveGroupRequested(group);
+                                  });
                             },
-                            itemBuilder: (BuildContext context,
-                                IndexPath indexPath) {
-                              return GroupListItem(
-                                group: snapshot.data!.values
-                                        .toList()[indexPath.section]
-                                    [indexPath.index],
-                                onGroupTap: _onGroupSelection,
-                                onLeaveGroupTap: (HiveGroup group) {
-                                  Alerts.showMessageBox(
-                                      context: context,
-                                      title: appLocalizations.dialogAlert,
-                                      message: appLocalizations
-                                          .alertLeaveThisGroup,
-                                      negativeButtonText:
-                                          appLocalizations.cancel,
-                                      positiveButtonText:
-                                          appLocalizations.leave,
-                                      negativeActionCallback: () {},
-                                      positiveActionCallback: () {
-                                        bloc.groupBloc.leaveGroup(
-                                          group,
-                                        );
-                                      });
-                                },
-                              );
-                            },
-                            groupHeaderBuilder:
-                                (BuildContext context, int section) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 8.h),
-                                child: Text(
-                                  '${snapshot.data!.keys.toList()[section].about}',
-                                  style: TextStyle(
-                                      fontSize: 19.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF434141)),
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 10),
-                            sectionSeparatorBuilder: (context, section) =>
-                                SizedBox(height: 10),
                           );
-                        } else {
-                          return Container(
-                            color: AppColors.groupScreenBG,
+                        },
+                        groupHeaderBuilder: (context, section) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.w, vertical: 8.h),
+                            child: Text(
+                              keys[section].about,
+                              style: TextStyle(
+                                  fontSize: 19.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF434141)),
+                            ),
                           );
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                        },
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 10),
+                        sectionSeparatorBuilder: (context, section) =>
+                            SizedBox(height: 10),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ),

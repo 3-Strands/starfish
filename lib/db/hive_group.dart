@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
@@ -78,11 +77,10 @@ class HiveGroup extends HiveConcrete implements HiveSyncable<Group> {
     this.isMe = false,
   });
 
-  HiveGroup.from(Group group) :
-      id = group.id,
-      outputMarkers = group.outputMarkers
-        .map(HiveOutputMarker.from)
-        .toList() {
+  HiveGroup.from(Group group)
+      : id = group.id,
+        outputMarkers =
+            group.outputMarkers.map(HiveOutputMarker.from).toList() {
     this.name = group.name;
     this.description = group.description;
     this.linkEmail = group.linkEmail;
@@ -97,16 +95,6 @@ class HiveGroup extends HiveConcrete implements HiveSyncable<Group> {
     this.editHistory =
         group.editHistory.map((Edit e) => HiveEdit.from(e)).toList();
     this.languages = group.languages;
-  }
-
-  static void populateBox(Group group) {
-    final hiveGroup = HiveGroup.from(group);
-    globalHiveApi.group.put(hiveGroup.key, hiveGroup);
-    for (final groupUser in group.users) {
-      final hiveGroupUser = HiveGroupUser.from(groupUser);
-      globalHiveApi.groupUser.put(hiveGroupUser.key, hiveGroupUser);
-      hiveGroup.users.add(hiveGroupUser);
-    }
   }
 
   GroupUser_Role? currentUserRole;
@@ -220,7 +208,7 @@ class HiveGroup extends HiveConcrete implements HiveSyncable<Group> {
 //   }
 
 //   String toString() {
-//     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description}, 
+//     return '''{id: ${this.id}, name: ${this.name}, description: ${this.description},
 //     languageIds: ${this.languageIds?.toString()}, status: ${this.status}, users: ${this.users?.toString()},
 //     editHistory: ${this.editHistory?.toString()}, currentUserRole: ${this.currentUserRole}, outputMarkers: ${this.outputMarkers} }''';
 //   }

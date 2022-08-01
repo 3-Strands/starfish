@@ -43,6 +43,11 @@ class DataRepository {
       _streamBox(_hiveApi.materialType);
   List<MaterialType> get currentMaterialTypes => _hiveApi.materialType.asList();
 
+  // ------------------- Groups -------------------
+
+  Stream<List<Group>> get groups => _streamBox(_hiveApi.group);
+  List<Group> get currentGroups => _hiveApi.group.asList();
+
   List<Action> getAllActiveActions() {
     return _hiveApi.action.values.where((action) {
       // Exclude deleted actions
