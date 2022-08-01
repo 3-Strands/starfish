@@ -12,8 +12,10 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/providers/language_provider.dart';
+import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import '../material_view/materials_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -124,9 +126,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // StarfishSharedPreference()
-    //     .getAccessToken()
-    //     .then((value) => debugPrint("AccessToken: $value"));
+    StarfishSharedPreference()
+        .getAccessToken()
+        .then((value) => debugPrint("AccessToken: $value"));
     _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       child: Stack(
@@ -137,8 +139,12 @@ class _DashboardState extends State<Dashboard> {
               itemCount: 4,
               itemBuilder: (context, index) {
                 switch (index) {
-                  case 0: return const Materials();
-                  default: return const SizedBox();
+                  case 0:
+                    return const Materials();
+                  case 2:
+                    return const ActionsView();
+                  default:
+                    return const SizedBox();
                 }
               },
               onPageChanged: onPageChanged,

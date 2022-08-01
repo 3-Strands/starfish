@@ -6,6 +6,7 @@ import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/*
 class SelectMaterial extends StatefulWidget {
   SelectMaterial({Key? key, required this.onSelect}) : super(key: key);
 
@@ -115,3 +116,4 @@ class _SelectMaterialState extends State<SelectMaterial>
     setState(() {});
   }
 }
+*/

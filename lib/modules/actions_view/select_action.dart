@@ -10,6 +10,7 @@ import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/*
 class SelectActions extends StatefulWidget {
   SelectActions({Key? key, required this.onSelect}) : super(key: key);
   final Function(HiveAction) onSelect;
@@ -169,3 +170,4 @@ class _SelectActionsState extends State<SelectActions>
     setState(() {});
   }
 }
+*/

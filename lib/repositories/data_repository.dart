@@ -105,6 +105,32 @@ class DataRepository {
   //   );
 
   // ------------------- Actions -------------------
+  Stream<List<HiveAction>> get actions => _streamBox(_hiveApi.action);
+  List<HiveAction> get currentActions => _hiveApi.action.asList();
+
+  RelatedActions getActionsRelatedToMe() {
+    final actionsAssignedToMe = <String, ActionStatus>{};
+    final actionsAssignedToGroupWithLeaderRole = <String>{};
+    final List<HiveGroup> actionGroups = [];
+
+    for (final action in getMyActions()) {
+      final actionId = action.id;
+      final groupId = action.groupId;
+      if (actionId != null) {
+        if (action.isIndividualAction) {
+          actionsAssignedToMe[actionId] = action.actionStatus;
+        } else {
+          actionsAssignedToGroupWithLeaderRole.add(actionId);
+        }
+      }
+      if (groupId != null) {
+        actionGroups.add(_hiveApi.group.values
+            .firstWhere((element) => element.id == groupId));
+      }
+    }
+    return RelatedActions(actionsAssignedToMe,
+        actionsAssignedToGroupWithLeaderRole, actionGroups);
+  }
 
   Stream<List<HiveAction>> getActionsByGroup(HiveGroup group) {
     throw UnimplementedError();
@@ -135,4 +161,13 @@ class RelatedMaterials {
 
   final Map<String, ActionStatus> materialsAssignedToMe;
   final Set<String> materialsAssignedToGroupWithLeaderRole;
+}
+
+class RelatedActions {
+  RelatedActions(this.actionsAssignedToMe,
+      this.actionsAssignedToGroupWithLeaderRole, this.actionGroups);
+
+  final Map<String, ActionStatus> actionsAssignedToMe;
+  final Set<String> actionsAssignedToGroupWithLeaderRole;
+  final List<HiveGroup> actionGroups;
 }
