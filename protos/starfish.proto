@@ -118,6 +118,10 @@ service Starfish {
 
     rpc RefreshSession (RefreshSessionRequest) returns (AuthenticateResponse) {}
 
+    // Perform a general sync which allows updates to any resource types and also
+    // may fetch multiple resource types which have changed on the server, including deleted records
+    rpc Sync (stream SyncRequest) returns (stream SyncResponse) {}
+
     // Update the current user.
     // Group or action connections cannot be updated through this procedure.
     rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
@@ -135,6 +139,29 @@ enum ResultsTab {
     RESULTS_UNSPECIFIED = 0;
     RESULTS_MINE = 1;
     RESULTS_MY_GROUPS = 2;
+}
+
+enum ResourceType {
+    TYPE_UNSPECIFIED = 0;
+    ACTION = 1;
+    ACTION_USER = 2;
+    COUNTRY = 3;
+    EVALUATION_CATEGORY = 4;
+    EVALUATION_VALUE_NAME = 5;
+    GROUP = 6;
+    GROUP_EVALUATION = 7;
+    GROUP_USER = 8;
+    LANGUAGE = 9;
+    LEARNER_EVALUATION = 10;
+    MATERIAL = 11;
+    MATERIAL_FEEDBACK = 12;
+    MATERIAL_TOPIC = 13;
+    MATERIAL_TYPE = 14;
+    OUTPUT = 15;
+    OUTPUT_MARKER = 16;
+    TEACHER_RESPONSE = 17;
+    TRANSFORMATION = 18;
+    USER = 19;
 }
 
 // An Action resource can be assigned to a group, and to multiple users
@@ -656,6 +683,19 @@ message DeleteActionResponse {
 
 }
 
+message DeletedResource {
+
+    // The type of resource that was deleted.
+    ResourceType resource_type = 1;
+
+    // The ID of the deleted resource.
+    string id = 2;
+
+    // The date of deletion
+    google.type.Date deletion_date = 3;
+
+}
+
 message DeleteGroupUsersResponse {
 
     enum Status {
@@ -1122,6 +1162,91 @@ message RefreshSessionRequest {
     string user_id = 1;
 
     string refresh_token = 2;
+
+}
+
+message SyncRequestMetaData {
+
+    // Whether the Sync endpoint should respond with a stream of records from the server
+    // including deleted records. If multiple SyncMetaData messages are in the stream
+    // this value is taken from the last sent
+    bool get_new_records = 1;
+
+    // If the Sync endpoint will respond with a stream of records, they will be limited (including deleted records)
+    // to those updated since this date.  If multiple SyncMetaData messages are in the stream
+    // the earliest date is used. If no date is set then all records will be sent, but no deleted records.
+    google.protobuf.Timestamp updated_since = 2;
+
+    // If the Sync endpoint will respond with a stream of records, they will be limited (including deleted records)
+    // to those of the types listed in the whitelist. If the whitelist is empty then all resource types
+    // will be sent, except for any listed in the blacklist. If the whitelist is not empty
+    // the blacklist is ignored.
+    repeated ResourceType resource_type_whitelist = 3;
+
+    repeated ResourceType resource_type_blacklist = 4;
+
+}
+
+message SyncResponseMetaData {
+
+    // the time that the response from the sync request was processed on the server.
+    google.protobuf.Timestamp request_time = 1;
+
+}
+
+// When performing a sync the client may issue a stream of update requests, mixing request
+// of different types into the same stream. The client may also add a meta data message into
+// the stream to control and filter what records are returned in response from the server.
+// Note that all updates in the stream are processed before the response stream is constructed
+// (and hence, all updates in the stream may be reflected in the response).
+// The response stream may also include messages to indicate deleted records.
+message SyncRequest {
+
+    oneof update {
+        SyncRequestMetaData meta_data = 1;
+        CreateMaterialFeedbacksRequest create_material_feedback = 2;
+        CreateUpdateActionsRequest create_update_action = 3;
+        CreateUpdateActionUserRequest create_update_action_user = 4;
+        CreateUpdateGroupEvaluationRequest create_update_group_evaluation = 5;
+        CreateUpdateGroupsRequest create_update_group = 6;
+        CreateUpdateGroupUsersRequest create_update_group_user = 7;
+        CreateUpdateLearnerEvaluationRequest create_update_learner_evaluation = 8;
+        CreateUpdateMaterialsRequest create_update_material = 9;
+        CreateUpdateOutputRequest create_update_output = 10;
+        CreateUpdateTeacherResponseRequest create_update_teacher_response = 11;
+        CreateUpdateTransformationRequest create_update_transformation = 12;
+        CreateUpdateUserRequest create_update_user = 13;
+        DeleteActionRequest delete_action = 14;
+        GroupUser delete_group_user = 15;
+        DeleteMaterialRequest delete_material = 16;
+        UpdateCurrentUserRequest update_current_user = 17;
+    }
+
+}
+
+// The response from a sync request is a stream that may include a variety of resource types.
+// The final message in the stream will be the meta_data giving a timestamp for when the
+// data for the stream was collected from the database.
+message SyncResponse {
+
+    oneof value {
+        Action action = 1;
+        Country country = 2;
+        EvaluationCategory evaluation_category = 3;
+        Group group = 4;
+        GroupEvaluation group_evaluation = 5;
+        Language language = 7;
+        LearnerEvaluation learner_evaluation = 8;
+        Material material = 9;
+        MaterialTopic material_topic = 10;
+        MaterialType material_type = 11;
+        Output output = 12;
+        TeacherResponse teacher_response = 13;
+        Transformation transformation = 14;
+        User user = 15;
+        DeletedResource deleted_record = 16;
+        SyncResponseMetaData meta_data = 17;
+    }
 
 }
 
