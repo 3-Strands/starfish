@@ -2,32 +2,25 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_user.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 
-class ContactListItem extends StatefulWidget {
-  final HiveUser contact;
-  final Function(HiveUser) onTap;
-
+class ContactListItem extends StatelessWidget {
   ContactListItem({
     Key? key,
     required this.contact,
+    required this.isSelected,
     required this.onTap,
   }) : super(key: key);
 
-  _ContactListItemState createState() => _ContactListItemState();
-}
+  final User contact;
+  final bool isSelected;
+  final VoidCallback onTap;
 
-class _ContactListItemState extends State<ContactListItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        setState(() {
-          widget.contact.isSelected = !widget.contact.isSelected;
-        });
-        widget.onTap(widget.contact);
-      },
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(color: Colors.transparent),
         margin: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
@@ -39,10 +32,9 @@ class _ContactListItemState extends State<ContactListItem> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width - 70.0,
+                Expanded(
                   child: Text(
-                    widget.contact.name ?? '',
+                    contact.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -53,20 +45,21 @@ class _ContactListItemState extends State<ContactListItem> {
                     ),
                   ),
                 ),
-                Visibility(
-                  child: Icon(
-                    Icons.check_circle,
-                    color: AppColors.selectedButtonBG,
+                if (isSelected)
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.h),
+                    child: Icon(
+                      Icons.check_circle,
+                      color: AppColors.selectedButtonBG,
+                    ),
                   ),
-                  visible: widget.contact.isSelected,
-                ),
               ],
             ),
             SizedBox(
               height: 10.h,
             ),
             Text(
-              '${widget.contact.diallingCode ?? ''} ${widget.contact.phone ?? ''} ',
+              '${contact.diallingCode} ${contact.phone}',
               style: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 21.5.sp,

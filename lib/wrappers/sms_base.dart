@@ -1,5 +1,4 @@
-import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/models/invite_contact.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
 class SMS {
   static const canSendMessage = false;
@@ -8,8 +7,8 @@ class SMS {
   }
 }
 
-Future<List<HiveUser>> getAllContacts() => Future.value([]);
+Future<List<User>> getAllContacts() => Future.value([]);
 
 Future<bool> hasContactAccess({bool shouldAskIfUnknown = false}) =>
     Future.value(false);
-Future<bool> canRequestContactAccess() => Future.value(false);
+const mightBeAbleToAccessContacts = false;

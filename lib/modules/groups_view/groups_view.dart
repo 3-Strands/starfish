@@ -168,13 +168,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  setState(
-                    () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.settings,
-                      );
-                    },
+                  Navigator.pushNamed(
+                    context,
+                    Routes.settings,
                   );
                 },
               ),
@@ -278,7 +274,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             sections[section].length,
                         itemBuilder: (context, indexPath) {
                           return GroupListItem(
-                            group: sections[indexPath.section][indexPath.index],
+                            groupPlus: sections[indexPath.section]
+                                [indexPath.index],
                             onGroupTap: _onGroupSelection,
                             onLeaveGroupTap: (Group group) {
                               Alerts.showMessageBox(

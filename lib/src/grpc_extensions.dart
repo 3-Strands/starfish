@@ -33,3 +33,9 @@ extension ActionExt on Action {
 
   bool get isPastDueDate => dateDue.toDateTime().isBefore(DateTime.now());
 }
+
+extension GroupExt on Group {
+  List<User> get fullUsers => users
+      .map((groupUser) => globalHiveApi.user.get(groupUser.userId)!)
+      .toList();
+}

@@ -3,7 +3,7 @@ part of 'groups_cubit.dart';
 @immutable
 class GroupsState {
   GroupsState({
-    required List<Group> groups,
+    required List<GroupWithActionsAndRoles> groups,
     // required RelatedMaterials relatedMaterials,
     UserGroupRoleFilter userRoleFilter = UserGroupRoleFilter.FILTER_ALL,
     String query = "",
@@ -12,7 +12,7 @@ class GroupsState {
         _userRoleFilter = userRoleFilter,
         _query = query;
 
-  final List<Group> _groups;
+  final List<GroupWithActionsAndRoles> _groups;
   // final RelatedMaterials _relatedMaterials;
   final UserGroupRoleFilter _userRoleFilter;
   final String _query;
@@ -20,19 +20,21 @@ class GroupsState {
   UserGroupRoleFilter get userRoleFilter => _userRoleFilter;
   String get query => _query;
 
-  Map<UserGroupRoleFilter, List<Group>> get groupsToShow {
+  Map<UserGroupRoleFilter, List<GroupWithActionsAndRoles>> get groupsToShow {
     var groups = _groups;
 
     if (_query.isNotEmpty) {
       final lowerCaseQuery = _query.toLowerCase();
       groups = groups
-          .where((group) =>
-              group.name.toLowerCase().contains(lowerCaseQuery) ||
-              group.description.toLowerCase().contains(lowerCaseQuery))
+          .where((groupPlus) =>
+              groupPlus.group.name.toLowerCase().contains(lowerCaseQuery) ||
+              groupPlus.group.description
+                  .toLowerCase()
+                  .contains(lowerCaseQuery))
           .toList();
     }
 
-    final Map<UserGroupRoleFilter, List<Group>> groupsMap =
+    final Map<UserGroupRoleFilter, List<GroupWithActionsAndRoles>> groupsMap =
         _userRoleFilter == UserGroupRoleFilter.FILTER_ALL
             ? {
                 UserGroupRoleFilter.FILTER_LEARNER: [],
@@ -40,16 +42,15 @@ class GroupsState {
               }
             : {_userRoleFilter: []};
 
-    groups.forEach((group) {
-      // TODO: Match to role
-      groupsMap[groupsMap.keys.first]!.add(group);
+    groups.forEach((groupPlus) {
+      groupsMap[groupPlus.myRole]?.add(groupPlus);
     });
 
     return groupsMap;
   }
 
   GroupsState copyWith({
-    List<Group>? groups,
+    List<GroupWithActionsAndRoles>? groups,
     RelatedMaterials? relatedMaterials,
     UserGroupRoleFilter? userRoleFilter,
     String? query,

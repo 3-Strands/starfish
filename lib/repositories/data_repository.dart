@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/models/user.dart';
+import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
@@ -47,6 +49,64 @@ class DataRepository {
 
   Stream<List<Group>> get groups => _streamBox(_hiveApi.group);
   List<Group> get currentGroups => _hiveApi.group.asList();
+
+  Stream<List<EvaluationCategory>> get evaluationCategories =>
+      _streamBox(_hiveApi.evaluationCategory);
+  List<EvaluationCategory> get currentEvaluationCategories =>
+      _hiveApi.evaluationCategory.asList();
+
+  List<GroupWithActionsAndRoles> getGroupsWithActionsAndRoles() {
+    final completedActions = <String, int>{};
+    for (final actionUser in _hiveApi.actionUser.values) {
+      completedActions[actionUser.actionId] =
+          (completedActions[actionUser.actionId] ?? 0) + 1;
+    }
+
+    final actionsByGroup = <String, List<_ActionInfo>>{};
+
+    for (final action in _hiveApi.action.values) {
+      if (action.hasGroupId()) {
+        (actionsByGroup[action.groupId] ??= []).add(
+          _ActionInfo(completedActions[action.id] ?? 0, action.isPastDueDate),
+        );
+      }
+    }
+
+    return currentGroups.map((group) {
+      final totalUsers = group.users.length;
+
+      var completedActions = 0;
+      var incompleteActions = 0;
+      var overdueActions = 0;
+
+      actionsByGroup[group.id]?.forEach((actionInfo) {
+        completedActions += actionInfo.numCompleted;
+        final remaining = totalUsers - actionInfo.numCompleted;
+        if (actionInfo.isOverdue) {
+          overdueActions += remaining;
+        } else {
+          incompleteActions += remaining;
+        }
+      });
+
+      final groupAdmin = group.users
+          .firstWhereOrNull((user) => user.role == GroupUser_Role.ADMIN);
+      final groupTeacher = group.users
+          .firstWhereOrNull((user) => user.role == GroupUser_Role.TEACHER);
+
+      return GroupWithActionsAndRoles(
+        group: group,
+        completedActions: completedActions,
+        incompleteActions: incompleteActions,
+        overdueActions: overdueActions,
+        admin: groupAdmin == null ? null : _hiveApi.user.get(groupAdmin.userId),
+        teacher: groupTeacher == null
+            ? null
+            : _hiveApi.user.get(groupTeacher.userId),
+        myRole: group.users.firstWhere((user) => user.userId == _userId).role,
+      );
+    }).toList();
+  }
 
   List<Action> getAllActiveActions() {
     return _hiveApi.action.values.where((action) {
@@ -161,4 +221,11 @@ class RelatedMaterials {
 
   final Map<String, ActionStatus> materialsAssignedToMe;
   final Set<String> materialsAssignedToGroupWithLeaderRole;
+}
+
+class _ActionInfo {
+  final int numCompleted;
+  final bool isOverdue;
+
+  const _ActionInfo(this.numCompleted, this.isOverdue);
 }
