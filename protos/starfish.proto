@@ -143,25 +143,25 @@ enum ResultsTab {
 
 enum ResourceType {
     TYPE_UNSPECIFIED = 0;
-    ACTION = 1;
-    ACTION_USER = 2;
-    COUNTRY = 3;
-    EVALUATION_CATEGORY = 4;
-    EVALUATION_VALUE_NAME = 5;
-    GROUP = 6;
-    GROUP_EVALUATION = 7;
-    GROUP_USER = 8;
-    LANGUAGE = 9;
-    LEARNER_EVALUATION = 10;
-    MATERIAL = 11;
-    MATERIAL_FEEDBACK = 12;
-    MATERIAL_TOPIC = 13;
-    MATERIAL_TYPE = 14;
-    OUTPUT = 15;
-    OUTPUT_MARKER = 16;
-    TEACHER_RESPONSE = 17;
-    TRANSFORMATION = 18;
-    USER = 19;
+    ACTION_RESOURCE = 1;
+    ACTION_USER_RESOURCE = 2;
+    COUNTRY_RESOURCE = 3;
+    EVALUATION_CATEGORY_RESOURCE = 4;
+    EVALUATION_VALUE_NAME_RESOURCE = 5;
+    GROUP_RESOURCE = 6;
+    GROUP_EVALUATION_RESOURCE = 7;
+    GROUP_USER_RESOURCE = 8;
+    LANGUAGE_RESOURCE = 9;
+    LEARNER_EVALUATION_RESOURCE = 10;
+    MATERIAL_RESOURCE = 11;
+    MATERIAL_FEEDBACK_RESOURCE = 12;
+    MATERIAL_TOPIC_RESOURCE = 13;
+    MATERIAL_TYPE_RESOURCE = 14;
+    OUTPUT_RESOURCE = 15;
+    OUTPUT_MARKER_RESOURCE = 16;
+    TEACHER_RESPONSE_RESOURCE = 17;
+    TRANSFORMATION_RESOURCE = 18;
+    USER_RESOURCE = 19;
 }
 
 // An Action resource can be assigned to a group, and to multiple users
@@ -1169,18 +1169,21 @@ message SyncRequestMetaData {
 
     // Whether the Sync endpoint should respond with a stream of records from the server
     // including deleted records. If multiple SyncMetaData messages are in the stream
-    // this value is taken from the last sent
+    // then records will be fetched if at least one of them has set this value to true.
     bool get_new_records = 1;
 
     // If the Sync endpoint will respond with a stream of records, they will be limited (including deleted records)
     // to those updated since this date.  If multiple SyncMetaData messages are in the stream
     // the earliest date is used. If no date is set then all records will be sent, but no deleted records.
+    // Generally the client should insert here the exact timestamp returned in the response meta data
+    // of the most recent successful sync.
     google.protobuf.Timestamp updated_since = 2;
 
     // If the Sync endpoint will respond with a stream of records, they will be limited (including deleted records)
     // to those of the types listed in the whitelist. If the whitelist is empty then all resource types
     // will be sent, except for any listed in the blacklist. If the whitelist is not empty
-    // the blacklist is ignored.
+    // the blacklist is ignored. If multiple SyncMetaData messages are in the stream both the whitelist
+    // and the blacklist accumulate entries from them all.
     repeated ResourceType resource_type_whitelist = 3;
 
     repeated ResourceType resource_type_blacklist = 4;
