@@ -65,8 +65,7 @@ service Starfish {
     rpc DeleteActions (stream DeleteActionRequest) returns (stream DeleteActionResponse) {}
 
     // Remove users from groups.
-    // The role on GroupUser message is ignored in this procedure
-    rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUsersResponse) {}
+    rpc DeleteGroupUsers (stream DeleteGroupUserRequest) returns (stream DeleteGroupUserResponse) {}
 
     // Delete Materials.
     rpc DeleteMaterials (stream DeleteMaterialRequest) returns (stream DeleteMaterialResponse) {}
@@ -221,6 +220,8 @@ message ActionUser {
         GOOD = 1;
         BAD = 2;
     }
+
+    string id = 1;
 
     string action_id = 2;
 
@@ -696,18 +697,22 @@ message DeletedResource {
 
 }
 
-message DeleteGroupUsersResponse {
+message DeleteGroupUserRequest {
+
+    // The ID of the group-user to delete
+    string group_user_id = 1;
+
+}
+
+message DeleteGroupUserResponse {
 
     enum Status {
         SUCCESS = 0;
         FAILURE = 1;
     }
 
-    // The ID of the user that was requested to be removed from a group
-    string user_id = 1;
-
-    // The ID of the group from which the user was requested to be removed
-    string group_id = 2;
+    // The ID of the group-user resource  that was requested to be deleted
+    string group_user_id = 1;
 
     // The status of the removal
     Status status = 3;
@@ -785,6 +790,9 @@ message EvaluationValueName {
 
     // The name for the value
     string name = 2;
+
+    // The unique identifier for this resource
+    string id = 3;
 
 }
 
@@ -865,6 +873,8 @@ message GroupUser {
         TEACHER = 2;
         ADMIN = 3;
     }
+
+    string id = 1;
 
     string group_id = 2;
 
@@ -1129,6 +1139,9 @@ message Output {
 
     // The ID of the group to which this output relates.
     string group_id = 1;
+
+    // The unique identifier for this output
+    string id = 2;
 
     // The month to which this output relates.
     // In output the day value is set to 0, and ignored in input
