@@ -71,7 +71,7 @@ class ContactList extends StatelessWidget {
                             return;
                           }
 
-                          contactCubit.contactToggled(contact.id);
+                          contactCubit.contactToggled(contact);
                         },
                       );
                     },

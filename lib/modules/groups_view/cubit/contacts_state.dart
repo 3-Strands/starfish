@@ -7,6 +7,10 @@ enum ContactPermission {
   unavailable,
 }
 
+enum ContactError {
+  nameAlreadyExists,
+}
+
 @immutable
 class ContactsState {
   const ContactsState({
@@ -15,13 +19,15 @@ class ContactsState {
     this.newlySelectedContacts = const {},
     this.permission = ContactPermission.unknown,
     this.query = '',
+    this.error,
   });
 
   final List<User>? contacts;
-  final Set<String> alreadySelectedContacts;
-  final Set<String> newlySelectedContacts;
+  final Set<User> alreadySelectedContacts;
+  final Set<User> newlySelectedContacts;
   final ContactPermission permission;
   final String query;
+  final ContactError? error;
 
   List<User> get contactsToShow {
     var contactsToShow = this.contacts ?? [];
@@ -42,10 +48,11 @@ class ContactsState {
 
   ContactsState copyWith({
     List<User>? contacts,
-    Set<String>? alreadySelectedContacts,
-    Set<String>? newlySelectedContacts,
+    Set<User>? alreadySelectedContacts,
+    Set<User>? newlySelectedContacts,
     ContactPermission? permission,
     String? query,
+    ContactError? error,
   }) =>
       ContactsState(
         contacts: contacts ?? this.contacts,
@@ -55,5 +62,6 @@ class ContactsState {
             newlySelectedContacts ?? this.newlySelectedContacts,
         permission: permission ?? this.permission,
         query: query ?? this.query,
+        error: error, // NOT default to this.error
       );
 }

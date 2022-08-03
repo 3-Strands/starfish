@@ -23,6 +23,7 @@ import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/modules/groups_view/contact_list.dart';
 import 'package:starfish/modules/groups_view/cubit/add_edit_group_cubit.dart';
 import 'package:starfish/modules/groups_view/cubit/contacts_cubit.dart';
+import 'package:starfish/modules/groups_view/cubit/group_navigation_cubit.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/repository/group_repository.dart';
@@ -37,7 +38,7 @@ import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
-import 'package:starfish/widgets/edit_invite_user_bottomsheet.dart';
+import 'package:starfish/modules/groups_view/edit_invite_user_bottomsheet.dart';
 import 'package:starfish/widgets/group_member_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -69,8 +70,42 @@ class AddEditGroup extends StatelessWidget {
             selectedUsers: group?.fullUsers,
           ),
         ),
+        BlocProvider(
+          create: (_) => GroupNavigationCubit(),
+        ),
       ],
-      child: const AddEditGroupView(),
+      child: BlocListener<GroupNavigationCubit, GroupNavigationState>(
+        listener: (context, state) {
+          switch (state) {
+            case GroupNavigationState.mainEdit:
+              Navigator.of(context).pop();
+              break;
+            case GroupNavigationState.addUsers:
+              context.read<ContactsCubit>().contactsRequested();
+              showModalBottomSheet(
+                context: context,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(34.r),
+                      topRight: Radius.circular(34.r)),
+                ),
+                isScrollControlled: true,
+                isDismissible: true,
+                enableDrag: true,
+                builder: (BuildContext context) {
+                  return Container(
+                    margin: EdgeInsets.only(top: 40.h),
+                    height: MediaQuery.of(context).size.height * 0.70,
+                    child: const ContactList(),
+                  );
+                },
+              );
+              break;
+            case GroupNavigationState.editUser:
+          }
+        },
+        child: const AddEditGroupView(),
+      ),
     );
   }
 }
@@ -83,8 +118,6 @@ class AddEditGroupView extends StatefulWidget {
 }
 
 class _AddEditGroupViewState extends State<AddEditGroupView> {
-  final ValueNotifier<List<HiveUser>?> _contactsNotifier = ValueNotifier(null);
-
   final _personNameController = TextEditingController();
 
   bool _isEditMode = false;
@@ -95,24 +128,6 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
 
   List<HiveGroupUser> _groupUsers = [];
   List<HiveGroupUser> _updatedGroupUsers = [];
-
-  Future<void> _checkPermissionsAndShowContact() async {
-    if (await hasContactAccess(shouldAskIfUnknown: true)) {
-      await _loadContacts();
-      _showContactList();
-    } else {
-      _handleInvalidPermissions();
-    }
-  }
-
-  void _handleInvalidPermissions() async {
-    final snackbar = SnackBar(
-      content: Text((await canRequestContactAccess())
-          ? appLocalizations.contactAccessDenied
-          : appLocalizations.contactDataNotAvailable),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackbar);
-  }
 
   void _sendInviteSMS(String message, List<HiveUser> recipents) async {
     recipents.forEach((element) {
@@ -147,45 +162,6 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
     }
 
     return _alreadySelected || _alreadyGroupMember;
-  }
-
-  _showContactList() {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
-      ),
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      builder: (BuildContext context) {
-        return Container(
-          margin: EdgeInsets.only(top: 40.h),
-          height: MediaQuery.of(context).size.height * 0.70,
-          child: const ContactList(),
-        );
-      },
-    );
-  }
-
-  void _validateAndCreateUpdateGroup() {
-    if (_titleController.text.isEmpty) {
-      StarfishSnackbar.showErrorMessage(
-          context, appLocalizations.emptyGroupTitle);
-    } else if (_descriptionController.text.isEmpty) {
-      StarfishSnackbar.showErrorMessage(
-          context, appLocalizations.emptyDescription);
-    } /* else if (_selectedLanguages.length == 0) {
-      StarfishSnackbar.showErrorMessage(
-          context, appLocalizations.emptySelectLanguage);
-    } else if (_selectedEvaluationCategories.length == 0) {
-      StarfishSnackbar.showErrorMessage(
-          context, appLocalizations.emptyEvaluateProgress);
-    }*/
-    else {
-      _createUpdateGroup();
-    }
   }
 
   void _createUpdateGroup() {
@@ -261,55 +237,71 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
           topRight: Radius.circular(34.r),
         ),
       ),
+      backgroundColor: const Color(0xFFEFEFEF),
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return EditInviteUserBottomSheet(user, groupUser, onDone:
-            (String contactName, String diallingCode, String phonenumber,
-                GroupUser_Role role) {
-          if (contactName.isEmpty) {
-            StarfishSnackbar.showErrorMessage(
-                context, AppLocalizations.of(context)!.emptyFullName);
-            return;
-          } else if (diallingCode.isEmpty) {
-            StarfishSnackbar.showErrorMessage(
-                context, AppLocalizations.of(context)!.emptyDialingCode);
-            return;
-          } else if (phonenumber.isEmpty) {
-            StarfishSnackbar.showErrorMessage(
-                context, AppLocalizations.of(context)!.emptyMobileNumbers);
-            return;
-          } else if ((user.phone != phonenumber ||
-                  user.diallingCode != diallingCode) &&
-              _checkIfUserPhonenumberAlreadySelected(
-                  diallingCode, phonenumber)) {
-            //check if there is any change in dialling code or in phone number
-            StarfishSnackbar.showErrorMessage(
-                context, appLocalizations.phonenumberAlreadyAdded);
-            return;
-          } else {
-            user.name = contactName;
-            user.diallingCode = diallingCode;
-            user.phone = phonenumber;
-            user.isUpdated = true;
+        return EditInviteUserBottomSheet(
+          user,
+          groupUser,
+          onDone: (String contactName, String diallingCode, String phonenumber,
+              GroupUser_Role role) {
+            if (contactName.isEmpty) {
+              StarfishSnackbar.showErrorMessage(
+                  context, AppLocalizations.of(context)!.emptyFullName);
+              return;
+            } else if (diallingCode.isEmpty) {
+              StarfishSnackbar.showErrorMessage(
+                  context, AppLocalizations.of(context)!.emptyDialingCode);
+              return;
+            } else if (phonenumber.isEmpty) {
+              StarfishSnackbar.showErrorMessage(
+                  context, AppLocalizations.of(context)!.emptyMobileNumbers);
+              return;
+            } else if ((user.phone != phonenumber ||
+                    user.diallingCode != diallingCode) &&
+                _checkIfUserPhonenumberAlreadySelected(
+                    diallingCode, phonenumber)) {
+              //check if there is any change in dialling code or in phone number
+              StarfishSnackbar.showErrorMessage(
+                  context, appLocalizations.phonenumberAlreadyAdded);
+              return;
+            } else {
+              user.name = contactName;
+              user.diallingCode = diallingCode;
+              user.phone = phonenumber;
+              user.isUpdated = true;
 
-            groupUser.role = role.value;
-            groupUser.isUpdated = true;
+              groupUser.role = role.value;
+              groupUser.isUpdated = true;
 
-            Navigator.of(context).pop();
-          }
-        });
+              Navigator.of(context).pop();
+            }
+          },
+        );
       },
-    ).whenComplete(() {
-      setState(() {});
-    });
+    );
+  }
+
+  void submitPersonName() {
+    context
+        .read<ContactsCubit>()
+        .personNameSubmitted(_personNameController.text);
+    _personNameController.text = '';
+  }
+
+  @override
+  void dispose() {
+    _personNameController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
     final addEditGroupCubit = context.read<AddEditGroupCubit>();
+    final contactCubit = context.read<ContactsCubit>();
 
     return Scaffold(
       backgroundColor: AppColors.groupScreenBG,
@@ -341,302 +333,303 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
           ),
         ),
       ),
-      body: Scrollbar(
-        thickness: 5.w,
-        isAlwaysShown: false,
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  appLocalizations.groupName,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  style: formTitleTextStyle,
-                  initialValue: addEditGroupCubit.state.name,
-                  onChanged: addEditGroupCubit.nameChanged,
-                  decoration: InputDecoration(
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                    labelText: appLocalizations.hintGroupName,
-                    labelStyle: formTitleHintStyle,
-                    alignLabelWithHint: true,
-                    // hintText: appLocalizations.hintGroupName,
-                    // hintStyle: formTitleHintStyle,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ContactsCubit, ContactsState>(
+            listener: (context, state) {
+              final error = state.error;
+              if (error != null) {
+                String message;
+                switch (error) {
+                  case ContactError.nameAlreadyExists:
+                    message = appLocalizations.userNameAlreadyAdded;
+                    break;
+                }
+                StarfishSnackbar.showErrorMessage(context, message);
+              }
+            },
+          ),
+          BlocListener<AddEditGroupCubit, AddEditGroupState>(
+            listener: (context, state) {
+              final error = state.error;
+              if (error != null) {
+                String message;
+                switch (error) {
+                  case GroupError.noName:
+                    message = appLocalizations.emptyGroupTitle;
+                    break;
+                  case GroupError.noDescription:
+                    message = appLocalizations.emptyDescription;
+                    break;
+                }
+                StarfishSnackbar.showErrorMessage(context, message);
+              }
+            },
+          ),
+        ],
+        child: Scrollbar(
+          thickness: 5.w,
+          isAlwaysShown: false,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    appLocalizations.groupName,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
                   ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Description
-                Text(
-                  appLocalizations.descripton,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                TextFormField(
-                  maxLines: 4,
-                  maxLength: 200,
-                  initialValue: addEditGroupCubit.state.description,
-                  onChanged: addEditGroupCubit.descriptionChanged,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    floatingLabelBehavior: FloatingLabelBehavior.never,
-                    labelText: appLocalizations.hintGroupDescription,
-                    labelStyle: formTitleHintStyle,
-                    alignLabelWithHint: true,
-                    // hintText:
-                    //     appLocalizations.hintGroupDescription,
-                    // hintStyle: formTitleHintStyle,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
+                  SizedBox(height: 11.h),
+                  TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    style: formTitleTextStyle,
+                    initialValue: addEditGroupCubit.state.name,
+                    onChanged: addEditGroupCubit.nameChanged,
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      labelText: appLocalizations.hintGroupName,
+                      labelStyle: formTitleHintStyle,
+                      alignLabelWithHint: true,
+                      // hintText: appLocalizations.hintGroupName,
+                      // hintStyle: formTitleHintStyle,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 21.h),
-
-                // Language(s) used
-                Text(
-                  appLocalizations.lanugagesUsedOptional,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                BlocBuilder<AddEditGroupCubit, AddEditGroupState>(
-                  buildWhen: (previous, current) =>
-                      previous.languages != current.languages,
-                  builder: (context, state) {
-                    return MultiSelect<Language>(
-                      navTitle: appLocalizations.selectLanugages,
-                      placeholder: appLocalizations.selectLanugages,
-                      items: state.languages,
-                      initialSelection: state.selectedLanguages
-                          .map((languageId) =>
-                              globalHiveApi.language.get(languageId)!)
-                          .toSet(),
-                      toDisplay: (language) => language.name,
-                      onFinished: (selectedLanguages) {
-                        addEditGroupCubit.selectedLanguagesChanged(
-                            selectedLanguages.map((l) => l.id).toSet());
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: 21.h),
-
-                // Evaluate Progress
-                Text(
-                  appLocalizations.evaluateProgressOptional,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 11.h),
-                BlocBuilder<AddEditGroupCubit, AddEditGroupState>(
-                  buildWhen: (previous, current) =>
-                      previous.evaluationCategories !=
-                      current.evaluationCategories,
-                  builder: (context, state) {
-                    return MultiSelect<EvaluationCategory>(
-                      maxSelectItemLimit: 3,
-                      navTitle: appLocalizations.selectCategories,
-                      placeholder: appLocalizations.selectCategories,
-                      items: state.evaluationCategories,
-                      initialSelection: state.selectedEvaluationCategories
-                          .map((categoryId) =>
-                              globalHiveApi.evaluationCategory.get(categoryId)!)
-                          .toSet(),
-                      toDisplay: (category) => category.name,
-                      onFinished: (selectedEvaluationCategories) {
-                        addEditGroupCubit.selectedEvaluationCategoriesChanged(
-                            selectedEvaluationCategories
-                                .map((c) => c.id)
-                                .toSet());
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  appLocalizations.hintEvaluateProgress,
-                  textAlign: TextAlign.left,
-                  style: italicDetailTextTextStyle,
-                ),
-                SizedBox(height: 40.h),
-
-                // Option 1.
-                Text(
-                  appLocalizations.invitePeopleFromContactsList,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 20.h),
-                Platform.isWeb
-                    ? Text(
-                        appLocalizations.featureOnlyAvailableOnNative,
-                        style: warningTextStyle,
-                        textAlign: TextAlign.center,
-                      )
-                    : DottedBorder(
-                        borderType: BorderType.RRect,
-                        radius: Radius.circular(30.r),
-                        color: Color(0xFF3475F0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 50.h,
-                          child: TextButton(
-                            onPressed: () {
-                              _checkPermissionsAndShowContact();
-                            },
-                            child: Text(
-                              appLocalizations.inviteFromContactsList,
-                              style: TextStyle(
-                                fontFamily: 'OpenSans',
-                                fontSize: 17.sp,
-                                color: Color(0xFF3475F0),
-                              ),
-                            ),
-                          ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
                         ),
                       ),
-                SizedBox(height: 21.h),
-
-                _invitedGroupMembersContainer(),
-                _invitedContactsContainer(),
-                // Option 2.
-                Text(
-                  appLocalizations.addWithoutInvite,
-                  textAlign: TextAlign.left,
-                  style: titleTextStyle,
-                ),
-                SizedBox(height: 20.h),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFEFEFEF),
-                    borderRadius: BorderRadius.circular(10.r),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
                   ),
-                  padding: EdgeInsets.only(left: 15.w),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _personNameController,
-                          keyboardType: TextInputType.text,
-                          style: textFormFieldText,
-                          decoration: InputDecoration(
-                            floatingLabelBehavior: FloatingLabelBehavior.never,
-                            labelText: appLocalizations.hintPersonName,
-                            labelStyle: formTitleHintStyle,
-                            alignLabelWithHint: true,
-                            // hintText:
-                            //     appLocalizations.hintPersonName,
-                            // hintStyle: textFormFieldText,
-                            contentPadding:
-                                EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0.r),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0.r),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0.r),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: AppColors.txtFieldBackground,
-                          ),
+                  SizedBox(height: 21.h),
+
+                  // Description
+                  Text(
+                    appLocalizations.descripton,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  TextFormField(
+                    maxLines: 4,
+                    maxLength: 200,
+                    initialValue: addEditGroupCubit.state.description,
+                    onChanged: addEditGroupCubit.descriptionChanged,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      labelText: appLocalizations.hintGroupDescription,
+                      labelStyle: formTitleHintStyle,
+                      alignLabelWithHint: true,
+                      // hintText:
+                      //     appLocalizations.hintGroupDescription,
+                      // hintStyle: formTitleHintStyle,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          if (_personNameController.text.isNotEmpty) {
-                            setState(() {
-                              // _unInvitedPersonNames
-                              //     .add(_personNameController.text);
-                              if (_newInvitedUsers
-                                      .where((element) =>
-                                          element.phone == null ||
-                                          (element.phone != null &&
-                                              element.phone!.isEmpty))
-                                      .where((element) =>
-                                          element.name!.toLowerCase() ==
-                                          _personNameController.text)
-                                      .length >
-                                  0) {
-                                // TODO: user with this name already added, also check in the already added group members
-                                StarfishSnackbar.showErrorMessage(context,
-                                    appLocalizations.userNameAlreadyAdded);
-                                return;
-                              }
-                              HiveUser _hiveUser = HiveUser(
-                                id: UuidGenerator.uuid(),
-                                name: _personNameController.text,
-                                isNew: true,
-                              );
-                              HiveGroupUser _hiveGroupUser = HiveGroupUser(
-                                groupId: _hiveGroup!.id,
-                                userId: _hiveUser.id,
-                                role: GroupUser_Role.LEARNER.value,
-                                isNew: true,
-                              );
-                              _newInvitedUsers.add(_hiveUser);
-                              _newInvitedGroupUsers.add(_hiveGroupUser);
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 21.h),
 
-                              _personNameController.text = '';
-                            });
-                          }
+                  // Language(s) used
+                  Text(
+                    appLocalizations.lanugagesUsedOptional,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  BlocBuilder<AddEditGroupCubit, AddEditGroupState>(
+                    buildWhen: (previous, current) =>
+                        previous.languages != current.languages,
+                    builder: (context, state) {
+                      return MultiSelect<Language>(
+                        navTitle: appLocalizations.selectLanugages,
+                        placeholder: appLocalizations.selectLanugages,
+                        items: state.languages,
+                        initialSelection: state.selectedLanguages
+                            .map((languageId) =>
+                                globalHiveApi.language.get(languageId)!)
+                            .toSet(),
+                        toDisplay: (language) => language.name,
+                        onFinished: (selectedLanguages) {
+                          addEditGroupCubit.selectedLanguagesChanged(
+                              selectedLanguages.map((l) => l.id).toSet());
                         },
-                        icon: SvgPicture.asset(AssetsPath.nextIcon),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
-                // Selection person without invite
-                _unInvitedGroupMembersContainer(),
-                _unInvitedContactsContainer(),
+                  SizedBox(height: 21.h),
 
-                if (widget.group?.editHistory != null)
-                  _editHistoryContainer(widget.group),
-                SizedBox(
-                  height: 75.h,
-                )
-              ],
+                  // Evaluate Progress
+                  Text(
+                    appLocalizations.evaluateProgressOptional,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 11.h),
+                  BlocBuilder<AddEditGroupCubit, AddEditGroupState>(
+                    buildWhen: (previous, current) =>
+                        previous.evaluationCategories !=
+                        current.evaluationCategories,
+                    builder: (context, state) {
+                      return MultiSelect<EvaluationCategory>(
+                        maxSelectItemLimit: 3,
+                        navTitle: appLocalizations.selectCategories,
+                        placeholder: appLocalizations.selectCategories,
+                        items: state.evaluationCategories,
+                        initialSelection: state.selectedEvaluationCategories
+                            .map((categoryId) => globalHiveApi
+                                .evaluationCategory
+                                .get(categoryId)!)
+                            .toSet(),
+                        toDisplay: (category) => category.name,
+                        onFinished: (selectedEvaluationCategories) {
+                          addEditGroupCubit.selectedEvaluationCategoriesChanged(
+                              selectedEvaluationCategories
+                                  .map((c) => c.id)
+                                  .toSet());
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    appLocalizations.hintEvaluateProgress,
+                    textAlign: TextAlign.left,
+                    style: italicDetailTextTextStyle,
+                  ),
+                  SizedBox(height: 40.h),
+
+                  // Option 1.
+                  Text(
+                    appLocalizations.invitePeopleFromContactsList,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 20.h),
+                  Platform.isWeb
+                      ? Text(
+                          appLocalizations.featureOnlyAvailableOnNative,
+                          style: warningTextStyle,
+                          textAlign: TextAlign.center,
+                        )
+                      : DottedBorder(
+                          borderType: BorderType.RRect,
+                          radius: Radius.circular(30.r),
+                          color: Color(0xFF3475F0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50.h,
+                            child: TextButton(
+                              onPressed: () {
+                                _checkPermissionsAndShowContact();
+                              },
+                              child: Text(
+                                appLocalizations.inviteFromContactsList,
+                                style: TextStyle(
+                                  fontFamily: 'OpenSans',
+                                  fontSize: 17.sp,
+                                  color: Color(0xFF3475F0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                  SizedBox(height: 21.h),
+
+                  _invitedGroupMembersContainer(),
+                  _invitedContactsContainer(),
+                  // Option 2.
+                  Text(
+                    appLocalizations.addWithoutInvite,
+                    textAlign: TextAlign.left,
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFEFEFEF),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    padding: EdgeInsets.only(left: 15.w),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _personNameController,
+                            keyboardType: TextInputType.text,
+                            style: textFormFieldText,
+                            onFieldSubmitted: (_) => submitPersonName(),
+                            decoration: InputDecoration(
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.never,
+                              labelText: appLocalizations.hintPersonName,
+                              labelStyle: formTitleHintStyle,
+                              alignLabelWithHint: true,
+                              // hintText:
+                              //     appLocalizations.hintPersonName,
+                              // hintStyle: textFormFieldText,
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(5.w, 5.0, 5.0.w, 5.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0.r),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0.r),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0.r),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: AppColors.txtFieldBackground,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: submitPersonName,
+                          icon: SvgPicture.asset(AssetsPath.nextIcon),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Selection person without invite
+                  _unInvitedGroupMembersContainer(),
+                  _unInvitedContactsContainer(),
+
+                  if (widget.group?.editHistory != null)
+                    _editHistoryContainer(widget.group),
+                  SizedBox(
+                    height: 75.h,
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -655,10 +648,6 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                 margin: EdgeInsets.only(left: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Discard any change in local group user roles i.e. HiveGroupUser box
-                    // _filteredContactList.clear();
-                    // _loadContacts();
-                    _query = '';
                     Navigator.of(context).pop();
                   },
                   child: Text(appLocalizations.cancel),

@@ -50,53 +50,39 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
       emit(state.copyWith(description: description));
 
   void submitRequested() {
-    MaterialError? error;
-    if (state.title.isEmpty) {
-      error = MaterialError.noTitle;
+    GroupError? error;
+    if (state.name.isEmpty) {
+      error = GroupError.noName;
     } else if (state.description.isEmpty) {
-      error = MaterialError.noDescription;
-    } else if (!state.hasAnyFilesSelected && state.url.isEmpty) {
-      error = MaterialError.noWebLinkOrFile;
-    } else if (state.selectedLanguages.isEmpty) {
-      error = MaterialError.noLanguage;
+      error = GroupError.noDescription;
     }
 
     if (error != null) {
       emit(state.copyWith(error: error));
     } else {
-      final material = _material;
-      final id = material?.id ?? UuidGenerator.uuid();
+      final group = _group;
+      final id = group?.id ?? UuidGenerator.uuid();
       _dataRepository.addDelta(
-        material == null
-            ? MaterialCreateDelta(
+        group == null
+            ? GroupCreateDelta(
                 id: id,
-                title: state.title,
+                name: state.name,
                 description: state.description,
-                topics: state.selectedTopics.toList(),
-                typeIds: state.selectedTypes.toList(),
                 languageIds: state.selectedLanguages.toList(),
-                url: state.url,
-                editability: state.editability,
+                evaluationCategoryIds:
+                    state.selectedEvaluationCategories.toList(),
+                // TODO
               )
-            : MaterialUpdateDelta(
-                material,
-                title: state.title,
+            : GroupUpdateDelta(
+                group,
+                name: state.name,
                 description: state.description,
-                topics: state.selectedTopics.toList(),
-                typeIds: state.selectedTypes.toList(),
                 languageIds: state.selectedLanguages.toList(),
-                url: state.url,
-                editability: state.editability,
+                evaluationCategoryIds:
+                    state.selectedEvaluationCategories.toList(),
+                // TODO
               ),
       );
-      state.newlySelectedFiles.forEach((file) {
-        _dataRepository.addDelta(FileReferenceCreateDelta(
-          entityId: id,
-          entityType: EntityType.MATERIAL,
-          filename: file.path.split('/').last,
-          filepath: file.path,
-        ));
-      });
     }
   }
 
