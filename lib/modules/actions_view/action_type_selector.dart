@@ -9,6 +9,7 @@ import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/enums/action_type.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/*
 class ActionTypeSelector extends StatefulWidget {
   Action_Type? selectedActionType;
   HiveMaterial? selectedMaterial;
@@ -401,3 +402,4 @@ class _ActionTypeSelectorState extends State<ActionTypeSelector> {
     );
   }
 }
+*/

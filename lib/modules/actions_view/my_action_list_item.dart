@@ -88,23 +88,23 @@ class MyActionListItem extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12.r)),
                               enabled: true,
                               onSelected: (value) {
-                                switch (value) {
-                                  case 0:
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AddEditAction(
-                                          action: action,
-                                        ),
-                                      ),
-                                    ).then((value) => FocusScope.of(context)
-                                        .requestFocus(new FocusNode()));
-                                    break;
-                                  case 1:
-                                    _deleteAction(context, action);
+                                // switch (value) {
+                                //   case 0:
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => AddEditAction(
+                                //           action: action,
+                                //         ),
+                                //       ),
+                                //     ).then((value) => FocusScope.of(context)
+                                //         .requestFocus(new FocusNode()));
+                                //     break;
+                                //   case 1:
+                                //     _deleteAction(context, action);
 
-                                    break;
-                                }
+                                //     break;
+                                // }
                               },
                               itemBuilder: (context) => [
                                 PopupMenuItem(
@@ -171,19 +171,19 @@ class MyActionListItem extends StatelessWidget {
   }
 
   _deleteAction(BuildContext context, HiveAction action) {
-    final bloc = Provider.of(context);
-    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
-    Alerts.showMessageBox(
-        context: context,
-        title: _appLocalizations.deleteActionTitle,
-        message: _appLocalizations.deleteActionMessage,
-        positiveButtonText: _appLocalizations.delete,
-        negativeButtonText: _appLocalizations.cancel,
-        positiveActionCallback: () {
-          // Mark this action for deletion
-          action.isDirty = true;
-          bloc.actionBloc.createUpdateAction(action);
-        },
-        negativeActionCallback: () {});
+    // final bloc = Provider.of(context);
+    // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    // Alerts.showMessageBox(
+    //     context: context,
+    //     title: _appLocalizations.deleteActionTitle,
+    //     message: _appLocalizations.deleteActionMessage,
+    //     positiveButtonText: _appLocalizations.delete,
+    //     negativeButtonText: _appLocalizations.cancel,
+    //     positiveActionCallback: () {
+    //       // Mark this action for deletion
+    //       action.isDirty = true;
+    //       bloc.actionBloc.createUpdateAction(action);
+    //     },
+    //     negativeActionCallback: () {});
   }
 }

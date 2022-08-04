@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "107890862409",
+    "firebase_url": "https://starfish-3s-default-rtdb.firebaseio.com",
+    "project_id": "starfish-3s",
+    "storage_bucket": "starfish-3s.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107890862409:android:f3fdaf9c310df7c40f9298",
+        "android_client_info": {
+          "package_name": "app.starfishonline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107890862409-armfgsil5di5tropj6c7pgq7f1f32gec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCevqciEnoFzvvjlTLgEq4_8WFky0kTZQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107890862409-armfgsil5di5tropj6c7pgq7f1f32gec.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "107890862409-p7132rrtnvh119qh3f1s2s702h48nbv6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sil.starfish"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107890862409:android:0737eb790c18294f0f9298",
+        "android_client_info": {
+          "package_name": "com.sil.starfish"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107890862409-ecdf541pmpli7l791repnpifr104af5d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sil.starfish",
+            "certificate_hash": "589d80a712e302b79a78a54dfb4d131bd867c000"
+          }
+        },
+        {
+          "client_id": "107890862409-armfgsil5di5tropj6c7pgq7f1f32gec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCevqciEnoFzvvjlTLgEq4_8WFky0kTZQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107890862409-armfgsil5di5tropj6c7pgq7f1f32gec.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "107890862409-p7132rrtnvh119qh3f1s2s702h48nbv6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sil.starfish"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

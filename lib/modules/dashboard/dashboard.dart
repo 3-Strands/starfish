@@ -8,9 +8,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
+// import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 // import 'package:starfish/modules/material_view/materials_view.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -120,9 +122,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // StarfishSharedPreference()
-    //     .getAccessToken()
-    //     .then((value) => debugPrint("AccessToken: $value"));
+    StarfishSharedPreference()
+        .getAccessToken()
+        .then((value) => debugPrint("AccessToken: $value"));
     _appLocalizations = AppLocalizations.of(context)!;
     return Container(
       child: Stack(
@@ -137,6 +139,8 @@ class _DashboardState extends State<Dashboard> {
                   //   return const Materials();
                   case 1:
                     return const Groups();
+                  // case 2:
+                  //   return const ActionsView();
                   default:
                     return const SizedBox();
                 }

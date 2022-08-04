@@ -23,27 +23,29 @@ class MyGroupActionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final _appLocalizations = AppLocalizations.of(context)!;
 
-    int countActionStatusDone =
-        action.memberCountByActionStatus(ActionStatus.DONE);
-    int countActionStatusNotDone =
-        action.memberCountByActionStatus(ActionStatus.NOT_DONE);
-    int countActionStatusOverdue =
-        action.memberCountByActionStatus(ActionStatus.OVERDUE);
+    int countActionStatusDone = 1;
+    //action.memberCountByActionStatus(ActionStatus.DONE);
+    int countActionStatusNotDone = 1;
+    // action.memberCountByActionStatus(ActionStatus.NOT_DONE);
+    int countActionStatusOverdue = 1;
+    //   action.memberCountByActionStatus(ActionStatus.OVERDUE);
 
-    bool maintainSize = (countActionStatusDone +
-            countActionStatusNotDone +
-            countActionStatusOverdue) >
-        0;
+    // bool maintainSize = (countActionStatusDone +
+    //         countActionStatusNotDone +
+    //         countActionStatusOverdue) >
+    //     0;
+    bool maintainSize = false;
 
-    int _thumbsUp = action.learnerCountByEvaluation(ActionUser_Evaluation.GOOD);
+    int _thumbsUp = 0;
+    //action.learnerCountByEvaluation(ActionUser_Evaluation.GOOD);
     int _thumbsDown =
-        action.learnerCountByEvaluation(ActionUser_Evaluation.BAD);
-    int _totalLearners =
-        (action.learners != null && action.learners!.length > 0)
-            ? action.learners!.length
-            : 1;
+        0; //action.learnerCountByEvaluation(ActionUser_Evaluation.BAD);
+    int _totalLearners = 1;
+    // (action.learners != null && action.learners!.length > 0)
+    //     ? action.learners!.length
+    //     : 1;
 
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
@@ -106,23 +108,23 @@ class MyGroupActionListItem extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12.r)),
                           enabled: true,
                           onSelected: (value) {
-                            switch (value) {
-                              case 0:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddEditAction(
-                                      action: action,
-                                    ),
-                                  ),
-                                ).then((value) => FocusScope.of(context)
-                                    .requestFocus(new FocusNode()));
-                                break;
-                              case 1:
-                                _deleteAction(context, action);
+                            // switch (value) {
+                            //   case 0:
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) => AddEditAction(
+                            //           action: action,
+                            //         ),
+                            //       ),
+                            //     ).then((value) => FocusScope.of(context)
+                            //         .requestFocus(new FocusNode()));
+                            //     break;
+                            //   case 1:
+                            //     _deleteAction(context, action);
 
-                                break;
-                            }
+                            //     break;
+                            // }
                           },
                           itemBuilder: (context) => [
                                 PopupMenuItem(
@@ -357,19 +359,19 @@ class MyGroupActionListItem extends StatelessWidget {
   }
 
   _deleteAction(BuildContext context, HiveAction action) {
-    final bloc = Provider.of(context);
-    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
-    Alerts.showMessageBox(
-        context: context,
-        title: _appLocalizations.deleteActionTitle,
-        message: _appLocalizations.deleteActionMessage,
-        positiveButtonText: _appLocalizations.delete,
-        negativeButtonText: _appLocalizations.cancel,
-        positiveActionCallback: () {
-          // Mark this action for deletion
-          action.isDirty = true;
-          bloc.actionBloc.createUpdateAction(action);
-        },
-        negativeActionCallback: () {});
+    // final bloc = Provider.of(context);
+    // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    // Alerts.showMessageBox(
+    //     context: context,
+    //     title: _appLocalizations.deleteActionTitle,
+    //     message: _appLocalizations.deleteActionMessage,
+    //     positiveButtonText: _appLocalizations.delete,
+    //     negativeButtonText: _appLocalizations.cancel,
+    //     positiveActionCallback: () {
+    //       // Mark this action for deletion
+    //       action.isDirty = true;
+    //       bloc.actionBloc.createUpdateAction(action);
+    //     },
+    //     negativeActionCallback: () {});
   }
 }

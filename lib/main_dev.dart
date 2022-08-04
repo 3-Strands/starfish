@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,10 @@ void main() async {
 
   if (!kIsWeb) {
     await Firebase.initializeApp();
+  } else {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   await HiveApiInterface.init();

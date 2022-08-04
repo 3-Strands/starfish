@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +17,10 @@ import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
+import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
+import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -30,162 +34,258 @@ import 'package:starfish/wrappers/platform.dart';
 // ignore: implementation_imports
 import 'package:template_string/src/extension.dart';
 
-class MyGroup extends StatefulWidget {
-  MyGroup({Key? key}) : super(key: key);
+class MyGroupActionsView extends StatefulWidget {
+  const MyGroupActionsView({Key? key}) : super(key: key);
 
   @override
-  _MyGroupState createState() => _MyGroupState();
+  _MyGroupViewState createState() => _MyGroupViewState();
 }
 
-class _MyGroupState extends State<MyGroup> {
-  final Key _groupActionFocusDetectorKey = UniqueKey();
-  final Map<String, GlobalKey<State<StatefulWidget>>> _groupItemKeys = Map();
+class _MyGroupViewState extends State<MyGroupActionsView> {
+  // final Key _groupActionFocusDetectorKey = UniqueKey();
+  // final Map<String, GlobalKey<State<StatefulWidget>>> _groupItemKeys = Map();
 
-  bool _isInitialized = false;
-  late DataBloc bloc;
-  late AppLocalizations _appLocalizations;
+  // bool _isInitialized = false;
+  // late DataBloc bloc;
+  // late AppLocalizations _appLocalizations;
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      Timer(Duration(milliseconds: 700), () {
-        if (bloc.actionBloc.focusedGroup != null) {
-          //debugPrint("MY Groups: ${bloc.actionBloc.focusedGroup?.id!}");
-          HiveGroup _hiveGroup = bloc.actionBloc.focusedGroup!;
-          //debugPrint("_groupItemKeys.containsKey(${_hiveGroup.id!}): ${_groupItemKeys.containsKey(_hiveGroup.id!)}");
-          Scrollable.ensureVisible(
-              _groupItemKeys[_hiveGroup.id!]!.currentContext!);
+    // WidgetsBinding.instance!.addPostFrameCallback((_) {
+    //   Timer(Duration(milliseconds: 700), () {
+    //     if (bloc.actionBloc.focusedGroup != null) {
+    //       //debugPrint("MY Groups: ${bloc.actionBloc.focusedGroup?.id!}");
+    //       HiveGroup _hiveGroup = bloc.actionBloc.focusedGroup!;
+    //       //debugPrint("_groupItemKeys.containsKey(${_hiveGroup.id!}): ${_groupItemKeys.containsKey(_hiveGroup.id!)}");
+    //       Scrollable.ensureVisible(
+    //           _groupItemKeys[_hiveGroup.id!]!.currentContext!);
 
-          // Reset selected Tab Index
-          bloc.actionBloc.selectedTabIndex = 0;
-          // Reset focused Group
-          bloc.actionBloc.focusedGroup = null;
-        }
-      });
-    });
+    //       // Reset selected Tab Index
+    //       bloc.actionBloc.selectedTabIndex = 0;
+    //       // Reset focused Group
+    //       bloc.actionBloc.focusedGroup = null;
+    //     }
+    //   });
+    // });
   }
 
-  _getActions(DataBloc bloc) async {
-    bloc.actionBloc.fetchGroupActionsFromDB();
-  }
+  // _getActions(DataBloc bloc) async {
+  //   bloc.actionBloc.fetchGroupActionsFromDB();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    _appLocalizations = AppLocalizations.of(context)!;
-    if (!_isInitialized) {
-      bloc = Provider.of(context);
-      _isInitialized = true;
-    }
+    final _appLocalizations = AppLocalizations.of(context)!;
+    // if (!_isInitialized) {
+    //   bloc = Provider.of(context);
+    //   _isInitialized = true;
+    // }
 
-    return FocusDetector(
-      key: _groupActionFocusDetectorKey,
-      onFocusGained: () {
-        _getActions(bloc);
-      },
-      onFocusLost: () {},
-      child: Scrollbar(
-        thickness: 5.w,
-        isAlwaysShown: false,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20.h,
-              ),
-              Container(
-                height: 52.h,
-                margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                decoration: BoxDecoration(
-                  color: AppColors.txtFieldBackground,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
+    return Scrollbar(
+      thickness: 5.w,
+      isAlwaysShown: false,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            Container(
+              height: 52.h,
+              margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              decoration: BoxDecoration(
+                color: AppColors.txtFieldBackground,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
                 ),
-                child: Center(
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      alignedDropdown: true,
-                      child: DropdownButton2<ActionFilter>(
-                        isExpanded: true,
-                        offset: Offset(0, -10),
-                        dropdownMaxHeight: 350.h,
+              ),
+              child: Center(
+                child: DropdownButtonHideUnderline(
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: BlocBuilder<ActionsCubit, ActionsState>(
+                        buildWhen: (previous, current) =>
+                            previous.actionFilter != current.actionFilter,
+                        builder: (context, state) {
+                          return DropdownButton2<ActionFilter>(
+                            isExpanded: true,
+                            offset: Offset(0, -10),
+                            dropdownMaxHeight: 350.h,
 
-                        // icon: Icon(Icons.arrow_drop_down),
-                        iconSize: 35,
-                        style: TextStyle(
-                          color: Color(0xFF434141),
-                          fontSize: 19.sp,
-                          fontFamily: 'OpenSans',
-                        ),
-                        hint: Text(
-                          bloc.actionBloc.actionFilter.about,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 19.sp,
-                            fontFamily: 'OpenSans',
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                        onChanged: (ActionFilter? value) {
-                          setState(() {
-                            bloc.actionBloc.actionFilter = value!;
-                            _getActions(bloc);
-                          });
-                        },
-                        items: ActionFilter.values
-                            .map<DropdownMenuItem<ActionFilter>>(
-                                (ActionFilter value) {
-                          return DropdownMenuItem<ActionFilter>(
-                            value: value,
-                            child: Text(
-                              value.about,
+                            // icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 35,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                            hint: Text(
+                              //bloc.actionBloc.actionFilter.about,
+                              context
+                                  .read<ActionsCubit>()
+                                  .state
+                                  .actionFilter
+                                  .about,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Color(0xFF434141),
-                                fontSize: 17.sp,
+                                fontSize: 19.sp,
                                 fontFamily: 'OpenSans',
                               ),
+                              textAlign: TextAlign.left,
                             ),
+                            onChanged: (ActionFilter? actionFilter) {
+                              if (actionFilter == null) {
+                                return;
+                              }
+                              context
+                                  .read<ActionsCubit>()
+                                  .updateActionFilter(actionFilter);
+                            },
+                            items: ActionFilter.values
+                                .map<DropdownMenuItem<ActionFilter>>(
+                                    (ActionFilter value) {
+                              return DropdownMenuItem<ActionFilter>(
+                                value: value,
+                                child: Text(
+                                  value.about,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 17.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           );
-                        }).toList(),
-                      ),
-                    ),
+                        }),
                   ),
                 ),
               ),
-              SizedBox(height: 10.h),
-              SearchBar(
-                initialValue: bloc.actionBloc.query,
-                onValueChanged: (value) {
-                  setState(() {
-                    bloc.actionBloc.query = value;
-                    _getActions(bloc);
-                  });
+            ),
+            SizedBox(height: 10.h),
+            SearchBar(
+              initialValue: '',
+              onValueChanged: (query) {
+                context.read<ActionsCubit>().updateQuery(query);
+              },
+              // TODO: This is actually unnecessary, since we update the query on every change.
+              onDone: (_) {},
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            //actionsList(bloc),
+            BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
+              final actionsToShow = state.actionsToShow;
+              final groupActionsMap = actionsToShow.groupActionsMap;
+              final hasMore = actionsToShow.hasMore;
+              if (groupActionsMap.isEmpty) {
+                return Container(
+                  margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  child: Text(
+                    '${_appLocalizations.noRecordFound}',
+                    style: TextStyle(
+                      color: Color(0xFF434141),
+                      fontSize: 17.sp,
+                      fontFamily: 'OpenSans',
+                    ),
+                  ),
+                );
+              }
+              // return ListView.builder(
+              //   shrinkWrap: true,
+              //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              //   physics: NeverScrollableScrollPhysics(),
+              //   itemCount: hasMore ? actions.length + 1 : actions.length,
+              //   itemBuilder: (BuildContext ctxt, int index) {
+              //     if (index >= actions.length) {
+              //       return Container(
+              //         margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+              //         padding: EdgeInsets.symmetric(vertical: 8.h),
+              //         child: Center(
+              //           child: SizedBox(
+              //             child: CircularProgressIndicator(),
+              //             height: 24,
+              //             width: 24,
+              //           ),
+              //         ),
+              //       );
+              //     }
+              //     final actionWithStatus = actions[index];
+              //     return MyGroupActionListItem(
+              //       index: index,
+              //       action: actionWithStatus.action,
+              //       onActionTap: (HiveAction action) {},
+              //       //onActionTap: _onActionSelection,
+              //       //actionStatus: materialWithStatus.status,
+              //     );
+              //   },
+              // );
+              return GroupListView(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                sectionsCount: groupActionsMap.keys.toList().length,
+                countOfItemInSection: (int section) {
+                  return groupActionsMap.values.toList()[section].length;
                 },
-                onDone: (value) {
-                  setState(() {
-                    bloc.actionBloc.query = value;
-                    _getActions(bloc);
-                  });
+                itemBuilder: (BuildContext context, IndexPath indexPath) {
+                  return MyGroupActionListItem(
+                    index: indexPath.index,
+                    action: groupActionsMap.values
+                        .toList()[indexPath.section][indexPath.index]
+                        .action,
+                    onActionTap: (HiveAction action) {},
+                    //       //onActionTap: _onActionSelection,
+                    //       //actionStatus: materialWithStatus.status,
+                  );
                 },
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              actionsList(bloc),
-              SizedBox(
-                height: 10.h,
-              ),
-            ],
-          ),
+                groupHeaderBuilder: (BuildContext context, int section) {
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${groupActionsMap.keys.toList()[section].name}',
+                          style: TextStyle(
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF434141),
+                          ),
+                        ),
+                        if (groupActionsMap.keys.toList()[section].id != null)
+                          Text(
+                            '${_appLocalizations.teacher}: ${groupActionsMap.keys.toList()[section].teachersName?.join(", ")}',
+                            style: TextStyle(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF797979),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                sectionSeparatorBuilder: (context, section) =>
+                    SizedBox(height: 10.h),
+              );
+            }),
+            SizedBox(
+              height: 10.h,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void _usersActionList(HiveAction action) {
+/*  void _usersActionList(HiveAction action) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -960,6 +1060,7 @@ class _MyGroupState extends State<MyGroup> {
       children: fileLinks,
     );
   }
+*/
 }
 
 /*
