@@ -35,7 +35,18 @@ extension ActionExt on Action {
 }
 
 extension GroupExt on Group {
-  List<User> get fullUsers => users
-      .map((groupUser) => globalHiveApi.user.get(groupUser.userId)!)
-      .toList();
+  List<User> get fullUsers => users.map((groupUser) => groupUser.user).toList();
+}
+
+extension GroupUserExt on GroupUser {
+  User get user => globalHiveApi.user.get(userId)!;
+
+  bool get userIsInvitedToGroup {
+    final user = this.user;
+    return user.phone.isNotEmpty && user.status != User_Status.ACTIVE;
+  }
+}
+
+extension UserExt on User {
+  String get fullPhone => '+${diallingCode.replaceFirst('+', '')} $phone';
 }

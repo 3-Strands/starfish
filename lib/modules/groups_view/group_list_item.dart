@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
+// import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -109,14 +109,14 @@ class GroupListItem extends StatelessWidget {
                           onSelected: (value) {
                             switch (value) {
                               case 0:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddEditGroupScreen(
-                                      group: group,
-                                    ),
-                                  ),
-                                );
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => AddEditGroupScreen(
+                                //       group: group,
+                                //     ),
+                                //   ),
+                                // );
                                 break;
                               case 1:
                                 Alerts.showMessageBox(

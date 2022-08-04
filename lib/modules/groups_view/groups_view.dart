@@ -7,33 +7,27 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/enums/group_user_role.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
-import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/modules/groups_view/group_list_item.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'group_users_list.dart';
 
-class GroupsScreen extends StatefulWidget {
-  GroupsScreen({Key? key, this.title = ''}) : super(key: key);
-
-  final String title;
+class Groups extends StatefulWidget {
+  const Groups({Key? key}) : super(key: key);
 
   @override
-  _GroupsScreenState createState() => _GroupsScreenState();
+  _GroupsState createState() => _GroupsState();
 }
 
-class _GroupsScreenState extends State<GroupsScreen> {
+class _GroupsState extends State<Groups> {
   late AppLocalizations appLocalizations;
 
   @override
@@ -104,7 +98,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     height: 36.h,
                   ),
                   Expanded(
-                    child: GroupUsersList(users: group.activeUsers!),
+                    child: GroupUsersList(users: group.users),
                   ),
                   SizedBox(
                     height: 20.h,

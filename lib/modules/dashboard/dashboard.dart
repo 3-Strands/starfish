@@ -8,8 +8,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/modules/groups_view/groups_view.dart';
+// import 'package:starfish/modules/material_view/materials_view.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
-import '../material_view/materials_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -132,8 +133,10 @@ class _DashboardState extends State<Dashboard> {
               itemCount: 4,
               itemBuilder: (context, index) {
                 switch (index) {
-                  case 0:
-                    return const Materials();
+                  // case 0:
+                  //   return const Materials();
+                  case 1:
+                    return const Groups();
                   default:
                     return const SizedBox();
                 }

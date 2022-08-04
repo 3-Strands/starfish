@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/repositories/model_wrappers/user_with_group_role.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/enums/group_user_role.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GroupUsersList extends StatelessWidget {
   const GroupUsersList({Key? key, required this.users}) : super(key: key);
 
-  final List<UserWithGroupRole> users;
+  final List<GroupUser> users;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,8 @@ class GroupUsersList extends StatelessWidget {
     return ListView.builder(
       itemCount: users.length,
       itemBuilder: (context, index) {
-        final userWithGroupRole = users[index];
-        final user = userWithGroupRole.user;
-        final groupUser = userWithGroupRole.groupUser;
+        final groupUser = users[index];
+        final user = groupUser.user;
 
         return Container(
           height: 96.h,
@@ -49,8 +48,8 @@ class GroupUsersList extends StatelessWidget {
                     child: Text(
                       user.status == User_Status.ACTIVE
                           ? groupUser.role.about
-                          : groupUser.isInvited
-                              ? "${GroupUser_Role.valueOf(user.role!)!.about} " +
+                          : user.phone.isNotEmpty
+                              ? "${groupUser.role.about} " +
                                   appLocalizations.userStatusInvited
                                       .toUpperCase()
                               : '',
@@ -71,7 +70,7 @@ class GroupUsersList extends StatelessWidget {
               Align(
                 alignment: FractionalOffset.topLeft,
                 child: Text(
-                  '${user.phoneWithDialingCode}',
+                  '${user.fullPhone}',
                   maxLines: 1,
                   style: TextStyle(
                     color: AppColors.appTitle,
