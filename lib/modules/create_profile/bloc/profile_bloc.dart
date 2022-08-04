@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:starfish/db/hive_country.dart';
-import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -15,12 +14,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required DataRepository dataRepository,
     required AuthenticationRepository authenticationRepository,
   }) : super(ProfileState(
-    name: authenticationRepository.currentSession!.user.name,
-    selectedCountries: authenticationRepository.currentSession!.user.countryIds.toSet(),
-    selectedLanguages: authenticationRepository.currentSession!.user.languageIds.toSet(),
-    countries: dataRepository.currentCountries,
-    languages: dataRepository.currentLanguages,
-  )) {
+          name: authenticationRepository.currentSession!.user.name,
+          selectedCountries:
+              authenticationRepository.currentSession!.user.countryIds.toSet(),
+          selectedLanguages:
+              authenticationRepository.currentSession!.user.languageIds.toSet(),
+          countries: dataRepository.currentCountries,
+          languages: dataRepository.currentLanguages,
+        )) {
     on<DataChanged>((event, emit) {
       emit(state.copyWith(
         selectedCountries: event.selectedCountries,
@@ -37,12 +38,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     });
     on<LanguageSelectionChanged>((event, emit) {
       emit(state.copyWith(
-        selectedLanguages: event.selectedLanguages.map((language) => language.id).toSet(),
+        selectedLanguages:
+            event.selectedLanguages.map((language) => language.id).toSet(),
       ));
     });
     on<CountrySelectionChanged>((event, emit) async {
       emit(state.copyWith(
-        selectedCountries: event.selectedCountries.map((country) => country.id).toSet(),
+        selectedCountries:
+            event.selectedCountries.map((country) => country.id).toSet(),
       ));
     });
     on<FinishClicked>((event, emit) async {

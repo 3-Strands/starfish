@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/models/file_reference.dart';
 
-Future<void> downloadMaterial(HiveFile hiveFile) =>
+Future<void> downloadMaterial(FileReference file) =>
     Future.error(Exception("Download not supported"));
 
-Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
+Future<void> uploadMaterials(Iterable<FileReference> files) =>
     Future.error(Exception("Upload not supported"));
 
-Future<void> openFile(String filepath) => Future.error("Open file not supported");
+Future<void> openFile(String filepath) =>
+    Future.error("Open file not supported");
 
 /// On Mobile, calls `Hive.init` with the application's document directory.
 Future<void> initHive() async {}
@@ -27,7 +28,8 @@ class File {
     BoxFit? fit,
     double? width,
     double? height,
-  }) => SizedBox(height: height, width: width);
+  }) =>
+      SizedBox(height: height, width: width);
 
   int get size => 0;
 

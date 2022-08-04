@@ -45,12 +45,12 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
 
     on<CountriesAndLanguagesRequested>((event, emit) async {
       _syncRepository.sync({
-        HiveType.country,
-        HiveType.language,
+        ModelType.country,
+        ModelType.language,
       });
     });
     on<SyncAllRequested>((event, emit) async {
-      _syncRepository.sync(HiveType.values);
+      _syncRepository.sync(ModelType.values);
     });
 
     _syncRepository.isSyncing.listen((isSyncing) {

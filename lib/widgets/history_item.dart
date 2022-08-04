@@ -7,7 +7,7 @@ import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HistoryItem extends StatelessWidget {
-  final HiveEdit? edit;
+  final Edit edit;
   final String type;
 
   HistoryItem({
@@ -27,7 +27,7 @@ class HistoryItem extends StatelessWidget {
           children: [
             Text.rich(
               TextSpan(
-                text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
+                text: edit.event == Edit_Event.CREATE
                     ? '$type ${AppLocalizations.of(context)!.historyAddedBy}: '
                     : '$type ${AppLocalizations.of(context)!.historyEditedBy}: ',
                 style: TextStyle(
@@ -37,7 +37,7 @@ class HistoryItem extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: edit?.username ?? 'Unknown',
+                    text: edit.username,
                     style: TextStyle(
                       fontFamily: 'OpenSans',
                       fontSize: 21.5.sp,
@@ -53,7 +53,7 @@ class HistoryItem extends StatelessWidget {
             ),
             Text.rich(
               TextSpan(
-                text: Edit_Event.valueOf(edit!.event!) == Edit_Event.CREATE
+                text: edit.event == Edit_Event.CREATE
                     ? '$type ${AppLocalizations.of(context)!.historyAddedOn}: '
                     : '$type ${AppLocalizations.of(context)!.historyEditedOn}: ',
                 style: TextStyle(
@@ -63,9 +63,8 @@ class HistoryItem extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: edit!.time != null
-                        ? '${DateTimeUtils.formatDate(edit!.localTime!, 'dd-MMM-yyyy')}'
-                        : 'NA',
+                    text:
+                        '${DateTimeUtils.formatDate(edit.time.toDateTime(), 'dd-MMM-yyyy')}',
                     style: TextStyle(
                       fontFamily: 'OpenSans',
                       fontSize: 21.5.sp,

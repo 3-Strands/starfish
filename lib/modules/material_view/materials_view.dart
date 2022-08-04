@@ -2,7 +2,7 @@
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 // ignore: implementation_imports
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Material;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -10,16 +10,14 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/db/hive_material_topic.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/single_material_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
+import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
@@ -76,7 +74,7 @@ class _MaterialsViewState extends State<MaterialsView> {
     }
   }
 
-  void _onMaterialSelection(HiveMaterial material, ActionStatus? status,
+  void _onMaterialSelection(Material material, ActionStatus? status,
       bool isAssignedToGroupWithLeaderRole) {
     final singleMaterialView = Container(
       height: MediaQuery.of(context).size.height * 0.70,
@@ -151,22 +149,22 @@ class _MaterialsViewState extends State<MaterialsView> {
                     SizedBox(height: 14.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      child: StreamBuilder<List<HiveLanguage>>(
+                      child: StreamBuilder<List<Language>>(
                           stream: RepositoryProvider.of<DataRepository>(context)
                               .languages,
                           builder: (context, snapshot) {
-                            return MultiSelect<HiveLanguage>(
+                            return MultiSelect<Language>(
                               navTitle: _appLocalizations.selectLanugages,
                               placeholder: _appLocalizations.selectLanugages,
                               // controller: _languageSelectController,
                               multilineSummary: true,
                               items: snapshot.data ?? [],
-                              toDisplay: HiveLanguage.toDisplay,
-                              onFinished:
-                                  (Set<HiveLanguage> selectedLanguages) {
+                              toDisplay: (language) => language.name,
+                              onFinished: (Set<Language> selectedLanguages) {
                                 context
                                     .read<MaterialsCubit>()
-                                    .updateSelectedLanguages(selectedLanguages);
+                                    .selectedLanguagesChanged(
+                                        selectedLanguages);
                               },
                             );
                           }),
@@ -174,11 +172,11 @@ class _MaterialsViewState extends State<MaterialsView> {
                     SizedBox(height: 10.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      child: StreamBuilder<List<HiveMaterialTopic>>(
+                      child: StreamBuilder<List<MaterialTopic>>(
                           stream: RepositoryProvider.of<DataRepository>(context)
                               .materialTopics,
                           builder: (context, snapshot) {
-                            return MultiSelect<HiveMaterialTopic>(
+                            return MultiSelect<MaterialTopic>(
                               navTitle: _appLocalizations.selectTopics,
                               placeholder: _appLocalizations.selectTopics,
                               multilineSummary: true,
@@ -186,12 +184,11 @@ class _MaterialsViewState extends State<MaterialsView> {
                               inverseSelectAll: true,
                               items: snapshot.data ?? [],
                               // initialSelection: bloc.materialBloc.selectedTopics.toSet(),
-                              toDisplay: HiveMaterialTopic.toDisplay,
-                              onFinished:
-                                  (Set<HiveMaterialTopic> selectedTopics) {
+                              toDisplay: (topic) => topic.name,
+                              onFinished: (Set<MaterialTopic> selectedTopics) {
                                 context
                                     .read<MaterialsCubit>()
-                                    .updateSelectedTopics(selectedTopics);
+                                    .selectedTopicsChanged(selectedTopics);
                               },
                             );
                           }),
@@ -200,7 +197,7 @@ class _MaterialsViewState extends State<MaterialsView> {
                     SearchBar(
                       initialValue: "",
                       onValueChanged: (query) {
-                        context.read<MaterialsCubit>().updateQuery(query);
+                        context.read<MaterialsCubit>().queryChanged(query);
                       },
                       // TODO: This is actually unnecessary, since we update the query on every change.
                       onDone: (_) {},
@@ -251,7 +248,7 @@ class _MaterialsViewState extends State<MaterialsView> {
                                       if (actions != null) {
                                         context
                                             .read<MaterialsCubit>()
-                                            .updateActions(actions);
+                                            .actionsChanged(actions);
                                       }
                                     },
                                     items: MaterialFilter.values
@@ -351,9 +348,9 @@ class _MaterialsViewState extends State<MaterialsView> {
 }
 
 class MaterialListItem extends StatelessWidget {
-  final HiveMaterial material;
+  final Material material;
   final Function(
-    HiveMaterial material,
+    Material material,
     ActionStatus? status,
     bool isAssignedToGroupWithLeaderRole,
   ) onMaterialTap;
@@ -453,13 +450,13 @@ class MaterialListItem extends StatelessWidget {
               SizedBox(
                 height: 10.h,
               ),
-              material.fileNames.isNotEmpty
+              material.files.isNotEmpty
                   ? Text(
-                      Intl.plural(material.fileNames.length,
+                      Intl.plural(material.files.length,
                           one:
-                              "${material.fileNames.length} ${_appLocalizations.attachment}",
-                          other: "${material.fileNames.length} ${_appLocalizations.attachments}",
-                          args: [material.fileNames.length]),
+                              "${material.files.length} ${_appLocalizations.attachment}",
+                          other: "${material.files.length} ${_appLocalizations.attachments}",
+                          args: [material.files.length]),
                       style: TextStyle(
                           color: Color(0xFF3475F0),
                           fontFamily: 'OpenSans',

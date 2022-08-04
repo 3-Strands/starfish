@@ -27,20 +27,20 @@ class AddEditMaterialState {
     this.error,
   });
 
-  final List<HiveLanguage> languages;
-  final List<HiveMaterialType> types;
-  final List<HiveMaterialTopic> topics;
+  final List<Language> languages;
+  final List<MaterialType> types;
+  final List<MaterialTopic> topics;
   final Set<String> selectedLanguages;
   final Set<String> selectedTypes;
   final Set<String> selectedTopics;
-  final List<HiveFile> previouslySelectedFiles;
+  final List<FileReference> previouslySelectedFiles;
   final List<File> newlySelectedFiles;
   final String title;
   final String description;
   final String url;
   final Material_Visibility visibility;
   final Material_Editability editability;
-  final List<HiveEdit> history;
+  final List<Edit> history;
 
   final MaterialError? error;
 
@@ -52,20 +52,20 @@ class AddEditMaterialState {
   bool get hasMaxFilesSelected => totalFiles >= 5;
 
   AddEditMaterialState copyWith({
-    List<HiveLanguage>? languages,
-    List<HiveMaterialType>? types,
-    List<HiveMaterialTopic>? topics,
+    List<Language>? languages,
+    List<MaterialType>? types,
+    List<MaterialTopic>? topics,
     Set<String>? selectedLanguages,
     Set<String>? selectedTypes,
     Set<String>? selectedTopics,
-    List<HiveFile>? previouslySelectedFiles,
+    List<FileReference>? previouslySelectedFiles,
     List<File>? newlySelectedFiles,
     String? title,
     String? description,
     String? url,
     Material_Visibility? visibility,
     Material_Editability? editability,
-    List<HiveEdit>? history,
+    List<Edit>? history,
     MaterialError? error,
   }) =>
       AddEditMaterialState(

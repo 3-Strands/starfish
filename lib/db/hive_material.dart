@@ -46,7 +46,8 @@ class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
   @HiveField(12)
   List<String> topicIds;
   @HiveField(13)
-  HiveList<HiveMaterialFeedback> feedbacks = HiveList(globalHiveApi.materialFeedback);
+  HiveList<HiveMaterialFeedback> feedbacks =
+      HiveList(globalHiveApi.materialFeedback);
   @HiveField(14)
   HiveDate dateCreated;
   @HiveField(15)
@@ -70,7 +71,7 @@ class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
     required this.description,
     required this.url,
     required this.targetAudience,
-    this.fileNames = const[],
+    this.fileNames = const [],
     this.languageIds = const [],
     this.typeIds = const [],
     this.topicIds = const [],
@@ -85,37 +86,26 @@ class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
     this.languages = const {},
   });
 
-  HiveMaterial.from(Material material) :
-    id = material.id,
-    creatorId = material.creatorId,
-    status = material.status.value, // Material_Status
-    visibility = material.visibility.value, // Material_Visibility
-    editability = material.editability.value, // Material_Editability
-    title = material.title,
-    description = material.description,
-    targetAudience = material.targetAudience,
-    url = material.url,
-    fileNames = material.files,
-    languageIds = material.languageIds,
-    typeIds = material.typeIds,
-    topicIds = material.topics,
-    // feedbacks = HiveList(Hive.box(HiveDatabase.MATERIAL_FEEDBACK_BOX)),
-    editHistory =
-        material.editHistory.map((Edit e) => HiveEdit.from(e)).toList(),
-    dateCreated = HiveDate.from(material.dateCreated),
-    dateUpdated = HiveDate.from(material.dateUpdated),
-    languages = material.languages;
-  
-  static void populateBox(Material material) {
-    final hiveMaterial = HiveMaterial.from(material);
-    globalHiveApi.material.put(hiveMaterial.key, hiveMaterial);
-    material.feedbacks.map(HiveMaterialFeedback.from).forEach(hiveMaterial.addFeedback);
-  }
-
-  void addFeedback(HiveMaterialFeedback feedback) {
-    globalHiveApi.materialFeedback.put(feedback.key, feedback);
-    feedbacks.add(feedback);
-  }
+  HiveMaterial.from(Material material)
+      : id = material.id,
+        creatorId = material.creatorId,
+        status = material.status.value, // Material_Status
+        visibility = material.visibility.value, // Material_Visibility
+        editability = material.editability.value, // Material_Editability
+        title = material.title,
+        description = material.description,
+        targetAudience = material.targetAudience,
+        url = material.url,
+        fileNames = material.files,
+        languageIds = material.languageIds,
+        typeIds = material.typeIds,
+        topicIds = material.topics,
+        // feedbacks = HiveList(Hive.box(HiveDatabase.MATERIAL_FEEDBACK_BOX)),
+        editHistory =
+            material.editHistory.map((Edit e) => HiveEdit.from(e)).toList(),
+        dateCreated = HiveDate.from(material.dateCreated),
+        dateUpdated = HiveDate.from(material.dateUpdated),
+        languages = material.languages;
 
   Material toGrpcCompatible() {
     return Material(
@@ -205,15 +195,14 @@ class HiveMaterial extends HiveConcrete implements HiveSyncable<Material> {
   //   return ActionStatus.NOT_DONE;
   // }
 
-  List<HiveFile> get files {
-    return fileNames.map(
-      (filename) => globalHiveApi.file.get(HiveFile.keyFrom(id, filename))!,
-    ).toList();
-  }
-
-  List<String> get languageNames => languageIds.map(
-    (languageId) => globalHiveApi.language.get(languageId)?.name ?? languages[languageId] ?? '',
-  ).toList();
+  List<String> get languageNames => languageIds
+      .map(
+        (languageId) =>
+            globalHiveApi.language.get(languageId)?.name ??
+            languages[languageId] ??
+            '',
+      )
+      .toList();
 
   // List<HiveLanguage> get allLanguages {
   //   List<HiveLanguage> _languages = [];

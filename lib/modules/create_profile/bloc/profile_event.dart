@@ -17,8 +17,8 @@ class DataChanged extends ProfileEvent {
   final String? name;
   final Set<String>? selectedCountries;
   final Set<String>? selectedLanguages;
-  final List<HiveCountry>? countries;
-  final List<HiveLanguage>? languages;
+  final List<Country>? countries;
+  final List<Language>? languages;
 }
 
 class NameChanged extends ProfileEvent {
@@ -30,13 +30,13 @@ class NameChanged extends ProfileEvent {
 class LanguageSelectionChanged extends ProfileEvent {
   const LanguageSelectionChanged(this.selectedLanguages);
 
-  final Set<HiveLanguage> selectedLanguages;
+  final Set<Language> selectedLanguages;
 }
 
 class CountrySelectionChanged extends ProfileEvent {
   const CountrySelectionChanged(this.selectedCountries);
 
-  final Set<HiveCountry> selectedCountries;
+  final Set<Country> selectedCountries;
 }
 
 class FinishClicked extends ProfileEvent {

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
-import 'package:starfish/db/hive_file.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'file_system_shared.dart' as shared;
@@ -26,8 +26,7 @@ Future<Uint8List> _fetchData(String url) async {
 
   unawaited(xhr.onError.first.then((_) {
     completer.completeError(
-        Exception('XMLHttpRequest error.'),
-        StackTrace.current);
+        Exception('XMLHttpRequest error.'), StackTrace.current);
   }));
 
   xhr.send();
@@ -35,36 +34,35 @@ Future<Uint8List> _fetchData(String url) async {
   return completer.future;
 }
 
-Future<void> downloadMaterial(HiveFile hiveFile) async {
+Future<void> downloadMaterial(FileReference fileReference) async {
   final buffer = <List<int>>[];
 
-  await shared.downloadFile(hiveFile, onData: (chunk) => buffer.add(chunk));
+  await shared.downloadFile(fileReference,
+      onData: (chunk) => buffer.add(chunk));
 
-  final file = await File.fromFilename(hiveFile.filename);
+  final file = await File.fromFilename(fileReference.filename);
 
   await file._createFromBlob(html.Blob(buffer));
 
-  hiveFile.filepath = file.path;
+  fileReference.filepath = file.path;
 }
 
-Future<void> uploadMaterials(Iterable<HiveFile> hiveFiles) =>
-  shared.uploadFile(
-    readStream: (controller) async {
-      for (final hiveFile in hiveFiles) {
+Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
+    shared.uploadFile(readStream: (controller) async {
+      for (final fileReference in fileReferences) {
         final metaData = FileMetaData(
-          entityId: hiveFile.entityId,
-          filename: hiveFile.filename,
+          entityId: fileReference.entityId,
+          filename: fileReference.filename,
           entityType: EntityType.MATERIAL,
         );
 
         controller.add(FileData(metaData: metaData));
-        final objectUrl = _fs[hiveFile.filepath]!;
+        final objectUrl = _fs[fileReference.filepath]!;
         final chunk = await _fetchData(objectUrl);
         debugPrint("Uploading file of size: ${chunk.length}");
         controller.add(FileData(chunk: chunk));
       }
-    }
-  );
+    });
 
 Future<void> openFile(String filepath) async {
   html.AnchorElement(href: _fs[filepath]!)
@@ -92,7 +90,8 @@ class File {
     Widget widget = SizedBox(
       width: width,
       height: height,
-      child: Text(extension.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
+      child: Text(extension.toUpperCase(),
+          style: TextStyle(fontWeight: FontWeight.bold)),
     );
     if (fit != null) {
       widget = FittedBox(

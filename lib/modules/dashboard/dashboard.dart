@@ -1,19 +1,14 @@
 import 'package:cron/cron.dart';
-import 'package:collection/collection.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 // import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/providers/language_provider.dart';
 import 'package:starfish/modules/actions_view/actions_view.dart';
-import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import '../material_view/materials_view.dart';

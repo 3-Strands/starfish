@@ -1,16 +1,14 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Material;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/hive_material.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
-import 'package:starfish/repositories/data_repository.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -25,7 +23,7 @@ class SingleMaterialView extends StatelessWidget {
     required this.isAssignedToGroupWithLeaderRole,
   }) : super(key: key);
 
-  final HiveMaterial material;
+  final Material material;
   final ActionStatus? actionStatus;
   final bool isAssignedToGroupWithLeaderRole;
 
@@ -72,17 +70,14 @@ class SingleMaterialView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (((Material_Editability.valueOf(
-                                              material.editability) ==
+                          if (((material.editability ==
                                           Material_Editability.CREATOR_EDIT ||
-                                      Material_Editability.valueOf(
-                                              material.editability) ==
+                                      material.editability ==
                                           Material_Editability.GROUP_EDIT) &&
                                   material.creatorId == user.id) ||
-                              (Material_Editability.valueOf(
-                                          material.editability) ==
-                                      Material_Editability.GROUP_EDIT) &&
-                                  isAssignedToGroupWithLeaderRole)
+                              (material.editability ==
+                                      Material_Editability.GROUP_EDIT &&
+                                  isAssignedToGroupWithLeaderRole))
                             PopupMenuButton(
                               icon: Icon(
                                 Icons.more_vert,
@@ -122,9 +117,9 @@ class SingleMaterialView extends StatelessWidget {
                                       negativeButtonText:
                                           appLocalizations.cancel,
                                       positiveActionCallback: () {
-                                        RepositoryProvider.of<DataRepository>(
-                                                context)
-                                            .deleteMaterial(material);
+                                        context
+                                            .read<MaterialsCubit>()
+                                            .materialDeleted(material);
                                         Navigator.of(context).pop();
                                       },
                                       negativeActionCallback: () {
@@ -212,18 +207,18 @@ class SingleMaterialView extends StatelessWidget {
                         color: Color(0xFF979797),
                         thickness: 2,
                       ),
-                    if (material.fileNames.isNotEmpty)
+                    if (material.files.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: material.files
+                        children: material.fileReferences
                             .map(
-                              (hiveFile) => Column(
+                              (file) => Column(
                                 children: [
                                   InkWell(
                                     onTap: () async {
                                       try {
                                         await GeneralFunctions.openFile(
-                                            hiveFile, context);
+                                            file, context);
                                       } on NetworkUnavailableException {
                                         // TODO: show message to user
                                       }
@@ -231,7 +226,7 @@ class SingleMaterialView extends StatelessWidget {
                                     child: Row(
                                       children: [
                                         Icon(
-                                          hiveFile.filepath != null
+                                          file.filepath != null
                                               ? Icons.file_present
                                               : Icons.download,
                                           color: Color(0xFF3475F0),
@@ -253,7 +248,7 @@ class SingleMaterialView extends StatelessWidget {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            hiveFile.filename,
+                                            file.filename,
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               color: Color(0xFF434141),
@@ -283,7 +278,7 @@ class SingleMaterialView extends StatelessWidget {
                     ),
                     if (material.creatorId == user.id ||
                         (material.editability ==
-                                Material_Editability.GROUP_EDIT.value &&
+                                Material_Editability.GROUP_EDIT &&
                             isAssignedToGroupWithLeaderRole)) ...[
                       Text(
                         appLocalizations.thismaterialIsVisibleTo,
@@ -308,8 +303,7 @@ class SingleMaterialView extends StatelessWidget {
                             width: 5.w,
                           ),
                           Text(
-                            Material_Visibility.valueOf(material.visibility)!
-                                .toLocaleString(context),
+                            material.visibility.toLocaleString(context),
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               //   color: Color(0xFF3475F0),
@@ -360,13 +354,13 @@ class SingleMaterialView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (material.topicIds.isNotEmpty)
+                    if (material.topics.isNotEmpty)
                       SizedBox(
                         height: 5.h,
                       ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: material.topicIds
+                      children: material.topics
                           .map(
                             (topic) => Text(
                               topic,
@@ -473,7 +467,7 @@ class _MaterialLanguages extends StatelessWidget {
   const _MaterialLanguages({Key? key, required this.material})
       : super(key: key);
 
-  final HiveMaterial material;
+  final Material material;
 
   @override
   Widget build(BuildContext context) {

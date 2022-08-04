@@ -3,27 +3,41 @@ part of 'hive_api.dart';
 class HiveApiImpl implements HiveApiInterface {
   const HiveApiImpl();
 
-  Box<HiveLastSyncDateTime> get lastSync => Hive.box<HiveLastSyncDateTime>(HiveApiInterface.LAST_SYNC_BOX);
-  Box<HiveCountry> get country => Hive.box<HiveCountry>(HiveApiInterface.COUNTRY_BOX);
-  Box<HiveLanguage> get language => Hive.box<HiveLanguage>(HiveApiInterface.LANGUAGE_BOX);
-  Box<HiveGroupUser> get groupUser => Hive.box<HiveGroupUser>(HiveApiInterface.GROUP_USER_BOX);
-  Box<HiveAction> get action => Hive.box<HiveAction>(HiveApiInterface.ACTIONS_BOX);
-  Box<HiveMaterial> get material => Hive.box<HiveMaterial>(HiveApiInterface.MATERIAL_BOX);
-  Box<HiveMaterialFeedback> get materialFeedback => Hive.box<HiveMaterialFeedback>(HiveApiInterface.MATERIAL_FEEDBACK_BOX);
-  Box<HiveMaterialTopic> get materialTopic => Hive.box<HiveMaterialTopic>(HiveApiInterface.MATERIAL_TOPIC_BOX);
-  Box<HiveMaterialType> get materialType => Hive.box<HiveMaterialType>(HiveApiInterface.MATERIAL_TYPE_BOX);
-  Box<HiveGroup> get group => Hive.box<HiveGroup>(HiveApiInterface.GROUP_BOX);
-  Box<HiveEvaluationCategory> get evaluationCategory => Hive.box<HiveEvaluationCategory>(HiveApiInterface.EVALUATION_CATEGORIES_BOX);
-  Box<HiveUser> get user => Hive.box<HiveUser>(HiveApiInterface.USER_BOX);
-  Box<HiveFile> get file => Hive.box<HiveFile>(HiveApiInterface.FILE_BOX);
-  Box<HiveActionUser> get actionUser => Hive.box<HiveActionUser>(HiveApiInterface.ACTION_USER_BOX);
-  Box<HiveLearnerEvaluation> get learnerEvaluation => Hive.box<HiveLearnerEvaluation>(HiveApiInterface.LEARNER_EVALUATION_BOX);
-  Box<HiveTeacherResponse> get teacherResponse => Hive.box<HiveTeacherResponse>(HiveApiInterface.TEACHER_RESPONSE_BOX);
-  Box<HiveGroupEvaluation> get groupEvaluation => Hive.box<HiveGroupEvaluation>(HiveApiInterface.GROUP_EVALUATION_BOX);
-  Box<HiveTransformation> get transformation => Hive.box<HiveTransformation>(HiveApiInterface.TRANSFORMATION_BOX);
-  Box<HiveOutput> get output => Hive.box<HiveOutput>(HiveApiInterface.OUTPUT_BOX);
+  // Box<LastSyncDateTime> get lastSync =>
+  //     Hive.box<LastSyncDateTime>(HiveApiInterface.LAST_SYNC_BOX);
+  Box<Country> get country => Hive.box<Country>(HiveApiInterface.COUNTRY_BOX);
+  Box<Language> get language =>
+      Hive.box<Language>(HiveApiInterface.LANGUAGE_BOX);
+  Box<GroupUser> get groupUser =>
+      Hive.box<GroupUser>(HiveApiInterface.GROUP_USER_BOX);
+  Box<Action> get action => Hive.box<Action>(HiveApiInterface.ACTIONS_BOX);
+  Box<Material> get material =>
+      Hive.box<Material>(HiveApiInterface.MATERIAL_BOX);
+  Box<MaterialFeedback> get materialFeedback =>
+      Hive.box<MaterialFeedback>(HiveApiInterface.MATERIAL_FEEDBACK_BOX);
+  Box<MaterialTopic> get materialTopic =>
+      Hive.box<MaterialTopic>(HiveApiInterface.MATERIAL_TOPIC_BOX);
+  Box<MaterialType> get materialType =>
+      Hive.box<MaterialType>(HiveApiInterface.MATERIAL_TYPE_BOX);
+  Box<Group> get group => Hive.box<Group>(HiveApiInterface.GROUP_BOX);
+  Box<EvaluationCategory> get evaluationCategory =>
+      Hive.box<EvaluationCategory>(HiveApiInterface.EVALUATION_CATEGORIES_BOX);
+  Box<User> get user => Hive.box<User>(HiveApiInterface.USER_BOX);
+  Box<FileReference> get file =>
+      Hive.box<FileReference>(HiveApiInterface.FILE_BOX);
+  Box<ActionUser> get actionUser =>
+      Hive.box<ActionUser>(HiveApiInterface.ACTION_USER_BOX);
+  Box<LearnerEvaluation> get learnerEvaluation =>
+      Hive.box<LearnerEvaluation>(HiveApiInterface.LEARNER_EVALUATION_BOX);
+  Box<TeacherResponse> get teacherResponse =>
+      Hive.box<TeacherResponse>(HiveApiInterface.TEACHER_RESPONSE_BOX);
+  Box<GroupEvaluation> get groupEvaluation =>
+      Hive.box<GroupEvaluation>(HiveApiInterface.GROUP_EVALUATION_BOX);
+  Box<Transformation> get transformation =>
+      Hive.box<Transformation>(HiveApiInterface.TRANSFORMATION_BOX);
+  Box<Output> get output => Hive.box<Output>(HiveApiInterface.OUTPUT_BOX);
 
-  // Future<void> updateMaterial(HiveMaterial material) async {
+  // Future<void> updateMaterial(Material material) async {
   //   // TODO: files
   //   await _updateMatchingRecord(this.material, material);
   // }

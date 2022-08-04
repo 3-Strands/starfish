@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Material;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/modules/material_view/cubit/report_material_cubit.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
+import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +15,7 @@ class ReportMaterialDialogBox extends StatelessWidget {
   const ReportMaterialDialogBox({Key? key, required this.material})
       : super(key: key);
 
-  final HiveMaterial material;
+  final Material material;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class ReportMaterialDialogBox extends StatelessWidget {
         create: (context) => ReportMaterialCubit(
               authenticationRepository:
                   context.read<AuthenticationRepository>(),
+              dataRepository: context.read<DataRepository>(),
               material: material,
             ),
         child: BlocListener<ReportMaterialCubit, ReportMaterialState>(
@@ -45,7 +47,7 @@ class ReportMaterialDialogBoxView extends StatelessWidget {
   const ReportMaterialDialogBoxView({Key? key, required this.material})
       : super(key: key);
 
-  final HiveMaterial material;
+  final Material material;
 
   @override
   Widget build(BuildContext context) {
