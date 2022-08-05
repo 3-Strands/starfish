@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_number/phone_number.dart';
-import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/models/invite_contact.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/wrappers/platform_native.dart';
@@ -37,12 +35,12 @@ class SMS {
   }
 }
 
-Future<List<HiveUser>> getAllContacts() async {
+Future<List<User>> getAllContacts() async {
   final contactList = await ContactsService.getContacts(
     withThumbnails: false,
     photoHighResolution: false,
   );
-  List<HiveUser> contactsWithNumber = [];
+  List<User> contactsWithNumber = [];
 
   await Future.wait(contactList.map((contact) async {
     final phones = contact.phones;
@@ -50,7 +48,7 @@ Future<List<HiveUser>> getAllContacts() async {
       return contactsWithNumber;
     }
 
-    phones.forEach((element) async {
+    await Future.wait(phones.map((element) async {
       final rawNumber = element.value;
       if (rawNumber != null) {
         var dialCode, phoneNumber;
@@ -63,15 +61,15 @@ Future<List<HiveUser>> getAllContacts() async {
           dialCode = null;
           phoneNumber = rawNumber.replaceAll(RegExp("[-()\\s]"), "");
         }
-        contactsWithNumber.add(HiveUser(
+        contactsWithNumber.add(User(
             id: UuidGenerator.uuid(),
             diallingCode: dialCode,
             phone: phoneNumber,
             name: contact.displayName,
             //givenName: contact.givenName,
-            status: User_Status.STATUS_UNSPECIFIED.value));
+            status: User_Status.STATUS_UNSPECIFIED));
       }
-    });
+    }));
   }));
 
   return contactsWithNumber;
@@ -87,5 +85,4 @@ Future<bool> hasContactAccess({bool shouldAskIfUnknown = false}) async {
   return permission.isGranted;
 }
 
-Future<bool> canRequestContactAccess() =>
-    Permission.contacts.status.isPermanentlyDenied;
+const mightBeAbleToAccessContacts = true;

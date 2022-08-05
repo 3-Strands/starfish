@@ -2,21 +2,24 @@
 
 import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
+// import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
+import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
+import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 
 class GroupListItem extends StatelessWidget {
-  final Group group;
+  final GroupWithActionsAndRoles groupPlus;
   final Function(Group group) onGroupTap;
   final Function(Group group) onLeaveGroupTap;
 
   const GroupListItem(
-      {required this.group,
+      {required this.groupPlus,
       required this.onGroupTap,
       required this.onLeaveGroupTap});
 
@@ -24,12 +27,22 @@ class GroupListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
 
-    int countActionsCompleted = group.actionsCompleted;
-    int countActionsNotDoneYet = group.actionsNotDoneYet;
-    int countActionsOverdue = group.actionsOverdue;
-    bool maintainSize =
-        (countActionsCompleted + countActionsNotDoneYet + countActionsOverdue) >
-            0;
+    final completedActions = groupPlus.completedActions;
+    final incompleteActions = groupPlus.incompleteActions;
+    final overdueActions = groupPlus.overdueActions;
+    final myRole = groupPlus.myRole;
+    final myRoleIsTeacherOrAdmin =
+        myRole == GroupUser_Role.ADMIN || myRole == GroupUser_Role.TEACHER;
+    final group = groupPlus.group;
+    final hasActions =
+        (completedActions + incompleteActions + overdueActions) > 0;
+
+    final goToGroup = myRole != GroupUser_Role.LEARNER
+        ? () {
+            _navigateToAction(group);
+          }
+        : null;
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
@@ -40,162 +53,132 @@ class GroupListItem extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            IntrinsicHeight(
-              //height: 20.h,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            right: 8.w,
-                          ),
-                          child: Text(
-                            '${group.name}',
-                            //overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontFamily: 'OpenSans',
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.txtFieldTextColor,
-                            ),
-                          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        group.name,
+                        //overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.txtFieldTextColor,
                         ),
-                        SizedBox(
-                          height: 5.h,
-                        ),
-                        Text(
-                          '${appLocalizations.adminNamePrifix}: ${group.adminName}',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 14.5.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF797979),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Spacer(),
-                  if (group.currentUserRole! == GroupUser_Role.ADMIN)
-                    PopupMenuButton(
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Color(0xFF3475F0),
-                        size: 30,
                       ),
-                      color: Colors.white,
-                      elevation: 20,
-                      shape: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                          borderRadius: BorderRadius.circular(12.r)),
-                      enabled: true,
-                      onSelected: (value) {
-                        switch (value) {
-                          case 0:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddEditGroupScreen(
-                                  group: group,
-                                ),
-                              ),
-                            ).then((value) => FocusScope.of(context)
-                                .requestFocus(new FocusNode()));
-                            break;
-                          case 1:
-                            _deleteGroup(context, group);
-
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          child: Text(
-                            appLocalizations.editGroup,
-                            style: TextStyle(
-                                color: Color(0xFF3475F0),
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          value: 0,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            appLocalizations.deleteGroup,
-                            style: TextStyle(
-                                color: Color(0xFF3475F0),
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          value: 1,
-                        ),
-                      ],
-                    ),
-
-                  // CustomIconButton(
-                  //   icon: Icon(
-                  //     Icons.edit,
-                  //     color: Colors.blue,
-                  //     size: 18.r,
-                  //   ),
-                  //   text: appLocalizations.edit,
-                  //   onButtonTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => AddEditGroupScreen(
-                  //           group: group,
-                  //         ),
-                  //       ),
-                  //     ).then((value) => FocusScope.of(context)
-                  //         .requestFocus(new FocusNode()));
-                  //   },
-                  // ),
-                  if (group.currentUserRole! == GroupUser_Role.LEARNER ||
-                      group.currentUserRole! == GroupUser_Role.TEACHER)
-                    ElevatedButton(
-                      onPressed: () {
-                        this.onLeaveGroupTap(group);
-                      },
-                      child: Text(
-                        appLocalizations.leaveThisGroup,
+                      SizedBox(
+                        height: 5.h,
+                      ),
+                      Text(
+                        '${appLocalizations.adminNamePrifix}: ${groupPlus.myRole == GroupUser_Role.ADMIN ? 'Me' : groupPlus.admin?.name ?? groupPlus.teacher?.name ?? 'Unknown'}',
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
                           fontSize: 14.5.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF797979),
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        primary: AppColors.selectedButtonBG,
-                      ),
-                    ),
-                ],
-              ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8.w),
+                  child: myRole == GroupUser_Role.ADMIN
+                      ? PopupMenuButton(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Color(0xFF3475F0),
+                            size: 30,
+                          ),
+                          color: Colors.white,
+                          elevation: 20,
+                          shape: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 2),
+                              borderRadius: BorderRadius.circular(12.r)),
+                          enabled: true,
+                          onSelected: (value) {
+                            switch (value) {
+                              case 0:
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => AddEditGroupScreen(
+                                //       group: group,
+                                //     ),
+                                //   ),
+                                // );
+                                break;
+                              case 1:
+                                Alerts.showMessageBox(
+                                  context: context,
+                                  title: appLocalizations.deleteGroupTitle,
+                                  message: appLocalizations.deleteGroupMessage,
+                                  positiveButtonText: appLocalizations.delete,
+                                  negativeButtonText: appLocalizations.cancel,
+                                  positiveActionCallback: () {
+                                    context
+                                        .read<GroupsCubit>()
+                                        .groupDeleted(group);
+                                  },
+                                  negativeActionCallback: () {},
+                                );
+                                break;
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Text(
+                                appLocalizations.editGroup,
+                                style: TextStyle(
+                                    color: Color(0xFF3475F0),
+                                    fontSize: 19.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              value: 0,
+                            ),
+                            PopupMenuItem(
+                              child: Text(
+                                appLocalizations.deleteGroup,
+                                style: TextStyle(
+                                    color: Color(0xFF3475F0),
+                                    fontSize: 19.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              value: 1,
+                            ),
+                          ],
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            this.onLeaveGroupTap(group);
+                          },
+                          child: Text(
+                            appLocalizations.leaveThisGroup,
+                            style: TextStyle(
+                              fontFamily: 'OpenSans',
+                              fontSize: 14.5.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: AppColors.selectedButtonBG,
+                          ),
+                        ),
+                ),
+              ],
             ),
-            SizedBox(height: 10.h),
-            // Text(
-            //   '${appLocalizations.adminNamePrifix}: ${group.adminName}',
-            //   textAlign: TextAlign.left,
-            //   style: TextStyle(
-            //     fontFamily: 'OpenSans',
-            //     fontSize: 14.5.sp,
-            //     fontWeight: FontWeight.w500,
-            //     color: Color(0xFF797979),
-            //   ),
-            // ),
-            SizedBox(height: 20.h),
-            if (group.currentUserRole == GroupUser_Role.ADMIN ||
-                group.currentUserRole == GroupUser_Role.TEACHER)
+            if (myRoleIsTeacherOrAdmin || hasActions) SizedBox(height: 20.h),
+            if (myRoleIsTeacherOrAdmin)
               InkWell(
                 onTap: () {
                   onGroupTap(group);
@@ -204,7 +187,7 @@ class GroupListItem extends StatelessWidget {
                   height: 36.h,
                   width: 326.w,
                   decoration: BoxDecoration(
-                      color: Color(0xFFDDDDDD),
+                      color: const Color(0xFFDDDDDD),
                       borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                   child: Padding(
                     padding:
@@ -220,18 +203,14 @@ class GroupListItem extends StatelessWidget {
                   ),
                 ),
               ),
-            SizedBox(height: 10.h),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            if (myRoleIsTeacherOrAdmin && hasActions) SizedBox(height: 10.h),
+            if (hasActions)
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Visibility(
                     child: InkWell(
-                      onTap: () {
-                        if (GroupUser_Role.valueOf(group.userRole!.value) !=
-                            GroupUser_Role.LEARNER) _navigateToAction(group);
-                      },
+                      onTap: goToGroup,
                       child: Container(
                         width: 99.w,
                         decoration: BoxDecoration(
@@ -242,12 +221,12 @@ class GroupListItem extends StatelessWidget {
                             vertical: 10.h, horizontal: 10.w),
                         child: Text(
                           //"${group.actionsCompleted} ${appLocalizations.actionsCompleted}",
-                          Intl.plural(countActionsCompleted,
+                          Intl.plural(completedActions,
                               zero:
-                                  "$countActionsCompleted ${appLocalizations.zeroOrOneActionCompleted}",
-                              one: "$countActionsCompleted ${appLocalizations.zeroOrOneActionCompleted}",
-                              other: "$countActionsCompleted ${appLocalizations.moreThenOneActionCompleted}",
-                              args: [countActionsCompleted]),
+                                  "$completedActions ${appLocalizations.zeroOrOneActionCompleted}",
+                              one: "$completedActions ${appLocalizations.zeroOrOneActionCompleted}",
+                              other: "$completedActions ${appLocalizations.moreThenOneActionCompleted}",
+                              args: [completedActions]),
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: "Rubik",
@@ -257,18 +236,14 @@ class GroupListItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    maintainAnimation: maintainSize,
-                    maintainState: maintainSize,
-                    maintainSize: maintainSize,
-                    visible: countActionsCompleted > 0,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    visible: completedActions > 0,
                   ),
-                  Spacer(),
                   Visibility(
                     child: InkWell(
-                      onTap: () {
-                        if (GroupUser_Role.valueOf(group.userRole!.value) !=
-                            GroupUser_Role.LEARNER) _navigateToAction(group);
-                      },
+                      onTap: goToGroup,
                       child: Container(
                         width: 99.w,
                         decoration: BoxDecoration(
@@ -279,12 +254,12 @@ class GroupListItem extends StatelessWidget {
                             vertical: 10.h, horizontal: 10.w),
                         child: Text(
                           //"${group.actionsNotDoneYet} ${appLocalizations.actionsIncompleted}",
-                          Intl.plural(countActionsNotDoneYet,
+                          Intl.plural(incompleteActions,
                               zero:
-                                  "$countActionsNotDoneYet ${appLocalizations.zeroOrOneActionsIncompleted}",
-                              one: "$countActionsNotDoneYet ${appLocalizations.zeroOrOneActionsIncompleted}",
-                              other: "$countActionsNotDoneYet ${appLocalizations.moreThenOneActionsIncompleted}",
-                              args: [countActionsNotDoneYet]),
+                                  "$incompleteActions ${appLocalizations.zeroOrOneActionsIncompleted}",
+                              one: "$incompleteActions ${appLocalizations.zeroOrOneActionsIncompleted}",
+                              other: "$incompleteActions ${appLocalizations.moreThenOneActionsIncompleted}",
+                              args: [incompleteActions]),
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: "Rubik",
@@ -294,18 +269,14 @@ class GroupListItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    maintainAnimation: maintainSize,
-                    maintainState: maintainSize,
-                    maintainSize: maintainSize,
-                    visible: countActionsNotDoneYet > 0,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    visible: incompleteActions > 0,
                   ),
-                  Spacer(),
                   Visibility(
                     child: InkWell(
-                      onTap: () {
-                        if (GroupUser_Role.valueOf(group.userRole!.value) !=
-                            GroupUser_Role.LEARNER) _navigateToAction(group);
-                      },
+                      onTap: goToGroup,
                       child: Container(
                         width: 99.w,
                         decoration: BoxDecoration(
@@ -316,12 +287,12 @@ class GroupListItem extends StatelessWidget {
                             vertical: 10.h, horizontal: 10.w),
                         child: Text(
                           //"${group.actionsOverdue} ${appLocalizations.actionsOverdue}",
-                          Intl.plural(countActionsOverdue,
+                          Intl.plural(overdueActions,
                               zero:
-                                  "$countActionsOverdue ${appLocalizations.zeroOrOneActionsOverdue}",
-                              one: "$countActionsOverdue ${appLocalizations.zeroOrOneActionsOverdue}",
-                              other: "$countActionsOverdue ${appLocalizations.moreThenOneActionsOverdue}",
-                              args: [countActionsOverdue]),
+                                  "$overdueActions ${appLocalizations.zeroOrOneActionsOverdue}",
+                              one: "$overdueActions ${appLocalizations.zeroOrOneActionsOverdue}",
+                              other: "$overdueActions ${appLocalizations.moreThenOneActionsOverdue}",
+                              args: [overdueActions]),
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: "Rubik",
@@ -331,42 +302,18 @@ class GroupListItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    maintainAnimation: maintainSize,
-                    maintainState: maintainSize,
-                    maintainSize: maintainSize,
-                    visible: countActionsOverdue > 0,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    visible: overdueActions > 0,
                   ),
                 ],
               ),
-            ),
           ],
         ),
       ),
       elevation: 5,
     );
-  }
-
-  _deleteGroup(BuildContext context, Group group) {
-    final appLocalizations = AppLocalizations.of(context)!;
-
-    Alerts.showMessageBox(
-        context: context,
-        title: appLocalizations.deleteGroupTitle,
-        message: appLocalizations.deleteGroupMessage,
-        positiveButtonText: appLocalizations.delete,
-        negativeButtonText: appLocalizations.cancel,
-        positiveActionCallback: () {
-          // Mark this group for deletion
-          group.status = Group_Status.INACTIVE.value;
-          group.isUpdated = true;
-          bloc.groupBloc.addEditGroup(group).then((_) {
-            // Broadcast to sync the delete Group with the server
-            FBroadcast.instance().broadcast(
-              SyncService.kUpdateGroup,
-            );
-          });
-        },
-        negativeActionCallback: () {});
   }
 
   _navigateToAction(Group group) {

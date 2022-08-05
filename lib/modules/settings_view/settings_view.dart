@@ -641,7 +641,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //           children: [
 //             Scrollbar(
 //               thickness: 5.w,
-//               isAlwaysShown: false,
+//               thumbVisibility: false,
 //               child: SingleChildScrollView(
 //                 child: Container(
 //                   padding: EdgeInsets.only(left: 15.w, right: 15.w),

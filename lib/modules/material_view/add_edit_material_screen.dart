@@ -125,7 +125,7 @@ class AddEditMaterialView extends StatelessWidget {
         },
         child: Scrollbar(
           thickness: 5.w,
-          isAlwaysShown: false,
+          thumbVisibility: false,
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
@@ -313,6 +313,8 @@ class AddEditMaterialView extends StatelessWidget {
                   Container(
                     child:
                         BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      buildWhen: (previous, current) =>
+                          previous.languages != current.languages,
                       builder: (context, state) {
                         return MultiSelect<Language>(
                           navTitle: appLocalizations.selectLanugages,
@@ -345,6 +347,8 @@ class AddEditMaterialView extends StatelessWidget {
                   Container(
                     child:
                         BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      buildWhen: (previous, current) =>
+                          previous.types != current.types,
                       builder: (context, state) {
                         return MultiSelect<MaterialType>(
                           navTitle: appLocalizations.selectType,
@@ -376,6 +380,8 @@ class AddEditMaterialView extends StatelessWidget {
                   Container(
                     child:
                         BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      buildWhen: (previous, current) =>
+                          previous.topics != current.topics,
                       builder: (context, state) {
                         return MultiSelect<MaterialTopic>(
                           navTitle: appLocalizations.selectTopics,

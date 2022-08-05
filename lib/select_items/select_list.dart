@@ -202,7 +202,7 @@ class _SelectListState<Item, SelectionModel>
             Expanded(
               child: Scrollbar(
                 thickness: 5.w,
-                isAlwaysShown: false,
+                thumbVisibility: false,
                 child: ListView.builder(
                   itemCount: currentList.length,
                   itemBuilder: _listItemBuilder,

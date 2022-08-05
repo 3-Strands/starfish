@@ -52,7 +52,7 @@ class _MyActionsViewState extends State<MyActionsView> {
 
     return Scrollbar(
       thickness: 5.w,
-      isAlwaysShown: false,
+      thumbVisibility: false,
       child: SingleChildScrollView(
         child: Center(
           child: Column(

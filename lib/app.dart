@@ -31,7 +31,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('here');
     return RepositoryProvider.value(
       value: authenticationRepository,
       child: MultiBlocProvider(
@@ -63,7 +62,6 @@ class AppView extends StatelessWidget {
         listenWhen: (previous, current) => previous is AppBooting,
         listener: (context, state) => removeSplashScreen(),
         builder: (context, state) {
-          print(state);
           if (state is AppReady) {
             return MaterialApp(
               locale: Locale(state.locale),

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
@@ -13,12 +14,12 @@ class GroupsCubit extends Cubit<GroupsState> {
   GroupsCubit(DataRepository dataRepository)
       : _dataRepository = dataRepository,
         super(GroupsState(
-          groups: dataRepository.currentGroups,
+          groups: dataRepository.getGroupsWithActionsAndRoles(),
           // relatedMaterials: dataRepository.getMaterialsRelatedToMe(),
         )) {
-    _subscription = dataRepository.groups.listen((groups) {
+    _subscription = dataRepository.groups.listen((_) {
       emit(state.copyWith(
-        groups: groups,
+        groups: dataRepository.getGroupsWithActionsAndRoles(),
         // relatedMaterials: dataRepository.getMaterialsRelatedToMe(),
       ));
     });

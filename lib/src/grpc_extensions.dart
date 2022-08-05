@@ -33,3 +33,21 @@ extension ActionExt on Action {
 
   bool get isPastDueDate => dateDue.toDateTime().isBefore(DateTime.now());
 }
+
+extension GroupExt on Group {
+  List<User> get fullUsers => users.map((groupUser) => groupUser.user).toList();
+}
+
+extension GroupUserExt on GroupUser {
+  User? get maybeUser => globalHiveApi.user.get(userId);
+  User get user => maybeUser!;
+
+  bool get userIsInvitedToGroup {
+    final user = this.user;
+    return user.phone.isNotEmpty && user.status != User_Status.ACTIVE;
+  }
+}
+
+extension UserExt on User {
+  String get fullPhone => '+${diallingCode.replaceFirst('+', '')} $phone';
+}

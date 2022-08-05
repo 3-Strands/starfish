@@ -19,13 +19,9 @@ const String _dsn =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-  } else {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   await HiveApiInterface.init();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

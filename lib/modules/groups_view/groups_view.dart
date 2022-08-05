@@ -7,33 +7,40 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/enums/group_user_role.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
-import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/modules/groups_view/group_list_item.dart';
-import 'package:starfish/modules/settings_view/settings_view.dart';
+import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'group_users_list.dart';
 
-class GroupsScreen extends StatefulWidget {
-  GroupsScreen({Key? key, this.title = ''}) : super(key: key);
-
-  final String title;
+class Groups extends StatelessWidget {
+  const Groups({Key? key}) : super(key: key);
 
   @override
-  _GroupsScreenState createState() => _GroupsScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => GroupsCubit(context.read<DataRepository>()),
+      child: const GroupsView(),
+    );
+  }
 }
 
-class _GroupsScreenState extends State<GroupsScreen> {
+class GroupsView extends StatefulWidget {
+  const GroupsView({Key? key}) : super(key: key);
+
+  @override
+  _GroupsViewState createState() => _GroupsViewState();
+}
+
+class _GroupsViewState extends State<GroupsView> {
   late AppLocalizations appLocalizations;
 
   @override
@@ -52,105 +59,69 @@ class _GroupsScreenState extends State<GroupsScreen> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(34.r)),
-              color: Color(0xFFEFEFEF),
-            ),
-            child: _buildSlidingUpPanel(group),
-          );
-        });
-      },
-    );
-  }
-
-  Widget _buildSlidingUpPanel(Group group) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            color: Colors.white,
-            margin: EdgeInsets.only(
-              top: 40.h,
-            ),
-            child: Container(
-              margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 10.h,
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.70,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 40.h),
+                child: Text(
+                  '${group.name}',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: AppColors.selectedButtonBG,
+                    fontFamily: 'OpenSans',
+                    fontSize: 21.5.sp,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Align(
-                    alignment: FractionalOffset.topLeft,
-                    child: Container(
-                      child: Text(
-                        '${group.name}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: AppColors.selectedButtonBG,
-                          fontFamily: 'OpenSans',
-                          fontSize: 21.5.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 36.h,
-                  ),
-                  Expanded(
-                    child: GroupUsersList(users: group.activeUsers!),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Container(
-          height: 75.0,
-          decoration: BoxDecoration(
-            color: Color(0xFFEFEFEF),
-          ),
-          width: MediaQuery.of(context).size.width,
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-            child: Container(
-              height: 37.5.h,
-              color: Color(0xFFEFEFEF),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40.r),
-                    ),
-                  ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      AppColors.selectedButtonBG),
                 ),
-                child: Text(appLocalizations.close),
               ),
-            ),
+              Expanded(
+                child: GroupUsersList(users: group.users),
+              ),
+              Container(
+                height: 75.0,
+                decoration: BoxDecoration(
+                  color: Color(0xFFEFEFEF),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 19.0),
+                  child: Container(
+                    height: 37.5.h,
+                    color: Color(0xFFEFEFEF),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40.r),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            AppColors.selectedButtonBG),
+                      ),
+                      child: Text(appLocalizations.close),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     appLocalizations = AppLocalizations.of(context)!;
+    final groupsCubit = context.read<GroupsCubit>();
 
     return Scaffold(
       backgroundColor: AppColors.groupScreenBG,
@@ -168,13 +139,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  setState(
-                    () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.settings,
-                      );
-                    },
+                  Navigator.pushNamed(
+                    context,
+                    Routes.settings,
                   );
                 },
               ),
@@ -189,15 +156,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
           Expanded(
             child: Scrollbar(
               thickness: 5.sp,
-              isAlwaysShown: false,
+              thumbVisibility: false,
               child: ListView(
                 physics: ScrollPhysics(),
                 children: <Widget>[
                   SearchBar(
                     initialValue: "",
-                    onValueChanged: (query) {
-                      context.read<GroupsCubit>().queryChanged(query);
-                    },
+                    onValueChanged: groupsCubit.queryChanged,
                     // TODO: This is actually unnecessary, since we update the query on every change.
                     onDone: (_) {},
                   ),
@@ -278,7 +243,8 @@ class _GroupsScreenState extends State<GroupsScreen> {
                             sections[section].length,
                         itemBuilder: (context, indexPath) {
                           return GroupListItem(
-                            group: sections[indexPath.section][indexPath.index],
+                            groupPlus: sections[indexPath.section]
+                                [indexPath.index],
                             onGroupTap: _onGroupSelection,
                             onLeaveGroupTap: (Group group) {
                               Alerts.showMessageBox(

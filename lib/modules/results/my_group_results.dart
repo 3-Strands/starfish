@@ -59,7 +59,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
         body: bloc.resultsBloc.hiveGroup != null
             ? Scrollbar(
                 thickness: 5.w,
-                isAlwaysShown: false,
+                thumbVisibility: false,
                 child: SingleChildScrollView(
                     child: Column(
                   children: [
