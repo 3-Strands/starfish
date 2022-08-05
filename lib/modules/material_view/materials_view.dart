@@ -140,7 +140,7 @@ class _MaterialsViewState extends State<MaterialsView> {
           Expanded(
             child: Scrollbar(
               thickness: 5.w,
-              isAlwaysShown: false,
+              thumbVisibility: false,
               child: SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(

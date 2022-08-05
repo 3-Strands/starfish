@@ -49,6 +49,9 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
   void descriptionChanged(String description) =>
       emit(state.copyWith(description: description));
 
+  void newUsersAdded(Set<User> users) =>
+      emit(state.copyWith(newUsers: state.newUsers.union(users)));
+
   void submitRequested() {
     GroupError? error;
     if (state.name.isEmpty) {

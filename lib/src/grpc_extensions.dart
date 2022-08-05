@@ -39,7 +39,8 @@ extension GroupExt on Group {
 }
 
 extension GroupUserExt on GroupUser {
-  User get user => globalHiveApi.user.get(userId)!;
+  User? get maybeUser => globalHiveApi.user.get(userId);
+  User get user => maybeUser!;
 
   bool get userIsInvitedToGroup {
     final user = this.user;

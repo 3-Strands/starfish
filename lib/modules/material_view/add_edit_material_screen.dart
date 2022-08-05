@@ -125,7 +125,7 @@ class AddEditMaterialView extends StatelessWidget {
         },
         child: Scrollbar(
           thickness: 5.w,
-          isAlwaysShown: false,
+          thumbVisibility: false,
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),

@@ -84,7 +84,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
 
     return Scrollbar(
       thickness: 5.w,
-      isAlwaysShown: false,
+      thumbVisibility: false,
       child: SingleChildScrollView(
         child: Column(
           children: [

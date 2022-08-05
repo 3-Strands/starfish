@@ -71,7 +71,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         backgroundColor: AppColors.resultsScreenBG,
         body: Scrollbar(
           thickness: 5.w,
-          isAlwaysShown: false,
+          thumbVisibility: false,
           child: bloc.resultsBloc.groupsWithLearnerRole.isNotEmpty
               ? SingleChildScrollView(
                   child: Column(

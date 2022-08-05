@@ -78,7 +78,7 @@ class GroupListItem extends StatelessWidget {
                         height: 5.h,
                       ),
                       Text(
-                        '${appLocalizations.adminNamePrifix}: ${groupPlus.admin!.name}',
+                        '${appLocalizations.adminNamePrifix}: ${groupPlus.myRole == GroupUser_Role.ADMIN ? 'Me' : groupPlus.admin?.name ?? groupPlus.teacher?.name ?? 'Unknown'}',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
@@ -237,6 +237,8 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                     maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
                     visible: completedActions > 0,
                   ),
                   Visibility(
@@ -268,6 +270,8 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                     maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
                     visible: incompleteActions > 0,
                   ),
                   Visibility(
@@ -299,6 +303,8 @@ class GroupListItem extends StatelessWidget {
                       ),
                     ),
                     maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
                     visible: overdueActions > 0,
                   ),
                 ],

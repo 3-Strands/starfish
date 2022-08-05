@@ -43,7 +43,10 @@ class GroupsState {
             : {_userRoleFilter: []};
 
     groups.forEach((groupPlus) {
-      groupsMap[groupPlus.myRole]?.add(groupPlus);
+      final key = groupPlus.myRole == GroupUser_Role.LEARNER
+          ? UserGroupRoleFilter.FILTER_LEARNER
+          : UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD;
+      groupsMap[key]?.add(groupPlus);
     });
 
     return groupsMap;

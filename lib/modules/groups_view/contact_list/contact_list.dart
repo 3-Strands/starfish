@@ -4,18 +4,57 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
+import 'package:starfish/modules/groups_view/contact_list/cubit/contact_list_cubit.dart';
 import 'package:starfish/modules/groups_view/cubit/contacts_cubit.dart';
+import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 
 class ContactList extends StatelessWidget {
-  const ContactList({Key? key}) : super(key: key);
+  const ContactList({Key? key, this.selectedUsers}) : super(key: key);
+
+  final List<User>? selectedUsers;
+
+  static Future<Set<User>?> showAsBottomSheet(BuildContext context,
+      {List<User>? selectedUsers}) {
+    final widget = SizedBox(
+      height: MediaQuery.of(context).size.height * 0.70,
+      child: ContactList(selectedUsers: selectedUsers),
+    );
+    return showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(34.r), topRight: Radius.circular(34.r)),
+      ),
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      builder: (BuildContext context) => widget,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ContactListCubit(
+        currentUser: context.currentUser,
+        selectedUsers: selectedUsers,
+      ),
+      child: const ContactListView(),
+    );
+  }
+}
+
+class ContactListView extends StatelessWidget {
+  const ContactListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
-    final contactCubit = context.read<ContactsCubit>();
+    final contactListCubit = context.read<ContactListCubit>();
 
     return Column(
       children: [
@@ -30,7 +69,7 @@ class ContactList extends StatelessWidget {
         SizedBox(height: 11.h),
         SearchBar(
           initialValue: '',
-          onValueChanged: contactCubit.queryChanged,
+          onValueChanged: contactListCubit.queryChanged,
           onDone: (_) {},
         ),
         SizedBox(height: 11.h),
@@ -53,7 +92,7 @@ class ContactList extends StatelessWidget {
 
                 return Scrollbar(
                   thickness: 5.w,
-                  isAlwaysShown: false,
+                  thumbVisibility: false,
                   child: ListView.builder(
                     itemCount: contacts.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -71,7 +110,7 @@ class ContactList extends StatelessWidget {
                             return;
                           }
 
-                          contactCubit.contactToggled(contact);
+                          contactListCubit.contactToggled(contact);
                         },
                       );
                     },
@@ -99,8 +138,8 @@ class ContactList extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    contactCubit.inviteRequested();
-                    Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .pop(contactListCubit.state.newlySelectedContacts);
                   },
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,

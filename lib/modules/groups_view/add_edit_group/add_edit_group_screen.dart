@@ -20,7 +20,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_language.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/modules/groups_view/contact_list.dart';
+import 'package:starfish/modules/groups_view/contact_list/contact_list.dart';
 import 'package:starfish/modules/groups_view/cubit/add_edit_group_cubit.dart';
 import 'package:starfish/modules/groups_view/cubit/contacts_cubit.dart';
 import 'package:starfish/modules/groups_view/cubit/group_navigation_cubit.dart';
@@ -39,11 +39,11 @@ import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/widgets/contact_list_item.dart';
 import 'package:starfish/modules/groups_view/edit_invite_user_bottomsheet.dart';
-import 'package:starfish/widgets/group_member_list_item.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/group_member_list_item.dart';
 import 'package:starfish/widgets/history_item.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
-import 'package:starfish/widgets/uninvited_group_member_list_item.dart';
-import 'package:starfish/widgets/uninvited_person_list_item.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/uninvited_group_member_list_item.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/uninvited_person_list_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:starfish/wrappers/sms.dart';
@@ -81,27 +81,18 @@ class AddEditGroup extends StatelessWidget {
               Navigator.of(context).pop();
               break;
             case GroupNavigationState.addUsers:
-              context.read<ContactsCubit>().contactsRequested();
-              showModalBottomSheet(
-                context: context,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(34.r),
-                      topRight: Radius.circular(34.r)),
-                ),
-                isScrollControlled: true,
-                isDismissible: true,
-                enableDrag: true,
-                builder: (BuildContext context) {
-                  return Container(
-                    margin: EdgeInsets.only(top: 40.h),
-                    height: MediaQuery.of(context).size.height * 0.70,
-                    child: const ContactList(),
-                  );
+              ContactList.showAsBottomSheet(context,
+                      selectedUsers: group?.fullUsers)
+                  .then(
+                (newUsers) {
+                  if (newUsers != null) {
+                    context.read<AddEditGroupCubit>().newUsersAdded(newUsers);
+                  }
                 },
               );
               break;
             case GroupNavigationState.editUser:
+            // TODO
           }
         },
         child: const AddEditGroupView(),
@@ -164,69 +155,69 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
     return _alreadySelected || _alreadyGroupMember;
   }
 
-  void _createUpdateGroup() {
-    // Step 1: save/update group
+  // void _createUpdateGroup() {
+  //   // Step 1: save/update group
 
-    if (_isEditMode) {
-      _hiveGroup!.isNew = true;
-    } else {
-      _hiveGroup!.isUpdated = true;
-    }
-    _hiveGroup!.name = _titleController.text;
-    _hiveGroup!.description = _descriptionController.text;
-    _hiveGroup!.languageIds =
-        _selectedLanguages.map((HiveLanguage language) => language.id).toList();
-    _hiveGroup!.evaluationCategoryIds = _selectedEvaluationCategories
-        .map((HiveEvaluationCategory category) => category.id!)
-        .toList();
+  //   if (_isEditMode) {
+  //     _hiveGroup!.isNew = true;
+  //   } else {
+  //     _hiveGroup!.isUpdated = true;
+  //   }
+  //   _hiveGroup!.name = _titleController.text;
+  //   _hiveGroup!.description = _descriptionController.text;
+  //   _hiveGroup!.languageIds =
+  //       _selectedLanguages.map((HiveLanguage language) => language.id).toList();
+  //   _hiveGroup!.evaluationCategoryIds = _selectedEvaluationCategories
+  //       .map((HiveEvaluationCategory category) => category.id!)
+  //       .toList();
 
-    bloc.groupBloc.addEditGroup(_hiveGroup!).then((value) {
-      // Step 2: save/update user
-      _newInvitedUsers.forEach((element) async {
-        await UserRepository().createUpdateUserInDB(element);
-      });
+  //   bloc.groupBloc.addEditGroup(_hiveGroup!).then((value) {
+  //     // Step 2: save/update user
+  //     _newInvitedUsers.forEach((element) async {
+  //       await UserRepository().createUpdateUserInDB(element);
+  //     });
 
-      // Step 3: createUpdate group members in the group
-      _newInvitedGroupUsers.forEach((element) async {
-        await GroupRepository().createUpdateGroupUserInDB(groupUser: element);
-      });
+  //     // Step 3: createUpdate group members in the group
+  //     _newInvitedGroupUsers.forEach((element) async {
+  //       await GroupRepository().createUpdateGroupUserInDB(groupUser: element);
+  //     });
 
-      // TODO: _updatedGroupUsers to be removed
-      _updatedGroupUsers.forEach((element) async {
-        await bloc.groupBloc.createUpdateGroupUser(element);
-      });
+  //     // TODO: _updatedGroupUsers to be removed
+  //     _updatedGroupUsers.forEach((element) async {
+  //       await bloc.groupBloc.createUpdateGroupUser(element);
+  //     });
 
-      // Step 4: send SMS
-      List<HiveUser> _usersWithPhone = _newInvitedUsers
-          .where(
-              (element) => element.phone != null && element.phone!.isNotEmpty)
-          .toList();
-      if (_usersWithPhone.length > 0) {
-        _sendInviteSMS(appLocalizations.inviteSMS, _usersWithPhone);
-      }
+  //     // Step 4: send SMS
+  //     List<HiveUser> _usersWithPhone = _newInvitedUsers
+  //         .where(
+  //             (element) => element.phone != null && element.phone!.isNotEmpty)
+  //         .toList();
+  //     if (_usersWithPhone.length > 0) {
+  //       _sendInviteSMS(appLocalizations.inviteSMS, _usersWithPhone);
+  //     }
 
-      FBroadcast.instance().broadcast(
-        SyncService.kUpdateGroup,
-        value: _hiveGroup,
-      );
+  //     FBroadcast.instance().broadcast(
+  //       SyncService.kUpdateGroup,
+  //       value: _hiveGroup,
+  //     );
 
-      Alerts.showMessageBox(
-          context: context,
-          title: appLocalizations.dialogInfo,
-          message: _isEditMode
-              ? appLocalizations.updateGroupSuccess
-              : appLocalizations.createGroupSuccess,
-          callback: () {
-            Navigator.of(context).pop();
-          });
-    }).onError((error, stackTrace) {
-      StarfishSnackbar.showErrorMessage(
-          context,
-          _isEditMode
-              ? appLocalizations.updateGroupFailed
-              : appLocalizations.createGroupSuccess);
-    }).whenComplete(() {});
-  }
+  //     Alerts.showMessageBox(
+  //         context: context,
+  //         title: appLocalizations.dialogInfo,
+  //         message: _isEditMode
+  //             ? appLocalizations.updateGroupSuccess
+  //             : appLocalizations.createGroupSuccess,
+  //         callback: () {
+  //           Navigator.of(context).pop();
+  //         });
+  //   }).onError((error, stackTrace) {
+  //     StarfishSnackbar.showErrorMessage(
+  //         context,
+  //         _isEditMode
+  //             ? appLocalizations.updateGroupFailed
+  //             : appLocalizations.createGroupSuccess);
+  //   }).whenComplete(() {});
+  // }
 
   void _onEditUserInvite(HiveUser user, HiveGroupUser groupUser) {
     showModalBottomSheet(
@@ -242,43 +233,46 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
       isDismissible: true,
       enableDrag: true,
       builder: (BuildContext context) {
-        return EditInviteUserBottomSheet(
-          user,
-          groupUser,
-          onDone: (String contactName, String diallingCode, String phonenumber,
-              GroupUser_Role role) {
-            if (contactName.isEmpty) {
-              StarfishSnackbar.showErrorMessage(
-                  context, AppLocalizations.of(context)!.emptyFullName);
-              return;
-            } else if (diallingCode.isEmpty) {
-              StarfishSnackbar.showErrorMessage(
-                  context, AppLocalizations.of(context)!.emptyDialingCode);
-              return;
-            } else if (phonenumber.isEmpty) {
-              StarfishSnackbar.showErrorMessage(
-                  context, AppLocalizations.of(context)!.emptyMobileNumbers);
-              return;
-            } else if ((user.phone != phonenumber ||
-                    user.diallingCode != diallingCode) &&
-                _checkIfUserPhonenumberAlreadySelected(
-                    diallingCode, phonenumber)) {
-              //check if there is any change in dialling code or in phone number
-              StarfishSnackbar.showErrorMessage(
-                  context, appLocalizations.phonenumberAlreadyAdded);
-              return;
-            } else {
-              user.name = contactName;
-              user.diallingCode = diallingCode;
-              user.phone = phonenumber;
-              user.isUpdated = true;
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.70,
+          child: EditInviteUserBottomSheet(
+            user,
+            groupUser,
+            onDone: (String contactName, String diallingCode,
+                String phonenumber, GroupUser_Role role) {
+              if (contactName.isEmpty) {
+                StarfishSnackbar.showErrorMessage(
+                    context, AppLocalizations.of(context)!.emptyFullName);
+                return;
+              } else if (diallingCode.isEmpty) {
+                StarfishSnackbar.showErrorMessage(
+                    context, AppLocalizations.of(context)!.emptyDialingCode);
+                return;
+              } else if (phonenumber.isEmpty) {
+                StarfishSnackbar.showErrorMessage(
+                    context, AppLocalizations.of(context)!.emptyMobileNumbers);
+                return;
+              } else if ((user.phone != phonenumber ||
+                      user.diallingCode != diallingCode) &&
+                  _checkIfUserPhonenumberAlreadySelected(
+                      diallingCode, phonenumber)) {
+                //check if there is any change in dialling code or in phone number
+                StarfishSnackbar.showErrorMessage(
+                    context, appLocalizations.phonenumberAlreadyAdded);
+                return;
+              } else {
+                user.name = contactName;
+                user.diallingCode = diallingCode;
+                user.phone = phonenumber;
+                user.isUpdated = true;
 
-              groupUser.role = role.value;
-              groupUser.isUpdated = true;
+                groupUser.role = role.value;
+                groupUser.isUpdated = true;
 
-              Navigator.of(context).pop();
-            }
-          },
+                Navigator.of(context).pop();
+              }
+            },
+          ),
         );
       },
     );
@@ -369,7 +363,7 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
         ],
         child: Scrollbar(
           thickness: 5.w,
-          isAlwaysShown: false,
+          thumbVisibility: false,
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),

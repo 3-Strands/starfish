@@ -11,6 +11,7 @@ enum ModelType {
   material,
   action,
   group,
+  user,
 }
 
 class SyncRepository {
@@ -44,6 +45,11 @@ class SyncRepository {
         pull: (client) => client
             .listGroups(ListGroupsRequest())
             .forEach((group) => hiveApi.group.put(group.id, group)),
+      ),
+      ModelType.user: SyncManager(
+        pull: (client) => client
+            .listUsers(ListUsersRequest())
+            .forEach((user) => hiveApi.user.put(user.id, user)),
       ),
     };
 

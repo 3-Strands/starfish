@@ -10,7 +10,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 // import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
-// import 'package:starfish/modules/material_view/materials_view.dart';
+import 'package:starfish/modules/material_view/materials_view.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -135,8 +135,8 @@ class _DashboardState extends State<Dashboard> {
               itemCount: 4,
               itemBuilder: (context, index) {
                 switch (index) {
-                  // case 0:
-                  //   return const Materials();
+                  case 0:
+                    return const Materials();
                   case 1:
                     return const Groups();
                   // case 2:

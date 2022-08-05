@@ -16,6 +16,7 @@ class GroupUsersList extends StatelessWidget {
     final appLocalizations = AppLocalizations.of(context)!;
 
     return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       itemCount: users.length,
       itemBuilder: (context, index) {
         final groupUser = users[index];
@@ -70,7 +71,7 @@ class GroupUsersList extends StatelessWidget {
               Align(
                 alignment: FractionalOffset.topLeft,
                 child: Text(
-                  '${user.fullPhone}',
+                  user.fullPhone,
                   maxLines: 1,
                   style: TextStyle(
                     color: AppColors.appTitle,

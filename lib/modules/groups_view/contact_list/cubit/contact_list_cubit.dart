@@ -3,33 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:starfish/models/user.dart';
 import 'package:starfish/src/grpc_extensions.dart';
-import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/wrappers/sms.dart';
 
-part 'contacts_state.dart';
+part 'contact_list_state.dart';
 
-class ContactsCubit extends Cubit<ContactsState> {
-  ContactsCubit({
+class ContactListCubit extends Cubit<ContactListState> {
+  ContactListCubit({
     required AppUser currentUser,
     List<User>? selectedUsers,
   })  : _currentUser = currentUser,
         _selectedUsers = selectedUsers ?? [],
-        super(ContactsState());
+        super(ContactListState()) {
+    _init();
+  }
 
   final AppUser _currentUser;
   final List<User> _selectedUsers;
 
-  void contactsRequested() async {
+  void _init() async {
     try {
-      if (!mightBeAbleToAccessContacts) {
-        emit(state.copyWith(permission: ContactPermission.unavailable));
-      } else if (await hasContactAccess(shouldAskIfUnknown: true)) {
+      if (await hasContactAccess(shouldAskIfUnknown: true)) {
         await _loadContacts();
       } else {
-        emit(state.copyWith(permission: ContactPermission.denied));
+        emit(state.copyWith(permission: ContactListPermission.denied));
       }
     } catch (_) {
-      emit(state.copyWith(permission: ContactPermission.denied));
+      emit(state.copyWith(permission: ContactListPermission.denied));
     }
   }
 
@@ -43,7 +42,7 @@ class ContactsCubit extends Cubit<ContactsState> {
         .toList();
 
     emit(state.copyWith(
-      permission: ContactPermission.granted,
+      permission: ContactListPermission.granted,
       contacts: contacts,
       alreadySelectedContacts: contacts
           .where((contact) => selectedNumbers.contains(contact.fullPhone))
@@ -63,30 +62,7 @@ class ContactsCubit extends Cubit<ContactsState> {
     ));
   }
 
-  void personNameSubmitted(String name) {
-    if (name.isEmpty) {
-      return;
-    }
-    final lowerCaseName = name.toLowerCase();
-    final userMatchesName =
-        (User user) => user.name.toLowerCase() == lowerCaseName;
-
-    if (state.alreadySelectedContacts.any(userMatchesName) ||
-        state.newlySelectedContacts.any(userMatchesName)) {
-      emit(state.copyWith(error: ContactError.nameAlreadyExists));
-      return;
-    }
-    contactToggled(User(
-      id: UuidGenerator.uuid(),
-      name: name,
-    ));
-  }
-
   void queryChanged(String query) {
     emit(state.copyWith(query: query));
-  }
-
-  void inviteRequested() {
-    // TODO: Invite users in newlySelectedContacts.
   }
 }

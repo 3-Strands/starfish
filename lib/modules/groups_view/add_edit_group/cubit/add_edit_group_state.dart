@@ -14,6 +14,7 @@ class AddEditGroupState {
     required this.selectedEvaluationCategories,
     required this.name,
     required this.description,
+    this.newUsers = const {},
     required this.history,
     this.error,
   });
@@ -24,6 +25,7 @@ class AddEditGroupState {
   final Set<String> selectedEvaluationCategories;
   final String name;
   final String description;
+  final Set<User> newUsers;
   final List<Edit> history;
 
   final GroupError? error;
@@ -35,6 +37,7 @@ class AddEditGroupState {
     Set<String>? selectedEvaluationCategories,
     String? name,
     String? description,
+    Set<User>? newUsers,
     List<Edit>? history,
     GroupError? error,
   }) =>
@@ -46,6 +49,7 @@ class AddEditGroupState {
             selectedEvaluationCategories ?? this.selectedEvaluationCategories,
         name: name ?? this.name,
         description: description ?? this.description,
+        newUsers: newUsers ?? this.newUsers,
         history: history ?? this.history,
         // We reset this to null every time unless explicitly passed.
         error: error,

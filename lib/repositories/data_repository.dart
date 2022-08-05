@@ -99,10 +99,8 @@ class DataRepository {
         completedActions: completedActions,
         incompleteActions: incompleteActions,
         overdueActions: overdueActions,
-        admin: groupAdmin == null ? null : _hiveApi.user.get(groupAdmin.userId),
-        teacher: groupTeacher == null
-            ? null
-            : _hiveApi.user.get(groupTeacher.userId),
+        admin: groupAdmin?.maybeUser,
+        teacher: groupTeacher?.maybeUser,
         myRole: group.users.firstWhere((user) => user.userId == _userId).role,
       );
     }).toList();
