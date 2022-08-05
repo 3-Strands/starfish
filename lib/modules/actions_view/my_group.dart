@@ -1,38 +1,15 @@
-import 'dart:async';
-
+import 'package:flutter/material.dart' hide Action;
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:group_list_view/group_list_view.dart';
-import 'package:intl/intl.dart';
-import 'package:open_file/open_file.dart';
-import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_action_user.dart';
-import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_material.dart';
-import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/enums/action_filter.dart';
-import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
-import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
-import 'package:starfish/repositories/data_repository.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/widgets/material_link_button.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/widgets/user_action_status_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/wrappers/file_system.dart';
-import 'package:starfish/wrappers/platform.dart';
-// ignore: implementation_imports
-import 'package:template_string/src/extension.dart';
 
 class MyGroupActionsView extends StatefulWidget {
   const MyGroupActionsView({Key? key}) : super(key: key);
@@ -180,7 +157,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
             //actionsList(bloc),
             BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
               final actionsToShow = state.actionsToShow;
-              final groupActionsMap = actionsToShow.groupActionsMap;
+              final groupActionsMap = actionsToShow.actions;
               final hasMore = actionsToShow.hasMore;
               if (groupActionsMap.isEmpty) {
                 return Container(
@@ -196,85 +173,87 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                   ),
                 );
               }
-              // return ListView.builder(
-              //   shrinkWrap: true,
-              //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+              return ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: hasMore
+                    ? groupActionsMap.length + 1
+                    : groupActionsMap.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  if (index >= groupActionsMap.length) {
+                    return Container(
+                      margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Center(
+                        child: SizedBox(
+                          child: CircularProgressIndicator(),
+                          height: 24,
+                          width: 24,
+                        ),
+                      ),
+                    );
+                  }
+                  final actionWithStatus = groupActionsMap[index];
+                  return MyGroupActionListItem(
+                    index: index,
+                    action: actionWithStatus.action,
+                    onActionTap: (Action action) {},
+                    //onActionTap: _onActionSelection,
+                    //actionStatus: materialWithStatus.status,
+                  );
+                },
+              );
+              // return GroupListView(
               //   physics: NeverScrollableScrollPhysics(),
-              //   itemCount: hasMore ? actions.length + 1 : actions.length,
-              //   itemBuilder: (BuildContext ctxt, int index) {
-              //     if (index >= actions.length) {
-              //       return Container(
-              //         margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-              //         padding: EdgeInsets.symmetric(vertical: 8.h),
-              //         child: Center(
-              //           child: SizedBox(
-              //             child: CircularProgressIndicator(),
-              //             height: 24,
-              //             width: 24,
-              //           ),
-              //         ),
-              //       );
-              //     }
-              //     final actionWithStatus = actions[index];
+              //   shrinkWrap: true,
+              //   sectionsCount: groupActionsMap.keys.toList().length,
+              //   countOfItemInSection: (int section) {
+              //     return groupActionsMap.values.toList()[section].length;
+              //   },
+              //   itemBuilder: (BuildContext context, IndexPath indexPath) {
               //     return MyGroupActionListItem(
-              //       index: index,
-              //       action: actionWithStatus.action,
-              //       onActionTap: (HiveAction action) {},
-              //       //onActionTap: _onActionSelection,
-              //       //actionStatus: materialWithStatus.status,
+              //       index: indexPath.index,
+              //       action: groupActionsMap.values
+              //           .toList()[indexPath.section][indexPath.index]
+              //           .action,
+              //       onActionTap: (Action action) {},
+              //       //       //onActionTap: _onActionSelection,
+              //       //       //actionStatus: materialWithStatus.status,
               //     );
               //   },
+              //   groupHeaderBuilder: (BuildContext context, int section) {
+              //     return Padding(
+              //       padding:
+              //           EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Text(
+              //             '${groupActionsMap.keys.toList()[section].name}',
+              //             style: TextStyle(
+              //               fontSize: 19.sp,
+              //               fontWeight: FontWeight.w600,
+              //               color: Color(0xFF434141),
+              //             ),
+              //           ),
+              //           if (groupActionsMap.keys.toList()[section].id != null)
+              //             Text(
+              //               '${_appLocalizations.teacher}: ${groupActionsMap.keys.toList()[section].teachersName?.join(", ")}',
+              //               style: TextStyle(
+              //                 fontSize: 17.sp,
+              //                 fontWeight: FontWeight.w600,
+              //                 color: Color(0xFF797979),
+              //               ),
+              //             ),
+              //         ],
+              //       ),
+              //     );
+              //   },
+              //   separatorBuilder: (context, index) => SizedBox(height: 10.h),
+              //   sectionSeparatorBuilder: (context, section) =>
+              //       SizedBox(height: 10.h),
               // );
-              return GroupListView(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                sectionsCount: groupActionsMap.keys.toList().length,
-                countOfItemInSection: (int section) {
-                  return groupActionsMap.values.toList()[section].length;
-                },
-                itemBuilder: (BuildContext context, IndexPath indexPath) {
-                  return MyGroupActionListItem(
-                    index: indexPath.index,
-                    action: groupActionsMap.values
-                        .toList()[indexPath.section][indexPath.index]
-                        .action,
-                    onActionTap: (HiveAction action) {},
-                    //       //onActionTap: _onActionSelection,
-                    //       //actionStatus: materialWithStatus.status,
-                  );
-                },
-                groupHeaderBuilder: (BuildContext context, int section) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${groupActionsMap.keys.toList()[section].name}',
-                          style: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF434141),
-                          ),
-                        ),
-                        if (groupActionsMap.keys.toList()[section].id != null)
-                          Text(
-                            '${_appLocalizations.teacher}: ${groupActionsMap.keys.toList()[section].teachersName?.join(", ")}',
-                            style: TextStyle(
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF797979),
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) => SizedBox(height: 10.h),
-                sectionSeparatorBuilder: (context, section) =>
-                    SizedBox(height: 10.h),
-              );
             }),
             SizedBox(
               height: 10.h,

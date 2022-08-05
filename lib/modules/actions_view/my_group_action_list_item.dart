@@ -1,22 +1,17 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_action.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:template_string/template_string.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 
 class MyGroupActionListItem extends StatelessWidget {
-  final HiveAction action;
+  final Action action;
   final index;
-  final Function(HiveAction action) onActionTap;
+  final Function(Action action) onActionTap;
 
   const MyGroupActionListItem(
       {Key? key, required this.action, required this.onActionTap, this.index});
@@ -81,7 +76,7 @@ class MyGroupActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8),
                         child: Text(
-                          action.name ?? '',
+                          action.name,
                           //maxLines: 1,
                           //overflow: TextOverflow.ellipsis,
                           //softWrap: false,
@@ -341,7 +336,8 @@ class MyGroupActionListItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                   child: Text(
-                    '${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue)}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -358,7 +354,7 @@ class MyGroupActionListItem extends StatelessWidget {
     );
   }
 
-  _deleteAction(BuildContext context, HiveAction action) {
+  _deleteAction(BuildContext context, Action action) {
     // final bloc = Provider.of(context);
     // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     // Alerts.showMessageBox(

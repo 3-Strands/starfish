@@ -13,7 +13,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_database.dart';
 import 'package:starfish/db/hive_edit.dart';
 import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/db/hive_date.dart';

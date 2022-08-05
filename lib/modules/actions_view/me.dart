@@ -1,22 +1,13 @@
+import 'package:flutter/material.dart' hide Action;
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_action_list_item.dart';
-import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
-import 'package:starfish/repositories/data_repository.dart';
-import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/widgets/action_status_widget.dart';
-import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -158,7 +149,7 @@ class _MyActionsViewState extends State<MyActionsView> {
               BlocBuilder<ActionsCubit, ActionsState>(
                   builder: (context, state) {
                 final actionsToShow = state.actionsToShow;
-                final groupActionsMap = actionsToShow.groupActionsMap;
+                final groupActionsMap = actionsToShow.actions;
                 final hasMore = actionsToShow.hasMore;
                 if (groupActionsMap.isEmpty) {
                   return Container(
@@ -174,87 +165,91 @@ class _MyActionsViewState extends State<MyActionsView> {
                     ),
                   );
                 }
-                // return ListView.builder(
-                //   shrinkWrap: true,
-                //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: hasMore ? actions.length + 1 : actions.length,
-                //   itemBuilder: (BuildContext ctxt, int index) {
-                //     if (index >= actions.length) {
-                //       return Container(
-                //         margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                //         padding: EdgeInsets.symmetric(vertical: 8.h),
-                //         child: Center(
-                //           child: SizedBox(
-                //             child: CircularProgressIndicator(),
-                //             height: 24,
-                //             width: 24,
-                //           ),
-                //         ),
-                //       );
-                //     }
-                //     final actionWithStatus = actions[index];
-                //     return MyActionListItem(
-                //       index: index,
-                //       action: actionWithStatus.action,
-                //       onActionTap: _onActionSelection,
-                //     );
-                //   },
-                // );
-                return GroupListView(
-                  physics: NeverScrollableScrollPhysics(),
+                return ListView.builder(
                   shrinkWrap: true,
-                  sectionsCount: groupActionsMap.keys.toList().length,
-                  countOfItemInSection: (int section) {
-                    return groupActionsMap.values.toList()[section].length;
-                  },
-                  itemBuilder: (BuildContext context, IndexPath indexPath) {
+                  padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: hasMore
+                      ? groupActionsMap.length + 1
+                      : groupActionsMap.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    if (index >= groupActionsMap.length) {
+                      return Container(
+                        margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Center(
+                          child: SizedBox(
+                            child: CircularProgressIndicator(),
+                            height: 24,
+                            width: 24,
+                          ),
+                        ),
+                      );
+                    }
+                    final actionWithStatus = groupActionsMap[index];
                     return MyActionListItem(
-                      index: indexPath.index,
-                      action: groupActionsMap.values
-                          .toList()[indexPath.section][indexPath.index]
-                          .action,
-                      displayActions: groupActionsMap.keys
-                              .elementAt(indexPath.section)
-                              .id ==
-                          null, // Dummy Group i.e. self actions
+                      index: index,
+                      action: actionWithStatus.action,
+                      actionStatus:
+                          actionWithStatus.status ?? ActionStatus.NOT_DONE,
                       onActionTap: _onActionSelection,
                     );
                   },
-                  groupHeaderBuilder: (BuildContext context, int section) {
-                    debugPrint(
-                        "SectionHeader: ${groupActionsMap.keys.toList()[section]}");
-                    return Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${groupActionsMap.keys.toList()[section].name ?? 'Self'}',
-                            style: TextStyle(
-                              fontSize: 19.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF434141),
-                            ),
-                          ),
-                          // if (groupActionsMap.keys.toList()[section].id != null)
-                          //   Text(
-                          //     '${_appLocalizations.teacher}: ${groupActionsMap.keys.toList()[section].teachersName?.join(", ")}',
-                          //     style: TextStyle(
-                          //       fontSize: 17.sp,
-                          //       fontWeight: FontWeight.w600,
-                          //       color: Color(0xFF797979),
-                          //     ),
-                          //   ),
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height: 10.h),
-                  sectionSeparatorBuilder: (context, section) =>
-                      SizedBox(height: 10.h),
                 );
+                // return GroupListView(
+                //   physics: NeverScrollableScrollPhysics(),
+                //   shrinkWrap: true,
+                //   sectionsCount: groupActionsMap.length,
+                //   countOfItemInSection: (int section) {
+                //     return groupActionsMap.values.toList()[section].length;
+                //   },
+                //   itemBuilder: (BuildContext context, IndexPath indexPath) {
+                //     return MyActionListItem(
+                //       index: indexPath.index,
+                //       action: groupActionsMap.values
+                //           .toList()[indexPath.section][indexPath.index]
+                //           .action,
+                //       displayActions: groupActionsMap.keys
+                //               .elementAt(indexPath.section)
+                //               .id ==
+                //           null, // Dummy Group i.e. self actions
+                //       onActionTap: _onActionSelection,
+                //     );
+                //   },
+                //   groupHeaderBuilder: (BuildContext context, int section) {
+                //     debugPrint(
+                //         "SectionHeader: ${groupActionsMap.keys.toList()[section]}");
+                //     return Padding(
+                //       padding:
+                //           EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Text(
+                //             '${groupActionsMap.keys.toList()[section].name ?? 'Self'}',
+                //             style: TextStyle(
+                //               fontSize: 19.sp,
+                //               fontWeight: FontWeight.w600,
+                //               color: Color(0xFF434141),
+                //             ),
+                //           ),
+                //           // if (groupActionsMap.keys.toList()[section].id != null)
+                //           //   Text(
+                //           //     '${_appLocalizations.teacher}: ${groupActionsMap.keys.toList()[section].teachersName?.join(", ")}',
+                //           //     style: TextStyle(
+                //           //       fontSize: 17.sp,
+                //           //       fontWeight: FontWeight.w600,
+                //           //       color: Color(0xFF797979),
+                //           //     ),
+                //           //   ),
+                //         ],
+                //       ),
+                //     );
+                //   },
+                //   separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                //   sectionSeparatorBuilder: (context, section) =>
+                //       SizedBox(height: 10.h),
+                // );
               }),
 
               SizedBox(
@@ -267,7 +262,7 @@ class _MyActionsViewState extends State<MyActionsView> {
     );
   }
 
-  void _onActionSelection(HiveAction action) async {
+  void _onActionSelection(Action action) async {
     /*  HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
 
     HiveActionUser? hiveActionUser = action.mineAction;

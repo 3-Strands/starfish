@@ -131,28 +131,32 @@ class DataRepository {
   //   );
 
   // ------------------- Actions -------------------
-  Stream<List<HiveAction>> get actions => _streamBox(_hiveApi.action);
-  List<HiveAction> get currentActions => _hiveApi.action.asList();
+  Stream<List<Action>> get actions => _streamBox(_hiveApi.action);
+  List<Action> get currentActions => _hiveApi.action.asList();
 
   RelatedActions getActionsRelatedToMe() {
+    final actionStatuses = getMyActionStatuses();
     final actionsAssignedToMe = <String, ActionStatus>{};
     final actionsAssignedToGroupWithLeaderRole = <String>{};
-    final List<HiveGroup> actionGroups = [];
+    final List<Group> actionGroups = [];
 
     for (final action in getMyActions()) {
       final actionId = action.id;
       final groupId = action.groupId;
-      if (actionId != null) {
-        if (action.isIndividualAction) {
-          actionsAssignedToMe[actionId] = action.actionStatus;
-        } else {
-          actionsAssignedToGroupWithLeaderRole.add(actionId);
-        }
+      if (action.isIndividualAction) {
+        final status =
+            actionStatuses[action.id] ?? ActionUser_Status.INCOMPLETE;
+
+        actionsAssignedToMe[actionId] = status == ActionUser_Status.COMPLETE
+            ? ActionStatus.DONE
+            : action.isPastDueDate
+                ? ActionStatus.OVERDUE
+                : ActionStatus.NOT_DONE;
+      } else {
+        actionsAssignedToGroupWithLeaderRole.add(actionId);
       }
-      if (groupId != null) {
-        actionGroups.add(_hiveApi.group.values
-            .firstWhere((element) => element.id == groupId));
-      }
+      actionGroups.add(
+          _hiveApi.group.values.firstWhere((element) => element.id == groupId));
     }
     return RelatedActions(actionsAssignedToMe,
         actionsAssignedToGroupWithLeaderRole, actionGroups);
@@ -195,5 +199,5 @@ class RelatedActions {
 
   final Map<String, ActionStatus> actionsAssignedToMe;
   final Set<String> actionsAssignedToGroupWithLeaderRole;
-  final List<HiveGroup> actionGroups;
+  final List<Group> actionGroups;
 }

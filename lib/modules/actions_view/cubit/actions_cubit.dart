@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_group.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
 part 'actions_state.dart';
 
@@ -28,7 +27,7 @@ class ActionsCubit extends Cubit<ActionsState> {
   }
 
   final DataRepository _dataRepository;
-  late StreamSubscription<List<HiveAction>> _subscription;
+  late StreamSubscription<List<Action>> _subscription;
 
   void loadMore() {
     emit(state.copyWith(
