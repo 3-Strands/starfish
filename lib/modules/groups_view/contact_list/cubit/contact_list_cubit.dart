@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:starfish/models/user.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/wrappers/sms.dart';
 
@@ -9,7 +8,7 @@ part 'contact_list_state.dart';
 
 class ContactListCubit extends Cubit<ContactListState> {
   ContactListCubit({
-    required AppUser currentUser,
+    required User currentUser,
     List<User>? selectedUsers,
   })  : _currentUser = currentUser,
         _selectedUsers = selectedUsers ?? [],
@@ -17,7 +16,7 @@ class ContactListCubit extends Cubit<ContactListState> {
     _init();
   }
 
-  final AppUser _currentUser;
+  final User _currentUser;
   final List<User> _selectedUsers;
 
   void _init() async {

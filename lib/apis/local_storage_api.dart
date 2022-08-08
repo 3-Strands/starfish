@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:starfish/models/tokens.dart';
-import 'package:starfish/models/user.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/wrappers/platform_storage.dart';
 
 class LocalStorageApi {
   static final String _kUserLoggedIn = "isUserLoggedIn";
   static final String _kIsSyncingFirstTime = "isSyncingFirstTime";
-  static final String _kHasBeenRemindedToDeleteFiles = "hasBeenRemindedToDeleteFiles";
+  static final String _kHasBeenRemindedToDeleteFiles =
+      "hasBeenRemindedToDeleteFiles";
   static final String _kAccessToken = "accessToken";
   static final String _kDeviceLanguage = "deviceLanguage";
   static final String _kRefreshToken = "refreshToken";
@@ -59,20 +60,19 @@ class LocalStorageApi {
     return (await _storage.getBool(_kIsSyncingFirstTime)) ?? false;
   }
 
-  Future<bool> saveUser(AppUser user) {
-    return _storage.setString(_kUser, jsonEncode(user.toJson()));
+  Future<bool> saveUser(User user) {
+    return _storage.setString(_kUser, user.writeToJson());
   }
 
-  Future<AppUser?> getUser() async {
+  Future<User?> getUser() async {
     final userData = await _storage.getString(_kUser);
     if (userData != null) {
-      return AppUser.fromJson(jsonDecode(userData));
+      return User.fromJson(userData);
     }
     return null;
   }
 
-  Future<bool> clearUser(AppUser user) =>
-    _storage.setString(_kUser, '');
+  Future<bool> clearUser(User user) => _storage.setString(_kUser, '');
 
   Future<void> saveTokens(Tokens session) async {
     await Future.wait([

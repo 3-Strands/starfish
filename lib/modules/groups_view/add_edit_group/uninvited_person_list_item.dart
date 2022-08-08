@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 
 class UnInvitedPersonListItem extends StatefulWidget {
   final HiveUser personName;
@@ -59,10 +59,7 @@ class _UnInvitedPersonListItemState extends State<UnInvitedPersonListItem> {
             SizedBox(
               height: 10.h,
             ),
-            SepratorLine(
-              hight: 1.h,
-              edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-            ),
+            const SeparatorLine(),
           ],
         ),
       ),

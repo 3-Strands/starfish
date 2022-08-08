@@ -8,7 +8,7 @@ import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_user.dart';
 import 'package:starfish/db/providers/current_user_provider.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UnInvitedGroupMemberListItem extends StatefulWidget {
@@ -248,10 +248,7 @@ class _UnInvitedGroupMemberListItemState
             SizedBox(
               height: 10.h,
             ),
-            SepratorLine(
-              hight: 1.h,
-              edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-            ),
+            const SeparatorLine(),
           ],
         ),
       ),

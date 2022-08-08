@@ -3,7 +3,7 @@ import 'package:starfish/db/hive_edit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HistoryItem extends StatelessWidget {
@@ -78,10 +78,7 @@ class HistoryItem extends StatelessWidget {
             SizedBox(
               height: 10.h,
             ),
-            SepratorLine(
-              hight: 1.h,
-              edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-            ),
+            const SeparatorLine(),
           ],
         ));
   }

@@ -24,7 +24,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int _selectedIndex = 3;
+  int _selectedIndex = 0;
   late String title;
   late PageController _pageController;
 
