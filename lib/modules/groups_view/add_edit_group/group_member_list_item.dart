@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
-import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/enums/group_user_role.dart';
 
-class GroupMemberListItem extends StatefulWidget {
-  final HiveGroupUser groupUser;
-  final HiveUser user;
-  final Function(HiveGroupUser, GroupUser_Role) onChangeUserRole;
-  final Function(HiveGroupUser) onRemoveUser;
-  final Function(HiveGroupUser, HiveUser) onEditUserInvite;
+class GroupMemberListItem extends StatelessWidget {
+  final GroupUser groupUser;
+  final User user;
+  final Function(GroupUser, GroupUser_Role) onChangeUserRole;
+  final Function(GroupUser) onRemoveUser;
+  final Function(GroupUser, User) onEditUserInvite;
 
   const GroupMemberListItem({
     Key? key,
@@ -25,20 +21,8 @@ class GroupMemberListItem extends StatefulWidget {
     required this.onEditUserInvite,
   }) : super(key: key);
 
-  _GroupMemberListItemState createState() => _GroupMemberListItemState();
-}
-
-class _GroupMemberListItemState extends State<GroupMemberListItem> {
-  late DataBloc bloc;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
     return Container(
       decoration: BoxDecoration(color: Colors.transparent),
       margin: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
@@ -53,7 +37,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
               Expanded(
                 // width: MediaQuery.of(context).size.width / 2,
                 child: Text(
-                  widget.user.name ?? '',
+                  user.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -64,8 +48,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   ),
                 ),
               ),
-              // if (widget.groupUser.user != null &&
-              //     User_Status.valueOf(widget.groupUser.user!.status!) !=
+              // if (groupUser.user != null &&
+              //     User_Status.valueOf(groupUser.user!.status!) !=
               //         User_Status.ACTIVE)
               //   Text(
               //     AppLocalizations.of(context)!.userStatusInvited.toUpperCase(),
@@ -75,8 +59,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
               //       color: Color(0xFF3475F0),
               //     ),
               //   ),
-              // if (widget.groupUser.user != null &&
-              //     User_Status.valueOf(widget.groupUser.user!.status!) ==
+              // if (groupUser.user != null &&
+              //     User_Status.valueOf(groupUser.user!.status!) ==
               //         User_Status.ACTIVE)
               PopupMenuButton(
                 color: Colors.white,
@@ -87,15 +71,13 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 ),
                 child: Container(
                   child: Text(
-                    User_Status.valueOf(widget.user.status!) ==
-                            User_Status.ACTIVE
-                        ? '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}'
-                        : User_Status.valueOf(widget.user.status!) ==
-                                User_Status.STATUS_UNSPECIFIED
+                    user.status == User_Status.ACTIVE
+                        ? groupUser.role.about
+                        : user.status == User_Status.STATUS_UNSPECIFIED
                             ? AppLocalizations.of(context)!
                                 .userStatusInvited
                                 .toUpperCase()
-                            : '${GroupUser_Role.valueOf(widget.groupUser.role!)!.about}' +
+                            : '${groupUser.role.about}' +
                                 " " +
                                 AppLocalizations.of(context)!
                                     .userStatusInvited
@@ -108,8 +90,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   ),
                 ),
                 itemBuilder: (context) => [
-                  if (User_Status.valueOf(widget.user.status!) ==
-                      User_Status.ACTIVE)
+                  if (user.status == User_Status.ACTIVE)
                     PopupMenuItem(
                       child: Text(
                         AppLocalizations.of(context)!.makeAdmin,
@@ -120,9 +101,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       ),
                       value: 0,
                     ),
-                  if (User_Status.valueOf(widget.user.status!) ==
-                      User_Status.ACCOUNT_PENDING || User_Status.valueOf(widget.user.status!) ==
-                      User_Status.STATUS_UNSPECIFIED)
+                  if (user.status == User_Status.ACCOUNT_PENDING ||
+                      user.status == User_Status.STATUS_UNSPECIFIED)
                     PopupMenuItem(
                       child: Text(
                         AppLocalizations.of(context)!.editInvite,
@@ -133,8 +113,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       ),
                       value: 3,
                     ),
-                  if (User_Status.valueOf(widget.user.status!) ==
-                      User_Status.ACTIVE)
+                  if (user.status == User_Status.ACTIVE)
                     PopupMenuItem(
                       child: Text(
                         AppLocalizations.of(context)!.makeTeacher,
@@ -159,36 +138,34 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 onSelected: (int value) {
                   switch (value) {
                     case 0:
-                      widget.onChangeUserRole(
-                          widget.groupUser, GroupUser_Role.ADMIN);
+                      onChangeUserRole(groupUser, GroupUser_Role.ADMIN);
                       break;
                     case 1:
-                      widget.onChangeUserRole(
-                          widget.groupUser, GroupUser_Role.TEACHER);
+                      onChangeUserRole(groupUser, GroupUser_Role.TEACHER);
                       break;
                     case 2:
-                      widget.onRemoveUser(widget.groupUser);
+                      onRemoveUser(groupUser);
                       break;
                     case 3:
                       // TODO: edit Invite
-                      widget.onEditUserInvite(widget.groupUser, widget.user);
+                      onEditUserInvite(groupUser, user);
                       break;
                   }
                   /*switch (value) {
                     case 0:
-                      widget.groupUser.role = GroupUser_Role.ADMIN.value;
-                      widget.groupUser.isUpdated = true;
+                      groupUser.role = GroupUser_Role.ADMIN.value;
+                      groupUser.isUpdated = true;
                       break;
                     case 1:
-                      widget.groupUser.role = GroupUser_Role.TEACHER.value;
-                      widget.groupUser.isUpdated = true;
+                      groupUser.role = GroupUser_Role.TEACHER.value;
+                      groupUser.isUpdated = true;
                       break;
                     case 2:
-                      widget.groupUser.isDirty = true;
+                      groupUser.isDirty = true;
                       break;
                     default:
                   }
-                  bloc.groupBloc.createUpdateGroupUser(widget.groupUser);*/
+                  bloc.groupBloc.createUpdateGroupUser(groupUser);*/
                 },
               ),
             ],
@@ -197,8 +174,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             height: 10.h,
           ),
           Text(
-            '${widget.user.phoneWithDialingCode}',
-            // widget.groupUser.phone,
+            '${user.fullPhone}',
+            // groupUser.phone,
             style: TextStyle(
               fontFamily: 'OpenSans',
               fontSize: 21.5.sp,
@@ -208,10 +185,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
           SizedBox(
             height: 10.h,
           ),
-          SepratorLine(
-            hight: 1.h,
-            edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-          ),
+          const SeparatorLine(),
         ],
       ),
     );

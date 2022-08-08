@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/enums/group_user_role.dart';
 import 'package:starfish/src/grpc_extensions.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GroupUsersList extends StatelessWidget {
@@ -84,10 +84,7 @@ class GroupUsersList extends StatelessWidget {
               SizedBox(
                 height: 10.h,
               ),
-              SepratorLine(
-                hight: 1.h,
-                edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-              ),
+              const SeparatorLine(),
               SizedBox(
                 height: 10.h,
               )

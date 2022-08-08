@@ -8,7 +8,7 @@ import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReportMaterialDialogBox extends StatelessWidget {
@@ -136,7 +136,7 @@ class ReportMaterialDialogBoxView extends StatelessWidget {
             SizedBox(
               height: 20.h,
             ),
-            SepratorLine(hight: 1.0, edgeInsets: EdgeInsets.zero),
+            const SeparatorLine(),
             Container(
               //height: 44.h,
               child: Row(
@@ -156,7 +156,7 @@ class ReportMaterialDialogBoxView extends StatelessWidget {
                   SizedBox(
                     width: 1.w,
                     height: 44.h,
-                    child: ColoredBox(color: AppColors.sepratorLineColor),
+                    child: ColoredBox(color: AppColors.separatorLineColor),
                   ),
                   Expanded(
                     child:

@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/models/user.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
@@ -14,12 +13,14 @@ extension AsList<T> on Box<T> {
 class DataRepository {
   DataRepository({
     HiveApiInterface hiveApi = globalHiveApi,
-    required AppUser user,
+    required User user,
   })  : _hiveApi = hiveApi,
-        _userId = user.id;
+        _userId = user.id,
+        _user = user;
 
   final HiveApiInterface _hiveApi;
   final String _userId;
+  final User _user;
 
   Stream<List<T>> _streamBox<T>(Box<T> box) =>
       box.watch().map((_) => box.asList());
@@ -29,7 +30,7 @@ class DataRepository {
     delta.apply();
   }
 
-  User get currentUser => _hiveApi.user.get(_userId)!;
+  User get currentUser => _user;
 
   // ------------------- Materials -------------------
 

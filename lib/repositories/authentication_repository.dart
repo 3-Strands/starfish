@@ -9,7 +9,6 @@ import 'package:starfish/apis/grpc_current_user_api.dart';
 import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/models/tokens.dart';
 import 'package:starfish/models/session.dart';
-import 'package:starfish/models/user.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/services/grpc_client.dart';
 
@@ -86,7 +85,7 @@ class AuthenticationRepository {
     if (tokens != null) {
       // TODO: sync user?
       final user = (await _localStorageApi.getUser()) ??
-          AppUser.fromUser(await _retrieveUserUsingTokens(tokens));
+          (await _retrieveUserUsingTokens(tokens));
       _session.value = Session(tokens, user);
     }
   }
@@ -168,10 +167,10 @@ class AuthenticationRepository {
     final tokens = await _grpcAuthenticationApi.authenticate(
         await firebaseUser.getIdToken(), firebaseUser.phoneNumber!);
     // Initialize HiveCurrentUser
-    final grpcUser = await _retrieveUserUsingTokens(tokens);
-    _session.value = Session(tokens, AppUser.fromUser(grpcUser),
+    final user = await _retrieveUserUsingTokens(tokens);
+    _session.value = Session(tokens, user,
         needsProfileCreation:
-            grpcUser.languageIds.isEmpty && grpcUser.countryIds.isEmpty);
+            user.languageIds.isEmpty && user.countryIds.isEmpty);
   }
 
   Future<User> _retrieveUserUsingTokens(Tokens tokens) =>
@@ -191,25 +190,6 @@ class AuthenticationRepository {
     List<String>? countryIds,
     List<String>? languageIds,
   }) {
-    final session = currentSession;
-    if (session == null) {
-      assert(false, 'Attempting to update a user without a valid session');
-      return;
-    }
-    final fieldMaskPaths = [
-      if (name != null) 'name',
-      if (countryIds != null) 'country_ids',
-      if (languageIds != null) 'language_ids',
-    ];
-    if (fieldMaskPaths.isNotEmpty) {
-      final newUser = session.user.copyWith(
-        name: name,
-        countryIds: countryIds,
-        languageIds: languageIds,
-      );
-      _session.value = Session(session.tokens, newUser);
-      _makeCurrentUserApi(session.tokens)
-          .updateCurrentUser(newUser.toUser(), fieldMaskPaths);
-    }
+    // TODO
   }
 }

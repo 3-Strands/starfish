@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/db/hive_user.dart';
-import 'package:starfish/widgets/seprator_line_widget.dart';
+import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../src/generated/starfish.pb.dart';
@@ -132,10 +132,7 @@ class _InvitedContactListItemState extends State<InvitedContactListItem> {
             SizedBox(
               height: 10.h,
             ),
-            SepratorLine(
-              hight: 1.h,
-              edgeInsets: EdgeInsets.only(left: 0.w, right: 0.w),
-            ),
+            const SeparatorLine(),
           ],
         ),
       ),
