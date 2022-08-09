@@ -216,8 +216,11 @@ class DataRepository {
       } else {
         actionsAssignedToGroupWithLeaderRole.add(actionId);
       }
-      actionGroups.add(
-          _hiveApi.group.values.firstWhere((element) => element.id == groupId));
+      Group? _group = _hiveApi.group.values
+          .firstWhereOrNull((element) => element.id == groupId);
+      if (_group != null) {
+        actionGroups.add(_group);
+      }
     }
     return RelatedActions(actionsAssignedToMe,
         actionsAssignedToGroupWithLeaderRole, actionGroups);

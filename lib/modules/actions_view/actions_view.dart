@@ -64,6 +64,96 @@ class _ActionsScreenState extends State<ActionsScreen>
     _tabController = new TabController(length: 2, vsync: this, initialIndex: 0);
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   final _appLocalizations = AppLocalizations.of(context)!;
+
+  //   return Scaffold(
+  //     backgroundColor: AppColors.actionScreenBG,
+  //     appBar: AppBar(
+  //       title: Container(
+  //         height: 64.h,
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: <Widget>[
+  //             AppLogo(hight: 36.h, width: 37.w),
+  //             Text(
+  //               _appLocalizations.actionsTabItemText,
+  //               style: dashboardNavigationTitle,
+  //             ),
+  //             IconButton(
+  //               icon: SvgPicture.asset(AssetsPath.settings),
+  //               onPressed: () {
+  //                 setState(
+  //                   () {
+  //                     Navigator.pushNamed(
+  //                       context,
+  //                       Routes.settings,
+  //                     );
+  //                   },
+  //                 );
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       backgroundColor: AppColors.actionScreenBG,
+  //       elevation: 0.0,
+  //     ),
+  //     body: Column(
+  //       children: [
+  //         TabBar(
+  //           controller: _tabController,
+  //           indicatorColor: Color(0xFF3475F0),
+  //           labelColor: Color(0xFF3475F0),
+  //           labelStyle: TextStyle(
+  //               fontSize: 19.sp,
+  //               fontWeight: FontWeight.w600), //For Selected tab
+  //           unselectedLabelColor: Color(0xFF797979),
+  //           isScrollable: true,
+  //           tabs: List.generate(
+  //             _tabController.length,
+  //             (index) => Tab(
+  //                 text: index == 0
+  //                     ? _appLocalizations.forMeTabText
+  //                     : _appLocalizations.forGroupITeachTabText),
+  //           ),
+  //           onTap: (index) {
+  //             if (index == 1) {
+  //               context
+  //                   .read<ActionsCubit>()
+  //                   .updateUserRole(UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD);
+  //             } else {
+  //               context
+  //                   .read<ActionsCubit>()
+  //                   .updateUserRole(UserGroupRoleFilter.FILTER_LEARNER);
+  //             }
+  //           },
+  //         ),
+  //         Expanded(
+  //           child: TabBarView(
+  //             physics: NeverScrollableScrollPhysics(),
+  //             children: _tabController.length == 2
+  //                 ? [MyActions(), MyActions()]
+  //                 : [MyActions()],
+  //             controller: _tabController,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //     floatingActionButton: FloatingActionButton(
+  //       onPressed: () {
+  //         Navigator.of(context).pushNamed(Routes.addActions).then(
+  //               (value) => FocusScope.of(context).requestFocus(
+  //                 new FocusNode(),
+  //               ),
+  //             );
+  //       },
+  //       child: Icon(Icons.add),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     final _appLocalizations = AppLocalizations.of(context)!;

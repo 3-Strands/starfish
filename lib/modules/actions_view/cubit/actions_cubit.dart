@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:meta/meta.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
@@ -13,8 +15,7 @@ part 'actions_state.dart';
 
 class ActionsCubit extends Cubit<ActionsState> {
   ActionsCubit(DataRepository dataRepository)
-      : _dataRepository = dataRepository,
-        super(ActionsState(
+      : super(ActionsState(
           actions: dataRepository.currentActions,
           relatedActions: dataRepository.getActionsRelatedToMe(),
         )) {
@@ -26,14 +27,7 @@ class ActionsCubit extends Cubit<ActionsState> {
     });
   }
 
-  final DataRepository _dataRepository;
   late StreamSubscription<List<Action>> _subscription;
-
-  void loadMore() {
-    emit(state.copyWith(
-      pagesToShow: state.pagesToShow + 1,
-    ));
-  }
 
   void updateActionFilter(ActionFilter actionFilter) {
     emit(state.copyWith(

@@ -32,10 +32,23 @@ extension ActionExt on Action {
   bool get isIndividualAction => groupId.isEmpty;
 
   bool get isPastDueDate => dateDue.toDateTime().isBefore(DateTime.now());
+
+  bool get hasValidDueDate {
+    return this.dateDue.year != 0 &&
+        this.dateDue.month != 0 &&
+        this.dateDue.day != 0;
+  }
 }
 
 extension GroupExt on Group {
   List<User> get fullUsers => users.map((groupUser) => groupUser.user).toList();
+
+  List<String> get teachersName => users
+      .where((groupUser) =>
+          groupUser.role == GroupUser_Role.ADMIN ||
+          groupUser.role == GroupUser_Role.TEACHER)
+      .map((groupUser) => groupUser.user.name)
+      .toList();
 }
 
 extension GroupUserExt on GroupUser {
