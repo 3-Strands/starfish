@@ -9,7 +9,6 @@ import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_action_list_item.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
@@ -18,6 +17,7 @@ import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:template_string/template_string.dart';
 
 class MyActions extends StatelessWidget {
   const MyActions({Key? key}) : super(key: key);
@@ -40,6 +40,7 @@ class MyActionsView extends StatefulWidget {
 }
 
 class _MyActionsViewState extends State<MyActionsView> {
+  late AppLocalizations _appLocalizations;
   @override
   void initState() {
     super.initState();
@@ -52,7 +53,7 @@ class _MyActionsViewState extends State<MyActionsView> {
 
   @override
   Widget build(BuildContext context) {
-    final _appLocalizations = AppLocalizations.of(context)!;
+    _appLocalizations = AppLocalizations.of(context)!;
 
     return Scrollbar(
       thickness: 5.w,
@@ -231,8 +232,6 @@ class _MyActionsViewState extends State<MyActionsView> {
 
   void _onActionSelection(
       ActionWithAssignedStatus _actionWithAssignedStatus) async {
-    final _appLocalizations = AppLocalizations.of(context)!;
-
     final Action _action = _actionWithAssignedStatus.action;
     final ActionStatus _actionStatus =
         _actionWithAssignedStatus.status ?? ActionStatus.NOT_DONE;
@@ -411,7 +410,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                                       _action.material!.url);
                                                 },
                                               ),
-                                            //materialList(action)
+                                            materialList(_action)
                                           ],
                                         ),
                                       ),
@@ -693,17 +692,14 @@ class _MyActionsViewState extends State<MyActionsView> {
         });
   }
 
-/*
-  Widget materialList(HiveAction hiveAction) {
-    if (hiveAction.material == null ||
-        (hiveAction.material != null &&
-                hiveAction.material!.files != null &&
-                hiveAction.material!.files!.length == 0 ||
-            hiveAction.material!.isDirty)) {
+  Widget materialList(Action action) {
+    if (action.material == null ||
+        (action.material != null &&
+            action.material!.fileReferences.isNotEmpty)) {
       return Container();
     }
     List<Widget> fileLinks = [];
-    hiveAction.material!.localFiles.forEach((hiveFile) {
+    action.material!.fileReferences.forEach((fileReference) {
       fileLinks.add(
         MaterialLinkButton(
           icon: Icon(
@@ -712,10 +708,10 @@ class _MyActionsViewState extends State<MyActionsView> {
             size: 18.r,
           ),
           text: _appLocalizations.clickToDownload
-              .insertTemplateValues({'file_name': hiveFile.filename}),
+              .insertTemplateValues({'file_name': fileReference.filename}),
           onButtonTap: () async {
             try {
-              await GeneralFunctions.openFile(hiveFile, context);
+              await GeneralFunctions.openFile(fileReference, context);
             } on NetworkUnavailableException {
               // TODO: show message to user
             }
@@ -730,6 +726,7 @@ class _MyActionsViewState extends State<MyActionsView> {
     );
   }
 
+/*
   Widget actionsList(DataBloc bloc) {
     return StreamBuilder(
         stream: bloc.actionBloc.actionsForMe,
