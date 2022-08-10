@@ -38,10 +38,18 @@ extension ActionExt on Action {
         this.dateDue.month != 0 &&
         this.dateDue.day != 0;
   }
+
+  Material? get material => globalHiveApi.material.get(materialId);
 }
 
 extension GroupExt on Group {
   List<User> get fullUsers => users.map((groupUser) => groupUser.user).toList();
+
+  List<User> get learners => users
+      .where((user) =>
+          user.maybeUser != null && user.role == GroupUser_Role.LEARNER)
+      .map((groupUser) => groupUser.user)
+      .toList();
 
   List<String> get teachersName => users
       .where((groupUser) =>

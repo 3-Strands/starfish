@@ -4,13 +4,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/enums/action_filter.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
+import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/repositories/model_wrappers/user_with_action-status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/widgets/user_action_status_widget.dart';
+import 'package:template_string/template_string.dart';
 
 class MyGroupActionsView extends StatefulWidget {
   const MyGroupActionsView({Key? key}) : super(key: key);
@@ -20,6 +28,7 @@ class MyGroupActionsView extends StatefulWidget {
 }
 
 class _MyGroupViewState extends State<MyGroupActionsView> {
+  late AppLocalizations _appLocalizations;
   @override
   void initState() {
     super.initState();
@@ -27,7 +36,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
 
   @override
   Widget build(BuildContext context) {
-    final _appLocalizations = AppLocalizations.of(context)!;
+    _appLocalizations = AppLocalizations.of(context)!;
 
     return Scrollbar(
       thickness: 5.w,
@@ -156,10 +165,9 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                           [indexPath.index];
                   return MyGroupActionListItem(
                     index: indexPath.index,
-                    action: _actionWithAssignedStatus.action,
-                    onActionTap: (Action action) {},
-                    //       //onActionTap: _onActionSelection,
-                    //       //actionStatus: materialWithStatus.status,
+                    actionWithAssignedStatus: _actionWithAssignedStatus,
+                    onActionTap: _usersActionList,
+                    //actionStatus: materialWithStatus.status,
                   );
                 },
                 groupHeaderBuilder: (BuildContext context, int section) {
@@ -204,7 +212,10 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
     );
   }
 
-/*  void _usersActionList(HiveAction action) {
+  void _usersActionList(
+      Action action, ActionGroupUserWithStatus actionGrouUsersWithStatus) {
+    print(
+        "${action.name} => ${actionGrouUsersWithStatus.group.learners.length}");
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -238,7 +249,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                   child: Align(
                     alignment: FractionalOffset.topLeft,
                     child: Text(
-                      action.name ?? '',
+                      action.name,
                       style: TextStyle(
                           fontSize: 19.sp,
                           color: Color(0xFF3475F0),
@@ -267,7 +278,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                 SizedBox(
                   height: 20.h,
                 ),
-                _buildUserList(action),
+                _buildUserList(action, actionGrouUsersWithStatus),
                 SizedBox(
                   height: 20.h,
                 ),
@@ -311,7 +322,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
     );
   }
 
-  Widget actionsList(DataBloc bloc) {
+/*  Widget actionsList(DataBloc bloc) {
     return StreamBuilder(
         stream: bloc.actionBloc.actionsForGroup,
         builder: (BuildContext context,
@@ -378,24 +389,27 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
           }
         });
   }
-
-  Widget _buildUserList(HiveAction action) {
-    if (action.learners == null) {
+*/
+  Widget _buildUserList(
+      Action action, ActionGroupUserWithStatus actionGrouUsersWithStatus) {
+    final List<UserWithActionStatus> _usersWithActionStatus =
+        actionGrouUsersWithStatus.userWithActionStatus;
+    if (_usersWithActionStatus.isEmpty) {
       return Container();
     }
 
     return Container(
       height: 300.h,
       child: ListView.builder(
-        itemCount: action.learners!.length,
+        itemCount: _usersWithActionStatus.length,
         itemBuilder: (context, index) {
-          final hiveUser = action.learners![index];
+          final _userWithActionStatus = _usersWithActionStatus[index];
           return ListTile(
             title: Row(
               children: [
                 Expanded(
                   child: Text(
-                    hiveUser.name ?? '',
+                    _userWithActionStatus.user.name,
                     style: TextStyle(
                       color: AppColors.txtFieldTextColor,
                       fontFamily: 'OpenSans',
@@ -406,7 +420,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                 ),
                 SizedBox(width: 10.w),
                 UserActionStatusWidget(
-                  title: hiveUser.actionStatusbyId(action),
+                  title: _userWithActionStatus.actionStatus,
                   height: 20.h,
                   width: 100.w,
                 ),
@@ -422,7 +436,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
             ),
             onTap: () {
               Navigator.pop(context);
-              _onActionSelection(action, hiveUser);
+              _onActionSelection(action, _userWithActionStatus);
             },
           );
         },
@@ -430,17 +444,13 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
     );
   }
 
-  void _onActionSelection(HiveAction action, HiveUser user) {
-    HiveActionUser? hiveActionUser = user.actionUser(action);
-    if (hiveActionUser == null) {
-      hiveActionUser = new HiveActionUser();
-      hiveActionUser.actionId = action.id!;
-      hiveActionUser.userId = user.id;
-      hiveActionUser.status = ActionUser_Status.UNSPECIFIED_STATUS.value;
-    }
+  void _onActionSelection(
+      Action action, UserWithActionStatus userWithActionStatus) {
+    final User _user = userWithActionStatus.user;
+    final ActionUser? _actionUser = userWithActionStatus.actionUser;
 
     final _questionController = TextEditingController();
-    _questionController.text = hiveActionUser.teacherResponse ?? '';
+    _questionController.text = _actionUser?.teacherResponse ?? '';
 
     showModalBottomSheet(
       context: context,
@@ -454,7 +464,6 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
       isDismissible: true,
       enableDrag: true,
       builder: (context) {
-        final bloc = Provider.of(context);
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
           return Container(
@@ -502,7 +511,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 15.w, vertical: 15.h),
                               child: Text(
-                                action.name ?? "",
+                                action.name,
                                 style: TextStyle(
                                     fontSize: 19.sp,
                                     color: Color(0xFF3475F0),
@@ -527,7 +536,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        user.name ?? '',
+                                        _user.name,
                                         maxLines: 2,
                                         style: TextStyle(
                                           fontSize: 24.sp,
@@ -555,40 +564,40 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            setModalState(() {
-                                              if (user.actionStatusbyId(
-                                                          action) ==
-                                                      ActionStatus.NOT_DONE ||
-                                                  user.actionStatusbyId(
-                                                          action) ==
-                                                      ActionStatus.OVERDUE) {
-                                                hiveActionUser!.status =
-                                                    ActionUser_Status
-                                                        .COMPLETE.value;
-                                              } else if (user.actionStatusbyId(
-                                                      action) ==
-                                                  ActionStatus.DONE) {
-                                                hiveActionUser!.status =
-                                                    ActionUser_Status
-                                                        .INCOMPLETE.value;
-                                              } else {
-                                                hiveActionUser!.status =
-                                                    ActionUser_Status
-                                                        .UNSPECIFIED_STATUS
-                                                        .value;
-                                              }
-                                            });
-                                            setState(
-                                                () {}); // To trigger the main view to redraw.
-                                            bloc.actionBloc
-                                                .createUpdateActionUser(
-                                                    hiveActionUser!);
+                                            // setModalState(() {
+                                            //   if (user.actionStatusbyId(
+                                            //               action) ==
+                                            //           ActionStatus.NOT_DONE ||
+                                            //       user.actionStatusbyId(
+                                            //               action) ==
+                                            //           ActionStatus.OVERDUE) {
+                                            //     hiveActionUser!.status =
+                                            //         ActionUser_Status
+                                            //             .COMPLETE.value;
+                                            //   } else if (user.actionStatusbyId(
+                                            //           action) ==
+                                            //       ActionStatus.DONE) {
+                                            //     hiveActionUser!.status =
+                                            //         ActionUser_Status
+                                            //             .INCOMPLETE.value;
+                                            //   } else {
+                                            //     hiveActionUser!.status =
+                                            //         ActionUser_Status
+                                            //             .UNSPECIFIED_STATUS
+                                            //             .value;
+                                            //   }
+                                            // });
+                                            // setState(
+                                            //     () {}); // To trigger the main view to redraw.
+                                            // bloc.actionBloc
+                                            //     .createUpdateActionUser(
+                                            //         hiveActionUser!);
 
                                             // TODO: should we update the status of this action on HiveUser also????
                                           },
                                           child: UserActionStatusWidget(
-                                            title:
-                                                user.actionStatusbyId(action),
+                                            title: userWithActionStatus
+                                                .actionStatus,
                                             height: 36.h,
                                             width: 130.w,
                                           ),
@@ -645,10 +654,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           if (action.material != null &&
-                                              action.material!.url != null &&
-                                              action
-                                                  .material!.url!.isNotEmpty &&
-                                              !action.material!.isDirty)
+                                              action.material!.url.isNotEmpty)
                                             MaterialLinkButton(
                                               icon: Icon(
                                                 Icons.open_in_new,
@@ -659,7 +665,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                                   .clickThisLinkToStart,
                                               onButtonTap: () {
                                                 GeneralFunctions.openUrl(
-                                                    action.material!.url!);
+                                                    action.material!.url);
                                               },
                                             ),
                                           materialList(action)
@@ -667,7 +673,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                       ),
                                     ),
                                     Text(
-                                      '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                                      '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue, requiredDateFormat: 'MMM dd')}',
                                       maxLines: 1,
                                       style: TextStyle(
                                           fontSize: 19.sp,
@@ -680,12 +686,9 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                               ),
                             ),
                             // Record the response to the question
-                            if (action.type ==
-                                    Action_Type.TEXT_RESPONSE.value ||
-                                action.type ==
-                                        Action_Type.MATERIAL_RESPONSE.value &&
-                                    (action.material != null &&
-                                        !action.material!.isDirty))
+                            if (action.type == Action_Type.TEXT_RESPONSE ||
+                                action.type == Action_Type.MATERIAL_RESPONSE &&
+                                    (action.material != null))
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -718,11 +721,11 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                           .questionTextEditHint,
                                     ),
                                     onSubmitted: (value) {
-                                      setModalState(() {
-                                        hiveActionUser!.teacherResponse = value;
-                                      });
-                                      bloc.actionBloc.createUpdateActionUser(
-                                          hiveActionUser!);
+                                      // setModalState(() {
+                                      //   hiveActionUser!.teacherResponse = value;
+                                      // });
+                                      // bloc.actionBloc.createUpdateActionUser(
+                                      //     hiveActionUser!);
                                     },
                                   ),
                                   Container(
@@ -758,29 +761,29 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      setModalState(() {
-                                        if (ActionUser_Evaluation.valueOf(
-                                                hiveActionUser!.evaluation!) ==
-                                            ActionUser_Evaluation.GOOD) {
-                                          hiveActionUser.evaluation =
-                                              ActionUser_Evaluation
-                                                  .UNSPECIFIED_EVALUATION.value;
-                                        } else if (ActionUser_Evaluation
-                                                    .valueOf(hiveActionUser
-                                                        .evaluation!) ==
-                                                ActionUser_Evaluation
-                                                    .UNSPECIFIED_EVALUATION ||
-                                            ActionUser_Evaluation.valueOf(
-                                                    hiveActionUser
-                                                        .evaluation!) ==
-                                                ActionUser_Evaluation.BAD) {
-                                          hiveActionUser.evaluation =
-                                              ActionUser_Evaluation.GOOD.value;
-                                        }
-                                      });
+                                      // setModalState(() {
+                                      //   if (ActionUser_Evaluation.valueOf(
+                                      //           hiveActionUser!.evaluation!) ==
+                                      //       ActionUser_Evaluation.GOOD) {
+                                      //     hiveActionUser.evaluation =
+                                      //         ActionUser_Evaluation
+                                      //             .UNSPECIFIED_EVALUATION.value;
+                                      //   } else if (ActionUser_Evaluation
+                                      //               .valueOf(hiveActionUser
+                                      //                   .evaluation!) ==
+                                      //           ActionUser_Evaluation
+                                      //               .UNSPECIFIED_EVALUATION ||
+                                      //       ActionUser_Evaluation.valueOf(
+                                      //               hiveActionUser
+                                      //                   .evaluation!) ==
+                                      //           ActionUser_Evaluation.BAD) {
+                                      //     hiveActionUser.evaluation =
+                                      //         ActionUser_Evaluation.GOOD.value;
+                                      //   }
+                                      // });
 
-                                      bloc.actionBloc.createUpdateActionUser(
-                                          hiveActionUser!);
+                                      // bloc.actionBloc.createUpdateActionUser(
+                                      //     hiveActionUser!);
                                     },
                                     child: Container(
                                       height: 36.h,
@@ -788,9 +791,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(4.r),
-                                        color: ActionUser_Evaluation.valueOf(
-                                                    hiveActionUser!
-                                                        .evaluation!) ==
+                                        color: _actionUser?.evaluation ==
                                                 ActionUser_Evaluation.GOOD
                                             ? Color(0xFF6DE26B)
                                             : Color(0xFFC9C9C9),
@@ -821,29 +822,29 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                      setModalState(() {
-                                        if (ActionUser_Evaluation.valueOf(
-                                                hiveActionUser!.evaluation!) ==
-                                            ActionUser_Evaluation.BAD) {
-                                          hiveActionUser.evaluation =
-                                              ActionUser_Evaluation
-                                                  .UNSPECIFIED_EVALUATION.value;
-                                        } else if (ActionUser_Evaluation
-                                                    .valueOf(hiveActionUser
-                                                        .evaluation!) ==
-                                                ActionUser_Evaluation
-                                                    .UNSPECIFIED_EVALUATION ||
-                                            ActionUser_Evaluation.valueOf(
-                                                    hiveActionUser
-                                                        .evaluation!) ==
-                                                ActionUser_Evaluation.GOOD) {
-                                          hiveActionUser.evaluation =
-                                              ActionUser_Evaluation.BAD.value;
-                                        }
-                                      });
+                                      // setModalState(() {
+                                      //   if (ActionUser_Evaluation.valueOf(
+                                      //           hiveActionUser!.evaluation!) ==
+                                      //       ActionUser_Evaluation.BAD) {
+                                      //     hiveActionUser.evaluation =
+                                      //         ActionUser_Evaluation
+                                      //             .UNSPECIFIED_EVALUATION.value;
+                                      //   } else if (ActionUser_Evaluation
+                                      //               .valueOf(hiveActionUser
+                                      //                   .evaluation!) ==
+                                      //           ActionUser_Evaluation
+                                      //               .UNSPECIFIED_EVALUATION ||
+                                      //       ActionUser_Evaluation.valueOf(
+                                      //               hiveActionUser
+                                      //                   .evaluation!) ==
+                                      //           ActionUser_Evaluation.GOOD) {
+                                      //     hiveActionUser.evaluation =
+                                      //         ActionUser_Evaluation.BAD.value;
+                                      //   }
+                                      // });
 
-                                      bloc.actionBloc.createUpdateActionUser(
-                                          hiveActionUser!);
+                                      // bloc.actionBloc.createUpdateActionUser(
+                                      //     hiveActionUser!);
                                     },
                                     child: Container(
                                       height: 36.h,
@@ -851,9 +852,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(4.r),
-                                        color: ActionUser_Evaluation.valueOf(
-                                                    hiveActionUser
-                                                        .evaluation!) ==
+                                        color: _actionUser?.evaluation ==
                                                 ActionUser_Evaluation.BAD
                                             ? Color(0xFFFFBE4A)
                                             : Color(0xFFC9C9C9),
@@ -913,13 +912,13 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                       color: Color(0xFFEFEFEF),
                       child: ElevatedButton(
                         onPressed: () {
-                          hiveActionUser!.teacherResponse =
-                              _questionController.text;
-                          bloc.actionBloc
-                              .createUpdateActionUser(hiveActionUser)
-                              .whenComplete(() {
-                            Navigator.pop(context);
-                          });
+                          // hiveActionUser!.teacherResponse =
+                          //     _questionController.text;
+                          // bloc.actionBloc
+                          //     .createUpdateActionUser(hiveActionUser)
+                          //     .whenComplete(() {
+                          Navigator.pop(context);
+                          // });
                         },
                         style: ButtonStyle(
                           shape:
@@ -941,19 +940,16 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
           );
         });
       },
-    ).whenComplete(() => setState(() {}));
+    );
   }
 
-  Widget materialList(HiveAction hiveAction) {
-    if (hiveAction.material == null ||
-        (hiveAction.material != null &&
-                hiveAction.material!.files != null &&
-                hiveAction.material!.files!.length == 0 ||
-            hiveAction.material!.isDirty)) {
+  Widget materialList(Action action) {
+    if (action.material == null ||
+        (action.material != null && action.material!.fileReferences.isEmpty)) {
       return Container();
     }
     List<Widget> fileLinks = [];
-    hiveAction.material!.localFiles.forEach((hiveFile) {
+    action.material!.fileReferences.forEach((fileReference) {
       fileLinks.add(
         MaterialLinkButton(
           icon: Icon(
@@ -962,10 +958,10 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
             size: 18.r,
           ),
           text: _appLocalizations.clickToDownload
-              .insertTemplateValues({'file_name': hiveFile.filename}),
+              .insertTemplateValues({'file_name': fileReference.filename}),
           onButtonTap: () async {
             try {
-              await GeneralFunctions.openFile(hiveFile, context);
+              await GeneralFunctions.openFile(fileReference, context);
             } on NetworkUnavailableException {
               // TODO: show message to user
             }
@@ -979,7 +975,6 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
       children: fileLinks,
     );
   }
-*/
 }
 
 /*

@@ -11,6 +11,10 @@ import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/general_functions.dart';
+import 'package:starfish/widgets/action_status_widget.dart';
+import 'package:starfish/widgets/material_link_button.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -172,14 +176,12 @@ class _MyActionsViewState extends State<MyActionsView> {
                   return groupActionsMap.values.toList()[section].length;
                 },
                 itemBuilder: (BuildContext context, IndexPath indexPath) {
-                  ActionWithAssignedStatus _actionWithAssignedStatus =
+                  final ActionWithAssignedStatus _actionWithAssignedStatus =
                       groupActionsMap.values.toList()[indexPath.section]
                           [indexPath.index];
                   return MyActionListItem(
                     index: indexPath.index,
-                    action: _actionWithAssignedStatus.action,
-                    actionStatus: _actionWithAssignedStatus.status ??
-                        ActionStatus.NOT_DONE,
+                    actionWithAssignedStatus: _actionWithAssignedStatus,
                     onActionTap: _onActionSelection,
                   );
                 },
@@ -192,7 +194,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${_group.name.isNotEmpty ? _group.name : 'Self'}',
+                          '${_group.name.isNotEmpty ? _group.name : _appLocalizations.selfAssigned}',
                           style: TextStyle(
                             fontSize: 19.sp,
                             fontWeight: FontWeight.w600,
@@ -227,20 +229,28 @@ class _MyActionsViewState extends State<MyActionsView> {
     );
   }
 
-  void _onActionSelection(Action action) async {
-    /*  HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
+  void _onActionSelection(
+      ActionWithAssignedStatus _actionWithAssignedStatus) async {
+    final _appLocalizations = AppLocalizations.of(context)!;
 
-    HiveActionUser? hiveActionUser = action.mineAction;
+    final Action _action = _actionWithAssignedStatus.action;
+    final ActionStatus _actionStatus =
+        _actionWithAssignedStatus.status ?? ActionStatus.NOT_DONE;
+    final ActionUser? _actionUser = _actionWithAssignedStatus.actionUser;
 
-    if (hiveActionUser == null) {
-      hiveActionUser = new HiveActionUser();
-      hiveActionUser.actionId = action.id!;
-      hiveActionUser.userId = _currentUser.id;
-      hiveActionUser.status = action.actionStatus.toActionUserStatus().value;
-    }
+    // HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
+
+    // HiveActionUser? hiveActionUser = action.mineAction;
+
+    // if (hiveActionUser == null) {
+    //   hiveActionUser = new HiveActionUser();
+    //   hiveActionUser.actionId = action.id!;
+    //   hiveActionUser.userId = _currentUser.id;
+    //   hiveActionUser.status = action.actionStatus.toActionUserStatus().value;
+    // }
 
     final _questionController = TextEditingController();
-    _questionController.text = hiveActionUser.userResponse ?? '';
+    _questionController.text = _actionUser?.userResponse ?? '';
 
     showModalBottomSheet(
         context: context,
@@ -254,7 +264,6 @@ class _MyActionsViewState extends State<MyActionsView> {
         isDismissible: true,
         enableDrag: true,
         builder: (context) {
-          final bloc = Provider.of(context);
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             return Container(
@@ -312,7 +321,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
-                                          action.name ?? '',
+                                          _action.name,
                                           maxLines: 2,
                                           style: TextStyle(
                                               fontSize: 19.sp,
@@ -334,18 +343,18 @@ class _MyActionsViewState extends State<MyActionsView> {
                                         ),
                                         ActionStatusWidget(
                                           onTap: (ActionStatus newStatus) {
-                                            setModalState(() {
-                                              hiveActionUser!.status = newStatus
-                                                  .toActionUserStatus()
-                                                  .value;
-                                            });
-                                            setState(
-                                                () {}); // To trigger the main view to redraw.
-                                            bloc.actionBloc
-                                                .createUpdateActionUser(
-                                                    hiveActionUser!);
+                                            // setModalState(() {
+                                            //   hiveActionUser!.status = newStatus
+                                            //       .toActionUserStatus()
+                                            //       .value;
+                                            // });
+                                            // setState(
+                                            //     () {}); // To trigger the main view to redraw.
+                                            // bloc.actionBloc
+                                            //     .createUpdateActionUser(
+                                            //         hiveActionUser!);
                                           },
-                                          actionStatus: action.actionStatus,
+                                          actionStatus: _actionStatus,
                                           height: 36.h,
                                           width: 130.w,
                                         ),
@@ -359,7 +368,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                 padding:
                                     EdgeInsets.only(left: 15.w, right: 15.w),
                                 child: Text(
-                                  '${_appLocalizations.instructions}: ${action.instructions}',
+                                  '${_appLocalizations.instructions}: ${_action.instructions}',
                                   maxLines: 5,
                                   style: TextStyle(
                                     fontSize: 17.sp,
@@ -385,11 +394,9 @@ class _MyActionsViewState extends State<MyActionsView> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            if (action.material != null &&
-                                                action.material!.url != null &&
-                                                action.material!.url!
-                                                    .isNotEmpty &&
-                                                !action.material!.isDirty)
+                                            if (_action.material != null &&
+                                                _action
+                                                    .material!.url.isNotEmpty)
                                               MaterialLinkButton(
                                                 icon: Icon(
                                                   Icons.open_in_new,
@@ -401,7 +408,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                                     .clickThisLinkToStart,
                                                 onButtonTap: () {
                                                   GeneralFunctions.openUrl(
-                                                      action.material!.url!);
+                                                      _action.material!.url);
                                                 },
                                               ),
                                             //materialList(action)
@@ -412,7 +419,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                         width: 8.w,
                                       ),
                                       Text(
-                                        '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
+                                        '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(_action.dateDue, requiredDateFormat: 'MMM dd')}',
                                         maxLines: 1,
                                         style: TextStyle(
                                             fontSize: 19.sp,
@@ -425,12 +432,10 @@ class _MyActionsViewState extends State<MyActionsView> {
                                 ),
                               ),
                               // Record the response to the Question
-                              if (action.type ==
-                                      Action_Type.TEXT_RESPONSE.value ||
-                                  action.type ==
-                                          Action_Type.MATERIAL_RESPONSE.value &&
-                                      (action.material != null &&
-                                          !action.material!.isDirty))
+                              if (_action.type == Action_Type.TEXT_RESPONSE ||
+                                  _action.type ==
+                                          Action_Type.MATERIAL_RESPONSE &&
+                                      _action.material != null)
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -440,7 +445,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                         alignment: FractionalOffset.topLeft,
                                         child: Text(
                                           _appLocalizations.question +
-                                              ': ${action.question}',
+                                              ': ${_action.question}',
                                           style: TextStyle(
                                             fontSize: 19.sp,
                                             color: Color(0xFF4F4F4F),
@@ -463,9 +468,9 @@ class _MyActionsViewState extends State<MyActionsView> {
                                             .questionTextEditHint,
                                       ),
                                       onSubmitted: (value) {
-                                        hiveActionUser!.userResponse = value;
-                                        bloc.actionBloc.createUpdateActionUser(
-                                            hiveActionUser);
+                                        // hiveActionUser!.userResponse = value;
+                                        // bloc.actionBloc.createUpdateActionUser(
+                                        //     hiveActionUser);
                                       },
                                     ),
                                     Container(
@@ -501,32 +506,32 @@ class _MyActionsViewState extends State<MyActionsView> {
                                     InkWell(
                                       // GOOD
                                       onTap: () {
-                                        setModalState(() {
-                                          if (ActionUser_Evaluation.valueOf(
-                                                  hiveActionUser!
-                                                      .evaluation!) ==
-                                              ActionUser_Evaluation.GOOD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation
-                                                    .UNSPECIFIED_EVALUATION
-                                                    .value;
-                                          } else if (ActionUser_Evaluation
-                                                      .valueOf(hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation
-                                                      .UNSPECIFIED_EVALUATION ||
-                                              ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation.BAD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation
-                                                    .GOOD.value;
-                                          }
-                                        });
+                                        // setModalState(() {
+                                        //   if (ActionUser_Evaluation.valueOf(
+                                        //           hiveActionUser!
+                                        //               .evaluation!) ==
+                                        //       ActionUser_Evaluation.GOOD) {
+                                        //     hiveActionUser.evaluation =
+                                        //         ActionUser_Evaluation
+                                        //             .UNSPECIFIED_EVALUATION
+                                        //             .value;
+                                        //   } else if (ActionUser_Evaluation
+                                        //               .valueOf(hiveActionUser
+                                        //                   .evaluation!) ==
+                                        //           ActionUser_Evaluation
+                                        //               .UNSPECIFIED_EVALUATION ||
+                                        //       ActionUser_Evaluation.valueOf(
+                                        //               hiveActionUser
+                                        //                   .evaluation!) ==
+                                        //           ActionUser_Evaluation.BAD) {
+                                        //     hiveActionUser.evaluation =
+                                        //         ActionUser_Evaluation
+                                        //             .GOOD.value;
+                                        //   }
+                                        // });
 
-                                        bloc.actionBloc.createUpdateActionUser(
-                                            hiveActionUser!);
+                                        // bloc.actionBloc.createUpdateActionUser(
+                                        //     hiveActionUser!);
                                       },
                                       child: Container(
                                         height: 36.h,
@@ -534,9 +539,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(4.r),
-                                          color: ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser!
-                                                          .evaluation!) ==
+                                          color: _actionUser?.evaluation ==
                                                   ActionUser_Evaluation.GOOD
                                               ? Color(0xFF6DE26B)
                                               : Color(0xFFC9C9C9),
@@ -569,31 +572,31 @@ class _MyActionsViewState extends State<MyActionsView> {
                                     InkWell(
                                       // NOT SO GOOD
                                       onTap: () {
-                                        setModalState(() {
-                                          if (ActionUser_Evaluation.valueOf(
-                                                  hiveActionUser!
-                                                      .evaluation!) ==
-                                              ActionUser_Evaluation.BAD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation
-                                                    .UNSPECIFIED_EVALUATION
-                                                    .value;
-                                          } else if (ActionUser_Evaluation
-                                                      .valueOf(hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation
-                                                      .UNSPECIFIED_EVALUATION ||
-                                              ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation.GOOD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation.BAD.value;
-                                          }
-                                        });
+                                        // setModalState(() {
+                                        //   if (ActionUser_Evaluation.valueOf(
+                                        //           hiveActionUser!
+                                        //               .evaluation!) ==
+                                        //       ActionUser_Evaluation.BAD) {
+                                        //     hiveActionUser.evaluation =
+                                        //         ActionUser_Evaluation
+                                        //             .UNSPECIFIED_EVALUATION
+                                        //             .value;
+                                        //   } else if (ActionUser_Evaluation
+                                        //               .valueOf(hiveActionUser
+                                        //                   .evaluation!) ==
+                                        //           ActionUser_Evaluation
+                                        //               .UNSPECIFIED_EVALUATION ||
+                                        //       ActionUser_Evaluation.valueOf(
+                                        //               hiveActionUser
+                                        //                   .evaluation!) ==
+                                        //           ActionUser_Evaluation.GOOD) {
+                                        //     hiveActionUser.evaluation =
+                                        //         ActionUser_Evaluation.BAD.value;
+                                        //   }
+                                        // });
 
-                                        bloc.actionBloc.createUpdateActionUser(
-                                            hiveActionUser!);
+                                        // bloc.actionBloc.createUpdateActionUser(
+                                        //     hiveActionUser!);
                                       },
                                       child: Container(
                                         height: 36.h,
@@ -601,9 +604,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(4.r),
-                                          color: ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser
-                                                          .evaluation!) ==
+                                          color: _actionUser?.evaluation ==
                                                   ActionUser_Evaluation.BAD
                                               ? Color(0xFFFFBE4A)
                                               : Color(0xFFC9C9C9),
@@ -646,10 +647,10 @@ class _MyActionsViewState extends State<MyActionsView> {
                     ),
                   ),
                   Container(
-                    height: (WidgetsBinding.instance!.window.viewInsets.bottom >
-                            0.0)
-                        ? 0.h
-                        : 75.h,
+                    height:
+                        (WidgetsBinding.instance.window.viewInsets.bottom > 0.0)
+                            ? 0.h
+                            : 75.h,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: Color(0xFFEFEFEF),
@@ -662,13 +663,13 @@ class _MyActionsViewState extends State<MyActionsView> {
                         color: Color(0xFFEFEFEF),
                         child: ElevatedButton(
                           onPressed: () {
-                            hiveActionUser!.userResponse =
-                                _questionController.text;
-                            bloc.actionBloc
-                                .createUpdateActionUser(hiveActionUser)
-                                .whenComplete(() {
-                              Navigator.pop(context);
-                            });
+                            // hiveActionUser!.userResponse =
+                            //     _questionController.text;
+                            // bloc.actionBloc
+                            //     .createUpdateActionUser(hiveActionUser)
+                            //     .whenComplete(() {
+                            Navigator.pop(context);
+                            // });
                           },
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all<
@@ -690,7 +691,6 @@ class _MyActionsViewState extends State<MyActionsView> {
             );
           });
         });
-        */
   }
 
 /*

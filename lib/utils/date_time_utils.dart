@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:starfish/db/hive_date.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
 
 class DateTimeUtils {
   /*static String formatHiveDate(HiveDate hiveDate) {
@@ -7,7 +7,7 @@ class DateTimeUtils {
     return formatDate(toDateTime(dateString, 'dd-MM-yyyy'), 'dd-MMM-yyyy');
   }*/
 
-  static String formatHiveDate(HiveDate hiveDate,
+  static String formatHiveDate(Date hiveDate,
       {String requiredDateFormat = 'dd-MMM-yyyy'}) {
     // Handle special case where day is set as 0 to indicate monthly data
     var day = hiveDate.day;

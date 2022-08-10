@@ -58,8 +58,11 @@ class ActionsState {
         .map((action) => ActionWithAssignedStatus(
             action: action,
             status: _assignedActionStatus(action),
+            actionUser: _relatedActions.myActionUsers[action.id],
             isAssignedToGroupWithLeaderRole:
-                _actionIsAssignedToGroupWithLeaderRole(action)))
+                _actionIsAssignedToGroupWithLeaderRole(action),
+            groupUserWithStatus:
+                _relatedActions.actionGroupUsersWithStatus[action.id]))
         .toList();
 
     final Group _dummyGroup = Group(id: null, name: null);

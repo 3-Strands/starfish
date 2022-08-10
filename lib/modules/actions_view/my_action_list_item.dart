@@ -10,14 +10,12 @@ import 'package:starfish/widgets/action_status_widget.dart';
 
 class MyActionListItem extends StatelessWidget {
   final int index;
-  final Action action;
-  final ActionStatus actionStatus;
+  final ActionWithAssignedStatus actionWithAssignedStatus;
   final bool displayActions;
-  final Function(Action action) onActionTap;
+  final Function(ActionWithAssignedStatus actionWithAssignedStatus) onActionTap;
 
   const MyActionListItem(
-      {required this.action,
-      required this.actionStatus,
+      {required this.actionWithAssignedStatus,
       required this.onActionTap,
       required this.index,
       this.displayActions = false});
@@ -25,7 +23,12 @@ class MyActionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final bloc = Provider.of(context);
-    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final Action _action = actionWithAssignedStatus.action;
+    final ActionStatus _actionStatus =
+        actionWithAssignedStatus.status ?? ActionStatus.NOT_DONE;
+    //final ActionUser? _actionUser = actionWithAssignedStatus.actionUser;
+
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
@@ -36,7 +39,7 @@ class MyActionListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          onActionTap(action);
+          onActionTap(actionWithAssignedStatus);
         },
         child: Padding(
           padding:
@@ -60,7 +63,7 @@ class MyActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.w, right: 8.w),
                         child: Text(
-                          action.name,
+                          _action.name,
                           //maxLines: 1,
                           //overflow: TextOverflow.ellipsis,
                           //softWrap: false,
@@ -143,9 +146,9 @@ class MyActionListItem extends StatelessWidget {
                 children: [
                   ActionStatusWidget(
                     onTap: (_) {
-                      onActionTap(action);
+                      onActionTap(actionWithAssignedStatus);
                     },
-                    actionStatus: actionStatus,
+                    actionStatus: _actionStatus,
 
                     ///
                     height: 30.h,
@@ -156,7 +159,7 @@ class MyActionListItem extends StatelessWidget {
                   ),
                   Text(
                     //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
-                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue)}',
+                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(_action.dateDue)}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,

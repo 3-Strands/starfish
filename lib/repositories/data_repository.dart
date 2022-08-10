@@ -4,7 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
+import 'package:starfish/repositories/model_wrappers/user_with_action-status.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
@@ -155,6 +157,12 @@ class DataRepository {
     // }
   }
 
+  // Returns 'ActionUsers' for the current user
+  Map<String, ActionUser> getMyActionUsers() {
+    return Map.fromEntries(currentUser.actions
+        .map((userAction) => MapEntry(userAction.actionId, userAction)));
+  }
+
   RelatedMaterials getMaterialsRelatedToMe() {
     final actionStatuses = getMyActionStatuses();
     final materialsAssignedToMe = <String, ActionStatus>{};
@@ -197,9 +205,11 @@ class DataRepository {
 
   RelatedActions getActionsRelatedToMe() {
     final actionStatuses = getMyActionStatuses();
+    final myActionUsers = getMyActionUsers();
     final actionsAssignedToMe = <String, ActionStatus>{};
     final actionsAssignedToGroupWithLeaderRole = <String>{};
-    final List<Group> actionGroups = [];
+    //final List<ActionGroupUserWithStatus> actionGroups = [];
+    final actionGroups = <String, ActionGroupUserWithStatus>{};
 
     for (final action in getMyActions()) {
       final actionId = action.id;
@@ -219,11 +229,40 @@ class DataRepository {
       Group? _group = _hiveApi.group.values
           .firstWhereOrNull((element) => element.id == groupId);
       if (_group != null) {
-        actionGroups.add(_group);
+        List<UserWithActionStatus> _usersWithStatus = _group.learners
+            .map((user) => UserWithActionStatus(
+                user: user,
+                actionStatus: _getActionStatus(user.id, action),
+                actionUser: _getUserAction(user.id, action)))
+            .toList();
+        actionGroups[actionId] = ActionGroupUserWithStatus(
+            group: _group, userWithActionStatus: _usersWithStatus);
       }
     }
     return RelatedActions(actionsAssignedToMe,
-        actionsAssignedToGroupWithLeaderRole, actionGroups);
+        actionsAssignedToGroupWithLeaderRole, actionGroups, myActionUsers);
+  }
+
+  ActionUser? _getUserAction(String userId, Action action) {
+    return globalHiveApi.user
+        .get(userId)
+        ?.actions
+        .firstWhereOrNull((actionUser) => actionUser.actionId == action.id);
+  }
+
+  ActionStatus _getActionStatus(String userId, Action action) {
+    ActionUser_Status status = globalHiveApi.user
+            .get(userId)
+            ?.actions
+            .firstWhereOrNull((actionUser) => actionUser.actionId == action.id)
+            ?.status ??
+        ActionUser_Status.INCOMPLETE;
+
+    return status == ActionUser_Status.COMPLETE
+        ? ActionStatus.DONE
+        : action.isPastDueDate
+            ? ActionStatus.OVERDUE
+            : ActionStatus.NOT_DONE;
   }
 
   Stream<List<Action>> getActionsByGroup(Group group) {
@@ -265,10 +304,14 @@ class _ActionInfo {
 }
 
 class RelatedActions {
-  RelatedActions(this.actionsAssignedToMe,
-      this.actionsAssignedToGroupWithLeaderRole, this.actionGroups);
+  RelatedActions(
+      this.actionsAssignedToMe,
+      this.actionsAssignedToGroupWithLeaderRole,
+      this.actionGroupUsersWithStatus,
+      this.myActionUsers);
 
+  final Map<String, ActionUser> myActionUsers;
   final Map<String, ActionStatus> actionsAssignedToMe;
   final Set<String> actionsAssignedToGroupWithLeaderRole;
-  final List<Group> actionGroups;
+  final Map<String, ActionGroupUserWithStatus> actionGroupUsersWithStatus;
 }
