@@ -6,9 +6,13 @@ import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/authenticated_app/authenticated_app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/session_bloc.dart';
+import 'package:starfish/cubit/error_cubit.dart';
 import 'package:starfish/modules/authentication/authentication.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
+import 'package:starfish/repositories/error_repository.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
+import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/widgets/constrain_center.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:starfish/wrappers/window.dart';
@@ -31,8 +35,15 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(
+          value: authenticationRepository,
+        ),
+        RepositoryProvider(
+          create: (_) => ErrorRepository(),
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -43,6 +54,10 @@ class App extends StatelessWidget {
           BlocProvider(
               create: (_) => SessionBloc(
                     authenticationRepository: authenticationRepository,
+                  )),
+          BlocProvider(
+              create: (context) => ErrorCubit(
+                    context.read<ErrorRepository>(),
                   )),
         ],
         child: const AppView(),
@@ -80,13 +95,37 @@ class AppView extends StatelessWidget {
               // initialRoute: _initialRoute,
               // routes: Routes.routes,
               onGenerateRoute: (settings) {
-                final loginGuard = BlocBuilder<SessionBloc, SessionState>(
-                  builder: (context, state) {
-                    if (state is SessionActive) {
-                      return AuthenticatedApp(session: state.session);
+                final loginGuard = BlocListener<ErrorCubit, UserFacingError?>(
+                  listener: (context, error) {
+                    if (error != null) {
+                      final appLocalizations = AppLocalizations.of(context)!;
+                      String message;
+                      switch (error.type) {
+                        case ErrorType.groupMustHaveAdmin:
+                          message =
+                              appLocalizations.alertGroupCanNotBeWithoutAdmin;
+                          break;
+                      }
+                      if (error.severity == Severity.low) {
+                        StarfishSnackbar.showErrorMessage(context, message);
+                      } else {
+                        Alerts.showMessageBox(
+                          context: context,
+                          title: appLocalizations.dialogAlert,
+                          message: message,
+                          callback: () {},
+                        );
+                      }
                     }
-                    return const Authentication();
                   },
+                  child: BlocBuilder<SessionBloc, SessionState>(
+                    builder: (context, state) {
+                      if (state is SessionActive) {
+                        return AuthenticatedApp(session: state.session);
+                      }
+                      return const Authentication();
+                    },
+                  ),
                 );
 
                 return MaterialPageRoute<void>(

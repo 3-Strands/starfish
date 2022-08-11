@@ -35,9 +35,9 @@ class ContactListCubit extends Cubit<ContactListState> {
     final selectedNumbers =
         _selectedUsers.map((user) => user.fullPhone).toSet();
 
+    final currentUserPhone = _currentUser.fullPhone;
     final contacts = (await getAllContacts())
-        .where((user) => !(user.diallingCode == _currentUser.diallingCode &&
-            user.phone == _currentUser.phone))
+        .where((user) => user.fullPhone != currentUserPhone)
         .toList();
 
     emit(state.copyWith(
@@ -50,6 +50,10 @@ class ContactListCubit extends Cubit<ContactListState> {
   }
 
   void contactToggled(User user) {
+    if (state.alreadySelectedContacts.contains(user)) {
+      // Can't toggle an already selected contact off here.
+      return;
+    }
     final newlySelectedContacts = {...state.newlySelectedContacts};
     if (newlySelectedContacts.contains(user)) {
       newlySelectedContacts.remove(user);

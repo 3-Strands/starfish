@@ -12,6 +12,7 @@ enum ModelType {
   action,
   group,
   user,
+  evaluationCategory,
 }
 
 class SyncRepository {
@@ -50,6 +51,12 @@ class SyncRepository {
         pull: (client) => client
             .listUsers(ListUsersRequest())
             .forEach((user) => hiveApi.user.put(user.id, user)),
+      ),
+      ModelType.evaluationCategory: SyncManager(
+        pull: (client) => client
+            .listEvaluationCategories(ListEvaluationCategoriesRequest())
+            .forEach((evaluationCategory) => hiveApi.evaluationCategory
+                .put(evaluationCategory.id, evaluationCategory)),
       ),
     };
 
