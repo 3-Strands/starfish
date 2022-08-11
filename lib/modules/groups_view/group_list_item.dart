@@ -1,12 +1,11 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
-import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/modules/dashboard/cubit/dashboard_navigation_cubit.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/add_edit_group_screen.dart';
 // import 'package:starfish/modules/groups_view/add_edit_group_screen.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
@@ -39,7 +38,9 @@ class GroupListItem extends StatelessWidget {
 
     final goToGroup = myRole != GroupUser_Role.LEARNER
         ? () {
-            _navigateToAction(group);
+            context.read<DashboardNavigationCubit>().navigationRequested(
+                  const ActionsTab(ActionTab.ACTIONS_MY_GROUPS),
+                );
           }
         : null;
 
@@ -109,14 +110,14 @@ class GroupListItem extends StatelessWidget {
                           onSelected: (value) {
                             switch (value) {
                               case 0:
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => AddEditGroupScreen(
-                                //       group: group,
-                                //     ),
-                                //   ),
-                                // );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddEditGroup(
+                                      group: group,
+                                    ),
+                                  ),
+                                );
                                 break;
                               case 1:
                                 Alerts.showMessageBox(
@@ -313,13 +314,6 @@ class GroupListItem extends StatelessWidget {
         ),
       ),
       elevation: 5,
-    );
-  }
-
-  _navigateToAction(Group group) {
-    FBroadcast.instance().broadcast(
-      "switchToActionTab",
-      value: group,
     );
   }
 }

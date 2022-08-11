@@ -2,8 +2,11 @@ import 'package:starfish/src/grpc_extensions.dart';
 
 class SMS {
   static const canSendMessage = false;
-  static send(String message, String phoneNumber) async {
-    throw Exception('Cannot send SMS message');
+  static Future<bool> send(String message, String phoneNumber) async {
+    // throw Exception('Cannot send SMS message');
+    print('Message: $message');
+    print('Sent to: $phoneNumber');
+    return false;
   }
 }
 

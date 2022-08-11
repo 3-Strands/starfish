@@ -44,8 +44,8 @@ class GroupUsersList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(right: 10.w),
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.w),
                     child: Text(
                       user.status == User_Status.ACTIVE
                           ? groupUser.role.about
@@ -68,19 +68,20 @@ class GroupUsersList extends StatelessWidget {
                 ],
               ),
               Spacer(),
-              Align(
-                alignment: FractionalOffset.topLeft,
-                child: Text(
-                  user.fullPhone,
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: AppColors.appTitle,
-                    fontFamily: 'OpenSans',
-                    fontSize: 19.sp,
-                    fontWeight: FontWeight.normal,
+              if (user.hasFullPhone)
+                Align(
+                  alignment: FractionalOffset.topLeft,
+                  child: Text(
+                    user.fullPhone,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: AppColors.appTitle,
+                      fontFamily: 'OpenSans',
+                      fontSize: 19.sp,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
                 ),
-              ),
               SizedBox(
                 height: 10.h,
               ),

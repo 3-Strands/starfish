@@ -12,7 +12,7 @@ class SMS {
 
   static get canSendMessage => Platform.isAndroid;
 
-  static send(String message, String phoneNumber) async {
+  static Future<bool> send(String message, String phoneNumber) async {
     if (_permissionGranted == null) {
       // We haven't yet checked. Get permission!
       _permissionGranted =

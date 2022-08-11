@@ -37,12 +37,14 @@ class Routes {
   static Widget _getPageFromRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       // case showProfile: return const CreateProfileScreen();
-      case dashboard: return const Dashboard();
+      case dashboard:
+        return const Dashboard();
       // case settings: return const SettingsScreen();
       // case addNewMaterial: return const AddEditMaterialScreen();
       // case addActions: return const AddEditAction();
       // case createNewGroup: return const AddEditGroupScreen();
-      default: return const Center(child: Text('404: Unknown Route'));
+      default:
+        return const Center(child: Text('404: Unknown Route'));
     }
   }
 }

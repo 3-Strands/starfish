@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
@@ -22,11 +23,14 @@ class DataRepository {
   final String _userId;
   final User _user;
 
-  Stream<List<T>> _streamBox<T>(Box<T> box) =>
-      box.watch().map((_) => box.asList());
+  Stream<List<T>> _streamBox<T>(Box<T> box) => box
+      .watch()
+      .debounceTime(const Duration(milliseconds: 200))
+      .map((_) => box.asList());
 
   void addDelta(DeltaBase delta) {
     // TODO: Save the generated request in the DB.
+    print(delta);
     delta.apply();
   }
 
@@ -73,7 +77,19 @@ class DataRepository {
       }
     }
 
-    return currentGroups.map((group) {
+    final myRoleByGroup = <String, GroupUser_Role>{};
+    for (final group in currentGroups) {
+      for (final groupUser in group.users) {
+        if (groupUser.userId == _userId) {
+          myRoleByGroup[group.id] = groupUser.role;
+          break;
+        }
+      }
+    }
+
+    return currentGroups
+        .where((group) => myRoleByGroup.containsKey(group.id))
+        .map((group) {
       final totalUsers = group.users.length;
 
       var completedActions = 0;
@@ -102,7 +118,7 @@ class DataRepository {
         overdueActions: overdueActions,
         admin: groupAdmin?.maybeUser,
         teacher: groupTeacher?.maybeUser,
-        myRole: group.users.firstWhere((user) => user.userId == _userId).role,
+        myRole: myRoleByGroup[group.id]!,
       );
     }).toList();
   }
