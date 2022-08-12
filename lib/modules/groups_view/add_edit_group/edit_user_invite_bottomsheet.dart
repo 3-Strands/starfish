@@ -1,49 +1,43 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_group_user.dart';
-import 'package:starfish/db/hive_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/helpers/snackbar.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/cubit/add_edit_group_cubit.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
-class EditInviteUserBottomSheet extends StatefulWidget {
-  final HiveGroupUser groupUser;
-  final HiveUser contact;
-  final Function(String contactName, String diallingCode, String phonenumber,
-      GroupUser_Role role) onDone;
+class EditUserInviteBottomSheet extends StatefulWidget {
+  final GroupUser_Role role;
+  final User contact;
 
-  const EditInviteUserBottomSheet(this.contact, this.groupUser,
-      {Key? key, required this.onDone})
-      : super(key: key);
+  const EditUserInviteBottomSheet({
+    Key? key,
+    required this.contact,
+    required this.role,
+  }) : super(key: key);
 
   @override
-  State<EditInviteUserBottomSheet> createState() =>
-      _EditInviteUserBottomSheetState();
+  State<EditUserInviteBottomSheet> createState() =>
+      _EditUserInviteBottomSheetState();
 }
 
-class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
+class _EditUserInviteBottomSheetState extends State<EditUserInviteBottomSheet> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _contactNumberController = TextEditingController();
   TextEditingController _dialingController = TextEditingController();
 
-  late HiveGroupUser _groupUser;
-  late HiveUser _hiveUser;
   late GroupUser_Role _selectedGroupUserRole;
 
   @override
   void initState() {
     super.initState();
-    _groupUser = widget.groupUser;
-    _hiveUser = widget.contact;
 
-    _selectedGroupUserRole =
-        GroupUser_Role.valueOf(widget.groupUser.role) ?? GroupUser_Role.LEARNER;
+    _selectedGroupUserRole = widget.role;
 
-    _nameController.text = _hiveUser.name!;
-    _contactNumberController.text = _hiveUser.phone ?? '';
-    _dialingController.text = _hiveUser.diallingCodeWithPlus;
+    _nameController.text = widget.contact.name;
+    _contactNumberController.text = widget.contact.phone;
+    _dialingController.text = widget.contact.diallingCodeWithPlus;
   }
 
   @override
@@ -212,7 +206,7 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                     child: ButtonTheme(
                       alignedDropdown: true,
                       child: DropdownButton2<GroupUser_Role>(
-                        onChanged: (GroupUser_Role? value) {
+                        onChanged: (value) {
                           setState(() {
                             _selectedGroupUserRole =
                                 value ?? GroupUser_Role.LEARNER;
@@ -264,9 +258,6 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // _filteredContactList.clear();
-                      // _loadContacts();
-
                       Navigator.of(context).pop();
                     },
                     child: Text(appLocalizations.cancel),
@@ -276,14 +267,15 @@ class _EditInviteUserBottomSheetState extends State<EditInviteUserBottomSheet> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onDone(
-                        _nameController.text,
-                        _dialingController.text.contains("+")
-                            ? _dialingController.text.substring(1)
-                            : _dialingController.text,
-                        _contactNumberController.text,
-                        _selectedGroupUserRole,
-                      );
+                      context.read<AddEditGroupCubit>().userUpdated(
+                            widget.contact,
+                            name: _nameController.text,
+                            diallingCode:
+                                _dialingController.text.replaceAll('+', ''),
+                            phone: _contactNumberController.text,
+                            role: _selectedGroupUserRole,
+                          );
+                      Navigator.of(context).pop();
                     },
                     child: Text(appLocalizations.update),
                     style: ElevatedButton.styleFrom(

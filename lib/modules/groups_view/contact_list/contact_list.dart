@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/modules/groups_view/contact_list/cubit/contact_list_cubit.dart';
-import 'package:starfish/modules/groups_view/cubit/contacts_cubit.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
@@ -76,13 +75,13 @@ class ContactListView extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-            child: BlocBuilder<ContactsCubit, ContactsState>(
+            child: BlocBuilder<ContactListCubit, ContactListState>(
               builder: (context, state) {
-                if (state.permission == ContactPermission.unknown) {
+                if (state.permission == ContactListPermission.unknown) {
                   return Center(
                     child: Text(appLocalizations.loading),
                   );
-                } else if (state.permission == ContactPermission.denied) {
+                } else if (state.permission == ContactListPermission.denied) {
                   return Center(
                     child: Text(appLocalizations.contactAccessDenied),
                   );
@@ -138,8 +137,10 @@ class ContactListView extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context)
-                        .pop(contactListCubit.state.newlySelectedContacts);
+                    Navigator.pop(
+                      context,
+                      contactListCubit.state.newlySelectedContacts,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.selectedButtonBG,

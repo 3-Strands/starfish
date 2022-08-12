@@ -1,5 +1,6 @@
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
+import 'package:starfish/repositories/model_wrappers/user_with_group_role.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
@@ -57,6 +58,9 @@ extension GroupExt on Group {
           groupUser.role == GroupUser_Role.TEACHER)
       .map((groupUser) => groupUser.user.name)
       .toList();
+  // List<UserWithGroupRole> get usersWithRole => users
+  //     .map((groupUser) => UserWithGroupRole(groupUser.user, groupUser.role))
+  //     .toList();
 }
 
 extension GroupUserExt on GroupUser {
@@ -70,5 +74,18 @@ extension GroupUserExt on GroupUser {
 }
 
 extension UserExt on User {
+  String get diallingCodeWithPlus {
+    if (this.diallingCode.isEmpty) {
+      return this.diallingCode;
+    }
+
+    if (RegExp("^\\+[0-9]").hasMatch(this.diallingCode)) {
+      return this.diallingCode;
+    }
+    return '+${this.diallingCode}';
+  }
+
   String get fullPhone => '+${diallingCode.replaceFirst('+', '')} $phone';
+
+  bool get hasFullPhone => diallingCode.isNotEmpty && phone.isNotEmpty;
 }

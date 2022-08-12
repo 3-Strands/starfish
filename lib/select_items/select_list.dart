@@ -86,8 +86,8 @@ class _SelectListState<Item, SelectionModel>
       _items = _sortItemsBySelection(widget.items);
     }
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller.removeListener(_onSearchTextChange);
-      widget.controller.addListener(_onSearchTextChange);
+      oldWidget.controller.removeListener(_rebuild);
+      widget.controller.addListener(_rebuild);
     }
   }
 

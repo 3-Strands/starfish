@@ -8,9 +8,9 @@ part 'fieldMasks.dart';
 abstract class Storage {
   const Storage();
 
-  String toCreateCode(String keyCode, String modelCode);
-  String toUpdateCode(String keyCode, String modelCode);
-  String toDeleteCode(String keyCode, String modelCode);
+  String toCreateCode(String modelCode);
+  String toUpdateCode(String modelCode);
+  String toDeleteCode(String modelCode);
 }
 
 class BoxStorage extends Storage {
@@ -19,17 +19,16 @@ class BoxStorage extends Storage {
   final String name;
 
   @override
-  String toCreateCode(String keyCode, String modelCode) {
-    return 'globalHiveApi.$name.put($keyCode, $modelCode)';
+  String toCreateCode(String modelCode) {
+    return 'globalHiveApi.$name.put($modelCode.id, $modelCode)';
   }
 
   @override
-  String toUpdateCode(String keyCode, String modelCode) =>
-      toCreateCode(keyCode, modelCode);
+  String toUpdateCode(String modelCode) => toCreateCode(modelCode);
 
   @override
-  String toDeleteCode(String keyCode, String modelCode) {
-    return 'globalHiveApi.$name.delete($keyCode)';
+  String toDeleteCode(String modelCode) {
+    return 'globalHiveApi.$name.delete($modelCode.id)';
   }
 }
 
@@ -52,7 +51,7 @@ class ReferenceStorage extends Storage {
   final Map<String, Reference> references;
 
   @override
-  String toCreateCode(String keyCode, String modelCode) {
+  String toCreateCode(String modelCode) {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
@@ -67,7 +66,7 @@ class ReferenceStorage extends Storage {
   }
 
   @override
-  String toUpdateCode(String keyCode, String modelCode) {
+  String toUpdateCode(String modelCode) {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
@@ -82,7 +81,7 @@ class ReferenceStorage extends Storage {
   }
 
   @override
-  String toDeleteCode(String keyCode, String modelCode) {
+  String toDeleteCode(String modelCode) {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
@@ -159,7 +158,6 @@ class Field {
 class Model {
   Model(
     this.message, {
-    required this.key,
     required this.typeId,
     required this.storage,
     this.readonlyFields = const {},
@@ -169,7 +167,6 @@ class Model {
   });
 
   final GeneratedMessage message;
-  final ModelKey key;
   final int typeId;
   final Storage storage;
   final Set<String> readonlyFields;
@@ -288,7 +285,7 @@ class Model {
 
     classBuffer.writeln('''
         );
-        ${storage.toCreateCode(key.toCode('model'), 'model')};
+        ${storage.toCreateCode('model')};
         return true;
       }
     ''');
@@ -350,7 +347,7 @@ class Model {
 
     classBuffer.writeln('''
       if (updateMask.isNotEmpty) {
-        ${storage.toUpdateCode(key.toCode('_model'), '_model')};
+        ${storage.toUpdateCode('_model')};
         return true;
       }
       return false;
@@ -379,7 +376,7 @@ class Model {
     classBuffer.writeln('''
       @override
       bool apply() {
-        ${storage.toDeleteCode(key.toCode('_model'), '_model')};
+        ${storage.toDeleteCode('_model')};
         return true;
       }
     ''');
@@ -391,7 +388,6 @@ class Model {
 void main() {
   final materialModel = Model(
     Material(),
-    key: ModelKey.id,
     typeId: 5,
     storage: BoxStorage('material'),
     readonlyFields: {
@@ -405,7 +401,6 @@ void main() {
 
   final actionModel = Model(
     Action(),
-    key: ModelKey.id,
     typeId: 4,
     storage: BoxStorage('action'),
     editableFields: _kActionFieldMask,
@@ -415,7 +410,6 @@ void main() {
 
   final groupModel = Model(
     Group(),
-    key: ModelKey.id,
     typeId: 12,
     storage: BoxStorage('group'),
     readonlyFields: {
@@ -427,7 +421,6 @@ void main() {
 
   final userModel = Model(
     User(),
-    key: ModelKey.id,
     typeId: 16,
     storage: BoxStorage('user'),
     editableFields: _kUserFieldMask,
@@ -437,21 +430,18 @@ void main() {
   final models = <Model>[
     Model(
       Country(),
-      key: ModelKey.id,
       typeId: 0,
       storage: BoxStorage('country'),
     ),
 
     Model(
       Language(),
-      key: ModelKey.id,
       typeId: 1,
       storage: BoxStorage('language'),
     ),
 
     Model(
       GroupUser(),
-      key: ModelKey.compound(['userId', 'groupId']),
       typeId: 3,
       storage: ReferenceStorage({
         'groupId': Reference(groupModel, 'users', ReferenceType.fullModel),
@@ -468,7 +458,6 @@ void main() {
 
     Model(
       MaterialFeedback(),
-      key: ModelKey.id,
       typeId: 6,
       storage: ReferenceStorage({
         'materialId':
@@ -479,14 +468,12 @@ void main() {
 
     Model(
       MaterialTopic(),
-      key: ModelKey.id,
       typeId: 9,
       storage: BoxStorage('materialTopic'),
     ),
 
     Model(
       MaterialType(),
-      key: ModelKey.id,
       typeId: 10,
       storage: BoxStorage('materialType'),
     ),
@@ -495,7 +482,6 @@ void main() {
 
     Model(
       ActionUser(),
-      key: ModelKey.compound(['actionId', 'userId']),
       typeId: 15,
       storage: ReferenceStorage({
         'userId': Reference(userModel, 'actions', ReferenceType.fullModel),

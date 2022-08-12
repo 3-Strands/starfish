@@ -87,6 +87,10 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
   MultiSelectController<T> get _effectiveController =>
       widget.controller ?? _localController!;
 
+  _rebuild() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     if (widget.controller == null) {
@@ -95,14 +99,15 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
         maxSelectItemLimit: widget.maxSelectItemLimit,
       );
     }
+    _effectiveController.addListener(_rebuild);
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant MultiSelect<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final oldController = oldWidget.controller;
-    final controller = widget.controller;
+    final oldController = oldWidget.controller?..removeListener(_rebuild);
+    final controller = widget.controller?..addListener(_rebuild);
     if (oldController != null && controller == null) {
       _localController = MultiSelectController<T>(
         initialSelection: widget.initialSelection,
@@ -117,6 +122,7 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
   @override
   void dispose() {
     _localController?.dispose();
+    _effectiveController.removeListener(_rebuild);
     super.dispose();
   }
 

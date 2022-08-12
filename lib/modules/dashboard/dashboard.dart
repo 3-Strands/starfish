@@ -1,37 +1,38 @@
-import 'package:cron/cron.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 // import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/modules/dashboard/cubit/dashboard_navigation_cubit.dart';
 // import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/material_view/materials_view.dart';
-import 'package:starfish/utils/helpers/snackbar.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class Dashboard extends StatefulWidget {
+class Dashboard extends StatelessWidget {
   const Dashboard({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _DashboardState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => DashboardNavigationCubit(),
+      child: const DashboardView(),
+    );
+  }
 }
 
-class _DashboardState extends State<Dashboard> {
-  int _selectedIndex = 0;
-  late String title;
+class DashboardView extends StatefulWidget {
+  const DashboardView({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
   late PageController _pageController;
-
-  // late DataBloc bloc;
-  late AppLocalizations _appLocalizations;
-
-  final cron = Cron();
 
   @override
   void initState() {
@@ -100,23 +101,14 @@ class _DashboardState extends State<Dashboard> {
     // var actionsWidget = ActionsScreen();
     // var resultsWidget = ResultsScreen();
 
-    _pageController = PageController(initialPage: _selectedIndex);
+    _pageController = PageController(initialPage: 1);
 
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
-    // bloc = Provider.of(context);
-    title = AppLocalizations.of(context)!.actionsTabItemText;
-
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
-    FBroadcast.instance().unregister(this);
     super.dispose();
   }
 
@@ -125,110 +117,92 @@ class _DashboardState extends State<Dashboard> {
     StarfishSharedPreference()
         .getAccessToken()
         .then((value) => debugPrint("AccessToken: $value"));
-    _appLocalizations = AppLocalizations.of(context)!;
-    return Container(
-      child: Stack(
-        children: <Widget>[
-          Scaffold(
-            backgroundColor: AppColors.background,
-            body: PageView.builder(
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                switch (index) {
-                  case 0:
-                    return const Materials();
-                  case 1:
-                    return const Groups();
-                  // case 2:
-                  //   return const ActionsView();
-                  default:
-                    return const SizedBox();
-                }
-              },
-              onPageChanged: onPageChanged,
-              controller: _pageController,
-            ),
-            bottomNavigationBar: BottomNavigationBar(
+    final appLocalizations = AppLocalizations.of(context)!;
+    return BlocListener<DashboardNavigationCubit, DashboardNavigationTab>(
+      listener: (context, state) {
+        if (_pageController.page!.round() != state.index) {
+          _pageController.animateToPage(
+            state.index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: PageView.builder(
+          onPageChanged: onPageChanged,
+          controller: _pageController,
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            switch (index) {
+              case 0:
+                return const Materials();
+              case 1:
+                return const Groups();
+              // case 2:
+              //   return const ActionsView();
+              default:
+                return const SizedBox();
+            }
+          },
+        ),
+        bottomNavigationBar:
+            BlocBuilder<DashboardNavigationCubit, DashboardNavigationTab>(
+          builder: (context, state) {
+            final index = state.index;
+            return BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.metericalsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.metericalsIcon),
-                  label: _appLocalizations.materialsTabItemText,
+                  label: appLocalizations.materialsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.groupsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.groupsIcon),
-                  label: _appLocalizations.groupsTabItemText,
+                  label: appLocalizations.groupsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.actionsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.actionsIcon),
-                  label: _appLocalizations.actionsTabItemText,
+                  label: appLocalizations.actionsTabItemText,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: SvgPicture.asset(AssetsPath.resultsActiveIcon),
                   icon: SvgPicture.asset(AssetsPath.resultsIcon),
-                  label: _appLocalizations.resultsTabItemText,
+                  label: appLocalizations.resultsTabItemText,
                 ),
               ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: _selectedTabColor(_selectedIndex),
+              currentIndex: index,
+              selectedItemColor: _selectedTabColor(index),
               backgroundColor: AppColors.txtFieldBackground,
               unselectedItemColor: AppColors.unselectedButtonBG,
               unselectedFontSize: 14.sp,
               selectedFontSize: 14.sp,
               onTap: onTabTapped,
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
 
-  // _cleanMaterialFilterValues() {
-  //   bloc.materialBloc.selectedLanguages.clear();
-  //   _selectLanguage(bloc);
-  //   bloc.materialBloc.selectedTopics.clear();
-  // }
-
-  // _selectLanguage(DataBloc bloc) {
-  //   context.currentUser.languageIds.forEach((languageId) {
-  //     HiveLanguage? _langugage = LanguageProvider()
-  //         .getAll()
-  //         .firstWhereOrNull((element) => element.id == languageId);
-  //     if (_langugage != null) {
-  //       bloc.materialBloc.selectedLanguages.add(_langugage);
-  //     }
-  //   });
-  // }
-
   void onPageChanged(int index) {
-    // if (index != 0) {
-    //   _cleanMaterialFilterValues();
-    // } else {
-    //   _selectLanguage(bloc);
-    // }
-
-    // FocusScope.of(context).requestFocus(new FocusNode());
-    setState(() {
-      this._selectedIndex = index;
-    });
+    context
+        .read<DashboardNavigationCubit>()
+        .navigationRequested(DashboardNavigationTab.tabs[index]);
   }
 
   void onTabTapped(int index) {
-    this._pageController.animateToPage(index,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    context
+        .read<DashboardNavigationCubit>()
+        .navigationRequested(DashboardNavigationTab.tabs[index]);
   }
 
-  void handleUnauthentication() {
-    StarfishSnackbar.showErrorMessage(
-        context, _appLocalizations.unauthenticated);
-    BlocProvider.of<SessionBloc>(context).add(const SignOutRequested());
-  }
-
-  Color _selectedTabColor(int _selectedIndex) {
-    switch (_selectedIndex) {
+  Color _selectedTabColor(int index) {
+    switch (index) {
       case 3:
         return AppColors.resultsTabBarTextColor;
       case 2:

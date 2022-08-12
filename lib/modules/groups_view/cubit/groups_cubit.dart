@@ -41,10 +41,10 @@ class GroupsCubit extends Cubit<GroupsState> {
   }
 
   void leaveGroupRequested(Group group) {
-    // TODO: delete group_user;
-    // _dataRepository.addDelta(GroupUserDeleteDelta(
-
-    // ));
+    final myId = _dataRepository.currentUser.id;
+    final groupUser =
+        group.users.firstWhere((groupUser) => groupUser.userId == myId);
+    _dataRepository.addDelta(GroupUserDeleteDelta(groupUser));
   }
 
   void groupDeleted(Group group) {

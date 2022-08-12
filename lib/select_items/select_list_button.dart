@@ -58,7 +58,7 @@ class SelectListButton extends StatelessWidget {
                   summary ?? placeholder,
                   maxLines: multilineSummary ? null : 1,
                   overflow: multilineSummary ? null : TextOverflow.fade,
-                  softWrap: true,
+                  softWrap: multilineSummary,
                   style:
                       summary == null ? formTitleHintStyle : textFormFieldText,
                 ),
