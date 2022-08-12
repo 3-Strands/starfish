@@ -37,6 +37,35 @@ const ResultsTab$json = const {
 
 /// Descriptor for `ResultsTab`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List resultsTabDescriptor = $convert.base64Decode('CgpSZXN1bHRzVGFiEhcKE1JFU1VMVFNfVU5TUEVDSUZJRUQQABIQCgxSRVNVTFRTX01JTkUQARIVChFSRVNVTFRTX01ZX0dST1VQUxAC');
+@$core.Deprecated('Use resourceTypeDescriptor instead')
+const ResourceType$json = const {
+  '1': 'ResourceType',
+  '2': const [
+    const {'1': 'TYPE_UNSPECIFIED', '2': 0},
+    const {'1': 'ACTION_RESOURCE', '2': 1},
+    const {'1': 'ACTION_USER_RESOURCE', '2': 2},
+    const {'1': 'COUNTRY_RESOURCE', '2': 3},
+    const {'1': 'EVALUATION_CATEGORY_RESOURCE', '2': 4},
+    const {'1': 'EVALUATION_VALUE_NAME_RESOURCE', '2': 5},
+    const {'1': 'GROUP_RESOURCE', '2': 6},
+    const {'1': 'GROUP_EVALUATION_RESOURCE', '2': 7},
+    const {'1': 'GROUP_USER_RESOURCE', '2': 8},
+    const {'1': 'LANGUAGE_RESOURCE', '2': 9},
+    const {'1': 'LEARNER_EVALUATION_RESOURCE', '2': 10},
+    const {'1': 'MATERIAL_RESOURCE', '2': 11},
+    const {'1': 'MATERIAL_FEEDBACK_RESOURCE', '2': 12},
+    const {'1': 'MATERIAL_TOPIC_RESOURCE', '2': 13},
+    const {'1': 'MATERIAL_TYPE_RESOURCE', '2': 14},
+    const {'1': 'OUTPUT_RESOURCE', '2': 15},
+    const {'1': 'OUTPUT_MARKER_RESOURCE', '2': 16},
+    const {'1': 'TEACHER_RESPONSE_RESOURCE', '2': 17},
+    const {'1': 'TRANSFORMATION_RESOURCE', '2': 18},
+    const {'1': 'USER_RESOURCE', '2': 19},
+  ],
+};
+
+/// Descriptor for `ResourceType`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List resourceTypeDescriptor = $convert.base64Decode('CgxSZXNvdXJjZVR5cGUSFAoQVFlQRV9VTlNQRUNJRklFRBAAEhMKD0FDVElPTl9SRVNPVVJDRRABEhgKFEFDVElPTl9VU0VSX1JFU09VUkNFEAISFAoQQ09VTlRSWV9SRVNPVVJDRRADEiAKHEVWQUxVQVRJT05fQ0FURUdPUllfUkVTT1VSQ0UQBBIiCh5FVkFMVUFUSU9OX1ZBTFVFX05BTUVfUkVTT1VSQ0UQBRISCg5HUk9VUF9SRVNPVVJDRRAGEh0KGUdST1VQX0VWQUxVQVRJT05fUkVTT1VSQ0UQBxIXChNHUk9VUF9VU0VSX1JFU09VUkNFEAgSFQoRTEFOR1VBR0VfUkVTT1VSQ0UQCRIfChtMRUFSTkVSX0VWQUxVQVRJT05fUkVTT1VSQ0UQChIVChFNQVRFUklBTF9SRVNPVVJDRRALEh4KGk1BVEVSSUFMX0ZFRURCQUNLX1JFU09VUkNFEAwSGwoXTUFURVJJQUxfVE9QSUNfUkVTT1VSQ0UQDRIaChZNQVRFUklBTF9UWVBFX1JFU09VUkNFEA4SEwoPT1VUUFVUX1JFU09VUkNFEA8SGgoWT1VUUFVUX01BUktFUl9SRVNPVVJDRRAQEh0KGVRFQUNIRVJfUkVTUE9OU0VfUkVTT1VSQ0UQERIbChdUUkFOU0ZPUk1BVElPTl9SRVNPVVJDRRASEhEKDVVTRVJfUkVTT1VSQ0UQEw==');
 @$core.Deprecated('Use actionDescriptor instead')
 const Action$json = const {
   '1': 'Action',
@@ -72,6 +101,7 @@ final $typed_data.Uint8List actionDescriptor = $convert.base64Decode('CgZBY3Rpb2
 const ActionUser$json = const {
   '1': 'ActionUser',
   '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     const {'1': 'action_id', '3': 2, '4': 1, '5': 9, '10': 'actionId'},
     const {'1': 'user_id', '3': 3, '4': 1, '5': 9, '10': 'userId'},
     const {'1': 'status', '3': 4, '4': 1, '5': 14, '6': '.sil.starfish.ActionUser.Status', '10': 'status'},
@@ -103,7 +133,7 @@ const ActionUser_Evaluation$json = const {
 };
 
 /// Descriptor for `ActionUser`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List actionUserDescriptor = $convert.base64Decode('CgpBY3Rpb25Vc2VyEhsKCWFjdGlvbl9pZBgCIAEoCVIIYWN0aW9uSWQSFwoHdXNlcl9pZBgDIAEoCVIGdXNlcklkEjcKBnN0YXR1cxgEIAEoDjIfLnNpbC5zdGFyZmlzaC5BY3Rpb25Vc2VyLlN0YXR1c1IGc3RhdHVzEikKEHRlYWNoZXJfcmVzcG9uc2UYBSABKAlSD3RlYWNoZXJSZXNwb25zZRIjCg11c2VyX3Jlc3BvbnNlGAcgASgJUgx1c2VyUmVzcG9uc2USQwoKZXZhbHVhdGlvbhgIIAEoDjIjLnNpbC5zdGFyZmlzaC5BY3Rpb25Vc2VyLkV2YWx1YXRpb25SCmV2YWx1YXRpb24iPgoGU3RhdHVzEhYKElVOU1BFQ0lGSUVEX1NUQVRVUxAAEg4KCklOQ09NUExFVEUQARIMCghDT01QTEVURRACIjsKCkV2YWx1YXRpb24SGgoWVU5TUEVDSUZJRURfRVZBTFVBVElPThAAEggKBEdPT0QQARIHCgNCQUQQAg==');
+final $typed_data.Uint8List actionUserDescriptor = $convert.base64Decode('CgpBY3Rpb25Vc2VyEg4KAmlkGAEgASgJUgJpZBIbCglhY3Rpb25faWQYAiABKAlSCGFjdGlvbklkEhcKB3VzZXJfaWQYAyABKAlSBnVzZXJJZBI3CgZzdGF0dXMYBCABKA4yHy5zaWwuc3RhcmZpc2guQWN0aW9uVXNlci5TdGF0dXNSBnN0YXR1cxIpChB0ZWFjaGVyX3Jlc3BvbnNlGAUgASgJUg90ZWFjaGVyUmVzcG9uc2USIwoNdXNlcl9yZXNwb25zZRgHIAEoCVIMdXNlclJlc3BvbnNlEkMKCmV2YWx1YXRpb24YCCABKA4yIy5zaWwuc3RhcmZpc2guQWN0aW9uVXNlci5FdmFsdWF0aW9uUgpldmFsdWF0aW9uIj4KBlN0YXR1cxIWChJVTlNQRUNJRklFRF9TVEFUVVMQABIOCgpJTkNPTVBMRVRFEAESDAoIQ09NUExFVEUQAiI7CgpFdmFsdWF0aW9uEhoKFlVOU1BFQ0lGSUVEX0VWQUxVQVRJT04QABIICgRHT09EEAESBwoDQkFEEAI=');
 @$core.Deprecated('Use authenticateRequestDescriptor instead')
 const AuthenticateRequest$json = const {
   '1': 'AuthenticateRequest',
@@ -563,20 +593,41 @@ const DeleteActionResponse_Status$json = const {
 
 /// Descriptor for `DeleteActionResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List deleteActionResponseDescriptor = $convert.base64Decode('ChREZWxldGVBY3Rpb25SZXNwb25zZRIbCglhY3Rpb25faWQYASABKAlSCGFjdGlvbklkEkEKBnN0YXR1cxgDIAEoDjIpLnNpbC5zdGFyZmlzaC5EZWxldGVBY3Rpb25SZXNwb25zZS5TdGF0dXNSBnN0YXR1cxIYCgdtZXNzYWdlGAQgASgJUgdtZXNzYWdlIiIKBlN0YXR1cxILCgdTVUNDRVNTEAASCwoHRkFJTFVSRRAB');
-@$core.Deprecated('Use deleteGroupUsersResponseDescriptor instead')
-const DeleteGroupUsersResponse$json = const {
-  '1': 'DeleteGroupUsersResponse',
+@$core.Deprecated('Use deletedResourceDescriptor instead')
+const DeletedResource$json = const {
+  '1': 'DeletedResource',
   '2': const [
-    const {'1': 'user_id', '3': 1, '4': 1, '5': 9, '10': 'userId'},
-    const {'1': 'group_id', '3': 2, '4': 1, '5': 9, '10': 'groupId'},
-    const {'1': 'status', '3': 3, '4': 1, '5': 14, '6': '.sil.starfish.DeleteGroupUsersResponse.Status', '10': 'status'},
-    const {'1': 'message', '3': 4, '4': 1, '5': 9, '10': 'message'},
+    const {'1': 'resource_type', '3': 1, '4': 1, '5': 14, '6': '.sil.starfish.ResourceType', '10': 'resourceType'},
+    const {'1': 'id', '3': 2, '4': 1, '5': 9, '10': 'id'},
+    const {'1': 'deletion_date', '3': 3, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'deletionDate'},
   ],
-  '4': const [DeleteGroupUsersResponse_Status$json],
 };
 
-@$core.Deprecated('Use deleteGroupUsersResponseDescriptor instead')
-const DeleteGroupUsersResponse_Status$json = const {
+/// Descriptor for `DeletedResource`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deletedResourceDescriptor = $convert.base64Decode('Cg9EZWxldGVkUmVzb3VyY2USPwoNcmVzb3VyY2VfdHlwZRgBIAEoDjIaLnNpbC5zdGFyZmlzaC5SZXNvdXJjZVR5cGVSDHJlc291cmNlVHlwZRIOCgJpZBgCIAEoCVICaWQSNgoNZGVsZXRpb25fZGF0ZRgDIAEoCzIRLmdvb2dsZS50eXBlLkRhdGVSDGRlbGV0aW9uRGF0ZQ==');
+@$core.Deprecated('Use deleteGroupUserRequestDescriptor instead')
+const DeleteGroupUserRequest$json = const {
+  '1': 'DeleteGroupUserRequest',
+  '2': const [
+    const {'1': 'group_user_id', '3': 1, '4': 1, '5': 9, '10': 'groupUserId'},
+  ],
+};
+
+/// Descriptor for `DeleteGroupUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteGroupUserRequestDescriptor = $convert.base64Decode('ChZEZWxldGVHcm91cFVzZXJSZXF1ZXN0EiIKDWdyb3VwX3VzZXJfaWQYASABKAlSC2dyb3VwVXNlcklk');
+@$core.Deprecated('Use deleteGroupUserResponseDescriptor instead')
+const DeleteGroupUserResponse$json = const {
+  '1': 'DeleteGroupUserResponse',
+  '2': const [
+    const {'1': 'group_user_id', '3': 1, '4': 1, '5': 9, '10': 'groupUserId'},
+    const {'1': 'status', '3': 3, '4': 1, '5': 14, '6': '.sil.starfish.DeleteGroupUserResponse.Status', '10': 'status'},
+    const {'1': 'message', '3': 4, '4': 1, '5': 9, '10': 'message'},
+  ],
+  '4': const [DeleteGroupUserResponse_Status$json],
+};
+
+@$core.Deprecated('Use deleteGroupUserResponseDescriptor instead')
+const DeleteGroupUserResponse_Status$json = const {
   '1': 'Status',
   '2': const [
     const {'1': 'SUCCESS', '2': 0},
@@ -584,8 +635,8 @@ const DeleteGroupUsersResponse_Status$json = const {
   ],
 };
 
-/// Descriptor for `DeleteGroupUsersResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List deleteGroupUsersResponseDescriptor = $convert.base64Decode('ChhEZWxldGVHcm91cFVzZXJzUmVzcG9uc2USFwoHdXNlcl9pZBgBIAEoCVIGdXNlcklkEhkKCGdyb3VwX2lkGAIgASgJUgdncm91cElkEkUKBnN0YXR1cxgDIAEoDjItLnNpbC5zdGFyZmlzaC5EZWxldGVHcm91cFVzZXJzUmVzcG9uc2UuU3RhdHVzUgZzdGF0dXMSGAoHbWVzc2FnZRgEIAEoCVIHbWVzc2FnZSIiCgZTdGF0dXMSCwoHU1VDQ0VTUxAAEgsKB0ZBSUxVUkUQAQ==');
+/// Descriptor for `DeleteGroupUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteGroupUserResponseDescriptor = $convert.base64Decode('ChdEZWxldGVHcm91cFVzZXJSZXNwb25zZRIiCg1ncm91cF91c2VyX2lkGAEgASgJUgtncm91cFVzZXJJZBJECgZzdGF0dXMYAyABKA4yLC5zaWwuc3RhcmZpc2guRGVsZXRlR3JvdXBVc2VyUmVzcG9uc2UuU3RhdHVzUgZzdGF0dXMSGAoHbWVzc2FnZRgEIAEoCVIHbWVzc2FnZSIiCgZTdGF0dXMSCwoHU1VDQ0VTUxAAEgsKB0ZBSUxVUkUQAQ==');
 @$core.Deprecated('Use deleteMaterialRequestDescriptor instead')
 const DeleteMaterialRequest$json = const {
   '1': 'DeleteMaterialRequest',
@@ -660,11 +711,12 @@ const EvaluationValueName$json = const {
   '2': const [
     const {'1': 'value', '3': 1, '4': 1, '5': 5, '10': 'value'},
     const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    const {'1': 'id', '3': 3, '4': 1, '5': 9, '10': 'id'},
   ],
 };
 
 /// Descriptor for `EvaluationValueName`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List evaluationValueNameDescriptor = $convert.base64Decode('ChNFdmFsdWF0aW9uVmFsdWVOYW1lEhQKBXZhbHVlGAEgASgFUgV2YWx1ZRISCgRuYW1lGAIgASgJUgRuYW1l');
+final $typed_data.Uint8List evaluationValueNameDescriptor = $convert.base64Decode('ChNFdmFsdWF0aW9uVmFsdWVOYW1lEhQKBXZhbHVlGAEgASgFUgV2YWx1ZRISCgRuYW1lGAIgASgJUgRuYW1lEg4KAmlkGAMgASgJUgJpZA==');
 @$core.Deprecated('Use groupDescriptor instead')
 const Group$json = const {
   '1': 'Group',
@@ -735,6 +787,7 @@ final $typed_data.Uint8List groupEvaluationDescriptor = $convert.base64Decode('C
 const GroupUser$json = const {
   '1': 'GroupUser',
   '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     const {'1': 'group_id', '3': 2, '4': 1, '5': 9, '10': 'groupId'},
     const {'1': 'user_id', '3': 3, '4': 1, '5': 9, '10': 'userId'},
     const {'1': 'role', '3': 4, '4': 1, '5': 14, '6': '.sil.starfish.GroupUser.Role', '10': 'role'},
@@ -755,7 +808,7 @@ const GroupUser_Role$json = const {
 };
 
 /// Descriptor for `GroupUser`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List groupUserDescriptor = $convert.base64Decode('CglHcm91cFVzZXISGQoIZ3JvdXBfaWQYAiABKAlSB2dyb3VwSWQSFwoHdXNlcl9pZBgDIAEoCVIGdXNlcklkEjAKBHJvbGUYBCABKA4yHC5zaWwuc3RhcmZpc2guR3JvdXBVc2VyLlJvbGVSBHJvbGUSGAoHcHJvZmlsZRgFIAEoCVIHcHJvZmlsZSJBCgRSb2xlEhQKEFVOU1BFQ0lGSUVEX1JPTEUQABILCgdMRUFSTkVSEAESCwoHVEVBQ0hFUhACEgkKBUFETUlOEAM=');
+final $typed_data.Uint8List groupUserDescriptor = $convert.base64Decode('CglHcm91cFVzZXISDgoCaWQYASABKAlSAmlkEhkKCGdyb3VwX2lkGAIgASgJUgdncm91cElkEhcKB3VzZXJfaWQYAyABKAlSBnVzZXJJZBIwCgRyb2xlGAQgASgOMhwuc2lsLnN0YXJmaXNoLkdyb3VwVXNlci5Sb2xlUgRyb2xlEhgKB3Byb2ZpbGUYBSABKAlSB3Byb2ZpbGUiQQoEUm9sZRIUChBVTlNQRUNJRklFRF9ST0xFEAASCwoHTEVBUk5FUhABEgsKB1RFQUNIRVIQAhIJCgVBRE1JThAD');
 @$core.Deprecated('Use languageDescriptor instead')
 const Language$json = const {
   '1': 'Language',
@@ -1045,6 +1098,7 @@ const Output$json = const {
   '1': 'Output',
   '2': const [
     const {'1': 'group_id', '3': 1, '4': 1, '5': 9, '10': 'groupId'},
+    const {'1': 'id', '3': 2, '4': 1, '5': 9, '10': 'id'},
     const {'1': 'month', '3': 5, '4': 1, '5': 11, '6': '.google.type.Date', '10': 'month'},
     const {'1': 'value', '3': 6, '4': 1, '5': 3, '10': 'value'},
     const {'1': 'output_marker', '3': 7, '4': 1, '5': 11, '6': '.sil.starfish.OutputMarker', '10': 'outputMarker'},
@@ -1052,7 +1106,7 @@ const Output$json = const {
 };
 
 /// Descriptor for `Output`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List outputDescriptor = $convert.base64Decode('CgZPdXRwdXQSGQoIZ3JvdXBfaWQYASABKAlSB2dyb3VwSWQSJwoFbW9udGgYBSABKAsyES5nb29nbGUudHlwZS5EYXRlUgVtb250aBIUCgV2YWx1ZRgGIAEoA1IFdmFsdWUSPwoNb3V0cHV0X21hcmtlchgHIAEoCzIaLnNpbC5zdGFyZmlzaC5PdXRwdXRNYXJrZXJSDG91dHB1dE1hcmtlcg==');
+final $typed_data.Uint8List outputDescriptor = $convert.base64Decode('CgZPdXRwdXQSGQoIZ3JvdXBfaWQYASABKAlSB2dyb3VwSWQSDgoCaWQYAiABKAlSAmlkEicKBW1vbnRoGAUgASgLMhEuZ29vZ2xlLnR5cGUuRGF0ZVIFbW9udGgSFAoFdmFsdWUYBiABKANSBXZhbHVlEj8KDW91dHB1dF9tYXJrZXIYByABKAsyGi5zaWwuc3RhcmZpc2guT3V0cHV0TWFya2VyUgxvdXRwdXRNYXJrZXI=');
 @$core.Deprecated('Use outputMarkerDescriptor instead')
 const OutputMarker$json = const {
   '1': 'OutputMarker',
@@ -1076,6 +1130,86 @@ const RefreshSessionRequest$json = const {
 
 /// Descriptor for `RefreshSessionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List refreshSessionRequestDescriptor = $convert.base64Decode('ChVSZWZyZXNoU2Vzc2lvblJlcXVlc3QSFwoHdXNlcl9pZBgBIAEoCVIGdXNlcklkEiMKDXJlZnJlc2hfdG9rZW4YAiABKAlSDHJlZnJlc2hUb2tlbg==');
+@$core.Deprecated('Use syncRequestMetaDataDescriptor instead')
+const SyncRequestMetaData$json = const {
+  '1': 'SyncRequestMetaData',
+  '2': const [
+    const {'1': 'get_new_records', '3': 1, '4': 1, '5': 8, '10': 'getNewRecords'},
+    const {'1': 'updated_since', '3': 2, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'updatedSince'},
+    const {'1': 'resource_type_whitelist', '3': 3, '4': 3, '5': 14, '6': '.sil.starfish.ResourceType', '10': 'resourceTypeWhitelist'},
+    const {'1': 'resource_type_blacklist', '3': 4, '4': 3, '5': 14, '6': '.sil.starfish.ResourceType', '10': 'resourceTypeBlacklist'},
+  ],
+};
+
+/// Descriptor for `SyncRequestMetaData`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List syncRequestMetaDataDescriptor = $convert.base64Decode('ChNTeW5jUmVxdWVzdE1ldGFEYXRhEiYKD2dldF9uZXdfcmVjb3JkcxgBIAEoCFINZ2V0TmV3UmVjb3JkcxI/Cg11cGRhdGVkX3NpbmNlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcFIMdXBkYXRlZFNpbmNlElIKF3Jlc291cmNlX3R5cGVfd2hpdGVsaXN0GAMgAygOMhouc2lsLnN0YXJmaXNoLlJlc291cmNlVHlwZVIVcmVzb3VyY2VUeXBlV2hpdGVsaXN0ElIKF3Jlc291cmNlX3R5cGVfYmxhY2tsaXN0GAQgAygOMhouc2lsLnN0YXJmaXNoLlJlc291cmNlVHlwZVIVcmVzb3VyY2VUeXBlQmxhY2tsaXN0');
+@$core.Deprecated('Use syncResponseMetaDataDescriptor instead')
+const SyncResponseMetaData$json = const {
+  '1': 'SyncResponseMetaData',
+  '2': const [
+    const {'1': 'request_time', '3': 1, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'requestTime'},
+  ],
+};
+
+/// Descriptor for `SyncResponseMetaData`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List syncResponseMetaDataDescriptor = $convert.base64Decode('ChRTeW5jUmVzcG9uc2VNZXRhRGF0YRI9CgxyZXF1ZXN0X3RpbWUYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wUgtyZXF1ZXN0VGltZQ==');
+@$core.Deprecated('Use syncRequestDescriptor instead')
+const SyncRequest$json = const {
+  '1': 'SyncRequest',
+  '2': const [
+    const {'1': 'meta_data', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.SyncRequestMetaData', '9': 0, '10': 'metaData'},
+    const {'1': 'create_material_feedback', '3': 2, '4': 1, '5': 11, '6': '.sil.starfish.CreateMaterialFeedbacksRequest', '9': 0, '10': 'createMaterialFeedback'},
+    const {'1': 'create_update_action', '3': 3, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateActionsRequest', '9': 0, '10': 'createUpdateAction'},
+    const {'1': 'create_update_action_user', '3': 4, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateActionUserRequest', '9': 0, '10': 'createUpdateActionUser'},
+    const {'1': 'create_update_group_evaluation', '3': 5, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateGroupEvaluationRequest', '9': 0, '10': 'createUpdateGroupEvaluation'},
+    const {'1': 'create_update_group', '3': 6, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateGroupsRequest', '9': 0, '10': 'createUpdateGroup'},
+    const {'1': 'create_update_group_user', '3': 7, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateGroupUsersRequest', '9': 0, '10': 'createUpdateGroupUser'},
+    const {'1': 'create_update_learner_evaluation', '3': 8, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateLearnerEvaluationRequest', '9': 0, '10': 'createUpdateLearnerEvaluation'},
+    const {'1': 'create_update_material', '3': 9, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateMaterialsRequest', '9': 0, '10': 'createUpdateMaterial'},
+    const {'1': 'create_update_output', '3': 10, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateOutputRequest', '9': 0, '10': 'createUpdateOutput'},
+    const {'1': 'create_update_teacher_response', '3': 11, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateTeacherResponseRequest', '9': 0, '10': 'createUpdateTeacherResponse'},
+    const {'1': 'create_update_transformation', '3': 12, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateTransformationRequest', '9': 0, '10': 'createUpdateTransformation'},
+    const {'1': 'create_update_user', '3': 13, '4': 1, '5': 11, '6': '.sil.starfish.CreateUpdateUserRequest', '9': 0, '10': 'createUpdateUser'},
+    const {'1': 'delete_action', '3': 14, '4': 1, '5': 11, '6': '.sil.starfish.DeleteActionRequest', '9': 0, '10': 'deleteAction'},
+    const {'1': 'delete_group_user', '3': 15, '4': 1, '5': 11, '6': '.sil.starfish.GroupUser', '9': 0, '10': 'deleteGroupUser'},
+    const {'1': 'delete_material', '3': 16, '4': 1, '5': 11, '6': '.sil.starfish.DeleteMaterialRequest', '9': 0, '10': 'deleteMaterial'},
+    const {'1': 'update_current_user', '3': 17, '4': 1, '5': 11, '6': '.sil.starfish.UpdateCurrentUserRequest', '9': 0, '10': 'updateCurrentUser'},
+  ],
+  '8': const [
+    const {'1': 'update'},
+  ],
+};
+
+/// Descriptor for `SyncRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List syncRequestDescriptor = $convert.base64Decode('CgtTeW5jUmVxdWVzdBJACgltZXRhX2RhdGEYASABKAsyIS5zaWwuc3RhcmZpc2guU3luY1JlcXVlc3RNZXRhRGF0YUgAUghtZXRhRGF0YRJoChhjcmVhdGVfbWF0ZXJpYWxfZmVlZGJhY2sYAiABKAsyLC5zaWwuc3RhcmZpc2guQ3JlYXRlTWF0ZXJpYWxGZWVkYmFja3NSZXF1ZXN0SABSFmNyZWF0ZU1hdGVyaWFsRmVlZGJhY2sSXAoUY3JlYXRlX3VwZGF0ZV9hY3Rpb24YAyABKAsyKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1JlcXVlc3RIAFISY3JlYXRlVXBkYXRlQWN0aW9uEmgKGWNyZWF0ZV91cGRhdGVfYWN0aW9uX3VzZXIYBCABKAsyKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uVXNlclJlcXVlc3RIAFIWY3JlYXRlVXBkYXRlQWN0aW9uVXNlchJ3Ch5jcmVhdGVfdXBkYXRlX2dyb3VwX2V2YWx1YXRpb24YBSABKAsyMC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBFdmFsdWF0aW9uUmVxdWVzdEgAUhtjcmVhdGVVcGRhdGVHcm91cEV2YWx1YXRpb24SWQoTY3JlYXRlX3VwZGF0ZV9ncm91cBgGIAEoCzInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cHNSZXF1ZXN0SABSEWNyZWF0ZVVwZGF0ZUdyb3VwEmYKGGNyZWF0ZV91cGRhdGVfZ3JvdXBfdXNlchgHIAEoCzIrLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cFVzZXJzUmVxdWVzdEgAUhVjcmVhdGVVcGRhdGVHcm91cFVzZXISfQogY3JlYXRlX3VwZGF0ZV9sZWFybmVyX2V2YWx1YXRpb24YCCABKAsyMi5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTGVhcm5lckV2YWx1YXRpb25SZXF1ZXN0SABSHWNyZWF0ZVVwZGF0ZUxlYXJuZXJFdmFsdWF0aW9uEmIKFmNyZWF0ZV91cGRhdGVfbWF0ZXJpYWwYCSABKAsyKi5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzUmVxdWVzdEgAUhRjcmVhdGVVcGRhdGVNYXRlcmlhbBJbChRjcmVhdGVfdXBkYXRlX291dHB1dBgKIAEoCzInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVPdXRwdXRSZXF1ZXN0SABSEmNyZWF0ZVVwZGF0ZU91dHB1dBJ3Ch5jcmVhdGVfdXBkYXRlX3RlYWNoZXJfcmVzcG9uc2UYCyABKAsyMC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlVGVhY2hlclJlc3BvbnNlUmVxdWVzdEgAUhtjcmVhdGVVcGRhdGVUZWFjaGVyUmVzcG9uc2UScwocY3JlYXRlX3VwZGF0ZV90cmFuc2Zvcm1hdGlvbhgMIAEoCzIvLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVUcmFuc2Zvcm1hdGlvblJlcXVlc3RIAFIaY3JlYXRlVXBkYXRlVHJhbnNmb3JtYXRpb24SVQoSY3JlYXRlX3VwZGF0ZV91c2VyGA0gASgLMiUuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZVVzZXJSZXF1ZXN0SABSEGNyZWF0ZVVwZGF0ZVVzZXISSAoNZGVsZXRlX2FjdGlvbhgOIAEoCzIhLnNpbC5zdGFyZmlzaC5EZWxldGVBY3Rpb25SZXF1ZXN0SABSDGRlbGV0ZUFjdGlvbhJFChFkZWxldGVfZ3JvdXBfdXNlchgPIAEoCzIXLnNpbC5zdGFyZmlzaC5Hcm91cFVzZXJIAFIPZGVsZXRlR3JvdXBVc2VyEk4KD2RlbGV0ZV9tYXRlcmlhbBgQIAEoCzIjLnNpbC5zdGFyZmlzaC5EZWxldGVNYXRlcmlhbFJlcXVlc3RIAFIOZGVsZXRlTWF0ZXJpYWwSWAoTdXBkYXRlX2N1cnJlbnRfdXNlchgRIAEoCzImLnNpbC5zdGFyZmlzaC5VcGRhdGVDdXJyZW50VXNlclJlcXVlc3RIAFIRdXBkYXRlQ3VycmVudFVzZXJCCAoGdXBkYXRl');
+@$core.Deprecated('Use syncResponseDescriptor instead')
+const SyncResponse$json = const {
+  '1': 'SyncResponse',
+  '2': const [
+    const {'1': 'action', '3': 1, '4': 1, '5': 11, '6': '.sil.starfish.Action', '9': 0, '10': 'action'},
+    const {'1': 'country', '3': 2, '4': 1, '5': 11, '6': '.sil.starfish.Country', '9': 0, '10': 'country'},
+    const {'1': 'evaluation_category', '3': 3, '4': 1, '5': 11, '6': '.sil.starfish.EvaluationCategory', '9': 0, '10': 'evaluationCategory'},
+    const {'1': 'group', '3': 4, '4': 1, '5': 11, '6': '.sil.starfish.Group', '9': 0, '10': 'group'},
+    const {'1': 'group_evaluation', '3': 5, '4': 1, '5': 11, '6': '.sil.starfish.GroupEvaluation', '9': 0, '10': 'groupEvaluation'},
+    const {'1': 'language', '3': 7, '4': 1, '5': 11, '6': '.sil.starfish.Language', '9': 0, '10': 'language'},
+    const {'1': 'learner_evaluation', '3': 8, '4': 1, '5': 11, '6': '.sil.starfish.LearnerEvaluation', '9': 0, '10': 'learnerEvaluation'},
+    const {'1': 'material', '3': 9, '4': 1, '5': 11, '6': '.sil.starfish.Material', '9': 0, '10': 'material'},
+    const {'1': 'material_topic', '3': 10, '4': 1, '5': 11, '6': '.sil.starfish.MaterialTopic', '9': 0, '10': 'materialTopic'},
+    const {'1': 'material_type', '3': 11, '4': 1, '5': 11, '6': '.sil.starfish.MaterialType', '9': 0, '10': 'materialType'},
+    const {'1': 'output', '3': 12, '4': 1, '5': 11, '6': '.sil.starfish.Output', '9': 0, '10': 'output'},
+    const {'1': 'teacher_response', '3': 13, '4': 1, '5': 11, '6': '.sil.starfish.TeacherResponse', '9': 0, '10': 'teacherResponse'},
+    const {'1': 'transformation', '3': 14, '4': 1, '5': 11, '6': '.sil.starfish.Transformation', '9': 0, '10': 'transformation'},
+    const {'1': 'user', '3': 15, '4': 1, '5': 11, '6': '.sil.starfish.User', '9': 0, '10': 'user'},
+    const {'1': 'deleted_record', '3': 16, '4': 1, '5': 11, '6': '.sil.starfish.DeletedResource', '9': 0, '10': 'deletedRecord'},
+    const {'1': 'meta_data', '3': 17, '4': 1, '5': 11, '6': '.sil.starfish.SyncResponseMetaData', '9': 0, '10': 'metaData'},
+  ],
+  '8': const [
+    const {'1': 'value'},
+  ],
+};
+
+/// Descriptor for `SyncResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List syncResponseDescriptor = $convert.base64Decode('CgxTeW5jUmVzcG9uc2USLgoGYWN0aW9uGAEgASgLMhQuc2lsLnN0YXJmaXNoLkFjdGlvbkgAUgZhY3Rpb24SMQoHY291bnRyeRgCIAEoCzIVLnNpbC5zdGFyZmlzaC5Db3VudHJ5SABSB2NvdW50cnkSUwoTZXZhbHVhdGlvbl9jYXRlZ29yeRgDIAEoCzIgLnNpbC5zdGFyZmlzaC5FdmFsdWF0aW9uQ2F0ZWdvcnlIAFISZXZhbHVhdGlvbkNhdGVnb3J5EisKBWdyb3VwGAQgASgLMhMuc2lsLnN0YXJmaXNoLkdyb3VwSABSBWdyb3VwEkoKEGdyb3VwX2V2YWx1YXRpb24YBSABKAsyHS5zaWwuc3RhcmZpc2guR3JvdXBFdmFsdWF0aW9uSABSD2dyb3VwRXZhbHVhdGlvbhI0CghsYW5ndWFnZRgHIAEoCzIWLnNpbC5zdGFyZmlzaC5MYW5ndWFnZUgAUghsYW5ndWFnZRJQChJsZWFybmVyX2V2YWx1YXRpb24YCCABKAsyHy5zaWwuc3RhcmZpc2guTGVhcm5lckV2YWx1YXRpb25IAFIRbGVhcm5lckV2YWx1YXRpb24SNAoIbWF0ZXJpYWwYCSABKAsyFi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxIAFIIbWF0ZXJpYWwSRAoObWF0ZXJpYWxfdG9waWMYCiABKAsyGy5zaWwuc3RhcmZpc2guTWF0ZXJpYWxUb3BpY0gAUg1tYXRlcmlhbFRvcGljEkEKDW1hdGVyaWFsX3R5cGUYCyABKAsyGi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxUeXBlSABSDG1hdGVyaWFsVHlwZRIuCgZvdXRwdXQYDCABKAsyFC5zaWwuc3RhcmZpc2guT3V0cHV0SABSBm91dHB1dBJKChB0ZWFjaGVyX3Jlc3BvbnNlGA0gASgLMh0uc2lsLnN0YXJmaXNoLlRlYWNoZXJSZXNwb25zZUgAUg90ZWFjaGVyUmVzcG9uc2USRgoOdHJhbnNmb3JtYXRpb24YDiABKAsyHC5zaWwuc3RhcmZpc2guVHJhbnNmb3JtYXRpb25IAFIOdHJhbnNmb3JtYXRpb24SKAoEdXNlchgPIAEoCzISLnNpbC5zdGFyZmlzaC5Vc2VySABSBHVzZXISRgoOZGVsZXRlZF9yZWNvcmQYECABKAsyHS5zaWwuc3RhcmZpc2guRGVsZXRlZFJlc291cmNlSABSDWRlbGV0ZWRSZWNvcmQSQQoJbWV0YV9kYXRhGBEgASgLMiIuc2lsLnN0YXJmaXNoLlN5bmNSZXNwb25zZU1ldGFEYXRhSABSCG1ldGFEYXRhQgcKBXZhbHVl');
 @$core.Deprecated('Use teacherResponseDescriptor instead')
 const TeacherResponse$json = const {
   '1': 'TeacherResponse',
@@ -1168,7 +1302,7 @@ const $core.Map<$core.String, $core.dynamic> StarfishServiceBase$json = const {
     const {'1': 'CreateUpdateTransformations', '2': '.sil.starfish.CreateUpdateTransformationRequest', '3': '.sil.starfish.CreateUpdateTransformationResponse', '4': const {}, '5': true, '6': true},
     const {'1': 'CreateUpdateUsers', '2': '.sil.starfish.CreateUpdateUserRequest', '3': '.sil.starfish.CreateUpdateUserResponse', '4': const {}, '5': true, '6': true},
     const {'1': 'DeleteActions', '2': '.sil.starfish.DeleteActionRequest', '3': '.sil.starfish.DeleteActionResponse', '4': const {}, '5': true, '6': true},
-    const {'1': 'DeleteGroupUsers', '2': '.sil.starfish.GroupUser', '3': '.sil.starfish.DeleteGroupUsersResponse', '4': const {}, '5': true, '6': true},
+    const {'1': 'DeleteGroupUsers', '2': '.sil.starfish.DeleteGroupUserRequest', '3': '.sil.starfish.DeleteGroupUserResponse', '4': const {}, '5': true, '6': true},
     const {'1': 'DeleteMaterials', '2': '.sil.starfish.DeleteMaterialRequest', '3': '.sil.starfish.DeleteMaterialResponse', '4': const {}, '5': true, '6': true},
     const {'1': 'GetCurrentUser', '2': '.google.protobuf.Empty', '3': '.sil.starfish.User', '4': const {}},
     const {'1': 'ListActions', '2': '.sil.starfish.ListActionsRequest', '3': '.sil.starfish.Action', '4': const {}, '6': true},
@@ -1186,6 +1320,7 @@ const $core.Map<$core.String, $core.dynamic> StarfishServiceBase$json = const {
     const {'1': 'ListTransformations', '2': '.sil.starfish.ListTransformationsRequest', '3': '.sil.starfish.Transformation', '4': const {}, '6': true},
     const {'1': 'ListUsers', '2': '.sil.starfish.ListUsersRequest', '3': '.sil.starfish.User', '4': const {}, '6': true},
     const {'1': 'RefreshSession', '2': '.sil.starfish.RefreshSessionRequest', '3': '.sil.starfish.AuthenticateResponse', '4': const {}},
+    const {'1': 'Sync', '2': '.sil.starfish.SyncRequest', '3': '.sil.starfish.SyncResponse', '4': const {}, '5': true, '6': true},
     const {'1': 'UpdateCurrentUser', '2': '.sil.starfish.UpdateCurrentUserRequest', '3': '.sil.starfish.User', '4': const {}},
   ],
 };
@@ -1239,7 +1374,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> StarfishSe
   '.sil.starfish.CreateUpdateUserResponse': CreateUpdateUserResponse$json,
   '.sil.starfish.DeleteActionRequest': DeleteActionRequest$json,
   '.sil.starfish.DeleteActionResponse': DeleteActionResponse$json,
-  '.sil.starfish.DeleteGroupUsersResponse': DeleteGroupUsersResponse$json,
+  '.sil.starfish.DeleteGroupUserRequest': DeleteGroupUserRequest$json,
+  '.sil.starfish.DeleteGroupUserResponse': DeleteGroupUserResponse$json,
   '.sil.starfish.DeleteMaterialRequest': DeleteMaterialRequest$json,
   '.sil.starfish.DeleteMaterialResponse': DeleteMaterialResponse$json,
   '.google.protobuf.Empty': $3.Empty$json,
@@ -1264,8 +1400,13 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> StarfishSe
   '.sil.starfish.ListTransformationsRequest': ListTransformationsRequest$json,
   '.sil.starfish.ListUsersRequest': ListUsersRequest$json,
   '.sil.starfish.RefreshSessionRequest': RefreshSessionRequest$json,
+  '.sil.starfish.SyncRequest': SyncRequest$json,
+  '.sil.starfish.SyncRequestMetaData': SyncRequestMetaData$json,
   '.sil.starfish.UpdateCurrentUserRequest': UpdateCurrentUserRequest$json,
+  '.sil.starfish.SyncResponse': SyncResponse$json,
+  '.sil.starfish.DeletedResource': DeletedResource$json,
+  '.sil.starfish.SyncResponseMetaData': SyncResponseMetaData$json,
 };
 
 /// Descriptor for `Starfish`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List starfishServiceDescriptor = $convert.base64Decode('CghTdGFyZmlzaBJXCgxBdXRoZW50aWNhdGUSIS5zaWwuc3RhcmZpc2guQXV0aGVudGljYXRlUmVxdWVzdBoiLnNpbC5zdGFyZmlzaC5BdXRoZW50aWNhdGVSZXNwb25zZSIAEnwKF0NyZWF0ZU1hdGVyaWFsRmVlZGJhY2tzEiwuc2lsLnN0YXJmaXNoLkNyZWF0ZU1hdGVyaWFsRmVlZGJhY2tzUmVxdWVzdBotLnNpbC5zdGFyZmlzaC5DcmVhdGVNYXRlcmlhbEZlZWRiYWNrc1Jlc3BvbnNlIgAoATABEnAKE0NyZWF0ZVVwZGF0ZUFjdGlvbnMSKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1JlcXVlc3QaKS5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1Jlc3BvbnNlIgAoATABEnoKF0NyZWF0ZVVwZGF0ZUFjdGlvblVzZXJzEisuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvblVzZXJSZXF1ZXN0Giwuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvblVzZXJSZXNwb25zZSIAKAEwARKJAQocQ3JlYXRlVXBkYXRlR3JvdXBFdmFsdWF0aW9ucxIwLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cEV2YWx1YXRpb25SZXF1ZXN0GjEuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3VwRXZhbHVhdGlvblJlc3BvbnNlIgAoATABEm0KEkNyZWF0ZVVwZGF0ZUdyb3VwcxInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cHNSZXF1ZXN0Giguc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3Vwc1Jlc3BvbnNlIgAoATABEnkKFkNyZWF0ZVVwZGF0ZUdyb3VwVXNlcnMSKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBVc2Vyc1JlcXVlc3QaLC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBVc2Vyc1Jlc3BvbnNlIgAoATABEo8BCh5DcmVhdGVVcGRhdGVMZWFybmVyRXZhbHVhdGlvbnMSMi5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTGVhcm5lckV2YWx1YXRpb25SZXF1ZXN0GjMuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUxlYXJuZXJFdmFsdWF0aW9uUmVzcG9uc2UiACgBMAESdgoVQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzEiouc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU1hdGVyaWFsc1JlcXVlc3QaKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzUmVzcG9uc2UiACgBMAESbgoTQ3JlYXRlVXBkYXRlT3V0cHV0cxInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVPdXRwdXRSZXF1ZXN0Giguc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU91dHB1dFJlc3BvbnNlIgAoATABEokBChxDcmVhdGVVcGRhdGVUZWFjaGVyUmVzcG9uc2VzEjAuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZVRlYWNoZXJSZXNwb25zZVJlcXVlc3QaMS5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlVGVhY2hlclJlc3BvbnNlUmVzcG9uc2UiACgBMAEShgEKG0NyZWF0ZVVwZGF0ZVRyYW5zZm9ybWF0aW9ucxIvLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVUcmFuc2Zvcm1hdGlvblJlcXVlc3QaMC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlVHJhbnNmb3JtYXRpb25SZXNwb25zZSIAKAEwARJoChFDcmVhdGVVcGRhdGVVc2VycxIlLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVxdWVzdBomLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVzcG9uc2UiACgBMAESXAoNRGVsZXRlQWN0aW9ucxIhLnNpbC5zdGFyZmlzaC5EZWxldGVBY3Rpb25SZXF1ZXN0GiIuc2lsLnN0YXJmaXNoLkRlbGV0ZUFjdGlvblJlc3BvbnNlIgAoATABElkKEERlbGV0ZUdyb3VwVXNlcnMSFy5zaWwuc3RhcmZpc2guR3JvdXBVc2VyGiYuc2lsLnN0YXJmaXNoLkRlbGV0ZUdyb3VwVXNlcnNSZXNwb25zZSIAKAEwARJiCg9EZWxldGVNYXRlcmlhbHMSIy5zaWwuc3RhcmZpc2guRGVsZXRlTWF0ZXJpYWxSZXF1ZXN0GiQuc2lsLnN0YXJmaXNoLkRlbGV0ZU1hdGVyaWFsUmVzcG9uc2UiACgBMAESPgoOR2V0Q3VycmVudFVzZXISFi5nb29nbGUucHJvdG9idWYuRW1wdHkaEi5zaWwuc3RhcmZpc2guVXNlciIAEkkKC0xpc3RBY3Rpb25zEiAuc2lsLnN0YXJmaXNoLkxpc3RBY3Rpb25zUmVxdWVzdBoULnNpbC5zdGFyZmlzaC5BY3Rpb24iADABElQKEExpc3RBbGxDb3VudHJpZXMSJS5zaWwuc3RhcmZpc2guTGlzdEFsbENvdW50cmllc1JlcXVlc3QaFS5zaWwuc3RhcmZpc2guQ291bnRyeSIAMAESbwoYTGlzdEV2YWx1YXRpb25DYXRlZ29yaWVzEi0uc2lsLnN0YXJmaXNoLkxpc3RFdmFsdWF0aW9uQ2F0ZWdvcmllc1JlcXVlc3QaIC5zaWwuc3RhcmZpc2guRXZhbHVhdGlvbkNhdGVnb3J5IgAwARJGCgpMaXN0R3JvdXBzEh8uc2lsLnN0YXJmaXNoLkxpc3RHcm91cHNSZXF1ZXN0GhMuc2lsLnN0YXJmaXNoLkdyb3VwIgAwARJkChRMaXN0R3JvdXBFdmFsdWF0aW9ucxIpLnNpbC5zdGFyZmlzaC5MaXN0R3JvdXBFdmFsdWF0aW9uc1JlcXVlc3QaHS5zaWwuc3RhcmZpc2guR3JvdXBFdmFsdWF0aW9uIgAwARJPCg1MaXN0TGFuZ3VhZ2VzEiIuc2lsLnN0YXJmaXNoLkxpc3RMYW5ndWFnZXNSZXF1ZXN0GhYuc2lsLnN0YXJmaXNoLkxhbmd1YWdlIgAwARJqChZMaXN0TGVhcm5lckV2YWx1YXRpb25zEisuc2lsLnN0YXJmaXNoLkxpc3RMZWFybmVyRXZhbHVhdGlvbnNSZXF1ZXN0Gh8uc2lsLnN0YXJmaXNoLkxlYXJuZXJFdmFsdWF0aW9uIgAwARJPCg1MaXN0TWF0ZXJpYWxzEiIuc2lsLnN0YXJmaXNoLkxpc3RNYXRlcmlhbHNSZXF1ZXN0GhYuc2lsLnN0YXJmaXNoLk1hdGVyaWFsIgAwARJeChJMaXN0TWF0ZXJpYWxUb3BpY3MSJy5zaWwuc3RhcmZpc2guTGlzdE1hdGVyaWFsVG9waWNzUmVxdWVzdBobLnNpbC5zdGFyZmlzaC5NYXRlcmlhbFRvcGljIgAwARJbChFMaXN0TWF0ZXJpYWxUeXBlcxImLnNpbC5zdGFyZmlzaC5MaXN0TWF0ZXJpYWxUeXBlc1JlcXVlc3QaGi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxUeXBlIgAwARJJCgtMaXN0T3V0cHV0cxIgLnNpbC5zdGFyZmlzaC5MaXN0T3V0cHV0c1JlcXVlc3QaFC5zaWwuc3RhcmZpc2guT3V0cHV0IgAwARJkChRMaXN0VGVhY2hlclJlc3BvbnNlcxIpLnNpbC5zdGFyZmlzaC5MaXN0VGVhY2hlclJlc3BvbnNlc1JlcXVlc3QaHS5zaWwuc3RhcmZpc2guVGVhY2hlclJlc3BvbnNlIgAwARJhChNMaXN0VHJhbnNmb3JtYXRpb25zEiguc2lsLnN0YXJmaXNoLkxpc3RUcmFuc2Zvcm1hdGlvbnNSZXF1ZXN0Ghwuc2lsLnN0YXJmaXNoLlRyYW5zZm9ybWF0aW9uIgAwARJDCglMaXN0VXNlcnMSHi5zaWwuc3RhcmZpc2guTGlzdFVzZXJzUmVxdWVzdBoSLnNpbC5zdGFyZmlzaC5Vc2VyIgAwARJbCg5SZWZyZXNoU2Vzc2lvbhIjLnNpbC5zdGFyZmlzaC5SZWZyZXNoU2Vzc2lvblJlcXVlc3QaIi5zaWwuc3RhcmZpc2guQXV0aGVudGljYXRlUmVzcG9uc2UiABJRChFVcGRhdGVDdXJyZW50VXNlchImLnNpbC5zdGFyZmlzaC5VcGRhdGVDdXJyZW50VXNlclJlcXVlc3QaEi5zaWwuc3RhcmZpc2guVXNlciIA');
+final $typed_data.Uint8List starfishServiceDescriptor = $convert.base64Decode('CghTdGFyZmlzaBJXCgxBdXRoZW50aWNhdGUSIS5zaWwuc3RhcmZpc2guQXV0aGVudGljYXRlUmVxdWVzdBoiLnNpbC5zdGFyZmlzaC5BdXRoZW50aWNhdGVSZXNwb25zZSIAEnwKF0NyZWF0ZU1hdGVyaWFsRmVlZGJhY2tzEiwuc2lsLnN0YXJmaXNoLkNyZWF0ZU1hdGVyaWFsRmVlZGJhY2tzUmVxdWVzdBotLnNpbC5zdGFyZmlzaC5DcmVhdGVNYXRlcmlhbEZlZWRiYWNrc1Jlc3BvbnNlIgAoATABEnAKE0NyZWF0ZVVwZGF0ZUFjdGlvbnMSKC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1JlcXVlc3QaKS5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlQWN0aW9uc1Jlc3BvbnNlIgAoATABEnoKF0NyZWF0ZVVwZGF0ZUFjdGlvblVzZXJzEisuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvblVzZXJSZXF1ZXN0Giwuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUFjdGlvblVzZXJSZXNwb25zZSIAKAEwARKJAQocQ3JlYXRlVXBkYXRlR3JvdXBFdmFsdWF0aW9ucxIwLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cEV2YWx1YXRpb25SZXF1ZXN0GjEuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3VwRXZhbHVhdGlvblJlc3BvbnNlIgAoATABEm0KEkNyZWF0ZVVwZGF0ZUdyb3VwcxInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVHcm91cHNSZXF1ZXN0Giguc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUdyb3Vwc1Jlc3BvbnNlIgAoATABEnkKFkNyZWF0ZVVwZGF0ZUdyb3VwVXNlcnMSKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBVc2Vyc1JlcXVlc3QaLC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlR3JvdXBVc2Vyc1Jlc3BvbnNlIgAoATABEo8BCh5DcmVhdGVVcGRhdGVMZWFybmVyRXZhbHVhdGlvbnMSMi5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTGVhcm5lckV2YWx1YXRpb25SZXF1ZXN0GjMuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZUxlYXJuZXJFdmFsdWF0aW9uUmVzcG9uc2UiACgBMAESdgoVQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzEiouc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU1hdGVyaWFsc1JlcXVlc3QaKy5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlTWF0ZXJpYWxzUmVzcG9uc2UiACgBMAESbgoTQ3JlYXRlVXBkYXRlT3V0cHV0cxInLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVPdXRwdXRSZXF1ZXN0Giguc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZU91dHB1dFJlc3BvbnNlIgAoATABEokBChxDcmVhdGVVcGRhdGVUZWFjaGVyUmVzcG9uc2VzEjAuc2lsLnN0YXJmaXNoLkNyZWF0ZVVwZGF0ZVRlYWNoZXJSZXNwb25zZVJlcXVlc3QaMS5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlVGVhY2hlclJlc3BvbnNlUmVzcG9uc2UiACgBMAEShgEKG0NyZWF0ZVVwZGF0ZVRyYW5zZm9ybWF0aW9ucxIvLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVUcmFuc2Zvcm1hdGlvblJlcXVlc3QaMC5zaWwuc3RhcmZpc2guQ3JlYXRlVXBkYXRlVHJhbnNmb3JtYXRpb25SZXNwb25zZSIAKAEwARJoChFDcmVhdGVVcGRhdGVVc2VycxIlLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVxdWVzdBomLnNpbC5zdGFyZmlzaC5DcmVhdGVVcGRhdGVVc2VyUmVzcG9uc2UiACgBMAESXAoNRGVsZXRlQWN0aW9ucxIhLnNpbC5zdGFyZmlzaC5EZWxldGVBY3Rpb25SZXF1ZXN0GiIuc2lsLnN0YXJmaXNoLkRlbGV0ZUFjdGlvblJlc3BvbnNlIgAoATABEmUKEERlbGV0ZUdyb3VwVXNlcnMSJC5zaWwuc3RhcmZpc2guRGVsZXRlR3JvdXBVc2VyUmVxdWVzdBolLnNpbC5zdGFyZmlzaC5EZWxldGVHcm91cFVzZXJSZXNwb25zZSIAKAEwARJiCg9EZWxldGVNYXRlcmlhbHMSIy5zaWwuc3RhcmZpc2guRGVsZXRlTWF0ZXJpYWxSZXF1ZXN0GiQuc2lsLnN0YXJmaXNoLkRlbGV0ZU1hdGVyaWFsUmVzcG9uc2UiACgBMAESPgoOR2V0Q3VycmVudFVzZXISFi5nb29nbGUucHJvdG9idWYuRW1wdHkaEi5zaWwuc3RhcmZpc2guVXNlciIAEkkKC0xpc3RBY3Rpb25zEiAuc2lsLnN0YXJmaXNoLkxpc3RBY3Rpb25zUmVxdWVzdBoULnNpbC5zdGFyZmlzaC5BY3Rpb24iADABElQKEExpc3RBbGxDb3VudHJpZXMSJS5zaWwuc3RhcmZpc2guTGlzdEFsbENvdW50cmllc1JlcXVlc3QaFS5zaWwuc3RhcmZpc2guQ291bnRyeSIAMAESbwoYTGlzdEV2YWx1YXRpb25DYXRlZ29yaWVzEi0uc2lsLnN0YXJmaXNoLkxpc3RFdmFsdWF0aW9uQ2F0ZWdvcmllc1JlcXVlc3QaIC5zaWwuc3RhcmZpc2guRXZhbHVhdGlvbkNhdGVnb3J5IgAwARJGCgpMaXN0R3JvdXBzEh8uc2lsLnN0YXJmaXNoLkxpc3RHcm91cHNSZXF1ZXN0GhMuc2lsLnN0YXJmaXNoLkdyb3VwIgAwARJkChRMaXN0R3JvdXBFdmFsdWF0aW9ucxIpLnNpbC5zdGFyZmlzaC5MaXN0R3JvdXBFdmFsdWF0aW9uc1JlcXVlc3QaHS5zaWwuc3RhcmZpc2guR3JvdXBFdmFsdWF0aW9uIgAwARJPCg1MaXN0TGFuZ3VhZ2VzEiIuc2lsLnN0YXJmaXNoLkxpc3RMYW5ndWFnZXNSZXF1ZXN0GhYuc2lsLnN0YXJmaXNoLkxhbmd1YWdlIgAwARJqChZMaXN0TGVhcm5lckV2YWx1YXRpb25zEisuc2lsLnN0YXJmaXNoLkxpc3RMZWFybmVyRXZhbHVhdGlvbnNSZXF1ZXN0Gh8uc2lsLnN0YXJmaXNoLkxlYXJuZXJFdmFsdWF0aW9uIgAwARJPCg1MaXN0TWF0ZXJpYWxzEiIuc2lsLnN0YXJmaXNoLkxpc3RNYXRlcmlhbHNSZXF1ZXN0GhYuc2lsLnN0YXJmaXNoLk1hdGVyaWFsIgAwARJeChJMaXN0TWF0ZXJpYWxUb3BpY3MSJy5zaWwuc3RhcmZpc2guTGlzdE1hdGVyaWFsVG9waWNzUmVxdWVzdBobLnNpbC5zdGFyZmlzaC5NYXRlcmlhbFRvcGljIgAwARJbChFMaXN0TWF0ZXJpYWxUeXBlcxImLnNpbC5zdGFyZmlzaC5MaXN0TWF0ZXJpYWxUeXBlc1JlcXVlc3QaGi5zaWwuc3RhcmZpc2guTWF0ZXJpYWxUeXBlIgAwARJJCgtMaXN0T3V0cHV0cxIgLnNpbC5zdGFyZmlzaC5MaXN0T3V0cHV0c1JlcXVlc3QaFC5zaWwuc3RhcmZpc2guT3V0cHV0IgAwARJkChRMaXN0VGVhY2hlclJlc3BvbnNlcxIpLnNpbC5zdGFyZmlzaC5MaXN0VGVhY2hlclJlc3BvbnNlc1JlcXVlc3QaHS5zaWwuc3RhcmZpc2guVGVhY2hlclJlc3BvbnNlIgAwARJhChNMaXN0VHJhbnNmb3JtYXRpb25zEiguc2lsLnN0YXJmaXNoLkxpc3RUcmFuc2Zvcm1hdGlvbnNSZXF1ZXN0Ghwuc2lsLnN0YXJmaXNoLlRyYW5zZm9ybWF0aW9uIgAwARJDCglMaXN0VXNlcnMSHi5zaWwuc3RhcmZpc2guTGlzdFVzZXJzUmVxdWVzdBoSLnNpbC5zdGFyZmlzaC5Vc2VyIgAwARJbCg5SZWZyZXNoU2Vzc2lvbhIjLnNpbC5zdGFyZmlzaC5SZWZyZXNoU2Vzc2lvblJlcXVlc3QaIi5zaWwuc3RhcmZpc2guQXV0aGVudGljYXRlUmVzcG9uc2UiABJDCgRTeW5jEhkuc2lsLnN0YXJmaXNoLlN5bmNSZXF1ZXN0Ghouc2lsLnN0YXJmaXNoLlN5bmNSZXNwb25zZSIAKAEwARJRChFVcGRhdGVDdXJyZW50VXNlchImLnNpbC5zdGFyZmlzaC5VcGRhdGVDdXJyZW50VXNlclJlcXVlc3QaEi5zaWwuc3RhcmZpc2guVXNlciIA');

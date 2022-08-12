@@ -1,0 +1,30 @@
+// This API allows error report to be uploaded to the server
+
+syntax = "proto3";
+
+package sil.starfish;
+
+option java_multiple_files = true;
+option java_outer_classname = "StarfishProto";
+option java_package = "org.sil.starfish";
+
+service ErrorHandling {
+
+  rpc ReportError(Error) returns (ReportErrorResponse) {}
+
+}
+
+// The information about an error
+message Error {
+  // The error type (typically the class of the thrown error)
+  string type = 1;
+  // The error message
+  string message = 2;
+  // The stacktrace (if available)
+  repeated string stacktrace = 3;
+  // The app version (if available - best would be the git hash)
+  string app_version = 4;
+}
+
+// response from reporting an error is just an empty message
+message ReportErrorResponse {}

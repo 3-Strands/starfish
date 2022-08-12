@@ -31,7 +31,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
   $async.Future<$4.CreateUpdateTransformationResponse> createUpdateTransformations($pb.ServerContext ctx, $4.CreateUpdateTransformationRequest request);
   $async.Future<$4.CreateUpdateUserResponse> createUpdateUsers($pb.ServerContext ctx, $4.CreateUpdateUserRequest request);
   $async.Future<$4.DeleteActionResponse> deleteActions($pb.ServerContext ctx, $4.DeleteActionRequest request);
-  $async.Future<$4.DeleteGroupUsersResponse> deleteGroupUsers($pb.ServerContext ctx, $4.GroupUser request);
+  $async.Future<$4.DeleteGroupUserResponse> deleteGroupUsers($pb.ServerContext ctx, $4.DeleteGroupUserRequest request);
   $async.Future<$4.DeleteMaterialResponse> deleteMaterials($pb.ServerContext ctx, $4.DeleteMaterialRequest request);
   $async.Future<$4.User> getCurrentUser($pb.ServerContext ctx, $3.Empty request);
   $async.Future<$4.Action> listActions($pb.ServerContext ctx, $4.ListActionsRequest request);
@@ -49,6 +49,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
   $async.Future<$4.Transformation> listTransformations($pb.ServerContext ctx, $4.ListTransformationsRequest request);
   $async.Future<$4.User> listUsers($pb.ServerContext ctx, $4.ListUsersRequest request);
   $async.Future<$4.AuthenticateResponse> refreshSession($pb.ServerContext ctx, $4.RefreshSessionRequest request);
+  $async.Future<$4.SyncResponse> sync($pb.ServerContext ctx, $4.SyncRequest request);
   $async.Future<$4.User> updateCurrentUser($pb.ServerContext ctx, $4.UpdateCurrentUserRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
@@ -67,7 +68,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'CreateUpdateTransformations': return $4.CreateUpdateTransformationRequest();
       case 'CreateUpdateUsers': return $4.CreateUpdateUserRequest();
       case 'DeleteActions': return $4.DeleteActionRequest();
-      case 'DeleteGroupUsers': return $4.GroupUser();
+      case 'DeleteGroupUsers': return $4.DeleteGroupUserRequest();
       case 'DeleteMaterials': return $4.DeleteMaterialRequest();
       case 'GetCurrentUser': return $3.Empty();
       case 'ListActions': return $4.ListActionsRequest();
@@ -85,6 +86,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'ListTransformations': return $4.ListTransformationsRequest();
       case 'ListUsers': return $4.ListUsersRequest();
       case 'RefreshSession': return $4.RefreshSessionRequest();
+      case 'Sync': return $4.SyncRequest();
       case 'UpdateCurrentUser': return $4.UpdateCurrentUserRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
@@ -106,7 +108,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'CreateUpdateTransformations': return this.createUpdateTransformations(ctx, request as $4.CreateUpdateTransformationRequest);
       case 'CreateUpdateUsers': return this.createUpdateUsers(ctx, request as $4.CreateUpdateUserRequest);
       case 'DeleteActions': return this.deleteActions(ctx, request as $4.DeleteActionRequest);
-      case 'DeleteGroupUsers': return this.deleteGroupUsers(ctx, request as $4.GroupUser);
+      case 'DeleteGroupUsers': return this.deleteGroupUsers(ctx, request as $4.DeleteGroupUserRequest);
       case 'DeleteMaterials': return this.deleteMaterials(ctx, request as $4.DeleteMaterialRequest);
       case 'GetCurrentUser': return this.getCurrentUser(ctx, request as $3.Empty);
       case 'ListActions': return this.listActions(ctx, request as $4.ListActionsRequest);
@@ -124,6 +126,7 @@ abstract class StarfishServiceBase extends $pb.GeneratedService {
       case 'ListTransformations': return this.listTransformations(ctx, request as $4.ListTransformationsRequest);
       case 'ListUsers': return this.listUsers(ctx, request as $4.ListUsersRequest);
       case 'RefreshSession': return this.refreshSession(ctx, request as $4.RefreshSessionRequest);
+      case 'Sync': return this.sync(ctx, request as $4.SyncRequest);
       case 'UpdateCurrentUser': return this.updateCurrentUser(ctx, request as $4.UpdateCurrentUserRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }

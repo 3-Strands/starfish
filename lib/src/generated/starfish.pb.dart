@@ -191,6 +191,7 @@ class Action extends $pb.GeneratedMessage {
 
 class ActionUser extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ActionUser', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'actionId')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
     ..e<ActionUser_Status>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: ActionUser_Status.UNSPECIFIED_STATUS, valueOf: ActionUser_Status.valueOf, enumValues: ActionUser_Status.values)
@@ -202,6 +203,7 @@ class ActionUser extends $pb.GeneratedMessage {
 
   ActionUser._() : super();
   factory ActionUser({
+    $core.String? id,
     $core.String? actionId,
     $core.String? userId,
     ActionUser_Status? status,
@@ -210,6 +212,9 @@ class ActionUser extends $pb.GeneratedMessage {
     ActionUser_Evaluation? evaluation,
   }) {
     final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
     if (actionId != null) {
       _result.actionId = actionId;
     }
@@ -251,57 +256,66 @@ class ActionUser extends $pb.GeneratedMessage {
   static ActionUser getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ActionUser>(create);
   static ActionUser? _defaultInstance;
 
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
   @$pb.TagNumber(2)
-  $core.String get actionId => $_getSZ(0);
+  $core.String get actionId => $_getSZ(1);
   @$pb.TagNumber(2)
-  set actionId($core.String v) { $_setString(0, v); }
+  set actionId($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasActionId() => $_has(0);
+  $core.bool hasActionId() => $_has(1);
   @$pb.TagNumber(2)
   void clearActionId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get userId => $_getSZ(1);
+  $core.String get userId => $_getSZ(2);
   @$pb.TagNumber(3)
-  set userId($core.String v) { $_setString(1, v); }
+  set userId($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasUserId() => $_has(1);
+  $core.bool hasUserId() => $_has(2);
   @$pb.TagNumber(3)
   void clearUserId() => clearField(3);
 
   @$pb.TagNumber(4)
-  ActionUser_Status get status => $_getN(2);
+  ActionUser_Status get status => $_getN(3);
   @$pb.TagNumber(4)
   set status(ActionUser_Status v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasStatus() => $_has(2);
+  $core.bool hasStatus() => $_has(3);
   @$pb.TagNumber(4)
   void clearStatus() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get teacherResponse => $_getSZ(3);
+  $core.String get teacherResponse => $_getSZ(4);
   @$pb.TagNumber(5)
-  set teacherResponse($core.String v) { $_setString(3, v); }
+  set teacherResponse($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasTeacherResponse() => $_has(3);
+  $core.bool hasTeacherResponse() => $_has(4);
   @$pb.TagNumber(5)
   void clearTeacherResponse() => clearField(5);
 
   @$pb.TagNumber(7)
-  $core.String get userResponse => $_getSZ(4);
+  $core.String get userResponse => $_getSZ(5);
   @$pb.TagNumber(7)
-  set userResponse($core.String v) { $_setString(4, v); }
+  set userResponse($core.String v) { $_setString(5, v); }
   @$pb.TagNumber(7)
-  $core.bool hasUserResponse() => $_has(4);
+  $core.bool hasUserResponse() => $_has(5);
   @$pb.TagNumber(7)
   void clearUserResponse() => clearField(7);
 
   @$pb.TagNumber(8)
-  ActionUser_Evaluation get evaluation => $_getN(5);
+  ActionUser_Evaluation get evaluation => $_getN(6);
   @$pb.TagNumber(8)
   set evaluation(ActionUser_Evaluation v) { setField(8, v); }
   @$pb.TagNumber(8)
-  $core.bool hasEvaluation() => $_has(5);
+  $core.bool hasEvaluation() => $_has(6);
   @$pb.TagNumber(8)
   void clearEvaluation() => clearField(8);
 }
@@ -2279,28 +2293,147 @@ class DeleteActionResponse extends $pb.GeneratedMessage {
   void clearMessage() => clearField(4);
 }
 
-class DeleteGroupUsersResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteGroupUsersResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
-    ..e<DeleteGroupUsersResponse_Status>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: DeleteGroupUsersResponse_Status.SUCCESS, valueOf: DeleteGroupUsersResponse_Status.valueOf, enumValues: DeleteGroupUsersResponse_Status.values)
+class DeletedResource extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeletedResource', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..e<ResourceType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resourceType', $pb.PbFieldType.OE, defaultOrMaker: ResourceType.TYPE_UNSPECIFIED, valueOf: ResourceType.valueOf, enumValues: ResourceType.values)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..aOM<$0.Date>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deletionDate', subBuilder: $0.Date.create)
+    ..hasRequiredFields = false
+  ;
+
+  DeletedResource._() : super();
+  factory DeletedResource({
+    ResourceType? resourceType,
+    $core.String? id,
+    $0.Date? deletionDate,
+  }) {
+    final _result = create();
+    if (resourceType != null) {
+      _result.resourceType = resourceType;
+    }
+    if (id != null) {
+      _result.id = id;
+    }
+    if (deletionDate != null) {
+      _result.deletionDate = deletionDate;
+    }
+    return _result;
+  }
+  factory DeletedResource.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeletedResource.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeletedResource clone() => DeletedResource()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeletedResource copyWith(void Function(DeletedResource) updates) => super.copyWith((message) => updates(message as DeletedResource)) as DeletedResource; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DeletedResource create() => DeletedResource._();
+  DeletedResource createEmptyInstance() => create();
+  static $pb.PbList<DeletedResource> createRepeated() => $pb.PbList<DeletedResource>();
+  @$core.pragma('dart2js:noInline')
+  static DeletedResource getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeletedResource>(create);
+  static DeletedResource? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  ResourceType get resourceType => $_getN(0);
+  @$pb.TagNumber(1)
+  set resourceType(ResourceType v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasResourceType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearResourceType() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get id => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set id($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $0.Date get deletionDate => $_getN(2);
+  @$pb.TagNumber(3)
+  set deletionDate($0.Date v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasDeletionDate() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearDeletionDate() => clearField(3);
+  @$pb.TagNumber(3)
+  $0.Date ensureDeletionDate() => $_ensure(2);
+}
+
+class DeleteGroupUserRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteGroupUserRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupUserId')
+    ..hasRequiredFields = false
+  ;
+
+  DeleteGroupUserRequest._() : super();
+  factory DeleteGroupUserRequest({
+    $core.String? groupUserId,
+  }) {
+    final _result = create();
+    if (groupUserId != null) {
+      _result.groupUserId = groupUserId;
+    }
+    return _result;
+  }
+  factory DeleteGroupUserRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteGroupUserRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteGroupUserRequest clone() => DeleteGroupUserRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteGroupUserRequest copyWith(void Function(DeleteGroupUserRequest) updates) => super.copyWith((message) => updates(message as DeleteGroupUserRequest)) as DeleteGroupUserRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DeleteGroupUserRequest create() => DeleteGroupUserRequest._();
+  DeleteGroupUserRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteGroupUserRequest> createRepeated() => $pb.PbList<DeleteGroupUserRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteGroupUserRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteGroupUserRequest>(create);
+  static DeleteGroupUserRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get groupUserId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set groupUserId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasGroupUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGroupUserId() => clearField(1);
+}
+
+class DeleteGroupUserResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeleteGroupUserResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupUserId')
+    ..e<DeleteGroupUserResponse_Status>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: DeleteGroupUserResponse_Status.SUCCESS, valueOf: DeleteGroupUserResponse_Status.valueOf, enumValues: DeleteGroupUserResponse_Status.values)
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
-  DeleteGroupUsersResponse._() : super();
-  factory DeleteGroupUsersResponse({
-    $core.String? userId,
-    $core.String? groupId,
-    DeleteGroupUsersResponse_Status? status,
+  DeleteGroupUserResponse._() : super();
+  factory DeleteGroupUserResponse({
+    $core.String? groupUserId,
+    DeleteGroupUserResponse_Status? status,
     $core.String? message,
   }) {
     final _result = create();
-    if (userId != null) {
-      _result.userId = userId;
-    }
-    if (groupId != null) {
-      _result.groupId = groupId;
+    if (groupUserId != null) {
+      _result.groupUserId = groupUserId;
     }
     if (status != null) {
       _result.status = status;
@@ -2310,60 +2443,51 @@ class DeleteGroupUsersResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory DeleteGroupUsersResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory DeleteGroupUsersResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory DeleteGroupUserResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteGroupUserResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  DeleteGroupUsersResponse clone() => DeleteGroupUsersResponse()..mergeFromMessage(this);
+  DeleteGroupUserResponse clone() => DeleteGroupUserResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  DeleteGroupUsersResponse copyWith(void Function(DeleteGroupUsersResponse) updates) => super.copyWith((message) => updates(message as DeleteGroupUsersResponse)) as DeleteGroupUsersResponse; // ignore: deprecated_member_use
+  DeleteGroupUserResponse copyWith(void Function(DeleteGroupUserResponse) updates) => super.copyWith((message) => updates(message as DeleteGroupUserResponse)) as DeleteGroupUserResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static DeleteGroupUsersResponse create() => DeleteGroupUsersResponse._();
-  DeleteGroupUsersResponse createEmptyInstance() => create();
-  static $pb.PbList<DeleteGroupUsersResponse> createRepeated() => $pb.PbList<DeleteGroupUsersResponse>();
+  static DeleteGroupUserResponse create() => DeleteGroupUserResponse._();
+  DeleteGroupUserResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteGroupUserResponse> createRepeated() => $pb.PbList<DeleteGroupUserResponse>();
   @$core.pragma('dart2js:noInline')
-  static DeleteGroupUsersResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteGroupUsersResponse>(create);
-  static DeleteGroupUsersResponse? _defaultInstance;
+  static DeleteGroupUserResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteGroupUserResponse>(create);
+  static DeleteGroupUserResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get userId => $_getSZ(0);
+  $core.String get groupUserId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set userId($core.String v) { $_setString(0, v); }
+  set groupUserId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasUserId() => $_has(0);
+  $core.bool hasGroupUserId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearUserId() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get groupId => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set groupId($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasGroupId() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearGroupId() => clearField(2);
+  void clearGroupUserId() => clearField(1);
 
   @$pb.TagNumber(3)
-  DeleteGroupUsersResponse_Status get status => $_getN(2);
+  DeleteGroupUserResponse_Status get status => $_getN(1);
   @$pb.TagNumber(3)
-  set status(DeleteGroupUsersResponse_Status v) { setField(3, v); }
+  set status(DeleteGroupUserResponse_Status v) { setField(3, v); }
   @$pb.TagNumber(3)
-  $core.bool hasStatus() => $_has(2);
+  $core.bool hasStatus() => $_has(1);
   @$pb.TagNumber(3)
   void clearStatus() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get message => $_getSZ(3);
+  $core.String get message => $_getSZ(2);
   @$pb.TagNumber(4)
-  set message($core.String v) { $_setString(3, v); }
+  set message($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(4)
-  $core.bool hasMessage() => $_has(3);
+  $core.bool hasMessage() => $_has(2);
   @$pb.TagNumber(4)
   void clearMessage() => clearField(4);
 }
@@ -2640,6 +2764,7 @@ class EvaluationValueName extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'EvaluationValueName', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value', $pb.PbFieldType.O3)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..hasRequiredFields = false
   ;
 
@@ -2647,6 +2772,7 @@ class EvaluationValueName extends $pb.GeneratedMessage {
   factory EvaluationValueName({
     $core.int? value,
     $core.String? name,
+    $core.String? id,
   }) {
     final _result = create();
     if (value != null) {
@@ -2654,6 +2780,9 @@ class EvaluationValueName extends $pb.GeneratedMessage {
     }
     if (name != null) {
       _result.name = name;
+    }
+    if (id != null) {
+      _result.id = id;
     }
     return _result;
   }
@@ -2695,6 +2824,15 @@ class EvaluationValueName extends $pb.GeneratedMessage {
   $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
   void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get id => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set id($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearId() => clearField(3);
 }
 
 class Group extends $pb.GeneratedMessage {
@@ -2955,6 +3093,7 @@ class GroupEvaluation extends $pb.GeneratedMessage {
 
 class GroupUser extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GroupUser', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'userId')
     ..e<GroupUser_Role>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'role', $pb.PbFieldType.OE, defaultOrMaker: GroupUser_Role.UNSPECIFIED_ROLE, valueOf: GroupUser_Role.valueOf, enumValues: GroupUser_Role.values)
@@ -2964,12 +3103,16 @@ class GroupUser extends $pb.GeneratedMessage {
 
   GroupUser._() : super();
   factory GroupUser({
+    $core.String? id,
     $core.String? groupId,
     $core.String? userId,
     GroupUser_Role? role,
     $core.String? profile,
   }) {
     final _result = create();
+    if (id != null) {
+      _result.id = id;
+    }
     if (groupId != null) {
       _result.groupId = groupId;
     }
@@ -3005,39 +3148,48 @@ class GroupUser extends $pb.GeneratedMessage {
   static GroupUser getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GroupUser>(create);
   static GroupUser? _defaultInstance;
 
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
   @$pb.TagNumber(2)
-  $core.String get groupId => $_getSZ(0);
+  $core.String get groupId => $_getSZ(1);
   @$pb.TagNumber(2)
-  set groupId($core.String v) { $_setString(0, v); }
+  set groupId($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasGroupId() => $_has(0);
+  $core.bool hasGroupId() => $_has(1);
   @$pb.TagNumber(2)
   void clearGroupId() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get userId => $_getSZ(1);
+  $core.String get userId => $_getSZ(2);
   @$pb.TagNumber(3)
-  set userId($core.String v) { $_setString(1, v); }
+  set userId($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasUserId() => $_has(1);
+  $core.bool hasUserId() => $_has(2);
   @$pb.TagNumber(3)
   void clearUserId() => clearField(3);
 
   @$pb.TagNumber(4)
-  GroupUser_Role get role => $_getN(2);
+  GroupUser_Role get role => $_getN(3);
   @$pb.TagNumber(4)
   set role(GroupUser_Role v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasRole() => $_has(2);
+  $core.bool hasRole() => $_has(3);
   @$pb.TagNumber(4)
   void clearRole() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get profile => $_getSZ(3);
+  $core.String get profile => $_getSZ(4);
   @$pb.TagNumber(5)
-  set profile($core.String v) { $_setString(3, v); }
+  set profile($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasProfile() => $_has(3);
+  $core.bool hasProfile() => $_has(4);
   @$pb.TagNumber(5)
   void clearProfile() => clearField(5);
 }
@@ -4411,6 +4563,7 @@ class MaterialType extends $pb.GeneratedMessage {
 class Output extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Output', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupId')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..aOM<$0.Date>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'month', subBuilder: $0.Date.create)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
     ..aOM<OutputMarker>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outputMarker', subBuilder: OutputMarker.create)
@@ -4420,6 +4573,7 @@ class Output extends $pb.GeneratedMessage {
   Output._() : super();
   factory Output({
     $core.String? groupId,
+    $core.String? id,
     $0.Date? month,
     $fixnum.Int64? value,
     OutputMarker? outputMarker,
@@ -4427,6 +4581,9 @@ class Output extends $pb.GeneratedMessage {
     final _result = create();
     if (groupId != null) {
       _result.groupId = groupId;
+    }
+    if (id != null) {
+      _result.id = id;
     }
     if (month != null) {
       _result.month = month;
@@ -4469,36 +4626,45 @@ class Output extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearGroupId() => clearField(1);
 
+  @$pb.TagNumber(2)
+  $core.String get id => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set id($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearId() => clearField(2);
+
   @$pb.TagNumber(5)
-  $0.Date get month => $_getN(1);
+  $0.Date get month => $_getN(2);
   @$pb.TagNumber(5)
   set month($0.Date v) { setField(5, v); }
   @$pb.TagNumber(5)
-  $core.bool hasMonth() => $_has(1);
+  $core.bool hasMonth() => $_has(2);
   @$pb.TagNumber(5)
   void clearMonth() => clearField(5);
   @$pb.TagNumber(5)
-  $0.Date ensureMonth() => $_ensure(1);
+  $0.Date ensureMonth() => $_ensure(2);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get value => $_getI64(2);
+  $fixnum.Int64 get value => $_getI64(3);
   @$pb.TagNumber(6)
-  set value($fixnum.Int64 v) { $_setInt64(2, v); }
+  set value($fixnum.Int64 v) { $_setInt64(3, v); }
   @$pb.TagNumber(6)
-  $core.bool hasValue() => $_has(2);
+  $core.bool hasValue() => $_has(3);
   @$pb.TagNumber(6)
   void clearValue() => clearField(6);
 
   @$pb.TagNumber(7)
-  OutputMarker get outputMarker => $_getN(3);
+  OutputMarker get outputMarker => $_getN(4);
   @$pb.TagNumber(7)
   set outputMarker(OutputMarker v) { setField(7, v); }
   @$pb.TagNumber(7)
-  $core.bool hasOutputMarker() => $_has(3);
+  $core.bool hasOutputMarker() => $_has(4);
   @$pb.TagNumber(7)
   void clearOutputMarker() => clearField(7);
   @$pb.TagNumber(7)
-  OutputMarker ensureOutputMarker() => $_ensure(3);
+  OutputMarker ensureOutputMarker() => $_ensure(4);
 }
 
 class OutputMarker extends $pb.GeneratedMessage {
@@ -4635,6 +4801,816 @@ class RefreshSessionRequest extends $pb.GeneratedMessage {
   $core.bool hasRefreshToken() => $_has(1);
   @$pb.TagNumber(2)
   void clearRefreshToken() => clearField(2);
+}
+
+class SyncRequestMetaData extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncRequestMetaData', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getNewRecords')
+    ..aOM<$1.Timestamp>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updatedSince', subBuilder: $1.Timestamp.create)
+    ..pc<ResourceType>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resourceTypeWhitelist', $pb.PbFieldType.PE, valueOf: ResourceType.valueOf, enumValues: ResourceType.values)
+    ..pc<ResourceType>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resourceTypeBlacklist', $pb.PbFieldType.PE, valueOf: ResourceType.valueOf, enumValues: ResourceType.values)
+    ..hasRequiredFields = false
+  ;
+
+  SyncRequestMetaData._() : super();
+  factory SyncRequestMetaData({
+    $core.bool? getNewRecords,
+    $1.Timestamp? updatedSince,
+    $core.Iterable<ResourceType>? resourceTypeWhitelist,
+    $core.Iterable<ResourceType>? resourceTypeBlacklist,
+  }) {
+    final _result = create();
+    if (getNewRecords != null) {
+      _result.getNewRecords = getNewRecords;
+    }
+    if (updatedSince != null) {
+      _result.updatedSince = updatedSince;
+    }
+    if (resourceTypeWhitelist != null) {
+      _result.resourceTypeWhitelist.addAll(resourceTypeWhitelist);
+    }
+    if (resourceTypeBlacklist != null) {
+      _result.resourceTypeBlacklist.addAll(resourceTypeBlacklist);
+    }
+    return _result;
+  }
+  factory SyncRequestMetaData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SyncRequestMetaData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SyncRequestMetaData clone() => SyncRequestMetaData()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SyncRequestMetaData copyWith(void Function(SyncRequestMetaData) updates) => super.copyWith((message) => updates(message as SyncRequestMetaData)) as SyncRequestMetaData; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SyncRequestMetaData create() => SyncRequestMetaData._();
+  SyncRequestMetaData createEmptyInstance() => create();
+  static $pb.PbList<SyncRequestMetaData> createRepeated() => $pb.PbList<SyncRequestMetaData>();
+  @$core.pragma('dart2js:noInline')
+  static SyncRequestMetaData getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncRequestMetaData>(create);
+  static SyncRequestMetaData? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get getNewRecords => $_getBF(0);
+  @$pb.TagNumber(1)
+  set getNewRecords($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasGetNewRecords() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearGetNewRecords() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $1.Timestamp get updatedSince => $_getN(1);
+  @$pb.TagNumber(2)
+  set updatedSince($1.Timestamp v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUpdatedSince() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUpdatedSince() => clearField(2);
+  @$pb.TagNumber(2)
+  $1.Timestamp ensureUpdatedSince() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.List<ResourceType> get resourceTypeWhitelist => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $core.List<ResourceType> get resourceTypeBlacklist => $_getList(3);
+}
+
+class SyncResponseMetaData extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncResponseMetaData', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<$1.Timestamp>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'requestTime', subBuilder: $1.Timestamp.create)
+    ..hasRequiredFields = false
+  ;
+
+  SyncResponseMetaData._() : super();
+  factory SyncResponseMetaData({
+    $1.Timestamp? requestTime,
+  }) {
+    final _result = create();
+    if (requestTime != null) {
+      _result.requestTime = requestTime;
+    }
+    return _result;
+  }
+  factory SyncResponseMetaData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SyncResponseMetaData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SyncResponseMetaData clone() => SyncResponseMetaData()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SyncResponseMetaData copyWith(void Function(SyncResponseMetaData) updates) => super.copyWith((message) => updates(message as SyncResponseMetaData)) as SyncResponseMetaData; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SyncResponseMetaData create() => SyncResponseMetaData._();
+  SyncResponseMetaData createEmptyInstance() => create();
+  static $pb.PbList<SyncResponseMetaData> createRepeated() => $pb.PbList<SyncResponseMetaData>();
+  @$core.pragma('dart2js:noInline')
+  static SyncResponseMetaData getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncResponseMetaData>(create);
+  static SyncResponseMetaData? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $1.Timestamp get requestTime => $_getN(0);
+  @$pb.TagNumber(1)
+  set requestTime($1.Timestamp v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRequestTime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRequestTime() => clearField(1);
+  @$pb.TagNumber(1)
+  $1.Timestamp ensureRequestTime() => $_ensure(0);
+}
+
+enum SyncRequest_Update {
+  metaData, 
+  createMaterialFeedback, 
+  createUpdateAction, 
+  createUpdateActionUser, 
+  createUpdateGroupEvaluation, 
+  createUpdateGroup, 
+  createUpdateGroupUser, 
+  createUpdateLearnerEvaluation, 
+  createUpdateMaterial, 
+  createUpdateOutput, 
+  createUpdateTeacherResponse, 
+  createUpdateTransformation, 
+  createUpdateUser, 
+  deleteAction, 
+  deleteGroupUser, 
+  deleteMaterial, 
+  updateCurrentUser, 
+  notSet
+}
+
+class SyncRequest extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, SyncRequest_Update> _SyncRequest_UpdateByTag = {
+    1 : SyncRequest_Update.metaData,
+    2 : SyncRequest_Update.createMaterialFeedback,
+    3 : SyncRequest_Update.createUpdateAction,
+    4 : SyncRequest_Update.createUpdateActionUser,
+    5 : SyncRequest_Update.createUpdateGroupEvaluation,
+    6 : SyncRequest_Update.createUpdateGroup,
+    7 : SyncRequest_Update.createUpdateGroupUser,
+    8 : SyncRequest_Update.createUpdateLearnerEvaluation,
+    9 : SyncRequest_Update.createUpdateMaterial,
+    10 : SyncRequest_Update.createUpdateOutput,
+    11 : SyncRequest_Update.createUpdateTeacherResponse,
+    12 : SyncRequest_Update.createUpdateTransformation,
+    13 : SyncRequest_Update.createUpdateUser,
+    14 : SyncRequest_Update.deleteAction,
+    15 : SyncRequest_Update.deleteGroupUser,
+    16 : SyncRequest_Update.deleteMaterial,
+    17 : SyncRequest_Update.updateCurrentUser,
+    0 : SyncRequest_Update.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..oo(0, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
+    ..aOM<SyncRequestMetaData>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metaData', subBuilder: SyncRequestMetaData.create)
+    ..aOM<CreateMaterialFeedbacksRequest>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createMaterialFeedback', subBuilder: CreateMaterialFeedbacksRequest.create)
+    ..aOM<CreateUpdateActionsRequest>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateAction', subBuilder: CreateUpdateActionsRequest.create)
+    ..aOM<CreateUpdateActionUserRequest>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateActionUser', subBuilder: CreateUpdateActionUserRequest.create)
+    ..aOM<CreateUpdateGroupEvaluationRequest>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateGroupEvaluation', subBuilder: CreateUpdateGroupEvaluationRequest.create)
+    ..aOM<CreateUpdateGroupsRequest>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateGroup', subBuilder: CreateUpdateGroupsRequest.create)
+    ..aOM<CreateUpdateGroupUsersRequest>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateGroupUser', subBuilder: CreateUpdateGroupUsersRequest.create)
+    ..aOM<CreateUpdateLearnerEvaluationRequest>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateLearnerEvaluation', subBuilder: CreateUpdateLearnerEvaluationRequest.create)
+    ..aOM<CreateUpdateMaterialsRequest>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateMaterial', subBuilder: CreateUpdateMaterialsRequest.create)
+    ..aOM<CreateUpdateOutputRequest>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateOutput', subBuilder: CreateUpdateOutputRequest.create)
+    ..aOM<CreateUpdateTeacherResponseRequest>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateTeacherResponse', subBuilder: CreateUpdateTeacherResponseRequest.create)
+    ..aOM<CreateUpdateTransformationRequest>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateTransformation', subBuilder: CreateUpdateTransformationRequest.create)
+    ..aOM<CreateUpdateUserRequest>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateUser', subBuilder: CreateUpdateUserRequest.create)
+    ..aOM<DeleteActionRequest>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteAction', subBuilder: DeleteActionRequest.create)
+    ..aOM<GroupUser>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteGroupUser', subBuilder: GroupUser.create)
+    ..aOM<DeleteMaterialRequest>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteMaterial', subBuilder: DeleteMaterialRequest.create)
+    ..aOM<UpdateCurrentUserRequest>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateCurrentUser', subBuilder: UpdateCurrentUserRequest.create)
+    ..hasRequiredFields = false
+  ;
+
+  SyncRequest._() : super();
+  factory SyncRequest({
+    SyncRequestMetaData? metaData,
+    CreateMaterialFeedbacksRequest? createMaterialFeedback,
+    CreateUpdateActionsRequest? createUpdateAction,
+    CreateUpdateActionUserRequest? createUpdateActionUser,
+    CreateUpdateGroupEvaluationRequest? createUpdateGroupEvaluation,
+    CreateUpdateGroupsRequest? createUpdateGroup,
+    CreateUpdateGroupUsersRequest? createUpdateGroupUser,
+    CreateUpdateLearnerEvaluationRequest? createUpdateLearnerEvaluation,
+    CreateUpdateMaterialsRequest? createUpdateMaterial,
+    CreateUpdateOutputRequest? createUpdateOutput,
+    CreateUpdateTeacherResponseRequest? createUpdateTeacherResponse,
+    CreateUpdateTransformationRequest? createUpdateTransformation,
+    CreateUpdateUserRequest? createUpdateUser,
+    DeleteActionRequest? deleteAction,
+    GroupUser? deleteGroupUser,
+    DeleteMaterialRequest? deleteMaterial,
+    UpdateCurrentUserRequest? updateCurrentUser,
+  }) {
+    final _result = create();
+    if (metaData != null) {
+      _result.metaData = metaData;
+    }
+    if (createMaterialFeedback != null) {
+      _result.createMaterialFeedback = createMaterialFeedback;
+    }
+    if (createUpdateAction != null) {
+      _result.createUpdateAction = createUpdateAction;
+    }
+    if (createUpdateActionUser != null) {
+      _result.createUpdateActionUser = createUpdateActionUser;
+    }
+    if (createUpdateGroupEvaluation != null) {
+      _result.createUpdateGroupEvaluation = createUpdateGroupEvaluation;
+    }
+    if (createUpdateGroup != null) {
+      _result.createUpdateGroup = createUpdateGroup;
+    }
+    if (createUpdateGroupUser != null) {
+      _result.createUpdateGroupUser = createUpdateGroupUser;
+    }
+    if (createUpdateLearnerEvaluation != null) {
+      _result.createUpdateLearnerEvaluation = createUpdateLearnerEvaluation;
+    }
+    if (createUpdateMaterial != null) {
+      _result.createUpdateMaterial = createUpdateMaterial;
+    }
+    if (createUpdateOutput != null) {
+      _result.createUpdateOutput = createUpdateOutput;
+    }
+    if (createUpdateTeacherResponse != null) {
+      _result.createUpdateTeacherResponse = createUpdateTeacherResponse;
+    }
+    if (createUpdateTransformation != null) {
+      _result.createUpdateTransformation = createUpdateTransformation;
+    }
+    if (createUpdateUser != null) {
+      _result.createUpdateUser = createUpdateUser;
+    }
+    if (deleteAction != null) {
+      _result.deleteAction = deleteAction;
+    }
+    if (deleteGroupUser != null) {
+      _result.deleteGroupUser = deleteGroupUser;
+    }
+    if (deleteMaterial != null) {
+      _result.deleteMaterial = deleteMaterial;
+    }
+    if (updateCurrentUser != null) {
+      _result.updateCurrentUser = updateCurrentUser;
+    }
+    return _result;
+  }
+  factory SyncRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SyncRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SyncRequest clone() => SyncRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SyncRequest copyWith(void Function(SyncRequest) updates) => super.copyWith((message) => updates(message as SyncRequest)) as SyncRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SyncRequest create() => SyncRequest._();
+  SyncRequest createEmptyInstance() => create();
+  static $pb.PbList<SyncRequest> createRepeated() => $pb.PbList<SyncRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SyncRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncRequest>(create);
+  static SyncRequest? _defaultInstance;
+
+  SyncRequest_Update whichUpdate() => _SyncRequest_UpdateByTag[$_whichOneof(0)]!;
+  void clearUpdate() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  SyncRequestMetaData get metaData => $_getN(0);
+  @$pb.TagNumber(1)
+  set metaData(SyncRequestMetaData v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMetaData() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMetaData() => clearField(1);
+  @$pb.TagNumber(1)
+  SyncRequestMetaData ensureMetaData() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  CreateMaterialFeedbacksRequest get createMaterialFeedback => $_getN(1);
+  @$pb.TagNumber(2)
+  set createMaterialFeedback(CreateMaterialFeedbacksRequest v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCreateMaterialFeedback() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCreateMaterialFeedback() => clearField(2);
+  @$pb.TagNumber(2)
+  CreateMaterialFeedbacksRequest ensureCreateMaterialFeedback() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  CreateUpdateActionsRequest get createUpdateAction => $_getN(2);
+  @$pb.TagNumber(3)
+  set createUpdateAction(CreateUpdateActionsRequest v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasCreateUpdateAction() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCreateUpdateAction() => clearField(3);
+  @$pb.TagNumber(3)
+  CreateUpdateActionsRequest ensureCreateUpdateAction() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  CreateUpdateActionUserRequest get createUpdateActionUser => $_getN(3);
+  @$pb.TagNumber(4)
+  set createUpdateActionUser(CreateUpdateActionUserRequest v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasCreateUpdateActionUser() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCreateUpdateActionUser() => clearField(4);
+  @$pb.TagNumber(4)
+  CreateUpdateActionUserRequest ensureCreateUpdateActionUser() => $_ensure(3);
+
+  @$pb.TagNumber(5)
+  CreateUpdateGroupEvaluationRequest get createUpdateGroupEvaluation => $_getN(4);
+  @$pb.TagNumber(5)
+  set createUpdateGroupEvaluation(CreateUpdateGroupEvaluationRequest v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasCreateUpdateGroupEvaluation() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearCreateUpdateGroupEvaluation() => clearField(5);
+  @$pb.TagNumber(5)
+  CreateUpdateGroupEvaluationRequest ensureCreateUpdateGroupEvaluation() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  CreateUpdateGroupsRequest get createUpdateGroup => $_getN(5);
+  @$pb.TagNumber(6)
+  set createUpdateGroup(CreateUpdateGroupsRequest v) { setField(6, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasCreateUpdateGroup() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCreateUpdateGroup() => clearField(6);
+  @$pb.TagNumber(6)
+  CreateUpdateGroupsRequest ensureCreateUpdateGroup() => $_ensure(5);
+
+  @$pb.TagNumber(7)
+  CreateUpdateGroupUsersRequest get createUpdateGroupUser => $_getN(6);
+  @$pb.TagNumber(7)
+  set createUpdateGroupUser(CreateUpdateGroupUsersRequest v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasCreateUpdateGroupUser() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearCreateUpdateGroupUser() => clearField(7);
+  @$pb.TagNumber(7)
+  CreateUpdateGroupUsersRequest ensureCreateUpdateGroupUser() => $_ensure(6);
+
+  @$pb.TagNumber(8)
+  CreateUpdateLearnerEvaluationRequest get createUpdateLearnerEvaluation => $_getN(7);
+  @$pb.TagNumber(8)
+  set createUpdateLearnerEvaluation(CreateUpdateLearnerEvaluationRequest v) { setField(8, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasCreateUpdateLearnerEvaluation() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearCreateUpdateLearnerEvaluation() => clearField(8);
+  @$pb.TagNumber(8)
+  CreateUpdateLearnerEvaluationRequest ensureCreateUpdateLearnerEvaluation() => $_ensure(7);
+
+  @$pb.TagNumber(9)
+  CreateUpdateMaterialsRequest get createUpdateMaterial => $_getN(8);
+  @$pb.TagNumber(9)
+  set createUpdateMaterial(CreateUpdateMaterialsRequest v) { setField(9, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasCreateUpdateMaterial() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearCreateUpdateMaterial() => clearField(9);
+  @$pb.TagNumber(9)
+  CreateUpdateMaterialsRequest ensureCreateUpdateMaterial() => $_ensure(8);
+
+  @$pb.TagNumber(10)
+  CreateUpdateOutputRequest get createUpdateOutput => $_getN(9);
+  @$pb.TagNumber(10)
+  set createUpdateOutput(CreateUpdateOutputRequest v) { setField(10, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasCreateUpdateOutput() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearCreateUpdateOutput() => clearField(10);
+  @$pb.TagNumber(10)
+  CreateUpdateOutputRequest ensureCreateUpdateOutput() => $_ensure(9);
+
+  @$pb.TagNumber(11)
+  CreateUpdateTeacherResponseRequest get createUpdateTeacherResponse => $_getN(10);
+  @$pb.TagNumber(11)
+  set createUpdateTeacherResponse(CreateUpdateTeacherResponseRequest v) { setField(11, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasCreateUpdateTeacherResponse() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearCreateUpdateTeacherResponse() => clearField(11);
+  @$pb.TagNumber(11)
+  CreateUpdateTeacherResponseRequest ensureCreateUpdateTeacherResponse() => $_ensure(10);
+
+  @$pb.TagNumber(12)
+  CreateUpdateTransformationRequest get createUpdateTransformation => $_getN(11);
+  @$pb.TagNumber(12)
+  set createUpdateTransformation(CreateUpdateTransformationRequest v) { setField(12, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasCreateUpdateTransformation() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearCreateUpdateTransformation() => clearField(12);
+  @$pb.TagNumber(12)
+  CreateUpdateTransformationRequest ensureCreateUpdateTransformation() => $_ensure(11);
+
+  @$pb.TagNumber(13)
+  CreateUpdateUserRequest get createUpdateUser => $_getN(12);
+  @$pb.TagNumber(13)
+  set createUpdateUser(CreateUpdateUserRequest v) { setField(13, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasCreateUpdateUser() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearCreateUpdateUser() => clearField(13);
+  @$pb.TagNumber(13)
+  CreateUpdateUserRequest ensureCreateUpdateUser() => $_ensure(12);
+
+  @$pb.TagNumber(14)
+  DeleteActionRequest get deleteAction => $_getN(13);
+  @$pb.TagNumber(14)
+  set deleteAction(DeleteActionRequest v) { setField(14, v); }
+  @$pb.TagNumber(14)
+  $core.bool hasDeleteAction() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearDeleteAction() => clearField(14);
+  @$pb.TagNumber(14)
+  DeleteActionRequest ensureDeleteAction() => $_ensure(13);
+
+  @$pb.TagNumber(15)
+  GroupUser get deleteGroupUser => $_getN(14);
+  @$pb.TagNumber(15)
+  set deleteGroupUser(GroupUser v) { setField(15, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasDeleteGroupUser() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearDeleteGroupUser() => clearField(15);
+  @$pb.TagNumber(15)
+  GroupUser ensureDeleteGroupUser() => $_ensure(14);
+
+  @$pb.TagNumber(16)
+  DeleteMaterialRequest get deleteMaterial => $_getN(15);
+  @$pb.TagNumber(16)
+  set deleteMaterial(DeleteMaterialRequest v) { setField(16, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasDeleteMaterial() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearDeleteMaterial() => clearField(16);
+  @$pb.TagNumber(16)
+  DeleteMaterialRequest ensureDeleteMaterial() => $_ensure(15);
+
+  @$pb.TagNumber(17)
+  UpdateCurrentUserRequest get updateCurrentUser => $_getN(16);
+  @$pb.TagNumber(17)
+  set updateCurrentUser(UpdateCurrentUserRequest v) { setField(17, v); }
+  @$pb.TagNumber(17)
+  $core.bool hasUpdateCurrentUser() => $_has(16);
+  @$pb.TagNumber(17)
+  void clearUpdateCurrentUser() => clearField(17);
+  @$pb.TagNumber(17)
+  UpdateCurrentUserRequest ensureUpdateCurrentUser() => $_ensure(16);
+}
+
+enum SyncResponse_Value {
+  action, 
+  country, 
+  evaluationCategory, 
+  group, 
+  groupEvaluation, 
+  language, 
+  learnerEvaluation, 
+  material, 
+  materialTopic, 
+  materialType, 
+  output, 
+  teacherResponse, 
+  transformation, 
+  user, 
+  deletedRecord, 
+  metaData, 
+  notSet
+}
+
+class SyncResponse extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, SyncResponse_Value> _SyncResponse_ValueByTag = {
+    1 : SyncResponse_Value.action,
+    2 : SyncResponse_Value.country,
+    3 : SyncResponse_Value.evaluationCategory,
+    4 : SyncResponse_Value.group,
+    5 : SyncResponse_Value.groupEvaluation,
+    7 : SyncResponse_Value.language,
+    8 : SyncResponse_Value.learnerEvaluation,
+    9 : SyncResponse_Value.material,
+    10 : SyncResponse_Value.materialTopic,
+    11 : SyncResponse_Value.materialType,
+    12 : SyncResponse_Value.output,
+    13 : SyncResponse_Value.teacherResponse,
+    14 : SyncResponse_Value.transformation,
+    15 : SyncResponse_Value.user,
+    16 : SyncResponse_Value.deletedRecord,
+    17 : SyncResponse_Value.metaData,
+    0 : SyncResponse_Value.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..oo(0, [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
+    ..aOM<Action>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action', subBuilder: Action.create)
+    ..aOM<Country>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'country', subBuilder: Country.create)
+    ..aOM<EvaluationCategory>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'evaluationCategory', subBuilder: EvaluationCategory.create)
+    ..aOM<Group>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'group', subBuilder: Group.create)
+    ..aOM<GroupEvaluation>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'groupEvaluation', subBuilder: GroupEvaluation.create)
+    ..aOM<Language>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'language', subBuilder: Language.create)
+    ..aOM<LearnerEvaluation>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'learnerEvaluation', subBuilder: LearnerEvaluation.create)
+    ..aOM<Material>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'material', subBuilder: Material.create)
+    ..aOM<MaterialTopic>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'materialTopic', subBuilder: MaterialTopic.create)
+    ..aOM<MaterialType>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'materialType', subBuilder: MaterialType.create)
+    ..aOM<Output>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'output', subBuilder: Output.create)
+    ..aOM<TeacherResponse>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'teacherResponse', subBuilder: TeacherResponse.create)
+    ..aOM<Transformation>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transformation', subBuilder: Transformation.create)
+    ..aOM<User>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
+    ..aOM<DeletedResource>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deletedRecord', subBuilder: DeletedResource.create)
+    ..aOM<SyncResponseMetaData>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metaData', subBuilder: SyncResponseMetaData.create)
+    ..hasRequiredFields = false
+  ;
+
+  SyncResponse._() : super();
+  factory SyncResponse({
+    Action? action,
+    Country? country,
+    EvaluationCategory? evaluationCategory,
+    Group? group,
+    GroupEvaluation? groupEvaluation,
+    Language? language,
+    LearnerEvaluation? learnerEvaluation,
+    Material? material,
+    MaterialTopic? materialTopic,
+    MaterialType? materialType,
+    Output? output,
+    TeacherResponse? teacherResponse,
+    Transformation? transformation,
+    User? user,
+    DeletedResource? deletedRecord,
+    SyncResponseMetaData? metaData,
+  }) {
+    final _result = create();
+    if (action != null) {
+      _result.action = action;
+    }
+    if (country != null) {
+      _result.country = country;
+    }
+    if (evaluationCategory != null) {
+      _result.evaluationCategory = evaluationCategory;
+    }
+    if (group != null) {
+      _result.group = group;
+    }
+    if (groupEvaluation != null) {
+      _result.groupEvaluation = groupEvaluation;
+    }
+    if (language != null) {
+      _result.language = language;
+    }
+    if (learnerEvaluation != null) {
+      _result.learnerEvaluation = learnerEvaluation;
+    }
+    if (material != null) {
+      _result.material = material;
+    }
+    if (materialTopic != null) {
+      _result.materialTopic = materialTopic;
+    }
+    if (materialType != null) {
+      _result.materialType = materialType;
+    }
+    if (output != null) {
+      _result.output = output;
+    }
+    if (teacherResponse != null) {
+      _result.teacherResponse = teacherResponse;
+    }
+    if (transformation != null) {
+      _result.transformation = transformation;
+    }
+    if (user != null) {
+      _result.user = user;
+    }
+    if (deletedRecord != null) {
+      _result.deletedRecord = deletedRecord;
+    }
+    if (metaData != null) {
+      _result.metaData = metaData;
+    }
+    return _result;
+  }
+  factory SyncResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SyncResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SyncResponse clone() => SyncResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SyncResponse copyWith(void Function(SyncResponse) updates) => super.copyWith((message) => updates(message as SyncResponse)) as SyncResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SyncResponse create() => SyncResponse._();
+  SyncResponse createEmptyInstance() => create();
+  static $pb.PbList<SyncResponse> createRepeated() => $pb.PbList<SyncResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SyncResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncResponse>(create);
+  static SyncResponse? _defaultInstance;
+
+  SyncResponse_Value whichValue() => _SyncResponse_ValueByTag[$_whichOneof(0)]!;
+  void clearValue() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  Action get action => $_getN(0);
+  @$pb.TagNumber(1)
+  set action(Action v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasAction() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAction() => clearField(1);
+  @$pb.TagNumber(1)
+  Action ensureAction() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  Country get country => $_getN(1);
+  @$pb.TagNumber(2)
+  set country(Country v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCountry() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCountry() => clearField(2);
+  @$pb.TagNumber(2)
+  Country ensureCountry() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  EvaluationCategory get evaluationCategory => $_getN(2);
+  @$pb.TagNumber(3)
+  set evaluationCategory(EvaluationCategory v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasEvaluationCategory() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearEvaluationCategory() => clearField(3);
+  @$pb.TagNumber(3)
+  EvaluationCategory ensureEvaluationCategory() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  Group get group => $_getN(3);
+  @$pb.TagNumber(4)
+  set group(Group v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasGroup() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearGroup() => clearField(4);
+  @$pb.TagNumber(4)
+  Group ensureGroup() => $_ensure(3);
+
+  @$pb.TagNumber(5)
+  GroupEvaluation get groupEvaluation => $_getN(4);
+  @$pb.TagNumber(5)
+  set groupEvaluation(GroupEvaluation v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasGroupEvaluation() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearGroupEvaluation() => clearField(5);
+  @$pb.TagNumber(5)
+  GroupEvaluation ensureGroupEvaluation() => $_ensure(4);
+
+  @$pb.TagNumber(7)
+  Language get language => $_getN(5);
+  @$pb.TagNumber(7)
+  set language(Language v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasLanguage() => $_has(5);
+  @$pb.TagNumber(7)
+  void clearLanguage() => clearField(7);
+  @$pb.TagNumber(7)
+  Language ensureLanguage() => $_ensure(5);
+
+  @$pb.TagNumber(8)
+  LearnerEvaluation get learnerEvaluation => $_getN(6);
+  @$pb.TagNumber(8)
+  set learnerEvaluation(LearnerEvaluation v) { setField(8, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasLearnerEvaluation() => $_has(6);
+  @$pb.TagNumber(8)
+  void clearLearnerEvaluation() => clearField(8);
+  @$pb.TagNumber(8)
+  LearnerEvaluation ensureLearnerEvaluation() => $_ensure(6);
+
+  @$pb.TagNumber(9)
+  Material get material => $_getN(7);
+  @$pb.TagNumber(9)
+  set material(Material v) { setField(9, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasMaterial() => $_has(7);
+  @$pb.TagNumber(9)
+  void clearMaterial() => clearField(9);
+  @$pb.TagNumber(9)
+  Material ensureMaterial() => $_ensure(7);
+
+  @$pb.TagNumber(10)
+  MaterialTopic get materialTopic => $_getN(8);
+  @$pb.TagNumber(10)
+  set materialTopic(MaterialTopic v) { setField(10, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasMaterialTopic() => $_has(8);
+  @$pb.TagNumber(10)
+  void clearMaterialTopic() => clearField(10);
+  @$pb.TagNumber(10)
+  MaterialTopic ensureMaterialTopic() => $_ensure(8);
+
+  @$pb.TagNumber(11)
+  MaterialType get materialType => $_getN(9);
+  @$pb.TagNumber(11)
+  set materialType(MaterialType v) { setField(11, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasMaterialType() => $_has(9);
+  @$pb.TagNumber(11)
+  void clearMaterialType() => clearField(11);
+  @$pb.TagNumber(11)
+  MaterialType ensureMaterialType() => $_ensure(9);
+
+  @$pb.TagNumber(12)
+  Output get output => $_getN(10);
+  @$pb.TagNumber(12)
+  set output(Output v) { setField(12, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasOutput() => $_has(10);
+  @$pb.TagNumber(12)
+  void clearOutput() => clearField(12);
+  @$pb.TagNumber(12)
+  Output ensureOutput() => $_ensure(10);
+
+  @$pb.TagNumber(13)
+  TeacherResponse get teacherResponse => $_getN(11);
+  @$pb.TagNumber(13)
+  set teacherResponse(TeacherResponse v) { setField(13, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasTeacherResponse() => $_has(11);
+  @$pb.TagNumber(13)
+  void clearTeacherResponse() => clearField(13);
+  @$pb.TagNumber(13)
+  TeacherResponse ensureTeacherResponse() => $_ensure(11);
+
+  @$pb.TagNumber(14)
+  Transformation get transformation => $_getN(12);
+  @$pb.TagNumber(14)
+  set transformation(Transformation v) { setField(14, v); }
+  @$pb.TagNumber(14)
+  $core.bool hasTransformation() => $_has(12);
+  @$pb.TagNumber(14)
+  void clearTransformation() => clearField(14);
+  @$pb.TagNumber(14)
+  Transformation ensureTransformation() => $_ensure(12);
+
+  @$pb.TagNumber(15)
+  User get user => $_getN(13);
+  @$pb.TagNumber(15)
+  set user(User v) { setField(15, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasUser() => $_has(13);
+  @$pb.TagNumber(15)
+  void clearUser() => clearField(15);
+  @$pb.TagNumber(15)
+  User ensureUser() => $_ensure(13);
+
+  @$pb.TagNumber(16)
+  DeletedResource get deletedRecord => $_getN(14);
+  @$pb.TagNumber(16)
+  set deletedRecord(DeletedResource v) { setField(16, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasDeletedRecord() => $_has(14);
+  @$pb.TagNumber(16)
+  void clearDeletedRecord() => clearField(16);
+  @$pb.TagNumber(16)
+  DeletedResource ensureDeletedRecord() => $_ensure(14);
+
+  @$pb.TagNumber(17)
+  SyncResponseMetaData get metaData => $_getN(15);
+  @$pb.TagNumber(17)
+  set metaData(SyncResponseMetaData v) { setField(17, v); }
+  @$pb.TagNumber(17)
+  $core.bool hasMetaData() => $_has(15);
+  @$pb.TagNumber(17)
+  void clearMetaData() => clearField(17);
+  @$pb.TagNumber(17)
+  SyncResponseMetaData ensureMetaData() => $_ensure(15);
 }
 
 class TeacherResponse extends $pb.GeneratedMessage {
@@ -5199,9 +6175,9 @@ class StarfishApi {
     var emptyResponse = DeleteActionResponse();
     return _client.invoke<DeleteActionResponse>(ctx, 'Starfish', 'DeleteActions', request, emptyResponse);
   }
-  $async.Future<DeleteGroupUsersResponse> deleteGroupUsers($pb.ClientContext? ctx, GroupUser request) {
-    var emptyResponse = DeleteGroupUsersResponse();
-    return _client.invoke<DeleteGroupUsersResponse>(ctx, 'Starfish', 'DeleteGroupUsers', request, emptyResponse);
+  $async.Future<DeleteGroupUserResponse> deleteGroupUsers($pb.ClientContext? ctx, DeleteGroupUserRequest request) {
+    var emptyResponse = DeleteGroupUserResponse();
+    return _client.invoke<DeleteGroupUserResponse>(ctx, 'Starfish', 'DeleteGroupUsers', request, emptyResponse);
   }
   $async.Future<DeleteMaterialResponse> deleteMaterials($pb.ClientContext? ctx, DeleteMaterialRequest request) {
     var emptyResponse = DeleteMaterialResponse();
@@ -5270,6 +6246,10 @@ class StarfishApi {
   $async.Future<AuthenticateResponse> refreshSession($pb.ClientContext? ctx, RefreshSessionRequest request) {
     var emptyResponse = AuthenticateResponse();
     return _client.invoke<AuthenticateResponse>(ctx, 'Starfish', 'RefreshSession', request, emptyResponse);
+  }
+  $async.Future<SyncResponse> sync($pb.ClientContext? ctx, SyncRequest request) {
+    var emptyResponse = SyncResponse();
+    return _client.invoke<SyncResponse>(ctx, 'Starfish', 'Sync', request, emptyResponse);
   }
   $async.Future<User> updateCurrentUser($pb.ClientContext? ctx, UpdateCurrentUserRequest request) {
     var emptyResponse = User();

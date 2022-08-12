@@ -43,6 +43,57 @@ class ResultsTab extends $pb.ProtobufEnum {
   const ResultsTab._($core.int v, $core.String n) : super(v, n);
 }
 
+class ResourceType extends $pb.ProtobufEnum {
+  static const ResourceType TYPE_UNSPECIFIED = ResourceType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TYPE_UNSPECIFIED');
+  static const ResourceType ACTION_RESOURCE = ResourceType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ACTION_RESOURCE');
+  static const ResourceType ACTION_USER_RESOURCE = ResourceType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ACTION_USER_RESOURCE');
+  static const ResourceType COUNTRY_RESOURCE = ResourceType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'COUNTRY_RESOURCE');
+  static const ResourceType EVALUATION_CATEGORY_RESOURCE = ResourceType._(4, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'EVALUATION_CATEGORY_RESOURCE');
+  static const ResourceType EVALUATION_VALUE_NAME_RESOURCE = ResourceType._(5, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'EVALUATION_VALUE_NAME_RESOURCE');
+  static const ResourceType GROUP_RESOURCE = ResourceType._(6, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GROUP_RESOURCE');
+  static const ResourceType GROUP_EVALUATION_RESOURCE = ResourceType._(7, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GROUP_EVALUATION_RESOURCE');
+  static const ResourceType GROUP_USER_RESOURCE = ResourceType._(8, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'GROUP_USER_RESOURCE');
+  static const ResourceType LANGUAGE_RESOURCE = ResourceType._(9, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'LANGUAGE_RESOURCE');
+  static const ResourceType LEARNER_EVALUATION_RESOURCE = ResourceType._(10, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'LEARNER_EVALUATION_RESOURCE');
+  static const ResourceType MATERIAL_RESOURCE = ResourceType._(11, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL_RESOURCE');
+  static const ResourceType MATERIAL_FEEDBACK_RESOURCE = ResourceType._(12, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL_FEEDBACK_RESOURCE');
+  static const ResourceType MATERIAL_TOPIC_RESOURCE = ResourceType._(13, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL_TOPIC_RESOURCE');
+  static const ResourceType MATERIAL_TYPE_RESOURCE = ResourceType._(14, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'MATERIAL_TYPE_RESOURCE');
+  static const ResourceType OUTPUT_RESOURCE = ResourceType._(15, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'OUTPUT_RESOURCE');
+  static const ResourceType OUTPUT_MARKER_RESOURCE = ResourceType._(16, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'OUTPUT_MARKER_RESOURCE');
+  static const ResourceType TEACHER_RESPONSE_RESOURCE = ResourceType._(17, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TEACHER_RESPONSE_RESOURCE');
+  static const ResourceType TRANSFORMATION_RESOURCE = ResourceType._(18, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TRANSFORMATION_RESOURCE');
+  static const ResourceType USER_RESOURCE = ResourceType._(19, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'USER_RESOURCE');
+
+  static const $core.List<ResourceType> values = <ResourceType> [
+    TYPE_UNSPECIFIED,
+    ACTION_RESOURCE,
+    ACTION_USER_RESOURCE,
+    COUNTRY_RESOURCE,
+    EVALUATION_CATEGORY_RESOURCE,
+    EVALUATION_VALUE_NAME_RESOURCE,
+    GROUP_RESOURCE,
+    GROUP_EVALUATION_RESOURCE,
+    GROUP_USER_RESOURCE,
+    LANGUAGE_RESOURCE,
+    LEARNER_EVALUATION_RESOURCE,
+    MATERIAL_RESOURCE,
+    MATERIAL_FEEDBACK_RESOURCE,
+    MATERIAL_TOPIC_RESOURCE,
+    MATERIAL_TYPE_RESOURCE,
+    OUTPUT_RESOURCE,
+    OUTPUT_MARKER_RESOURCE,
+    TEACHER_RESPONSE_RESOURCE,
+    TRANSFORMATION_RESOURCE,
+    USER_RESOURCE,
+  ];
+
+  static final $core.Map<$core.int, ResourceType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static ResourceType? valueOf($core.int value) => _byValue[value];
+
+  const ResourceType._($core.int v, $core.String n) : super(v, n);
+}
+
 class Action_Type extends $pb.ProtobufEnum {
   static const Action_Type TEXT_INSTRUCTION = Action_Type._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TEXT_INSTRUCTION');
   static const Action_Type TEXT_RESPONSE = Action_Type._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TEXT_RESPONSE');
@@ -291,19 +342,19 @@ class DeleteActionResponse_Status extends $pb.ProtobufEnum {
   const DeleteActionResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
-class DeleteGroupUsersResponse_Status extends $pb.ProtobufEnum {
-  static const DeleteGroupUsersResponse_Status SUCCESS = DeleteGroupUsersResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
-  static const DeleteGroupUsersResponse_Status FAILURE = DeleteGroupUsersResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
+class DeleteGroupUserResponse_Status extends $pb.ProtobufEnum {
+  static const DeleteGroupUserResponse_Status SUCCESS = DeleteGroupUserResponse_Status._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');
+  static const DeleteGroupUserResponse_Status FAILURE = DeleteGroupUserResponse_Status._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'FAILURE');
 
-  static const $core.List<DeleteGroupUsersResponse_Status> values = <DeleteGroupUsersResponse_Status> [
+  static const $core.List<DeleteGroupUserResponse_Status> values = <DeleteGroupUserResponse_Status> [
     SUCCESS,
     FAILURE,
   ];
 
-  static final $core.Map<$core.int, DeleteGroupUsersResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static DeleteGroupUsersResponse_Status? valueOf($core.int value) => _byValue[value];
+  static final $core.Map<$core.int, DeleteGroupUserResponse_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static DeleteGroupUserResponse_Status? valueOf($core.int value) => _byValue[value];
 
-  const DeleteGroupUsersResponse_Status._($core.int v, $core.String n) : super(v, n);
+  const DeleteGroupUserResponse_Status._($core.int v, $core.String n) : super(v, n);
 }
 
 class DeleteMaterialResponse_Status extends $pb.ProtobufEnum {
