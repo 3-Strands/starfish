@@ -1,10 +1,12 @@
 import 'package:hive/hive.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:starfish/apis/hive_api.dart';
-import 'package:starfish/models/delta.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
+
+import 'generated/google/protobuf/field_mask.pb.dart';
 
 part 'deltas.g.dart';
 
@@ -17,16 +19,43 @@ Date _currentDate() {
   );
 }
 
-extension Edits<T> on Box<T> {
-  void resave(dynamic key) {
-    final item = get(key)!;
-    put(key, item);
+extension Edits<T extends GeneratedMessage> on Box<T> {
+  void applyEdit(int typeId, dynamic key, void Function(T other) updates) {
+    final item = get(key);
+    if (item != null) {
+      final itemWithChangesApplied = item.rebuild(updates);
+      ensureRevert(typeId, key, item);
+      put(key, itemWithChangesApplied);
+    }
   }
+}
 
-  void edit(dynamic key, void Function(T) applyEdit) {
-    final item = get(key)!;
-    applyEdit(item);
-    put(key, item);
+void ensureRevert(int typeId, dynamic key, dynamic item) {
+  final map = globalHiveApi.revert.get(typeId) as Map<String, dynamic>? ?? {};
+  if (!map.containsKey(key)) {
+    map[key] = item;
+  }
+  globalHiveApi.revert.put(typeId, map);
+}
+
+const kCreatedKeys = '__created';
+
+void ensureCreateRevert(int typeId, String key) {
+  final map =
+      globalHiveApi.revert.get(kCreatedKeys) as Map<int, List<String>>? ?? {};
+  (map[typeId] ??= []).add(key);
+  globalHiveApi.revert.put(kCreatedKeys, map);
+}
+
+void revertAll() {
+  // First, pull out all the items to delete.
+  final deleteMap =
+      globalHiveApi.revert.get(kCreatedKeys) as Map<int, List<String>>?;
+  globalHiveApi.revert.delete(kCreatedKeys);
+  if (deleteMap != null) {
+    for (final entry in deleteMap.entries) {
+      _resolveBox(entry.key).deleteAll(entry.value);
+    }
   }
 }
 

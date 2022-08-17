@@ -1,6 +1,5 @@
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
-import 'package:starfish/repositories/model_wrappers/user_with_group_role.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
@@ -35,6 +34,11 @@ extension ActionExt on Action {
   bool get isPastDueDate => dateDue.toDateTime().isBefore(DateTime.now());
 }
 
+extension ActionUserExt on ActionUser {
+  // TODO: REMOVE THIS!
+  String get id => '$userId:$actionId';
+}
+
 extension GroupExt on Group {
   List<User> get fullUsers => users.map((groupUser) => groupUser.user).toList();
   // List<UserWithGroupRole> get usersWithRole => users
@@ -43,6 +47,8 @@ extension GroupExt on Group {
 }
 
 extension GroupUserExt on GroupUser {
+  // TODO: REMOVE THIS!
+  String get id => '$userId:$groupId';
   User? get maybeUser => globalHiveApi.user.get(userId);
   User get user => maybeUser!;
 

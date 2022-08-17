@@ -17,7 +17,7 @@ enum ModelType {
 
 class SyncRepository {
   SyncRepository({
-    HiveApiInterface hiveApi = globalHiveApi,
+    HiveApi hiveApi = globalHiveApi,
     required this.client,
     required this.requestRefresh,
   }) {

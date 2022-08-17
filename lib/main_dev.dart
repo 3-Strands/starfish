@@ -1,4 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:starfish/src/grpc_adapters.dart';
+import 'package:starfish/wrappers/hive_init.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +24,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final localStorageApi = LocalStorageApi();
 
-  await HiveApiInterface.init();
+  registerAllAdapters();
+  await initHive();
+  await HiveApi.init(
+    encryptionKey: await localStorageApi.getEncryptionKey(),
+    memoryOnly: kIsWeb,
+  );
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await ConfigReader.initialize();
   FlavorConfig(
@@ -34,7 +42,6 @@ void main() async {
     ),
   );
   GeneralFunctions.configLoading();
-  final localStorageApi = LocalStorageApi();
   EasyLoading.instance
     ..loadingStyle = EasyLoadingStyle.custom
     ..userInteractions = false

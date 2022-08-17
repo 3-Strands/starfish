@@ -1,16 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/grpc_adapters.dart';
 import 'package:starfish/src/grpc_extensions.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
-import 'package:starfish/wrappers/file_system.dart';
 
-part 'hive_api_impl.dart';
+class HiveApi {
+  const HiveApi();
 
-abstract class HiveApiInterface {
   static const String COUNTRY_BOX = 'countryBox'; //0
   static const String LANGUAGE_BOX = 'languageBox'; //1
   static const String CURRENT_USER_BOX = 'currentUserBox'; //2
@@ -36,100 +33,89 @@ abstract class HiveApiInterface {
   static const String OUTPUT_BOX = 'outputBox'; // 22
   // HiveOutputMarker // 23
   // HiveEvaluationValueName // 24
+  static const String SYNC_BOX = 'syncBox';
+  static const String REVERT_BOX = 'revertBox';
 
-  static init() async {
-    await initHive();
-    // Hive.registerAdapter(LastSyncDateTimeAdapter());
-    Hive.registerAdapter(CountryAdapter());
-    Hive.registerAdapter(LanguageAdapter());
-    Hive.registerAdapter(UserAdapter());
-    Hive.registerAdapter(GroupUserAdapter());
-    Hive.registerAdapter(ActionUserAdapter());
-    Hive.registerAdapter(ActionAdapter());
-    Hive.registerAdapter(MaterialAdapter());
-    Hive.registerAdapter(MaterialTopicAdapter());
-    Hive.registerAdapter(MaterialTypeAdapter());
-    Hive.registerAdapter(MaterialFeedbackAdapter());
-    // Hive.registerAdapter(DateAdapter());
-    // Hive.registerAdapter(EditAdapter());
-    Hive.registerAdapter(GroupAdapter());
-    // Hive.registerAdapter(GroupActionAdapter());
-    // Hive.registerAdapter(EvaluationCategoryAdapter());
-    Hive.registerAdapter(FileReferenceAdapter());
-    // Hive.registerAdapter(LearnerEvaluationAdapter());
-    // Hive.registerAdapter(TeacherResponseAdapter());
-    // Hive.registerAdapter(GroupEvaluationAdapter());
-    // Hive.registerAdapter(TransformationAdapter());
-    // Hive.registerAdapter(OutputAdapter());
-    // Hive.registerAdapter(OutputMarkerAdapter());
-    // Hive.registerAdapter(EvaluationValueNameAdapter());
-
-    await _openBoxes();
-  }
-
-  static _openBoxes() async {
-    final encryptionKey = await StarfishSharedPreference().getEncryptionKey();
-
-    final bytes = kIsWeb ? Uint8List(0) : null;
+  static init({
+    List<int>? encryptionKey,
+    bool memoryOnly = false,
+  }) async {
+    final encryptionCipher =
+        encryptionKey == null ? null : HiveAesCipher(encryptionKey);
+    final bytes = memoryOnly ? Uint8List(0) : null;
 
     await Hive.openBox<Country>(COUNTRY_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Language>(LANGUAGE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<GroupUser>(GROUP_USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Action>(ACTIONS_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Material>(MATERIAL_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<MaterialFeedback>(MATERIAL_FEEDBACK_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<MaterialTopic>(MATERIAL_TOPIC_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<MaterialType>(MATERIAL_TYPE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Group>(GROUP_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<EvaluationCategory>(EVALUATION_CATEGORIES_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<ActionUser>(ACTION_USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<User>(USER_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<FileReference>(FILE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<LearnerEvaluation>(LEARNER_EVALUATION_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<TeacherResponse>(TEACHER_RESPONSE_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<GroupEvaluation>(GROUP_EVALUATION_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Transformation>(TRANSFORMATION_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Output>(OUTPUT_BOX,
-        encryptionCipher: HiveAesCipher(encryptionKey), bytes: bytes);
+        encryptionCipher: encryptionCipher, bytes: bytes);
+    await Hive.openBox(SYNC_BOX,
+        encryptionCipher: encryptionCipher, bytes: bytes);
+    await Hive.openBox(REVERT_BOX,
+        encryptionCipher: encryptionCipher, bytes: bytes);
   }
 
   // Box<LastSyncDateTime> get lastSync;
-  Box<Country> get country;
-  Box<Language> get language;
-  Box<GroupUser> get groupUser;
-  Box<Action> get action;
-  Box<Material> get material;
-  Box<MaterialFeedback> get materialFeedback;
-  Box<MaterialTopic> get materialTopic;
-  Box<MaterialType> get materialType;
-  Box<Group> get group;
-  Box<EvaluationCategory> get evaluationCategory;
-  Box<User> get user;
-  Box<FileReference> get file;
-  Box<ActionUser> get actionUser;
-  Box<LearnerEvaluation> get learnerEvaluation;
-  Box<TeacherResponse> get teacherResponse;
-  Box<GroupEvaluation> get groupEvaluation;
-  Box<Transformation> get transformation;
-  Box<Output> get output;
+  Box<Country> get country => Hive.box<Country>(COUNTRY_BOX);
+  Box<Language> get language => Hive.box<Language>(LANGUAGE_BOX);
+  Box<GroupUser> get groupUser => Hive.box<GroupUser>(GROUP_USER_BOX);
+  Box<Action> get action => Hive.box<Action>(ACTIONS_BOX);
+  Box<Material> get material => Hive.box<Material>(MATERIAL_BOX);
+  Box<MaterialFeedback> get materialFeedback =>
+      Hive.box<MaterialFeedback>(MATERIAL_FEEDBACK_BOX);
+  Box<MaterialTopic> get materialTopic =>
+      Hive.box<MaterialTopic>(MATERIAL_TOPIC_BOX);
+  Box<MaterialType> get materialType =>
+      Hive.box<MaterialType>(MATERIAL_TYPE_BOX);
+  Box<Group> get group => Hive.box<Group>(GROUP_BOX);
+  Box<EvaluationCategory> get evaluationCategory =>
+      Hive.box<EvaluationCategory>(EVALUATION_CATEGORIES_BOX);
+  Box<User> get user => Hive.box<User>(USER_BOX);
+  Box<FileReference> get file => Hive.box<FileReference>(FILE_BOX);
+  Box<ActionUser> get actionUser => Hive.box<ActionUser>(ACTION_USER_BOX);
+  Box<LearnerEvaluation> get learnerEvaluation =>
+      Hive.box<LearnerEvaluation>(LEARNER_EVALUATION_BOX);
+  Box<TeacherResponse> get teacherResponse =>
+      Hive.box<TeacherResponse>(TEACHER_RESPONSE_BOX);
+  Box<GroupEvaluation> get groupEvaluation =>
+      Hive.box<GroupEvaluation>(GROUP_EVALUATION_BOX);
+  Box<Transformation> get transformation =>
+      Hive.box<Transformation>(TRANSFORMATION_BOX);
+  Box<Output> get output => Hive.box<Output>(OUTPUT_BOX);
+  Box<dynamic> get sync => Hive.box(SYNC_BOX);
+  Box<dynamic> get revert => Hive.box(REVERT_BOX);
 }
 
 /// Global constant to access HiveApi.
-const HiveApiInterface globalHiveApi = HiveApiImpl();
+const HiveApi globalHiveApi = HiveApi();

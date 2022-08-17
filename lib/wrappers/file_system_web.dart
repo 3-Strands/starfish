@@ -8,8 +8,6 @@ import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'file_system_shared.dart' as shared;
 
-export 'file_system_base.dart' show initHive;
-
 final _fs = Map<String, String>();
 
 Future<Uint8List> _fetchData(String url) async {

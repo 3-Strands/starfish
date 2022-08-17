@@ -12,9 +12,6 @@ Future<void> uploadMaterials(Iterable<FileReference> files) =>
 Future<void> openFile(String filepath) =>
     Future.error("Open file not supported");
 
-/// On Mobile, calls `Hive.init` with the application's document directory.
-Future<void> initHive() async {}
-
 class File {
   final String path;
 
