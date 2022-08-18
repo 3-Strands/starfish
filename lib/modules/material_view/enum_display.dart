@@ -64,3 +64,23 @@ extension ActionDisplay on ActionStatus {
     }
   }
 }
+
+extension ActionTypeDisplay on Action_Type {
+  String toLocaleString(BuildContext context) {
+    switch (this) {
+      case Action_Type.TEXT_INSTRUCTION:
+        return AppLocalizations.of(context)!.actionTypeTextInstruction;
+      case Action_Type.TEXT_RESPONSE:
+        return AppLocalizations.of(context)!.actionTypeTextResponse;
+      case Action_Type.MATERIAL_INSTRUCTION:
+        return AppLocalizations.of(context)!.actionTypeMaterialInstruction;
+      case Action_Type.MATERIAL_RESPONSE:
+        return AppLocalizations.of(context)!.actionTypeMaterialResponse;
+      default:
+        assert(false, 'Unexpected locale string requested from $this');
+        return '';
+    }
+  }
+
+  static List<Action_Type> get displayList => Action_Type.values.toList();
+}

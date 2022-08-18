@@ -64,6 +64,21 @@ class DataRepository {
   List<EvaluationCategory> get currentEvaluationCategories =>
       _hiveApi.evaluationCategory.asList();
 
+  List<Group> get groupsWithAdminRole {
+    final List<Group> _groupsWithAdminRole = [];
+    for (final group in currentGroups) {
+      for (final groupUser in group.users) {
+        if (groupUser.userId == _userId &&
+                groupUser.role == GroupUser_Role.ADMIN ||
+            groupUser.role == GroupUser_Role.TEACHER) {
+          _groupsWithAdminRole.add(group);
+          break;
+        }
+      }
+    }
+    return _groupsWithAdminRole;
+  }
+
   List<GroupWithActionsAndRoles> getGroupsWithActionsAndRoles() {
     final completedActions = <String, int>{};
     for (final actionUser in _hiveApi.actionUser.values) {

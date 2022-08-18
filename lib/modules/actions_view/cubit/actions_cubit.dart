@@ -9,13 +9,15 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
 part 'actions_state.dart';
 
 class ActionsCubit extends Cubit<ActionsState> {
   ActionsCubit(DataRepository dataRepository)
-      : super(ActionsState(
+      : _dataRepository = dataRepository,
+        super(ActionsState(
           actions: dataRepository.currentActions,
           relatedActions: dataRepository.getActionsRelatedToMe(),
         )) {
@@ -28,6 +30,7 @@ class ActionsCubit extends Cubit<ActionsState> {
   }
 
   late StreamSubscription<List<Action>> _subscription;
+  final DataRepository _dataRepository;
 
   void updateActionFilter(ActionFilter actionFilter) {
     emit(state.copyWith(
@@ -45,6 +48,10 @@ class ActionsCubit extends Cubit<ActionsState> {
     emit(state.copyWith(
       userGroupRoleFilter: userRole,
     ));
+  }
+
+  void deleteAction(Action action) {
+    _dataRepository.addDelta(ActionDeleteDelta(action));
   }
 
   @override

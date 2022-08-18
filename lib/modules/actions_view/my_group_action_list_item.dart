@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart' hide Action;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
+import 'package:starfish/modules/actions_view/cubit/add_edit_action_cubit.dart';
 import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
@@ -117,23 +121,29 @@ class MyGroupActionListItem extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12.r)),
                           enabled: true,
                           onSelected: (value) {
-                            // switch (value) {
-                            //   case 0:
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => AddEditAction(
-                            //           action: action,
-                            //         ),
-                            //       ),
-                            //     ).then((value) => FocusScope.of(context)
-                            //         .requestFocus(new FocusNode()));
-                            //     break;
-                            //   case 1:
-                            //     _deleteAction(context, action);
+                            final cubit = context.read<ActionsCubit>();
+                            switch (value) {
+                              case 0:
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => AddEditAction(
+                                //       action: action,
+                                //     ),
+                                //   ),
+                                // ).then((value) => FocusScope.of(context)
+                                //     .requestFocus(new FocusNode()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => AddEditAction(
+                                          action: _action,
+                                        )));
+                                break;
+                              case 1:
+                                //_deleteAction(context, action);
+                                cubit.deleteAction(_action);
 
-                            //     break;
-                            // }
+                                break;
+                            }
                           },
                           itemBuilder: (context) => [
                                 PopupMenuItem(

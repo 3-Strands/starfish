@@ -1,12 +1,15 @@
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
-import 'package:starfish/repositories/model_wrappers/user_with_group_role.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
 
 extension DateExt on Date {
   DateTime toDateTime() => DateTime(year, month, day);
+
+  bool get isValidDate {
+    return this.year != 0 && this.month != 0 && this.day != 0;
+  }
 }
 
 extension MaterialExt on Material {
