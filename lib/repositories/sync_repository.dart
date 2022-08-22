@@ -157,6 +157,12 @@ class SyncRepository {
   void close() {
     _isSyncing.close();
   }
+
+  Future<User> syncCurrentUserImmediately(
+      UpdateCurrentUserRequest request) =>
+    _makeRequestWithRefresh((client) =>
+      client.updateCurrentUser(request)
+    );
 }
 
 class SyncManager {

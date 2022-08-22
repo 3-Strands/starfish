@@ -185,11 +185,7 @@ class AuthenticationRepository {
     return session;
   }
 
-  void updateUser({
-    String? name,
-    List<String>? countryIds,
-    List<String>? languageIds,
-  }) {
-    // TODO
+  void updateCurrentUser(User user) {
+    _session.value = Session(_session.value!.tokens, user);
   }
 }
