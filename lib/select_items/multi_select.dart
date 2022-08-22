@@ -57,6 +57,7 @@ class MultiSelect<T> extends StatefulWidget {
   final void Function(Set<T> selectedItems)? onFinished;
   final VoidCallback? onMoveNext;
   final ToDisplay<T> toDisplay;
+  final Widget Function(T item)? displayItem;
 
   MultiSelect({
     Key? key,
@@ -73,6 +74,7 @@ class MultiSelect<T> extends StatefulWidget {
     this.onFinished,
     this.onMoveNext,
     required this.toDisplay,
+    this.displayItem,
   })  : assert(controller == null ||
             (maxSelectItemLimit == null && initialSelection == null)),
         super(key: key);
@@ -149,6 +151,7 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
           inverseSelectAll: widget.inverseSelectAll,
           items: widget.items,
           toDisplay: widget.toDisplay,
+          displayItem: widget.displayItem,
         );
       },
     );

@@ -65,23 +65,87 @@ class AddEditActionView extends StatelessWidget {
                 previous.actions != current.actions,
             builder: (context, state) {
               return MultiSelect<Action>(
-                navTitle: appLocalizations.selectAction,
-                placeholder: appLocalizations.selectAnAction,
-                items: state.actions,
-                maxSelectItemLimit: 1,
-                initialSelection:
-                    state.reuseAction != null ? {state.reuseAction!} : const {},
-                toDisplay: (action) => action.name,
-                onFinished: (selectedActions) {
-                  context
-                      .read<AddEditActionCubit>()
-                      .reuseActionChanged(selectedActions.first);
-                },
-              );
+                  navTitle: appLocalizations.selectAction,
+                  placeholder: appLocalizations.selectAnAction,
+                  items: state.actions,
+                  maxSelectItemLimit: 1,
+                  initialSelection: state.reuseAction != null
+                      ? {state.reuseAction!}
+                      : const {},
+                  toDisplay: (action) => action.name,
+                  onFinished: (selectedActions) {
+                    context
+                        .read<AddEditActionCubit>()
+                        .reuseActionChanged(selectedActions.first);
+                  },
+                  displayItem: (Action action) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              action.name,
+                              style: TextStyle(
+                                  fontSize: 17.sp, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                                appLocalizations.type +
+                                    ': ' +
+                                    //"${Action_Type.valueOf(action.type!)!.about}",
+                                    action.type.toLocaleString(context),
+                                style: TextStyle(
+                                    fontSize: 17.sp, color: Color(0xFF797979))),
+                            Text(
+                                appLocalizations.usedBy +
+                                    ': ' +
+                                    "${action.group != null ? action.group!.name : 'None'}",
+                                style: TextStyle(
+                                    fontSize: 17.sp, color: Color(0xFF797979))),
+                            Row(
+                              children: [
+                                Text(appLocalizations.createdDate + ': ', // +
+                                    //"${_getCreatedDate(action)}",
+                                    style: TextStyle(
+                                        fontSize: 17.sp,
+                                        color: Color(0xFF797979))),
+                                //action.isNew
+                                true
+                                    ? Text(" Not sync",
+                                        style: TextStyle(
+                                            fontSize: 17.sp,
+                                            color: Color(0xFF797979)))
+                                    : Container()
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      margin: const EdgeInsets.all(0.0),
+                      elevation: 2,
+                    );
+                  });
             }),
       ],
     );
   }
+
+  // String _getCreatedDate(Action action) {
+  //   if (action.editHistory.isNotEmpty) {
+  //     var createdEvent = action.editHistory
+  //         .where((element) => element.event == Edit_Event.CREATE)
+  //         .first;
+  //     return DateTimeUtils.formatDate(createdEvent.localTime!, 'dd-MMM-yyyy');
+  //   } else {
+  //     if (action.isNew && action.createdDate != null) {
+  //       String actionCreatedDate =
+  //           DateTimeUtils.formatHiveDate(action.createdDate!);
+  //       return actionCreatedDate;
+  //     }
+  //     return "";
+  //   }
+  // }
 
   Widget _showGroupNameContainer(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
@@ -401,10 +465,8 @@ class AddEditActionView extends StatelessWidget {
                                     : const {},
                                 toDisplay: (material) => material.title,
                                 onFinished: (selectedMaterials) {
-                                  context
-                                      .read<AddEditActionCubit>()
-                                      .selectedMaterialChanged(
-                                          selectedMaterials.first.id);
+                                  cubit.selectedMaterialChanged(
+                                      selectedMaterials.first.id);
                                 },
                               ),
                             ),
@@ -478,8 +540,7 @@ class AddEditActionView extends StatelessWidget {
                               .toSet(),
                           toDisplay: (group) => group.name,
                           onFinished: (selectedGroups) {
-                            context
-                                .read<AddEditActionCubit>()
+                            cubit
                                 .selectedGroupsChanged(selectedGroups.toList());
                           },
                         );

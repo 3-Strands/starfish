@@ -8,26 +8,12 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_action_list_item.dart';
 import 'package:starfish/modules/actions_view/single_action_user_view.dart';
-import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-class MyActions extends StatelessWidget {
-  const MyActions({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          ActionsCubit(RepositoryProvider.of<DataRepository>(context)),
-      child: const MyActionsView(),
-    );
-  }
-}
 
 class MyActionsView extends StatefulWidget {
   const MyActionsView({Key? key}) : super(key: key);

@@ -70,6 +70,8 @@ extension GroupUserExt on GroupUser {
   User? get maybeUser => globalHiveApi.user.get(userId);
   User get user => maybeUser!;
 
+  Group? get group => globalHiveApi.group.get(groupId);
+
   bool get userIsInvitedToGroup {
     final user = this.user;
     return user.phone.isNotEmpty && user.status != User_Status.ACTIVE;
@@ -91,4 +93,18 @@ extension UserExt on User {
   String get fullPhone => '+${diallingCode.replaceFirst('+', '')} $phone';
 
   bool get hasFullPhone => diallingCode.isNotEmpty && phone.isNotEmpty;
+
+  List<Group> get adminGroups => List<Group>.from(
+        groups
+            .where((groupUser) => groupUser.role == GroupUser_Role.ADMIN)
+            .map((groupUser) => groupUser.group)
+            .where((group) => group != null),
+      );
+
+  List<Group> get teacherGroups => List<Group>.from(
+        groups
+            .where((groupUser) => groupUser.role == GroupUser_Role.TEACHER)
+            .map((groupUser) => groupUser.group)
+            .where((group) => group != null),
+      );
 }
