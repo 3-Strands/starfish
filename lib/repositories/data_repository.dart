@@ -300,6 +300,10 @@ class DataRepository {
     throw UnimplementedError();
   }
 
+  // ------------------- Actions -------------------
+  Stream<List<ActionUser>> get actionUsers => _streamBox(_hiveApi.actionUser);
+  List<ActionUser> get currentActionUsers => _hiveApi.actionUser.asList();
+
   // ------------------- Countries -------------------
 
   Stream<List<Country>> get countries => _streamBox(_hiveApi.country);

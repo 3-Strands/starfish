@@ -6,6 +6,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
+import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
@@ -251,11 +252,8 @@ class _ActionsScreenState extends State<ActionsScreen>
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).pushNamed(Routes.addActions).then(
-                  (value) => FocusScope.of(context).requestFocus(
-                    new FocusNode(),
-                  ),
-                );
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => AddEditAction()));
           },
           child: Icon(Icons.add),
         ),
