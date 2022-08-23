@@ -120,13 +120,12 @@ class HiveApi {
       Hive.box<Map<String, dynamic>>(REVERT_BOX);
 
   /// Make sure the sync box is not written to for the duration of the passed function.
-  /// Once the function is completed, the
   Future<void> protectSyncBox(FutureOr<void> Function() fn) async {
     assert(!_isSyncBoxProtected,
         'Attempting to protect an already protected sync box! This is undefined behavior.');
     _isSyncBoxProtected = true;
     try {
-      await fn();
+      return await fn();
     } finally {
       _isSyncBoxProtected = false;
     }

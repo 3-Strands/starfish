@@ -6,6 +6,7 @@ import 'package:flutter/material.dart' hide Material;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
@@ -70,7 +71,7 @@ class _MaterialsViewState extends State<MaterialsView> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      context.read<MaterialsCubit>().loadMore();
+      context.read<MaterialsCubit>().moreRequested();
     }
   }
 
@@ -106,6 +107,7 @@ class _MaterialsViewState extends State<MaterialsView> {
   @override
   Widget build(BuildContext context) {
     final _appLocalizations = AppLocalizations.of(context)!;
+    final dataRepository = context.read<DataRepository>();
 
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
@@ -150,48 +152,58 @@ class _MaterialsViewState extends State<MaterialsView> {
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       child: StreamBuilder<List<Language>>(
-                          stream: RepositoryProvider.of<DataRepository>(context)
-                              .languages,
-                          builder: (context, snapshot) {
-                            return MultiSelect<Language>(
-                              navTitle: _appLocalizations.selectLanugages,
-                              placeholder: _appLocalizations.selectLanugages,
-                              // controller: _languageSelectController,
-                              multilineSummary: true,
-                              items: snapshot.data ?? [],
-                              toDisplay: (language) => language.name,
-                              onFinished: (Set<Language> selectedLanguages) {
-                                context
-                                    .read<MaterialsCubit>()
-                                    .selectedLanguagesChanged(
-                                        selectedLanguages);
-                              },
-                            );
-                          }),
+                        initialData: dataRepository.currentLanguages,
+                        stream: dataRepository.languages,
+                        builder: (context, snapshot) {
+                          return MultiSelect<Language>(
+                            navTitle: _appLocalizations.selectLanugages,
+                            placeholder: _appLocalizations.selectLanugages,
+                            // controller: _languageSelectController,
+                            multilineSummary: true,
+                            items: snapshot.data ?? [],
+                            initialSelection: Set<Language>.from(
+                              context
+                                  .read<MaterialsCubit>()
+                                  .state
+                                  .selectedLanguages
+                                  .map((languageId) =>
+                                      globalHiveApi.language.get(languageId))
+                                  .where((language) => language != null),
+                            ),
+                            toDisplay: (language) => language.name,
+                            onFinished: (Set<Language> selectedLanguages) {
+                              context
+                                  .read<MaterialsCubit>()
+                                  .selectedLanguagesChanged(selectedLanguages);
+                            },
+                          );
+                        },
+                      ),
                     ),
                     SizedBox(height: 10.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
                       child: StreamBuilder<List<MaterialTopic>>(
-                          stream: RepositoryProvider.of<DataRepository>(context)
-                              .materialTopics,
-                          builder: (context, snapshot) {
-                            return MultiSelect<MaterialTopic>(
-                              navTitle: _appLocalizations.selectTopics,
-                              placeholder: _appLocalizations.selectTopics,
-                              multilineSummary: true,
-                              enableSelectAllOption: true,
-                              inverseSelectAll: true,
-                              items: snapshot.data ?? [],
-                              // initialSelection: bloc.materialBloc.selectedTopics.toSet(),
-                              toDisplay: (topic) => topic.name,
-                              onFinished: (Set<MaterialTopic> selectedTopics) {
-                                context
-                                    .read<MaterialsCubit>()
-                                    .selectedTopicsChanged(selectedTopics);
-                              },
-                            );
-                          }),
+                        initialData: dataRepository.currentMaterialTopics,
+                        stream: dataRepository.materialTopics,
+                        builder: (context, snapshot) {
+                          return MultiSelect<MaterialTopic>(
+                            navTitle: _appLocalizations.selectTopics,
+                            placeholder: _appLocalizations.selectTopics,
+                            multilineSummary: true,
+                            enableSelectAllOption: true,
+                            inverseSelectAll: true,
+                            items: snapshot.data ?? [],
+                            // initialSelection: bloc.materialBloc.selectedTopics.toSet(),
+                            toDisplay: (topic) => topic.name,
+                            onFinished: (Set<MaterialTopic> selectedTopics) {
+                              context
+                                  .read<MaterialsCubit>()
+                                  .selectedTopicsChanged(selectedTopics);
+                            },
+                          );
+                        },
+                      ),
                     ),
                     SizedBox(height: 10.h),
                     SearchBar(

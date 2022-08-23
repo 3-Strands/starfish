@@ -15,6 +15,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
   MaterialsCubit(DataRepository dataRepository)
       : _dataRepository = dataRepository,
         super(MaterialsState(
+          selectedLanguages: dataRepository.currentUser.languageIds.toSet(),
           materials: dataRepository.currentMaterials,
           relatedMaterials: dataRepository.getMaterialsRelatedToMe(),
         )) {
@@ -29,7 +30,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
   final DataRepository _dataRepository;
   late StreamSubscription<List<Material>> _subscription;
 
-  void loadMore() {
+  void moreRequested() {
     emit(state.copyWith(
       pagesToShow: state.pagesToShow + 1,
     ));
@@ -38,7 +39,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
   void selectedLanguagesChanged(Set<Language> selectedLanguages) {
     final languageIds =
         selectedLanguages.map((language) => language.id).toSet();
-    _dataRepository.addUserLanguages(languageIds);
+    // TODO: Handle updated languages
     emit(state.copyWith(
       selectedLanguages: languageIds,
     ));

@@ -8,6 +8,7 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
+import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -398,13 +399,15 @@ class SingleMaterialView extends StatelessWidget {
                                 fontStyle: FontStyle.italic),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
+                                final widget = RepositoryProvider.value(
+                                  value: context.read<DataRepository>(),
+                                  child: ReportMaterialDialogBox(
+                                    material: material,
+                                  ),
+                                );
                                 showDialog(
                                   context: context,
-                                  builder: (BuildContext context) {
-                                    return ReportMaterialDialogBox(
-                                      material: material,
-                                    );
-                                  },
+                                  builder: (_) => widget,
                                 );
                               },
                           ),
