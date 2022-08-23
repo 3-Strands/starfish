@@ -21,6 +21,7 @@ import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
+import 'package:starfish/widgets/box_builder.dart';
 import 'package:starfish/widgets/custon_icon_button.dart';
 import 'package:starfish/widgets/last_sync_bottom_widget.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
@@ -151,16 +152,15 @@ class _MaterialsViewState extends State<MaterialsView> {
                     SizedBox(height: 14.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      child: StreamBuilder<List<Language>>(
-                        initialData: dataRepository.currentLanguages,
-                        stream: dataRepository.languages,
-                        builder: (context, snapshot) {
+                      child: BoxBuilder<Language>(
+                        box: globalHiveApi.language,
+                        builder: (context, values) {
                           return MultiSelect<Language>(
                             navTitle: _appLocalizations.selectLanugages,
                             placeholder: _appLocalizations.selectLanugages,
                             // controller: _languageSelectController,
                             multilineSummary: true,
-                            items: snapshot.data ?? [],
+                            items: values.toList(),
                             initialSelection: Set<Language>.from(
                               context
                                   .read<MaterialsCubit>()
@@ -183,17 +183,16 @@ class _MaterialsViewState extends State<MaterialsView> {
                     SizedBox(height: 10.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      child: StreamBuilder<List<MaterialTopic>>(
-                        initialData: dataRepository.currentMaterialTopics,
-                        stream: dataRepository.materialTopics,
-                        builder: (context, snapshot) {
+                      child: BoxBuilder<MaterialTopic>(
+                        box: globalHiveApi.materialTopic,
+                        builder: (context, values) {
                           return MultiSelect<MaterialTopic>(
                             navTitle: _appLocalizations.selectTopics,
                             placeholder: _appLocalizations.selectTopics,
                             multilineSummary: true,
                             enableSelectAllOption: true,
                             inverseSelectAll: true,
-                            items: snapshot.data ?? [],
+                            items: values.toList(),
                             // initialSelection: bloc.materialBloc.selectedTopics.toSet(),
                             toDisplay: (topic) => topic.name,
                             onFinished: (Set<MaterialTopic> selectedTopics) {
