@@ -8,6 +8,9 @@ part 'fieldMasks.dart';
 abstract class Storage {
   const Storage();
 
+  String toSaveCode(String modelCode);
+  String toRemoveCode();
+
   String toCreateCode(int typeId, String modelCode);
   String toUpdateCode(int typeId, String modelCode, String originalModelCode);
   String toDeleteCode(int typeId, String modelCode);
@@ -19,10 +22,20 @@ class BoxStorage extends Storage {
   final String name;
 
   @override
+  String toSaveCode(String modelCode) {
+    return 'globalHiveApi.$name.put($modelCode.id, $modelCode);';
+  }
+
+  @override
+  String toRemoveCode() {
+    return 'globalHiveApi.$name.delete(id);';
+  }
+
+  @override
   String toCreateCode(int typeId, String modelCode) {
     return '''
       globalHiveApi.$name.put($modelCode.id, $modelCode);
-      ensureCreateRevert($typeId, $modelCode.id);''';
+      ensureRevert($typeId, $modelCode.id, null);''';
   }
 
   @override
@@ -40,17 +53,11 @@ class BoxStorage extends Storage {
   }
 }
 
-enum ReferenceType {
-  fullModel,
-  modelKey,
-}
-
 class Reference {
-  Reference(this.model, this.field, this.type);
+  Reference(this.model, this.field);
 
   final Model model;
   final String field;
-  final ReferenceType type;
 }
 
 class ReferenceStorage extends Storage {
@@ -59,20 +66,43 @@ class ReferenceStorage extends Storage {
   final Map<String, Reference> references;
 
   @override
+  String toSaveCode(String modelCode) {
+    return references.entries.map((entry) {
+      final referringField = entry.key;
+      if (referringField.isEmpty) {
+        return '// noop';
+      }
+      final refersTo = entry.value;
+      final box = refersTo.model.storage as BoxStorage;
+      return '''
+        globalHiveApi.${box.name}.applyUpdate($modelCode.$referringField, (other) {
+          other.${refersTo.field}.add($modelCode);
+        });''';
+    }).join('\n');
+  }
+
+  @override
+  String toRemoveCode() {
+    throw Exception(
+        'Should not be generating remove code for object stored in reference to other objects');
+    // return references.entries.map((entry) {
+    //   final refersTo = entry.value;
+    //   final box = refersTo.model.storage as BoxStorage;
+    //   return '''
+    //     globalHiveApi.${box.name}.applyGenericUpdate((model) => model.id == id, (other) => other.${refersTo.field}.removeWhere((item) => item.id == id));''';
+    // }).join('\n');
+  }
+
+  @override
   String toCreateCode(int typeId, String modelCode) {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
-      switch (refersTo.type) {
-        case ReferenceType.fullModel:
-          final box = refersTo.model.storage as BoxStorage;
-          return '''
-            globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
-              other.${refersTo.field}.add($modelCode);
-            });''';
-        case ReferenceType.modelKey:
-          return '';
-      }
+      final box = refersTo.model.storage as BoxStorage;
+      return '''
+        globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
+          other.${refersTo.field}.add($modelCode);
+        });''';
     }).join('\n');
   }
 
@@ -82,20 +112,15 @@ class ReferenceStorage extends Storage {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
-      switch (refersTo.type) {
-        case ReferenceType.fullModel:
-          final box = refersTo.model.storage as BoxStorage;
-          final code = '''
-            ${hasWrittenId ? '' : 'final id = $modelCode.id;'}
-            globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
-              final index = other.${refersTo.field}.indexWhere((item) => item.id == id);
-              other.${refersTo.field}[index] = $modelCode;
-            });''';
-          hasWrittenId = true;
-          return code;
-        case ReferenceType.modelKey:
-          return '';
-      }
+      final box = refersTo.model.storage as BoxStorage;
+      final code = '''
+        ${hasWrittenId ? '' : 'final id = $modelCode.id;'}
+        globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
+          final index = other.${refersTo.field}.indexWhere((item) => item.id == id);
+          other.${refersTo.field}[index] = $modelCode;
+        });''';
+      hasWrittenId = true;
+      return code;
     }).join('\n');
   }
 
@@ -104,13 +129,8 @@ class ReferenceStorage extends Storage {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
-      switch (refersTo.type) {
-        case ReferenceType.fullModel:
-          final box = refersTo.model.storage as BoxStorage;
-          return 'globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) => other.${refersTo.field}.removeWhere((item) => item.id == $modelCode.id));';
-        case ReferenceType.modelKey:
-          return '';
-      }
+      final box = refersTo.model.storage as BoxStorage;
+      return 'globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) => other.${refersTo.field}.removeWhere((item) => item.id == $modelCode.id));';
     }).join('\n');
   }
 }
@@ -176,6 +196,18 @@ class Model extends MessageWrapper {
 
   String makeDeltaCode(int typeId) {
     final classBuffer = StringBuffer();
+    classBuffer.writeln('''
+      void save${name}Locally($name model) {
+        ${storage.toSaveCode('model')}
+      }''');
+    classBuffer.writeln();
+    if (storage is BoxStorage) {
+      classBuffer.writeln('''
+        void remove${name}Locally(String id) {
+          ${storage.toRemoveCode()}
+        }''');
+      classBuffer.writeln();
+    }
     _generateCreateDelta(typeId, classBuffer);
     classBuffer.writeln();
     _generateUpdateDelta(typeId, classBuffer);
@@ -203,11 +235,18 @@ class Model extends MessageWrapper {
               ? 'String'
               : field.type == PbFieldType.OB
                   ? 'bool'
-                  : field.isGroupOrMessage
-                      ? field.makeDefault!().runtimeType.toString()
-                      : field.isEnum
-                          ? field.enumValues![0].runtimeType.toString()
-                          : 'dynamic';
+                  : field.type == PbFieldType.O3
+                      ? 'int'
+                      : field.type == PbFieldType.O6
+                          ? 'Int64'
+                          : field.isGroupOrMessage
+                              ? field.makeDefault!().runtimeType.toString()
+                              : field.isEnum
+                                  ? field.enumValues![0].runtimeType.toString()
+                                  : 'dynamic';
+      if (type == 'dynamic')
+        print(
+            'Unknown type for $name.$field (${field.type}): ${field.makeDefault?.call().runtimeType ?? '<unknown>'}');
       return Field(
         name: field.name,
         protoName: field.protoName,
@@ -244,7 +283,7 @@ class Model extends MessageWrapper {
 
   void _generateCreateDelta(int typeId, StringBuffer classBuffer) {
     if (createUpdateRequest == null) {
-      classBuffer.writeln('// $name is not creatable');
+      classBuffer.writeln('// Users cannot create the $name type');
       return;
     }
 
@@ -279,7 +318,7 @@ class Model extends MessageWrapper {
     }
 
     classBuffer.writeln('''
-        );
+        )..freeze();
         ${storage.toCreateCode(typeId, 'model')}
         assert(!globalHiveApi.sync.containsKey(model.id));
         globalHiveApi.sync.put(model.id, ${_makeCreateUpdateRequestCode('model')});
@@ -294,7 +333,7 @@ class Model extends MessageWrapper {
     final editableFields = this.editableFields;
 
     if (editableFields == null || createUpdateRequest == null) {
-      classBuffer.writeln('// $name is not updatable');
+      classBuffer.writeln('// Users cannot update the $name type');
       return;
     }
     final className = '${name}UpdateDelta';
@@ -373,7 +412,7 @@ class Model extends MessageWrapper {
 
   void _generateDeleteDelta(int typeId, StringBuffer classBuffer) {
     if (deleteRequest == null) {
-      classBuffer.writeln('// $name is not deletable');
+      classBuffer.writeln('// Users cannot delete the $name type');
       return;
     }
     final className = '${name}DeleteDelta';
@@ -443,6 +482,11 @@ final userModel = Model(
   createUpdateRequest: CreateUpdateUserRequest(),
 );
 
+final evaluationCategoryModel = Model(
+  EvaluationCategory(),
+  storage: BoxStorage('evaluationCategory'),
+);
+
 final messages = <int, MessageWrapper>{
   0: Model(
     Country(),
@@ -452,26 +496,28 @@ final messages = <int, MessageWrapper>{
     Language(),
     storage: BoxStorage('language'),
   ),
+  // 2: legacy: CurrentUser,
   3: Model(
     GroupUser(),
     storage: ReferenceStorage({
-      'groupId': Reference(groupModel, 'users', ReferenceType.fullModel),
-      'userId': Reference(userModel, 'groups', ReferenceType.fullModel),
+      'groupId': Reference(groupModel, 'users'),
+      'userId': Reference(userModel, 'groups'),
     }),
     editableFields: _kGroupUserFieldMask,
     createUpdateRequest: CreateUpdateGroupUsersRequest(),
-    deleteRequest: GroupUser(),
+    deleteRequest: DeleteGroupUserRequest(),
   ),
   4: actionModel,
   5: materialModel,
   6: Model(
     MaterialFeedback(),
     storage: ReferenceStorage({
-      'materialId':
-          Reference(materialModel, 'feedbacks', ReferenceType.fullModel),
+      'materialId': Reference(materialModel, 'feedbacks'),
     }),
     createUpdateRequest: CreateMaterialFeedbacksRequest(),
   ),
+  // 7: MessageWrapper(Date()),
+  // 8: legacy: HiveDateTime
   9: Model(
     MaterialTopic(),
     storage: BoxStorage('materialTopic'),
@@ -480,34 +526,74 @@ final messages = <int, MessageWrapper>{
     MaterialType(),
     storage: BoxStorage('materialType'),
   ),
+  // 11: MessageWrapper(Edit()),
   12: groupModel,
+  // 13: deprecated: GroupAction,
+  14: evaluationCategoryModel,
   15: Model(
     ActionUser(),
     storage: ReferenceStorage({
-      'userId': Reference(userModel, 'actions', ReferenceType.fullModel),
+      'userId': Reference(userModel, 'actions'),
     }),
     editableFields: _kActionUserFieldMask,
     createUpdateRequest: CreateUpdateActionUserRequest(),
   ),
   16: userModel,
+  // 17: custom: File
+  18: Model(
+    LearnerEvaluation(),
+    storage: BoxStorage('learnerEvaluation'),
+    createUpdateRequest: CreateUpdateLearnerEvaluationRequest(),
+  ),
+  19: Model(
+    TeacherResponse(),
+    storage: BoxStorage('teacherResponse'),
+    createUpdateRequest: CreateUpdateTeacherResponseRequest(),
+  ),
+  20: Model(
+    GroupEvaluation(),
+    storage: BoxStorage('groupEvaluation'),
+  ),
+  21: Model(
+    Transformation(),
+    storage: BoxStorage('transformation'),
+    createUpdateRequest: CreateUpdateTransformationRequest(),
+  ),
+  22: Model(
+    Output(),
+    storage: BoxStorage('output'),
+    createUpdateRequest: CreateUpdateOutputRequest(),
+  ),
+  23: Model(
+    OutputMarker(),
+    storage: ReferenceStorage({
+      '': Reference(groupModel, 'outputMarkers'),
+    }),
+  ),
+  24: Model(
+    EvaluationValueName(),
+    storage: ReferenceStorage({
+      '': Reference(evaluationCategoryModel, 'valueNames'),
+    }),
+  ),
 
   // ------------------ Request Types ------------------
-  102: MessageWrapper(CreateMaterialFeedbacksRequest()),
-  103: MessageWrapper(CreateUpdateActionsRequest()),
-  104: MessageWrapper(CreateUpdateActionUserRequest()),
-  105: MessageWrapper(CreateUpdateGroupEvaluationRequest()),
-  106: MessageWrapper(CreateUpdateGroupsRequest()),
-  107: MessageWrapper(CreateUpdateGroupUsersRequest()),
-  108: MessageWrapper(CreateUpdateLearnerEvaluationRequest()),
-  109: MessageWrapper(CreateUpdateMaterialsRequest()),
-  110: MessageWrapper(CreateUpdateOutputRequest()),
-  111: MessageWrapper(CreateUpdateTeacherResponseRequest()),
-  112: MessageWrapper(CreateUpdateTransformationRequest()),
-  113: MessageWrapper(CreateUpdateUserRequest()),
-  114: MessageWrapper(DeleteActionRequest()),
-  // 115: MessageWrapper(DeleteGroupUserRequest()),
+  102: MessageWrapper(CreateUpdateMaterialsRequest()),
+  103: MessageWrapper(CreateUpdateGroupsRequest()),
+  104: MessageWrapper(CreateUpdateUserRequest()),
+  105: MessageWrapper(UpdateCurrentUserRequest()),
+  106: MessageWrapper(CreateUpdateActionsRequest()),
+  107: MessageWrapper(CreateUpdateTransformationRequest()),
+  108: MessageWrapper(CreateUpdateTeacherResponseRequest()),
+  109: MessageWrapper(CreateMaterialFeedbacksRequest()),
+  110: MessageWrapper(CreateUpdateActionUserRequest()),
+  111: MessageWrapper(CreateUpdateGroupEvaluationRequest()),
+  112: MessageWrapper(CreateUpdateGroupUsersRequest()),
+  113: MessageWrapper(CreateUpdateLearnerEvaluationRequest()),
+  114: MessageWrapper(CreateUpdateOutputRequest()),
+  115: MessageWrapper(DeleteActionRequest()),
   116: MessageWrapper(DeleteMaterialRequest()),
-  117: MessageWrapper(UpdateCurrentUserRequest()),
+  117: MessageWrapper(DeleteGroupUserRequest()),
 };
 
 int findTypeId(Model model) =>
@@ -530,6 +616,10 @@ void main() {
       default: throw Exception('Unknown type id \$typeId');
     }
   }
+
+  const _messageToTypeIdMap = <Type, int>{
+    ${messages.entries.where((entry) => entry.key >= 100 && entry.key < 200).map((entry) => '${entry.value.name}: ${entry.key},').join('\n')}
+  };
   ''';
 
   File('lib/src/deltas.g.dart').writeAsString(deltaContents);

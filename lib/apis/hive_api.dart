@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
@@ -34,6 +35,7 @@ class HiveApi {
   // HiveOutputMarker // 23
   // HiveEvaluationValueName // 24
   static const String SYNC_BOX = 'syncBox';
+  static const String SYNC_FALLBACK_BOX = 'syncFallbackBox';
   static const String REVERT_BOX = 'revertBox';
 
   static init({
@@ -82,7 +84,7 @@ class HiveApi {
         encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox(SYNC_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
-    await Hive.openBox(REVERT_BOX,
+    await Hive.openBox<Map<String, dynamic>>(REVERT_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
   }
 
@@ -113,8 +115,25 @@ class HiveApi {
   Box<Transformation> get transformation =>
       Hive.box<Transformation>(TRANSFORMATION_BOX);
   Box<Output> get output => Hive.box<Output>(OUTPUT_BOX);
-  Box<dynamic> get sync => Hive.box(SYNC_BOX);
-  Box<dynamic> get revert => Hive.box(REVERT_BOX);
+  Box<dynamic> get sync =>
+      Hive.box(_isSyncBoxProtected ? SYNC_FALLBACK_BOX : SYNC_BOX);
+  Box<Map<String, dynamic>> get revert =>
+      Hive.box<Map<String, dynamic>>(REVERT_BOX);
+
+  var _isSyncBoxProtected = false;
+
+  /// Make sure the sync box is not written to for the duration of the passed function.
+  /// Once the function is completed, the
+  Future<void> protectSyncBox(FutureOr<void> Function() fn) async {
+    assert(!_isSyncBoxProtected,
+        'Attempting to protect an already protected sync box! This is undefined behavior.');
+    _isSyncBoxProtected = true;
+    try {
+      await fn();
+    } finally {
+      _isSyncBoxProtected = false;
+    }
+  }
 }
 
 /// Global constant to access HiveApi.

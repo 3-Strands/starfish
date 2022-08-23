@@ -1,3 +1,6 @@
+import 'package:fixnum/fixnum.dart';
+import 'package:meta/meta.dart';
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:starfish/apis/hive_api.dart';
@@ -20,6 +23,24 @@ Date _currentDate() {
 }
 
 extension Edits<T extends GeneratedMessage> on Box<T> {
+  // void applyGenericUpdate(
+  //     bool Function(T model) isCorrect, void Function(T other) updates) {
+  //   for (final key in keys) {
+  //     final item = get(key)!;
+  //     if (isCorrect(item)) {
+  //       put(key, item.rebuild(updates));
+  //       return;
+  //     }
+  //   }
+  // }
+
+  void applyUpdate(dynamic key, void Function(T other) updates) {
+    final item = get(key);
+    if (item != null) {
+      put(key, item.rebuild(updates));
+    }
+  }
+
   void applyEdit(int typeId, dynamic key, void Function(T other) updates) {
     final item = get(key);
     if (item != null) {
@@ -31,32 +52,23 @@ extension Edits<T extends GeneratedMessage> on Box<T> {
 }
 
 void ensureRevert(int typeId, dynamic key, dynamic item) {
-  final map = globalHiveApi.revert.get(typeId) as Map<String, dynamic>? ?? {};
+  final map = globalHiveApi.revert.get(typeId) ?? {};
   if (!map.containsKey(key)) {
     map[key] = item;
   }
   globalHiveApi.revert.put(typeId, map);
 }
 
-const kCreatedKeys = '__created';
-
-void ensureCreateRevert(int typeId, String key) {
-  final map =
-      globalHiveApi.revert.get(kCreatedKeys) as Map<int, List<String>>? ?? {};
-  (map[typeId] ??= []).add(key);
-  globalHiveApi.revert.put(kCreatedKeys, map);
-}
-
 void revertAll() {
-  // First, pull out all the items to delete.
-  final deleteMap =
-      globalHiveApi.revert.get(kCreatedKeys) as Map<int, List<String>>?;
-  globalHiveApi.revert.delete(kCreatedKeys);
-  if (deleteMap != null) {
-    for (final entry in deleteMap.entries) {
-      _resolveBox(entry.key).deleteAll(entry.value);
-    }
-  }
+  // // First, pull out all the items to delete.
+  // final deleteMap =
+  //     globalHiveApi.revert.get(kCreatedKeys) as Map<int, List<String>>?;
+  // globalHiveApi.revert.delete(kCreatedKeys);
+  // if (deleteMap != null) {
+  //   for (final entry in deleteMap.entries) {
+  //     _resolveBox(entry.key).deleteAll(entry.value);
+  //   }
+  // }
 }
 
 bool listsAreSame<T>(List<T> a, List<T> b) {
@@ -99,4 +111,13 @@ class FileReferenceCreateDelta extends DeltaBase {
     globalHiveApi.file.put(model.key, model);
     return true;
   }
+}
+
+int _typeIdOf(Type t) => _messageToTypeIdMap[t]!;
+
+List<dynamic> getRequestsInOrder() {
+  return globalHiveApi.sync.values.toList()
+    ..sort(
+      (a, b) => _typeIdOf(a.runtimeType).compareTo(_typeIdOf(b.runtimeType)),
+    );
 }

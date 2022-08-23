@@ -34,7 +34,7 @@ dependencies:
 
   #Helper Pubs
   bloc: ^8.0.0
-  flutter_bloc: ^8.0.0
+  flutter_bloc: ^8.1.1
   grpc: ^3.0.1
   protobuf: ^2.0.0
   rxdart: ^0.27.1

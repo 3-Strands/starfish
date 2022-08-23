@@ -34,11 +34,6 @@ extension ActionExt on Action {
   bool get isPastDueDate => dateDue.toDateTime().isBefore(DateTime.now());
 }
 
-extension ActionUserExt on ActionUser {
-  // TODO: REMOVE THIS!
-  String get id => '$userId:$actionId';
-}
-
 extension GroupExt on Group {
   List<User> get fullUsers => users.map((groupUser) => groupUser.user).toList();
   // List<UserWithGroupRole> get usersWithRole => users
@@ -47,8 +42,6 @@ extension GroupExt on Group {
 }
 
 extension GroupUserExt on GroupUser {
-  // TODO: REMOVE THIS!
-  String get id => '$userId:$groupId';
   User? get maybeUser => globalHiveApi.user.get(userId);
   User get user => maybeUser!;
 
