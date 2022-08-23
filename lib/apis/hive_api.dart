@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 import 'package:starfish/models/file_reference.dart';
-import 'package:starfish/src/grpc_adapters.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
 class HiveApi {
@@ -120,8 +119,6 @@ class HiveApi {
   Box<Map<String, dynamic>> get revert =>
       Hive.box<Map<String, dynamic>>(REVERT_BOX);
 
-  var _isSyncBoxProtected = false;
-
   /// Make sure the sync box is not written to for the duration of the passed function.
   /// Once the function is completed, the
   Future<void> protectSyncBox(FutureOr<void> Function() fn) async {
@@ -135,6 +132,8 @@ class HiveApi {
     }
   }
 }
+
+var _isSyncBoxProtected = false;
 
 /// Global constant to access HiveApi.
 const HiveApi globalHiveApi = HiveApi();

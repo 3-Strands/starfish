@@ -71,11 +71,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
                 .isNotEmpty) {
           // We need to send the request immediately
           try {
-            // TODO: Generate UpdateCurrentUserRequest
-            final newCurrentUser =
-                await syncRepository.syncCurrentUserImmediately(UpdateCurrentUserRequest(user: currentUser, updateMask: FieldMask(paths: kCurrentUserFieldMask)));
-            globalHiveApi.user.put(newCurrentUser.id, newCurrentUser);
-            authenticationRepository.updateCurrentUser(newCurrentUser);
+            // TODO: UpdateUserDelta
+            final newCurrentUser = await syncRepository.syncImmediately();
+            // authenticationRepository.updateCurrentUser(newCurrentUser);
           } catch (err) {
             // TODO: Warn user they must be online.
           }

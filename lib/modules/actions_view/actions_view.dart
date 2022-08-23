@@ -26,14 +26,12 @@ class ActionsView extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => MyTeacherAdminRoleCubit(
-              RepositoryProvider.of<DataRepository>(context)),
-          child: const ActionsScreen(),
+          create: (context) =>
+              MyTeacherAdminRoleCubit(context.read<DataRepository>()),
         ),
         BlocProvider(
           create: (context) =>
               ActionsCubit(RepositoryProvider.of<DataRepository>(context)),
-          child: const ActionsScreen(),
         ),
       ],
       child: const ActionsScreen(),
