@@ -9,7 +9,10 @@ import 'package:starfish/modules/create_profile/create_profile.dart';
 import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/sync_repository.dart';
+import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/currentUser.dart';
+import 'package:starfish/utils/services/grpc_client.dart';
 
 import '../models/session.dart';
 
@@ -23,8 +26,30 @@ class AuthenticatedApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => DataRepository(user: context.currentUser),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+            create: (context) => DataRepository(user: context.currentUser)),
+        RepositoryProvider(
+          create: (context) => SyncRepository(
+              client: makeAuthenticatedClient(session.tokens.accessToken),
+              // This function will only initiate a refresh request if
+              // there is not an existing request pending.
+              requestRefresh: () {
+                Future<StarfishClient>? pendingRefresh;
+                return () {
+                  pendingRefresh ??= context
+                      .read<AuthenticationRepository>()
+                      .refreshSession()
+                      .then((session) {
+                    pendingRefresh = null;
+                    return makeAuthenticatedClient(session.tokens.accessToken);
+                  });
+                  return pendingRefresh!;
+                };
+              }()),
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -33,6 +58,7 @@ class AuthenticatedApp extends StatelessWidget {
               return SyncBloc(
                 authenticationRepository:
                     context.read<AuthenticationRepository>(),
+                syncRepository: context.read<SyncRepository>(),
               );
             },
           ),
