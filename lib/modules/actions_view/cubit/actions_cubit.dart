@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_group.dart';
+import 'package:meta/meta.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/src/deltas.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
 part 'actions_state.dart';
 
@@ -27,14 +29,8 @@ class ActionsCubit extends Cubit<ActionsState> {
     });
   }
 
+  late StreamSubscription<List<Action>> _subscription;
   final DataRepository _dataRepository;
-  late StreamSubscription<List<HiveAction>> _subscription;
-
-  void loadMore() {
-    emit(state.copyWith(
-      pagesToShow: state.pagesToShow + 1,
-    ));
-  }
 
   void updateActionFilter(ActionFilter actionFilter) {
     emit(state.copyWith(
@@ -52,6 +48,10 @@ class ActionsCubit extends Cubit<ActionsState> {
     emit(state.copyWith(
       userGroupRoleFilter: userRole,
     ));
+  }
+
+  void deleteAction(Action action) {
+    _dataRepository.addDelta(ActionDeleteDelta(action));
   }
 
   @override

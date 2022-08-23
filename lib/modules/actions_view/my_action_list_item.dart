@@ -1,22 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:starfish/bloc/provider.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_action.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 
 class MyActionListItem extends StatelessWidget {
   final int index;
-  final HiveAction action;
+  final ActionWithAssignedStatus actionWithAssignedStatus;
   final bool displayActions;
-  final Function(HiveAction action) onActionTap;
+  final Function(ActionWithAssignedStatus actionWithAssignedStatus) onActionTap;
 
   const MyActionListItem(
-      {required this.action,
+      {required this.actionWithAssignedStatus,
       required this.onActionTap,
       required this.index,
       this.displayActions = false});
@@ -24,7 +23,12 @@ class MyActionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final bloc = Provider.of(context);
-    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final Action _action = actionWithAssignedStatus.action;
+    final ActionStatus _actionStatus =
+        actionWithAssignedStatus.status ?? ActionStatus.NOT_DONE;
+    //final ActionUser? _actionUser = actionWithAssignedStatus.actionUser;
+
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
@@ -35,7 +39,7 @@ class MyActionListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          onActionTap(action);
+          onActionTap(actionWithAssignedStatus);
         },
         child: Padding(
           padding:
@@ -59,7 +63,7 @@ class MyActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.w, right: 8.w),
                         child: Text(
-                          action.name!,
+                          _action.name,
                           //maxLines: 1,
                           //overflow: TextOverflow.ellipsis,
                           //softWrap: false,
@@ -142,9 +146,9 @@ class MyActionListItem extends StatelessWidget {
                 children: [
                   ActionStatusWidget(
                     onTap: (_) {
-                      onActionTap(action);
+                      onActionTap(actionWithAssignedStatus);
                     },
-                    actionStatus: action.actionStatus,
+                    actionStatus: _actionStatus,
 
                     ///
                     height: 30.h,
@@ -154,7 +158,8 @@ class MyActionListItem extends StatelessWidget {
                     width: 10.w,
                   ),
                   Text(
-                    '${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(_action.dateDue)}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -170,7 +175,7 @@ class MyActionListItem extends StatelessWidget {
     );
   }
 
-  _deleteAction(BuildContext context, HiveAction action) {
+  _deleteAction(BuildContext context, Action action) {
     // final bloc = Provider.of(context);
     // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     // Alerts.showMessageBox(

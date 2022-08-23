@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 
 class ActionStatusWidget extends StatefulWidget {
   final ActionStatus actionStatus;
   final height;
   final width;
-  final Function(ActionStatus newStatus) onTap;
+  final Function(ActionUser_Status newStatus) onTap;
 
   ActionStatusWidget({
     Key? key,
@@ -25,14 +26,12 @@ class _ActionStatusWidgetState extends State<ActionStatusWidget> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (widget.actionStatus == ActionStatus.OVERDUE) {
+        if (widget.actionStatus == ActionStatus.OVERDUE ||
+            widget.actionStatus == ActionStatus.NOT_DONE) {
           //return;
-          widget.onTap(ActionStatus.DONE);
-        }
-        if (widget.actionStatus == ActionStatus.DONE) {
-          widget.onTap(ActionStatus.NOT_DONE);
-        } else if (widget.actionStatus == ActionStatus.NOT_DONE) {
-          widget.onTap(ActionStatus.DONE);
+          widget.onTap(ActionUser_Status.COMPLETE);
+        } else if (widget.actionStatus == ActionStatus.DONE) {
+          widget.onTap(ActionUser_Status.INCOMPLETE);
         }
       },
       child: Container(

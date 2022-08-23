@@ -1,22 +1,16 @@
+import 'package:flutter/material.dart' hide Action;
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_list_view/group_list_view.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_action.dart';
-import 'package:starfish/db/hive_action_user.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_action_list_item.dart';
-import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
-import 'package:starfish/repositories/data_repository.dart';
-import 'package:starfish/repository/current_user_repository.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/general_functions.dart';
-import 'package:starfish/widgets/action_status_widget.dart';
-import 'package:starfish/widgets/material_link_button.dart';
+import 'package:starfish/modules/actions_view/single_action_user_view.dart';
+import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,258 +23,230 @@ class MyActionsView extends StatefulWidget {
 }
 
 class _MyActionsViewState extends State<MyActionsView> {
-  // final Key _meFocusDetectorKey = UniqueKey();
+  late AppLocalizations _appLocalizations;
+  @override
+  void initState() {
+    super.initState();
+  }
 
-  // bool _isInitialized = false;
-
-  // late DataBloc bloc;
-  // late AppLocalizations _appLocalizations;
-
-  // Dashboard obj = new Dashboard();
-
-  // _getActions(DataBloc bloc) async {
-  //   bloc.actionBloc.fetchMyActionsFromDB();
-  // }
-
-  // void _isSyncingFirstTime() async {
-  //   StarfishSharedPreference().isSyncingFirstTimeDone().then((status) => {
-  //         if (!status)
-  //           {
-  //             SyncService().syncAll(),
-  //           }
-  //       });
-  // }
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _appLocalizations = AppLocalizations.of(context)!;
-    // if (!_isInitialized) {
-    //   bloc = Provider.of(context);
-    //   _isInitialized = true;
-    // }
+    _appLocalizations = AppLocalizations.of(context)!;
 
     return Scrollbar(
       thickness: 5.w,
       thumbVisibility: false,
       child: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 20.h,
-              ),
-              Container(
-                height: 52.h,
-                margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                decoration: BoxDecoration(
-                  color: AppColors.txtFieldBackground,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.r),
-                  ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            Container(
+              height: 52.h,
+              margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              decoration: BoxDecoration(
+                color: AppColors.txtFieldBackground,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.r),
                 ),
-                child: Center(
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      alignedDropdown: true,
-                      child: BlocBuilder<ActionsCubit, ActionsState>(
-                        buildWhen: (previous, current) =>
-                            previous.actionFilter != current.actionFilter,
-                        builder: (context, state) {
-                          return DropdownButton2<ActionFilter>(
-                            dropdownMaxHeight: 350.h,
-                            offset: Offset(0, -10),
-                            isExpanded: true,
-                            iconSize: 35,
+              ),
+              child: Center(
+                child: DropdownButtonHideUnderline(
+                  child: ButtonTheme(
+                    alignedDropdown: true,
+                    child: BlocBuilder<ActionsCubit, ActionsState>(
+                      buildWhen: (previous, current) =>
+                          previous.actionFilter != current.actionFilter,
+                      builder: (context, state) {
+                        return DropdownButton2<ActionFilter>(
+                          dropdownMaxHeight: 350.h,
+                          offset: Offset(0, -10),
+                          isExpanded: true,
+                          iconSize: 35,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 19.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                          hint: Text(
+                            //bloc.actionBloc.actionFilter.about,
+                            context
+                                .read<ActionsCubit>()
+                                .state
+                                .actionFilter
+                                .about,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Color(0xFF434141),
                               fontSize: 19.sp,
                               fontFamily: 'OpenSans',
                             ),
-                            hint: Text(
-                              //bloc.actionBloc.actionFilter.about,
-                              context
-                                  .read<ActionsCubit>()
-                                  .state
-                                  .actionFilter
-                                  .about,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            onChanged: (ActionFilter? actionFilter) {
-                              if (actionFilter == null) {
-                                return;
-                              }
-                              context
-                                  .read<ActionsCubit>()
-                                  .updateActionFilter(actionFilter);
-                            },
-                            items: ActionFilter.values
-                                .map<DropdownMenuItem<ActionFilter>>(
-                                    (ActionFilter value) {
-                              return DropdownMenuItem<ActionFilter>(
-                                value: value,
-                                child: Text(
-                                  value.about,
-                                  style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 17.sp,
-                                    fontFamily: 'OpenSans',
-                                  ),
+                            textAlign: TextAlign.left,
+                          ),
+                          onChanged: (ActionFilter? actionFilter) {
+                            if (actionFilter == null) {
+                              return;
+                            }
+                            context
+                                .read<ActionsCubit>()
+                                .updateActionFilter(actionFilter);
+                          },
+                          items: ActionFilter.values
+                              .map<DropdownMenuItem<ActionFilter>>(
+                                  (ActionFilter value) {
+                            return DropdownMenuItem<ActionFilter>(
+                              value: value,
+                              child: Text(
+                                value.about,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 17.sp,
+                                  fontFamily: 'OpenSans',
                                 ),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 10.h),
-              SearchBar(
-                initialValue: '',
-                onValueChanged: (query) {
-                  context.read<ActionsCubit>().updateQuery(query);
-                },
-                // TODO: This is actually unnecessary, since we update the query on every change.
-                onDone: (_) {},
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              //actionsList(bloc),
-              BlocBuilder<ActionsCubit, ActionsState>(
-                  builder: (context, state) {
-                final actionsToShow = state.actionsToShow;
-                final groupActionsMap = actionsToShow.groupActionsMap;
-                final hasMore = actionsToShow.hasMore;
-                if (groupActionsMap.isEmpty) {
-                  return Container(
-                    margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Text(
-                      '${_appLocalizations.noRecordFound}',
-                      style: TextStyle(
-                        color: Color(0xFF434141),
-                        fontSize: 17.sp,
-                        fontFamily: 'OpenSans',
-                      ),
+            ),
+            SizedBox(height: 10.h),
+            SearchBar(
+              initialValue: '',
+              onValueChanged: (query) {
+                context.read<ActionsCubit>().updateQuery(query);
+              },
+              // TODO: This is actually unnecessary, since we update the query on every change.
+              onDone: (_) {},
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            //actionsList(bloc),
+            BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
+              final actionsToShow = state.actionsToShow;
+              final groupActionsMap = actionsToShow.groupActionsMap;
+              //final hasMore = actionsToShow.hasMore;
+              if (groupActionsMap.isEmpty) {
+                return Container(
+                  margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  child: Text(
+                    '${_appLocalizations.noRecordFound}',
+                    style: TextStyle(
+                      color: Color(0xFF434141),
+                      fontSize: 17.sp,
+                      fontFamily: 'OpenSans',
                     ),
+                  ),
+                );
+              }
+              return GroupListView(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                sectionsCount: groupActionsMap.length,
+                countOfItemInSection: (int section) {
+                  return groupActionsMap.values.toList()[section].length;
+                },
+                itemBuilder: (BuildContext context, IndexPath indexPath) {
+                  final ActionWithAssignedStatus _actionWithAssignedStatus =
+                      groupActionsMap.values.toList()[indexPath.section]
+                          [indexPath.index];
+                  return MyActionListItem(
+                    index: indexPath.index,
+                    actionWithAssignedStatus: _actionWithAssignedStatus,
+                    onActionTap: _onActionSelection,
                   );
-                }
-                // return ListView.builder(
-                //   shrinkWrap: true,
-                //   padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: hasMore ? actions.length + 1 : actions.length,
-                //   itemBuilder: (BuildContext ctxt, int index) {
-                //     if (index >= actions.length) {
-                //       return Container(
-                //         margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                //         padding: EdgeInsets.symmetric(vertical: 8.h),
-                //         child: Center(
-                //           child: SizedBox(
-                //             child: CircularProgressIndicator(),
-                //             height: 24,
-                //             width: 24,
-                //           ),
-                //         ),
-                //       );
-                //     }
-                //     final actionWithStatus = actions[index];
-                //     return MyActionListItem(
-                //       index: index,
-                //       action: actionWithStatus.action,
-                //       onActionTap: _onActionSelection,
-                //     );
-                //   },
-                // );
-                return GroupListView(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  sectionsCount: groupActionsMap.keys.toList().length,
-                  countOfItemInSection: (int section) {
-                    return groupActionsMap.values.toList()[section].length;
-                  },
-                  itemBuilder: (BuildContext context, IndexPath indexPath) {
-                    return MyActionListItem(
-                      index: indexPath.index,
-                      action: groupActionsMap.values
-                          .toList()[indexPath.section][indexPath.index]
-                          .action,
-                      displayActions: groupActionsMap.keys
-                              .elementAt(indexPath.section)
-                              .id ==
-                          null, // Dummy Group i.e. self actions
-                      onActionTap: _onActionSelection,
-                    );
-                  },
-                  groupHeaderBuilder: (BuildContext context, int section) {
-                    debugPrint(
-                        "SectionHeader: ${groupActionsMap.keys.toList()[section]}");
-                    return Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                },
+                groupHeaderBuilder: (BuildContext context, int section) {
+                  Group _group = groupActionsMap.keys.toList()[section];
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${_group.name.isNotEmpty ? _group.name : _appLocalizations.selfAssigned}',
+                          style: TextStyle(
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF434141),
+                          ),
+                        ),
+                        if (_group.id.isNotEmpty)
                           Text(
-                            '${groupActionsMap.keys.toList()[section].name ?? 'Self'}',
+                            '${_appLocalizations.teacher}: ${_group.teachersName.join(", ")}',
                             style: TextStyle(
-                              fontSize: 19.sp,
+                              fontSize: 17.sp,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF434141),
+                              color: Color(0xFF797979),
                             ),
                           ),
-                          // if (groupActionsMap.keys.toList()[section].id != null)
-                          //   Text(
-                          //     '${_appLocalizations.teacher}: ${groupActionsMap.keys.toList()[section].teachersName?.join(", ")}',
-                          //     style: TextStyle(
-                          //       fontSize: 17.sp,
-                          //       fontWeight: FontWeight.w600,
-                          //       color: Color(0xFF797979),
-                          //     ),
-                          //   ),
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height: 10.h),
-                  sectionSeparatorBuilder: (context, section) =>
-                      SizedBox(height: 10.h),
-                );
-              }),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                sectionSeparatorBuilder: (context, section) =>
+                    SizedBox(height: 10.h),
+              );
+            }),
 
-              SizedBox(
-                height: 10.h,
-              ),
-            ],
-          ),
+            SizedBox(
+              height: 10.h,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void _onActionSelection(HiveAction action) async {
-    /*  HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
+  void _onActionSelection(
+      ActionWithAssignedStatus _actionWithAssignedStatus) async {
+    final Action _action = _actionWithAssignedStatus.action;
+    final ActionStatus _actionStatus =
+        _actionWithAssignedStatus.status ?? ActionStatus.NOT_DONE;
+    final ActionUser? _actionUser = _actionWithAssignedStatus.actionUser;
 
-    HiveActionUser? hiveActionUser = action.mineAction;
+    // HiveCurrentUser _currentUser = CurrentUserRepository().getUserSyncFromDB();
 
-    if (hiveActionUser == null) {
-      hiveActionUser = new HiveActionUser();
-      hiveActionUser.actionId = action.id!;
-      hiveActionUser.userId = _currentUser.id;
-      hiveActionUser.status = action.actionStatus.toActionUserStatus().value;
-    }
+    // HiveActionUser? hiveActionUser = action.mineAction;
 
-    final _questionController = TextEditingController();
-    _questionController.text = hiveActionUser.userResponse ?? '';
+    // if (hiveActionUser == null) {
+    //   hiveActionUser = new HiveActionUser();
+    //   hiveActionUser.actionId = action.id!;
+    //   hiveActionUser.userId = _currentUser.id;
+    //   hiveActionUser.status = action.actionStatus.toActionUserStatus().value;
+    // }
+
+    // final _questionController = TextEditingController();
+    // _questionController.text = _actionUser?.userResponse ?? '';
+
+    final singleActionUserView = Container(
+      height: MediaQuery.of(context).size.height * 0.70,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(34.r)),
+        color: Color(0xFFEFEFEF),
+      ),
+      child: SingleActionUser(
+        action: _action,
+        user: context.currentUser,
+        actionStatus: _actionStatus,
+        actionUser: _actionUser,
+      ),
+    );
 
     showModalBottomSheet(
         context: context,
@@ -293,483 +259,10 @@ class _MyActionsViewState extends State<MyActionsView> {
         isScrollControlled: true,
         isDismissible: true,
         enableDrag: true,
-        builder: (context) {
-          final bloc = Provider.of(context);
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setModalState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.70,
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(34.r)),
-                color: Color(0xFFEFEFEF),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      color: Colors.white,
-                      margin: EdgeInsets.only(
-                        top: 40.h,
-                      ),
-                      child: Container(
-                        //   margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              Center(
-                                child: Text(
-                                  '${_appLocalizations.month}: ${DateTimeUtils.formatDate(DateTime.now(), 'MMM yyyy')}',
-                                  style: TextStyle(
-                                      fontSize: 19.sp,
-                                      color: Color(0xFF3475F0),
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 40.h,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      //height: 44.h,
-                                      //width: 169.w,
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          action.name ?? '',
-                                          maxLines: 2,
-                                          style: TextStyle(
-                                              fontSize: 19.sp,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/hand_right.png',
-                                          height: 14.r,
-                                          width: 14.r,
-                                        ),
-                                        SizedBox(
-                                          width: 6.w,
-                                        ),
-                                        ActionStatusWidget(
-                                          onTap: (ActionStatus newStatus) {
-                                            setModalState(() {
-                                              hiveActionUser!.status = newStatus
-                                                  .toActionUserStatus()
-                                                  .value;
-                                            });
-                                            setState(
-                                                () {}); // To trigger the main view to redraw.
-                                            bloc.actionBloc
-                                                .createUpdateActionUser(
-                                                    hiveActionUser!);
-                                          },
-                                          actionStatus: action.actionStatus,
-                                          height: 36.h,
-                                          width: 130.w,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 15.w, right: 15.w),
-                                child: Text(
-                                  '${_appLocalizations.instructions}: ${action.instructions}',
-                                  maxLines: 5,
-                                  style: TextStyle(
-                                    fontSize: 17.sp,
-                                    color: Color(0xFF797979),
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
-                              Container(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15.w, vertical: 15.h),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (action.material != null &&
-                                                action.material!.url != null &&
-                                                action.material!.url!
-                                                    .isNotEmpty &&
-                                                !action.material!.isDirty)
-                                              MaterialLinkButton(
-                                                icon: Icon(
-                                                  Icons.open_in_new,
-                                                  color: Colors.blue,
-                                                  size: 18.r,
-                                                ),
-                                                text: AppLocalizations.of(
-                                                        context)!
-                                                    .clickThisLinkToStart,
-                                                onButtonTap: () {
-                                                  GeneralFunctions.openUrl(
-                                                      action.material!.url!);
-                                                },
-                                              ),
-                                            //materialList(action)
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 8.w,
-                                      ),
-                                      Text(
-                                        '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(action.dateDue!, requiredDateFormat: 'MMM dd')}',
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontSize: 19.sp,
-                                            color: Color(0xFF4F4F4F),
-                                            fontWeight: FontWeight.w500),
-                                        textAlign: TextAlign.right,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              // Record the response to the Question
-                              if (action.type ==
-                                      Action_Type.TEXT_RESPONSE.value ||
-                                  action.type ==
-                                          Action_Type.MATERIAL_RESPONSE.value &&
-                                      (action.material != null &&
-                                          !action.material!.isDirty))
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Align(
-                                        alignment: FractionalOffset.topLeft,
-                                        child: Text(
-                                          _appLocalizations.question +
-                                              ': ${action.question}',
-                                          style: TextStyle(
-                                            fontSize: 19.sp,
-                                            color: Color(0xFF4F4F4F),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    TextField(
-                                      controller: _questionController,
-                                      decoration: InputDecoration(
-                                        hintStyle: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 17.sp,
-                                          color: Color(0xFF797979),
-                                        ),
-                                        border: InputBorder.none,
-                                        hintText: _appLocalizations
-                                            .questionTextEditHint,
-                                      ),
-                                      onSubmitted: (value) {
-                                        hiveActionUser!.userResponse = value;
-                                        bloc.actionBloc.createUpdateActionUser(
-                                            hiveActionUser);
-                                      },
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          left: 15.w, right: 15.w),
-                                      height: 1.0,
-                                      color: Color(0xFF3475F0),
-                                    ),
-                                  ],
-                                ),
-                              Padding(
-                                padding: EdgeInsets.all(15.r),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    _appLocalizations.howWasThisActionText,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                        fontSize: 19.sp,
-                                        color: Color(0xFF4F4F4F),
-                                        fontWeight: FontWeight.w500),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 15.w, right: 15.w),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      // GOOD
-                                      onTap: () {
-                                        setModalState(() {
-                                          if (ActionUser_Evaluation.valueOf(
-                                                  hiveActionUser!
-                                                      .evaluation!) ==
-                                              ActionUser_Evaluation.GOOD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation
-                                                    .UNSPECIFIED_EVALUATION
-                                                    .value;
-                                          } else if (ActionUser_Evaluation
-                                                      .valueOf(hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation
-                                                      .UNSPECIFIED_EVALUATION ||
-                                              ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation.BAD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation
-                                                    .GOOD.value;
-                                          }
-                                        });
-
-                                        bloc.actionBloc.createUpdateActionUser(
-                                            hiveActionUser!);
-                                      },
-                                      child: Container(
-                                        height: 36.h,
-                                        width: 160.w,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4.r),
-                                          color: ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser!
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation.GOOD
-                                              ? Color(0xFF6DE26B)
-                                              : Color(0xFFC9C9C9),
-                                        ),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              //Icon(Icons.thumb_up_outlined, size: 14.sp),
-                                              Image.asset(
-                                                'assets/images/thumbs_up.png',
-                                                height: 14.r,
-                                                width: 14.r,
-                                              ),
-                                              SizedBox(
-                                                width: 4.w,
-                                              ),
-                                              Text(
-                                                _appLocalizations.goodText,
-                                                maxLines: 1,
-                                                style: TextStyle(
-                                                  fontFamily: 'Rubik',
-                                                  fontSize: 17.sp,
-                                                  color: Color(0xFF777777),
-                                                ),
-                                              ),
-                                            ]),
-                                      ),
-                                    ),
-                                    InkWell(
-                                      // NOT SO GOOD
-                                      onTap: () {
-                                        setModalState(() {
-                                          if (ActionUser_Evaluation.valueOf(
-                                                  hiveActionUser!
-                                                      .evaluation!) ==
-                                              ActionUser_Evaluation.BAD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation
-                                                    .UNSPECIFIED_EVALUATION
-                                                    .value;
-                                          } else if (ActionUser_Evaluation
-                                                      .valueOf(hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation
-                                                      .UNSPECIFIED_EVALUATION ||
-                                              ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation.GOOD) {
-                                            hiveActionUser.evaluation =
-                                                ActionUser_Evaluation.BAD.value;
-                                          }
-                                        });
-
-                                        bloc.actionBloc.createUpdateActionUser(
-                                            hiveActionUser!);
-                                      },
-                                      child: Container(
-                                        height: 36.h,
-                                        width: 160.w,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4.r),
-                                          color: ActionUser_Evaluation.valueOf(
-                                                      hiveActionUser
-                                                          .evaluation!) ==
-                                                  ActionUser_Evaluation.BAD
-                                              ? Color(0xFFFFBE4A)
-                                              : Color(0xFFC9C9C9),
-                                        ),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              //Icon(Icons.thumb_down_outlined, size: 14.sp),
-                                              Image.asset(
-                                                'assets/images/thumbs_down.png',
-                                                height: 14.r,
-                                                width: 14.r,
-                                              ),
-                                              SizedBox(
-                                                width: 4.w,
-                                              ),
-                                              Text(
-                                                _appLocalizations.notSoGoodText,
-                                                maxLines: 1,
-                                                style: TextStyle(
-                                                  fontFamily: 'Rubik',
-                                                  fontSize: 17.sp,
-                                                  color: Color(0xFF777777),
-                                                ),
-                                              ),
-                                            ]),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 39.h,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: (WidgetsBinding.instance!.window.viewInsets.bottom >
-                            0.0)
-                        ? 0.h
-                        : 75.h,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFEFEFEF),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 30.w, right: 30.w, top: 19.h, bottom: 19.h),
-                      child: Container(
-                        height: 37.5.h,
-                        color: Color(0xFFEFEFEF),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            hiveActionUser!.userResponse =
-                                _questionController.text;
-                            bloc.actionBloc
-                                .createUpdateActionUser(hiveActionUser)
-                                .whenComplete(() {
-                              Navigator.pop(context);
-                            });
-                          },
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40.r),
-                              ),
-                            ),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.selectedButtonBG),
-                          ),
-                          child: Text(_appLocalizations.close),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          });
-        });
-        */
+        builder: (BuildContext context) => singleActionUserView);
   }
 
 /*
-  Widget materialList(HiveAction hiveAction) {
-    if (hiveAction.material == null ||
-        (hiveAction.material != null &&
-                hiveAction.material!.files != null &&
-                hiveAction.material!.files!.length == 0 ||
-            hiveAction.material!.isDirty)) {
-      return Container();
-    }
-    List<Widget> fileLinks = [];
-    hiveAction.material!.localFiles.forEach((hiveFile) {
-      fileLinks.add(
-        MaterialLinkButton(
-          icon: Icon(
-            Icons.download,
-            color: Colors.blue,
-            size: 18.r,
-          ),
-          text: _appLocalizations.clickToDownload
-              .insertTemplateValues({'file_name': hiveFile.filename}),
-          onButtonTap: () async {
-            try {
-              await GeneralFunctions.openFile(hiveFile, context);
-            } on NetworkUnavailableException {
-              // TODO: show message to user
-            }
-          },
-        ),
-      );
-      fileLinks.add(SizedBox(height: 4.h));
-    });
-
-    return Column(
-      children: fileLinks,
-    );
-  }
-
   Widget actionsList(DataBloc bloc) {
     return StreamBuilder(
         stream: bloc.actionBloc.actionsForMe,

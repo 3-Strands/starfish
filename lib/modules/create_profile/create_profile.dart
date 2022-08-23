@@ -4,6 +4,7 @@ import 'package:starfish/authenticated_app/bloc/profile_creation_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/sync_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
@@ -27,6 +28,7 @@ class CreateProfile extends StatelessWidget {
       create: (context) => ProfileBloc(
         dataRepository: context.read<DataRepository>(),
         authenticationRepository: context.read<AuthenticationRepository>(),
+        syncRepository: context.read<SyncRepository>(),
       ),
       child: const CreateProfileView(),
     );

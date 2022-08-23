@@ -1,9 +1,13 @@
+import 'dart:core';
+
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
+import 'package:starfish/repositories/model_wrappers/user_with_action-status.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
@@ -59,6 +63,21 @@ class DataRepository {
       _streamBox(_hiveApi.evaluationCategory);
   List<EvaluationCategory> get currentEvaluationCategories =>
       _hiveApi.evaluationCategory.asList();
+
+  List<Group> get groupsWithAdminRole {
+    final List<Group> _groupsWithAdminRole = [];
+    for (final group in currentGroups) {
+      for (final groupUser in group.users) {
+        if (groupUser.userId == _userId &&
+                groupUser.role == GroupUser_Role.ADMIN ||
+            groupUser.role == GroupUser_Role.TEACHER) {
+          _groupsWithAdminRole.add(group);
+          break;
+        }
+      }
+    }
+    return _groupsWithAdminRole;
+  }
 
   List<GroupWithActionsAndRoles> getGroupsWithActionsAndRoles() {
     final completedActions = <String, int>{};
@@ -169,6 +188,12 @@ class DataRepository {
     // }
   }
 
+  // Returns 'ActionUsers' for the current user
+  Map<String, ActionUser> getMyActionUsers() {
+    return Map.fromEntries(currentUser.actions
+        .map((userAction) => MapEntry(userAction.actionId, userAction)));
+  }
+
   RelatedMaterials getMaterialsRelatedToMe() {
     final actionStatuses = getMyActionStatuses();
     final materialsAssignedToMe = <String, ActionStatus>{};
@@ -206,36 +231,78 @@ class DataRepository {
   //   );
 
   // ------------------- Actions -------------------
-  // Stream<List<HiveAction>> get actions => _streamBox(_hiveApi.action);
-  // List<HiveAction> get currentActions => _hiveApi.action.asList();
+  Stream<List<Action>> get actions => _streamBox(_hiveApi.action);
+  List<Action> get currentActions => _hiveApi.action.asList();
 
-  // RelatedActions getActionsRelatedToMe() {
-  //   final actionsAssignedToMe = <String, ActionStatus>{};
-  //   final actionsAssignedToGroupWithLeaderRole = <String>{};
-  //   final List<HiveGroup> actionGroups = [];
+  RelatedActions getActionsRelatedToMe() {
+    final actionStatuses = getMyActionStatuses();
+    final myActionUsers = getMyActionUsers();
+    final actionsAssignedToMe = <String, ActionStatus>{};
+    final actionsAssignedToGroupWithLeaderRole = <String>{};
+    //final List<ActionGroupUserWithStatus> actionGroups = [];
+    final actionGroups = <String, ActionGroupUserWithStatus>{};
 
-  //   for (final action in getMyActions()) {
-  //     final actionId = action.id;
-  //     final groupId = action.groupId;
-  //     if (actionId != null) {
-  //       if (action.isIndividualAction) {
-  //         actionsAssignedToMe[actionId] = action.actionStatus;
-  //       } else {
-  //         actionsAssignedToGroupWithLeaderRole.add(actionId);
-  //       }
-  //     }
-  //     if (groupId != null) {
-  //       actionGroups.add(_hiveApi.group.values
-  //           .firstWhere((element) => element.id == groupId));
-  //     }
-  //   }
-  //   return RelatedActions(actionsAssignedToMe,
-  //       actionsAssignedToGroupWithLeaderRole, actionGroups);
-  // }
+    for (final action in getMyActions()) {
+      final actionId = action.id;
+      final groupId = action.groupId;
+      if (action.isIndividualAction) {
+        final status =
+            actionStatuses[action.id] ?? ActionUser_Status.INCOMPLETE;
 
-  // Stream<List<Action>> getActionsByGroup(Group group) {
-  //   throw UnimplementedError();
-  // }
+        actionsAssignedToMe[actionId] = status == ActionUser_Status.COMPLETE
+            ? ActionStatus.DONE
+            : action.isPastDueDate
+                ? ActionStatus.OVERDUE
+                : ActionStatus.NOT_DONE;
+      } else {
+        actionsAssignedToGroupWithLeaderRole.add(actionId);
+      }
+      Group? _group = _hiveApi.group.values
+          .firstWhereOrNull((element) => element.id == groupId);
+      if (_group != null) {
+        List<UserWithActionStatus> _usersWithStatus = _group.learners
+            .map((user) => UserWithActionStatus(
+                user: user,
+                actionStatus: _getActionStatus(user.id, action),
+                actionUser: _getUserAction(user.id, action)))
+            .toList();
+        actionGroups[actionId] = ActionGroupUserWithStatus(
+            group: _group, userWithActionStatus: _usersWithStatus);
+      }
+    }
+    return RelatedActions(actionsAssignedToMe,
+        actionsAssignedToGroupWithLeaderRole, actionGroups, myActionUsers);
+  }
+
+  ActionUser? _getUserAction(String userId, Action action) {
+    return globalHiveApi.user
+        .get(userId)
+        ?.actions
+        .firstWhereOrNull((actionUser) => actionUser.actionId == action.id);
+  }
+
+  ActionStatus _getActionStatus(String userId, Action action) {
+    ActionUser_Status status = globalHiveApi.user
+            .get(userId)
+            ?.actions
+            .firstWhereOrNull((actionUser) => actionUser.actionId == action.id)
+            ?.status ??
+        ActionUser_Status.INCOMPLETE;
+
+    return status == ActionUser_Status.COMPLETE
+        ? ActionStatus.DONE
+        : action.isPastDueDate
+            ? ActionStatus.OVERDUE
+            : ActionStatus.NOT_DONE;
+  }
+
+  Stream<List<Action>> getActionsByGroup(Group group) {
+    throw UnimplementedError();
+  }
+
+  // ------------------- Actions -------------------
+  Stream<List<ActionUser>> get actionUsers => _streamBox(_hiveApi.actionUser);
+  List<ActionUser> get currentActionUsers => _hiveApi.actionUser.asList();
 
   // ------------------- Countries -------------------
 
@@ -272,10 +339,14 @@ class _ActionInfo {
 }
 
 class RelatedActions {
-  RelatedActions(this.actionsAssignedToMe,
-      this.actionsAssignedToGroupWithLeaderRole, this.actionGroups);
+  RelatedActions(
+      this.actionsAssignedToMe,
+      this.actionsAssignedToGroupWithLeaderRole,
+      this.actionGroupUsersWithStatus,
+      this.myActionUsers);
 
+  final Map<String, ActionUser> myActionUsers;
   final Map<String, ActionStatus> actionsAssignedToMe;
   final Set<String> actionsAssignedToGroupWithLeaderRole;
-  final List<Group> actionGroups;
+  final Map<String, ActionGroupUserWithStatus> actionGroupUsersWithStatus;
 }

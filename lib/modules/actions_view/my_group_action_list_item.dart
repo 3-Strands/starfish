@@ -1,29 +1,40 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
-import 'package:starfish/db/hive_action.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
+import 'package:starfish/modules/actions_view/cubit/add_edit_action_cubit.dart';
+import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
+import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:template_string/template_string.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
 
 class MyGroupActionListItem extends StatelessWidget {
-  final HiveAction action;
+  final ActionWithAssignedStatus actionWithAssignedStatus;
   final index;
-  final Function(HiveAction action) onActionTap;
+  final Function(
+          Action action, ActionGroupUserWithStatus actionGrouUsersWithStatus)
+      onActionTap;
 
   const MyGroupActionListItem(
-      {Key? key, required this.action, required this.onActionTap, this.index});
+      {Key? key,
+      required this.actionWithAssignedStatus,
+      required this.onActionTap,
+      this.index});
 
   @override
   Widget build(BuildContext context) {
     final _appLocalizations = AppLocalizations.of(context)!;
+    final Action _action = actionWithAssignedStatus.action;
+    final ActionGroupUserWithStatus? _actionGrouUsersWithStatus =
+        actionWithAssignedStatus.groupUserWithStatus;
+
+    //final ActionUser? _actionUser = actionWithAssignedStatus.actionUser;
 
     int countActionStatusDone = 1;
     //action.memberCountByActionStatus(ActionStatus.DONE);
@@ -57,7 +68,9 @@ class MyGroupActionListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          onActionTap(action);
+          if (_actionGrouUsersWithStatus != null) {
+            onActionTap(_action, _actionGrouUsersWithStatus);
+          }
         },
         child: Padding(
           padding:
@@ -81,7 +94,7 @@ class MyGroupActionListItem extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8),
                         child: Text(
-                          action.name ?? '',
+                          _action.name,
                           //maxLines: 1,
                           //overflow: TextOverflow.ellipsis,
                           //softWrap: false,
@@ -108,23 +121,29 @@ class MyGroupActionListItem extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12.r)),
                           enabled: true,
                           onSelected: (value) {
-                            // switch (value) {
-                            //   case 0:
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => AddEditAction(
-                            //           action: action,
-                            //         ),
-                            //       ),
-                            //     ).then((value) => FocusScope.of(context)
-                            //         .requestFocus(new FocusNode()));
-                            //     break;
-                            //   case 1:
-                            //     _deleteAction(context, action);
+                            final cubit = context.read<ActionsCubit>();
+                            switch (value) {
+                              case 0:
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => AddEditAction(
+                                //       action: action,
+                                //     ),
+                                //   ),
+                                // ).then((value) => FocusScope.of(context)
+                                //     .requestFocus(new FocusNode()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => AddEditAction(
+                                          action: _action,
+                                        )));
+                                break;
+                              case 1:
+                                //_deleteAction(context, action);
+                                cubit.deleteAction(_action);
 
-                            //     break;
-                            // }
+                                break;
+                            }
                           },
                           itemBuilder: (context) => [
                                 PopupMenuItem(
@@ -341,7 +360,8 @@ class MyGroupActionListItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                   child: Text(
-                    '${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(_action.dateDue)}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -358,7 +378,7 @@ class MyGroupActionListItem extends StatelessWidget {
     );
   }
 
-  _deleteAction(BuildContext context, HiveAction action) {
+  _deleteAction(BuildContext context, Action action) {
     // final bloc = Provider.of(context);
     // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     // Alerts.showMessageBox(

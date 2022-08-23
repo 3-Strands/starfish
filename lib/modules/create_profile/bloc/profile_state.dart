@@ -18,12 +18,16 @@ class ProfileState {
     required this.languages,
     this.selectedCountries = const {},
     this.selectedLanguages = const {},
+    this.diallingCode = '',
+    this.phone = '',
     this.isSubmissionCandidate = false,
   });
 
   final String name;
   final Set<String> selectedCountries;
   final Set<String> selectedLanguages;
+  final String diallingCode;
+  final String phone;
   final List<Country> countries;
   final List<Language> languages;
   final bool isSubmissionCandidate;
