@@ -1,5 +1,6 @@
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
@@ -9,6 +10,27 @@ extension DateExt on Date {
 
   bool get isValidDate {
     return this.year != 0 && this.month != 0 && this.day != 0;
+  }
+}
+
+extension FileReferenceExt on FileReference {
+  static FileReference getFileReference({
+    required String entityId,
+    required EntityType entityType,
+    required String filename,
+  }) {
+    final key = FileReference.keyFrom(entityId, filename);
+    final fileReference = globalHiveApi.file.get(key);
+    if (fileReference != null) {
+      return fileReference;
+    }
+    final newFileReference = FileReference(
+      entityId: entityId,
+      entityType: entityType.value,
+      filename: filename,
+    );
+    globalHiveApi.file.put(key, newFileReference);
+    return newFileReference;
   }
 }
 
@@ -25,8 +47,8 @@ extension MaterialExt on Material {
       .toList();
 
   List<FileReference> get fileReferences => files
-      .map((filename) =>
-          globalHiveApi.file.get(FileReference.keyFrom(id, filename))!)
+      .map((filename) => FileReferenceExt.getFileReference(
+          entityId: id, entityType: EntityType.MATERIAL, filename: filename))
       .toList();
 }
 
