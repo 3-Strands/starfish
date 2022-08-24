@@ -21,6 +21,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required SyncRepository syncRepository,
   }) : super(ProfileState(
           name: authenticationRepository.currentSession!.user.name,
+          diallingCode:
+              authenticationRepository.currentSession!.user.diallingCode,
+          phone: authenticationRepository.currentSession!.user.phone,
+          hasLinkGroups:
+              authenticationRepository.currentSession!.user.hasLinkGroups(),
           selectedCountries:
               authenticationRepository.currentSession!.user.countryIds.toSet(),
           selectedLanguages:
@@ -33,6 +38,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         selectedCountries: event.selectedCountries,
         selectedLanguages: event.selectedLanguages,
         name: event.name,
+        diallingCode: event.diallingCode,
+        phone: event.phone,
         countries: event.countries,
         languages: event.languages,
       ));
@@ -40,6 +47,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<NameChanged>((event, emit) {
       emit(state.copyWith(
         name: event.name,
+      ));
+    });
+    on<PhonenumberChanged>((event, emit) {
+      emit(state.copyWith(
+        diallingCode: event.diallingCode,
+        phone: event.phone,
+      ));
+    });
+    on<LinkGroupChanged>((event, emit) {
+      emit(state.copyWith(
+        hasLinkGroups: event.hasLinkGroup,
       ));
     });
     on<LanguageSelectionChanged>((event, emit) {
@@ -72,8 +90,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           // We need to send the request immediately
           try {
             // TODO: Generate UpdateCurrentUserRequest
-            final newCurrentUser =
-                await syncRepository.syncCurrentUserImmediately(UpdateCurrentUserRequest(user: currentUser, updateMask: FieldMask(paths: kCurrentUserFieldMask)));
+            final newCurrentUser = await syncRepository
+                .syncCurrentUserImmediately(UpdateCurrentUserRequest(
+                    user: currentUser,
+                    updateMask: FieldMask(paths: kCurrentUserFieldMask)));
             globalHiveApi.user.put(newCurrentUser.id, newCurrentUser);
             authenticationRepository.updateCurrentUser(newCurrentUser);
           } catch (err) {

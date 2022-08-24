@@ -3,8 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditButton extends StatefulWidget {
+  const EditButton({
+    Key? key,
+    required this.onButtonClicked,
+    required this.onSave,
+    required this.onCancel,
+    this.editMode,
+  }) : super(key: key);
+
+  final bool? editMode;
   final Function(bool isEditable) onButtonClicked;
-  EditButton({Key? key, required this.onButtonClicked}) : super(key: key);
+  final Function() onSave;
+  final Function() onCancel;
 
   @override
   _EditButtonState createState() => _EditButtonState();
@@ -16,8 +26,21 @@ class _EditButtonState extends State<EditButton> {
   onButtonClicked(bool isEditable) {}
 
   @override
+  void initState() {
+    super.initState();
+    //isEditable = widget.editMode ?? false;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return (isEditable) ? saveButton() : editButton();
+    isEditable = widget.editMode ?? false;
+    return isEditable
+        ? Row(children: [
+            saveButton(),
+            SizedBox(width: 5),
+            cancelButton(),
+          ])
+        : editButton();
   }
 
   InkWell editButton() {
@@ -29,7 +52,8 @@ class _EditButtonState extends State<EditButton> {
         widget.onButtonClicked(isEditable);
       },
       child: Container(
-        height: 44.h,
+        //height: 44.h,
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -59,11 +83,12 @@ class _EditButtonState extends State<EditButton> {
         setState(() {
           isEditable = !isEditable;
         });
-        widget.onButtonClicked(isEditable);
+        widget.onSave();
       },
       child: Container(
-        width: 53.w,
-        height: 44.h,
+        //width: 53.w,
+        //height: 44.h,
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
           color: Colors.blue,
@@ -71,6 +96,33 @@ class _EditButtonState extends State<EditButton> {
         child: Center(
           child: Text(
             AppLocalizations.of(context)!.save,
+            style: TextStyle(
+              fontSize: 17.sp,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  InkWell cancelButton() {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          isEditable = !isEditable;
+        });
+        widget.onCancel();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(22),
+          color: Colors.grey,
+        ),
+        child: Center(
+          child: Text(
+            AppLocalizations.of(context)!.cancel,
             style: TextStyle(
               fontSize: 17.sp,
               color: Colors.white,
