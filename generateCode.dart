@@ -12,8 +12,9 @@ abstract class Storage {
   String toRemoveCode();
 
   String toCreateCode(int typeId, String modelCode);
-  String toUpdateCode(int typeId, String modelCode, String originalModelCode);
-  String toDeleteCode(int typeId, String modelCode);
+  String toUpdateCode(int typeId, String className, String modelIdCode,
+      String originalModelCode);
+  String toDeleteCode(int typeId, String className, String modelCode);
 }
 
 class BoxStorage extends Storage {
@@ -39,15 +40,24 @@ class BoxStorage extends Storage {
   }
 
   @override
-  String toUpdateCode(int typeId, String modelCode, String originalModelCode) {
+  String toUpdateCode(int typeId, String className, String modelIdCode,
+      String originalModelCode) {
     return '''
-      globalHiveApi.$name.put($modelCode.id, $modelCode);
-      ensureRevert($typeId, $originalModelCode.id, $originalModelCode);''';
+      final originalModel = globalHiveApi.$name.get($modelIdCode);
+      if (originalModel == null) {
+        return false;
+      }
+      final updatedModel = applyUpdateToModel(originalModel);
+      globalHiveApi.$name.put(updatedModel.id, updatedModel);
+      ensureRevert($typeId, originalModel.id, originalModel);''';
   }
 
   @override
-  String toDeleteCode(int typeId, String modelCode) {
+  String toDeleteCode(int typeId, String className, String modelCode) {
     return '''
+      if (!globalHiveApi.$name.containsKey($modelCode.id)) {
+        return false;
+      }
       globalHiveApi.$name.delete($modelCode.id);
       ensureRevert($typeId, $modelCode.id, $modelCode);''';
   }
@@ -95,43 +105,101 @@ class ReferenceStorage extends Storage {
 
   @override
   String toCreateCode(int typeId, String modelCode) {
-    return references.entries.map((entry) {
-      final referringField = entry.key;
-      final refersTo = entry.value;
-      final box = refersTo.model.storage as BoxStorage;
-      return '''
-        globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
-          other.${refersTo.field}.add($modelCode);
-        });''';
-    }).join('\n');
+    return '''
+      bool createApplies = false;
+      ''' +
+        references.entries.map((entry) {
+          final referringField = entry.key;
+          final refersTo = entry.value;
+          final box = refersTo.model.storage as BoxStorage;
+          final containerVar = '${box.name}ModelContainer';
+          return '''
+        final $containerVar = globalHiveApi.${box.name}.get($modelCode.$referringField);
+        if ($containerVar != null) {
+          createApplies = true;
+          globalHiveApi.${box.name}.put(
+            $containerVar.id,
+            $containerVar.rebuild((other) {
+              other.${refersTo.field}.add($modelCode);
+            }),
+          );
+          ensureRevert(${findTypeId(refersTo.model)}, $containerVar.id, $containerVar);
+        }''';
+        }).join('\n') +
+        '''
+      if (!createApplies) {
+        return false;
+      }''';
   }
 
   @override
-  String toUpdateCode(int typeId, String modelCode, String _) {
-    bool hasWrittenId = false;
-    return references.entries.map((entry) {
-      final referringField = entry.key;
-      final refersTo = entry.value;
-      final box = refersTo.model.storage as BoxStorage;
-      final code = '''
-        ${hasWrittenId ? '' : 'final id = $modelCode.id;'}
-        globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
-          final index = other.${refersTo.field}.indexWhere((item) => item.id == id);
-          other.${refersTo.field}[index] = $modelCode;
-        });''';
-      hasWrittenId = true;
-      return code;
-    }).join('\n');
+  String toUpdateCode(int typeId, String className, String modelIdCode,
+      String originalModelCode) {
+    return '''
+      final id = $originalModelCode.id;
+      $className? tempUpdatedModel;
+      ''' +
+        references.entries.map((entry) {
+          final referringField = entry.key;
+          final refersTo = entry.value;
+          final box = refersTo.model.storage as BoxStorage;
+          final containerVar = '${box.name}ModelContainer';
+          final indexVar = '${box.name}Index';
+          return '''
+        final $containerVar = globalHiveApi.${box.name}.get($originalModelCode.$referringField);
+        if ($containerVar != null) {
+          final $indexVar = $containerVar.${refersTo.field}.indexWhere((item) => item.id == id);
+          if ($indexVar >= 0) {
+            tempUpdatedModel ??= applyUpdateToModel($containerVar.${refersTo.field}[$indexVar]);
+            globalHiveApi.${box.name}.put(
+              $containerVar.id,
+              $containerVar.rebuild((other) {
+                other.${refersTo.field}[$indexVar] = tempUpdatedModel!;
+              }),
+            );
+            ensureRevert(${findTypeId(refersTo.model)}, $containerVar.id, $containerVar);
+          }
+        }''';
+        }).join('\n') +
+        '''
+        if (tempUpdatedModel == null) {
+          // No changes were applied.
+          return false;
+        }
+        final updatedModel = tempUpdatedModel;''';
   }
 
   @override
-  String toDeleteCode(int typeId, String modelCode) {
-    return references.entries.map((entry) {
-      final referringField = entry.key;
-      final refersTo = entry.value;
-      final box = refersTo.model.storage as BoxStorage;
-      return 'globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) => other.${refersTo.field}.removeWhere((item) => item.id == $modelCode.id));';
-    }).join('\n');
+  String toDeleteCode(int typeId, String className, String modelCode) {
+    return '''
+      final id = $modelCode.id;
+      final matches = ($className item) => item.id == id;
+      bool deleteApplies = false;
+      ''' +
+        references.entries.map((entry) {
+          final referringField = entry.key;
+          final refersTo = entry.value;
+          final box = refersTo.model.storage as BoxStorage;
+          final containerVar = '${box.name}ModelContainer';
+          return '''
+        final $containerVar = globalHiveApi.${box.name}.get($modelCode.$referringField);
+        if ($containerVar != null) {
+          if ($containerVar.${refersTo.field}.any(matches)) {
+            deleteApplies = true;
+            globalHiveApi.${box.name}.put(
+              $containerVar.id,
+              $containerVar.rebuild((other) {
+                other.${refersTo.field}.removeWhere(matches);
+              }),
+            );
+            ensureRevert(${findTypeId(refersTo.model)}, $containerVar.id, $containerVar);
+          }
+        }''';
+        }).join('\n') +
+        '''
+      if (!deleteApplies) {
+        return false;
+      }''';
   }
 }
 
@@ -193,6 +261,8 @@ class Model extends MessageWrapper {
     'dateUpdated',
     'creatorId',
   };
+
+  bool get hasAnyCUD => createUpdateRequest != null || deleteRequest != null;
 
   String makeDeltaCode(int typeId) {
     final classBuffer = StringBuffer();
@@ -314,14 +384,14 @@ class Model extends MessageWrapper {
     ''');
 
     for (final field in fields) {
-      classBuffer.writeln('${field.name}: ${field.name},');
+      classBuffer.writeln(
+          '${field.name}: ${field.name}${field.name == 'id' ? ' ?? UuidGenerator.uuid()' : ''},');
     }
 
     classBuffer.writeln('''
         )..freeze();
         ${storage.toCreateCode(typeId, 'model')}
-        assert(!globalHiveApi.sync.containsKey(model.id));
-        globalHiveApi.sync.put(model.id, ${_makeCreateUpdateRequestCode('model')});
+        globalHiveApi.putSyncRequest(model.id, ${_makeCreateUpdateRequestCode('model')});
         return true;
       }
     ''');
@@ -349,48 +419,66 @@ class Model extends MessageWrapper {
         'FieldMask definition not aligned with model definition for $name');
 
     for (final field in fields) {
-      classBuffer.writeln('this.${field.name},');
+      classBuffer.writeln('${field.type}? ${field.name},');
     }
 
-    classBuffer.writeln('});');
+    classBuffer.writeln('}) {');
+    classBuffer.writeln('final updateMask = <String>{};');
+
+    for (final field in fields) {
+      final comparison = field.isIterable
+          ? '!listsAreSame(${field.name}, _model.${field.name})'
+          : '${field.name} != _model.${field.name}';
+      classBuffer.writeln('''
+        if (${field.name} != null && $comparison) {
+          this.${field.name} = ${field.name};
+          updateMask.add('${field.protoName}');
+        } else { this.${field.name} = null; }''');
+    }
+    classBuffer.writeln('_updateMask = updateMask;');
+    classBuffer.writeln('}');
     classBuffer.writeln();
 
     classBuffer.writeln('final $name _model;');
+    classBuffer.writeln('late final Set<String> _updateMask;');
     for (final field in fields) {
-      classBuffer.writeln('final ${field.type}? ${field.name};');
+      classBuffer.writeln('late final ${field.type}? ${field.name};');
     }
 
     classBuffer.writeln();
     classBuffer.writeln('''
-      @override
-      bool apply() {
-        Set<String>? updateMask = <String>{};
-        final newModel = _model.rebuild((other) {
-    ''');
+      $name applyUpdateToModel($name originalModel) {
+        return originalModel.rebuild((other) {''');
 
     for (final field in fields) {
-      final comparison = field.isIterable
-          ? '!listsAreSame(${field.name}!, other.${field.name})'
-          : '${field.name} != other.${field.name}';
       final updateCode = field.isIterable
           ? '''other.${field.name}
             ..clear()
             ..addAll(${field.name}!);'''
           : 'other.${field.name} = ${field.name}!;';
       classBuffer.writeln('''
-        if (${field.name} != null && $comparison) {
+        if (${field.name} != null) {
           $updateCode
-          updateMask!.add('${field.protoName}');
         }
       ''');
     }
 
     classBuffer.writeln('''
       });
+    }
+    ''');
 
-      if (updateMask.isNotEmpty) {
-        ${storage.toUpdateCode(typeId, 'newModel', '_model')}
-        final $createUpdateRequestName? request = globalHiveApi.sync.get(newModel.id);
+    classBuffer.writeln();
+    classBuffer.writeln('''
+      @override
+      bool apply() {
+        if (_updateMask.isEmpty) {
+          return false;
+        }
+
+        ${storage.toUpdateCode(typeId, name, '_model.id', '_model')}
+        Set<String>? updateMask = _updateMask;
+        final $createUpdateRequestName? request = globalHiveApi.getSyncRequest(updatedModel.id);
         if (request != null) {
           if (!request.hasUpdateMask()) {
             // This edit follows a create. Stays as a create.
@@ -400,12 +488,10 @@ class Model extends MessageWrapper {
             updateMask = {...updateMask, ...request.updateMask.paths};
           }
         }
-        globalHiveApi.sync.put(newModel.id, ${_makeCreateUpdateRequestCode('newModel', 'updateMask == null ? null : FieldMask(paths: updateMask)')});
+        globalHiveApi.putSyncRequest(updatedModel.id, ${_makeCreateUpdateRequestCode('updatedModel', 'updateMask == null ? null : FieldMask(paths: updateMask)')});
         return true;
       }
-      return false;
-    }
-    ''');
+      ''');
 
     classBuffer.writeln('}');
   }
@@ -429,13 +515,13 @@ class Model extends MessageWrapper {
     classBuffer.writeln('''
       @override
       bool apply() {
-        ${storage.toDeleteCode(typeId, '_model')}
-        final $createUpdateRequestName? request = globalHiveApi.sync.get(_model.id);
+        ${storage.toDeleteCode(typeId, name, '_model')}
+        final $createUpdateRequestName? request = globalHiveApi.getSyncRequest(_model.id);
         if (request != null && !request.hasUpdateMask()) {
           // This delete follows a create. Reverts to nothing.
-          globalHiveApi.sync.delete(_model.id);
+          globalHiveApi.deleteSyncRequest(_model.id);
         } else {
-          globalHiveApi.sync.put(_model.id, ${_makeDeleteRequestCode('_model')});
+          globalHiveApi.putSyncRequest(_model.id, ${_makeDeleteRequestCode('_model')});
         }
         return true;
       }
@@ -601,11 +687,49 @@ int findTypeId(Model model) =>
 
 void main() {
   final deltaContents = '''
-  // GENERATED CODE - DO NOT MODIFY BY HAND
+  /// GENERATED CODE - DO NOT MODIFY BY HAND
+  /// 
+  /// This file contains delta models. The trickiest part of deltas is making sure they apply
+  /// correctly, in the correct order. In general, the algorithm is as follows:
+  /// 
+  /// 1. Check to see if this delta actually "applies". For example, an update or delete delta
+  /// can only apply if the record already exists.
+  /// 2. Assuming the delta actually *does* apply, go ahead and apply it to the local data.
+  /// 3. Then, make sure that there is sufficient information to roll back to the version
+  /// as it stood after the last sync.
+  /// 4. Finally, save the request associated with this delta to be sent to the server later,
+  /// merging it with any pre-existing requests if they exist.
+  /// 
+  /// This gets even more complicated if the delta is applied while the sync is taking place.
+  /// In this case, we have to update the local information immediately for the sake of the
+  /// UI, but the final state of the data depends on whether the sync will eventually succeed
+  /// or fail.
+  /// 
+  /// So we apply 1-3 above as is, but we have to modify number 4. If a sync is currently in
+  /// progress, we don't save the request to the sync box. We store the merged request in a
+  /// backup sync box, as well as saving the delta to possibly reapply later. Then, we branch
+  /// on success/failure of the current sync.
+  /// 
+  /// If the current sync *fails*, we have to pretend that the deltas applied mid-sync were
+  /// applied to the data as normal. That means we take the backup sync items and write them
+  /// back to the sync box. The data is then in a consistent state.
+  /// 
+  /// If the current sync *succeeds*, then we have to pretend that the deltas weren't applied
+  /// until after the sync was finished. In that case, the data would have been rolled back
+  /// to its previous state in preparation for the server changes, and we simply have to reapply
+  /// the mid-sync deltas once again.
 
   part of 'deltas.dart';
 
   ${messages.entries.where((entry) => entry.value is Model).map((entry) => (entry.value as Model).makeDeltaCode(entry.key)).join('\n')}
+
+  void revertAll() {
+    ${messages.entries.where((entry) => entry.value is Model && (entry.value as Model).hasAnyCUD && (entry.value as Model).storage is BoxStorage).map((entry) {
+    final model = entry.value as Model;
+    return '''
+      _revertValuesInBox(globalHiveApi.${(model.storage as BoxStorage).name}, globalHiveApi.revert.get(${entry.key}));''';
+  }).join('\n')}
+  }
 
   Box _resolveBox(int typeId) {
     switch (typeId) {

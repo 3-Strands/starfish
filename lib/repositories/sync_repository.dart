@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:grpc/grpc.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/src/deltas.dart';
@@ -64,9 +65,22 @@ class SyncRepository {
     required this.requestRefresh,
   }) {
     _scheduler = _Scheduler(_doSync);
+    _subscription = globalHiveApi.sync
+        .watch()
+        .debounceTime(const Duration(milliseconds: 200))
+        .listen(
+      (_) {
+        print('Detected items to sync');
+        print('======================');
+        for (final request in globalHiveApi.sync.values) {
+          print(request);
+        }
+      },
+    );
   }
 
   late _Scheduler _scheduler;
+  late StreamSubscription _subscription;
 
   StarfishClient client;
   final Future<StarfishClient> Function() requestRefresh;
@@ -90,6 +104,7 @@ class SyncRepository {
 
   void close() {
     _scheduler.close();
+    _subscription.cancel();
   }
 
   Future<void> syncImmediately() => _scheduler.schedule(immediately: true);
@@ -98,7 +113,7 @@ class SyncRepository {
 
   Future<void> _doSync() async {
     await globalHiveApi.protectSyncBox(
-      () => _makeRequestWithRefresh((client) async {
+      (requests) => _makeRequestWithRefresh((client) async {
         final controller = StreamController<SyncRequest>();
         final responseStream = client.sync(controller.stream);
         // TODO: Add requests.
@@ -106,7 +121,9 @@ class SyncRepository {
             SyncRequest(metaData: SyncRequestMetaData(getNewRecords: true)));
         controller.close();
         final items = await responseStream.toList();
+        revertAll();
         for (final item in items) {
+          item.freeze();
           if (item.hasAction())
             globalHiveApi.action.put(item.action.id, item.action);
           if (item.hasCountry())
@@ -208,5 +225,6 @@ class SyncRepository {
         }
       }),
     );
+    // TODO: check for any more deltas to apply.
   }
 }

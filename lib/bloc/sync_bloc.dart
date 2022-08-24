@@ -11,10 +11,9 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
   SyncBloc({
     required SyncRepository syncRepository,
     required AuthenticationRepository authenticationRepository,
-  }) : super(SyncState()) {
+  })  : _syncRepository = syncRepository,
+        super(SyncState()) {
     final session = authenticationRepository.currentSession!;
-
-    _syncRepository = syncRepository;
 
     on<SyncInitiated>((event, emit) {
       emit(state.copyWith(isSyncing: true));
@@ -40,5 +39,11 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
         : const SyncAllRequested());
   }
 
-  late SyncRepository _syncRepository;
+  @override
+  Future<void> close() {
+    _syncRepository.close();
+    return super.close();
+  }
+
+  final SyncRepository _syncRepository;
 }

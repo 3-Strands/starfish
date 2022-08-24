@@ -8,6 +8,7 @@ import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
 
 import 'generated/google/protobuf/field_mask.pb.dart';
 
@@ -55,20 +56,8 @@ void ensureRevert(int typeId, dynamic key, dynamic item) {
   final map = globalHiveApi.revert.get(typeId) ?? {};
   if (!map.containsKey(key)) {
     map[key] = item;
+    globalHiveApi.revert.put(typeId, map);
   }
-  globalHiveApi.revert.put(typeId, map);
-}
-
-void revertAll() {
-  // // First, pull out all the items to delete.
-  // final deleteMap =
-  //     globalHiveApi.revert.get(kCreatedKeys) as Map<int, List<String>>?;
-  // globalHiveApi.revert.delete(kCreatedKeys);
-  // if (deleteMap != null) {
-  //   for (final entry in deleteMap.entries) {
-  //     _resolveBox(entry.key).deleteAll(entry.value);
-  //   }
-  // }
 }
 
 bool listsAreSame<T>(List<T> a, List<T> b) {
@@ -115,9 +104,24 @@ class FileReferenceCreateDelta extends DeltaBase {
 
 int _typeIdOf(Type t) => _messageToTypeIdMap[t]!;
 
-List<dynamic> getRequestsInOrder() {
-  return globalHiveApi.sync.values.toList()
+List<dynamic> orderRequests(Iterable<dynamic> requests) {
+  return requests.toList()
     ..sort(
       (a, b) => _typeIdOf(a.runtimeType).compareTo(_typeIdOf(b.runtimeType)),
     );
+}
+
+void _revertValuesInBox<T>(Box<T> box, Map<String, dynamic>? map) {
+  if (map == null) {
+    return;
+  }
+  for (final entry in map.entries) {
+    final key = entry.key;
+    final T? item = entry.value;
+    if (item == null) {
+      box.delete(key);
+    } else {
+      box.put(key, item);
+    }
+  }
 }

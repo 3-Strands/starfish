@@ -8,6 +8,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/add_edit_group_screen.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/modules/groups_view/group_list_item.dart';
 import 'package:starfish/repositories/data_repository.dart';
@@ -291,7 +292,12 @@ class _GroupsViewState extends State<GroupsView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.createNewGroup);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddEditGroup(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
