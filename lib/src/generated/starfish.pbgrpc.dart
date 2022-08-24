@@ -3,7 +3,7 @@
 //  source: starfish.proto
 //
 // @dart = 2.12
-// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
+// ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
 
 import 'dart:async' as $async;
 
@@ -105,11 +105,11 @@ class StarfishClient extends $grpc.Client {
           ($core.List<$core.int> value) =>
               $0.DeleteActionResponse.fromBuffer(value));
   static final _$deleteGroupUsers =
-      $grpc.ClientMethod<$0.GroupUser, $0.DeleteGroupUsersResponse>(
+      $grpc.ClientMethod<$0.DeleteGroupUserRequest, $0.DeleteGroupUserResponse>(
           '/sil.starfish.Starfish/DeleteGroupUsers',
-          ($0.GroupUser value) => value.writeToBuffer(),
+          ($0.DeleteGroupUserRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
-              $0.DeleteGroupUsersResponse.fromBuffer(value));
+              $0.DeleteGroupUserResponse.fromBuffer(value));
   static final _$deleteMaterials =
       $grpc.ClientMethod<$0.DeleteMaterialRequest, $0.DeleteMaterialResponse>(
           '/sil.starfish.Starfish/DeleteMaterials',
@@ -197,6 +197,10 @@ class StarfishClient extends $grpc.Client {
           ($0.RefreshSessionRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.AuthenticateResponse.fromBuffer(value));
+  static final _$sync = $grpc.ClientMethod<$0.SyncRequest, $0.SyncResponse>(
+      '/sil.starfish.Starfish/Sync',
+      ($0.SyncRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.SyncResponse.fromBuffer(value));
   static final _$updateCurrentUser =
       $grpc.ClientMethod<$0.UpdateCurrentUserRequest, $0.User>(
           '/sil.starfish.Starfish/UpdateCurrentUser',
@@ -310,8 +314,8 @@ class StarfishClient extends $grpc.Client {
     return $createStreamingCall(_$deleteActions, request, options: options);
   }
 
-  $grpc.ResponseStream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
-      $async.Stream<$0.GroupUser> request,
+  $grpc.ResponseStream<$0.DeleteGroupUserResponse> deleteGroupUsers(
+      $async.Stream<$0.DeleteGroupUserRequest> request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$deleteGroupUsers, request, options: options);
   }
@@ -435,10 +439,16 @@ class StarfishClient extends $grpc.Client {
         options: options);
   }
 
-  $grpc.ResponseFuture<$0.AuthenticateResponse> refreshTokens(
+  $grpc.ResponseFuture<$0.AuthenticateResponse> refreshSession(
       $0.RefreshSessionRequest request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$refreshSession, request, options: options);
+  }
+
+  $grpc.ResponseStream<$0.SyncResponse> sync(
+      $async.Stream<$0.SyncRequest> request,
+      {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$sync, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.User> updateCurrentUser(
@@ -582,13 +592,15 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.DeleteActionRequest.fromBuffer(value),
             ($0.DeleteActionResponse value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.GroupUser, $0.DeleteGroupUsersResponse>(
+    $addMethod($grpc.ServiceMethod<$0.DeleteGroupUserRequest,
+            $0.DeleteGroupUserResponse>(
         'DeleteGroupUsers',
         deleteGroupUsers,
         true,
         true,
-        ($core.List<$core.int> value) => $0.GroupUser.fromBuffer(value),
-        ($0.DeleteGroupUsersResponse value) => value.writeToBuffer()));
+        ($core.List<$core.int> value) =>
+            $0.DeleteGroupUserRequest.fromBuffer(value),
+        ($0.DeleteGroupUserResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.DeleteMaterialRequest,
             $0.DeleteMaterialResponse>(
         'DeleteMaterials',
@@ -731,6 +743,13 @@ abstract class StarfishServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.RefreshSessionRequest.fromBuffer(value),
             ($0.AuthenticateResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.SyncRequest, $0.SyncResponse>(
+        'Sync',
+        sync,
+        true,
+        true,
+        ($core.List<$core.int> value) => $0.SyncRequest.fromBuffer(value),
+        ($0.SyncResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UpdateCurrentUserRequest, $0.User>(
         'UpdateCurrentUser',
         updateCurrentUser_Pre,
@@ -878,8 +897,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $async.Stream<$0.CreateUpdateUserRequest> request);
   $async.Stream<$0.DeleteActionResponse> deleteActions(
       $grpc.ServiceCall call, $async.Stream<$0.DeleteActionRequest> request);
-  $async.Stream<$0.DeleteGroupUsersResponse> deleteGroupUsers(
-      $grpc.ServiceCall call, $async.Stream<$0.GroupUser> request);
+  $async.Stream<$0.DeleteGroupUserResponse> deleteGroupUsers(
+      $grpc.ServiceCall call, $async.Stream<$0.DeleteGroupUserRequest> request);
   $async.Stream<$0.DeleteMaterialResponse> deleteMaterials(
       $grpc.ServiceCall call, $async.Stream<$0.DeleteMaterialRequest> request);
   $async.Future<$0.User> getCurrentUser(
@@ -914,6 +933,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.ListUsersRequest request);
   $async.Future<$0.AuthenticateResponse> refreshSession(
       $grpc.ServiceCall call, $0.RefreshSessionRequest request);
+  $async.Stream<$0.SyncResponse> sync(
+      $grpc.ServiceCall call, $async.Stream<$0.SyncRequest> request);
   $async.Future<$0.User> updateCurrentUser(
       $grpc.ServiceCall call, $0.UpdateCurrentUserRequest request);
 }

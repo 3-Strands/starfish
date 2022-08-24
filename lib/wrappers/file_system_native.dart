@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io' as io show File, RandomAccessFile, FileMode;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:starfish/models/file_reference.dart';
@@ -46,11 +45,6 @@ Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
 
 Future<void> openFile(String filepath) async {
   await OpenFile.open(filepath);
-}
-
-Future<void> initHive() async {
-  final directory = await getApplicationDocumentsDirectory();
-  Hive.init(directory.path);
 }
 
 class File {

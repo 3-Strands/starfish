@@ -8,9 +8,12 @@ part 'fieldMasks.dart';
 abstract class Storage {
   const Storage();
 
-  String toCreateCode(String modelCode);
-  String toUpdateCode(String modelCode);
-  String toDeleteCode(String modelCode);
+  String toSaveCode(String modelCode);
+  String toRemoveCode();
+
+  String toCreateCode(int typeId, String modelCode);
+  String toUpdateCode(int typeId, String modelCode, String originalModelCode);
+  String toDeleteCode(int typeId, String modelCode);
 }
 
 class BoxStorage extends Storage {
@@ -19,30 +22,42 @@ class BoxStorage extends Storage {
   final String name;
 
   @override
-  String toCreateCode(String modelCode) {
-    return 'globalHiveApi.$name.put($modelCode.id, $modelCode)';
+  String toSaveCode(String modelCode) {
+    return 'globalHiveApi.$name.put($modelCode.id, $modelCode);';
   }
 
   @override
-  String toUpdateCode(String modelCode) => toCreateCode(modelCode);
+  String toRemoveCode() {
+    return 'globalHiveApi.$name.delete(id);';
+  }
 
   @override
-  String toDeleteCode(String modelCode) {
-    return 'globalHiveApi.$name.delete($modelCode.id)';
+  String toCreateCode(int typeId, String modelCode) {
+    return '''
+      globalHiveApi.$name.put($modelCode.id, $modelCode);
+      ensureRevert($typeId, $modelCode.id, null);''';
   }
-}
 
-enum ReferenceType {
-  fullModel,
-  modelKey,
+  @override
+  String toUpdateCode(int typeId, String modelCode, String originalModelCode) {
+    return '''
+      globalHiveApi.$name.put($modelCode.id, $modelCode);
+      ensureRevert($typeId, $originalModelCode.id, $originalModelCode);''';
+  }
+
+  @override
+  String toDeleteCode(int typeId, String modelCode) {
+    return '''
+      globalHiveApi.$name.delete($modelCode.id);
+      ensureRevert($typeId, $modelCode.id, $modelCode);''';
+  }
 }
 
 class Reference {
-  Reference(this.model, this.field, this.type);
+  Reference(this.model, this.field);
 
   final Model model;
   final String field;
-  final ReferenceType type;
 }
 
 class ReferenceStorage extends Storage {
@@ -51,95 +66,73 @@ class ReferenceStorage extends Storage {
   final Map<String, Reference> references;
 
   @override
-  String toCreateCode(String modelCode) {
+  String toSaveCode(String modelCode) {
+    return references.entries.map((entry) {
+      final referringField = entry.key;
+      if (referringField.isEmpty) {
+        return '// noop';
+      }
+      final refersTo = entry.value;
+      final box = refersTo.model.storage as BoxStorage;
+      return '''
+        globalHiveApi.${box.name}.applyUpdate($modelCode.$referringField, (other) {
+          other.${refersTo.field}.add($modelCode);
+        });''';
+    }).join('\n');
+  }
+
+  @override
+  String toRemoveCode() {
+    throw Exception(
+        'Should not be generating remove code for object stored in reference to other objects');
+    // return references.entries.map((entry) {
+    //   final refersTo = entry.value;
+    //   final box = refersTo.model.storage as BoxStorage;
+    //   return '''
+    //     globalHiveApi.${box.name}.applyGenericUpdate((model) => model.id == id, (other) => other.${refersTo.field}.removeWhere((item) => item.id == id));''';
+    // }).join('\n');
+  }
+
+  @override
+  String toCreateCode(int typeId, String modelCode) {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
-      switch (refersTo.type) {
-        case ReferenceType.fullModel:
-          final box = refersTo.model.storage as BoxStorage;
-          return 'globalHiveApi.${box.name}.get($modelCode.$referringField)!.${refersTo.field}.add($modelCode)';
-        case ReferenceType.modelKey:
-          return '';
-      }
-    }).join(';\n');
+      final box = refersTo.model.storage as BoxStorage;
+      return '''
+        globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
+          other.${refersTo.field}.add($modelCode);
+        });''';
+    }).join('\n');
   }
 
   @override
-  String toUpdateCode(String modelCode) {
+  String toUpdateCode(int typeId, String modelCode, String _) {
+    bool hasWrittenId = false;
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
-      switch (refersTo.type) {
-        case ReferenceType.fullModel:
-          final box = refersTo.model.storage as BoxStorage;
-          return 'globalHiveApi.${box.name}.resave($modelCode.$referringField)';
-        case ReferenceType.modelKey:
-          return '';
-      }
-    }).join(';\n');
+      final box = refersTo.model.storage as BoxStorage;
+      final code = '''
+        ${hasWrittenId ? '' : 'final id = $modelCode.id;'}
+        globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) {
+          final index = other.${refersTo.field}.indexWhere((item) => item.id == id);
+          other.${refersTo.field}[index] = $modelCode;
+        });''';
+      hasWrittenId = true;
+      return code;
+    }).join('\n');
   }
 
   @override
-  String toDeleteCode(String modelCode) {
+  String toDeleteCode(int typeId, String modelCode) {
     return references.entries.map((entry) {
       final referringField = entry.key;
       final refersTo = entry.value;
-      switch (refersTo.type) {
-        case ReferenceType.fullModel:
-          final box = refersTo.model.storage as BoxStorage;
-          return 'globalHiveApi.${box.name}.edit($modelCode.$referringField, (item) => item.${refersTo.field}.remove($modelCode))';
-        case ReferenceType.modelKey:
-          return '';
-      }
-    }).join(';\n');
+      final box = refersTo.model.storage as BoxStorage;
+      return 'globalHiveApi.${box.name}.applyEdit(${findTypeId(refersTo.model)}, $modelCode.$referringField, (other) => other.${refersTo.field}.removeWhere((item) => item.id == $modelCode.id));';
+    }).join('\n');
   }
-}
-
-abstract class ModelKey {
-  bool isKey(String field);
-  String toCode(String base);
-
-  bool get isAutoGenerated;
-
-  factory ModelKey.single(String field, {bool auto = false}) {
-    return ModelKeySingle(field, isAutoGenerated: auto);
-  }
-
-  factory ModelKey.compound(List<String> fields) {
-    return ModelKeyCompound(fields);
-  }
-
-  static ModelKey id = ModelKey.single('id', auto: true);
-}
-
-class ModelKeySingle implements ModelKey {
-  ModelKeySingle(this.field, {this.isAutoGenerated = false});
-
-  final String field;
-  final bool isAutoGenerated;
-
-  @override
-  bool isKey(String field) => field == this.field;
-
-  @override
-  String toCode(String base) => '$base.$field';
-}
-
-class ModelKeyCompound implements ModelKey {
-  ModelKeyCompound(this.fields);
-
-  final List<String> fields;
-
-  @override
-  bool isKey(String field) => fields.contains(field);
-
-  @override
-  bool get isAutoGenerated => false;
-
-  @override
-  String toCode(String base) =>
-      '\'${fields.map((field) => '\${$base.$field}').join(':')}\'';
 }
 
 class Field {
@@ -155,10 +148,32 @@ class Field {
   final bool isIterable;
 }
 
-class Model {
+class MessageWrapper {
+  MessageWrapper(this.message);
+
+  final GeneratedMessage message;
+
+  String get name => message.runtimeType.toString();
+
+  String makeAdapterCode(int typeId) {
+    assert(typeId >= 0 && typeId < 256);
+    final name = this.name;
+
+    return '''
+      class ${name}Adapter extends _GrpcAdapter<$name> {
+        @override
+        int get typeId => $typeId;
+
+        @override
+        $name create() => $name.create();
+      }
+    ''';
+  }
+}
+
+class Model extends MessageWrapper {
   Model(
-    this.message, {
-    required this.typeId,
+    super.message, {
     required this.storage,
     this.readonlyFields = const {},
     this.editableFields,
@@ -166,15 +181,11 @@ class Model {
     this.deleteRequest,
   });
 
-  final GeneratedMessage message;
-  final int typeId;
   final Storage storage;
   final Set<String> readonlyFields;
   final List<String>? editableFields;
   final GeneratedMessage? createUpdateRequest;
   final GeneratedMessage? deleteRequest;
-
-  String get name => message.runtimeType.toString();
 
   static Set<String> _globalReadOnlyFields = {
     'editHistory',
@@ -183,29 +194,25 @@ class Model {
     'creatorId',
   };
 
-  String makeDeltaCode() {
+  String makeDeltaCode(int typeId) {
     final classBuffer = StringBuffer();
-    _generateCreateDelta(classBuffer);
-    classBuffer.writeln();
-    _generateUpdateDelta(classBuffer);
-    classBuffer.writeln();
-    _generateDeleteDelta(classBuffer);
-    return classBuffer.toString();
-  }
-
-  String makeAdapterCode() {
-    final classBuffer = StringBuffer();
-
     classBuffer.writeln('''
-      class ${name}Adapter extends _GrpcAdapter<$name> {
-        @override
-        int get typeId => $typeId;
-
-        @override
-        $name create() => $name.create();
-      }
-    ''');
-
+      void save${name}Locally($name model) {
+        ${storage.toSaveCode('model')}
+      }''');
+    classBuffer.writeln();
+    if (storage is BoxStorage) {
+      classBuffer.writeln('''
+        void remove${name}Locally(String id) {
+          ${storage.toRemoveCode()}
+        }''');
+      classBuffer.writeln();
+    }
+    _generateCreateDelta(typeId, classBuffer);
+    classBuffer.writeln();
+    _generateUpdateDelta(typeId, classBuffer);
+    classBuffer.writeln();
+    _generateDeleteDelta(typeId, classBuffer);
     return classBuffer.toString();
   }
 
@@ -228,11 +235,18 @@ class Model {
               ? 'String'
               : field.type == PbFieldType.OB
                   ? 'bool'
-                  : field.isGroupOrMessage
-                      ? field.makeDefault!().runtimeType.toString()
-                      : field.isEnum
-                          ? field.enumValues![0].runtimeType.toString()
-                          : 'dynamic';
+                  : field.type == PbFieldType.O3
+                      ? 'int'
+                      : field.type == PbFieldType.O6
+                          ? 'Int64'
+                          : field.isGroupOrMessage
+                              ? field.makeDefault!().runtimeType.toString()
+                              : field.isEnum
+                                  ? field.enumValues![0].runtimeType.toString()
+                                  : 'dynamic';
+      if (type == 'dynamic')
+        print(
+            'Unknown type for $name.$field (${field.type}): ${field.makeDefault?.call().runtimeType ?? '<unknown>'}');
       return Field(
         name: field.name,
         protoName: field.protoName,
@@ -247,9 +261,29 @@ class Model {
   List<Field> get _creatableFields =>
       _fields.where((field) => _isCreatable(field.name)).toList();
 
-  void _generateCreateDelta(StringBuffer classBuffer) {
+  String get createUpdateRequestName =>
+      createUpdateRequest!.runtimeType.toString();
+
+  String get deleteRequestName => deleteRequest!.runtimeType.toString();
+
+  String _makeCreateUpdateRequestCode(String modelCode,
+      [String? updateMaskCode]) {
+    final name = createUpdateRequestName;
+    final fieldName = createUpdateRequest!.info_.fieldInfo.values
+        .firstWhere((field) => field.name != 'updateMask')
+        .name;
+    return '$name($fieldName: $modelCode${updateMaskCode == null ? '' : ', updateMask: $updateMaskCode'})';
+  }
+
+  String _makeDeleteRequestCode(String modelCode) {
+    final name = deleteRequestName;
+    final fieldName = deleteRequest!.info_.fieldInfo.values.first.name;
+    return '$name($fieldName: $modelCode.id)';
+  }
+
+  void _generateCreateDelta(int typeId, StringBuffer classBuffer) {
     if (createUpdateRequest == null) {
-      classBuffer.writeln('// $name is not creatable');
+      classBuffer.writeln('// Users cannot create the $name type');
       return;
     }
 
@@ -284,8 +318,10 @@ class Model {
     }
 
     classBuffer.writeln('''
-        );
-        ${storage.toCreateCode('model')};
+        )..freeze();
+        ${storage.toCreateCode(typeId, 'model')}
+        assert(!globalHiveApi.sync.containsKey(model.id));
+        globalHiveApi.sync.put(model.id, ${_makeCreateUpdateRequestCode('model')});
         return true;
       }
     ''');
@@ -293,11 +329,11 @@ class Model {
     classBuffer.writeln('}');
   }
 
-  void _generateUpdateDelta(StringBuffer classBuffer) {
+  void _generateUpdateDelta(int typeId, StringBuffer classBuffer) {
     final editableFields = this.editableFields;
 
     if (editableFields == null || createUpdateRequest == null) {
-      classBuffer.writeln('// $name is not updatable');
+      classBuffer.writeln('// Users cannot update the $name type');
       return;
     }
     final className = '${name}UpdateDelta';
@@ -328,26 +364,43 @@ class Model {
     classBuffer.writeln('''
       @override
       bool apply() {
-        final updateMask = <String>[];
+        Set<String>? updateMask = <String>{};
+        final newModel = _model.rebuild((other) {
     ''');
 
     for (final field in fields) {
       final comparison = field.isIterable
-          ? '!listsAreSame(${field.name}!, _model.${field.name})'
-          : '${field.name} != _model.${field.name}';
+          ? '!listsAreSame(${field.name}!, other.${field.name})'
+          : '${field.name} != other.${field.name}';
+      final updateCode = field.isIterable
+          ? '''other.${field.name}
+            ..clear()
+            ..addAll(${field.name}!);'''
+          : 'other.${field.name} = ${field.name}!;';
       classBuffer.writeln('''
         if (${field.name} != null && $comparison) {
-          ${field.isIterable ? '''_model.${field.name}
-            ..clear()
-            ..addAll(${field.name}!);''' : '_model.${field.name} = ${field.name}!;'}
-          updateMask.add('${field.protoName}');
+          $updateCode
+          updateMask!.add('${field.protoName}');
         }
       ''');
     }
 
     classBuffer.writeln('''
+      });
+
       if (updateMask.isNotEmpty) {
-        ${storage.toUpdateCode('_model')};
+        ${storage.toUpdateCode(typeId, 'newModel', '_model')}
+        final $createUpdateRequestName? request = globalHiveApi.sync.get(newModel.id);
+        if (request != null) {
+          if (!request.hasUpdateMask()) {
+            // This edit follows a create. Stays as a create.
+            updateMask = null;
+          } else {
+            // This edit follows a previous edit. Merge the edits.
+            updateMask = {...updateMask, ...request.updateMask.paths};
+          }
+        }
+        globalHiveApi.sync.put(newModel.id, ${_makeCreateUpdateRequestCode('newModel', 'updateMask == null ? null : FieldMask(paths: updateMask)')});
         return true;
       }
       return false;
@@ -357,9 +410,9 @@ class Model {
     classBuffer.writeln('}');
   }
 
-  void _generateDeleteDelta(StringBuffer classBuffer) {
+  void _generateDeleteDelta(int typeId, StringBuffer classBuffer) {
     if (deleteRequest == null) {
-      classBuffer.writeln('// $name is not deletable');
+      classBuffer.writeln('// Users cannot delete the $name type');
       return;
     }
     final className = '${name}DeleteDelta';
@@ -376,7 +429,14 @@ class Model {
     classBuffer.writeln('''
       @override
       bool apply() {
-        ${storage.toDeleteCode('_model')};
+        ${storage.toDeleteCode(typeId, '_model')}
+        final $createUpdateRequestName? request = globalHiveApi.sync.get(_model.id);
+        if (request != null && !request.hasUpdateMask()) {
+          // This delete follows a create. Reverts to nothing.
+          globalHiveApi.sync.delete(_model.id);
+        } else {
+          globalHiveApi.sync.put(_model.id, ${_makeDeleteRequestCode('_model')});
+        }
         return true;
       }
     ''');
@@ -385,120 +445,181 @@ class Model {
   }
 }
 
+final materialModel = Model(
+  Material(),
+  storage: BoxStorage('material'),
+  readonlyFields: {
+    'languages',
+    'feedbacks',
+  },
+  editableFields: _kMaterialFieldMask,
+  createUpdateRequest: CreateUpdateMaterialsRequest(),
+  deleteRequest: DeleteMaterialRequest(),
+);
+
+final actionModel = Model(
+  Action(),
+  storage: BoxStorage('action'),
+  editableFields: _kActionFieldMask,
+  createUpdateRequest: CreateUpdateActionsRequest(),
+  deleteRequest: DeleteActionRequest(),
+);
+
+final groupModel = Model(
+  Group(),
+  storage: BoxStorage('group'),
+  readonlyFields: {
+    'languages',
+  },
+  editableFields: _kGroupFieldMask,
+  createUpdateRequest: CreateUpdateGroupsRequest(),
+);
+
+final userModel = Model(
+  User(),
+  storage: BoxStorage('user'),
+  editableFields: _kUserFieldMask,
+  createUpdateRequest: CreateUpdateUserRequest(),
+);
+
+final evaluationCategoryModel = Model(
+  EvaluationCategory(),
+  storage: BoxStorage('evaluationCategory'),
+);
+
+final messages = <int, MessageWrapper>{
+  0: Model(
+    Country(),
+    storage: BoxStorage('country'),
+  ),
+  1: Model(
+    Language(),
+    storage: BoxStorage('language'),
+  ),
+  // 2: legacy: CurrentUser,
+  3: Model(
+    GroupUser(),
+    storage: ReferenceStorage({
+      'groupId': Reference(groupModel, 'users'),
+      'userId': Reference(userModel, 'groups'),
+    }),
+    editableFields: _kGroupUserFieldMask,
+    createUpdateRequest: CreateUpdateGroupUsersRequest(),
+    deleteRequest: DeleteGroupUserRequest(),
+  ),
+  4: actionModel,
+  5: materialModel,
+  6: Model(
+    MaterialFeedback(),
+    storage: ReferenceStorage({
+      'materialId': Reference(materialModel, 'feedbacks'),
+    }),
+    createUpdateRequest: CreateMaterialFeedbacksRequest(),
+  ),
+  // 7: MessageWrapper(Date()),
+  // 8: legacy: HiveDateTime
+  9: Model(
+    MaterialTopic(),
+    storage: BoxStorage('materialTopic'),
+  ),
+  10: Model(
+    MaterialType(),
+    storage: BoxStorage('materialType'),
+  ),
+  // 11: MessageWrapper(Edit()),
+  12: groupModel,
+  // 13: deprecated: GroupAction,
+  14: evaluationCategoryModel,
+  15: Model(
+    ActionUser(),
+    storage: ReferenceStorage({
+      'userId': Reference(userModel, 'actions'),
+    }),
+    editableFields: _kActionUserFieldMask,
+    createUpdateRequest: CreateUpdateActionUserRequest(),
+  ),
+  16: userModel,
+  // 17: custom: File
+  18: Model(
+    LearnerEvaluation(),
+    storage: BoxStorage('learnerEvaluation'),
+    createUpdateRequest: CreateUpdateLearnerEvaluationRequest(),
+  ),
+  19: Model(
+    TeacherResponse(),
+    storage: BoxStorage('teacherResponse'),
+    createUpdateRequest: CreateUpdateTeacherResponseRequest(),
+  ),
+  20: Model(
+    GroupEvaluation(),
+    storage: BoxStorage('groupEvaluation'),
+  ),
+  21: Model(
+    Transformation(),
+    storage: BoxStorage('transformation'),
+    createUpdateRequest: CreateUpdateTransformationRequest(),
+  ),
+  22: Model(
+    Output(),
+    storage: BoxStorage('output'),
+    createUpdateRequest: CreateUpdateOutputRequest(),
+  ),
+  23: Model(
+    OutputMarker(),
+    storage: ReferenceStorage({
+      '': Reference(groupModel, 'outputMarkers'),
+    }),
+  ),
+  24: Model(
+    EvaluationValueName(),
+    storage: ReferenceStorage({
+      '': Reference(evaluationCategoryModel, 'valueNames'),
+    }),
+  ),
+
+  // ------------------ Request Types ------------------
+  102: MessageWrapper(CreateUpdateMaterialsRequest()),
+  103: MessageWrapper(CreateUpdateGroupsRequest()),
+  104: MessageWrapper(CreateUpdateUserRequest()),
+  105: MessageWrapper(UpdateCurrentUserRequest()),
+  106: MessageWrapper(CreateUpdateActionsRequest()),
+  107: MessageWrapper(CreateUpdateTransformationRequest()),
+  108: MessageWrapper(CreateUpdateTeacherResponseRequest()),
+  109: MessageWrapper(CreateMaterialFeedbacksRequest()),
+  110: MessageWrapper(CreateUpdateActionUserRequest()),
+  111: MessageWrapper(CreateUpdateGroupEvaluationRequest()),
+  112: MessageWrapper(CreateUpdateGroupUsersRequest()),
+  113: MessageWrapper(CreateUpdateLearnerEvaluationRequest()),
+  114: MessageWrapper(CreateUpdateOutputRequest()),
+  115: MessageWrapper(DeleteActionRequest()),
+  116: MessageWrapper(DeleteMaterialRequest()),
+  117: MessageWrapper(DeleteGroupUserRequest()),
+};
+
+int findTypeId(Model model) =>
+    messages.entries.firstWhere((entry) => entry.value == model).key;
+
 void main() {
-  final materialModel = Model(
-    Material(),
-    typeId: 5,
-    storage: BoxStorage('material'),
-    readonlyFields: {
-      'languages',
-      'feedbacks',
-    },
-    editableFields: _kMaterialFieldMask,
-    createUpdateRequest: CreateUpdateMaterialsRequest(),
-    deleteRequest: DeleteMaterialRequest(),
-  );
-
-  final actionModel = Model(
-    Action(),
-    typeId: 4,
-    storage: BoxStorage('action'),
-    editableFields: _kActionFieldMask,
-    createUpdateRequest: CreateUpdateActionsRequest(),
-    deleteRequest: DeleteActionRequest(),
-  );
-
-  final groupModel = Model(
-    Group(),
-    typeId: 12,
-    storage: BoxStorage('group'),
-    readonlyFields: {
-      'languages',
-    },
-    editableFields: _kGroupFieldMask,
-    createUpdateRequest: CreateUpdateGroupsRequest(),
-  );
-
-  final userModel = Model(
-    User(),
-    typeId: 16,
-    storage: BoxStorage('user'),
-    editableFields: _kUserFieldMask,
-    createUpdateRequest: CreateUpdateUserRequest(),
-  );
-
-  final models = <Model>[
-    Model(
-      Country(),
-      typeId: 0,
-      storage: BoxStorage('country'),
-    ),
-
-    Model(
-      Language(),
-      typeId: 1,
-      storage: BoxStorage('language'),
-    ),
-
-    Model(
-      GroupUser(),
-      typeId: 3,
-      storage: ReferenceStorage({
-        'groupId': Reference(groupModel, 'users', ReferenceType.fullModel),
-        'userId': Reference(userModel, 'groups', ReferenceType.fullModel),
-      }),
-      editableFields: _kGroupUserFieldMask,
-      createUpdateRequest: CreateUpdateGroupUsersRequest(),
-      deleteRequest: GroupUser(),
-    ),
-
-    actionModel, // 4
-
-    materialModel, // 5
-
-    Model(
-      MaterialFeedback(),
-      typeId: 6,
-      storage: ReferenceStorage({
-        'materialId':
-            Reference(materialModel, 'feedbacks', ReferenceType.fullModel),
-      }),
-      createUpdateRequest: CreateMaterialFeedbacksRequest(),
-    ),
-
-    Model(
-      MaterialTopic(),
-      typeId: 9,
-      storage: BoxStorage('materialTopic'),
-    ),
-
-    Model(
-      MaterialType(),
-      typeId: 10,
-      storage: BoxStorage('materialType'),
-    ),
-
-    groupModel, // 12
-
-    Model(
-      ActionUser(),
-      typeId: 15,
-      storage: ReferenceStorage({
-        'userId': Reference(userModel, 'actions', ReferenceType.fullModel),
-      }),
-      editableFields: _kActionUserFieldMask,
-      createUpdateRequest: CreateUpdateActionUserRequest(),
-    ),
-
-    userModel, // 16
-  ];
-
   final deltaContents = '''
   // GENERATED CODE - DO NOT MODIFY BY HAND
 
   part of 'deltas.dart';
 
-  ${models.map((model) => model.makeDeltaCode()).join('\n')}
+  ${messages.entries.where((entry) => entry.value is Model).map((entry) => (entry.value as Model).makeDeltaCode(entry.key)).join('\n')}
+
+  Box _resolveBox(int typeId) {
+    switch (typeId) {
+      ${messages.entries.where((entry) {
+            final model = entry.value;
+            return model is Model && model.storage is BoxStorage;
+          }).map((entry) => 'case ${entry.key}: return globalHiveApi.${((entry.value as Model).storage as BoxStorage).name};').join('\n')}
+      default: throw Exception('Unknown type id \$typeId');
+    }
+  }
+
+  const _messageToTypeIdMap = <Type, int>{
+    ${messages.entries.where((entry) => entry.key >= 100 && entry.key < 200).map((entry) => '${entry.value.name}: ${entry.key},').join('\n')}
+  };
   ''';
 
   File('lib/src/deltas.g.dart').writeAsString(deltaContents);
@@ -508,7 +629,11 @@ void main() {
 
   part of 'grpc_adapters.dart';
 
-  ${models.map((model) => model.makeAdapterCode()).join('\n')}
+  ${messages.entries.map((entry) => entry.value.makeAdapterCode(entry.key)).join('\n')}
+
+  void registerAllAdapters() {
+    ${messages.values.map((value) => 'Hive.registerAdapter(${value.name}Adapter());').join('\n')}
+  }
   ''';
 
   File('lib/src/grpc_adapters.g.dart').writeAsString(adapterContents);

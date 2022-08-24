@@ -230,7 +230,7 @@ class _GroupsViewState extends State<GroupsView> {
                   ),
                   BlocBuilder<GroupsCubit, GroupsState>(
                     builder: (context, state) {
-                      final map = state.groupsToShow;
+                      final map = state.calculateGroupsToShow();
                       final keys = map.keys.toList();
                       final sections = map.values.toList();
 

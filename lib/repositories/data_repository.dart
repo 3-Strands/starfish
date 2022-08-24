@@ -17,13 +17,13 @@ extension AsList<T> on Box<T> {
 
 class DataRepository {
   DataRepository({
-    HiveApiInterface hiveApi = globalHiveApi,
+    HiveApi hiveApi = globalHiveApi,
     required User user,
   })  : _hiveApi = hiveApi,
         _userId = user.id,
         _user = user;
 
-  final HiveApiInterface _hiveApi;
+  final HiveApi _hiveApi;
   final String _userId;
   final User _user;
 

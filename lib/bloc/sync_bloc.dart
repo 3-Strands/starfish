@@ -25,16 +25,13 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
     });
 
     on<CountriesAndLanguagesRequested>((event, emit) async {
-      _syncRepository.sync({
-        ModelType.country,
-        ModelType.language,
-      });
+      _syncRepository.sync();
     });
     on<SyncAllRequested>((event, emit) async {
-      _syncRepository.sync(ModelType.values);
+      _syncRepository.sync();
     });
 
-    _syncRepository.isSyncing.listen((isSyncing) {
+    _syncRepository.isSyncingStream.listen((isSyncing) {
       add(isSyncing ? const SyncInitiated() : const SyncCompleted());
     });
 

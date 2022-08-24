@@ -6,15 +6,15 @@ class MaterialsState {
     required List<Material> materials,
     required RelatedMaterials relatedMaterials,
     int pagesToShow = 1,
-    Set<String>? selectedLanguages,
-    Set<String>? selectedTopics,
+    Set<String> selectedLanguages = const {},
+    Set<String> selectedTopics = const {},
     MaterialFilter actions = MaterialFilter.NO_FILTER_APPLIED,
     String query = "",
   })  : _materials = materials,
         _relatedMaterials = relatedMaterials,
         _pagesToShow = pagesToShow,
-        _selectedLanguages = selectedLanguages ?? Set(),
-        _selectedTopics = selectedTopics ?? Set(),
+        _selectedLanguages = selectedLanguages,
+        _selectedTopics = selectedTopics,
         _actions = actions,
         _query = query;
 
@@ -27,6 +27,8 @@ class MaterialsState {
   final Set<String> _selectedTopics;
   final MaterialFilter _actions;
   final String _query;
+
+  Set<String> get selectedLanguages => _selectedLanguages;
 
   int get pagesToShow => _pagesToShow;
   MaterialFilter get actions => _actions;
