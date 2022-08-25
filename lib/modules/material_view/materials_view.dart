@@ -16,6 +16,7 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/single_material_view.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
@@ -126,9 +127,11 @@ class _MaterialsViewState extends State<MaterialsView> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    Routes.settings,
+                    MaterialPageRoute(
+                      builder: (context) => const Settings(),
+                    ),
                   );
                 },
               ),

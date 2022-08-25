@@ -13,6 +13,7 @@ import 'package:starfish/modules/actions_view/my_group.dart';
 import 'package:starfish/modules/actions_view/me.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
@@ -181,13 +182,11 @@ class _ActionsScreenState extends State<ActionsScreen>
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  setState(
-                    () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.settings,
-                      );
-                    },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Settings(),
+                    ),
                   );
                 },
               ),

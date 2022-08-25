@@ -11,6 +11,7 @@ import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/modules/groups_view/add_edit_group/add_edit_group_screen.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/modules/groups_view/group_list_item.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -140,9 +141,11 @@ class _GroupsViewState extends State<GroupsView> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    Routes.settings,
+                    MaterialPageRoute(
+                      builder: (context) => const Settings(),
+                    ),
                   );
                 },
               ),
