@@ -65,7 +65,8 @@ service Starfish {
     rpc DeleteActions (stream DeleteActionRequest) returns (stream DeleteActionResponse) {}
 
     // Remove users from groups.
-    rpc DeleteGroupUsers (stream DeleteGroupUserRequest) returns (stream DeleteGroupUserResponse) {}
+    // The role on GroupUser message is ignored in this procedure
+    rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUserResponse) {}
 
     // Delete Materials.
     rpc DeleteMaterials (stream DeleteMaterialRequest) returns (stream DeleteMaterialResponse) {}
@@ -1178,6 +1179,18 @@ message RefreshSessionRequest {
 
 }
 
+// When sending update requests through the Sync endpoint, it's possible that the update fails.
+// In that case a corresponding SyncError message is returned in the response stream.
+message SyncError {
+
+    // The request message that triggered the error
+    SyncRequest request = 1;
+
+    // The error message
+    string message = 2;
+
+}
+
 message SyncRequestMetaData {
 
     // Whether the Sync endpoint should respond with a stream of records from the server
@@ -1262,6 +1275,7 @@ message SyncResponse {
         User user = 15;
         DeletedResource deleted_record = 16;
         SyncResponseMetaData meta_data = 17;
+        SyncError error = 18;
     }
 
 }
