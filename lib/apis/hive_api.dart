@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/models/file_reference.dart';
+import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
 class HiveApi {
@@ -37,6 +38,7 @@ class HiveApi {
   static const String SYNC_BOX = 'syncBox';
   static const String BACKUP_SYNC_BOX = 'backupSyncBox';
   static const String REVERT_BOX = 'revertBox';
+  static const String SYNC_TIMESTAMP_BOX = 'syncTimestampBox';
 
   static init({
     List<int>? encryptionKey,
@@ -88,6 +90,8 @@ class HiveApi {
         encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Map<String, dynamic>>(REVERT_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
+    await Hive.openBox<Timestamp>(SYNC_TIMESTAMP_BOX,
+        encryptionCipher: encryptionCipher, bytes: bytes);
   }
 
   // Box<LastSyncDateTime> get lastSync;
@@ -122,6 +126,7 @@ class HiveApi {
   Box<dynamic> get _backupSync => Hive.box(BACKUP_SYNC_BOX);
   Box<Map<String, dynamic>> get revert =>
       Hive.box<Map<String, dynamic>>(REVERT_BOX);
+  Box<Timestamp> get _syncTimestamp => Hive.box<Timestamp>(SYNC_TIMESTAMP_BOX);
 
   /// Make sure the sync box is not written to for the duration of the passed function.
   Future<void> protectSyncBox(
@@ -153,6 +158,12 @@ class HiveApi {
       _isSyncBoxProtected = false;
     }
   }
+
+  Timestamp? get lastSync => _syncTimestamp.get(0);
+
+  set lastSync(Timestamp? timestamp) => timestamp == null
+      ? _syncTimestamp.delete(0)
+      : _syncTimestamp.put(0, timestamp);
 
   dynamic getSyncRequest(dynamic key) => _backupSync.get(key) ?? sync.get(key);
 

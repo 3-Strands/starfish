@@ -20,12 +20,12 @@ class _Scheduler {
   bool get isSyncing => _isSyncing.value;
 
   void _run() {
-    _isSyncing.add(true);
+    _isSyncing.value = true;
     sync()
         .then(_completer!.complete)
         .onError(_completer!.completeError)
         .whenComplete(() {
-      _isSyncing.add(false);
+      _isSyncing.value = false;
       _completer = null;
     });
   }
@@ -116,9 +116,49 @@ class SyncRepository {
       (requests) => _makeRequestWithRefresh((client) async {
         final controller = StreamController<SyncRequest>();
         final responseStream = client.sync(controller.stream);
-        // TODO: Add requests.
-        controller.add(
-            SyncRequest(metaData: SyncRequestMetaData(getNewRecords: true)));
+        controller.add(SyncRequest(
+          metaData: SyncRequestMetaData(
+            getNewRecords: true,
+            updatedSince: globalHiveApi.lastSync,
+          ),
+        ));
+        for (final request in orderRequests(requests)) {
+          final syncRequest = SyncRequest.create();
+          if (request is CreateMaterialFeedbacksRequest)
+            syncRequest.createMaterialFeedback = request;
+          else if (request is CreateUpdateActionsRequest)
+            syncRequest.createUpdateAction = request;
+          else if (request is CreateUpdateActionUserRequest)
+            syncRequest.createUpdateActionUser = request;
+          else if (request is CreateUpdateGroupsRequest)
+            syncRequest.createUpdateGroup = request;
+          else if (request is CreateUpdateGroupEvaluationRequest)
+            syncRequest.createUpdateGroupEvaluation = request;
+          else if (request is CreateUpdateGroupUsersRequest)
+            syncRequest.createUpdateGroupUser = request;
+          else if (request is CreateUpdateLearnerEvaluationRequest)
+            syncRequest.createUpdateLearnerEvaluation = request;
+          else if (request is CreateUpdateMaterialsRequest)
+            syncRequest.createUpdateMaterial = request;
+          else if (request is CreateUpdateOutputRequest)
+            syncRequest.createUpdateOutput = request;
+          else if (request is CreateUpdateTeacherResponseRequest)
+            syncRequest.createUpdateTeacherResponse = request;
+          else if (request is CreateUpdateTransformationRequest)
+            syncRequest.createUpdateTransformation = request;
+          else if (request is CreateUpdateUserRequest)
+            syncRequest.createUpdateUser = request;
+          else if (request is DeleteActionRequest)
+            syncRequest.deleteAction = request;
+          // TODO
+          // else if (request is DeleteGroupUserRequest)
+          //   syncRequest.deleteGroupUser = request;
+          else if (request is DeleteMaterialRequest)
+            syncRequest.deleteMaterial = request;
+          else if (request is UpdateCurrentUserRequest)
+            syncRequest.updateCurrentUser = request;
+          controller.add(syncRequest);
+        }
         controller.close();
         final items = await responseStream.toList();
         revertAll();

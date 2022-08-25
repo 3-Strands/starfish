@@ -104,6 +104,7 @@ class FileReferenceCreateDelta extends DeltaBase {
 
 int _typeIdOf(Type t) => _messageToTypeIdMap[t]!;
 
+/// Order the requests based on their type
 List<dynamic> orderRequests(Iterable<dynamic> requests) {
   return requests.toList()
     ..sort(
