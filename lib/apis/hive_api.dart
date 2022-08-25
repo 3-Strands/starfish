@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
 import 'package:hive/hive.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/grpc_extensions.dart';
@@ -34,7 +35,7 @@ class HiveApi {
   // HiveOutputMarker // 23
   // HiveEvaluationValueName // 24
   static const String SYNC_BOX = 'syncBox';
-  static const String SYNC_FALLBACK_BOX = 'syncFallbackBox';
+  static const String BACKUP_SYNC_BOX = 'backupSyncBox';
   static const String REVERT_BOX = 'revertBox';
 
   static init({
@@ -83,6 +84,8 @@ class HiveApi {
         encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox(SYNC_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
+    await Hive.openBox(BACKUP_SYNC_BOX,
+        encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Map<String, dynamic>>(REVERT_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
   }
@@ -114,21 +117,67 @@ class HiveApi {
   Box<Transformation> get transformation =>
       Hive.box<Transformation>(TRANSFORMATION_BOX);
   Box<Output> get output => Hive.box<Output>(OUTPUT_BOX);
-  Box<dynamic> get sync =>
-      Hive.box(_isSyncBoxProtected ? SYNC_FALLBACK_BOX : SYNC_BOX);
+  @visibleForTesting
+  Box<dynamic> get sync => Hive.box(SYNC_BOX);
+  Box<dynamic> get _backupSync => Hive.box(BACKUP_SYNC_BOX);
   Box<Map<String, dynamic>> get revert =>
       Hive.box<Map<String, dynamic>>(REVERT_BOX);
 
   /// Make sure the sync box is not written to for the duration of the passed function.
-  Future<void> protectSyncBox(FutureOr<void> Function() fn) async {
+  Future<void> protectSyncBox(
+      FutureOr<void> Function(Iterable<dynamic>) fn) async {
     assert(!_isSyncBoxProtected,
         'Attempting to protect an already protected sync box! This is undefined behavior.');
     _isSyncBoxProtected = true;
     try {
-      return await fn();
+      await fn(sync.values);
+      // Sync succeeded!
+      // First, clear the sync and revert box.
+      clearSyncAndRevert();
+    } catch (error) {
+      // Sync failed!
+      // First, write any requests saved in backup sync
+      // to the sync box.
+      for (final key in _backupSync.keys) {
+        final request = _backupSync.get(key);
+        if (request == null) {
+          sync.delete(key);
+        } else {
+          sync.put(key, request);
+        }
+      }
+      throw error;
     } finally {
+      // No matter what, we clear the backup sync.
+      clearBackupSync();
       _isSyncBoxProtected = false;
     }
+  }
+
+  dynamic getSyncRequest(dynamic key) => _backupSync.get(key) ?? sync.get(key);
+
+  Future<void> putSyncRequest(dynamic key, dynamic request) =>
+      (_isSyncBoxProtected ? _backupSync : sync).put(key, request);
+
+  Future<void> deleteSyncRequest(dynamic key) async {
+    if (_isSyncBoxProtected) {
+      await _backupSync.put(key, null);
+    } else {
+      await sync.delete(key);
+    }
+  }
+
+  void _clearBox(Box box) {
+    box.deleteAll(box.keys);
+  }
+
+  void clearSyncAndRevert() {
+    _clearBox(sync);
+    _clearBox(revert);
+  }
+
+  void clearBackupSync() {
+    _clearBox(_backupSync);
   }
 }
 

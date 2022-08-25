@@ -1,4 +1,34 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
+/// GENERATED CODE - DO NOT MODIFY BY HAND
+///
+/// This file contains delta models. The trickiest part of deltas is making sure they apply
+/// correctly, in the correct order. In general, the algorithm is as follows:
+///
+/// 1. Check to see if this delta actually "applies". For example, an update or delete delta
+/// can only apply if the record already exists.
+/// 2. Assuming the delta actually *does* apply, go ahead and apply it to the local data.
+/// 3. Then, make sure that there is sufficient information to roll back to the version
+/// as it stood after the last sync.
+/// 4. Finally, save the request associated with this delta to be sent to the server later,
+/// merging it with any pre-existing requests if they exist.
+///
+/// This gets even more complicated if the delta is applied while the sync is taking place.
+/// In this case, we have to update the local information immediately for the sake of the
+/// UI, but the final state of the data depends on whether the sync will eventually succeed
+/// or fail.
+///
+/// So we apply 1-3 above as is, but we have to modify number 4. If a sync is currently in
+/// progress, we don't save the request to the sync box. We store the merged request in a
+/// backup sync box, as well as saving the delta to possibly reapply later. Then, we branch
+/// on success/failure of the current sync.
+///
+/// If the current sync *fails*, we have to pretend that the deltas applied mid-sync were
+/// applied to the data as normal. That means we take the backup sync items and write them
+/// back to the sync box. The data is then in a consistent state.
+///
+/// If the current sync *succeeds*, then we have to pretend that the deltas weren't applied
+/// until after the sync was finished. In that case, the data would have been rolled back
+/// to its previous state in preparation for the server changes, and we simply have to reapply
+/// the mid-sync deltas once again.
 
 part of 'deltas.dart';
 
@@ -57,21 +87,40 @@ class GroupUserCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = GroupUser(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       groupId: groupId,
       userId: userId,
       role: role,
       profile: profile,
     )..freeze();
-    globalHiveApi.group.applyEdit(12, model.groupId, (other) {
-      other.users.add(model);
-    });
-    globalHiveApi.user.applyEdit(16, model.userId, (other) {
-      other.groups.add(model);
-    });
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync
-        .put(model.id, CreateUpdateGroupUsersRequest(groupUser: model));
+    bool createApplies = false;
+    final groupModelContainer = globalHiveApi.group.get(model.groupId);
+    if (groupModelContainer != null) {
+      createApplies = true;
+      globalHiveApi.group.put(
+        groupModelContainer.id,
+        groupModelContainer.rebuild((other) {
+          other.users.add(model);
+        }),
+      );
+      ensureRevert(12, groupModelContainer.id, groupModelContainer);
+    }
+    final userModelContainer = globalHiveApi.user.get(model.userId);
+    if (userModelContainer != null) {
+      createApplies = true;
+      globalHiveApi.user.put(
+        userModelContainer.id,
+        userModelContainer.rebuild((other) {
+          other.groups.add(model);
+        }),
+      );
+      ensureRevert(16, userModelContainer.id, userModelContainer);
+    }
+    if (!createApplies) {
+      return false;
+    }
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateGroupUsersRequest(groupUser: model));
     return true;
   }
 }
@@ -79,60 +128,106 @@ class GroupUserCreateDelta extends DeltaBase {
 class GroupUserUpdateDelta extends DeltaBase {
   GroupUserUpdateDelta(
     this._model, {
-    this.role,
-    this.profile,
-  });
+    GroupUser_Role? role,
+    String? profile,
+  }) {
+    final updateMask = <String>{};
+    if (role != null && role != _model.role) {
+      this.role = role;
+      updateMask.add('role');
+    } else {
+      this.role = null;
+    }
+    if (profile != null && profile != _model.profile) {
+      this.profile = profile;
+      updateMask.add('profile');
+    } else {
+      this.profile = null;
+    }
+    _updateMask = updateMask;
+  }
 
   final GroupUser _model;
-  final GroupUser_Role? role;
-  final String? profile;
+  late final Set<String> _updateMask;
+  late final GroupUser_Role? role;
+  late final String? profile;
+
+  GroupUser applyUpdateToModel(GroupUser originalModel) {
+    return originalModel.rebuild((other) {
+      if (role != null) {
+        other.role = role!;
+      }
+
+      if (profile != null) {
+        other.profile = profile!;
+      }
+    });
+  }
 
   @override
   bool apply() {
-    Set<String>? updateMask = <String>{};
-    final newModel = _model.rebuild((other) {
-      if (role != null && role != other.role) {
-        other.role = role!;
-        updateMask!.add('role');
-      }
-
-      if (profile != null && profile != other.profile) {
-        other.profile = profile!;
-        updateMask!.add('profile');
-      }
-    });
-
-    if (updateMask.isNotEmpty) {
-      final id = newModel.id;
-      globalHiveApi.group.applyEdit(12, newModel.groupId, (other) {
-        final index = other.users.indexWhere((item) => item.id == id);
-        other.users[index] = newModel;
-      });
-
-      globalHiveApi.user.applyEdit(16, newModel.userId, (other) {
-        final index = other.groups.indexWhere((item) => item.id == id);
-        other.groups[index] = newModel;
-      });
-      final CreateUpdateGroupUsersRequest? request =
-          globalHiveApi.sync.get(newModel.id);
-      if (request != null) {
-        if (!request.hasUpdateMask()) {
-          // This edit follows a create. Stays as a create.
-          updateMask = null;
-        } else {
-          // This edit follows a previous edit. Merge the edits.
-          updateMask = {...updateMask, ...request.updateMask.paths};
-        }
-      }
-      globalHiveApi.sync.put(
-          newModel.id,
-          CreateUpdateGroupUsersRequest(
-              groupUser: newModel,
-              updateMask:
-                  updateMask == null ? null : FieldMask(paths: updateMask)));
-      return true;
+    if (_updateMask.isEmpty) {
+      return false;
     }
-    return false;
+
+    final id = _model.id;
+    GroupUser? tempUpdatedModel;
+    final groupModelContainer = globalHiveApi.group.get(_model.groupId);
+    if (groupModelContainer != null) {
+      final groupIndex =
+          groupModelContainer.users.indexWhere((item) => item.id == id);
+      if (groupIndex >= 0) {
+        tempUpdatedModel ??=
+            applyUpdateToModel(groupModelContainer.users[groupIndex]);
+        globalHiveApi.group.put(
+          groupModelContainer.id,
+          groupModelContainer.rebuild((other) {
+            other.users[groupIndex] = tempUpdatedModel!;
+          }),
+        );
+        ensureRevert(12, groupModelContainer.id, groupModelContainer);
+      }
+    }
+    final userModelContainer = globalHiveApi.user.get(_model.userId);
+    if (userModelContainer != null) {
+      final userIndex =
+          userModelContainer.groups.indexWhere((item) => item.id == id);
+      if (userIndex >= 0) {
+        tempUpdatedModel ??=
+            applyUpdateToModel(userModelContainer.groups[userIndex]);
+        globalHiveApi.user.put(
+          userModelContainer.id,
+          userModelContainer.rebuild((other) {
+            other.groups[userIndex] = tempUpdatedModel!;
+          }),
+        );
+        ensureRevert(16, userModelContainer.id, userModelContainer);
+      }
+    }
+    if (tempUpdatedModel == null) {
+      // No changes were applied.
+      return false;
+    }
+    final updatedModel = tempUpdatedModel;
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateGroupUsersRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateGroupUsersRequest(
+            groupUser: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
   }
 }
 
@@ -143,18 +238,46 @@ class GroupUserDeleteDelta extends DeltaBase {
 
   @override
   bool apply() {
-    globalHiveApi.group.applyEdit(12, _model.groupId,
-        (other) => other.users.removeWhere((item) => item.id == _model.id));
-    globalHiveApi.user.applyEdit(16, _model.userId,
-        (other) => other.groups.removeWhere((item) => item.id == _model.id));
+    final id = _model.id;
+    final matches = (GroupUser item) => item.id == id;
+    bool deleteApplies = false;
+    final groupModelContainer = globalHiveApi.group.get(_model.groupId);
+    if (groupModelContainer != null) {
+      if (groupModelContainer.users.any(matches)) {
+        deleteApplies = true;
+        globalHiveApi.group.put(
+          groupModelContainer.id,
+          groupModelContainer.rebuild((other) {
+            other.users.removeWhere(matches);
+          }),
+        );
+        ensureRevert(12, groupModelContainer.id, groupModelContainer);
+      }
+    }
+    final userModelContainer = globalHiveApi.user.get(_model.userId);
+    if (userModelContainer != null) {
+      if (userModelContainer.groups.any(matches)) {
+        deleteApplies = true;
+        globalHiveApi.user.put(
+          userModelContainer.id,
+          userModelContainer.rebuild((other) {
+            other.groups.removeWhere(matches);
+          }),
+        );
+        ensureRevert(16, userModelContainer.id, userModelContainer);
+      }
+    }
+    if (!deleteApplies) {
+      return false;
+    }
     final CreateUpdateGroupUsersRequest? request =
-        globalHiveApi.sync.get(_model.id);
+        globalHiveApi.getSyncRequest(_model.id);
     if (request != null && !request.hasUpdateMask()) {
       // This delete follows a create. Reverts to nothing.
-      globalHiveApi.sync.delete(_model.id);
+      globalHiveApi.deleteSyncRequest(_model.id);
     } else {
-      globalHiveApi.sync
-          .put(_model.id, DeleteGroupUserRequest(groupUserId: _model.id));
+      globalHiveApi.putSyncRequest(
+          _model.id, DeleteGroupUserRequest(groupUserId: _model.id));
     }
     return true;
   }
@@ -192,7 +315,7 @@ class ActionCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = Action(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       type: type,
       name: name,
       groupId: groupId,
@@ -203,8 +326,8 @@ class ActionCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.action.put(model.id, model);
     ensureRevert(4, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(model.id, CreateUpdateActionsRequest(action: model));
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateActionsRequest(action: model));
     return true;
   }
 }
@@ -212,87 +335,134 @@ class ActionCreateDelta extends DeltaBase {
 class ActionUpdateDelta extends DeltaBase {
   ActionUpdateDelta(
     this._model, {
-    this.type,
-    this.name,
-    this.groupId,
-    this.instructions,
-    this.materialId,
-    this.question,
-    this.dateDue,
-  });
+    Action_Type? type,
+    String? name,
+    String? groupId,
+    String? instructions,
+    String? materialId,
+    String? question,
+    Date? dateDue,
+  }) {
+    final updateMask = <String>{};
+    if (type != null && type != _model.type) {
+      this.type = type;
+      updateMask.add('type');
+    } else {
+      this.type = null;
+    }
+    if (name != null && name != _model.name) {
+      this.name = name;
+      updateMask.add('name');
+    } else {
+      this.name = null;
+    }
+    if (groupId != null && groupId != _model.groupId) {
+      this.groupId = groupId;
+      updateMask.add('group_id');
+    } else {
+      this.groupId = null;
+    }
+    if (instructions != null && instructions != _model.instructions) {
+      this.instructions = instructions;
+      updateMask.add('instructions');
+    } else {
+      this.instructions = null;
+    }
+    if (materialId != null && materialId != _model.materialId) {
+      this.materialId = materialId;
+      updateMask.add('material_id');
+    } else {
+      this.materialId = null;
+    }
+    if (question != null && question != _model.question) {
+      this.question = question;
+      updateMask.add('question');
+    } else {
+      this.question = null;
+    }
+    if (dateDue != null && dateDue != _model.dateDue) {
+      this.dateDue = dateDue;
+      updateMask.add('date_due');
+    } else {
+      this.dateDue = null;
+    }
+    _updateMask = updateMask;
+  }
 
   final Action _model;
-  final Action_Type? type;
-  final String? name;
-  final String? groupId;
-  final String? instructions;
-  final String? materialId;
-  final String? question;
-  final Date? dateDue;
+  late final Set<String> _updateMask;
+  late final Action_Type? type;
+  late final String? name;
+  late final String? groupId;
+  late final String? instructions;
+  late final String? materialId;
+  late final String? question;
+  late final Date? dateDue;
+
+  Action applyUpdateToModel(Action originalModel) {
+    return originalModel.rebuild((other) {
+      if (type != null) {
+        other.type = type!;
+      }
+
+      if (name != null) {
+        other.name = name!;
+      }
+
+      if (groupId != null) {
+        other.groupId = groupId!;
+      }
+
+      if (instructions != null) {
+        other.instructions = instructions!;
+      }
+
+      if (materialId != null) {
+        other.materialId = materialId!;
+      }
+
+      if (question != null) {
+        other.question = question!;
+      }
+
+      if (dateDue != null) {
+        other.dateDue = dateDue!;
+      }
+    });
+  }
 
   @override
   bool apply() {
-    Set<String>? updateMask = <String>{};
-    final newModel = _model.rebuild((other) {
-      if (type != null && type != other.type) {
-        other.type = type!;
-        updateMask!.add('type');
-      }
-
-      if (name != null && name != other.name) {
-        other.name = name!;
-        updateMask!.add('name');
-      }
-
-      if (groupId != null && groupId != other.groupId) {
-        other.groupId = groupId!;
-        updateMask!.add('group_id');
-      }
-
-      if (instructions != null && instructions != other.instructions) {
-        other.instructions = instructions!;
-        updateMask!.add('instructions');
-      }
-
-      if (materialId != null && materialId != other.materialId) {
-        other.materialId = materialId!;
-        updateMask!.add('material_id');
-      }
-
-      if (question != null && question != other.question) {
-        other.question = question!;
-        updateMask!.add('question');
-      }
-
-      if (dateDue != null && dateDue != other.dateDue) {
-        other.dateDue = dateDue!;
-        updateMask!.add('date_due');
-      }
-    });
-
-    if (updateMask.isNotEmpty) {
-      globalHiveApi.action.put(newModel.id, newModel);
-      ensureRevert(4, _model.id, _model);
-      final CreateUpdateActionsRequest? request =
-          globalHiveApi.sync.get(newModel.id);
-      if (request != null) {
-        if (!request.hasUpdateMask()) {
-          // This edit follows a create. Stays as a create.
-          updateMask = null;
-        } else {
-          // This edit follows a previous edit. Merge the edits.
-          updateMask = {...updateMask, ...request.updateMask.paths};
-        }
-      }
-      globalHiveApi.sync.put(
-          newModel.id,
-          CreateUpdateActionsRequest(
-              action: newModel,
-              updateMask:
-                  updateMask == null ? null : FieldMask(paths: updateMask)));
-      return true;
+    if (_updateMask.isEmpty) {
+      return false;
     }
-    return false;
+
+    final originalModel = globalHiveApi.action.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.action.put(updatedModel.id, updatedModel);
+    ensureRevert(4, originalModel.id, originalModel);
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateActionsRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateActionsRequest(
+            action: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
   }
 }
 
@@ -303,16 +473,19 @@ class ActionDeleteDelta extends DeltaBase {
 
   @override
   bool apply() {
+    if (!globalHiveApi.action.containsKey(_model.id)) {
+      return false;
+    }
     globalHiveApi.action.delete(_model.id);
     ensureRevert(4, _model.id, _model);
     final CreateUpdateActionsRequest? request =
-        globalHiveApi.sync.get(_model.id);
+        globalHiveApi.getSyncRequest(_model.id);
     if (request != null && !request.hasUpdateMask()) {
       // This delete follows a create. Reverts to nothing.
-      globalHiveApi.sync.delete(_model.id);
+      globalHiveApi.deleteSyncRequest(_model.id);
     } else {
-      globalHiveApi.sync
-          .put(_model.id, DeleteActionRequest(actionId: _model.id));
+      globalHiveApi.putSyncRequest(
+          _model.id, DeleteActionRequest(actionId: _model.id));
     }
     return true;
   }
@@ -358,7 +531,7 @@ class MaterialCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = Material(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       status: status,
       visibility: visibility,
       editability: editability,
@@ -373,9 +546,8 @@ class MaterialCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.material.put(model.id, model);
     ensureRevert(5, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync
-        .put(model.id, CreateUpdateMaterialsRequest(material: model));
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateMaterialsRequest(material: model));
     return true;
   }
 }
@@ -383,110 +555,166 @@ class MaterialCreateDelta extends DeltaBase {
 class MaterialUpdateDelta extends DeltaBase {
   MaterialUpdateDelta(
     this._model, {
-    this.visibility,
-    this.editability,
-    this.title,
-    this.description,
-    this.url,
-    this.files,
-    this.languageIds,
-    this.typeIds,
-    this.topics,
-  });
+    Material_Visibility? visibility,
+    Material_Editability? editability,
+    String? title,
+    String? description,
+    String? url,
+    List<String>? files,
+    List<String>? languageIds,
+    List<String>? typeIds,
+    List<String>? topics,
+  }) {
+    final updateMask = <String>{};
+    if (visibility != null && visibility != _model.visibility) {
+      this.visibility = visibility;
+      updateMask.add('visibility');
+    } else {
+      this.visibility = null;
+    }
+    if (editability != null && editability != _model.editability) {
+      this.editability = editability;
+      updateMask.add('editability');
+    } else {
+      this.editability = null;
+    }
+    if (title != null && title != _model.title) {
+      this.title = title;
+      updateMask.add('title');
+    } else {
+      this.title = null;
+    }
+    if (description != null && description != _model.description) {
+      this.description = description;
+      updateMask.add('description');
+    } else {
+      this.description = null;
+    }
+    if (url != null && url != _model.url) {
+      this.url = url;
+      updateMask.add('url');
+    } else {
+      this.url = null;
+    }
+    if (files != null && !listsAreSame(files, _model.files)) {
+      this.files = files;
+      updateMask.add('files');
+    } else {
+      this.files = null;
+    }
+    if (languageIds != null && !listsAreSame(languageIds, _model.languageIds)) {
+      this.languageIds = languageIds;
+      updateMask.add('language_ids');
+    } else {
+      this.languageIds = null;
+    }
+    if (typeIds != null && !listsAreSame(typeIds, _model.typeIds)) {
+      this.typeIds = typeIds;
+      updateMask.add('type_ids');
+    } else {
+      this.typeIds = null;
+    }
+    if (topics != null && !listsAreSame(topics, _model.topics)) {
+      this.topics = topics;
+      updateMask.add('topics');
+    } else {
+      this.topics = null;
+    }
+    _updateMask = updateMask;
+  }
 
   final Material _model;
-  final Material_Visibility? visibility;
-  final Material_Editability? editability;
-  final String? title;
-  final String? description;
-  final String? url;
-  final List<String>? files;
-  final List<String>? languageIds;
-  final List<String>? typeIds;
-  final List<String>? topics;
+  late final Set<String> _updateMask;
+  late final Material_Visibility? visibility;
+  late final Material_Editability? editability;
+  late final String? title;
+  late final String? description;
+  late final String? url;
+  late final List<String>? files;
+  late final List<String>? languageIds;
+  late final List<String>? typeIds;
+  late final List<String>? topics;
 
-  @override
-  bool apply() {
-    Set<String>? updateMask = <String>{};
-    final newModel = _model.rebuild((other) {
-      if (visibility != null && visibility != other.visibility) {
+  Material applyUpdateToModel(Material originalModel) {
+    return originalModel.rebuild((other) {
+      if (visibility != null) {
         other.visibility = visibility!;
-        updateMask!.add('visibility');
       }
 
-      if (editability != null && editability != other.editability) {
+      if (editability != null) {
         other.editability = editability!;
-        updateMask!.add('editability');
       }
 
-      if (title != null && title != other.title) {
+      if (title != null) {
         other.title = title!;
-        updateMask!.add('title');
       }
 
-      if (description != null && description != other.description) {
+      if (description != null) {
         other.description = description!;
-        updateMask!.add('description');
       }
 
-      if (url != null && url != other.url) {
+      if (url != null) {
         other.url = url!;
-        updateMask!.add('url');
       }
 
-      if (files != null && !listsAreSame(files!, other.files)) {
+      if (files != null) {
         other.files
           ..clear()
           ..addAll(files!);
-        updateMask!.add('files');
       }
 
-      if (languageIds != null &&
-          !listsAreSame(languageIds!, other.languageIds)) {
+      if (languageIds != null) {
         other.languageIds
           ..clear()
           ..addAll(languageIds!);
-        updateMask!.add('language_ids');
       }
 
-      if (typeIds != null && !listsAreSame(typeIds!, other.typeIds)) {
+      if (typeIds != null) {
         other.typeIds
           ..clear()
           ..addAll(typeIds!);
-        updateMask!.add('type_ids');
       }
 
-      if (topics != null && !listsAreSame(topics!, other.topics)) {
+      if (topics != null) {
         other.topics
           ..clear()
           ..addAll(topics!);
-        updateMask!.add('topics');
       }
     });
+  }
 
-    if (updateMask.isNotEmpty) {
-      globalHiveApi.material.put(newModel.id, newModel);
-      ensureRevert(5, _model.id, _model);
-      final CreateUpdateMaterialsRequest? request =
-          globalHiveApi.sync.get(newModel.id);
-      if (request != null) {
-        if (!request.hasUpdateMask()) {
-          // This edit follows a create. Stays as a create.
-          updateMask = null;
-        } else {
-          // This edit follows a previous edit. Merge the edits.
-          updateMask = {...updateMask, ...request.updateMask.paths};
-        }
-      }
-      globalHiveApi.sync.put(
-          newModel.id,
-          CreateUpdateMaterialsRequest(
-              material: newModel,
-              updateMask:
-                  updateMask == null ? null : FieldMask(paths: updateMask)));
-      return true;
+  @override
+  bool apply() {
+    if (_updateMask.isEmpty) {
+      return false;
     }
-    return false;
+
+    final originalModel = globalHiveApi.material.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.material.put(updatedModel.id, updatedModel);
+    ensureRevert(5, originalModel.id, originalModel);
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateMaterialsRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateMaterialsRequest(
+            material: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
   }
 }
 
@@ -497,16 +725,19 @@ class MaterialDeleteDelta extends DeltaBase {
 
   @override
   bool apply() {
+    if (!globalHiveApi.material.containsKey(_model.id)) {
+      return false;
+    }
     globalHiveApi.material.delete(_model.id);
     ensureRevert(5, _model.id, _model);
     final CreateUpdateMaterialsRequest? request =
-        globalHiveApi.sync.get(_model.id);
+        globalHiveApi.getSyncRequest(_model.id);
     if (request != null && !request.hasUpdateMask()) {
       // This delete follows a create. Reverts to nothing.
-      globalHiveApi.sync.delete(_model.id);
+      globalHiveApi.deleteSyncRequest(_model.id);
     } else {
-      globalHiveApi.sync
-          .put(_model.id, DeleteMaterialRequest(materialId: _model.id));
+      globalHiveApi.putSyncRequest(
+          _model.id, DeleteMaterialRequest(materialId: _model.id));
     }
     return true;
   }
@@ -538,19 +769,30 @@ class MaterialFeedbackCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = MaterialFeedback(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       type: type,
       reporterId: reporterId,
       report: report,
       response: response,
       materialId: materialId,
     )..freeze();
-    globalHiveApi.material.applyEdit(5, model.materialId, (other) {
-      other.feedbacks.add(model);
-    });
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync
-        .put(model.id, CreateMaterialFeedbacksRequest(feedback: model));
+    bool createApplies = false;
+    final materialModelContainer = globalHiveApi.material.get(model.materialId);
+    if (materialModelContainer != null) {
+      createApplies = true;
+      globalHiveApi.material.put(
+        materialModelContainer.id,
+        materialModelContainer.rebuild((other) {
+          other.feedbacks.add(model);
+        }),
+      );
+      ensureRevert(5, materialModelContainer.id, materialModelContainer);
+    }
+    if (!createApplies) {
+      return false;
+    }
+    globalHiveApi.putSyncRequest(
+        model.id, CreateMaterialFeedbacksRequest(feedback: model));
     return true;
   }
 }
@@ -621,7 +863,7 @@ class GroupCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = Group(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       name: name,
       languageIds: languageIds,
       users: users,
@@ -633,8 +875,8 @@ class GroupCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.group.put(model.id, model);
     ensureRevert(12, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(model.id, CreateUpdateGroupsRequest(group: model));
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateGroupsRequest(group: model));
     return true;
   }
 }
@@ -642,86 +884,127 @@ class GroupCreateDelta extends DeltaBase {
 class GroupUpdateDelta extends DeltaBase {
   GroupUpdateDelta(
     this._model, {
-    this.name,
-    this.languageIds,
-    this.evaluationCategoryIds,
-    this.description,
-    this.linkEmail,
-    this.status,
-  });
+    String? name,
+    List<String>? languageIds,
+    List<String>? evaluationCategoryIds,
+    String? description,
+    String? linkEmail,
+    Group_Status? status,
+  }) {
+    final updateMask = <String>{};
+    if (name != null && name != _model.name) {
+      this.name = name;
+      updateMask.add('name');
+    } else {
+      this.name = null;
+    }
+    if (languageIds != null && !listsAreSame(languageIds, _model.languageIds)) {
+      this.languageIds = languageIds;
+      updateMask.add('language_ids');
+    } else {
+      this.languageIds = null;
+    }
+    if (evaluationCategoryIds != null &&
+        !listsAreSame(evaluationCategoryIds, _model.evaluationCategoryIds)) {
+      this.evaluationCategoryIds = evaluationCategoryIds;
+      updateMask.add('evaluation_category_ids');
+    } else {
+      this.evaluationCategoryIds = null;
+    }
+    if (description != null && description != _model.description) {
+      this.description = description;
+      updateMask.add('description');
+    } else {
+      this.description = null;
+    }
+    if (linkEmail != null && linkEmail != _model.linkEmail) {
+      this.linkEmail = linkEmail;
+      updateMask.add('link_email');
+    } else {
+      this.linkEmail = null;
+    }
+    if (status != null && status != _model.status) {
+      this.status = status;
+      updateMask.add('status');
+    } else {
+      this.status = null;
+    }
+    _updateMask = updateMask;
+  }
 
   final Group _model;
-  final String? name;
-  final List<String>? languageIds;
-  final List<String>? evaluationCategoryIds;
-  final String? description;
-  final String? linkEmail;
-  final Group_Status? status;
+  late final Set<String> _updateMask;
+  late final String? name;
+  late final List<String>? languageIds;
+  late final List<String>? evaluationCategoryIds;
+  late final String? description;
+  late final String? linkEmail;
+  late final Group_Status? status;
 
-  @override
-  bool apply() {
-    Set<String>? updateMask = <String>{};
-    final newModel = _model.rebuild((other) {
-      if (name != null && name != other.name) {
+  Group applyUpdateToModel(Group originalModel) {
+    return originalModel.rebuild((other) {
+      if (name != null) {
         other.name = name!;
-        updateMask!.add('name');
       }
 
-      if (languageIds != null &&
-          !listsAreSame(languageIds!, other.languageIds)) {
+      if (languageIds != null) {
         other.languageIds
           ..clear()
           ..addAll(languageIds!);
-        updateMask!.add('language_ids');
       }
 
-      if (evaluationCategoryIds != null &&
-          !listsAreSame(evaluationCategoryIds!, other.evaluationCategoryIds)) {
+      if (evaluationCategoryIds != null) {
         other.evaluationCategoryIds
           ..clear()
           ..addAll(evaluationCategoryIds!);
-        updateMask!.add('evaluation_category_ids');
       }
 
-      if (description != null && description != other.description) {
+      if (description != null) {
         other.description = description!;
-        updateMask!.add('description');
       }
 
-      if (linkEmail != null && linkEmail != other.linkEmail) {
+      if (linkEmail != null) {
         other.linkEmail = linkEmail!;
-        updateMask!.add('link_email');
       }
 
-      if (status != null && status != other.status) {
+      if (status != null) {
         other.status = status!;
-        updateMask!.add('status');
       }
     });
+  }
 
-    if (updateMask.isNotEmpty) {
-      globalHiveApi.group.put(newModel.id, newModel);
-      ensureRevert(12, _model.id, _model);
-      final CreateUpdateGroupsRequest? request =
-          globalHiveApi.sync.get(newModel.id);
-      if (request != null) {
-        if (!request.hasUpdateMask()) {
-          // This edit follows a create. Stays as a create.
-          updateMask = null;
-        } else {
-          // This edit follows a previous edit. Merge the edits.
-          updateMask = {...updateMask, ...request.updateMask.paths};
-        }
-      }
-      globalHiveApi.sync.put(
-          newModel.id,
-          CreateUpdateGroupsRequest(
-              group: newModel,
-              updateMask:
-                  updateMask == null ? null : FieldMask(paths: updateMask)));
-      return true;
+  @override
+  bool apply() {
+    if (_updateMask.isEmpty) {
+      return false;
     }
-    return false;
+
+    final originalModel = globalHiveApi.group.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.group.put(updatedModel.id, updatedModel);
+    ensureRevert(12, originalModel.id, originalModel);
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateGroupsRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateGroupsRequest(
+            group: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
   }
 }
 
@@ -769,7 +1052,7 @@ class ActionUserCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = ActionUser(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       actionId: actionId,
       userId: userId,
       status: status,
@@ -777,12 +1060,23 @@ class ActionUserCreateDelta extends DeltaBase {
       userResponse: userResponse,
       evaluation: evaluation,
     )..freeze();
-    globalHiveApi.user.applyEdit(16, model.userId, (other) {
-      other.actions.add(model);
-    });
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync
-        .put(model.id, CreateUpdateActionUserRequest(actionUser: model));
+    bool createApplies = false;
+    final userModelContainer = globalHiveApi.user.get(model.userId);
+    if (userModelContainer != null) {
+      createApplies = true;
+      globalHiveApi.user.put(
+        userModelContainer.id,
+        userModelContainer.rebuild((other) {
+          other.actions.add(model);
+        }),
+      );
+      ensureRevert(16, userModelContainer.id, userModelContainer);
+    }
+    if (!createApplies) {
+      return false;
+    }
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateActionUserRequest(actionUser: model));
     return true;
   }
 }
@@ -790,69 +1084,114 @@ class ActionUserCreateDelta extends DeltaBase {
 class ActionUserUpdateDelta extends DeltaBase {
   ActionUserUpdateDelta(
     this._model, {
-    this.status,
-    this.teacherResponse,
-    this.userResponse,
-    this.evaluation,
-  });
+    ActionUser_Status? status,
+    String? teacherResponse,
+    String? userResponse,
+    ActionUser_Evaluation? evaluation,
+  }) {
+    final updateMask = <String>{};
+    if (status != null && status != _model.status) {
+      this.status = status;
+      updateMask.add('status');
+    } else {
+      this.status = null;
+    }
+    if (teacherResponse != null && teacherResponse != _model.teacherResponse) {
+      this.teacherResponse = teacherResponse;
+      updateMask.add('teacher_response');
+    } else {
+      this.teacherResponse = null;
+    }
+    if (userResponse != null && userResponse != _model.userResponse) {
+      this.userResponse = userResponse;
+      updateMask.add('user_response');
+    } else {
+      this.userResponse = null;
+    }
+    if (evaluation != null && evaluation != _model.evaluation) {
+      this.evaluation = evaluation;
+      updateMask.add('evaluation');
+    } else {
+      this.evaluation = null;
+    }
+    _updateMask = updateMask;
+  }
 
   final ActionUser _model;
-  final ActionUser_Status? status;
-  final String? teacherResponse;
-  final String? userResponse;
-  final ActionUser_Evaluation? evaluation;
+  late final Set<String> _updateMask;
+  late final ActionUser_Status? status;
+  late final String? teacherResponse;
+  late final String? userResponse;
+  late final ActionUser_Evaluation? evaluation;
+
+  ActionUser applyUpdateToModel(ActionUser originalModel) {
+    return originalModel.rebuild((other) {
+      if (status != null) {
+        other.status = status!;
+      }
+
+      if (teacherResponse != null) {
+        other.teacherResponse = teacherResponse!;
+      }
+
+      if (userResponse != null) {
+        other.userResponse = userResponse!;
+      }
+
+      if (evaluation != null) {
+        other.evaluation = evaluation!;
+      }
+    });
+  }
 
   @override
   bool apply() {
-    Set<String>? updateMask = <String>{};
-    final newModel = _model.rebuild((other) {
-      if (status != null && status != other.status) {
-        other.status = status!;
-        updateMask!.add('status');
-      }
-
-      if (teacherResponse != null && teacherResponse != other.teacherResponse) {
-        other.teacherResponse = teacherResponse!;
-        updateMask!.add('teacher_response');
-      }
-
-      if (userResponse != null && userResponse != other.userResponse) {
-        other.userResponse = userResponse!;
-        updateMask!.add('user_response');
-      }
-
-      if (evaluation != null && evaluation != other.evaluation) {
-        other.evaluation = evaluation!;
-        updateMask!.add('evaluation');
-      }
-    });
-
-    if (updateMask.isNotEmpty) {
-      final id = newModel.id;
-      globalHiveApi.user.applyEdit(16, newModel.userId, (other) {
-        final index = other.actions.indexWhere((item) => item.id == id);
-        other.actions[index] = newModel;
-      });
-      final CreateUpdateActionUserRequest? request =
-          globalHiveApi.sync.get(newModel.id);
-      if (request != null) {
-        if (!request.hasUpdateMask()) {
-          // This edit follows a create. Stays as a create.
-          updateMask = null;
-        } else {
-          // This edit follows a previous edit. Merge the edits.
-          updateMask = {...updateMask, ...request.updateMask.paths};
-        }
-      }
-      globalHiveApi.sync.put(
-          newModel.id,
-          CreateUpdateActionUserRequest(
-              actionUser: newModel,
-              updateMask:
-                  updateMask == null ? null : FieldMask(paths: updateMask)));
-      return true;
+    if (_updateMask.isEmpty) {
+      return false;
     }
-    return false;
+
+    final id = _model.id;
+    ActionUser? tempUpdatedModel;
+    final userModelContainer = globalHiveApi.user.get(_model.userId);
+    if (userModelContainer != null) {
+      final userIndex =
+          userModelContainer.actions.indexWhere((item) => item.id == id);
+      if (userIndex >= 0) {
+        tempUpdatedModel ??=
+            applyUpdateToModel(userModelContainer.actions[userIndex]);
+        globalHiveApi.user.put(
+          userModelContainer.id,
+          userModelContainer.rebuild((other) {
+            other.actions[userIndex] = tempUpdatedModel!;
+          }),
+        );
+        ensureRevert(16, userModelContainer.id, userModelContainer);
+      }
+    }
+    if (tempUpdatedModel == null) {
+      // No changes were applied.
+      return false;
+    }
+    final updatedModel = tempUpdatedModel;
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateActionUserRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateActionUserRequest(
+            actionUser: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
   }
 }
 
@@ -900,7 +1239,7 @@ class UserCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = User(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       name: name,
       phone: phone,
       countryIds: countryIds,
@@ -916,8 +1255,8 @@ class UserCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.user.put(model.id, model);
     ensureRevert(16, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(model.id, CreateUpdateUserRequest(user: model));
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateUserRequest(user: model));
     return true;
   }
 }
@@ -925,66 +1264,98 @@ class UserCreateDelta extends DeltaBase {
 class UserUpdateDelta extends DeltaBase {
   UserUpdateDelta(
     this._model, {
-    this.name,
-    this.phone,
-    this.phoneCountryId,
-    this.diallingCode,
-  });
+    String? name,
+    String? phone,
+    String? phoneCountryId,
+    String? diallingCode,
+  }) {
+    final updateMask = <String>{};
+    if (name != null && name != _model.name) {
+      this.name = name;
+      updateMask.add('name');
+    } else {
+      this.name = null;
+    }
+    if (phone != null && phone != _model.phone) {
+      this.phone = phone;
+      updateMask.add('phone');
+    } else {
+      this.phone = null;
+    }
+    if (phoneCountryId != null && phoneCountryId != _model.phoneCountryId) {
+      this.phoneCountryId = phoneCountryId;
+      updateMask.add('phone_country_id');
+    } else {
+      this.phoneCountryId = null;
+    }
+    if (diallingCode != null && diallingCode != _model.diallingCode) {
+      this.diallingCode = diallingCode;
+      updateMask.add('dialling_code');
+    } else {
+      this.diallingCode = null;
+    }
+    _updateMask = updateMask;
+  }
 
   final User _model;
-  final String? name;
-  final String? phone;
-  final String? phoneCountryId;
-  final String? diallingCode;
+  late final Set<String> _updateMask;
+  late final String? name;
+  late final String? phone;
+  late final String? phoneCountryId;
+  late final String? diallingCode;
+
+  User applyUpdateToModel(User originalModel) {
+    return originalModel.rebuild((other) {
+      if (name != null) {
+        other.name = name!;
+      }
+
+      if (phone != null) {
+        other.phone = phone!;
+      }
+
+      if (phoneCountryId != null) {
+        other.phoneCountryId = phoneCountryId!;
+      }
+
+      if (diallingCode != null) {
+        other.diallingCode = diallingCode!;
+      }
+    });
+  }
 
   @override
   bool apply() {
-    Set<String>? updateMask = <String>{};
-    final newModel = _model.rebuild((other) {
-      if (name != null && name != other.name) {
-        other.name = name!;
-        updateMask!.add('name');
-      }
-
-      if (phone != null && phone != other.phone) {
-        other.phone = phone!;
-        updateMask!.add('phone');
-      }
-
-      if (phoneCountryId != null && phoneCountryId != other.phoneCountryId) {
-        other.phoneCountryId = phoneCountryId!;
-        updateMask!.add('phone_country_id');
-      }
-
-      if (diallingCode != null && diallingCode != other.diallingCode) {
-        other.diallingCode = diallingCode!;
-        updateMask!.add('dialling_code');
-      }
-    });
-
-    if (updateMask.isNotEmpty) {
-      globalHiveApi.user.put(newModel.id, newModel);
-      ensureRevert(16, _model.id, _model);
-      final CreateUpdateUserRequest? request =
-          globalHiveApi.sync.get(newModel.id);
-      if (request != null) {
-        if (!request.hasUpdateMask()) {
-          // This edit follows a create. Stays as a create.
-          updateMask = null;
-        } else {
-          // This edit follows a previous edit. Merge the edits.
-          updateMask = {...updateMask, ...request.updateMask.paths};
-        }
-      }
-      globalHiveApi.sync.put(
-          newModel.id,
-          CreateUpdateUserRequest(
-              user: newModel,
-              updateMask:
-                  updateMask == null ? null : FieldMask(paths: updateMask)));
-      return true;
+    if (_updateMask.isEmpty) {
+      return false;
     }
-    return false;
+
+    final originalModel = globalHiveApi.user.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.user.put(updatedModel.id, updatedModel);
+    ensureRevert(16, originalModel.id, originalModel);
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateUserRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateUserRequest(
+            user: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
   }
 }
 
@@ -1020,7 +1391,7 @@ class LearnerEvaluationCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = LearnerEvaluation(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       learnerId: learnerId,
       evaluatorId: evaluatorId,
       groupId: groupId,
@@ -1030,8 +1401,7 @@ class LearnerEvaluationCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.learnerEvaluation.put(model.id, model);
     ensureRevert(18, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(model.id,
+    globalHiveApi.putSyncRequest(model.id,
         CreateUpdateLearnerEvaluationRequest(learnerEvaluation: model));
     return true;
   }
@@ -1069,7 +1439,7 @@ class TeacherResponseCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = TeacherResponse(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       learnerId: learnerId,
       teacherId: teacherId,
       groupId: groupId,
@@ -1078,8 +1448,7 @@ class TeacherResponseCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.teacherResponse.put(model.id, model);
     ensureRevert(19, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(
+    globalHiveApi.putSyncRequest(
         model.id, CreateUpdateTeacherResponseRequest(teacherResponse: model));
     return true;
   }
@@ -1131,7 +1500,7 @@ class TransformationCreateDelta extends DeltaBase {
   @override
   bool apply() {
     final model = Transformation(
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       userId: userId,
       groupId: groupId,
       month: month,
@@ -1140,8 +1509,7 @@ class TransformationCreateDelta extends DeltaBase {
     )..freeze();
     globalHiveApi.transformation.put(model.id, model);
     ensureRevert(21, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(
+    globalHiveApi.putSyncRequest(
         model.id, CreateUpdateTransformationRequest(transformation: model));
     return true;
   }
@@ -1178,15 +1546,15 @@ class OutputCreateDelta extends DeltaBase {
   bool apply() {
     final model = Output(
       groupId: groupId,
-      id: id,
+      id: id ?? UuidGenerator.uuid(),
       month: month,
       value: value,
       outputMarker: outputMarker,
     )..freeze();
     globalHiveApi.output.put(model.id, model);
     ensureRevert(22, model.id, null);
-    assert(!globalHiveApi.sync.containsKey(model.id));
-    globalHiveApi.sync.put(model.id, CreateUpdateOutputRequest(output: model));
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateOutputRequest(output: model));
     return true;
   }
 }
@@ -1214,6 +1582,20 @@ void saveEvaluationValueNameLocally(EvaluationValueName model) {
 // Users cannot update the EvaluationValueName type
 
 // Users cannot delete the EvaluationValueName type
+
+void revertAll() {
+  _revertValuesInBox(globalHiveApi.action, globalHiveApi.revert.get(4));
+  _revertValuesInBox(globalHiveApi.material, globalHiveApi.revert.get(5));
+  _revertValuesInBox(globalHiveApi.group, globalHiveApi.revert.get(12));
+  _revertValuesInBox(globalHiveApi.user, globalHiveApi.revert.get(16));
+  _revertValuesInBox(
+      globalHiveApi.learnerEvaluation, globalHiveApi.revert.get(18));
+  _revertValuesInBox(
+      globalHiveApi.teacherResponse, globalHiveApi.revert.get(19));
+  _revertValuesInBox(
+      globalHiveApi.transformation, globalHiveApi.revert.get(21));
+  _revertValuesInBox(globalHiveApi.output, globalHiveApi.revert.get(22));
+}
 
 Box _resolveBox(int typeId) {
   switch (typeId) {

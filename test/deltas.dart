@@ -422,15 +422,389 @@ void main() async {
   });
 
   test('ordering of sync deltas', () {
-    ActionUserCreateDelta(id: '1234', actionId: '5678')..apply();
-    ActionCreateDelta(id: '5678', name: 'My Action')..apply();
+    MaterialCreateDelta(id: '5678')..apply();
+    GroupCreateDelta(id: '1234')..apply();
+
+    expect(globalHiveApi.sync.values.first is CreateUpdateGroupsRequest, true);
+
+    final inOrder = orderRequests(globalHiveApi.sync.values);
+    expect(inOrder.length, 2);
+    expect(inOrder[0] is CreateUpdateMaterialsRequest, true);
+    expect(inOrder[1] is CreateUpdateGroupsRequest, true);
+  });
+
+  test('correctly reverts created records', () {
+    GroupCreateDelta(id: '5678', name: 'My Group')..apply();
+    UserCreateDelta(id: '9012', name: 'My User')..apply();
+    GroupUserCreateDelta(id: '1234', groupId: '5678', userId: '9012')..apply();
+
+    expect(globalHiveApi.group.length, 1);
+    expect(
+        globalHiveApi.group.get('5678'),
+        Group(
+          id: '5678',
+          name: 'My Group',
+          users: [
+            GroupUser(id: '1234', groupId: '5678', userId: '9012'),
+          ],
+        ));
+
+    expect(globalHiveApi.user.length, 1);
+    expect(
+        globalHiveApi.user.get('9012'),
+        User(
+          id: '9012',
+          name: 'My User',
+          groups: [
+            GroupUser(id: '1234', groupId: '5678', userId: '9012'),
+          ],
+        ));
+
+    revertAll();
+
+    expect(globalHiveApi.group.length, 0);
+    expect(globalHiveApi.user.length, 0);
+  });
+
+  test('correctly reverts edited records', () {
+    final originalAction = Action(id: '1234', name: 'My Action')..freeze();
+
+    globalHiveApi.action.put('1234', originalAction);
+
+    ActionUpdateDelta(originalAction, name: 'My New Action')..apply();
 
     expect(
-        globalHiveApi.sync.values.first is CreateUpdateActionUserRequest, true);
+        globalHiveApi.action.get('1234'),
+        Action(
+          id: '1234',
+          name: 'My New Action',
+        ));
 
-    final inOrder = getRequestsInOrder();
-    expect(inOrder.length, 2);
-    expect(inOrder[0] is CreateUpdateActionsRequest, true);
-    expect(inOrder[1] is CreateUpdateActionUserRequest, true);
+    revertAll();
+
+    expect(
+      globalHiveApi.action.get('1234'),
+      originalAction,
+    );
+  });
+
+  test('correctly reverts deleted records', () {
+    final originalAction = Action(id: '1234', name: 'My Action')..freeze();
+
+    globalHiveApi.action.put('1234', originalAction);
+
+    ActionDeleteDelta(originalAction)..apply();
+
+    expect(globalHiveApi.action.get('1234'), null);
+
+    revertAll();
+
+    expect(
+      globalHiveApi.action.get('1234'),
+      originalAction,
+    );
+  });
+
+  test('correctly handles deltas applied during sync', () async {
+    final originalAction = Action(
+      id: '1234',
+      name: 'My Original Action',
+      instructions: 'Some instructions',
+    )..freeze();
+    final deletableAction = Action(
+      id: '5678',
+      name: 'My Deletable Action',
+    )..freeze();
+
+    globalHiveApi.action.put('1234', originalAction);
+    globalHiveApi.action.put('5678', deletableAction);
+
+    // Apply two updates: a create and an update
+    ActionCreateDelta(id: '9012', name: 'My Other Action')..apply();
+    ActionUpdateDelta(
+      originalAction,
+      name: 'My Updated Original Action',
+      instructions: 'Some instructions',
+    )..apply();
+
+    // Don't apply these just yet
+    final addOneMoreDelta = ActionCreateDelta(
+      id: '3456',
+      name: 'My Newest Action',
+    );
+    final updateJustCreatedDelta = ActionUpdateDelta(
+      globalHiveApi.action.get('9012')!,
+      name: 'My New Other Action',
+    );
+    final updateJustEditedDelta = ActionUpdateDelta(
+      globalHiveApi.action.get('1234')!,
+      name: 'My Final Action',
+      instructions: 'Some instructions',
+    );
+    final deleteDelta = ActionDeleteDelta(deletableAction);
+
+    await globalHiveApi.protectSyncBox((requests) {
+      // We are now in a simulated sync.
+
+      // Apply the deltas while the sync is happening.
+      // Only update some fields, to check whether the incoming is properly
+      // applied in the right order.
+      addOneMoreDelta.apply();
+      updateJustCreatedDelta.apply();
+      updateJustEditedDelta.apply();
+      deleteDelta.apply();
+
+      // Simulate the end of the sync
+
+      // First, we revert everything. This includes the deltas
+      // applied *during* the sync.
+      revertAll();
+      // Test that we're back to having just the two original actions.
+      expect(globalHiveApi.action.length, 2);
+      expect(globalHiveApi.action.get('1234'), originalAction);
+      expect(globalHiveApi.action.get('5678'), deletableAction);
+
+      // The server accepted everything, but with some additions.
+      // Someone else updated the same record.
+      globalHiveApi.action.put(
+        '9012',
+        Action(id: '9012', name: 'My Other Action')..freeze(),
+      );
+      globalHiveApi.action.put(
+        '1234',
+        Action(
+          id: '1234',
+          name: 'My Updated Original Action',
+          // Here is the server addition
+          instructions: 'Some new instructions',
+        )..freeze(),
+      );
+    });
+
+    // Now, finally, apply the deltas again.
+    addOneMoreDelta.apply();
+    updateJustCreatedDelta.apply();
+    updateJustEditedDelta.apply();
+    deleteDelta.apply();
+
+    // Check to see that everything is correct.
+    expect(globalHiveApi.action.length, 3);
+    expect(
+      globalHiveApi.action.get('1234'),
+      Action(
+        id: '1234',
+        name: 'My Final Action',
+        instructions: 'Some new instructions',
+      ),
+    );
+    expect(
+      globalHiveApi.action.get('9012'),
+      Action(
+        id: '9012',
+        name: 'My New Other Action',
+      ),
+    );
+    expect(
+      globalHiveApi.action.get('3456'),
+      Action(
+        id: '3456',
+        name: 'My Newest Action',
+      ),
+    );
+
+    expect(globalHiveApi.sync.length, 4);
+    expect(
+      globalHiveApi.sync.get('1234'),
+      CreateUpdateActionsRequest(
+        action: Action(
+          id: '1234',
+          name: 'My Final Action',
+          instructions: 'Some new instructions',
+        ),
+        updateMask: FieldMask(paths: ['name']),
+      ),
+    );
+    expect(
+      globalHiveApi.sync.get('9012'),
+      CreateUpdateActionsRequest(
+        action: Action(
+          id: '9012',
+          name: 'My New Other Action',
+        ),
+        updateMask: FieldMask(paths: ['name']),
+      ),
+    );
+    expect(
+      globalHiveApi.sync.get('3456'),
+      CreateUpdateActionsRequest(
+        action: Action(
+          id: '3456',
+          name: 'My Newest Action',
+        ),
+      ),
+    );
+    expect(
+      globalHiveApi.sync.get('5678'),
+      DeleteActionRequest(
+        actionId: '5678',
+      ),
+    );
+
+    expect(globalHiveApi.revert.length, 1);
+    final map = globalHiveApi.revert.get(4)!;
+    expect(map.keys.length, 4);
+    expect(
+      map['1234'],
+      Action(
+        id: '1234',
+        name: 'My Updated Original Action',
+        instructions: 'Some new instructions',
+      ),
+    );
+    expect(
+      map['9012'],
+      Action(id: '9012', name: 'My Other Action'),
+    );
+    expect(map.containsKey('3456'), true);
+    expect(map['3456'], null);
+    expect(map['5678'], deletableAction);
+  });
+
+  test('correctly handles delete deltas applied during sync', () async {
+    final originalAction = Action(
+      id: '1234',
+      name: 'My Action',
+    )..freeze();
+
+    globalHiveApi.action.put('1234', originalAction);
+
+    final deleteDelta = ActionDeleteDelta(originalAction);
+
+    await globalHiveApi.protectSyncBox((requests) {
+      // We are now in a simulated sync.
+
+      deleteDelta.apply();
+
+      // Simulate the end of the sync
+
+      // First, we revert everything. This includes the deltas
+      // applied *during* the sync.
+      revertAll();
+      // Test that we reverted correctly.
+      expect(globalHiveApi.action.length, 1);
+      expect(globalHiveApi.action.get('1234'), originalAction);
+
+      // The server already deleted the record!
+      globalHiveApi.action.delete('1234');
+    });
+
+    // Now apply the delta again.
+    deleteDelta.apply();
+
+    // Check to see that everything is correct.
+    expect(globalHiveApi.action.length, 0);
+    expect(globalHiveApi.sync.length, 0);
+    expect(globalHiveApi.revert.length, 0);
+  });
+
+  test('correctly handles create/update deltas applied during sync that fails',
+      () async {
+    UserCreateDelta(id: '1234', name: 'My User')..apply();
+
+    final createDelta = UserCreateDelta(
+      id: '9012',
+      name: 'My Other User',
+    );
+    final updateDelta = UserUpdateDelta(
+      globalHiveApi.user.get('1234')!,
+      name: 'My New User',
+    );
+    final createActionUserDelta =
+        ActionUserCreateDelta(id: '5678', userId: '1234');
+
+    try {
+      await globalHiveApi.protectSyncBox((values) {
+        // We are now in a simulated sync.
+
+        createDelta.apply();
+        updateDelta.apply();
+        createActionUserDelta.apply();
+
+        // Sync fails!
+        throw Exception();
+      });
+    } catch (_) {
+      expect(globalHiveApi.user.length, 2);
+      expect(
+        globalHiveApi.user.get('1234'),
+        User(
+          id: '1234',
+          name: 'My New User',
+          actions: [
+            ActionUser(id: '5678', userId: '1234'),
+          ],
+        ),
+      );
+      expect(
+        globalHiveApi.user.get('9012'),
+        User(
+          id: '9012',
+          name: 'My Other User',
+        ),
+      );
+
+      expect(globalHiveApi.revert.length, 1);
+      final map = globalHiveApi.revert.get(16)!;
+      expect(map.keys.length, 2);
+      expect(map.keys.contains('1234'), true);
+      expect(map['1234'], null);
+      expect(map.keys.contains('9012'), true);
+      expect(map['9012'], null);
+
+      expect(globalHiveApi.sync.length, 3);
+      expect(
+        globalHiveApi.sync.get('1234'),
+        CreateUpdateUserRequest(
+          user: User(
+            id: '1234',
+            name: 'My New User',
+          ),
+        ),
+      );
+      expect(
+        globalHiveApi.sync.get('5678'),
+        CreateUpdateActionUserRequest(
+          actionUser: ActionUser(id: '5678', userId: '1234'),
+        ),
+      );
+      expect(
+        globalHiveApi.sync.get('9012'),
+        CreateUpdateUserRequest(
+          user: User(
+            id: '9012',
+            name: 'My Other User',
+          ),
+        ),
+      );
+    }
+  });
+
+  test('correctly handles delete deltas applied during sync that fails',
+      () async {
+    ActionCreateDelta(id: '1234', name: 'My Action')..apply();
+
+    try {
+      await globalHiveApi.protectSyncBox((values) {
+        // We are now in a simulated sync.
+
+        ActionDeleteDelta(globalHiveApi.action.get('1234')!)..apply();
+
+        // Sync fails!
+        throw Exception();
+      });
+    } catch (_) {
+      expect(globalHiveApi.action.length, 0);
+      expect(globalHiveApi.sync.length, 0);
+    }
   });
 }
