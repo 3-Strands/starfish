@@ -4,5 +4,5 @@ import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
 extension CurrentUser on BuildContext {
-  User get currentUser => read<AuthenticationRepository>().currentSession!.user;
+  User get currentUser => read<AuthenticationRepository>().getCurrentUser();
 }

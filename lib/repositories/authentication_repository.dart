@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:grpc/grpc.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:starfish/apis/grpc_authentication_api.dart';
 import 'package:starfish/apis/grpc_current_user_api.dart';
 import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/models/tokens.dart';
 import 'package:starfish/models/session.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/services/grpc_client.dart';
 
 /// Thrown during authentication. If caught, check the [code] property
@@ -44,6 +45,9 @@ class OtpHandler {
 }
 
 typedef MakeCurrentUserApi = GrpcCurrentUserApi Function(Tokens session);
+
+typedef MakeAuthenticatedRequest = Future<T> Function<T>(
+    Future<T> Function(StarfishClient client) makeRequest);
 
 /// {@template authentication_repository}
 /// Repository which manages user authentication.
@@ -97,6 +101,10 @@ class AuthenticationRepository {
   Stream<Session?> get session => _session.stream;
 
   Session? get currentSession => _session.value;
+
+  User getCurrentUser() => _session.value!.user;
+
+  // BehaviorSubject<User> get currentUser => BehaviorSubject.from
 
   OtpHandler makeOtpHandler(
     Future<void> Function(String code) authenticateWithCode, {
@@ -176,7 +184,21 @@ class AuthenticationRepository {
   Future<User> _retrieveUserUsingTokens(Tokens tokens) =>
       _makeCurrentUserApi(tokens).getCurrentUser();
 
-  Future<Session> refreshSession() async {
+  Completer<Session>? _sessionRefreshCompleter;
+
+  Future<Session> refreshSession() {
+    if (_sessionRefreshCompleter != null) {
+      return _sessionRefreshCompleter!.future;
+    }
+    _sessionRefreshCompleter = Completer();
+    _doRefreshSession()
+        .then(_sessionRefreshCompleter!.complete)
+        .onError(_sessionRefreshCompleter!.completeError)
+        .whenComplete(() => _sessionRefreshCompleter = null);
+    return _sessionRefreshCompleter!.future;
+  }
+
+  Future<Session> _doRefreshSession() async {
     final currentSession = this.currentSession!;
     final newTokens =
         await _grpcAuthenticationApi.refreshTokens(currentSession.tokens);
@@ -187,5 +209,23 @@ class AuthenticationRepository {
 
   void updateCurrentUser(User user) {
     _session.value = Session(_session.value!.tokens, user);
+  }
+
+  Future<T> makeAuthenticatedRequest<T>(
+      Future<T> Function(StarfishClient client) makeRequest) async {
+    assert(_session.value != null,
+        'Attempting to make an authenticated request without a valid session!');
+    var client = makeAuthenticatedClient(_session.value!.tokens.accessToken);
+    try {
+      return await makeRequest(client);
+    } on GrpcError catch (error) {
+      if (error.code == StatusCode.unauthenticated) {
+        final newSession = await refreshSession();
+        client = makeAuthenticatedClient(newSession.tokens.accessToken);
+        return await makeRequest(client);
+      } else {
+        throw error;
+      }
+    }
   }
 }

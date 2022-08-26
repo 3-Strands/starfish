@@ -18,14 +18,11 @@ extension AsList<T> on Box<T> {
 class DataRepository {
   DataRepository({
     HiveApi hiveApi = globalHiveApi,
-    required User user,
-  })  : _hiveApi = hiveApi,
-        _userId = user.id,
-        _user = user;
+    required this.getCurrentUser,
+  }) : _hiveApi = hiveApi;
 
   final HiveApi _hiveApi;
-  final String _userId;
-  final User _user;
+  final User Function() getCurrentUser;
 
   Stream<List<T>> _streamBox<T>(Box<T> box) => box
       .watch()
@@ -38,7 +35,7 @@ class DataRepository {
     delta.apply();
   }
 
-  User get currentUser => _user;
+  User get currentUser => getCurrentUser();
 
   // ------------------- Materials -------------------
 
@@ -66,9 +63,10 @@ class DataRepository {
 
   List<Group> get groupsWithAdminRole {
     final List<Group> _groupsWithAdminRole = [];
+    final userId = getCurrentUser().id;
     for (final group in currentGroups) {
       for (final groupUser in group.users) {
-        if (groupUser.userId == _userId &&
+        if (groupUser.userId == userId &&
                 groupUser.role == GroupUser_Role.ADMIN ||
             groupUser.role == GroupUser_Role.TEACHER) {
           _groupsWithAdminRole.add(group);
@@ -80,6 +78,8 @@ class DataRepository {
   }
 
   List<GroupWithActionsAndRoles> getGroupsWithActionsAndRoles() {
+    final userId = getCurrentUser().id;
+
     final completedActions = <String, int>{};
     for (final actionUser in _hiveApi.actionUser.values) {
       completedActions[actionUser.actionId] =
@@ -99,7 +99,7 @@ class DataRepository {
     final myRoleByGroup = <String, GroupUser_Role>{};
     for (final group in currentGroups) {
       for (final groupUser in group.users) {
-        if (groupUser.userId == _userId) {
+        if (groupUser.userId == userId) {
           myRoleByGroup[group.id] = groupUser.role;
           break;
         }

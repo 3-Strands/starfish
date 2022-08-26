@@ -30,7 +30,7 @@ class ReportMaterialCubit extends Cubit<ReportMaterialState> {
     _dataRepository.addDelta(MaterialFeedbackCreateDelta(
       type: MaterialFeedback_Type.INAPPROPRIATE,
       materialId: _material.id,
-      reporterId: _authenticationRepository.currentSession!.user.id,
+      reporterId: _authenticationRepository.getCurrentUser().id,
       report: state.text,
     ));
     emit(state.asSubmitted());

@@ -134,6 +134,10 @@ class HiveApi {
     assert(!_isSyncBoxProtected,
         'Attempting to protect an already protected sync box! This is undefined behavior.');
     _isSyncBoxProtected = true;
+    if (_backupSync.isNotEmpty) {
+      // Somehow, things failed to get removed. Remove them now!
+      clearBackupSync();
+    }
     try {
       await fn(sync.values);
       // Sync succeeded!
@@ -165,7 +169,8 @@ class HiveApi {
       ? _syncTimestamp.delete(0)
       : _syncTimestamp.put(0, timestamp);
 
-  dynamic getSyncRequest(dynamic key) => _backupSync.get(key) ?? sync.get(key);
+  dynamic getSyncRequest(dynamic key) =>
+      (_isSyncBoxProtected ? _backupSync.get(key) : null) ?? sync.get(key);
 
   Future<void> putSyncRequest(dynamic key, dynamic request) =>
       (_isSyncBoxProtected ? _backupSync : sync).put(key, request);
