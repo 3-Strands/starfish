@@ -1,68 +1,14 @@
 import 'dart:async';
 
-import 'package:grpc/grpc.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:starfish/apis/hive_api.dart';
+import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
-class _Scheduler {
-  _Scheduler(this.sync);
-
-  final Future<void> Function() sync;
-
-  final _isSyncing = BehaviorSubject<bool>.seeded(false);
-  Completer<void>? _completer;
-  Timer? _timer;
-
-  Stream<bool> get isSyncingStream => _isSyncing.stream;
-  bool get isSyncing => _isSyncing.value;
-
-  void _run() {
-    _isSyncing.add(true);
-    sync()
-        .then(_completer!.complete)
-        .onError(_completer!.completeError)
-        .whenComplete(() {
-      _isSyncing.add(false);
-      _completer = null;
-    });
-  }
-
-  Future<void> schedule({bool immediately = false}) {
-    if (isSyncing) {
-      // nothing to do
-      return _completer!.future;
-    }
-    _completer ??= Completer();
-    _timer?.cancel();
-    if (immediately) {
-      _timer = null;
-      _run();
-    } else {
-      _timer = Timer(const Duration(milliseconds: 200), _run);
-    }
-
-    return _completer!.future;
-  }
-
-  void close() async {
-    _timer?.cancel();
-    try {
-      if (isSyncing) {
-        await _completer!.future;
-      }
-    } finally {
-      _isSyncing.close();
-    }
-  }
-}
-
 class SyncRepository {
   SyncRepository({
-    required this.client,
-    required this.requestRefresh,
+    required this.makeAuthenticatedRequest,
   }) {
     _scheduler = _Scheduler(_doSync);
     _subscription = globalHiveApi.sync
@@ -82,25 +28,10 @@ class SyncRepository {
   late _Scheduler _scheduler;
   late StreamSubscription _subscription;
 
-  StarfishClient client;
-  final Future<StarfishClient> Function() requestRefresh;
+  final MakeAuthenticatedRequest makeAuthenticatedRequest;
 
   Stream<bool> get isSyncingStream => _scheduler.isSyncingStream;
   bool get isSyncing => _scheduler.isSyncing;
-
-  Future<T> _makeRequestWithRefresh<T>(
-      Future<T> Function(StarfishClient client) makeRequest) async {
-    try {
-      return await makeRequest(client);
-    } on GrpcError catch (error) {
-      if (error.code == StatusCode.unauthenticated) {
-        client = await requestRefresh();
-        return await makeRequest(client);
-      } else {
-        throw error;
-      }
-    }
-  }
 
   void close() {
     _scheduler.close();
@@ -113,17 +44,59 @@ class SyncRepository {
 
   Future<void> _doSync() async {
     await globalHiveApi.protectSyncBox(
-      (requests) => _makeRequestWithRefresh((client) async {
+      (requests) => makeAuthenticatedRequest((client) async {
         final controller = StreamController<SyncRequest>();
         final responseStream = client.sync(controller.stream);
-        // TODO: Add requests.
-        controller.add(
-            SyncRequest(metaData: SyncRequestMetaData(getNewRecords: true)));
+        controller.add(SyncRequest(
+          metaData: SyncRequestMetaData(
+            getNewRecords: true,
+            updatedSince: globalHiveApi.lastSync,
+          ),
+        ));
+        for (final request in orderRequests(requests)) {
+          final syncRequest = SyncRequest.create();
+          if (request is CreateMaterialFeedbacksRequest)
+            syncRequest.createMaterialFeedback = request;
+          else if (request is CreateUpdateActionsRequest)
+            syncRequest.createUpdateAction = request;
+          else if (request is CreateUpdateActionUserRequest)
+            syncRequest.createUpdateActionUser = request;
+          else if (request is CreateUpdateGroupsRequest)
+            syncRequest.createUpdateGroup = request;
+          else if (request is CreateUpdateGroupEvaluationRequest)
+            syncRequest.createUpdateGroupEvaluation = request;
+          else if (request is CreateUpdateGroupUsersRequest)
+            syncRequest.createUpdateGroupUser = request;
+          else if (request is CreateUpdateLearnerEvaluationRequest)
+            syncRequest.createUpdateLearnerEvaluation = request;
+          else if (request is CreateUpdateMaterialsRequest)
+            syncRequest.createUpdateMaterial = request;
+          else if (request is CreateUpdateOutputRequest)
+            syncRequest.createUpdateOutput = request;
+          else if (request is CreateUpdateTeacherResponseRequest)
+            syncRequest.createUpdateTeacherResponse = request;
+          else if (request is CreateUpdateTransformationRequest)
+            syncRequest.createUpdateTransformation = request;
+          else if (request is CreateUpdateUserRequest)
+            syncRequest.createUpdateUser = request;
+          else if (request is DeleteActionRequest)
+            syncRequest.deleteAction = request;
+          // TODO
+          // else if (request is DeleteGroupUserRequest)
+          //   syncRequest.deleteGroupUser = request;
+          else if (request is DeleteMaterialRequest)
+            syncRequest.deleteMaterial = request;
+          else if (request is UpdateCurrentUserRequest)
+            syncRequest.updateCurrentUser = request;
+          controller.add(syncRequest);
+        }
         controller.close();
         final items = await responseStream.toList();
         revertAll();
         for (final item in items) {
           item.freeze();
+          if (item.hasMetaData())
+            globalHiveApi.lastSync = item.metaData.requestTime;
           if (item.hasAction())
             globalHiveApi.action.put(item.action.id, item.action);
           if (item.hasCountry())
@@ -226,5 +199,57 @@ class SyncRepository {
       }),
     );
     // TODO: check for any more deltas to apply.
+  }
+}
+
+class _Scheduler {
+  _Scheduler(this.sync);
+
+  final Future<void> Function() sync;
+
+  final _isSyncing = BehaviorSubject<bool>.seeded(false);
+  Completer<void>? _completer;
+  Timer? _timer;
+
+  Stream<bool> get isSyncingStream => _isSyncing.stream;
+  bool get isSyncing => _isSyncing.value;
+
+  void _run() {
+    _isSyncing.value = true;
+    sync()
+        .then(_completer!.complete)
+        .onError(_completer!.completeError)
+        .whenComplete(() {
+      _isSyncing.value = false;
+      _completer = null;
+    });
+  }
+
+  Future<void> schedule({bool immediately = false}) {
+    if (isSyncing) {
+      // nothing to do
+      return _completer!.future;
+    }
+    _completer ??= Completer();
+    _timer?.cancel();
+    if (immediately) {
+      _timer = null;
+      _run();
+    } else {
+      _timer = Timer(const Duration(milliseconds: 200), _run);
+    }
+
+    return _completer!.future;
+  }
+
+  void close() async {
+    _timer?.cancel();
+    try {
+      if (isSyncing) {
+        await _completer!.future;
+      }
+    } finally {
+      _isSyncing.close();
+    }
   }
 }

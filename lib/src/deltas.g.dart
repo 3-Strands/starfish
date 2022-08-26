@@ -28,7 +28,7 @@
 /// If the current sync *succeeds*, then we have to pretend that the deltas weren't applied
 /// until after the sync was finished. In that case, the data would have been rolled back
 /// to its previous state in preparation for the server changes, and we simply have to reapply
-/// the mid-sync deltas once again.
+/// the mid-sync deltas once again, ignoring the values in the backup sync box.
 
 part of 'deltas.dart';
 

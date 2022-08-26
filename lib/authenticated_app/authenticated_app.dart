@@ -10,9 +10,7 @@ import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/sync_repository.dart';
-import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/currentUser.dart';
-import 'package:starfish/utils/services/grpc_client.dart';
 
 import '../models/session.dart';
 
@@ -29,25 +27,17 @@ class AuthenticatedApp extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-            create: (context) => DataRepository(user: context.currentUser)),
+          create: (context) => DataRepository(
+            getCurrentUser:
+                context.read<AuthenticationRepository>().getCurrentUser,
+          ),
+        ),
         RepositoryProvider(
           create: (context) => SyncRepository(
-              client: makeAuthenticatedClient(session.tokens.accessToken),
-              // This function will only initiate a refresh request if
-              // there is not an existing request pending.
-              requestRefresh: () {
-                Future<StarfishClient>? pendingRefresh;
-                return () {
-                  pendingRefresh ??= context
-                      .read<AuthenticationRepository>()
-                      .refreshSession()
-                      .then((session) {
-                    pendingRefresh = null;
-                    return makeAuthenticatedClient(session.tokens.accessToken);
-                  });
-                  return pendingRefresh!;
-                };
-              }()),
+            makeAuthenticatedRequest: context
+                .read<AuthenticationRepository>()
+                .makeAuthenticatedRequest,
+          ),
         ),
       ],
       child: MultiBlocProvider(

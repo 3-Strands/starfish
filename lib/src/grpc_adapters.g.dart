@@ -304,6 +304,14 @@ class DeleteGroupUserRequestAdapter
   DeleteGroupUserRequest create() => DeleteGroupUserRequest.create();
 }
 
+class TimestampAdapter extends _GrpcAdapter<Timestamp> {
+  @override
+  int get typeId => 200;
+
+  @override
+  Timestamp create() => Timestamp.create();
+}
+
 void registerAllAdapters() {
   Hive.registerAdapter(CountryAdapter());
   Hive.registerAdapter(LanguageAdapter());
@@ -340,4 +348,5 @@ void registerAllAdapters() {
   Hive.registerAdapter(DeleteActionRequestAdapter());
   Hive.registerAdapter(DeleteMaterialRequestAdapter());
   Hive.registerAdapter(DeleteGroupUserRequestAdapter());
+  Hive.registerAdapter(TimestampAdapter());
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:protobuf/protobuf.dart';
 
@@ -680,6 +681,9 @@ final messages = <int, MessageWrapper>{
   115: MessageWrapper(DeleteActionRequest()),
   116: MessageWrapper(DeleteMaterialRequest()),
   117: MessageWrapper(DeleteGroupUserRequest()),
+
+  // ------------------ Other ------------------
+  200: MessageWrapper(Timestamp()),
 };
 
 int findTypeId(Model model) =>

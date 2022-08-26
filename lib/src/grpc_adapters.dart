@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:protobuf/protobuf.dart';
+import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
 part 'grpc_adapters.g.dart';
