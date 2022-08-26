@@ -9,7 +9,7 @@ import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
 import 'package:starfish/modules/actions_view/single_action_user_view.dart';
 import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
-import 'package:starfish/repositories/model_wrappers/user_with_action-status.dart';
+import 'package:starfish/repositories/model_wrappers/user_with_action_status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/searchbar_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -159,11 +159,14 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                   ActionWithAssignedStatus _actionWithAssignedStatus =
                       groupActionsMap.values.toList()[indexPath.section]
                           [indexPath.index];
+                  final _group =
+                      groupActionsMap.keys.toList()[indexPath.section];
                   return MyGroupActionListItem(
                     index: indexPath.index,
                     actionWithAssignedStatus: _actionWithAssignedStatus,
                     onActionTap: _usersActionList,
-                    //actionStatus: materialWithStatus.status,
+                    totalLeaners:
+                        _group.learners.length > 1 ? _group.learners.length : 1,
                   );
                 },
                 groupHeaderBuilder: (BuildContext context, int section) {

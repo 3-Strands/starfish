@@ -7,7 +7,7 @@ import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/group_with_actions_and_roles.dart';
-import 'package:starfish/repositories/model_wrappers/user_with_action-status.dart';
+import 'package:starfish/repositories/model_wrappers/user_with_action_status.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
@@ -263,7 +263,7 @@ class DataRepository {
         List<UserWithActionStatus> _usersWithStatus = _group.learners
             .map((user) => UserWithActionStatus(
                 user: user,
-                actionStatus: _getActionStatus(user.id, action),
+                action: action,
                 actionUser: _getUserAction(user.id, action)))
             .toList();
         actionGroups[actionId] = ActionGroupUserWithStatus(
