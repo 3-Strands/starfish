@@ -196,9 +196,8 @@ class _ActionsScreenState extends State<ActionsScreen>
         backgroundColor: AppColors.actionScreenBG,
         elevation: 0.0,
       ),
-      body: Container(
-        height: 812.h,
-        color: AppColors.actionScreenBG,
+      body: DecoratedBox(
+        decoration: BoxDecoration(color: AppColors.actionScreenBG),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -228,15 +227,6 @@ class _ActionsScreenState extends State<ActionsScreen>
                                   text:
                                       _appLocalizations.forGroupITeachTabText),
                             ],
-                            onTap: (index) {
-                              if (index == 1) {
-                                context.read<ActionsCubit>().updateUserRole(
-                                    UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD);
-                              } else {
-                                context.read<ActionsCubit>().updateUserRole(
-                                    UserGroupRoleFilter.FILTER_LEARNER);
-                              }
-                            },
                           ),
                           Expanded(
                             child: TabBarView(

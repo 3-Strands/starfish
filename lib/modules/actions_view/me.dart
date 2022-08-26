@@ -23,20 +23,9 @@ class MyActionsView extends StatefulWidget {
 }
 
 class _MyActionsViewState extends State<MyActionsView> {
-  late AppLocalizations _appLocalizations;
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    _appLocalizations = AppLocalizations.of(context)!;
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return Scrollbar(
       thickness: 5.w,
@@ -135,7 +124,7 @@ class _MyActionsViewState extends State<MyActionsView> {
             ),
             //actionsList(bloc),
             BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
-              final actionsToShow = state.actionsToShow;
+              final actionsToShow = state.getMyActionsToShow();
               final groupActionsMap = actionsToShow.groupActionsMap;
               //final hasMore = actionsToShow.hasMore;
               if (groupActionsMap.isEmpty) {
@@ -143,7 +132,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                   margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
                   padding: EdgeInsets.symmetric(vertical: 8.h),
                   child: Text(
-                    '${_appLocalizations.noRecordFound}',
+                    '${appLocalizations.noRecordFound}',
                     style: TextStyle(
                       color: Color(0xFF434141),
                       fontSize: 17.sp,
@@ -167,6 +156,8 @@ class _MyActionsViewState extends State<MyActionsView> {
                     index: indexPath.index,
                     actionWithAssignedStatus: _actionWithAssignedStatus,
                     onActionTap: _onActionSelection,
+                    displayActions:
+                        _actionWithAssignedStatus.action.groupId.isEmpty,
                   );
                 },
                 groupHeaderBuilder: (BuildContext context, int section) {
@@ -178,7 +169,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${_group.name.isNotEmpty ? _group.name : _appLocalizations.selfAssigned}',
+                          '${_group.name.isNotEmpty ? _group.name : appLocalizations.selfAssigned}',
                           style: TextStyle(
                             fontSize: 19.sp,
                             fontWeight: FontWeight.w600,
@@ -187,7 +178,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                         ),
                         if (_group.id.isNotEmpty)
                           Text(
-                            '${_appLocalizations.teacher}: ${_group.teachersName.join(", ")}',
+                            '${appLocalizations.teacher}: ${_group.teachersName.join(", ")}',
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontWeight: FontWeight.w600,
@@ -308,7 +299,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                       ),
                       if (snapshot.data!.keys.toList()[section].id != null)
                         Text(
-                          '${_appLocalizations.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
+                          '${appLocalizations.teacher}: ${snapshot.data!.keys.toList()[section].teachersName?.join(", ")}',
                           style: TextStyle(
                             fontSize: 17.sp,
                             fontWeight: FontWeight.w600,
@@ -348,7 +339,7 @@ class _MyActionsViewState extends State<MyActionsView> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
       shape: RoundedRectangleBorder(
@@ -433,7 +424,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                               itemBuilder: (context) => [
                                 PopupMenuItem(
                                   child: Text(
-                                    _appLocalizations.editActionText,
+                                    appLocalizations.editActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 19.sp,
@@ -443,7 +434,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                                 ),
                                 PopupMenuItem(
                                   child: Text(
-                                    _appLocalizations.deleteActionText,
+                                    appLocalizations.deleteActionText,
                                     style: TextStyle(
                                         color: Color(0xFF3475F0),
                                         fontSize: 19.sp,
@@ -478,7 +469,7 @@ class _MyActionsViewState extends State<MyActionsView> {
                     width: 10.w,
                   ),
                   Text(
-                    '${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
+                    '${appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -496,13 +487,13 @@ class _MyActionsViewState extends State<MyActionsView> {
 
   _deleteAction(BuildContext context, HiveAction action) {
     final bloc = Provider.of(context);
-    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     Alerts.showMessageBox(
         context: context,
-        title: _appLocalizations.deleteActionTitle,
-        message: _appLocalizations.deleteActionMessage,
-        positiveButtonText: _appLocalizations.delete,
-        negativeButtonText: _appLocalizations.cancel,
+        title: appLocalizations.deleteActionTitle,
+        message: appLocalizations.deleteActionMessage,
+        positiveButtonText: appLocalizations.delete,
+        negativeButtonText: appLocalizations.cancel,
         positiveActionCallback: () {
           // Mark this action for deletion
           action.isDirty = true;

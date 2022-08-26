@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/modules/dashboard/cubit/dashboard_navigation_cubit.dart';
-// import 'package:starfish/modules/actions_view/actions_view.dart';
+import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/material_view/materials_view.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
@@ -140,8 +140,8 @@ class _DashboardViewState extends State<DashboardView> {
                 return const Materials();
               case 1:
                 return const Groups();
-              // case 2:
-              //   return const ActionsView();
+              case 2:
+                return const ActionsView();
               default:
                 return const SizedBox();
             }

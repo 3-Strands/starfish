@@ -57,7 +57,9 @@ extension ActionExt on Action {
 
   bool get isIndividualAction => groupId.isEmpty;
 
-  bool get isPastDueDate => dateDue.toDateTime().isBefore(DateTime.now());
+  bool get isPastDueDate => dateDue.isValidDate
+      ? dateDue.toDateTime().isBefore(DateTime.now())
+      : false;
 
   bool get hasValidDueDate {
     return this.dateDue.year != 0 &&

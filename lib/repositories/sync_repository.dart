@@ -16,10 +16,13 @@ class SyncRepository {
         .debounceTime(const Duration(milliseconds: 200))
         .listen(
       (_) {
-        print('Detected items to sync');
-        print('======================');
-        for (final request in globalHiveApi.sync.values) {
-          print(request);
+        if (globalHiveApi.sync.isNotEmpty) {
+          print('Detected items to sync');
+          print('======================');
+          for (final request in globalHiveApi.sync.values) {
+            print(request);
+          }
+          sync();
         }
       },
     );

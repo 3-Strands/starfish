@@ -44,12 +44,6 @@ class ActionsCubit extends Cubit<ActionsState> {
     ));
   }
 
-  void updateUserRole(UserGroupRoleFilter userRole) {
-    emit(state.copyWith(
-      userGroupRoleFilter: userRole,
-    ));
-  }
-
   void deleteAction(Action action) {
     _dataRepository.addDelta(ActionDeleteDelta(action));
   }

@@ -6,12 +6,10 @@ class ActionsState {
     required List<Action> actions,
     required RelatedActions relatedActions,
     ActionFilter actionFilter = ActionFilter.THIS_MONTH,
-    UserGroupRoleFilter userGroupRoleFilter = UserGroupRoleFilter.FILTER_ALL,
     String query = "",
   })  : _actions = actions,
         _relatedActions = relatedActions,
         _actionFilter = actionFilter,
-        _userGroupRoleFilter = userGroupRoleFilter,
         _query = query;
 
   static const itemsPerPage = 20;
@@ -20,26 +18,25 @@ class ActionsState {
   final RelatedActions _relatedActions;
   final ActionFilter _actionFilter;
   final String _query;
-  final UserGroupRoleFilter _userGroupRoleFilter;
 
   ActionFilter get actionFilter => _actionFilter;
   String get query => _query;
-  UserGroupRoleFilter get userGroupRoleFilter => _userGroupRoleFilter;
 
-  ActionsPageView get actionsToShow {
-    var actions = _actions;
+  ActionsPageView getMyActionsToShow() => _getActionsToShow(
+        _actions.where(
+          (action) => !_actionIsAssignedToGroupWithLeaderRole(action),
+        ),
+      );
+
+  ActionsPageView getGroupActionsToShow() => _getActionsToShow(
+        _actions.where(
+          (action) => _actionIsAssignedToGroupWithLeaderRole(action),
+        ),
+      );
+
+  ActionsPageView _getActionsToShow(Iterable<Action> actions) {
     final LinkedHashMap<Group, List<ActionWithAssignedStatus>> groupActionsMap =
         LinkedHashMap();
-
-    if (_userGroupRoleFilter == UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD) {
-      actions = actions
-          .where((action) => _actionIsAssignedToGroupWithLeaderRole(action))
-          .toList();
-    } else {
-      actions = actions
-          .where((action) => !_actionIsAssignedToGroupWithLeaderRole(action))
-          .toList();
-    }
 
     actions =
         actions.where((action) => _actionPassesActionFilter(action)).toList();
@@ -85,14 +82,12 @@ class ActionsState {
     RelatedActions? relatedActions,
     ActionFilter? actionFilter,
     String? query,
-    UserGroupRoleFilter? userGroupRoleFilter,
   }) =>
       ActionsState(
         actions: actions ?? this._actions,
         relatedActions: relatedActions ?? this._relatedActions,
         actionFilter: actionFilter ?? this._actionFilter,
         query: query ?? this._query,
-        userGroupRoleFilter: userGroupRoleFilter ?? this._userGroupRoleFilter,
       );
 
   bool _actionPassesActionFilter(Action action) {

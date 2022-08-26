@@ -131,7 +131,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
             ),
             //actionsList(bloc),
             BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
-              final actionsToShow = state.actionsToShow;
+              final actionsToShow = state.getGroupActionsToShow();
               final groupActionsMap = actionsToShow.groupActionsMap;
               //final hasMore = actionsToShow.hasMore;
               if (groupActionsMap.isEmpty) {

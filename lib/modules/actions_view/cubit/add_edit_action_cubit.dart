@@ -79,7 +79,7 @@ class AddEditActionCubit extends Cubit<AddEditActionState> {
   // void newGroupsAdded(Set<User> groups) =>
   //     emit(state.copyWith(groups: state.groups.union(groups)));
 
-  void submitRequested() {
+  bool submitRequested() {
     ActionError? error;
     if (state.name.isEmpty) {
       error = ActionError.noName;
@@ -93,36 +93,24 @@ class AddEditActionCubit extends Cubit<AddEditActionState> {
             state.type == Action_Type.MATERIAL_RESPONSE) &&
         state.question.isEmpty) {
       error = ActionError.noQuestion;
+    } else if (state.selectedGroups.isEmpty) {
+      error = ActionError.noGroup;
     }
 
     if (error != null) {
       emit(state.copyWith(error: error));
-    } else {
-      if (_action == null) {
-        for (final group in state.selectedGroups) {
-          final id = UuidGenerator.uuid();
-          _dataRepository.addDelta(
-            ActionCreateDelta(
-              id: id,
-              name: state.name,
-              type: state.type,
-              groupId: group.id,
-              instructions: state.instructions,
-              materialId: state.materialId,
-              question: state.question,
-              dateDue: state.dueDate,
-              // TODO
-            ),
-          );
-        }
-      } else {
-        final action = _action;
+      return false;
+    }
+
+    if (_action == null) {
+      for (final group in state.selectedGroups) {
+        final id = UuidGenerator.uuid();
         _dataRepository.addDelta(
-          ActionUpdateDelta(
-            action!,
+          ActionCreateDelta(
+            id: id,
             name: state.name,
             type: state.type,
-            //groupId: state.groupId, //group can't be changed in 'Edit' mode
+            groupId: group.hasId() ? group.id : null,
             instructions: state.instructions,
             materialId: state.materialId,
             question: state.question,
@@ -131,7 +119,23 @@ class AddEditActionCubit extends Cubit<AddEditActionState> {
           ),
         );
       }
+    } else {
+      final action = _action;
+      _dataRepository.addDelta(
+        ActionUpdateDelta(
+          action!,
+          name: state.name,
+          type: state.type,
+          //groupId: state.groupId, //group can't be changed in 'Edit' mode
+          instructions: state.instructions,
+          materialId: state.materialId,
+          question: state.question,
+          dateDue: state.dueDate,
+          // TODO
+        ),
+      );
     }
+    return true;
   }
 
   @override

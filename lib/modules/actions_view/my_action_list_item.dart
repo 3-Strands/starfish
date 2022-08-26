@@ -43,106 +43,99 @@ class MyActionListItem extends StatelessWidget {
         },
         child: Padding(
           padding:
-              EdgeInsets.only(left: 5.w, right: 5.w, top: 5.h, bottom: 15.h),
+              EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h, bottom: 10.h),
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 10.w),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "#${index + 1}",
-                      style: TextStyle(
-                          color: Color(0xFF797979),
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                        child: Text(
-                          _action.name,
-                          //maxLines: 1,
-                          //overflow: TextOverflow.ellipsis,
-                          //softWrap: false,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 19.sp,
-                              fontWeight: FontWeight.w500),
-                        ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "#${index + 1}",
+                    style: TextStyle(
+                        color: Color(0xFF797979),
+                        fontSize: 19.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                      child: Text(
+                        _action.name,
+                        //maxLines: 1,
+                        //overflow: TextOverflow.ellipsis,
+                        //softWrap: false,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
-                    SizedBox(
-                      width: 30.w,
-                      height: 40.h,
-                      child: displayActions
-                          ? PopupMenuButton(
-                              icon: Icon(
-                                Icons.more_vert,
-                                color: Color(0xFF3475F0),
-                                size: 30,
-                              ),
-                              color: Colors.white,
-                              elevation: 20,
-                              shape: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(12.r)),
-                              enabled: true,
-                              onSelected: (value) {
-                                // switch (value) {
-                                //   case 0:
-                                //     Navigator.push(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //         builder: (context) => AddEditAction(
-                                //           action: action,
-                                //         ),
-                                //       ),
-                                //     ).then((value) => FocusScope.of(context)
-                                //         .requestFocus(new FocusNode()));
-                                //     break;
-                                //   case 1:
-                                //     _deleteAction(context, action);
+                  ),
+                  displayActions
+                      ? PopupMenuButton(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Color(0xFF3475F0),
+                            size: 30,
+                          ),
+                          color: Colors.white,
+                          elevation: 20,
+                          shape: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 2),
+                              borderRadius: BorderRadius.circular(12.r)),
+                          enabled: true,
+                          onSelected: (value) {
+                            // switch (value) {
+                            //   case 0:
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) => AddEditAction(
+                            //           action: action,
+                            //         ),
+                            //       ),
+                            //     ).then((value) => FocusScope.of(context)
+                            //         .requestFocus(new FocusNode()));
+                            //     break;
+                            //   case 1:
+                            //     _deleteAction(context, action);
 
-                                //     break;
-                                // }
-                              },
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  child: Text(
-                                    _appLocalizations.editActionText,
-                                    style: TextStyle(
-                                        color: Color(0xFF3475F0),
-                                        fontSize: 19.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  value: 0,
-                                ),
-                                PopupMenuItem(
-                                  child: Text(
-                                    _appLocalizations.deleteActionText,
-                                    style: TextStyle(
-                                        color: Color(0xFF3475F0),
-                                        fontSize: 19.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  value: 1,
-                                ),
-                              ],
-                            )
-                          : Container(),
-                    ),
-                  ],
-                ),
+                            //     break;
+                            // }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Text(
+                                _appLocalizations.editActionText,
+                                style: TextStyle(
+                                    color: Color(0xFF3475F0),
+                                    fontSize: 19.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              value: 0,
+                            ),
+                            PopupMenuItem(
+                              child: Text(
+                                _appLocalizations.deleteActionText,
+                                style: TextStyle(
+                                    color: Color(0xFF3475F0),
+                                    fontSize: 19.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              value: 1,
+                            ),
+                          ],
+                        )
+                      : Container(),
+                ],
               ),
               SizedBox(
-                height: 5.h,
+                height: 15.h,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ActionStatusWidget(
                     onTap: (_) {
@@ -154,12 +147,9 @@ class MyActionListItem extends StatelessWidget {
                     height: 30.h,
                     width: 130.w,
                   ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
                   Text(
                     //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
-                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(_action.dateDue)}',
+                    '${_appLocalizations.due}: ${_action.dateDue.isValidDate ? DateTimeUtils.formatHiveDate(_action.dateDue) : _appLocalizations.na}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,

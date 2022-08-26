@@ -5,6 +5,7 @@ enum ActionError {
   noInstructions,
   noMaterial,
   noQuestion,
+  noGroup,
 }
 
 @immutable
