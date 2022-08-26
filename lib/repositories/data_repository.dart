@@ -17,13 +17,13 @@ extension AsList<T> on Box<T> {
 
 class DataRepository {
   DataRepository({
-    HiveApiInterface hiveApi = globalHiveApi,
+    HiveApi hiveApi = globalHiveApi,
     required User user,
   })  : _hiveApi = hiveApi,
         _userId = user.id,
         _user = user;
 
-  final HiveApiInterface _hiveApi;
+  final HiveApi _hiveApi;
   final String _userId;
   final User _user;
 
@@ -63,6 +63,21 @@ class DataRepository {
       _streamBox(_hiveApi.evaluationCategory);
   List<EvaluationCategory> get currentEvaluationCategories =>
       _hiveApi.evaluationCategory.asList();
+
+  List<Group> get groupsWithAdminRole {
+    final List<Group> _groupsWithAdminRole = [];
+    for (final group in currentGroups) {
+      for (final groupUser in group.users) {
+        if (groupUser.userId == _userId &&
+                groupUser.role == GroupUser_Role.ADMIN ||
+            groupUser.role == GroupUser_Role.TEACHER) {
+          _groupsWithAdminRole.add(group);
+          break;
+        }
+      }
+    }
+    return _groupsWithAdminRole;
+  }
 
   List<GroupWithActionsAndRoles> getGroupsWithActionsAndRoles() {
     final completedActions = <String, int>{};
@@ -284,6 +299,10 @@ class DataRepository {
   Stream<List<Action>> getActionsByGroup(Group group) {
     throw UnimplementedError();
   }
+
+  // ------------------- Actions -------------------
+  Stream<List<ActionUser>> get actionUsers => _streamBox(_hiveApi.actionUser);
+  List<ActionUser> get currentActionUsers => _hiveApi.actionUser.asList();
 
   // ------------------- Countries -------------------
 

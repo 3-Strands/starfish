@@ -10,7 +10,9 @@ abstract class _GrpcAdapter<Model extends GeneratedMessage>
 
   @override
   Model read(BinaryReader reader) {
-    return create()..mergeFromBuffer(reader.readByteList());
+    return create()
+      ..mergeFromBuffer(reader.readByteList())
+      ..freeze();
   }
 
   @override

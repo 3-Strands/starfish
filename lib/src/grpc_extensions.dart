@@ -1,12 +1,37 @@
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
-import 'package:starfish/repositories/model_wrappers/user_with_group_role.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
 
 extension DateExt on Date {
   DateTime toDateTime() => DateTime(year, month, day);
+
+  bool get isValidDate {
+    return this.year != 0 && this.month != 0 && this.day != 0;
+  }
+}
+
+extension FileReferenceExt on FileReference {
+  static FileReference getFileReference({
+    required String entityId,
+    required EntityType entityType,
+    required String filename,
+  }) {
+    final key = FileReference.keyFrom(entityId, filename);
+    final fileReference = globalHiveApi.file.get(key);
+    if (fileReference != null) {
+      return fileReference;
+    }
+    final newFileReference = FileReference(
+      entityId: entityId,
+      entityType: entityType.value,
+      filename: filename,
+    );
+    globalHiveApi.file.put(key, newFileReference);
+    return newFileReference;
+  }
 }
 
 extension MaterialExt on Material {
@@ -22,8 +47,8 @@ extension MaterialExt on Material {
       .toList();
 
   List<FileReference> get fileReferences => files
-      .map((filename) =>
-          globalHiveApi.file.get(FileReference.keyFrom(id, filename))!)
+      .map((filename) => FileReferenceExt.getFileReference(
+          entityId: id, entityType: EntityType.MATERIAL, filename: filename))
       .toList();
 }
 
@@ -67,6 +92,8 @@ extension GroupUserExt on GroupUser {
   User? get maybeUser => globalHiveApi.user.get(userId);
   User get user => maybeUser!;
 
+  Group? get group => globalHiveApi.group.get(groupId);
+
   bool get userIsInvitedToGroup {
     final user = this.user;
     return user.phone.isNotEmpty && user.status != User_Status.ACTIVE;
@@ -88,4 +115,18 @@ extension UserExt on User {
   String get fullPhone => '+${diallingCode.replaceFirst('+', '')} $phone';
 
   bool get hasFullPhone => diallingCode.isNotEmpty && phone.isNotEmpty;
+
+  List<Group> get adminGroups => List<Group>.from(
+        groups
+            .where((groupUser) => groupUser.role == GroupUser_Role.ADMIN)
+            .map((groupUser) => groupUser.group)
+            .where((group) => group != null),
+      );
+
+  List<Group> get teacherGroups => List<Group>.from(
+        groups
+            .where((groupUser) => groupUser.role == GroupUser_Role.TEACHER)
+            .map((groupUser) => groupUser.group)
+            .where((group) => group != null),
+      );
 }

@@ -8,6 +8,9 @@ abstract class ProfileEvent {
 class DataChanged extends ProfileEvent {
   const DataChanged({
     this.name,
+    this.diallingCode,
+    this.phone,
+    this.hasLinkGroups,
     this.selectedCountries,
     this.selectedLanguages,
     this.countries,
@@ -15,6 +18,9 @@ class DataChanged extends ProfileEvent {
   });
 
   final String? name;
+  final String? diallingCode;
+  final String? phone;
+  final bool? hasLinkGroups;
   final Set<String>? selectedCountries;
   final Set<String>? selectedLanguages;
   final List<Country>? countries;
@@ -25,6 +31,19 @@ class NameChanged extends ProfileEvent {
   const NameChanged(this.name);
 
   final String name;
+}
+
+class PhonenumberChanged extends ProfileEvent {
+  const PhonenumberChanged(this.diallingCode, this.phone);
+
+  final String diallingCode;
+  final String phone;
+}
+
+class LinkGroupChanged extends ProfileEvent {
+  const LinkGroupChanged(this.hasLinkGroup);
+
+  final bool hasLinkGroup;
 }
 
 class LanguageSelectionChanged extends ProfileEvent {

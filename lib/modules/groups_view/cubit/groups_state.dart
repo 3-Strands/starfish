@@ -20,7 +20,8 @@ class GroupsState {
   UserGroupRoleFilter get userRoleFilter => _userRoleFilter;
   String get query => _query;
 
-  Map<UserGroupRoleFilter, List<GroupWithActionsAndRoles>> get groupsToShow {
+  Map<UserGroupRoleFilter, List<GroupWithActionsAndRoles>>
+      calculateGroupsToShow() {
     var groups = _groups;
 
     if (_query.isNotEmpty) {

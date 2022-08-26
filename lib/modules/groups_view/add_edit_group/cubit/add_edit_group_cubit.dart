@@ -189,7 +189,11 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
     }
     final groupUserMatchesUser =
         (GroupUser groupUser) => groupUser.userId == user.id;
-    final memberMatchesUser = (UserWithGroupRole member) => member.user == user;
+    final memberMatchesUser =
+        (UserWithGroupRole member) => member.user.id == user.id;
+    print(user);
+    print(state.currentMembers);
+    print(state.newMembers);
     if (state.currentMembers.any(groupUserMatchesUser)) {
       // We only mark this item for permanent deletion if it was previously
       // saved.
@@ -218,9 +222,10 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
       return false;
     }
     final group = _group;
+    final isCreate = group == null;
     final id = group?.id ?? UuidGenerator.uuid();
     _dataRepository.addDelta(
-      group == null
+      isCreate
           ? GroupCreateDelta(
               id: id,
               name: state.name,
@@ -238,6 +243,16 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
                   state.selectedEvaluationCategories.toList(),
             ),
     );
+
+    // If we just added this group, add ourselves to it.
+    if (isCreate) {
+      _dataRepository.addDelta(GroupUserCreateDelta(
+        userId: _dataRepository.currentUser.id,
+        groupId: id,
+        role: GroupUser_Role.ADMIN,
+      ));
+    }
+
     for (final groupUser in state.currentMembers) {
       final user = groupUser.user;
       _dataRepository.addDelta(

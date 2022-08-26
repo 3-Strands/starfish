@@ -8,8 +8,10 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
+import 'package:starfish/modules/groups_view/add_edit_group/add_edit_group_screen.dart';
 import 'package:starfish/modules/groups_view/cubit/groups_cubit.dart';
 import 'package:starfish/modules/groups_view/group_list_item.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/helpers/alerts.dart';
@@ -139,9 +141,11 @@ class _GroupsViewState extends State<GroupsView> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    Routes.settings,
+                    MaterialPageRoute(
+                      builder: (context) => const Settings(),
+                    ),
                   );
                 },
               ),
@@ -230,7 +234,7 @@ class _GroupsViewState extends State<GroupsView> {
                   ),
                   BlocBuilder<GroupsCubit, GroupsState>(
                     builder: (context, state) {
-                      final map = state.groupsToShow;
+                      final map = state.calculateGroupsToShow();
                       final keys = map.keys.toList();
                       final sections = map.values.toList();
 
@@ -291,7 +295,12 @@ class _GroupsViewState extends State<GroupsView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.createNewGroup);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddEditGroup(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),

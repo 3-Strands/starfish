@@ -1,58 +1,506 @@
-import 'dart:async';
-import 'package:collection/collection.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:grpc/grpc_or_grpcweb.dart';
-import 'package:hive/hive.dart';
-import 'package:starfish/app.dart';
 import 'package:starfish/bloc/app_bloc.dart';
-import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
-import 'package:starfish/bloc/profile_bloc.dart';
-import 'package:starfish/bloc/session_bloc.dart';
-import 'package:starfish/config/routes/routes.dart';
+import 'package:starfish/bloc/my_teacher_admin_role_cubit.dart';
+import 'package:starfish/bloc/sync_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/app_strings.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/repositories/grpc_repository.dart';
+import 'package:starfish/modules/create_profile/bloc/profile_bloc.dart';
+import 'package:starfish/modules/settings_view/group_email/edit_group_email_widget.dart';
+import 'package:starfish/modules/settings_view/edit_name_widget.dart';
+import 'package:starfish/modules/settings_view/edit_phone_number_widget.dart';
+import 'package:starfish/repositories/authentication_repository.dart';
+import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/repositories/sync_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
-import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/db/hive_country.dart';
-//import 'package:starfish/db/hive_current_user.dart';
-import 'package:starfish/db/hive_database.dart';
-import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_language.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/repository/current_user_repository.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/utils/helpers/general_functions.dart';
 import 'package:starfish/utils/helpers/snackbar.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
-import 'package:starfish/utils/services/sync_service.dart';
-import 'package:starfish/utils/sync_time.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
+import 'package:starfish/widgets/loading.dart';
 import 'package:starfish/widgets/separator_line_widget.dart';
-import 'package:starfish/widgets/settings_edit_button_widget.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-// class SettingsScreen extends StatefulWidget {
-//   const SettingsScreen({Key? key, this.title = ''}) : super(key: key);
+class Settings extends StatelessWidget {
+  const Settings({Key? key}) : super(key: key);
 
-//   final String title;
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+        create: (context) =>
+            MyTeacherAdminRoleCubit(context.read<DataRepository>()),
+      ),
+      BlocProvider(
+        create: (context) => ProfileBloc(
+            dataRepository: context.read<DataRepository>(),
+            authenticationRepository: context.read<AuthenticationRepository>(),
+            syncRepository: context.read<SyncRepository>()),
+      ),
+    ], child: const SettingsView());
+  }
+}
 
-//   @override
-//   _SettingsScreenState createState() => _SettingsScreenState();
-// }
+class SettingsView extends StatelessWidget {
+  const SettingsView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        automaticallyImplyLeading: false,
+        title: Container(
+          height: 64.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              AppLogo(hight: 36.h, width: 37.w),
+              Text(
+                appLocalizations.settings,
+                style: dashboardNavigationTitle,
+              ),
+              Visibility(
+                child: IconButton(
+                  icon: SvgPicture.asset(AssetsPath.settings),
+                  onPressed: () {},
+                ),
+                visible: false,
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Stack(
+          children: [
+            Scrollbar(
+              thickness: 5.w,
+              thumbVisibility: false,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 20.h),
+                      //_getNameSection(),
+                      BlocBuilder<ProfileBloc, ProfileState>(
+                        buildWhen: (previous, current) =>
+                            previous.name != current.name,
+                        builder: (context, state) {
+                          return EditName(
+                            lable: appLocalizations.name,
+                            hint: appLocalizations.nameHint,
+                            initialValue: state.name,
+                            onDone: (value) {
+                              // TODO: save chagnes
+                              context
+                                  .read<ProfileBloc>()
+                                  .add(NameChanged(value));
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 5.h),
+                      //_getPhoneNumberSection(),
+                      BlocBuilder<ProfileBloc, ProfileState>(
+                        buildWhen: (previous, current) =>
+                            previous.phone != current.phone ||
+                            previous.diallingCode != current.diallingCode,
+                        builder: (context, state) {
+                          return EditPhoneNumber(
+                            lable: appLocalizations.mobile,
+                            hint: appLocalizations.phoneNumberHint,
+                            initialDiallingCode: state.diallingCode,
+                            initialPhonenumber: state.phone,
+                            onInputChanged: (value) {},
+                            onInputValidated: (isValid) {},
+                            onFieldSubmitted: (_) {},
+                          );
+                        },
+                      ),
+                      SizedBox(height: 5.h),
+
+                      //--> App language section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: appLocalizations.appLanguage,
+                          align: TextAlign.left,
+                        ),
+                      ),
+
+                      SizedBox(height: 10.h),
+
+                      Container(
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.txtFieldBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        child: Center(
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: BlocBuilder<AppBloc, AppState>(
+                                  builder: (context, state) {
+                                final locale = (state as AppReady).locale;
+                                return DropdownButton2(
+                                  offset: Offset(0, -10),
+                                  dropdownMaxHeight: 200.h,
+                                  isExpanded: true,
+                                  iconSize: 35,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 19.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                  onChanged: (LanguageCode? value) {
+                                    BlocProvider.of<AppBloc>(context)
+                                        .add(LocaleChanged(value!.code));
+                                    //reinitLanguageFilter();
+                                  },
+                                  value: AppStrings.appLanguageList.firstWhere(
+                                    (item) => item.code == locale,
+                                    orElse: () =>
+                                        AppStrings.appLanguageList.first,
+                                  ),
+                                  items: AppStrings.appLanguageList
+                                      .map(
+                                        (language) => DropdownMenuItem(
+                                          child: Text(language.name),
+                                          value: language,
+                                        ),
+                                      )
+                                      .toList(),
+                                );
+                              }),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      //--> Select country section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: appLocalizations.myCountry,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      BlocBuilder<ProfileBloc, ProfileState>(
+                          builder: (context, state) {
+                        if (!state.hasCountries) {
+                          return const Loading();
+                        }
+                        final items = [...state.countries];
+                        items.sort((a, b) => a.name.compareTo(b.name));
+
+                        final selectedCountries =
+                            state.selectedCountries.toSet();
+                        final initialSelection = selectedCountries.isEmpty
+                            ? null
+                            : items
+                                .where((country) =>
+                                    selectedCountries.contains(country.id))
+                                .toSet();
+
+                        return MultiSelect<Country>(
+                          navTitle: appLocalizations.selectCountry,
+                          placeholder: appLocalizations.selectCountry,
+                          items: state.countries,
+                          initialSelection: initialSelection,
+                          toDisplay: (country) => country.name,
+                          onFinished: (Set<Country> selectedCountries) async {
+                            bool _isNetworkAvailable =
+                                await GeneralFunctions.isNetworkAvailable();
+                            if (!_isNetworkAvailable) {
+                              StarfishSnackbar.showErrorMessage(
+                                  context,
+                                  appLocalizations
+                                      .internetRequiredToChangeCountriesOrLanguage);
+                              return;
+                            }
+                          },
+                        );
+                      }),
+
+                      SizedBox(height: 20.h),
+
+                      //--> Select language section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: appLocalizations.myLanugages,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+
+                      BlocBuilder<ProfileBloc, ProfileState>(
+                        buildWhen: (previous, current) =>
+                            previous.languages != current.languages,
+                        builder: (context, state) {
+                          if (!state.hasLanguages) {
+                            return const Loading();
+                          }
+                          final items = [...state.languages];
+                          items.sort((a, b) => a.name.compareTo(b.name));
+
+                          final selectedLanguages =
+                              state.selectedLanguages.toSet();
+                          final initialSelection = selectedLanguages.isEmpty
+                              ? null
+                              : items
+                                  .where((country) =>
+                                      selectedLanguages.contains(country.id))
+                                  .toSet();
+
+                          return MultiSelect<Language>(
+                            navTitle: appLocalizations.selectLanugages,
+                            placeholder: appLocalizations.selectLanugages,
+                            items: items,
+                            initialSelection: initialSelection,
+                            toDisplay: (language) => language.name,
+                            onFinished: (Set<Language> selectedLanguages) {
+                              context.read<ProfileBloc>().add(
+                                  LanguageSelectionChanged(selectedLanguages));
+                            },
+                          );
+                        },
+                      ),
+                      // //--------------------------
+
+                      SizedBox(height: 39.h),
+
+                      //--> Last successfull sync section
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: TitleLabel(
+                          title: appLocalizations.lastSuccessfullSync,
+                          align: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      const SeparatorLine(),
+                      SizedBox(height: 20.h),
+
+                      Container(
+                        child: Align(
+                          alignment: FractionalOffset.topLeft,
+                          child: BlocBuilder<SyncBloc, SyncState>(
+                              builder: (context, state) {
+                            final lastSync = state.lastSync.value;
+                            return Text.rich(
+                              TextSpan(
+                                text:
+                                    "${appLocalizations.lastSuccessfullSync}: ",
+                                style: TextStyle(
+                                  color: AppColors.appTitle,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 21.5.sp,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: state.isSyncing
+                                        ? 'Syncing...'
+                                        : '${lastSync == null ? 'never' : lastSync.toUtc()}',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Roboto',
+                                      fontSize: 21.5.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                      //--------------------------
+
+                      SizedBox(height: 50.h),
+                      //--> Group admin section
+                      //_getGroupAdminsSections(),
+                      Column(
+                        children: [
+                          Align(
+                            alignment: FractionalOffset.topLeft,
+                            child: TitleLabel(
+                              title: appLocalizations.forGroupAdmin,
+                              align: TextAlign.left,
+                            ),
+                          ),
+                          SizedBox(height: 5.h),
+
+                          const SeparatorLine(),
+
+                          SizedBox(height: 20.h),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    appLocalizations.linkMyGroups,
+                                    textAlign: TextAlign.left,
+                                    style: titleTextStyle,
+                                  ),
+                                ),
+                                Center(
+                                  child: BlocBuilder<ProfileBloc, ProfileState>(
+                                    builder: (context, state) {
+                                      return IconButton(
+                                        icon: (state.hasLinkGroups)
+                                            ? Icon(Icons.check_box)
+                                            : Icon(
+                                                Icons.check_box_outline_blank),
+                                        color: AppColors.selectedButtonBG,
+                                        onPressed: () {
+                                          context.read<ProfileBloc>().add(
+                                              LinkGroupChanged(
+                                                  !state.hasLinkGroups));
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          //--------------------------
+
+                          SizedBox(height: 50.h),
+
+                          //--> My groups section
+                          BlocBuilder<MyTeacherAdminRoleCubit,
+                                  MyTeacherAdminRoleState>(
+                              builder: (context, state) {
+                            if (!context
+                                .read<ProfileBloc>()
+                                .state
+                                .hasLinkGroups) {
+                              return Container();
+                            }
+                            return Column(
+                              children: [
+                                Align(
+                                  alignment: FractionalOffset.topLeft,
+                                  child: TitleLabel(
+                                    title: appLocalizations.myGroups,
+                                    align: TextAlign.left,
+                                  ),
+                                ),
+                                SizedBox(height: 5.h),
+                                const SeparatorLine(),
+                                SizedBox(height: 20.h),
+                                //_myGroupsList(),
+
+                                ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: state.groupsWhereIAmAdmin.length,
+                                    itemBuilder: (context, index) {
+                                      return EditGroupEamil(
+                                        group: state.groupsWhereIAmAdmin
+                                            .elementAt(index),
+                                      );
+                                    }),
+                              ],
+                            );
+                          })
+                        ],
+                      ),
+
+                      SizedBox(height: 75.h),
+                      //--------------------------
+                      // SizedBox(height: 10.h),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            /*(_isLoading == true)
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container()*/
+          ],
+        ),
+      ),
+      // bottomNavigationBar: _footer(),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: SizedBox(
+        height: 75.h,
+        child: Stack(
+          children: [
+            Positioned(
+              child: new Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      color: AppColors.txtFieldBackground,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.all(0.0),
+                            child: SizedBox(
+                              width: 319.w,
+                              height: 37.h,
+                              child: ElevatedButton(
+                                child: Text(
+                                  appLocalizations.back,
+                                  textAlign: TextAlign.start,
+                                  style: buttonTextStyle,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: AppColors.unselectedButtonBG,
+                                  shape: new RoundedRectangleBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // class _SettingsScreenState extends State<SettingsScreen> {
 //   final _countryCodeController = TextEditingController();

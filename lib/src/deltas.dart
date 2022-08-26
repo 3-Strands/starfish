@@ -1,10 +1,16 @@
+import 'package:fixnum/fixnum.dart';
+import 'package:meta/meta.dart';
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:starfish/apis/hive_api.dart';
-import 'package:starfish/models/delta.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
-import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
+
+import 'generated/google/protobuf/field_mask.pb.dart';
 
 part 'deltas.g.dart';
 
@@ -17,16 +23,40 @@ Date _currentDate() {
   );
 }
 
-extension Edits<T> on Box<T> {
-  void resave(dynamic key) {
-    final item = get(key)!;
-    put(key, item);
+extension Edits<T extends GeneratedMessage> on Box<T> {
+  // void applyGenericUpdate(
+  //     bool Function(T model) isCorrect, void Function(T other) updates) {
+  //   for (final key in keys) {
+  //     final item = get(key)!;
+  //     if (isCorrect(item)) {
+  //       put(key, item.rebuild(updates));
+  //       return;
+  //     }
+  //   }
+  // }
+
+  void applyUpdate(dynamic key, void Function(T other) updates) {
+    final item = get(key);
+    if (item != null) {
+      put(key, item.rebuild(updates));
+    }
   }
 
-  void edit(dynamic key, void Function(T) applyEdit) {
-    final item = get(key)!;
-    applyEdit(item);
-    put(key, item);
+  void applyEdit(int typeId, dynamic key, void Function(T other) updates) {
+    final item = get(key);
+    if (item != null) {
+      final itemWithChangesApplied = item.rebuild(updates);
+      ensureRevert(typeId, key, item);
+      put(key, itemWithChangesApplied);
+    }
+  }
+}
+
+void ensureRevert(int typeId, dynamic key, dynamic item) {
+  final map = globalHiveApi.revert.get(typeId) ?? {};
+  if (!map.containsKey(key)) {
+    map[key] = item;
+    globalHiveApi.revert.put(typeId, map);
   }
 }
 
@@ -69,5 +99,29 @@ class FileReferenceCreateDelta extends DeltaBase {
     );
     globalHiveApi.file.put(model.key, model);
     return true;
+  }
+}
+
+int _typeIdOf(Type t) => _messageToTypeIdMap[t]!;
+
+List<dynamic> orderRequests(Iterable<dynamic> requests) {
+  return requests.toList()
+    ..sort(
+      (a, b) => _typeIdOf(a.runtimeType).compareTo(_typeIdOf(b.runtimeType)),
+    );
+}
+
+void _revertValuesInBox<T>(Box<T> box, Map<String, dynamic>? map) {
+  if (map == null) {
+    return;
+  }
+  for (final entry in map.entries) {
+    final key = entry.key;
+    final T? item = entry.value;
+    if (item == null) {
+      box.delete(key);
+    } else {
+      box.put(key, item);
+    }
   }
 }

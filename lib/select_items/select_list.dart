@@ -26,6 +26,7 @@ class SelectList<Item, SelectionModel> extends StatefulWidget {
   final SelectListController<Item, SelectionModel> controller;
   final List<Item> items;
   final ToDisplay<Item> toDisplay;
+  final Widget Function(Item)? displayItem;
 
   SelectList({
     Key? key,
@@ -35,6 +36,7 @@ class SelectList<Item, SelectionModel> extends StatefulWidget {
     this.inverseSelectAll = false,
     required this.items,
     required this.toDisplay,
+    this.displayItem,
   }) : super(key: key);
 
   @override
@@ -249,6 +251,20 @@ class _SelectListState<Item, SelectionModel>
   Widget _listItemBuilder(BuildContext context, int index) {
     final item = currentList[index];
     final isSelected = widget.controller.isSelected(item);
+    if (widget.displayItem != null) {
+      return InkWell(
+        onTap: () {
+          final errorMessage =
+              widget.controller.toggleSelected(item, !isSelected);
+          if (errorMessage != null) {
+            StarfishSnackbar.showErrorMessage(context, errorMessage);
+          } else if (widget.controller.isSelectionComplete) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: widget.displayItem!(item),
+      );
+    }
     return _ListItem(
       label: Text(
         widget.toDisplay(item),

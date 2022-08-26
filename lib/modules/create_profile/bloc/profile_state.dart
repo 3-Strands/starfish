@@ -18,15 +18,21 @@ class ProfileState {
     required this.languages,
     this.selectedCountries = const {},
     this.selectedLanguages = const {},
+    this.diallingCode = '',
+    this.phone = '',
     this.isSubmissionCandidate = false,
+    this.hasLinkGroups = false,
   });
 
   final String name;
   final Set<String> selectedCountries;
   final Set<String> selectedLanguages;
+  final String diallingCode;
+  final String phone;
   final List<Country> countries;
   final List<Language> languages;
   final bool isSubmissionCandidate;
+  final bool hasLinkGroups;
 
   ProfileError? get error => name.isEmpty
       ? ProfileError.missingName
@@ -43,19 +49,25 @@ class ProfileState {
 
   ProfileState copyWith({
     String? name,
+    String? diallingCode,
+    String? phone,
     Set<String>? selectedCountries,
     Set<String>? selectedLanguages,
     List<Country>? countries,
     List<Language>? languages,
     bool? isSubmissionCandidate,
+    bool? hasLinkGroups,
   }) =>
       ProfileState(
         name: name ?? this.name,
+        diallingCode: diallingCode ?? this.diallingCode,
+        phone: phone ?? this.phone,
         selectedCountries: selectedCountries ?? this.selectedCountries,
         selectedLanguages: selectedLanguages ?? this.selectedLanguages,
         countries: countries ?? this.countries,
         languages: languages ?? this.languages,
         isSubmissionCandidate:
             isSubmissionCandidate ?? this.isSubmissionCandidate,
+        hasLinkGroups: hasLinkGroups ?? this.hasLinkGroups,
       );
 }
