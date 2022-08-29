@@ -10,6 +10,7 @@ import 'package:starfish/apis/grpc_current_user_api.dart';
 import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/models/tokens.dart';
 import 'package:starfish/models/session.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 import 'package:starfish/utils/services/grpc_client.dart';
 
@@ -222,6 +223,26 @@ class AuthenticationRepository {
       if (error.code == StatusCode.unauthenticated) {
         final newSession = await refreshSession();
         client = makeAuthenticatedClient(newSession.tokens.accessToken);
+        return await makeRequest(client);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  Future<T> makeAuthenticatedFileTransferRequest<T>(
+      Future<T> Function(FileTransferClient client) makeRequest) async {
+    assert(_session.value != null,
+        'Attempting to make an authenticated request without a valid session!');
+    var client =
+        makeAuthenticatedFileTransferClient(_session.value!.tokens.accessToken);
+    try {
+      return await makeRequest(client);
+    } on GrpcError catch (error) {
+      if (error.code == StatusCode.unauthenticated) {
+        final newSession = await refreshSession();
+        client =
+            makeAuthenticatedFileTransferClient(newSession.tokens.accessToken);
         return await makeRequest(client);
       } else {
         throw error;

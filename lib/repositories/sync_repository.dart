@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/src/deltas.dart';
+import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
 
 class SyncRepository {
@@ -11,25 +13,49 @@ class SyncRepository {
     required this.makeAuthenticatedRequest,
   }) {
     _scheduler = _Scheduler(_doSync);
-    _subscription = globalHiveApi.sync
-        .watch()
-        .debounceTime(const Duration(milliseconds: 200))
-        .listen(
-      (_) {
-        if (globalHiveApi.sync.isNotEmpty) {
-          print('Detected items to sync');
-          print('======================');
-          for (final request in globalHiveApi.sync.values) {
-            print(request);
+    _subscriptions = [
+      globalHiveApi.sync
+          .watch()
+          .debounceTime(const Duration(milliseconds: 200))
+          .listen(
+        (_) {
+          if (globalHiveApi.sync.isNotEmpty) {
+            sync();
           }
-          sync();
+        },
+      ),
+      Connectivity().onConnectivityChanged.listen((status) {
+        if (status == ConnectivityResult.bluetooth) {
+          // Don't care about bluetooth connections...
+          return;
         }
-      },
-    );
+        isConnected = status != ConnectivityResult.none;
+      }),
+    ];
   }
 
+  bool _isConnected = true;
   late _Scheduler _scheduler;
-  late StreamSubscription _subscription;
+  late List<StreamSubscription> _subscriptions;
+
+  bool get isConnected => _isConnected;
+  set isConnected(bool value) {
+    if (value != _isConnected) {
+      _isConnected = value;
+      // If we have gained connectivity, check to see if (a) we have
+      // things to sync, or (b) it's been more than 15 minutes.
+      if (value && (globalHiveApi.sync.isNotEmpty || _lastSyncWasOld())) {
+        sync();
+      }
+    }
+  }
+
+  bool _lastSyncWasOld() =>
+      (globalHiveApi.lastSync?.seconds.toInt() ?? 0) <
+      Timestamp.fromDateTime(DateTime.now()).seconds.toInt() -
+          _secondsIn15Minutes;
+
+  static const _secondsIn15Minutes = 60 * 15;
 
   final MakeAuthenticatedRequest makeAuthenticatedRequest;
 
@@ -38,7 +64,7 @@ class SyncRepository {
 
   void close() {
     _scheduler.close();
-    _subscription.cancel();
+    _subscriptions.forEach((s) => s.cancel());
   }
 
   Future<void> syncImmediately() => _scheduler.schedule(immediately: true);
@@ -91,6 +117,7 @@ class SyncRepository {
             syncRequest.deleteMaterial = request;
           else if (request is UpdateCurrentUserRequest)
             syncRequest.updateCurrentUser = request;
+          print('Adding $syncRequest');
           controller.add(syncRequest);
         }
         controller.close();
@@ -209,6 +236,7 @@ class _Scheduler {
   _Scheduler(this.sync);
 
   final Future<void> Function() sync;
+  Timer? _nextSyncTimer;
 
   final _isSyncing = BehaviorSubject<bool>.seeded(false);
   Completer<void>? _completer;
@@ -219,12 +247,15 @@ class _Scheduler {
 
   void _run() {
     _isSyncing.value = true;
+    _nextSyncTimer?.cancel();
     sync()
         .then(_completer!.complete)
         .onError(_completer!.completeError)
         .whenComplete(() {
       _isSyncing.value = false;
       _completer = null;
+      // Schedule the next
+      _nextSyncTimer = Timer(const Duration(minutes: 15), schedule);
     });
   }
 
@@ -247,6 +278,7 @@ class _Scheduler {
 
   void close() async {
     _timer?.cancel();
+    _nextSyncTimer?.cancel();
     try {
       if (isSyncing) {
         await _completer!.future;

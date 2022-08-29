@@ -32,10 +32,11 @@ Future<Uint8List> _fetchData(String url) async {
   return completer.future;
 }
 
-Future<void> downloadMaterial(FileReference fileReference) async {
+Future<void> downloadMaterial(
+    FileReference fileReference, FileTransferClient client) async {
   final buffer = <List<int>>[];
 
-  await shared.downloadFile(fileReference,
+  await shared.downloadFile(fileReference, client,
       onData: (chunk) => buffer.add(chunk));
 
   final file = await File.fromFilename(fileReference.filename);

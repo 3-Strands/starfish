@@ -191,9 +191,6 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
         (GroupUser groupUser) => groupUser.userId == user.id;
     final memberMatchesUser =
         (UserWithGroupRole member) => member.user.id == user.id;
-    print(user);
-    print(state.currentMembers);
-    print(state.newMembers);
     if (state.currentMembers.any(groupUserMatchesUser)) {
       // We only mark this item for permanent deletion if it was previously
       // saved.

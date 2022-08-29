@@ -4,28 +4,31 @@ import 'package:starfish/models/file_reference.dart';
 // import 'package:starfish/repository/materials_repository.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
-Future<void> downloadFile(FileReference file,
+Future<FileMetaData> downloadFile(FileReference file, FileTransferClient client,
     {required void Function(List<int> chunk) onData}) async {
-  // final responseStream = await MaterialRepository()
-  //   .apiProvider
-  //   .downloadFile(
-  //     Stream.value(
-  //       DownloadRequest(
-  //         entityId: file.entityId,
-  //         entityType: EntityType.valueOf(file.entityType!),
-  //         filenames: <String>[file.filename],
-  //       ),
-  //     ),
-  //   );
+  final responseStream = client.download(
+    Stream.value(
+      DownloadRequest(
+        entityId: file.entityId,
+        entityType: EntityType.valueOf(file.entityType),
+        filenames: <String>[file.filename],
+      ),
+    ),
+  );
 
-  // await for (final fileData in responseStream) {
-  //   if (fileData.hasMetaData()) {
-  //     // print("META DATA: ${fileData.metaData}");
-  //   } else if (fileData.hasChunk()) {
-  //     // print("FILE CHUNK: ${fileData.chunk.length}");
-  //     onData(fileData.chunk);
-  //   }
-  // }
+  FileMetaData? metaData;
+
+  await for (final fileData in responseStream) {
+    if (fileData.hasMetaData()) {
+      print('Meta data: ${fileData.metaData}');
+      metaData = fileData.metaData;
+    } else if (fileData.hasChunk()) {
+      print('Chunk of length ${fileData.chunk.length}');
+      onData(fileData.chunk);
+    }
+  }
+
+  return metaData ?? FileMetaData();
 }
 
 Future<void> uploadFile(

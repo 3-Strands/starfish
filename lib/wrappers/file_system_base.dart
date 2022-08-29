@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:starfish/models/file_reference.dart';
+import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 
-Future<void> downloadMaterial(FileReference file) =>
+Future<void> downloadMaterial(FileReference file, FileTransferClient client) =>
     Future.error(Exception("Download not supported"));
 
 Future<void> uploadMaterials(Iterable<FileReference> files) =>

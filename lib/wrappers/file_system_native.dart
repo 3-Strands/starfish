@@ -9,7 +9,7 @@ import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'file_system_shared.dart' as shared;
 
 // TODO: don't download the file again if already downloaded.
-downloadMaterial(FileReference fileReference) async {
+downloadMaterial(FileReference fileReference, FileTransferClient client) async {
   String filePath = await File._filepathFromFilename(fileReference.filename);
 
   io.File file = io.File(filePath);
@@ -17,7 +17,7 @@ downloadMaterial(FileReference fileReference) async {
   io.RandomAccessFile randomAccessFile =
       await file.open(mode: io.FileMode.write);
 
-  await shared.downloadFile(fileReference,
+  await shared.downloadFile(fileReference, client,
       onData: (chunk) => randomAccessFile.writeFromSync(chunk));
   await randomAccessFile.close();
 
