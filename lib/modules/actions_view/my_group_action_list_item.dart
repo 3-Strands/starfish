@@ -7,56 +7,47 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/modules/actions_view/add_edit_action.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
-import 'package:starfish/modules/actions_view/cubit/add_edit_action_cubit.dart';
 import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:template_string/template_string.dart';
 
 class MyGroupActionListItem extends StatelessWidget {
   final ActionWithAssignedStatus actionWithAssignedStatus;
-  final index;
+  final int index;
+  final int totalLeaners;
   final Function(
-          Action action, ActionGroupUserWithStatus actionGrouUsersWithStatus)
+          Action action, ActionGroupUserWithStatus actionGroupUsersWithStatus)
       onActionTap;
 
-  const MyGroupActionListItem(
-      {Key? key,
-      required this.actionWithAssignedStatus,
-      required this.onActionTap,
-      this.index});
+  const MyGroupActionListItem({
+    Key? key,
+    required this.actionWithAssignedStatus,
+    required this.onActionTap,
+    required this.index,
+    required this.totalLeaners,
+  });
 
   @override
   Widget build(BuildContext context) {
     final _appLocalizations = AppLocalizations.of(context)!;
     final Action _action = actionWithAssignedStatus.action;
-    final ActionGroupUserWithStatus? _actionGrouUsersWithStatus =
+    final ActionGroupUserWithStatus? _actionGroupUsersWithStatus =
         actionWithAssignedStatus.groupUserWithStatus;
 
-    //final ActionUser? _actionUser = actionWithAssignedStatus.actionUser;
+    int countActionStatusDone = _actionGroupUsersWithStatus?.actionsDone ?? 0;
+    int countActionStatusNotDone =
+        _actionGroupUsersWithStatus?.actionsNotDone ?? 0;
+    int countActionStatusOverdue =
+        _actionGroupUsersWithStatus?.actionsOverdue ?? 0;
 
-    int countActionStatusDone = 1;
-    //action.memberCountByActionStatus(ActionStatus.DONE);
-    int countActionStatusNotDone = 1;
-    // action.memberCountByActionStatus(ActionStatus.NOT_DONE);
-    int countActionStatusOverdue = 1;
-    //   action.memberCountByActionStatus(ActionStatus.OVERDUE);
-
-    // bool maintainSize = (countActionStatusDone +
-    //         countActionStatusNotDone +
-    //         countActionStatusOverdue) >
-    //     0;
     bool maintainSize = false;
 
-    int _thumbsUp = 0;
-    //action.learnerCountByEvaluation(ActionUser_Evaluation.GOOD);
-    int _thumbsDown =
-        0; //action.learnerCountByEvaluation(ActionUser_Evaluation.BAD);
-    int _totalLearners = 1;
-    // (action.learners != null && action.learners!.length > 0)
-    //     ? action.learners!.length
-    //     : 1;
+    int _thumbsUp = _actionGroupUsersWithStatus?.goodEvaluations ?? 0;
+    int _thumbsDown = _actionGroupUsersWithStatus?.badEvaluations ?? 0;
+    int _totalLearners = totalLeaners;
 
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
@@ -68,8 +59,8 @@ class MyGroupActionListItem extends StatelessWidget {
       color: AppColors.txtFieldBackground,
       child: InkWell(
         onTap: () {
-          if (_actionGrouUsersWithStatus != null) {
-            onActionTap(_action, _actionGrouUsersWithStatus);
+          if (_actionGroupUsersWithStatus != null) {
+            onActionTap(_action, _actionGroupUsersWithStatus);
           }
         },
         child: Padding(
@@ -124,23 +115,27 @@ class MyGroupActionListItem extends StatelessWidget {
                             final cubit = context.read<ActionsCubit>();
                             switch (value) {
                               case 0:
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => AddEditAction(
-                                //       action: action,
-                                //     ),
-                                //   ),
-                                // ).then((value) => FocusScope.of(context)
-                                //     .requestFocus(new FocusNode()));
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => AddEditAction(
-                                          action: _action,
-                                        )));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddEditAction(
+                                              action: _action,
+                                            )));
                                 break;
                               case 1:
-                                //_deleteAction(context, action);
-                                cubit.deleteAction(_action);
+                                Alerts.showMessageBox(
+                                    context: context,
+                                    title: _appLocalizations.deleteActionTitle,
+                                    message:
+                                        _appLocalizations.deleteActionMessage,
+                                    positiveButtonText:
+                                        _appLocalizations.delete,
+                                    negativeButtonText:
+                                        _appLocalizations.cancel,
+                                    positiveActionCallback: () {
+                                      cubit.deleteAction(_action);
+                                    },
+                                    negativeActionCallback: () {});
 
                                 break;
                             }
@@ -360,8 +355,7 @@ class MyGroupActionListItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                   child: Text(
-                    //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
-                    '${_appLocalizations.due}: ${DateTimeUtils.formatHiveDate(_action.dateDue)}',
+                    '${_appLocalizations.due}: ${_action.dateDue.isValidDate ? DateTimeUtils.formatHiveDate(_action.dateDue) : _appLocalizations.na}',
                     style: TextStyle(
                       color: Color(0xFF797979),
                       fontSize: 19.sp,
@@ -376,22 +370,5 @@ class MyGroupActionListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  _deleteAction(BuildContext context, Action action) {
-    // final bloc = Provider.of(context);
-    // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
-    // Alerts.showMessageBox(
-    //     context: context,
-    //     title: _appLocalizations.deleteActionTitle,
-    //     message: _appLocalizations.deleteActionMessage,
-    //     positiveButtonText: _appLocalizations.delete,
-    //     negativeButtonText: _appLocalizations.cancel,
-    //     positiveActionCallback: () {
-    //       // Mark this action for deletion
-    //       action.isDirty = true;
-    //       bloc.actionBloc.createUpdateAction(action);
-    //     },
-    //     negativeActionCallback: () {});
   }
 }
