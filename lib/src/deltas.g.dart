@@ -28,7 +28,7 @@
 /// If the current sync *succeeds*, then we have to pretend that the deltas weren't applied
 /// until after the sync was finished. In that case, the data would have been rolled back
 /// to its previous state in preparation for the server changes, and we simply have to reapply
-/// the mid-sync deltas once again, ignoring the values in the backup sync box.
+/// the mid-sync deltas once again.
 
 part of 'deltas.dart';
 
@@ -1515,7 +1515,67 @@ class TransformationCreateDelta extends DeltaBase {
   }
 }
 
-// Users cannot update the Transformation type
+class TransformationUpdateDelta extends DeltaBase {
+  TransformationUpdateDelta(
+    this._model, {
+    String? impactStory,
+  }) {
+    final updateMask = <String>{};
+    if (impactStory != null && impactStory != _model.impactStory) {
+      this.impactStory = impactStory;
+      updateMask.add('impact_story');
+    } else {
+      this.impactStory = null;
+    }
+    _updateMask = updateMask;
+  }
+
+  final Transformation _model;
+  late final Set<String> _updateMask;
+  late final String? impactStory;
+
+  Transformation applyUpdateToModel(Transformation originalModel) {
+    return originalModel.rebuild((other) {
+      if (impactStory != null) {
+        other.impactStory = impactStory!;
+      }
+    });
+  }
+
+  @override
+  bool apply() {
+    if (_updateMask.isEmpty) {
+      return false;
+    }
+
+    final originalModel = globalHiveApi.transformation.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.transformation.put(updatedModel.id, updatedModel);
+    ensureRevert(21, originalModel.id, originalModel);
+    Set<String>? updateMask = _updateMask;
+    final CreateUpdateTransformationRequest? request =
+        globalHiveApi.getSyncRequest(updatedModel.id);
+    if (request != null) {
+      if (!request.hasUpdateMask()) {
+        // This edit follows a create. Stays as a create.
+        updateMask = null;
+      } else {
+        // This edit follows a previous edit. Merge the edits.
+        updateMask = {...updateMask, ...request.updateMask.paths};
+      }
+    }
+    globalHiveApi.putSyncRequest(
+        updatedModel.id,
+        CreateUpdateTransformationRequest(
+            transformation: updatedModel,
+            updateMask:
+                updateMask == null ? null : FieldMask(paths: updateMask)));
+    return true;
+  }
+}
 
 // Users cannot delete the Transformation type
 

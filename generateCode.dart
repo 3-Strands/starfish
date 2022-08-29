@@ -645,6 +645,7 @@ final messages = <int, MessageWrapper>{
     Transformation(),
     storage: BoxStorage('transformation'),
     createUpdateRequest: CreateUpdateTransformationRequest(),
+    editableFields: _kTransformationFieldMask,
   ),
   22: Model(
     Output(),
