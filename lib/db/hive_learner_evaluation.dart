@@ -69,12 +69,12 @@ class HiveLearnerEvaluation extends HiveObject {
   }
 }
 
-extension HiveLearnerEvaluationExt on HiveLearnerEvaluation {
-  String? get name {
-    return EvaluationCategoryProvider().getCategoryById(this.categoryId!)?.name;
-  }
+// extension HiveLearnerEvaluationExt on HiveLearnerEvaluation {
+//   String? get name {
+//     return EvaluationCategoryProvider().getCategoryById(this.categoryId!)?.name;
+//   }
 
-  HiveEvaluationCategory? get category {
-    return EvaluationCategoryProvider().getCategoryById(this.categoryId!);
-  }
-}
+//   HiveEvaluationCategory? get category {
+//     return EvaluationCategoryProvider().getCategoryById(this.categoryId!);
+//   }
+// }

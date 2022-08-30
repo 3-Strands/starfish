@@ -59,9 +59,9 @@ class HiveGroupUser extends HiveObject {
     );
   }
 
-  HiveUser get user => globalHiveApi.user.get(userId)!;
+  // HiveUser get user => globalHiveApi.user.get(userId)!;
 
-  HiveGroup get group => globalHiveApi.group.get(groupId)!;
+  // HiveGroup get group => globalHiveApi.group.get(groupId)!;
 
   // HiveTransformation? getTransformationForMonth(HiveDate hiveDate) {
   //   return this.transformations.firstWhereOrNull((element) {

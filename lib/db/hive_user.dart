@@ -173,54 +173,54 @@ extension HiveUserExt on HiveUser {
   }
 
 // TODO: improve by havving a optional param HiveDate, for which the status can be retrieved
-  ActionStatus actionStatusbyId(HiveAction action) {
-    /*if (this.actions == null || this.actions?.length == 0) {
-      print("Check Point 1");
-      return ActionStatus.NOT_DONE;
-    }*/
-    /*HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
-        element.actionId! == action.id! && element.userId! == this.id);*/
+  // ActionStatus actionStatusbyId(HiveAction action) {
+  //   /*if (this.actions == null || this.actions?.length == 0) {
+  //     print("Check Point 1");
+  //     return ActionStatus.NOT_DONE;
+  //   }*/
+  //   /*HiveActionUser? actionUser = this.actions!.firstWhereOrNull((element) =>
+  //       element.actionId! == action.id! && element.userId! == this.id);*/
 
-    HiveActionUser? actionUser =
-        ActionProvider().getActionUser(this.id!, action.id);
+  //   HiveActionUser? actionUser =
+  //       ActionProvider().getActionUser(this.id!, action.id);
 
-    if (actionUser != null) {
-      ActionStatus? actionStatus = actionUser.status != null
-          ? ActionUser_Status.valueOf(actionUser.status!)!.convertTo()
-          : ActionStatus.NOT_DONE;
+  //   if (actionUser != null) {
+  //     ActionStatus? actionStatus = actionUser.status != null
+  //         ? ActionUser_Status.valueOf(actionUser.status!)!.convertTo()
+  //         : ActionStatus.NOT_DONE;
 
-      //
-      if (actionStatus == ActionStatus.DONE) {
-        return ActionStatus.DONE;
-      }
-    }
+  //     //
+  //     if (actionStatus == ActionStatus.DONE) {
+  //       return ActionStatus.DONE;
+  //     }
+  //   }
 
-    // We need to check if the action is not done yet, if it's overdue or not
-    if (action.dateDue == null || !action.hasValidDueDate) {
-      return ActionStatus.NOT_DONE;
-    } else if (action.dateDue != null &&
-        action.dateDue.isBefore(HiveDate.fromDateTime(DateTime.now()))) {
-      return ActionStatus.OVERDUE;
-    } else {
-      return ActionStatus.NOT_DONE;
-    }
-  }
+  //   // We need to check if the action is not done yet, if it's overdue or not
+  //   if (action.dateDue == null || !action.hasValidDueDate) {
+  //     return ActionStatus.NOT_DONE;
+  //   } else if (action.dateDue != null &&
+  //       action.dateDue.isBefore(HiveDate.fromDateTime(DateTime.now()))) {
+  //     return ActionStatus.OVERDUE;
+  //   } else {
+  //     return ActionStatus.NOT_DONE;
+  //   }
+  // }
 
-  ActionUser_Evaluation actionUserEvaluationById(HiveAction action) {
-    HiveActionUser? actionUser =
-        ActionProvider().getActionUser(this.id!, action.id);
+  // ActionUser_Evaluation actionUserEvaluationById(HiveAction action) {
+  //   HiveActionUser? actionUser =
+  //       ActionProvider().getActionUser(this.id!, action.id);
 
-    if (actionUser != null) {
-      ActionUser_Evaluation actionUserEvaluation = actionUser.evaluation != null
-          ? ActionUser_Evaluation.valueOf(actionUser.evaluation!)!
-          : ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
+  //   if (actionUser != null) {
+  //     ActionUser_Evaluation actionUserEvaluation = actionUser.evaluation != null
+  //         ? ActionUser_Evaluation.valueOf(actionUser.evaluation!)!
+  //         : ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
 
-      return actionUserEvaluation;
-    }
-    return ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
-  }
+  //     return actionUserEvaluation;
+  //   }
+  //   return ActionUser_Evaluation.UNSPECIFIED_EVALUATION;
+  // }
 
-  HiveActionUser? actionUser(HiveAction action) {
-    return ActionProvider().getActionUser(this.id!, action.id);
-  }
+  // HiveActionUser? actionUser(HiveAction action) {
+  //   return ActionProvider().getActionUser(this.id!, action.id);
+  // }
 }

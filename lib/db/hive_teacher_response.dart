@@ -64,8 +64,8 @@ class HiveTeacherResponse extends HiveObject {
   }
 }
 
-extension HiveTeacherResponseExt on HiveTeacherResponse {
-  HiveUser? get teacher {
-    return UserProvider().getUserById(this.teacherId!);
-  }
-}
+// extension HiveTeacherResponseExt on HiveTeacherResponse {
+//   HiveUser? get teacher {
+//     return UserProvider().getUserById(this.teacherId!);
+//   }
+// }

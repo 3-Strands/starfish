@@ -55,18 +55,18 @@ class HiveTransformation extends HiveObject {
     );
   }
 
-  @override
-  String toString() {
-    return '''{ id: ${this.id}, userId: ${this.userId}, groupId: ${this.groupId}, 
-          month: ${this.month}, impactStory: ${this.impactStory}, files: ${this.files}, localFiles: ${this.localFiles} }''';
-  }
+  // @override
+  // String toString() {
+  //   return '''{ id: ${this.id}, userId: ${this.userId}, groupId: ${this.groupId}, 
+  //         month: ${this.month}, impactStory: ${this.impactStory}, files: ${this.files}, localFiles: ${this.localFiles} }''';
+  // }
 }
 
-extension HiveTransformationExt on HiveTransformation {
-  List<HiveFile> get localFiles {
-    return TransformationProvider()
-        .getFiles()
-        .where((element) => element.entityId == this.id)
-        .toList();
-  }
-}
+// extension HiveTransformationExt on HiveTransformation {
+//   List<HiveFile> get localFiles {
+//     return TransformationProvider()
+//         .getFiles()
+//         .where((element) => element.entityId == this.id)
+//         .toList();
+//   }
+// }

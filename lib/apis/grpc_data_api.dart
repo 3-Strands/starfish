@@ -97,8 +97,8 @@ class GrpcDataApi {
     return client.createUpdateGroupUsers(request);
   }
 
-  ResponseStream<DeleteGroupUsersResponse> deleteGroupUsers(
-      Stream<GroupUser> groupUser) {
+  ResponseStream<DeleteGroupUserResponse> deleteGroupUsers(
+      Stream<DeleteGroupUserRequest> groupUser) {
     return client.deleteGroupUsers(groupUser);
   }
 
@@ -116,14 +116,12 @@ class GrpcDataApi {
     return client.createUpdateUsers(request);
   }
 
-  ResponseStream<CreateUpdateActionsResponse>
-      createUpdateActions(
-          Stream<CreateUpdateActionsRequest> request) {
+  ResponseStream<CreateUpdateActionsResponse> createUpdateActions(
+      Stream<CreateUpdateActionsRequest> request) {
     return client.createUpdateActions(request);
   }
 
-  ResponseStream<DeleteActionResponse> deleteAction(
-      Action action) {
+  ResponseStream<DeleteActionResponse> deleteAction(Action action) {
     var request = DeleteActionRequest.create();
     request.actionId = action.id;
 
@@ -131,14 +129,12 @@ class GrpcDataApi {
     return client.deleteActions(streamRequest);
   }
 
-  ResponseStream<CreateUpdateActionUserResponse>
-      createUpdateActionUsers(
-          Stream<CreateUpdateActionUserRequest> request) {
+  ResponseStream<CreateUpdateActionUserResponse> createUpdateActionUsers(
+      Stream<CreateUpdateActionUserRequest> request) {
     return client.createUpdateActionUsers(request);
   }
 
-  ResponseStream<UploadStatus> uploadFile(
-      Stream<FileData> request) {
+  ResponseStream<UploadStatus> uploadFile(Stream<FileData> request) {
     return fileTransferClient.upload(request);
   }
 
