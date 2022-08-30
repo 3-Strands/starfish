@@ -104,7 +104,7 @@ class AddEditGroupState {
             selectedEvaluationCategories ?? this.selectedEvaluationCategories,
         name: name ?? this.name,
         description: description ?? this.description,
-        currentMembers: this.currentMembers,
+        currentMembers: currentMembers ?? this.currentMembers,
         newMembers: newMembers ?? this.newMembers,
         removedMembers: removedMembers ?? this.removedMembers,
         roleChanges: roleChanges ?? this.roleChanges,

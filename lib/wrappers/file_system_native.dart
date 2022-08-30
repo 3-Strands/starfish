@@ -9,7 +9,7 @@ import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'file_system_shared.dart' as shared;
 
 // TODO: don't download the file again if already downloaded.
-downloadMaterial(FileReference fileReference) async {
+downloadMaterial(FileReference fileReference, FileTransferClient client) async {
   String filePath = await File._filepathFromFilename(fileReference.filename);
 
   io.File file = io.File(filePath);
@@ -17,31 +17,29 @@ downloadMaterial(FileReference fileReference) async {
   io.RandomAccessFile randomAccessFile =
       await file.open(mode: io.FileMode.write);
 
-  await shared.downloadFile(fileReference,
+  await shared.downloadFile(fileReference, client,
       onData: (chunk) => randomAccessFile.writeFromSync(chunk));
   await randomAccessFile.close();
 
   fileReference.filepath = file.path;
 }
 
-Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
-    shared.uploadFile(readStream: (controller) async {
-      for (final fileReference in fileReferences) {
+Future<void> uploadFiles(
+        Iterable<FileReference> fileReferences, FileTransferClient client) =>
+    shared.uploadFiles(
+      fileReferences,
+      client,
+      readStream: (controller, fileReference) async {
         final file = io.File(fileReference.filepath!);
-        final metaData = FileMetaData(
-          entityId: fileReference.entityId,
-          filename: fileReference.filename,
-          entityType: EntityType.MATERIAL,
-        );
+        // TODO: Make sure file exists!
 
-        controller.add(FileData(metaData: metaData));
+        controller.add(FileData(metaData: fileReference.toFileMetaData()));
 
-        Stream<List<int>> inputStream = file.openRead();
-        await for (final data in inputStream) {
+        await for (final data in file.openRead()) {
           controller.add(FileData(chunk: data));
         }
-      }
-    });
+      },
+    );
 
 Future<void> openFile(String filepath) async {
   await OpenFile.open(filepath);

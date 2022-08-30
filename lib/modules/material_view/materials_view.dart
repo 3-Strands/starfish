@@ -14,6 +14,7 @@ import 'package:starfish/constants/text_styles.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
+import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/single_material_view.dart';
 import 'package:starfish/modules/settings_view/settings_view.dart';
@@ -353,7 +354,12 @@ class _MaterialsViewState extends State<MaterialsView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Routes.addNewMaterial);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddEditMaterial(),
+            ),
+          );
         },
         child: Icon(Icons.add),
       ),

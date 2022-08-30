@@ -9,7 +9,6 @@ import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/currentUser.dart';
 import 'package:starfish/widgets/separator_line_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/enums/group_user_role.dart';
 
 class GroupMemberListItem extends StatefulWidget {
   final GroupUser_Role role;

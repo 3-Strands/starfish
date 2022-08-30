@@ -107,9 +107,8 @@ class SyncRepositoryOld {
 
   final GrpcRepository _grpcRepository;
 
-  SyncRepositoryOld({
-    required GrpcRepository grpcRepository
-  }) : _grpcRepository = grpcRepository {
+  SyncRepositoryOld({required GrpcRepository grpcRepository})
+      : _grpcRepository = grpcRepository {
     lastSyncBox = Hive.box<HiveLastSyncDateTime>(HiveDatabase.LAST_SYNC_BOX);
     countryBox = Hive.box<HiveCountry>(HiveDatabase.COUNTRY_BOX);
     languageBox = Hive.box<HiveLanguage>(HiveDatabase.LANGUAGE_BOX);
@@ -414,8 +413,7 @@ class SyncRepositoryOld {
   }
 
   Future syncCountries() async {
-    ResponseStream<Country> stream =
-        _grpcRepository.listAllCountries();
+    ResponseStream<Country> stream = _grpcRepository.listAllCountries();
     return stream.forEach((country) {
       int _currentIndex = -1;
       countryBox.values.toList().asMap().forEach((key, hiveCountry) {
@@ -464,8 +462,7 @@ class SyncRepositoryOld {
 
   Future syncLanguages() async {
     await languageBox.clear();
-    ResponseStream<Language> stream =
-        _grpcRepository.listAllLanguages();
+    ResponseStream<Language> stream = _grpcRepository.listAllLanguages();
     return stream.forEach((language) {
       HiveLanguage _language =
           HiveLanguage(id: language.id, name: language.name);
@@ -584,8 +581,7 @@ class SyncRepositoryOld {
       });
     }
 
-    ResponseStream<MaterialTopic> stream =
-        _grpcRepository.getMaterialTopics();
+    ResponseStream<MaterialTopic> stream = _grpcRepository.getMaterialTopics();
     return stream.forEach((topic) {
       HiveMaterialTopic _materialTopic = HiveMaterialTopic.from(topic);
 
@@ -643,8 +639,7 @@ class SyncRepositoryOld {
       });
     }
 
-    ResponseStream<MaterialType> stream =
-        _grpcRepository.getMaterialTypes();
+    ResponseStream<MaterialType> stream = _grpcRepository.getMaterialTypes();
     return stream.forEach((materialType) {
       HiveMaterialType _materialType = HiveMaterialType.from(materialType);
 
@@ -881,8 +876,7 @@ class SyncRepositoryOld {
         .firstWhereOrNull((element) => element.isUpdated == true);
 
     if (_currentUser != null) {
-      _grpcRepository
-          .updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths);
+      _grpcRepository.updateCurrentUser(_currentUser.toUser(), _fieldMaskPaths);
     }
     print('============= END: Sync Local CurrentUser to Remote =============');
   }
@@ -1090,8 +1084,7 @@ class SyncRepositoryOld {
       });
     }
 
-    ResponseStream<starfish.Action> stream =
-        _grpcRepository.getActions();
+    ResponseStream<starfish.Action> stream = _grpcRepository.getActions();
 
     return stream.forEach((action) {
       HiveAction _hiveAction = HiveAction.from(action);
@@ -1236,7 +1229,7 @@ class SyncRepositoryOld {
     }
 
     try {
-      await uploadMaterials(_localFiles);
+      await uploadFiles(_localFiles);
       await Future.wait(_localFiles.map((hiveFile) {
         hiveFile.isSynced = true;
         return hiveFile.save();
@@ -1279,8 +1272,8 @@ class SyncRepositoryOld {
     StreamController<CreateUpdateActionUserRequest> _controller =
         StreamController();
 
-    final response = _grpcRepository
-        .createUpdateActionUsers(_controller.stream);
+    final response =
+        _grpcRepository.createUpdateActionUsers(_controller.stream);
     response.listen((value) {
       // delete this actionuser form `ACTION_USER_BOX`
       HiveActionUser _hiveActionUser = HiveActionUser.from(value.actionUser);
@@ -1316,8 +1309,7 @@ class SyncRepositoryOld {
 
     try {
       ResponseStream<CreateUpdateLearnerEvaluationResponse> responseStream =
-          _grpcRepository
-              .createUpdateLearnerEvaluations(_controller.stream);
+          _grpcRepository.createUpdateLearnerEvaluations(_controller.stream);
       learnerEvaluationBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((_hiveLearnerEvaluation) {
@@ -1365,8 +1357,7 @@ class SyncRepositoryOld {
 
     try {
       ResponseStream<CreateUpdateGroupEvaluationResponse> responseStream =
-          _grpcRepository
-              .createUpdateGroupEvaluations(_controller.stream);
+          _grpcRepository.createUpdateGroupEvaluations(_controller.stream);
       groupEvaluationBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((_hiveGroupEvaluation) {
@@ -1412,8 +1403,7 @@ class SyncRepositoryOld {
 
     try {
       ResponseStream<CreateUpdateTransformationResponse> responseStream =
-          _grpcRepository
-              .createUpdateTransformations(_controller.stream);
+          _grpcRepository.createUpdateTransformations(_controller.stream);
       transformationBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((_hivetransformation) {
@@ -1464,8 +1454,7 @@ class SyncRepositoryOld {
 
     try {
       ResponseStream<CreateUpdateTeacherResponseResponse> responseStream =
-          _grpcRepository
-              .createUpdateTeacherResponses(_controller.stream);
+          _grpcRepository.createUpdateTeacherResponses(_controller.stream);
       teacherResponseBox.values
           .where((element) => element.isNew || element.isUpdated)
           .forEach((_hiveTeacherResponse) {

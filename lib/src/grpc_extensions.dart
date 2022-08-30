@@ -114,9 +114,10 @@ extension UserExt on User {
     return '+${this.diallingCode}';
   }
 
-  String get fullPhone => '+${diallingCode.replaceFirst('+', '')} $phone';
+  String get fullPhone =>
+      '${diallingCode.isNotEmpty ? '+${diallingCode.replaceFirst('+', '')} ' : ''}$phone';
 
-  bool get hasFullPhone => diallingCode.isNotEmpty && phone.isNotEmpty;
+  bool get hasFullPhone => phone.isNotEmpty;
 
   List<Group> get adminGroups => List<Group>.from(
         groups

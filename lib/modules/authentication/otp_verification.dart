@@ -16,7 +16,7 @@ import 'bloc/otp_timer_bloc.dart';
 import 'footer.dart';
 
 class OTPVerification extends StatelessWidget {
-  const OTPVerification({ Key? key }) : super(key: key);
+  const OTPVerification({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +34,21 @@ class OTPVerification extends StatelessWidget {
   }
 }
 
-class OTPVerificationView extends StatelessWidget {
-  const OTPVerificationView({ Key? key }) : super(key: key);
+class OTPVerificationView extends StatefulWidget {
+  const OTPVerificationView({Key? key}) : super(key: key);
+
+  @override
+  State<OTPVerificationView> createState() => _OTPVerificationViewState();
+}
+
+class _OTPVerificationViewState extends State<OTPVerificationView> {
+  final _buttonFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _buttonFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +78,7 @@ class OTPVerificationView extends StatelessWidget {
                     child: BlocBuilder<OtpBloc, OtpState>(
                       builder: (context, state) {
                         return PinCodeTextField(
+                          autoFocus: true,
                           appContext: context,
                           pastedTextStyle: TextStyle(
                             color: Colors.green.shade600,
@@ -89,10 +103,15 @@ class OTPVerificationView extends StatelessWidget {
                             )
                           ],
                           onChanged: (value) =>
-                            context.read<OtpBloc>().add(OtpChanged(value)),
+                              context.read<OtpBloc>().add(OtpChanged(value)),
                           onSubmitted: state.isComplete
-                            ? (_) => context.read<LoginFlowBloc>().add(SMSCodeEntered(state.code))
-                            : null,
+                              ? (_) => context
+                                  .read<LoginFlowBloc>()
+                                  .add(SMSCodeEntered(state.code))
+                              : null,
+                          onCompleted: (_) {
+                            _buttonFocus.requestFocus();
+                          },
                         );
                       },
                     ),
@@ -108,13 +127,15 @@ class OTPVerificationView extends StatelessWidget {
                         if (state is TimerTicking) {
                           return Text(
                             appLocalizations.waitForSeconds
-                                .insertTemplateValues({'timeout': state.secondsRemaining}),
+                                .insertTemplateValues(
+                                    {'timeout': state.secondsRemaining}),
                             style: resentOTPTextStyle,
                           );
                         }
                         return TextButton(
-                          onPressed: () =>
-                            context.read<LoginFlowBloc>().add(const SMSCodeRefreshRequested()),
+                          onPressed: () => context
+                              .read<LoginFlowBloc>()
+                              .add(const SMSCodeRefreshRequested()),
                           child: Text(
                             appLocalizations.resentOTP,
                             style: resentOTPTextStyle,
@@ -160,8 +181,8 @@ class OTPVerificationView extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       primary: AppColors.unselectedButtonBG,
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(20.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
                   ),
@@ -179,27 +200,31 @@ class OTPVerificationView extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.all(0.0),
                   child: BlocBuilder<OtpBloc, OtpState>(
-                    buildWhen: (previous, current) => previous.isComplete != current.isComplete,
-                    builder: (context, state) {
-                      return ElevatedButton(
-                        child: Text(
-                          appLocalizations.next,
-                          textAlign: TextAlign.start,
-                          style: buttonTextStyle,
-                        ),
-                        onPressed: state.isComplete
-                          ? () => context.read<LoginFlowBloc>().add(SMSCodeEntered(state.code))
-                          : null,
-                        style: ElevatedButton.styleFrom(
-                          primary:
-                              state.isComplete ? AppColors.selectedButtonBG : Colors.grey,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0),
+                      buildWhen: (previous, current) =>
+                          previous.isComplete != current.isComplete,
+                      builder: (context, state) {
+                        return ElevatedButton(
+                          child: Text(
+                            appLocalizations.next,
+                            textAlign: TextAlign.start,
+                            style: buttonTextStyle,
                           ),
-                        ),
-                      );
-                    }
-                  ),
+                          focusNode: _buttonFocus,
+                          onPressed: state.isComplete
+                              ? () => context
+                                  .read<LoginFlowBloc>()
+                                  .add(SMSCodeEntered(state.code))
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            primary: state.isComplete
+                                ? AppColors.selectedButtonBG
+                                : Colors.grey,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        );
+                      }),
                 ),
               ),
             ],

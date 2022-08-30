@@ -312,7 +312,7 @@ class TimestampAdapter extends _GrpcAdapter<Timestamp> {
   Timestamp create() => Timestamp.create();
 }
 
-void registerAllAdapters() {
+void _registerAllAutoAdapters() {
   Hive.registerAdapter(CountryAdapter());
   Hive.registerAdapter(LanguageAdapter());
   Hive.registerAdapter(GroupUserAdapter());

@@ -1,8 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:starfish/models/file_reference.dart';
+import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,7 +51,11 @@ class GeneralFunctions {
       }
       EasyLoading.show();
       try {
-        await fs.downloadMaterial(file);
+        await context
+            .read<AuthenticationRepository>()
+            .makeAuthenticatedFileTransferRequest(
+              (client) => fs.downloadMaterial(file, client),
+            );
         file.isSynced = true;
         await file.save();
         await fs.openFile(file.filepath!);
@@ -61,24 +67,24 @@ class GeneralFunctions {
     if (Platform.isWeb &&
         !(await StarfishSharedPreference().hasBeenRemindedToDeleteFiles())) {
       final l18n = AppLocalizations.of(context)!;
-      final dialog = CupertinoAlertDialog(
-        title: Text(
-          l18n.warning,
-          style: TextStyle(color: const Color(0xFF030303)),
-        ),
-        content: Text(l18n.rememberToRemoveDownloadedFiles),
-        actions: <Widget>[
-          CupertinoDialogAction(
-            child: Text(l18n.close),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
       showCupertinoDialog(
         context: context,
-        builder: (_) => dialog,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text(
+            l18n.warning,
+            style: TextStyle(color: const Color(0xFF030303)),
+          ),
+          content: Text(l18n.rememberToRemoveDownloadedFiles),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text(l18n.close),
+              isDefaultAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       );
       StarfishSharedPreference().setHasBeenRemindedToDeleteFiles();
     }

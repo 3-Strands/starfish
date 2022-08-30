@@ -32,10 +32,11 @@ Future<Uint8List> _fetchData(String url) async {
   return completer.future;
 }
 
-Future<void> downloadMaterial(FileReference fileReference) async {
+Future<void> downloadMaterial(
+    FileReference fileReference, FileTransferClient client) async {
   final buffer = <List<int>>[];
 
-  await shared.downloadFile(fileReference,
+  await shared.downloadFile(fileReference, client,
       onData: (chunk) => buffer.add(chunk));
 
   final file = await File.fromFilename(fileReference.filename);
@@ -45,22 +46,19 @@ Future<void> downloadMaterial(FileReference fileReference) async {
   fileReference.filepath = file.path;
 }
 
-Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
-    shared.uploadFile(readStream: (controller) async {
-      for (final fileReference in fileReferences) {
-        final metaData = FileMetaData(
-          entityId: fileReference.entityId,
-          filename: fileReference.filename,
-          entityType: EntityType.MATERIAL,
-        );
-
-        controller.add(FileData(metaData: metaData));
+Future<void> uploadFiles(
+        Iterable<FileReference> fileReferences, FileTransferClient client) =>
+    shared.uploadFiles(
+      fileReferences,
+      client,
+      readStream: (controller, fileReference) async {
+        controller.add(FileData(metaData: fileReference.toFileMetaData()));
         final objectUrl = _fs[fileReference.filepath]!;
         final chunk = await _fetchData(objectUrl);
         debugPrint("Uploading file of size: ${chunk.length}");
         controller.add(FileData(chunk: chunk));
-      }
-    });
+      },
+    );
 
 Future<void> openFile(String filepath) async {
   html.AnchorElement(href: _fs[filepath]!)

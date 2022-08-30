@@ -66,6 +66,15 @@
   "lastSuccessfullSync": "Last Successful Sync",
 
   "lastSync": "Last Sync",
+  "syncing": "Syncing...",
+  "lastSyncMessage": "Last sync: {date}",
+  "@lastSyncMessage": {
+    "description": "Shows the last sync time to the user",
+    "placeholders": {
+        "date": {
+        }
+    }
+  },
 
   "forGroupAdmin": "For Group Admins",
 
