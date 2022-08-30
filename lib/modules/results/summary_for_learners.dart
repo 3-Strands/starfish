@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/db/hive_date.dart';
-import 'package:starfish/db/hive_evaluation_category.dart';
-import 'package:starfish/db/hive_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
@@ -17,16 +16,16 @@ class SummaryForAllLearners extends StatelessWidget {
       required this.groupEvaluationBadCount})
       : super(key: key);
 
-  final HiveGroup hiveGroup;
-  final HiveDate month;
-  final Map<HiveEvaluationCategory, Map<String, int>>
+  final Group hiveGroup;
+  final Date month;
+  final Map<EvaluationCategory, Map<String, int>>
       groupLearnerEvaluationsByCategory;
   final int? groupEvaluationGoodCount;
   final int? groupEvaluationBadCount;
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
+    final appLocalizations = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFF424242),
@@ -40,7 +39,7 @@ class SummaryForAllLearners extends StatelessWidget {
             height: 10.h,
           ),
           Text(
-            "${_appLocalizations.summaryForAllLearners}",
+            "${appLocalizations.summaryForAllLearners}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
@@ -52,7 +51,7 @@ class SummaryForAllLearners extends StatelessWidget {
           ),
           Center(
             child: Text(
-              "${_appLocalizations.actionsTabItemText}",
+              "${appLocalizations.actionsTabItemText}",
               style: TextStyle(
                   color: Color(0xFFFFFFFF),
                   fontFamily: "OpenSans",
@@ -65,9 +64,10 @@ class SummaryForAllLearners extends StatelessWidget {
             height: 10.h,
           ),
           ActionStatusCountWidget(
-              done: hiveGroup.getActionsCompletedInMonth(month),
-              pending: hiveGroup.getActionsNotYetCompletedInMonth(month),
-              overdue: hiveGroup.getActionsOverdueInMonth(month)),
+            done: 0, //hiveGroup.getActionsCompletedInMonth(month),
+            pending: 0, //hiveGroup.getActionsNotYetCompletedInMonth(month),
+            overdue: 0, //hiveGroup.getActionsOverdueInMonth(month)
+          ),
 
           // Uncomment once leaner is allowed to update 'GroupEvaluation'
           Padding(
@@ -79,7 +79,7 @@ class SummaryForAllLearners extends StatelessWidget {
           ),
           Center(
               child: Text(
-            "${_appLocalizations.feelingAboutTheGroup}",
+            "${appLocalizations.feelingAboutTheGroup}",
             style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "OpenSans",
@@ -99,7 +99,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${groupEvaluationGoodCount ?? 0}  ${_appLocalizations.goodText}",
+                  "${groupEvaluationGoodCount ?? 0}  ${appLocalizations.goodText}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -117,7 +117,7 @@ class SummaryForAllLearners extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text(
-                  "${groupEvaluationBadCount ?? 0} ${_appLocalizations.notSoGoodText}",
+                  "${groupEvaluationBadCount ?? 0} ${appLocalizations.notSoGoodText}",
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Rubik",
@@ -136,39 +136,37 @@ class SummaryForAllLearners extends StatelessWidget {
               thickness: 1,
             ),
           ),
-          if (hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
-            Center(
-              child: Text(
-                "${_appLocalizations.averages}",
-                style: TextStyle(
-                    color: Color(0xFFFFFFFF),
-                    fontFamily: "OpenSans",
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.bold),
-              ),
+          Center(
+            child: Text(
+              "${appLocalizations.averages}",
+              style: TextStyle(
+                  color: Color(0xFFFFFFFF),
+                  fontFamily: "OpenSans",
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10.h),
-            _buildCategoryAverageWidget(
-                groupLearnerEvaluationsByCategory,
-                (hiveGroup.learners != null && hiveGroup.learners!.length > 0)
-                    ? hiveGroup.learners!.length
-                    : 1),
-            SizedBox(height: 20.h),
-          ]
+          ),
+          SizedBox(height: 10.h),
+          _buildCategoryAverageWidget(
+              groupLearnerEvaluationsByCategory,
+              (hiveGroup.learners != null && hiveGroup.learners!.length > 0)
+                  ? hiveGroup.learners!.length
+                  : 1),
+          SizedBox(height: 20.h),
         ],
       ),
     );
   }
 
   Widget _buildCategoryAverageWidget(
-      Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations,
+      Map<EvaluationCategory, Map<String, int>> _learnersEvaluations,
       int learnerCount) {
     List<Widget> _categoryWidgets = [];
-    _learnersEvaluations.forEach(
-        (HiveEvaluationCategory category, Map<String, int> countByMonth) {
+    _learnersEvaluations
+        .forEach((EvaluationCategory category, Map<String, int> countByMonth) {
       _categoryWidgets.add(_buildCategoryStatics(
           (countByMonth["this-month"] ?? 0) / learnerCount,
-          category.name!,
+          category.name,
           (((countByMonth["this-month"] ?? 0) / learnerCount) -
               ((countByMonth["last-month"] ?? 0) / learnerCount)),
           Color(0xFFFFFFFF),

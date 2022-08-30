@@ -1,35 +1,36 @@
-import 'package:fbroadcast/fbroadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/db/providers/group_provider.dart';
+import 'package:starfish/modules/results/cubit/results_cubit.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
-import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
-import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
-import 'package:starfish/utils/services/sync_service.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
-import 'package:starfish/widgets/focusable_text_field.dart';
 
 class LearnerSummary extends StatelessWidget {
-  final HiveGroupUser hiveGroupUser;
-  final HiveDate month;
-  final HiveGroupEvaluation? leanerEvaluationForGroup;
+  const LearnerSummary({
+    Key? key,
+    required this.groupUserResultStatus,
+    required this.month,
+    //this.leanerEvaluationForGroup,
+  }) : super(key: key);
 
-  const LearnerSummary(
-      {Key? key,
-      required this.hiveGroupUser,
-      required this.month,
-      this.leanerEvaluationForGroup})
-      : super(key: key);
+  final GroupUserResultStatus groupUserResultStatus;
+  final Date month;
+  //final GroupEvaluation? leanerEvaluationForGroup;
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _profileController = TextEditingController();
-    _profileController.text = hiveGroupUser.profile ?? '';
+    // TextEditingController _profileController = TextEditingController();
+    // _profileController.text = hiveGroupUser.profile ?? '';
+    final user = groupUserResultStatus.user;
+    final groupUser = groupUserResultStatus.groupUser;
+    final groupEvaluation = groupUserResultStatus.groupEvaluation;
+    final transformation = groupUserResultStatus.transformation;
+    final teacherResponses = groupUserResultStatus.teacherResponses;
 
     final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Column(
@@ -53,7 +54,7 @@ class LearnerSummary extends StatelessWidget {
                   height: 10.h,
                 ),
                 Text(
-                  "${hiveGroupUser.name}",
+                  "${user.name}",
                   style: TextStyle(
                     color: Color(0xFF434141),
                     fontFamily: "OpenSans",
@@ -65,10 +66,12 @@ class LearnerSummary extends StatelessWidget {
                   height: 10.h,
                 ),
                 ActionStatusCountWidget(
-                    label: "${_appLocalizations.actionsTabItemText}",
-                    done: hiveGroupUser.getActionsCompletedInMonth(month),
-                    pending: hiveGroupUser.getActionsNotCompletedInMonth(month),
-                    overdue: hiveGroupUser.getActionsOverdueInMonth(month)),
+                  label: "${_appLocalizations.actionsTabItemText}",
+                  done: 0, //hiveGroupUser.getActionsCompletedInMonth(month),
+                  pending:
+                      0, //hiveGroupUser.getActionsNotCompletedInMonth(month),
+                  overdue: 0, //hiveGroupUser.getActionsOverdueInMonth(month),
+                ),
                 SizedBox(
                   height: 15.h,
                 ),
@@ -95,7 +98,7 @@ class LearnerSummary extends StatelessWidget {
                   ),
                   child: TextField(
                     maxLength: 500,
-                    controller: _profileController,
+                    //controller: _profileController,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       // hintText:
@@ -109,7 +112,7 @@ class LearnerSummary extends StatelessWidget {
                     maxLines: 3,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (String value) {
-                      _saveLearnerProfile(hiveGroupUser, value);
+                      //  _saveLearnerProfile(hiveGroupUser, value);
                     },
                     /*onFocusChange: (isFocused) {
                       if (isFocused) {
@@ -148,9 +151,7 @@ class LearnerSummary extends StatelessWidget {
                       ),
                       TextSpan(
                         //  "${hiveGroupUser.getTransformationForMonth(month)?.impactStory ?? ''}",
-                        text: hiveGroupUser
-                            .getTransformationForMonth(month)
-                            ?.impactStory,
+                        text: transformation?.impactStory ?? '',
                         style: TextStyle(
                           fontFamily: "OpenSans",
                           fontSize: 17.sp,
@@ -177,14 +178,12 @@ class LearnerSummary extends StatelessWidget {
                           color: Color(0xFF4F4F4F),
                           fontWeight: FontWeight.w600),
                     ),
-                    if (leanerEvaluationForGroup != null)
+                    if (groupEvaluation != null)
                       Expanded(
                         child: Container(
                           child: Row(
                             children: [
-                              GroupEvaluation_Evaluation.valueOf(
-                                          leanerEvaluationForGroup!
-                                              .evaluation!) ==
+                              groupEvaluation.evaluation ==
                                       GroupEvaluation_Evaluation.GOOD
                                   ? Image.asset(
                                       AssetsPath.thumbsUp,
@@ -200,7 +199,7 @@ class LearnerSummary extends StatelessWidget {
                                 width: 5.w,
                               ),
                               Text(
-                                "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
+                                "${groupEvaluation.evaluation.name.toCapitalized()}",
                                 style: TextStyle(
                                   fontFamily: "Rubik",
                                   fontSize: 15.sp,
@@ -229,17 +228,15 @@ class LearnerSummary extends StatelessWidget {
                             color: Color(0xFF4F4F4F),
                             fontWeight: FontWeight.w600),
                       ),
-                      TextSpan(
-                        text: hiveGroupUser
-                            .getTeacherResponseForMonth(month)
-                            ?.response,
-                        style: TextStyle(
-                          fontFamily: "OpenSans",
-                          fontSize: 17.sp,
-                          fontStyle: FontStyle.italic,
-                          color: Color(0xFF4F4F4F),
-                        ),
-                      )
+                      // TextSpan(
+                      //   text: teacherResponse?.response ?? '',
+                      //   style: TextStyle(
+                      //     fontFamily: "OpenSans",
+                      //     fontSize: 17.sp,
+                      //     fontStyle: FontStyle.italic,
+                      //     color: Color(0xFF4F4F4F),
+                      //   ),
+                      // )
                     ],
                   ),
                   maxLines: 1,
@@ -248,9 +245,9 @@ class LearnerSummary extends StatelessWidget {
                 SizedBox(
                   height: 20.h,
                 ),
-                _buildCategoryAverageWidget(
-                  hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(month),
-                ),
+                // _buildCategoryAverageWidget(
+                //   groupUser.getLearnerEvaluationsByCategoryForMoth(month),
+                // ),
                 SizedBox(height: 10.h),
               ],
             ),
@@ -328,13 +325,13 @@ class LearnerSummary extends StatelessWidget {
   void _saveLearnerProfile(HiveGroupUser groupUser, String profile) async {
     groupUser.profile = profile;
     groupUser.isUpdated = true;
-    await GroupProvider().createUpdateGroupUser(groupUser);
+    // await GroupProvider().createUpdateGroupUser(groupUser);
 
-    // Broadcast to sync learner's profile, as it may a local learner assigned to local group,
-    // sync group and groupmembers
-    FBroadcast.instance().broadcast(
-      SyncService.kUpdateGroup,
-      value: groupUser,
-    );
+    // // Broadcast to sync learner's profile, as it may a local learner assigned to local group,
+    // // sync group and groupmembers
+    // FBroadcast.instance().broadcast(
+    //   SyncService.kUpdateGroup,
+    //   value: groupUser,
+    // );
   }
 }

@@ -1,17 +1,14 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
-import 'package:starfish/bloc/data_bloc.dart';
-import 'package:starfish/bloc/provider.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
-import 'package:starfish/db/hive_current_user.dart';
 import 'package:starfish/db/hive_date.dart';
 import 'package:starfish/db/hive_evaluation_category.dart';
 import 'package:starfish/db/hive_file.dart';
@@ -20,273 +17,451 @@ import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
-import 'package:starfish/db/providers/current_user_provider.dart';
-import 'package:starfish/db/providers/group_evaluation_provider.dart';
-import 'package:starfish/db/providers/teacher_response_provider.dart';
-import 'package:starfish/db/providers/transformation_provider.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
+import 'package:starfish/modules/results/cubit/results_cubit.dart';
+import 'package:starfish/modules/results/user_transformaiton.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
+import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/widgets/result_transformations_widget.dart';
 import 'package:starfish/wrappers/file_system.dart';
-import 'package:starfish/wrappers/platform.dart';
 
 class MyLifeResults extends StatefulWidget {
   const MyLifeResults({Key? key}) : super(key: key);
 
   @override
-  State<MyLifeResults> createState() => _MyLifeResultsState();
+  _MyLifeResultsState createState() => _MyLifeResultsState();
 }
 
 class _MyLifeResultsState extends State<MyLifeResults> {
-  late DataBloc bloc;
-  late HiveCurrentUser currentUser;
+  // late DataBloc bloc;
+  // late HiveCurrentUser currentUser;
   List<File>? imageFiles;
   String? userImpactStory;
 
-  bool _isInitialized = false;
-  final Key _focusDetectorKey = UniqueKey();
+  // bool _isInitialized = false;
+  // final Key _focusDetectorKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of(context);
+    final appLocalizations = AppLocalizations.of(context)!;
+    return Scrollbar(
+      thickness: 5.w,
+      thumbVisibility: false,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            BlocBuilder<ResultsCubit, ResultsState>(
+                buildWhen: (previous, current) =>
+                    previous.month != current.month,
+                builder: (context, state) {
+                  return InkWell(
+                    onTap: () async {
+                      DateTime? selected = await _selectMonth(state.month);
 
-    // call init only once
-    if (bloc.resultsBloc.hiveGroup == null) {
-      bloc.resultsBloc.init();
-    }
-
-    currentUser = CurrentUserProvider().getUserSync();
-    return FocusDetector(
-      key: _focusDetectorKey,
-      onFocusGained: () {},
-      onFocusLost: () {},
-      child: Scaffold(
-        backgroundColor: AppColors.resultsScreenBG,
-        body: Scrollbar(
-          thickness: 5.w,
-          thumbVisibility: false,
-          child: bloc.resultsBloc.groupsWithLearnerRole.isNotEmpty
-              ? SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          DateTime? selected = await _selectMonth(bloc);
-
-                          if (selected != null) {
-                            HiveDate _hiveDate = HiveDate.create(
-                                selected.year, selected.month, 0);
-
-                            setState(() {
-                              bloc.resultsBloc.hiveDate = _hiveDate;
-                            });
-                          }
-                        },
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          height: 52.h,
-                          //width: 345.w,
-                          padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
-                          margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.txtFieldBackground,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: ButtonTheme(
-                            alignedDropdown: true,
-                            child: Text(
-                              DateTimeUtils.formatHiveDate(
-                                  bloc.resultsBloc.hiveDate!,
-                                  requiredDateFormat: "MMMM yyyy"),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: bloc.resultsBloc.groupsWithLearnerRole
-                              .length, //bloc.resultsBloc.hiveGroup!.learners!.length,
-                          itemBuilder: (BuildContext context, index) {
-                            HiveGroup _hiveGroup =
-                                bloc.resultsBloc.groupsWithLearnerRole[index];
-                            HiveGroupUser? _hiveGroupUser = _hiveGroup.learners
-                                ?.firstWhereOrNull((element) =>
-                                    element.userId == currentUser.id);
-
-                            return Container(
-                              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  index != 0
-                                      ? SizedBox(
-                                          height: 10.h,
-                                        )
-                                      : Container(),
-                                  Text(
-                                    '${_hiveGroup.name}',
-                                    style: TextStyle(
-                                        fontFamily: "OpenSans",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 19.sp),
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  _buildActionCard(_hiveGroupUser),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  if (_hiveGroupUser != null) ...[
-                                    _buildTransformationWidget(
-                                        hiveGroupUser: _hiveGroupUser,
-                                        learnerId: currentUser.id,
-                                        groupId: _hiveGroup.id!,
-                                        month: bloc.resultsBloc.hiveDate!),
-                                    SizedBox(
-                                      height: 10.h,
-                                    ),
-                                    _buildFeedbackFromTeachers(
-                                        hiveGroupUser: _hiveGroupUser,
-                                        learnerId: currentUser.id,
-                                        groupId: _hiveGroup.id!,
-                                        month: bloc.resultsBloc.hiveDate!),
-                                    SizedBox(
-                                      height: 10.h,
-                                    ),
-                                    _buildFeelingAboutGroupCard(
-                                        hiveGroupUser: _hiveGroupUser,
-                                        learnerId: currentUser.id,
-                                        groupId: _hiveGroup.id!,
-                                        month: bloc.resultsBloc.hiveDate!),
-                                  ]
-                                ],
-                              ),
+                      if (selected != null) {
+                        context.read<ResultsCubit>().updateMonthFilter(
+                              Date(
+                                  year: selected.year,
+                                  month: selected.month,
+                                  day: 0),
                             );
-                          }),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                    ],
-                  ),
-                )
-              : Column(
-                  children: [
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        DateTime? selected = await _selectMonth(bloc);
-
-                        if (selected != null) {
-                          HiveDate _hiveDate =
-                              HiveDate.create(selected.year, selected.month, 0);
-
-                          setState(() {
-                            bloc.resultsBloc.hiveDate = _hiveDate;
-                          });
-                        }
-                      },
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        height: 52.h,
-                        //width: 345.w,
-                        padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
-                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                        decoration: BoxDecoration(
-                          color: AppColors.txtFieldBackground,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
+                      }
+                    },
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      height: 52.h,
+                      //width: 345.w,
+                      padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: Text(
-                            DateTimeUtils.formatHiveDate(
-                                bloc.resultsBloc.hiveDate!,
-                                requiredDateFormat: "MMMM yyyy"),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            textAlign: TextAlign.left,
+                      ),
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: Text(
+                          DateTimeUtils.formatHiveDate(state.month,
+                              requiredDateFormat: "MMMM yyyy"),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 19.sp,
+                            fontFamily: 'OpenSans',
                           ),
+                          textAlign: TextAlign.left,
                         ),
                       ),
                     ),
-                    SizedBox(height: 15.h),
-                    Expanded(
+                  );
+                }),
+            SizedBox(
+              height: 20.h,
+            ),
+            BlocBuilder<ResultsCubit, ResultsState>(
+                buildWhen: (previous, current) =>
+                    previous.month != current.month,
+                builder: (context, state) {
+                  final resultsToShow = state.myLifeResultsToShow;
+                  final groupUserResultsList =
+                      resultsToShow.groupUserResultsStatusList;
+
+                  if (groupUserResultsList.isEmpty) {
+                    return Container(
                       child: Center(
-                        child: Container(
-                          //  color: Colors.red,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                '${AppLocalizations.of(context)!.joinOrCreateGroupMessage}',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontFamily: "OpenSans",
-                                  fontStyle: FontStyle.italic,
-                                  color: Color(0xFF797979),
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            '${appLocalizations.joinOrCreateGroupMessage}',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontFamily: "OpenSans",
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xFF797979),
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                  ],
-                ),
+                    );
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: groupUserResultsList
+                        .length, //bloc.resultsBloc.hiveGroup!.learners!.length,
+                    itemBuilder: (BuildContext context, index) {
+                      final _groupUserResultStatus =
+                          groupUserResultsList.elementAt(index);
+
+                      return Container(
+                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            index != 0
+                                ? SizedBox(
+                                    height: 10.h,
+                                  )
+                                : Container(),
+                            Text(
+                              '${_groupUserResultStatus.group?.name}',
+                              style: TextStyle(
+                                  fontFamily: "OpenSans",
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19.sp),
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            _buildActionCard(_groupUserResultStatus.groupUser),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            // _buildTransformationWidget(
+                            //   groupUser: _groupUserResultStatus.groupUser,
+                            //   // learnerId: _groupUserResultStatus.user.id,
+                            //   // groupId: _groupUserResultStatus.groupUser.groupId,
+                            //   transformation: _groupUserResultStatus.transformation,
+                            //   month: state.month,
+                            // ),
+                            BlocBuilder<ResultsCubit, ResultsState>(
+                              buildWhen: (previous, current) =>
+                                  previous.month != current.month,
+                              builder: (context, state) {
+                                return UserTransformation(
+                                  groupUser: _groupUserResultStatus.groupUser,
+                                  month: state.month,
+                                  transformation:
+                                      _groupUserResultStatus.transformation,
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            _buildFeedbackFromTeachers(
+                              groupUser: _groupUserResultStatus.groupUser,
+                              // learnerId: _groupUserResultStatus.user.id,
+                              // groupId: _groupUserResultStatus.groupUser.groupId,
+                              teacherResponses:
+                                  _groupUserResultStatus.teacherResponses,
+                              month: state.month,
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            _buildFeelingAboutGroupCard(
+                              hiveGroupUser: _groupUserResultStatus.groupUser,
+                              learnerId: _groupUserResultStatus.user.id,
+                              groupId: _groupUserResultStatus.groupUser.groupId,
+                              month: state.month,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }),
+            SizedBox(
+              height: 20.h,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildFeelingAboutGroupCard(
-      {required HiveGroupUser hiveGroupUser,
-      required String learnerId,
-      required String groupId,
-      required HiveDate month}) {
-    HiveGroupEvaluation? _hiveGroupEvalution = GroupEvaluationProvider()
-        .getGroupUserGroupEvaluation(learnerId, groupId)
-        .where((element) => element.month != null
-            ? (element.month!.year == month.year &&
-                element.month!.month == month.month)
-            : false)
-        .firstOrNull;
+  // @override
+  // Widget build(BuildContext context) {
+  //   bloc = Provider.of(context);
+
+  //   // call init only once
+  //   if (bloc.resultsBloc.hiveGroup == null) {
+  //     bloc.resultsBloc.init();
+  //   }
+
+  //   currentUser = CurrentUserProvider().getUserSync();
+  //   return FocusDetector(
+  //     key: _focusDetectorKey,
+  //     onFocusGained: () {},
+  //     onFocusLost: () {},
+  //     child: Scaffold(
+  //       backgroundColor: AppColors.resultsScreenBG,
+  //       body: Scrollbar(
+  //         thickness: 5.w,
+  //         thumbVisibility: false,
+  //         child: bloc.resultsBloc.groupsWithLearnerRole.isNotEmpty
+  //             ? SingleChildScrollView(
+  //                 child: Column(
+  //                   children: [
+  //                     SizedBox(
+  //                       height: 20.h,
+  //                     ),
+  //                     InkWell(
+  //                       onTap: () async {
+  //                         DateTime? selected = await _selectMonth(bloc);
+
+  //                         if (selected != null) {
+  //                           HiveDate _hiveDate = HiveDate.create(
+  //                               selected.year, selected.month, 0);
+
+  //                           setState(() {
+  //                             bloc.resultsBloc.hiveDate = _hiveDate;
+  //                           });
+  //                         }
+  //                       },
+  //                       child: Container(
+  //                         alignment: Alignment.centerLeft,
+  //                         height: 52.h,
+  //                         //width: 345.w,
+  //                         padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+  //                         margin: EdgeInsets.only(left: 15.w, right: 15.w),
+  //                         decoration: BoxDecoration(
+  //                           color: AppColors.txtFieldBackground,
+  //                           borderRadius: BorderRadius.all(
+  //                             Radius.circular(10),
+  //                           ),
+  //                         ),
+  //                         child: ButtonTheme(
+  //                           alignedDropdown: true,
+  //                           child: Text(
+  //                             DateTimeUtils.formatHiveDate(
+  //                                 bloc.resultsBloc.hiveDate!,
+  //                                 requiredDateFormat: "MMMM yyyy"),
+  //                             maxLines: 2,
+  //                             overflow: TextOverflow.ellipsis,
+  //                             style: TextStyle(
+  //                               color: Color(0xFF434141),
+  //                               fontSize: 19.sp,
+  //                               fontFamily: 'OpenSans',
+  //                             ),
+  //                             textAlign: TextAlign.left,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     SizedBox(
+  //                       height: 20.h,
+  //                     ),
+  //                     ListView.builder(
+  //                         shrinkWrap: true,
+  //                         physics: NeverScrollableScrollPhysics(),
+  //                         itemCount: bloc.resultsBloc.groupsWithLearnerRole
+  //                             .length, //bloc.resultsBloc.hiveGroup!.learners!.length,
+  //                         itemBuilder: (BuildContext context, index) {
+  //                           HiveGroup _hiveGroup =
+  //                               bloc.resultsBloc.groupsWithLearnerRole[index];
+  //                           HiveGroupUser? _hiveGroupUser = _hiveGroup.learners
+  //                               ?.firstWhereOrNull((element) =>
+  //                                   element.userId == currentUser.id);
+
+  //                           return Container(
+  //                             margin: EdgeInsets.only(left: 15.w, right: 15.w),
+  //                             child: Column(
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 index != 0
+  //                                     ? SizedBox(
+  //                                         height: 10.h,
+  //                                       )
+  //                                     : Container(),
+  //                                 Text(
+  //                                   '${_hiveGroup.name}',
+  //                                   style: TextStyle(
+  //                                       fontFamily: "OpenSans",
+  //                                       fontWeight: FontWeight.bold,
+  //                                       fontSize: 19.sp),
+  //                                 ),
+  //                                 SizedBox(
+  //                                   height: 10.h,
+  //                                 ),
+  //                                 _buildActionCard(_hiveGroupUser),
+  //                                 SizedBox(
+  //                                   height: 10.h,
+  //                                 ),
+  //                                 if (_hiveGroupUser != null) ...[
+  //                                   _buildTransformationWidget(
+  //                                       hiveGroupUser: _hiveGroupUser,
+  //                                       learnerId: currentUser.id,
+  //                                       groupId: _hiveGroup.id!,
+  //                                       month: bloc.resultsBloc.hiveDate!),
+  //                                   SizedBox(
+  //                                     height: 10.h,
+  //                                   ),
+  //                                   _buildFeedbackFromTeachers(
+  //                                       hiveGroupUser: _hiveGroupUser,
+  //                                       learnerId: currentUser.id,
+  //                                       groupId: _hiveGroup.id!,
+  //                                       month: bloc.resultsBloc.hiveDate!),
+  //                                   SizedBox(
+  //                                     height: 10.h,
+  //                                   ),
+  //                                   _buildFeelingAboutGroupCard(
+  //                                       hiveGroupUser: _hiveGroupUser,
+  //                                       learnerId: currentUser.id,
+  //                                       groupId: _hiveGroup.id!,
+  //                                       month: bloc.resultsBloc.hiveDate!),
+  //                                 ]
+  //                               ],
+  //                             ),
+  //                           );
+  //                         }),
+  //                     SizedBox(
+  //                       height: 20.h,
+  //                     ),
+  //                   ],
+  //                 ),
+  //               )
+  //             : Column(
+  //                 children: [
+  //                   SizedBox(
+  //                     height: 20.h,
+  //                   ),
+  //                   InkWell(
+  //                     onTap: () async {
+  //                       DateTime? selected = await _selectMonth(bloc);
+
+  //                       if (selected != null) {
+  //                         HiveDate _hiveDate =
+  //                             HiveDate.create(selected.year, selected.month, 0);
+
+  //                         setState(() {
+  //                           bloc.resultsBloc.hiveDate = _hiveDate;
+  //                         });
+  //                       }
+  //                     },
+  //                     child: Container(
+  //                       alignment: Alignment.centerLeft,
+  //                       height: 52.h,
+  //                       //width: 345.w,
+  //                       padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+  //                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
+  //                       decoration: BoxDecoration(
+  //                         color: AppColors.txtFieldBackground,
+  //                         borderRadius: BorderRadius.all(
+  //                           Radius.circular(10),
+  //                         ),
+  //                       ),
+  //                       child: ButtonTheme(
+  //                         alignedDropdown: true,
+  //                         child: Text(
+  //                           DateTimeUtils.formatHiveDate(
+  //                               bloc.resultsBloc.hiveDate!,
+  //                               requiredDateFormat: "MMMM yyyy"),
+  //                           maxLines: 2,
+  //                           overflow: TextOverflow.ellipsis,
+  //                           style: TextStyle(
+  //                             color: Color(0xFF434141),
+  //                             fontSize: 19.sp,
+  //                             fontFamily: 'OpenSans',
+  //                           ),
+  //                           textAlign: TextAlign.left,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 15.h),
+  //                   Expanded(
+  //                     child: Center(
+  //                       child: Container(
+  //                         //  color: Colors.red,
+  //                         child: Center(
+  //                           child: Padding(
+  //                             padding: const EdgeInsets.all(10.0),
+  //                             child: Text(
+  //                               '${AppLocalizations.of(context)!.joinOrCreateGroupMessage}',
+  //                               style: TextStyle(
+  //                                 fontSize: 16.sp,
+  //                                 fontFamily: "OpenSans",
+  //                                 fontStyle: FontStyle.italic,
+  //                                 color: Color(0xFF797979),
+  //                               ),
+  //                               textAlign: TextAlign.center,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   SizedBox(
+  //                     height: 20.h,
+  //                   ),
+  //                 ],
+  //               ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildFeelingAboutGroupCard({
+    required GroupUser hiveGroupUser,
+    required String learnerId,
+    required String groupId,
+    required Date month,
+  }) {
+    // HiveGroupEvaluation? _hiveGroupEvalution = GroupEvaluationProvider()
+    //     .getGroupUserGroupEvaluation(learnerId, groupId)
+    //     .where((element) => element.month != null
+    //         ? (element.month!.year == month.year &&
+    //             element.month!.month == month.month)
+    //         : false)
+    //     .firstOrNull;
+
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return Card(
         //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -305,7 +480,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               height: 5.h,
             ),
             Text(
-              '${AppLocalizations.of(context)!.howDoYouFeelAboutThisGroup}',
+              '${appLocalizations.howDoYouFeelAboutThisGroup}',
               style: TextStyle(
                 color: Color(0xFF4F4F4F),
                 fontFamily: "OpenSans",
@@ -326,27 +501,28 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                       decoration: BoxDecoration(),
                       child: ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            _saveGroupEvaluations(
-                                hiveGroupUser, _hiveGroupEvalution,
-                                evaluation: GroupEvaluation_Evaluation.GOOD);
-                          });
+                          // setState(() {
+                          //   _saveGroupEvaluations(
+                          //       hiveGroupUser, _hiveGroupEvalution,
+                          //       evaluation: GroupEvaluation_Evaluation.GOOD);
+                          // });
                         },
                         style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.r),
                             ),
-                            backgroundColor: (_hiveGroupEvalution != null &&
-                                    GroupEvaluation_Evaluation.valueOf(
-                                            _hiveGroupEvalution.evaluation!) ==
-                                        GroupEvaluation_Evaluation.GOOD)
-                                ? MaterialStateProperty.all<Color>(
-                                    Color(0xFF6DE26B))
-                                : MaterialStateProperty.all<Color>(
-                                    Color(0xFFC9C9C9))),
+                          ),
+                          // backgroundColor: (_hiveGroupEvalution != null &&
+                          //         GroupEvaluation_Evaluation.valueOf(
+                          //                 _hiveGroupEvalution.evaluation!) ==
+                          //             GroupEvaluation_Evaluation.GOOD)
+                          //     ? MaterialStateProperty.all<Color>(
+                          //         Color(0xFF6DE26B))
+                          //     : MaterialStateProperty.all<Color>(
+                          //         Color(0xFFC9C9C9)),
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -359,7 +535,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                               width: 3.w,
                             ),
                             Text(
-                              AppLocalizations.of(context)!.goodText,
+                              appLocalizations.goodText,
                               style: TextStyle(
                                   fontSize: 17.sp,
                                   fontFamily: "Rubik",
@@ -379,27 +555,28 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                       decoration: BoxDecoration(),
                       child: ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            _saveGroupEvaluations(
-                                hiveGroupUser, _hiveGroupEvalution,
-                                evaluation: GroupEvaluation_Evaluation.BAD);
-                          });
+                          // setState(() {
+                          //   _saveGroupEvaluations(
+                          //       hiveGroupUser, _hiveGroupEvalution,
+                          //       evaluation: GroupEvaluation_Evaluation.BAD);
+                          // });
                         },
                         style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.r),
                             ),
-                            backgroundColor: (_hiveGroupEvalution != null &&
-                                    GroupEvaluation_Evaluation.valueOf(
-                                            _hiveGroupEvalution.evaluation!) ==
-                                        GroupEvaluation_Evaluation.BAD)
-                                ? MaterialStateProperty.all<Color>(
-                                    Color(0xFFFFBE4A))
-                                : MaterialStateProperty.all<Color>(
-                                    Color(0xFFC9C9C9))),
+                          ),
+                          // backgroundColor: (_hiveGroupEvalution != null &&
+                          //         GroupEvaluation_Evaluation.valueOf(
+                          //                 _hiveGroupEvalution.evaluation!) ==
+                          //             GroupEvaluation_Evaluation.BAD)
+                          //     ? MaterialStateProperty.all<Color>(
+                          //         Color(0xFFFFBE4A))
+                          //     : MaterialStateProperty.all<Color>(
+                          //         Color(0xFFC9C9C9)),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -412,7 +589,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             ),
                             Expanded(
                               child: Text(
-                                AppLocalizations.of(context)!.notSoGoodText,
+                                appLocalizations.notSoGoodText,
                                 style: TextStyle(
                                     fontSize: 17.sp,
                                     fontFamily: "Rubik",
@@ -434,18 +611,21 @@ class _MyLifeResultsState extends State<MyLifeResults> {
         ));
   }
 
-  Widget _buildFeedbackFromTeachers(
-      {required HiveGroupUser hiveGroupUser,
-      required String learnerId,
-      required String groupId,
-      required HiveDate month}) {
-    List<HiveTeacherResponse> _feedbacksFromTeachers = TeacherResponseProvider()
-        .getGroupUserTeacherResponse(learnerId, groupId)
-        .where((element) => element.month != null
-            ? (element.month!.year == month.year &&
-                element.month!.month == month.month)
-            : false)
-        .toList();
+  Widget _buildFeedbackFromTeachers({
+    required GroupUser groupUser,
+    // required String learnerId,
+    // required String groupId,
+    List<TeacherResponse>? teacherResponses,
+    required Date month,
+  }) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    // List<HiveTeacherResponse> _feedbacksFromTeachers = TeacherResponseProvider()
+    //     .getGroupUserTeacherResponse(learnerId, groupId)
+    //     .where((element) => element.month != null
+    //         ? (element.month!.year == month.year &&
+    //             element.month!.month == month.month)
+    //         : false)
+    //     .toList();
 
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
@@ -467,7 +647,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               height: 10.h,
             ),
             Text(
-              "${AppLocalizations.of(context)!.feedbackFromGroupTeacher}",
+              "${appLocalizations.feedbackFromGroupTeacher}",
               style: TextStyle(
                 fontFamily: "OpenSans",
                 color: Color(0xFF4F4F4F),
@@ -482,10 +662,9 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: _feedbacksFromTeachers.length,
+              itemCount: teacherResponses?.length ?? 0,
               itemBuilder: (context, index) {
-                HiveTeacherResponse _hiveTeacherResponse =
-                    _feedbacksFromTeachers[index];
+                final _teacherResponse = teacherResponses![index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -505,7 +684,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${_hiveTeacherResponse.response}",
+                            "${_teacherResponse.response}",
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -518,7 +697,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             height: 20.h,
                           ),
                           Text(
-                            "${AppLocalizations.of(context)!.teacher}: ${_hiveTeacherResponse.teacher?.name ?? ''}",
+                            "${appLocalizations.teacher}: ${_teacherResponse.teacher?.name ?? ''}",
                             style: TextStyle(
                               fontFamily: "OpenSans",
                               fontSize: 16.sp,
@@ -539,11 +718,11 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             SizedBox(
               height: 10.h,
             ),
-            if (bloc.resultsBloc.hiveGroupUser != null)
-              _buildCurrentEvaluationWidget(
-                hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(
-                    bloc.resultsBloc.hiveDate!),
-              ),
+            // if (bloc.resultsBloc.hiveGroupUser != null)
+            //   _buildCurrentEvaluationWidget(
+            //     hiveGroupUser.getLearnerEvaluationsByCategoryForMoth(
+            //         bloc.resultsBloc.hiveDate!),
+            //   ),
             SizedBox(
               height: 10.h,
             ),
@@ -615,7 +794,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  Widget _buildActionCard(HiveGroupUser? _hiveGroupUser) {
+  Widget _buildActionCard(GroupUser _groupUser) {
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
       color: Color(0xFFEFEFEF),
@@ -647,17 +826,19 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                     _hiveGroupUser, bloc.resultsBloc.hiveDate!),
                 displayOverdue: true),*/
 
-            _buildMonthlyActionWidget(
-                _hiveGroupUser?.getActionsCompletedInMonth(
-                        bloc.resultsBloc.hiveDate!) ??
-                    0,
-                _hiveGroupUser?.getActionsNotCompletedInMonth(
-                        bloc.resultsBloc.hiveDate!) ??
-                    0,
-                _hiveGroupUser?.getActionsOverdueInMonth(
-                        bloc.resultsBloc.hiveDate!) ??
-                    0,
-                displayOverdue: true),
+            // _buildMonthlyActionWidget(
+            //     _hiveGroupUser?.getActionsCompletedInMonth(
+            //             bloc.resultsBloc.hiveDate!) ??
+            //         0,
+            //     _hiveGroupUser?.getActionsNotCompletedInMonth(
+            //             bloc.resultsBloc.hiveDate!) ??
+            //         0,
+            //     _hiveGroupUser?.getActionsOverdueInMonth(
+            //             bloc.resultsBloc.hiveDate!) ??
+            //         0,
+            //     displayOverdue: true),
+
+            _buildMonthlyActionWidget(1, 1, 1, displayOverdue: true),
             SizedBox(
               height: 10.h,
             ),
@@ -781,29 +962,28 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  Card _buildTransformationWidget(
-      {required HiveGroupUser hiveGroupUser,
-      required String learnerId,
-      required String groupId,
-      required HiveDate month}) {
-    TextEditingController _transformationController = TextEditingController();
-    List<HiveFile> _hiveFiles = [];
-    List<File> _selectedFiles = [];
+  Widget _buildTransformationWidget(
+      {required GroupUser groupUser,
+      // required String learnerId,
+      // required String groupId,
+      Transformation? transformation,
+      required Date month}) {
+    final List<FileReference> previouslySelectedFiles;
+    final List<File> newlySelectedFiles;
 
-    HiveTransformation? _currentGroupUserTransformation =
-        TransformationProvider()
-            .getGroupUserTransformations(learnerId, groupId)
-            .where((element) => element.month != null
-                ? (element.month!.year == month.year &&
-                    element.month!.month == month.month)
-                : false)
-            .firstOrNull;
+    // Transformation? _currentGroupUserTransformation = TransformationProvider()
+    //     .getGroupUserTransformations(learnerId, groupId)
+    //     .where((element) => element.month != null
+    //         ? (element.month!.year == month.year &&
+    //             element.month!.month == month.month)
+    //         : false)
+    //     .firstOrNull;
 
-    if (_currentGroupUserTransformation != null) {
-      _transformationController.text =
-          _currentGroupUserTransformation.impactStory ?? '';
-      _hiveFiles = _currentGroupUserTransformation.localFiles;
-    }
+    // if (_currentGroupUserTransformation != null) {
+    //   _transformationController.text =
+    //       _currentGroupUserTransformation.impactStory ?? '';
+    //   _hiveFiles = _currentGroupUserTransformation.localFiles;
+    // }
 
     return Card(
       color: Color(0xE6EFEFEF),
@@ -855,7 +1035,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                 ),
               ),
               child: FocusableTextField(
-                controller: _transformationController,
+                //controller: _transformationController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   hintText:
@@ -866,6 +1046,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
+                text: transformation?.impactStory ?? '',
                 maxLines: 3,
                 textInputAction: TextInputAction.done,
                 onFocusChange: (isFocused) {
@@ -875,8 +1056,9 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                 },
                 onChange: (String value) {
                   userImpactStory = value.trim();
-                  _saveTransformation(userImpactStory, _selectedFiles,
-                      hiveGroupUser, _currentGroupUserTransformation);
+                  // _saveTransformation(userImpactStory, _selectedFiles,
+                  //     hiveGroupUser, _currentGroupUserTransformation);
+                  context.read<ResultsCubit>().updateTransformation(value);
                 },
               ),
             ),
@@ -890,12 +1072,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
 
             // Add Materials
 
-            if (_selectedFiles.isNotEmpty ||
-                (_currentGroupUserTransformation != null &&
-                    _currentGroupUserTransformation.localFiles.isNotEmpty &&
-                    _hiveFiles != null &&
-                    _hiveFiles.isNotEmpty))
-              _previewSelectedFiles(_hiveFiles, _selectedFiles),
+            // if (_selectedFiles.isNotEmpty ||
+            //     (_currentGroupUserTransformation != null &&
+            //         _currentGroupUserTransformation.localFiles.isNotEmpty &&
+            //         _hiveFiles != null &&
+            //         _hiveFiles.isNotEmpty))
+            //_previewSelectedFiles(_hiveFiles, _selectedFiles),
             SizedBox(height: 10.h),
             DottedBorder(
               borderType: BorderType.RRect,
@@ -906,7 +1088,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                   height: 50.h,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if ((_selectedFiles.length + (_hiveFiles.length)) >= 5) {
+                      if (true) {
+                        //(_selectedFiles.length + (_hiveFiles.length)) >= 5) {
                         Fluttertoast.showToast(
                             msg:
                                 AppLocalizations.of(context)!.maxFilesSelected);
@@ -925,15 +1108,15 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                                 msg: AppLocalizations.of(context)!
                                     .imageSizeValidation);
                           } else {
-                            setState(() {
-                              _selectedFiles.add(result);
-                              _saveTransformation(
-                                  _transformationController.text,
-                                  _selectedFiles,
-                                  hiveGroupUser,
-                                  _currentGroupUserTransformation);
-                              _selectedFiles.clear();
-                            });
+                            // setState(() {
+                            //   _selectedFiles.add(result);
+                            //   _saveTransformation(
+                            //       _transformationController.text,
+                            //       _selectedFiles,
+                            //       hiveGroupUser,
+                            //       _currentGroupUserTransformation);
+                            //   _selectedFiles.clear();
+                            // });
                           }
                         } else {
                           // User canceled the picker
@@ -965,54 +1148,54 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   }
 
   void _saveTransformation(String? _impactStory, List<File> _files,
-      HiveGroupUser hiveGroupUser, HiveTransformation? _hiveTransformation) {
-    // _hiveTransformation = widget.hiveGroupUser
-    //     .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
-    if (_impactStory != null) {
-      if (_hiveTransformation == null) {
-        _hiveTransformation = HiveTransformation();
-        _hiveTransformation.id = UuidGenerator.uuid();
-        _hiveTransformation.groupId = hiveGroupUser.groupId;
-        _hiveTransformation.userId = hiveGroupUser.userId;
-        _hiveTransformation.month = bloc.resultsBloc.hiveDate!;
-        _hiveTransformation.isNew = true;
-      } else {
-        _hiveTransformation.isUpdated = true;
-      }
+      GroupUser hiveGroupUser, Transformation? _hiveTransformation) {
+    //   // _hiveTransformation = widget.hiveGroupUser
+    //   //     .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
+    //   if (_impactStory != null) {
+    //     if (_hiveTransformation == null) {
+    //       _hiveTransformation = HiveTransformation();
+    //       _hiveTransformation.id = UuidGenerator.uuid();
+    //       _hiveTransformation.groupId = hiveGroupUser.groupId;
+    //       _hiveTransformation.userId = hiveGroupUser.userId;
+    //       _hiveTransformation.month = bloc.resultsBloc.hiveDate!;
+    //       _hiveTransformation.isNew = true;
+    //     } else {
+    //       _hiveTransformation.isUpdated = true;
+    //     }
 
-      _hiveTransformation.impactStory = _impactStory;
-    }
+    //     _hiveTransformation.impactStory = _impactStory;
+    //   }
 
-    List<HiveFile> _transformationFiles = [];
+    //   List<HiveFile> _transformationFiles = [];
 
-    if (_files.isNotEmpty) {
-      _files.forEach((file) {
-        _transformationFiles.add(HiveFile(
-          entityId: _hiveTransformation!.id,
-          entityType: EntityType.TRANSFORMATION.value,
-          filepath: file.path,
-          filename: file.path.split("/").last,
-        ));
-      });
-    }
+    //   if (_files.isNotEmpty) {
+    //     _files.forEach((file) {
+    //       _transformationFiles.add(HiveFile(
+    //         entityId: _hiveTransformation!.id,
+    //         entityType: EntityType.TRANSFORMATION.value,
+    //         filepath: file.path,
+    //         filename: file.path.split("/").last,
+    //       ));
+    //     });
+    //   }
 
-    TransformationProvider()
-        .createUpdateTransformation(_hiveTransformation!,
-            transformationFiles: _transformationFiles)
-        .then((value) {
-      debugPrint("Transformation saved.");
-      // save files also
-    }).onError((error, stackTrace) {
-      debugPrint("Failed to save Transformation");
-    });
+    //   TransformationProvider()
+    //       .createUpdateTransformation(_hiveTransformation!,
+    //           transformationFiles: _transformationFiles)
+    //       .then((value) {
+    //     debugPrint("Transformation saved.");
+    //     // save files also
+    //   }).onError((error, stackTrace) {
+    //     debugPrint("Failed to save Transformation");
+    //   });
   }
 
-  Future<DateTime?> _selectMonth(DataBloc bloc) async {
+  Future<DateTime?> _selectMonth(Date month) async {
     // reference for the MonthYearPickerLocalizations is add in app.dart
     return await showMonthYearPicker(
       context: context,
       initialDate: DateTimeUtils.toDateTime(
-          DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
+          DateTimeUtils.formatHiveDate(month,
               requiredDateFormat: "dd-MMM-yyyy"),
           "dd-MMM-yyyy"),
       firstDate: DateTime(DateTime.now().year - 10),
@@ -1115,26 +1298,26 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   void _saveGroupEvaluations(
       HiveGroupUser hiveGroupUser, HiveGroupEvaluation? _hiveGroupEvalution,
       {required GroupEvaluation_Evaluation evaluation}) {
-    if (_hiveGroupEvalution == null) {
-      _hiveGroupEvalution = HiveGroupEvaluation();
-      _hiveGroupEvalution.id = UuidGenerator.uuid();
-      _hiveGroupEvalution.groupId = hiveGroupUser.groupId;
-      _hiveGroupEvalution.userId = hiveGroupUser.userId;
-      _hiveGroupEvalution.month = bloc.resultsBloc.hiveDate!;
-      _hiveGroupEvalution.isNew = true;
-    } else {
-      _hiveGroupEvalution.isUpdated = true;
-    }
+    // if (_hiveGroupEvalution == null) {
+    //   _hiveGroupEvalution = HiveGroupEvaluation();
+    //   _hiveGroupEvalution.id = UuidGenerator.uuid();
+    //   _hiveGroupEvalution.groupId = hiveGroupUser.groupId;
+    //   _hiveGroupEvalution.userId = hiveGroupUser.userId;
+    //   _hiveGroupEvalution.month = bloc.resultsBloc.hiveDate!;
+    //   _hiveGroupEvalution.isNew = true;
+    // } else {
+    //   _hiveGroupEvalution.isUpdated = true;
+    // }
 
-    _hiveGroupEvalution.evaluation = evaluation.value;
+    // _hiveGroupEvalution.evaluation = evaluation.value;
 
-    GroupEvaluationProvider()
-        .createUpdateGroupEvaluation(_hiveGroupEvalution)
-        .then((value) {
-      debugPrint("Evaluaitons saved.");
-      // save files also
-    }).onError((error, stackTrace) {
-      debugPrint("Evaluations to save Transformation");
-    });
+    // GroupEvaluationProvider()
+    //     .createUpdateGroupEvaluation(_hiveGroupEvalution)
+    //     .then((value) {
+    //   debugPrint("Evaluaitons saved.");
+    //   // save files also
+    // }).onError((error, stackTrace) {
+    //   debugPrint("Evaluations to save Transformation");
+    // });
   }
 }

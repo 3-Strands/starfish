@@ -304,6 +304,17 @@ class DataRepository {
   Stream<List<ActionUser>> get actionUsers => _streamBox(_hiveApi.actionUser);
   List<ActionUser> get currentActionUsers => _hiveApi.actionUser.asList();
 
+  // ------------------- Transformations ---------------------
+  Stream<List<Transformation>> get transformations =>
+      _streamBox(_hiveApi.transformation);
+  List<Transformation> get currentTransformations =>
+      _hiveApi.transformation.asList();
+
+  RelatedTransformation getTransformationRelatedToUser(String userId) {
+    return RelatedTransformation(globalHiveApi.transformation.values
+        .where((transformation) => transformation.userId == userId)
+        .toList());
+  }
   // ------------------- Countries -------------------
 
   Stream<List<Country>> get countries => _streamBox(_hiveApi.country);
@@ -349,4 +360,10 @@ class RelatedActions {
   final Map<String, ActionStatus> actionsAssignedToMe;
   final Set<String> actionsAssignedToGroupWithLeaderRole;
   final Map<String, ActionGroupUserWithStatus> actionGroupUsersWithStatus;
+}
+
+class RelatedTransformation {
+  RelatedTransformation(this.transformations);
+
+  final List<Transformation> transformations;
 }

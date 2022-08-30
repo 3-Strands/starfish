@@ -37,9 +37,9 @@ class FocusableTextField extends HookWidget {
       return;
     }, [focusNode]);
 
-    return TextField(
+    return TextFormField(
       focusNode: focusNode,
-      controller: controller,
+      initialValue: text,
       keyboardType: TextInputType.text,
       decoration: decoration,
       maxLines: maxLines,

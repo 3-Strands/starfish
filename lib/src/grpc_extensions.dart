@@ -132,3 +132,14 @@ extension UserExt on User {
             .where((group) => group != null),
       );
 }
+
+extension TeacherResponseExt on TeacherResponse {
+  User? get teacher => globalHiveApi.user.get(teacherId);
+}
+
+extension TransformationExt on Transformation {
+  List<FileReference> get fileReferences => files
+      .map((filename) => FileReferenceExt.getFileReference(
+          entityId: id, entityType: EntityType.MATERIAL, filename: filename))
+      .toList();
+}
