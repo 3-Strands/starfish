@@ -54,5 +54,12 @@ class FileReference extends HiveObject {
   static String keyFrom(String entityId, String filename) =>
       '$entityId:$filename';
 
-  get key => keyFrom(entityId, filename);
+  String get key => keyFrom(entityId, filename);
+
+  FileReference clone() => FileReference(
+      entityId: entityId,
+      filename: filename,
+      filepath: filepath,
+      entityType: entityType,
+      isSynced: isSynced);
 }

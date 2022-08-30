@@ -83,7 +83,7 @@ class AddEditMaterialCubit extends Cubit<AddEditMaterialState> {
           editability:
               editability ?? Material_Editability.UNSPECIFIED_EDITABILITY));
 
-  void submitRequested() {
+  bool submitRequested() {
     MaterialError? error;
     if (state.title.isEmpty) {
       error = MaterialError.noTitle;
@@ -97,41 +97,49 @@ class AddEditMaterialCubit extends Cubit<AddEditMaterialState> {
 
     if (error != null) {
       emit(state.copyWith(error: error));
-    } else {
-      final material = _material;
-      final id = material?.id ?? UuidGenerator.uuid();
-      _dataRepository.addDelta(
-        material == null
-            ? MaterialCreateDelta(
-                id: id,
-                title: state.title,
-                description: state.description,
-                topics: state.selectedTopics.toList(),
-                typeIds: state.selectedTypes.toList(),
-                languageIds: state.selectedLanguages.toList(),
-                url: state.url,
-                editability: state.editability,
-              )
-            : MaterialUpdateDelta(
-                material,
-                title: state.title,
-                description: state.description,
-                topics: state.selectedTopics.toList(),
-                typeIds: state.selectedTypes.toList(),
-                languageIds: state.selectedLanguages.toList(),
-                url: state.url,
-                editability: state.editability,
-              ),
-      );
-      state.newlySelectedFiles.forEach((file) {
-        _dataRepository.addDelta(FileReferenceCreateDelta(
-          entityId: id,
-          entityType: EntityType.MATERIAL,
-          filename: file.path.split('/').last,
-          filepath: file.path,
-        ));
-      });
+      return false;
     }
+    final material = _material;
+    final id = material?.id ?? UuidGenerator.uuid();
+    final files = [
+      ...state.previouslySelectedFiles
+          .map((fileReference) => fileReference.filename),
+      ...state.newlySelectedFiles.map((file) => file.path.split('/').last),
+    ];
+    state.newlySelectedFiles.forEach((file) {
+      _dataRepository.addDelta(FileReferenceCreateDelta(
+        entityId: id,
+        entityType: EntityType.MATERIAL,
+        filename: file.path.split('/').last,
+        filepath: file.path,
+      ));
+    });
+    _dataRepository.addDelta(
+      material == null
+          ? MaterialCreateDelta(
+              id: id,
+              title: state.title,
+              description: state.description,
+              topics: state.selectedTopics.toList(),
+              typeIds: state.selectedTypes.toList(),
+              languageIds: state.selectedLanguages.toList(),
+              url: state.url,
+              editability: state.editability,
+              files: files,
+            )
+          : MaterialUpdateDelta(
+              material,
+              title: state.title,
+              description: state.description,
+              topics: state.selectedTopics.toList(),
+              typeIds: state.selectedTypes.toList(),
+              languageIds: state.selectedLanguages.toList(),
+              url: state.url,
+              editability: state.editability,
+              files: files,
+            ),
+    );
+    return true;
   }
 
   @override

@@ -24,24 +24,22 @@ downloadMaterial(FileReference fileReference, FileTransferClient client) async {
   fileReference.filepath = file.path;
 }
 
-Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
-    shared.uploadFile(readStream: (controller) async {
-      for (final fileReference in fileReferences) {
+Future<void> uploadFiles(
+        Iterable<FileReference> fileReferences, FileTransferClient client) =>
+    shared.uploadFiles(
+      fileReferences,
+      client,
+      readStream: (controller, fileReference) async {
         final file = io.File(fileReference.filepath!);
-        final metaData = FileMetaData(
-          entityId: fileReference.entityId,
-          filename: fileReference.filename,
-          entityType: EntityType.MATERIAL,
-        );
+        // TODO: Make sure file exists!
 
-        controller.add(FileData(metaData: metaData));
+        controller.add(FileData(metaData: fileReference.toFileMetaData()));
 
-        Stream<List<int>> inputStream = file.openRead();
-        await for (final data in inputStream) {
+        await for (final data in file.openRead()) {
           controller.add(FileData(chunk: data));
         }
-      }
-    });
+      },
+    );
 
 Future<void> openFile(String filepath) async {
   await OpenFile.open(filepath);

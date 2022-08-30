@@ -760,7 +760,7 @@ void main() {
 
   ${messages.entries.map((entry) => entry.value.makeAdapterCode(entry.key)).join('\n')}
 
-  void registerAllAdapters() {
+  void _registerAllAutoAdapters() {
     ${messages.values.map((value) => 'Hive.registerAdapter(${value.name}Adapter());').join('\n')}
   }
   ''';

@@ -46,22 +46,19 @@ Future<void> downloadMaterial(
   fileReference.filepath = file.path;
 }
 
-Future<void> uploadMaterials(Iterable<FileReference> fileReferences) =>
-    shared.uploadFile(readStream: (controller) async {
-      for (final fileReference in fileReferences) {
-        final metaData = FileMetaData(
-          entityId: fileReference.entityId,
-          filename: fileReference.filename,
-          entityType: EntityType.MATERIAL,
-        );
-
-        controller.add(FileData(metaData: metaData));
+Future<void> uploadFiles(
+        Iterable<FileReference> fileReferences, FileTransferClient client) =>
+    shared.uploadFiles(
+      fileReferences,
+      client,
+      readStream: (controller, fileReference) async {
+        controller.add(FileData(metaData: fileReference.toFileMetaData()));
         final objectUrl = _fs[fileReference.filepath]!;
         final chunk = await _fetchData(objectUrl);
         debugPrint("Uploading file of size: ${chunk.length}");
         controller.add(FileData(chunk: chunk));
-      }
-    });
+      },
+    );
 
 Future<void> openFile(String filepath) async {
   html.AnchorElement(href: _fs[filepath]!)

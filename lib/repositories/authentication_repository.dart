@@ -48,7 +48,9 @@ class OtpHandler {
 typedef MakeCurrentUserApi = GrpcCurrentUserApi Function(Tokens session);
 
 typedef MakeAuthenticatedRequest = Future<T> Function<T>(
-    Future<T> Function(StarfishClient client) makeRequest);
+    Future<T> Function(
+            StarfishClient client, FileTransferClient fileTransferClient)
+        makeRequest);
 
 /// {@template authentication_repository}
 /// Repository which manages user authentication.
@@ -213,17 +215,23 @@ class AuthenticationRepository {
   }
 
   Future<T> makeAuthenticatedRequest<T>(
-      Future<T> Function(StarfishClient client) makeRequest) async {
+      Future<T> Function(
+              StarfishClient client, FileTransferClient fileTransferClient)
+          makeRequest) async {
     assert(_session.value != null,
         'Attempting to make an authenticated request without a valid session!');
     var client = makeAuthenticatedClient(_session.value!.tokens.accessToken);
+    var fileTransferClient =
+        makeAuthenticatedFileTransferClient(_session.value!.tokens.accessToken);
     try {
-      return await makeRequest(client);
+      return await makeRequest(client, fileTransferClient);
     } on GrpcError catch (error) {
       if (error.code == StatusCode.unauthenticated) {
         final newSession = await refreshSession();
         client = makeAuthenticatedClient(newSession.tokens.accessToken);
-        return await makeRequest(client);
+        fileTransferClient =
+            makeAuthenticatedFileTransferClient(newSession.tokens.accessToken);
+        return await makeRequest(client, fileTransferClient);
       } else {
         throw error;
       }

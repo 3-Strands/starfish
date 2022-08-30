@@ -589,7 +589,11 @@ class AddEditMaterialView extends StatelessWidget {
               child: Container(
                 margin: EdgeInsets.only(right: 10.h),
                 child: ElevatedButton(
-                  onPressed: cubit.submitRequested,
+                  onPressed: () {
+                    if (cubit.submitRequested()) {
+                      Navigator.of(context).pop();
+                    }
+                  },
                   child: Text(
                     isEditMode ? appLocalizations.update : appLocalizations.add,
                   ),

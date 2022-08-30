@@ -1237,7 +1237,7 @@
 //     }
 
 //     try {
-//       await uploadMaterials(_localFiles);
+//       await uploadFiles(_localFiles);
 //       await Future.wait(_localFiles.map((hiveFile) {
 //         hiveFile.isSynced = true;
 //         return hiveFile.save();

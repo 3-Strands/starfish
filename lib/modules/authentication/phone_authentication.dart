@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -14,7 +15,7 @@ import 'authentication_error_handler.dart';
 import 'bloc/login_flow_bloc.dart';
 
 class PhoneAuthentication extends StatelessWidget {
-  const PhoneAuthentication({ Key? key }) : super(key: key);
+  const PhoneAuthentication({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class PhoneAuthentication extends StatelessWidget {
 }
 
 class PhoneAuthenticationView extends StatelessWidget {
-  const PhoneAuthenticationView({ Key? key }) : super(key: key);
+  const PhoneAuthenticationView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +60,7 @@ class PhoneAuthenticationView extends StatelessWidget {
                 BlocBuilder<PhoneBloc, PhoneState>(
                   builder: (context, state) {
                     return InternationalPhoneNumberInput(
+                      autoFocus: true,
                       selectorConfig: SelectorConfig(
                         selectorType: PhoneInputSelectorType.DIALOG,
                         showFlags: true,
@@ -69,7 +71,8 @@ class PhoneAuthenticationView extends StatelessWidget {
                         labelStyle: formTitleHintStyle,
                         hintText: appLocalizations.phoneNumberHint,
                         hintStyle: formTitleHintStyle,
-                        contentPadding: EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
                         border: outlineInputBorder,
                         enabledBorder: outlineInputBorder,
                         // errorBorder: outlineInputBorder,
@@ -78,14 +81,23 @@ class PhoneAuthenticationView extends StatelessWidget {
                         filled: true,
                         fillColor: AppColors.txtFieldBackground,
                       ),
-                      onInputChanged: (value) =>
-                        context.read<PhoneBloc>().add(NumberChanged(value.phoneNumber!)),
-                      onInputValidated: (isValid) =>
-                        context.read<PhoneBloc>().add(ValidityChanged(isValid)),
-                      onFieldSubmitted: (_) =>
-                        context.read<LoginFlowBloc>().add(SignInRequested(state.number)),
+                      onInputChanged: (value) => context
+                          .read<PhoneBloc>()
+                          .add(NumberChanged(value.phoneNumber!)),
+                      onInputValidated: (isValid) => context
+                          .read<PhoneBloc>()
+                          .add(ValidityChanged(
+                              kIsWeb ? state.number.length > 2 : isValid)),
+                      onFieldSubmitted: (_) => context
+                          .read<LoginFlowBloc>()
+                          .add(SignInRequested(state.number)),
                       errorMessage: appLocalizations.invalidPhoneNumber,
                       autoValidateMode: AutovalidateMode.onUserInteraction,
+                      validator: kIsWeb
+                          ? ((value) => (value?.length ?? 0) > 2
+                              ? null
+                              : appLocalizations.invalidPhoneNumber)
+                          : null,
                       formatInput: false,
                     );
                   },
@@ -106,12 +118,12 @@ class PhoneAuthenticationView extends StatelessWidget {
                 textAlign: TextAlign.start,
                 style: buttonTextStyle,
               ),
-              onPressed: () =>
-                context.read<LoginFlowBloc>().add(SignInRequested(state.number)),
+              onPressed: () => context
+                  .read<LoginFlowBloc>()
+                  .add(SignInRequested(state.number)),
               style: ElevatedButton.styleFrom(
-                primary: (!state.isValid)
-                    ? Colors.grey
-                    : AppColors.selectedButtonBG,
+                primary:
+                    (!state.isValid) ? Colors.grey : AppColors.selectedButtonBG,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.r),
                 ),

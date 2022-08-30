@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/apis/hive_api.dart';
+import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pbgrpc.dart';
+import 'package:starfish/wrappers/file_system.dart';
 
 class SyncRepository {
   SyncRepository({
@@ -73,7 +75,19 @@ class SyncRepository {
 
   Future<void> _doSync() async {
     await globalHiveApi.protectSyncBox(
-      (requests) => makeAuthenticatedRequest((client) async {
+      (requests) =>
+          makeAuthenticatedRequest((client, fileTransferClient) async {
+        final fileRequests = List<FileReference>.from(
+            requests.where((request) => request is FileReference));
+        if (fileRequests.isNotEmpty) {
+          // Upload the files
+          await uploadFiles(fileRequests, fileTransferClient);
+          // Delete the requests
+          globalHiveApi.sync
+              .deleteAll(fileRequests.map((fileRequest) => fileRequest.key));
+          // Filter the remaining requests and proceed
+          requests = requests.where((request) => !(request is FileReference));
+        }
         final controller = StreamController<SyncRequest>();
         final responseStream = client.sync(controller.stream);
         controller.add(SyncRequest(

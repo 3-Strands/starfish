@@ -31,25 +31,30 @@ Future<FileMetaData> downloadFile(FileReference file, FileTransferClient client,
   return metaData ?? FileMetaData();
 }
 
-Future<void> uploadFile(
-    {required FutureOr<void> Function(StreamController<FileData> controller)
-        readStream}) async {
-  // final controller = StreamController<FileData>();
+Future<void> uploadFiles(
+  Iterable<FileReference> fileReferences,
+  FileTransferClient client, {
+  required FutureOr<void> Function(
+    StreamController<FileData> controller,
+    FileReference fileReference,
+  )
+      readStream,
+}) async {
+  final controller = StreamController<FileData>();
 
-  // final responseStream = await MaterialRepository()
-  //     .apiProvider
-  //     .uploadFile(controller.stream);
+  final responseStream = client.upload(controller.stream);
 
-  // await readStream(controller);
+  for (final fileReference in fileReferences) {
+    await readStream(controller, fileReference);
+  }
 
-  // // await controller.close();
+  controller.close();
 
-  // await for (final uploadStatus in responseStream) {
-  //   if (uploadStatus.status == UploadStatus_Status.OK) {
-  //     await controller.close();
-  //     return;
-  //   } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
-  //     throw Exception('Upload failed');
-  //   }
-  // }
+  await for (final uploadStatus in responseStream) {
+    if (uploadStatus.status == UploadStatus_Status.OK) {
+      return;
+    } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
+      throw Exception('Upload failed');
+    }
+  }
 }
