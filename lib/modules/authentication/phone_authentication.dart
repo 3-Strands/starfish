@@ -66,6 +66,7 @@ class PhoneAuthenticationView extends StatelessWidget {
                         showFlags: true,
                         useEmoji: true,
                       ),
+                      initialValue: PhoneNumber(isoCode: "IN"),
                       inputDecoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         labelStyle: formTitleHintStyle,
