@@ -3,6 +3,8 @@ import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
+
+export 'package:starfish/src/generated/google/type/date.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
 
 extension DateExt on Date {
@@ -11,6 +13,14 @@ extension DateExt on Date {
   bool get isValidDate {
     return this.year != 0 && this.month != 0 && this.day != 0;
   }
+
+  int compareMonthTo(Date other) => year < other.year
+      ? -1
+      : year > other.year
+          ? 1
+          : month < other.month
+              ? -1
+              : 1;
 }
 
 extension FileReferenceExt on FileReference {
@@ -68,6 +78,10 @@ extension ActionExt on Action {
   }
 
   Material? get material => globalHiveApi.material.get(materialId);
+}
+
+extension ActionUserExt on ActionUser {
+  Action? get action => globalHiveApi.action.get(actionId);
 }
 
 extension GroupExt on Group {

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -5,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/modules/results/action_history.dart';
+import 'package:starfish/modules/results/action_statuses.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
@@ -253,7 +257,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   SizedBox(
                     height: 20.h,
                   ),
-                  _ActionCard(),
+                  _ActionCard(groupUser: widget.groupUser),
                   SizedBox(
                     height: 5.h,
                   ),
@@ -695,90 +699,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //       ),
   //       SizedBox(
   //         height: 5.h,
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildActionHistoryWidget() {
-  //   // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
-  //   // _currentMonth.day = 0;
-
-  //   List<HiveDate> _historyAvailableMonths =
-  //       bloc.resultsBloc.getListOfAvailableHistoryMonths();
-  //   // _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-  //   // if (_historyAvailableMonths.contains(_currentMonth)) {
-  //   //   _historyAvailableMonths.remove(_currentMonth);
-  //   // }
-
-  //   if (_historyAvailableMonths.length == 0) {
-  //     return SizedBox(
-  //       height: 10.h,
-  //     );
-  //   }
-
-  //   return Column(
-  //     children: [
-  //       SizedBox(
-  //         height: 15.h,
-  //       ),
-  //       Align(
-  //         alignment: Alignment.centerLeft,
-  //         child: Text(
-  //           '${appLocalizations.history}',
-  //           style: TextStyle(
-  //             fontFeatures: [FontFeature.subscripts()],
-  //             color: Color(0xFF434141),
-  //             fontFamily: "OpenSans",
-  //             fontSize: 19.sp,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //           textAlign: TextAlign.left,
-  //         ),
-  //       ),
-  //       SizedBox(
-  //         height: 10.h,
-  //       ),
-  //       ListView.builder(
-  //         shrinkWrap: true,
-  //         physics: NeverScrollableScrollPhysics(),
-  //         itemCount: _historyAvailableMonths.length,
-  //         itemBuilder: (BuildContext context, index) {
-  //           return Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: <Widget>[
-  //               SizedBox(
-  //                 height: 10.h,
-  //               ),
-  //               Text(
-  //                 DateTimeUtils.formatHiveDate(
-  //                     _historyAvailableMonths.elementAt(index),
-  //                     requiredDateFormat: "MMM yyyy"), //"JUL 2021",
-  //                 style: TextStyle(
-  //                   fontFamily: "OpenSans",
-  //                   fontSize: 19.sp,
-  //                   color: Color(0xFF434141),
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 10.h,
-  //               ),
-  //               _buildMonthlyActionWidget(
-  //                   hiveGroupUser
-  //                       .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
-  //                   hiveGroupUser.getActionsNotCompletedInMonth(
-  //                       bloc.resultsBloc.hiveDate!),
-  //                   hiveGroupUser
-  //                       .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!)),
-  //               SizedBox(
-  //                 height: 10.h,
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       ),
-  //       SizedBox(
-  //         height: 10.h,
   //       ),
   //     ],
   //   );
@@ -1393,7 +1313,9 @@ class TeacherFeedback extends StatelessWidget {
 }
 
 class _ActionCard extends StatelessWidget {
-  const _ActionCard({Key? key}) : super(key: key);
+  const _ActionCard({Key? key, required this.groupUser}) : super(key: key);
+
+  final GroupUser groupUser;
 
   @override
   Widget build(BuildContext context) {
@@ -1427,7 +1349,7 @@ class _ActionCard extends StatelessWidget {
               height: 10.h,
             ),
             // TODO: Actual numbers
-            _ActionStatuses(
+            ActionStatuses(
               complete: 0,
               notComplete: 0,
               overdue: 0,
@@ -1436,128 +1358,13 @@ class _ActionCard extends StatelessWidget {
               height: 20.h,
             ),
             // TODO: If history is available
-            if (true) ...[
-              if (isViewActionHistory) _buildActionHistoryWidget(),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    isViewActionHistory = !isViewActionHistory;
-                  });
-                },
-                child: Text(
-                  isViewActionHistory
-                      ? '${appLocalizations.hideHistory}'
-                      : '${appLocalizations.viewHistory}',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: "Open",
-                    color: Color(0xFF3475F0),
-                  ),
-                ),
+            if (true)
+              Padding(
+                padding: EdgeInsets.only(bottom: 10.h),
+                child: ActionHistory(groupUser: groupUser),
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-            ]
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ActionStatuses extends StatelessWidget {
-  const _ActionStatuses({
-    Key? key,
-    required this.complete,
-    required this.notComplete,
-    this.overdue,
-  }) : super(key: key);
-
-  final int complete;
-  final int notComplete;
-  final int? overdue;
-
-  @override
-  Widget build(BuildContext context) {
-    final appLocalizations = AppLocalizations.of(context)!;
-
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-              color: Color(0xFF6DE26B),
-              borderRadius: BorderRadius.all(Radius.circular(8.5.r)),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                complete,
-                zero: "$complete ${appLocalizations.done}",
-                one: "$complete ${appLocalizations.done}",
-                other: "$complete ${appLocalizations.done}",
-                args: [complete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Container(
-            width: 99.w,
-            decoration: BoxDecoration(
-              color: Color(0xFFFFBE4A),
-              borderRadius: BorderRadius.all(Radius.circular(8.5.r)),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-            child: Text(
-              Intl.plural(
-                notComplete,
-                zero: "$notComplete ${appLocalizations.pending}",
-                one: "$notComplete ${appLocalizations.pending}",
-                other: "$notComplete ${appLocalizations.pending}",
-                args: [notComplete],
-              ),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Rubik",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          if (overdue != null)
-            Container(
-              width: 99.w,
-              decoration: BoxDecoration(
-                color: Color(0xFFFF5E4D),
-                borderRadius: BorderRadius.all(Radius.circular(8.5.r)),
-              ),
-              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-              child: Text(
-                Intl.plural(
-                  overdue!,
-                  zero: "$overdue ${appLocalizations.overdue}",
-                  one: "$overdue ${appLocalizations.overdue}",
-                  other: "$overdue ${appLocalizations.overdue}",
-                  args: [overdue!],
-                ),
-                style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Rubik",
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
-        ],
       ),
     );
   }
