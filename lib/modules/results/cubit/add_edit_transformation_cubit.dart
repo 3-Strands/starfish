@@ -39,11 +39,11 @@ class AddEditTransformaitonCubit extends Cubit<AddEditTransformationState> {
     emit(state
         .copyWith(newlySelectedFiles: [...state.newlySelectedFiles, file]));
 
-    _dataRepository.addDelta(FileReferenceCreateDelta(
-        entityId: _transformation?.id,
-        entityType: EntityType.TRANSFORMATION,
-        filename: file.name,
-        filepath: file.path));
+    // _dataRepository.addDelta(FileReferenceCreateDelta(
+    //     entityId: _transformation?.id,
+    //     entityType: EntityType.TRANSFORMATION,
+    //     filename: file.name,
+    //     filepath: file.path));
   }
 
   void removeFile(File file) {

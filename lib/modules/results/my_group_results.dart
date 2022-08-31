@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
+import 'package:starfish/modules/results/result_bottomsheet.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -26,8 +27,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
     return Scrollbar(
       thickness: 5.w,
       thumbVisibility: false,
-      child: SingleChildScrollView(
-          child: Column(
+      child: ListView(
         children: [
           SizedBox(
             height: 20.h,
@@ -173,24 +173,29 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   final _groupUserResultStatus =
                       groupUserResultsList.elementAt(index);
                   return InkWell(
-                    //onTap: () => _onLearnerSummarySelection(_hiveGroupUser),
-                    child: Column(
-                      children: [
-                        index != 0
-                            ? SizedBox(
-                                height: 20.h,
-                              )
-                            : SizedBox(
-                                height: 0.0,
-                              ),
-                        LearnerSummary(
-                          groupUserResultStatus: _groupUserResultStatus,
-                          month: state.month,
-                          // leanerEvaluationForGroup:
-                          //     _hiveGroupUser.getGroupEvaluationForMonth(
-                          //         bloc.resultsBloc.hiveDate!),
-                        ),
-                      ],
+                    onTap: () {
+                      final results = ResultWidgetBottomSheet(
+                        _groupUserResultStatus.group!,
+                        _groupUserResultStatus.groupUser,
+                        _groupUserResultStatus.groupEvaluation,
+                      );
+                      showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) => results,
+                      );
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: index != 0 ? 20.h : 0,
+                      ),
+                      child: LearnerSummary(
+                        groupUserResultStatus: _groupUserResultStatus,
+                        month: state.month,
+                        // leanerEvaluationForGroup:
+                        //     _hiveGroupUser.getGroupEvaluationForMonth(
+                        //         bloc.resultsBloc.hiveDate!),
+                      ),
                     ),
                   );
                 });
@@ -199,7 +204,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
             height: 20.h,
           )
         ],
-      )),
+      ),
     );
   }
   // @override

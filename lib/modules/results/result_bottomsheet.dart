@@ -1,18 +1,19 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:starfish/db/hive_file.dart';
-import 'package:starfish/db/hive_group.dart';
-import 'package:starfish/db/hive_group_evaluation.dart';
-import 'package:starfish/db/hive_group_user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/wrappers/file_system.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
-  final HiveGroup hiveGroup;
-  final HiveGroupUser hiveGroupUser;
-  final HiveGroupEvaluation? leanerEvaluationForGroup;
+  final Group group;
+  final GroupUser groupUser;
+  final GroupEvaluation? leanerEvaluationForGroup;
 
   const ResultWidgetBottomSheet(
-      this.hiveGroup, this.hiveGroupUser, this.leanerEvaluationForGroup,
+      this.group, this.groupUser, this.leanerEvaluationForGroup,
       {Key? key})
       : super(key: key);
 
@@ -36,7 +37,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   TextEditingController _teacherFeedbackController = TextEditingController();
   TextEditingController _transformationController = TextEditingController();
   List<File> _selectedFiles = [];
-  List<HiveFile> _hiveFiles = [];
+  // List<HiveFile> _hiveFiles = [];
 
   String _impactStory = '';
   String _teacherFeedback = '';
@@ -48,360 +49,274 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //   super.initState();
   // }
 
-  late HiveGroup hiveGroup;
-  late HiveGroupUser hiveGroupUser;
-  late HiveGroupEvaluation? leanerEvaluationForGroup;
-
-  @override
-  void initState() {
-    super.initState();
-
-    hiveGroup = widget.hiveGroup;
-    hiveGroupUser = widget.hiveGroupUser;
-    leanerEvaluationForGroup = widget.leanerEvaluationForGroup;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container();
-    // bloc = Provider.of(context);
-    // bloc.resultsBloc.hiveGroupUser = hiveGroupUser;
+    final appLocalizations = AppLocalizations.of(context)!;
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.80,
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom, top: 40.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(34.r)),
+        color: Color(0xFFEFEFEF),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: Colors.white),
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+                children: [
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Container(
+                    //height: 22.h,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              widget.group.name,
+                              //overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFF3475F0),
+                                fontFamily: 'OpenSans',
+                                fontSize: 19.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  SizedBox(height: 20.h),
+                  InkWell(
+                    onTap: () async {
+                      // TODO
+                      // final selected = await _selectMonth(bloc);
+                      // if (selected != null) {
+                      //   HiveDate _hiveDate = HiveDate.create(
+                      //       selected.year, selected.month, 0);
 
-    // _hiveTransformation =
-    //     hiveGroupUser.getTransformationForMonth(bloc.resultsBloc.hiveDate!);
-    // if (_hiveTransformation != null) {
-    //   _impactStory = _hiveTransformation?.impactStory ?? '';
-    // } else {
-    //   _impactStory = '';
-    // }
+                      //   setState(() {
+                      //     bloc.resultsBloc.hiveDate = _hiveDate;
+                      //     leanerEvaluationForGroup =
+                      //         hiveGroupUser.getGroupEvaluationForMonth(
+                      //             bloc.resultsBloc.hiveDate!);
+                      //   });
 
-    // _hiveTeacherResponse =
-    //     hiveGroupUser.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
-    // if (_hiveTeacherResponse != null) {
-    //   _teacherFeedback = _hiveTeacherResponse?.response ?? '';
-    // } else {
-    //   _teacherFeedback = '';
-    // }
+                      //   //_updateLearnerSummary();
+                      // }
+                    },
+                    child: Container(
+                      alignment: Alignment.centerLeft,
 
-    // _teacherFeedbackController.text = _teacherFeedback;
-    // _teacherFeedbackController.selection = TextSelection.fromPosition(
-    //     new TextPosition(offset: _teacherFeedback.length));
+                      height: 52.h,
+                      //width: 345.w,
+                      padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: Text(
+                          // TODO
+                          'TODO',
+                          // DateTimeUtils.formatHiveDate(
+                          //     bloc.resultsBloc.hiveDate!,
+                          //     requiredDateFormat: "MMMM yyyy"),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 19.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xFFEFEFEF),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(8.5.r))),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton2<User>(
+                            offset: Offset(0, -10),
+                            dropdownMaxHeight: 200.h,
+                            scrollbarAlwaysShow: true,
+                            isExpanded: true,
+                            iconSize: 35,
+                            style: TextStyle(
+                              color: Color(0xFFEFEFEF),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                            hint: Text(
+                              "${appLocalizations.learner}: ${widget.groupUser.group?.name ?? ''}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            onChanged: (User? value) {
+                              // TODO
+                            },
+                            items: widget.group.learners
+                                .map<DropdownMenuItem<User>>((User value) {
+                              return DropdownMenuItem<User>(
+                                value: value,
+                                child: Text(
+                                  value.name,
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 17.sp,
+                                    fontFamily: 'OpenSans',
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "${appLocalizations.feelingAboutTheGroup}: ",
+                        style: TextStyle(
+                            fontSize: 17.sp,
+                            fontFamily: "OpenSans",
+                            fontStyle: FontStyle.normal,
+                            color: Color(0xFF4F4F4F),
+                            fontWeight: FontWeight.w600),
+                      ),
+                      // TODO
+                      //     if (leanerEvaluationForGroup != null)
+                      //       Expanded(
+                      //         child: Container(
+                      //           child: Row(
+                      //             children: [
+                      //               GroupEvaluation_Evaluation.valueOf(
+                      //                           leanerEvaluationForGroup!
+                      //                               .evaluation!) ==
+                      //                       GroupEvaluation_Evaluation.GOOD
+                      //                   ? Image.asset(
+                      //                       AssetsPath.thumbsUp,
+                      //                       color: Color(0xFF797979),
+                      //                       height: 15.sp,
+                      //                     )
+                      //                   : Image.asset(
+                      //                       AssetsPath.thumbsDown,
+                      //                       color: Color(0xFF797979),
+                      //                       height: 15.sp,
+                      //                     ),
+                      //               SizedBox(
+                      //                 width: 5.w,
+                      //               ),
+                      //               Text(
+                      //                 "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
+                      //                 style: TextStyle(
+                      //                   fontFamily: "Rubik",
+                      //                   fontSize: 15.sp,
+                      //                   color: Color(0xFF797979),
+                      //                 ),
+                      //                 overflow: TextOverflow.ellipsis,
+                      //                 maxLines: 1,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       )
+                      //   ],
+                      // ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      // _buildActionCard(),
+                      SizedBox(
+                        height: 5.h,
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      //_buildTrasnformatonsCard(),
+                      // _buildTransformationWidget(),
 
-    // _transformationController.text = _impactStory;
-    // _transformationController.selection = TextSelection.fromPosition(
-    //     new TextPosition(offset: _impactStory.length));
-
-    // if (_hiveTransformation != null) {
-    //   _hiveFiles = _hiveTransformation?.localFiles ?? [];
-    // }
-
-    // return Container(
-    //   height: MediaQuery.of(context).size.height * 0.80,
-    //   padding:
-    //       EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-    //   decoration: BoxDecoration(
-    //     borderRadius: BorderRadius.all(Radius.circular(34.r)),
-    //     color: Color(0xFFEFEFEF),
-    //   ),
-    //   child: Column(
-    //     children: [
-    //       Expanded(
-    //         child: Container(
-    //           color: Colors.white,
-    //           margin: EdgeInsets.only(
-    //             top: 40.h,
-    //           ),
-    //           child: Container(
-    //             margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-    //             child: SingleChildScrollView(
-    //               child: Column(
-    //                 mainAxisAlignment: MainAxisAlignment.start,
-    //                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                 children: <Widget>[
-    //                   SizedBox(
-    //                     height: 10.h,
-    //                   ),
-    //                   Container(
-    //                     //height: 22.h,
-    //                     child: Row(
-    //                       mainAxisSize: MainAxisSize.max,
-    //                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //                       children: <Widget>[
-    //                         Expanded(
-    //                           child: Center(
-    //                             child: Text(
-    //                               '${widget.hiveGroup.name}',
-    //                               //overflow: TextOverflow.ellipsis,
-    //                               textAlign: TextAlign.center,
-    //                               style: TextStyle(
-    //                                 color: Color(0xFF3475F0),
-    //                                 fontFamily: 'OpenSans',
-    //                                 fontSize: 19.sp,
-    //                                 fontWeight: FontWeight.bold,
-    //                               ),
-    //                             ),
-    //                           ),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ),
-    //                   SizedBox(
-    //                     height: 20.h,
-    //                   ),
-    //                   SizedBox(height: 20.h),
-    //                   InkWell(
-    //                     onTap: () async {
-    //                       final selected = await _selectMonth(bloc);
-    //                       if (selected != null) {
-    //                         HiveDate _hiveDate = HiveDate.create(
-    //                             selected.year, selected.month, 0);
-
-    //                         setState(() {
-    //                           bloc.resultsBloc.hiveDate = _hiveDate;
-    //                           leanerEvaluationForGroup =
-    //                               hiveGroupUser.getGroupEvaluationForMonth(
-    //                                   bloc.resultsBloc.hiveDate!);
-    //                         });
-
-    //                         //_updateLearnerSummary();
-    //                       }
-    //                     },
-    //                     child: Container(
-    //                       alignment: Alignment.centerLeft,
-
-    //                       height: 52.h,
-    //                       //width: 345.w,
-    //                       padding: EdgeInsets.only(left: 15.w, right: 15.w),
-    //                       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-    //                       decoration: BoxDecoration(
-    //                         color: AppColors.txtFieldBackground,
-    //                         borderRadius: BorderRadius.all(
-    //                           Radius.circular(10),
-    //                         ),
-    //                       ),
-    //                       child: ButtonTheme(
-    //                         alignedDropdown: true,
-    //                         child: Text(
-    //                           DateTimeUtils.formatHiveDate(
-    //                               bloc.resultsBloc.hiveDate!,
-    //                               requiredDateFormat: "MMMM yyyy"),
-    //                           maxLines: 2,
-    //                           overflow: TextOverflow.ellipsis,
-    //                           style: TextStyle(
-    //                             color: Color(0xFF434141),
-    //                             fontSize: 19.sp,
-    //                             fontFamily: 'OpenSans',
-    //                           ),
-    //                           textAlign: TextAlign.left,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   ),
-    //                   SizedBox(height: 20.h),
-    //                   Center(
-    //                     child: Container(
-    //                       decoration: BoxDecoration(
-    //                           color: Color(0xFFEFEFEF),
-    //                           borderRadius:
-    //                               BorderRadius.all(Radius.circular(8.5.r))),
-    //                       child: DropdownButtonHideUnderline(
-    //                         child: ButtonTheme(
-    //                           alignedDropdown: true,
-    //                           child: DropdownButton2<HiveGroupUser>(
-    //                             offset: Offset(0, -10),
-    //                             dropdownMaxHeight: 200.h,
-    //                             scrollbarAlwaysShow: true,
-    //                             isExpanded: true,
-    //                             iconSize: 35,
-    //                             style: TextStyle(
-    //                               color: Color(0xFFEFEFEF),
-    //                               fontSize: 19.sp,
-    //                               fontFamily: 'OpenSans',
-    //                             ),
-    //                             hint: Text(
-    //                               "${AppLocalizations.of(context)!.learner}: ${hiveGroupUser.name}",
-    //                               maxLines: 2,
-    //                               overflow: TextOverflow.ellipsis,
-    //                               style: TextStyle(
-    //                                 color: Color(0xFF434141),
-    //                                 fontSize: 19.sp,
-    //                                 fontFamily: 'OpenSans',
-    //                               ),
-    //                               textAlign: TextAlign.left,
-    //                             ),
-    //                             onChanged: (HiveGroupUser? value) {
-    //                               setState(() {
-    //                                 hiveGroupUser = value!;
-    //                                 bloc.resultsBloc.hiveGroupUser = value;
-    //                                 leanerEvaluationForGroup = hiveGroupUser
-    //                                     .getGroupEvaluationForMonth(
-    //                                         bloc.resultsBloc.hiveDate!);
-    //                                 /*_hiveTransformation = hiveGroupUser
-    //                                     .getTransformationForMonth(
-    //                                         bloc.resultsBloc.hiveDate!);
-    //                                 _hiveTeacherResponse = hiveGroupUser
-    //                                     .getTeacherResponseForMonth(
-    //                                         bloc.resultsBloc.hiveDate!);*/
-    //                               });
-
-    //                               /*setState(() {
-    //                                   bloc.resultsBloc.hiveGroupUser = value;
-    //                                 });*/
-
-    //                               //_updateLearnerSummary();
-    //                             },
-    //                             items: widget.hiveGroup.learners
-    //                                 ?.map<DropdownMenuItem<HiveGroupUser>>(
-    //                                     (HiveGroupUser value) {
-    //                               return DropdownMenuItem<HiveGroupUser>(
-    //                                 value: value,
-    //                                 child: Text(
-    //                                   value.name,
-    //                                   style: TextStyle(
-    //                                     color: Color(0xFF434141),
-    //                                     fontSize: 17.sp,
-    //                                     fontFamily: 'OpenSans',
-    //                                   ),
-    //                                 ),
-    //                               );
-    //                             }).toList(),
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   ),
-    //                   SizedBox(
-    //                     height: 20.h,
-    //                   ),
-    //                   Row(
-    //                     children: [
-    //                       Text(
-    //                         "${AppLocalizations.of(context)!.feelingAboutTheGroup}: ",
-    //                         style: TextStyle(
-    //                             fontSize: 17.sp,
-    //                             fontFamily: "OpenSans",
-    //                             fontStyle: FontStyle.normal,
-    //                             color: Color(0xFF4F4F4F),
-    //                             fontWeight: FontWeight.w600),
-    //                       ),
-    //                       if (leanerEvaluationForGroup != null)
-    //                         Expanded(
-    //                           child: Container(
-    //                             child: Row(
-    //                               children: [
-    //                                 GroupEvaluation_Evaluation.valueOf(
-    //                                             leanerEvaluationForGroup!
-    //                                                 .evaluation!) ==
-    //                                         GroupEvaluation_Evaluation.GOOD
-    //                                     ? Image.asset(
-    //                                         AssetsPath.thumbsUp,
-    //                                         color: Color(0xFF797979),
-    //                                         height: 15.sp,
-    //                                       )
-    //                                     : Image.asset(
-    //                                         AssetsPath.thumbsDown,
-    //                                         color: Color(0xFF797979),
-    //                                         height: 15.sp,
-    //                                       ),
-    //                                 SizedBox(
-    //                                   width: 5.w,
-    //                                 ),
-    //                                 Text(
-    //                                   "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
-    //                                   style: TextStyle(
-    //                                     fontFamily: "Rubik",
-    //                                     fontSize: 15.sp,
-    //                                     color: Color(0xFF797979),
-    //                                   ),
-    //                                   overflow: TextOverflow.ellipsis,
-    //                                   maxLines: 1,
-    //                                 ),
-    //                               ],
-    //                             ),
-    //                           ),
-    //                         )
-    //                     ],
-    //                   ),
-    //                   /*SizedBox(
-    //                       height: 20.h,
-    //                     ),
-    //                     Row(
-    //                       children: [
-    //                         Text(
-    //                           '${AppLocalizations.of(context)!.feelingAboutTheGroup}:',
-    //                           style: TextStyle(
-    //                             fontWeight: FontWeight.w600,
-    //                             fontSize: 19.sp,
-    //                             fontFamily: "OpenSans",
-    //                             color: Color(0xFF4F4F4F),
-    //                           ),
-    //                         ),
-    //                         SizedBox(
-    //                           width: 5.w,
-    //                         ),
-    //                         _buildGroupEvaluationWidget(),
-    //                       ],
-    //                     ),*/
-    //                   SizedBox(
-    //                     height: 20.h,
-    //                   ),
-    //                   _buildActionCard(),
-    //                   SizedBox(
-    //                     height: 5.h,
-    //                   ),
-    //                   SizedBox(
-    //                     height: 10.h,
-    //                   ),
-    //                   //_buildTrasnformatonsCard(),
-    //                   _buildTransformationWidget(),
-
-    //                   SizedBox(
-    //                     height: 10.h,
-    //                   ),
-    //                   _buildTeacherFeedbackCard(),
-    //                   SizedBox(
-    //                     height: 10.h,
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //       Container(
-    //         height: 75.0,
-    //         width: MediaQuery.of(context).size.width,
-    //         decoration: BoxDecoration(
-    //           color: Color(0xFFEFEFEF),
-    //         ),
-    //         child: Padding(
-    //           padding: const EdgeInsets.only(
-    //               left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
-    //           child: Container(
-    //             height: 37.5.h,
-    //             color: Color(0xFFEFEFEF),
-    //             child: ElevatedButton(
-    //               onPressed: () {
-    //                 //  _saveTransformation(userImpactStory, imageFiles ?? []);
-    //                 Navigator.pop(context);
-    //               },
-    //               style: ButtonStyle(
-    //                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-    //                   RoundedRectangleBorder(
-    //                     borderRadius: BorderRadius.circular(40.r),
-    //                   ),
-    //                 ),
-    //                 backgroundColor: MaterialStateProperty.all<Color>(
-    //                     AppColors.unselectedButtonBG),
-    //               ),
-    //               child: Text(AppLocalizations.of(context)!.close),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      TeacherFeedback(),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 75.0,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Color(0xFFEFEFEF),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 30.0, right: 30.0, top: 19.0, bottom: 19.0),
+              child: Container(
+                height: 37.5.h,
+                color: Color(0xFFEFEFEF),
+                child: ElevatedButton(
+                  onPressed: () {
+                    //  _saveTransformation(userImpactStory, imageFiles ?? []);
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40.r),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        AppColors.unselectedButtonBG),
+                  ),
+                  child: Text(appLocalizations.close),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Widget _buildTeacherFeedbackCard() {
@@ -424,7 +339,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //   //           height: 10.h,
   //   //         ),
   //   //         Text(
-  //   //           '${AppLocalizations.of(context)!.teacherFeedbackForLearner}',
+  //   //           '${appLocalizations.teacherFeedbackForLearner}',
   //   //           style: TextStyle(
   //   //             fontWeight: FontWeight.w600,
   //   //             fontSize: 17.sp,
@@ -513,8 +428,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //   //                       child: Center(
   //   //                         child: Text(
   //   //                           isViewCategoryEvalutionHistory
-  //   //                               ? '${AppLocalizations.of(context)!.hideHistory}'
-  //   //                               : '${AppLocalizations.of(context)!.viewHistory}',
+  //   //                               ? '${appLocalizations.hideHistory}'
+  //   //                               : '${appLocalizations.viewHistory}',
   //   //                           style: TextStyle(
   //   //                             fontSize: 16.sp,
   //   //                             fontFamily: "Open",
@@ -560,7 +475,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //       Visibility(
   //         visible: isViewCategoryEvalutionHistory,
   //         child: Text(
-  //           '${AppLocalizations.of(context)!.currentEvaluation}',
+  //           '${appLocalizations.currentEvaluation}',
   //           style: TextStyle(
   //             fontFeatures: [FontFeature.subscripts()],
   //             color: Color(0xFF434141),
@@ -594,7 +509,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //         child: Align(
   //           alignment: Alignment.centerLeft,
   //           child: Text(
-  //             '${AppLocalizations.of(context)!.history}',
+  //             '${appLocalizations.history}',
   //             style: TextStyle(
   //               fontFeatures: [FontFeature.subscripts()],
   //               color: Color(0xFF434141),
@@ -915,7 +830,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //       ),
   //       Text(
   //         _value.toInt() == 0
-  //             ? "${AppLocalizations.of(context)!.dragToSelect}"
+  //             ? "${appLocalizations.dragToSelect}"
   //             : _evaluationCategory.getEvaluationNameFromValue(_value.toInt()),
   //         style: TextStyle(
   //           fontStyle: FontStyle.italic,
@@ -951,7 +866,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //             height: 10.h,
   //           ),
   //           Text(
-  //             "${AppLocalizations.of(context)!.resultMoreThenOneActionCompleted}",
+  //             "${appLocalizations.resultMoreThenOneActionCompleted}",
   //             style: TextStyle(
   //               fontSize: 19.sp,
   //               color: Color(0xFF4F4F4F),
@@ -985,8 +900,8 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //               },
   //               child: Text(
   //                 isViewActionHistory
-  //                     ? '${AppLocalizations.of(context)!.hideHistory}'
-  //                     : '${AppLocalizations.of(context)!.viewHistory}',
+  //                     ? '${appLocalizations.hideHistory}'
+  //                     : '${appLocalizations.viewHistory}',
   //                 style: TextStyle(
   //                   fontSize: 16.sp,
   //                   fontFamily: "Open",
@@ -1029,7 +944,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //       Align(
   //         alignment: Alignment.centerLeft,
   //         child: Text(
-  //           '${AppLocalizations.of(context)!.history}',
+  //           '${appLocalizations.history}',
   //           style: TextStyle(
   //             fontFeatures: [FontFeature.subscripts()],
   //             color: Color(0xFF434141),
@@ -1105,9 +1020,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //             child: Text(
   //               Intl.plural(
   //                 complete,
-  //                 zero: "$complete ${AppLocalizations.of(context)!.done}",
-  //                 one: "$complete ${AppLocalizations.of(context)!.done}",
-  //                 other: "$complete ${AppLocalizations.of(context)!.done}",
+  //                 zero: "$complete ${appLocalizations.done}",
+  //                 one: "$complete ${appLocalizations.done}",
+  //                 other: "$complete ${appLocalizations.done}",
   //                 args: [complete],
   //               ),
   //               style: TextStyle(
@@ -1135,10 +1050,10 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //             child: Text(
   //               Intl.plural(
   //                 notComplete,
-  //                 zero: "$notComplete ${AppLocalizations.of(context)!.pending}",
-  //                 one: "$notComplete ${AppLocalizations.of(context)!.pending}",
+  //                 zero: "$notComplete ${appLocalizations.pending}",
+  //                 one: "$notComplete ${appLocalizations.pending}",
   //                 other:
-  //                     "$notComplete ${AppLocalizations.of(context)!.pending}",
+  //                     "$notComplete ${appLocalizations.pending}",
   //                 args: [notComplete],
   //               ),
   //               style: TextStyle(
@@ -1164,9 +1079,9 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //               child: Text(
   //                 Intl.plural(
   //                   overdue,
-  //                   zero: "$overdue ${AppLocalizations.of(context)!.overdue}",
-  //                   one: "$overdue ${AppLocalizations.of(context)!.overdue}",
-  //                   other: "$overdue ${AppLocalizations.of(context)!.overdue}",
+  //                   zero: "$overdue ${appLocalizations.overdue}",
+  //                   one: "$overdue ${appLocalizations.overdue}",
+  //                   other: "$overdue ${appLocalizations.overdue}",
   //                   args: [overdue],
   //                 ),
   //                 style: TextStyle(
@@ -1196,7 +1111,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //         width: 5.w,
   //       ),
   //       Text(
-  //         '${AppLocalizations.of(context)!.goodText}',
+  //         '${appLocalizations.goodText}',
   //         style: TextStyle(
   //           //    fontWeight: FontWeight.w600,
   //           fontSize: 16.sp,
@@ -1216,7 +1131,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //         width: 5.w,
   //       ),
   //       Text(
-  //         '${AppLocalizations.of(context)!.notSoGoodText}',
+  //         '${appLocalizations.notSoGoodText}',
   //         style: TextStyle(
   //           //    fontWeight: FontWeight.w600,
   //           fontSize: 16.sp,
@@ -1248,15 +1163,15 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   // String sliderLabel(int value) {
   //   switch (value) {
   //     case 1:
-  //       return "${AppLocalizations.of(context)!.poorText}";
+  //       return "${appLocalizations.poorText}";
   //     case 2:
-  //       return "${AppLocalizations.of(context)!.notSoGoodText}";
+  //       return "${appLocalizations.notSoGoodText}";
   //     case 3:
-  //       return "${AppLocalizations.of(context)!.acceptableText}";
+  //       return "${appLocalizations.acceptableText}";
   //     case 4:
-  //       return "${AppLocalizations.of(context)!.goodText}";
+  //       return "${appLocalizations.goodText}";
   //     case 5:
-  //       return "${AppLocalizations.of(context)!.greatText}";
+  //       return "${appLocalizations.greatText}";
   //     default:
   //       return "";
   //   }
@@ -1427,7 +1342,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //                 width: 5.w,
   //               ),
   //               Text(
-  //                 '${AppLocalizations.of(context)!.transformations}',
+  //                 '${appLocalizations.transformations}',
   //                 style: TextStyle(
   //                   fontWeight: FontWeight.w600,
   //                   fontSize: 19.sp,
@@ -1453,7 +1368,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //               keyboardType: TextInputType.text,
   //               decoration: InputDecoration(
   //                 hintText:
-  //                     '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
+  //                     '${appLocalizations.hintTextTransformationsTextField}',
   //                 hintStyle: TextStyle(
   //                   fontFamily: "OpenSans",
   //                   fontSize: 16.sp,
@@ -1503,7 +1418,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //                     if ((_selectedFiles.length + (_hiveFiles.length)) >= 5) {
   //                       Fluttertoast.showToast(
   //                           msg:
-  //                               AppLocalizations.of(context)!.maxFilesSelected);
+  //                               appLocalizations.maxFilesSelected);
   //                     } else {
   //                       final result = await getPickerFileWithCrop(
   //                         context,
@@ -1514,7 +1429,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //                         var fileSize = result.size;
   //                         if (fileSize > 5 * 1024 * 1024) {
   //                           Fluttertoast.showToast(
-  //                               msg: AppLocalizations.of(context)!
+  //                               msg: appLocalizations
   //                                   .imageSizeValidation);
   //                         } else {
   //                           setState(() {
@@ -1531,7 +1446,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //                     }
   //                   },
   //                   child: Text(
-  //                     '${AppLocalizations.of(context)!.addPhotos}',
+  //                     '${appLocalizations.addPhotos}',
   //                     style: TextStyle(
   //                       fontFamily: 'OpenSans',
   //                       fontSize: 17.sp,
@@ -1646,4 +1561,148 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //     children: _widgetList,
   //   );
   // }
+}
+
+class TeacherFeedback extends StatelessWidget {
+  const TeacherFeedback({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    return Card(
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            10,
+          ),
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.only(left: 15.w, right: 15.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              '${appLocalizations.teacherFeedbackForLearner}',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 17.sp,
+                fontFamily: "OpenSans",
+                color: Color(0xFF4F4F4F),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 5.h,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFFFF),
+                border: Border.all(
+                  color: Color(0xFF979797),
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: FocusableTextField(
+                // controller: _teacherFeedbackController,
+                keyboardType: TextInputType.text,
+                maxCharacters: 200,
+                decoration: InputDecoration(
+                  counterText: "",
+                  hintText: "",
+                  hintStyle: TextStyle(
+                    fontFamily: "OpenSans",
+                    fontSize: 16.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                maxLines: 3,
+                textInputAction: TextInputAction.done,
+                onFocusChange: (isFocused) {
+                  if (isFocused) {
+                    return;
+                  }
+                  // TODO
+                  // _saveTeacherFeedback(_teacherFeedbackController.text.trim());
+                },
+                // onChange: (value) {
+                //   _teacherFeedback = value;
+                // },
+              ),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            // if (widget.hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
+            //   widgets.StatefulBuilder(
+            //     builder: (BuildContext context, StateSetter setState) {
+            //       return Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           ListView.builder(
+            //               shrinkWrap: true,
+            //               physics: NeverScrollableScrollPhysics(),
+            //               itemCount:
+            //                   widget.hiveGroup.groupEvaluationCategories.length,
+            //               itemBuilder: (context, index) {
+            //                 HiveEvaluationCategory _category = widget
+            //                     .hiveGroup.groupEvaluationCategories
+            //                     .elementAt(index);
+            //                 return _buildCategorySlider(_category);
+            //               }),
+            //           SizedBox(
+            //             height: 20.h,
+            //           ),
+            //           if (bloc.resultsBloc
+            //               .getListOfAvailableHistoryMonths()
+            //               .isNotEmpty) ...[
+            //             if (isViewCategoryEvalutionHistory)
+            //               _buildCategoryHistoryWidget(),
+            //             SizedBox(
+            //               height: 10.h,
+            //             ),
+            //             InkWell(
+            //               onTap: () {
+            //                 setState(() {
+            //                   isViewCategoryEvalutionHistory =
+            //                       !isViewCategoryEvalutionHistory;
+            //                 });
+            //               },
+            //               child: Center(
+            //                 child: Text(
+            //                   isViewCategoryEvalutionHistory
+            //                       ? '${appLocalizations.hideHistory}'
+            //                       : '${appLocalizations.viewHistory}',
+            //                   style: TextStyle(
+            //                     fontSize: 16.sp,
+            //                     fontFamily: "Open",
+            //                     color: Color(0xFF3475F0),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //             SizedBox(
+            //               height: 10.h,
+            //             )
+            //           ]
+            //         ],
+            //       );
+            //     },
+            //   ),
+            // ],
+            SizedBox(
+              height: 20.h,
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
