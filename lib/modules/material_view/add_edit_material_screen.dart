@@ -413,7 +413,7 @@ class AddEditMaterialView extends StatelessWidget {
                   Container(
                     height: 52.h,
                     width: double.infinity,
-                    //  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
                       color: AppColors.txtFieldBackground,
                       borderRadius: BorderRadius.all(
@@ -437,15 +437,12 @@ class AddEditMaterialView extends StatelessWidget {
                                     Material_Visibility.UNSPECIFIED_VISIBILITY
                                 ? null
                                 : state.visibility,
-                            hint: Padding(
-                              padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                              child: Text(
-                                appLocalizations.seenBy,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 19.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
+                            hint: Text(
+                              appLocalizations.seenBy,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
                               ),
                             ),
                             onChanged: cubit.visibilityChanged,
@@ -482,7 +479,7 @@ class AddEditMaterialView extends StatelessWidget {
                   Container(
                     height: 52.h,
                     width: double.infinity,
-                    //  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
                     decoration: BoxDecoration(
                       color: AppColors.txtFieldBackground,
                       borderRadius: BorderRadius.all(
@@ -502,15 +499,12 @@ class AddEditMaterialView extends StatelessWidget {
                               fontSize: 19.sp,
                               fontFamily: 'OpenSans',
                             ),
-                            hint: Padding(
-                              padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                              child: Text(
-                                appLocalizations.editedOrDeletedBy,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 19.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
+                            hint: Text(
+                              appLocalizations.editedOrDeletedBy,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
                               ),
                             ),
                             value: state.editability ==
@@ -525,15 +519,12 @@ class AddEditMaterialView extends StatelessWidget {
                                 .map((editability) {
                               return DropdownMenuItem<Material_Editability>(
                                 value: editability,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    editability.toLocaleString(context),
-                                    style: TextStyle(
-                                      color: Color(0xFF434141),
-                                      fontSize: 17.sp,
-                                      fontFamily: 'OpenSans',
-                                    ),
+                                child: Text(
+                                  editability.toLocaleString(context),
+                                  style: TextStyle(
+                                    color: Color(0xFF434141),
+                                    fontSize: 17.sp,
+                                    fontFamily: 'OpenSans',
                                   ),
                                 ),
                               );
