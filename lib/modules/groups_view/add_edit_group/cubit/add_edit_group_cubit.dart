@@ -250,6 +250,8 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
       ));
     }
 
+    final smsSendResults = <Future>[];
+
     for (final groupUser in state.currentMembers) {
       final user = groupUser.user;
       _dataRepository.addDelta(
@@ -262,7 +264,9 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
       ));
       if (state.phoneChanges.containsKey(user.id) ||
           state.diallingCodeChanges.containsKey(user.id)) {
-        _sendSMS(message, user.fullPhone, user.name);
+        smsSendResults.add(
+          _sendSMS(message, user.fullPhone, user.name),
+        );
       }
     }
     for (final userWithRole in state.newMembers) {
@@ -280,15 +284,24 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
         role: userWithRole.role,
       ));
       if (user.hasFullPhone) {
-        _sendSMS(message, user.fullPhone, user.name);
+        smsSendResults.add(
+          _sendSMS(message, user.fullPhone, user.name),
+        );
       }
     }
+
+    Future.wait(smsSendResults).onError((error, stackTrace) {
+      // TODO
+      print(error);
+      print(stackTrace);
+      return [];
+    });
 
     return true;
   }
 
-  void _sendSMS(String message, String number, String to) {
-    SMS.send(
+  Future<void> _sendSMS(String message, String number, String to) async {
+    await SMS.send(
       message.insertTemplateValues({
         'receiver_first_name': to,
         'sender_name': _dataRepository.currentUser.name,
