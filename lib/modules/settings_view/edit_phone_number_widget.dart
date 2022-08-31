@@ -34,6 +34,20 @@ class EditPhoneNumber extends StatefulWidget {
 class _EditPhoneNumberState extends State<EditPhoneNumber> {
   bool inEditMode = false;
 
+  final _phoneNumberController = TextEditingController();
+
+  @override
+  void initState() {
+    _phoneNumberController.text = widget.initialPhonenumber;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _phoneNumberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
@@ -88,14 +102,13 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
           //   SizedBox(height: 5.h),
           (inEditMode)
               ? InternationalPhoneNumberInput(
+                  textFieldController: _phoneNumberController,
                   selectorConfig: SelectorConfig(
                     selectorType: PhoneInputSelectorType.DIALOG,
                     showFlags: true,
                     useEmoji: true,
                   ),
                   initialValue: PhoneNumber(
-                    dialCode: widget.initialDiallingCode,
-                    phoneNumber: widget.initialPhonenumber,
                     isoCode: PhoneNumber.getISO2CodeByPrefix(
                         widget.initialDiallingCode),
                   ),
