@@ -2,8 +2,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/utils/helpers/extensions/strings.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/wrappers/file_system.dart';
 
@@ -12,10 +15,12 @@ class ResultWidgetBottomSheet extends StatefulWidget {
   final GroupUser groupUser;
   final GroupEvaluation? leanerEvaluationForGroup;
 
-  const ResultWidgetBottomSheet(
-      this.group, this.groupUser, this.leanerEvaluationForGroup,
-      {Key? key})
-      : super(key: key);
+  const ResultWidgetBottomSheet({
+    Key? key,
+    required this.group,
+    required this.groupUser,
+    this.leanerEvaluationForGroup,
+  }) : super(key: key);
 
   @override
   State<ResultWidgetBottomSheet> createState() =>
@@ -212,72 +217,58 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       Text(
                         "${appLocalizations.feelingAboutTheGroup}: ",
                         style: TextStyle(
-                            fontSize: 17.sp,
-                            fontFamily: "OpenSans",
-                            fontStyle: FontStyle.normal,
-                            color: Color(0xFF4F4F4F),
-                            fontWeight: FontWeight.w600),
+                          fontSize: 17.sp,
+                          fontFamily: "OpenSans",
+                          fontStyle: FontStyle.normal,
+                          color: Color(0xFF4F4F4F),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      // TODO
-                      //     if (leanerEvaluationForGroup != null)
-                      //       Expanded(
-                      //         child: Container(
-                      //           child: Row(
-                      //             children: [
-                      //               GroupEvaluation_Evaluation.valueOf(
-                      //                           leanerEvaluationForGroup!
-                      //                               .evaluation!) ==
-                      //                       GroupEvaluation_Evaluation.GOOD
-                      //                   ? Image.asset(
-                      //                       AssetsPath.thumbsUp,
-                      //                       color: Color(0xFF797979),
-                      //                       height: 15.sp,
-                      //                     )
-                      //                   : Image.asset(
-                      //                       AssetsPath.thumbsDown,
-                      //                       color: Color(0xFF797979),
-                      //                       height: 15.sp,
-                      //                     ),
-                      //               SizedBox(
-                      //                 width: 5.w,
-                      //               ),
-                      //               Text(
-                      //                 "${GroupEvaluation_Evaluation.valueOf(leanerEvaluationForGroup!.evaluation!)!.name.toCapitalized()}",
-                      //                 style: TextStyle(
-                      //                   fontFamily: "Rubik",
-                      //                   fontSize: 15.sp,
-                      //                   color: Color(0xFF797979),
-                      //                 ),
-                      //                 overflow: TextOverflow.ellipsis,
-                      //                 maxLines: 1,
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       )
-                      //   ],
-                      // ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      // _buildActionCard(),
-                      SizedBox(
-                        height: 5.h,
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      //_buildTrasnformatonsCard(),
-                      // _buildTransformationWidget(),
-
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      TeacherFeedback(),
-                      SizedBox(
-                        height: 10.h,
-                      ),
+                      if (widget.leanerEvaluationForGroup != null) ...[
+                        Image.asset(
+                          widget.leanerEvaluationForGroup!.evaluation ==
+                                  GroupEvaluation_Evaluation.GOOD
+                              ? AssetsPath.thumbsUp
+                              : AssetsPath.thumbsDown,
+                          color: const Color(0xFF797979),
+                          height: 15.sp,
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Text(
+                          widget.leanerEvaluationForGroup!.evaluation.name
+                              .toCapitalized(),
+                          style: TextStyle(
+                            fontFamily: "Rubik",
+                            fontSize: 15.sp,
+                            color: Color(0xFF797979),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ],
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  _ActionCard(),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  //_buildTrasnformatonsCard(),
+                  // _buildTransformationWidget(),
+
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  TeacherFeedback(),
+                  SizedBox(
+                    height: 10.h,
                   ),
                 ],
               ),
@@ -318,143 +309,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       ),
     );
   }
-
-  // Widget _buildTeacherFeedbackCard() {
-  //   return Container();
-  //   // return Card(
-  //   //   color: Color(0xFFEFEFEF),
-  //   //   elevation: 4,
-  //   //   shape: RoundedRectangleBorder(
-  //   //     borderRadius: BorderRadius.all(
-  //   //       Radius.circular(
-  //   //         10,
-  //   //       ),
-  //   //     ),
-  //   //   ),
-  //   //   child: Container(
-  //   //     padding: EdgeInsets.only(left: 15.w, right: 15.w),
-  //   //     child: Column(
-  //   //       children: [
-  //   //         SizedBox(
-  //   //           height: 10.h,
-  //   //         ),
-  //   //         Text(
-  //   //           '${appLocalizations.teacherFeedbackForLearner}',
-  //   //           style: TextStyle(
-  //   //             fontWeight: FontWeight.w600,
-  //   //             fontSize: 17.sp,
-  //   //             fontFamily: "OpenSans",
-  //   //             color: Color(0xFF4F4F4F),
-  //   //           ),
-  //   //           textAlign: TextAlign.center,
-  //   //         ),
-  //   //         SizedBox(
-  //   //           height: 5.h,
-  //   //         ),
-  //   //         Container(
-  //   //           decoration: BoxDecoration(
-  //   //             color: Color(0xFFFFFFFF),
-  //   //             border: Border.all(
-  //   //               color: Color(0xFF979797),
-  //   //             ),
-  //   //             borderRadius: BorderRadius.all(
-  //   //               Radius.circular(10),
-  //   //             ),
-  //   //           ),
-  //   //           child: FocusableTextField(
-  //   //             controller: _teacherFeedbackController,
-  //   //             keyboardType: TextInputType.text,
-  //   //             maxCharacters: 200,
-  //   //             decoration: InputDecoration(
-  //   //               counterText: "",
-  //   //               hintText: "",
-  //   //               hintStyle: TextStyle(
-  //   //                 fontFamily: "OpenSans",
-  //   //                 fontSize: 16.sp,
-  //   //                 fontStyle: FontStyle.italic,
-  //   //               ),
-  //   //             ),
-  //   //             maxLines: 3,
-  //   //             textInputAction: TextInputAction.done,
-  //   //             onFocusChange: (isFocused) {
-  //   //               if (isFocused) {
-  //   //                 return;
-  //   //               }
-  //   //               _saveTeacherFeedback(_teacherFeedbackController.text.trim());
-  //   //             },
-  //   //             onChange: (value) {
-  //   //               _teacherFeedback = value;
-  //   //             },
-  //   //           ),
-  //   //         ),
-  //   //         SizedBox(
-  //   //           height: 20.h,
-  //   //         ),
-  //   //         if (widget.hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
-  //   //           widgets.StatefulBuilder(
-  //   //             builder: (BuildContext context, StateSetter setState) {
-  //   //               return Column(
-  //   //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //   //                 children: [
-  //   //                   ListView.builder(
-  //   //                       shrinkWrap: true,
-  //   //                       physics: NeverScrollableScrollPhysics(),
-  //   //                       itemCount:
-  //   //                           widget.hiveGroup.groupEvaluationCategories.length,
-  //   //                       itemBuilder: (context, index) {
-  //   //                         HiveEvaluationCategory _category = widget
-  //   //                             .hiveGroup.groupEvaluationCategories
-  //   //                             .elementAt(index);
-  //   //                         return _buildCategorySlider(_category);
-  //   //                       }),
-  //   //                   SizedBox(
-  //   //                     height: 20.h,
-  //   //                   ),
-  //   //                   if (bloc.resultsBloc
-  //   //                       .getListOfAvailableHistoryMonths()
-  //   //                       .isNotEmpty) ...[
-  //   //                     if (isViewCategoryEvalutionHistory)
-  //   //                       _buildCategoryHistoryWidget(),
-  //   //                     SizedBox(
-  //   //                       height: 10.h,
-  //   //                     ),
-  //   //                     InkWell(
-  //   //                       onTap: () {
-  //   //                         setState(() {
-  //   //                           isViewCategoryEvalutionHistory =
-  //   //                               !isViewCategoryEvalutionHistory;
-  //   //                         });
-  //   //                       },
-  //   //                       child: Center(
-  //   //                         child: Text(
-  //   //                           isViewCategoryEvalutionHistory
-  //   //                               ? '${appLocalizations.hideHistory}'
-  //   //                               : '${appLocalizations.viewHistory}',
-  //   //                           style: TextStyle(
-  //   //                             fontSize: 16.sp,
-  //   //                             fontFamily: "Open",
-  //   //                             color: Color(0xFF3475F0),
-  //   //                           ),
-  //   //                         ),
-  //   //                       ),
-  //   //                     ),
-  //   //                     SizedBox(
-  //   //                       height: 10.h,
-  //   //                     )
-  //   //                   ]
-  //   //                 ],
-  //   //               );
-  //   //             },
-  //   //           ),
-  //   //         ],
-  //   //         SizedBox(
-  //   //           height: 20.h,
-  //   //         )
-  //   //       ],
-  //   //     ),
-  //   //   ),
-  //   // );
-  // }
 
   // Widget _buildCategoryHistoryWidget() {
   //   // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
@@ -846,79 +700,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //   );
   // }
 
-  // Widget _buildActionCard() {
-  //   return Card(
-  //     //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
-  //     color: Color(0xFFEFEFEF),
-  //     elevation: 4,
-  //     shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.all(
-  //       Radius.circular(
-  //         10,
-  //       ),
-  //     )),
-  //     child: Container(
-  //       padding: EdgeInsets.only(left: 15.w, right: 15.w),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         children: [
-  //           SizedBox(
-  //             height: 10.h,
-  //           ),
-  //           Text(
-  //             "${appLocalizations.resultMoreThenOneActionCompleted}",
-  //             style: TextStyle(
-  //               fontSize: 19.sp,
-  //               color: Color(0xFF4F4F4F),
-  //               fontWeight: FontWeight.w600,
-  //               fontFamily: "OpenSans",
-  //             ),
-  //           ),
-  //           SizedBox(
-  //             height: 10.h,
-  //           ),
-  //           _buildMonthlyActionWidget(
-  //               hiveGroupUser
-  //                   .getActionsCompletedInMonth(bloc.resultsBloc.hiveDate!),
-  //               hiveGroupUser
-  //                   .getActionsNotCompletedInMonth(bloc.resultsBloc.hiveDate!),
-  //               hiveGroupUser
-  //                   .getActionsOverdueInMonth(bloc.resultsBloc.hiveDate!),
-  //               displayOverdue: true),
-  //           SizedBox(
-  //             height: 20.h,
-  //           ),
-  //           if (bloc.resultsBloc
-  //               .getListOfAvailableHistoryMonths()
-  //               .isNotEmpty) ...[
-  //             if (isViewActionHistory) _buildActionHistoryWidget(),
-  //             InkWell(
-  //               onTap: () {
-  //                 setState(() {
-  //                   isViewActionHistory = !isViewActionHistory;
-  //                 });
-  //               },
-  //               child: Text(
-  //                 isViewActionHistory
-  //                     ? '${appLocalizations.hideHistory}'
-  //                     : '${appLocalizations.viewHistory}',
-  //                 style: TextStyle(
-  //                   fontSize: 16.sp,
-  //                   fontFamily: "Open",
-  //                   color: Color(0xFF3475F0),
-  //                 ),
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               height: 10.h,
-  //             ),
-  //           ]
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   // Widget _buildActionHistoryWidget() {
   //   // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
   //   // _currentMonth.day = 0;
@@ -1000,102 +781,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //         height: 10.h,
   //       ),
   //     ],
-  //   );
-  // }
-
-  // Widget _buildMonthlyActionWidget(int complete, int notComplete, int overdue,
-  //     {displayOverdue = false}) {
-  //   return IntrinsicHeight(
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.stretch,
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: [
-  //         Expanded(
-  //           child: Container(
-  //             width: 99.w,
-  //             decoration: BoxDecoration(
-  //                 color: Color(0xFF6DE26B),
-  //                 borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-  //             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-  //             child: Text(
-  //               Intl.plural(
-  //                 complete,
-  //                 zero: "$complete ${appLocalizations.done}",
-  //                 one: "$complete ${appLocalizations.done}",
-  //                 other: "$complete ${appLocalizations.done}",
-  //                 args: [complete],
-  //               ),
-  //               style: TextStyle(
-  //                   color: Colors.black,
-  //                   fontFamily: "Rubik",
-  //                   fontSize: 14.sp,
-  //                   fontWeight: FontWeight.bold),
-  //               textAlign: TextAlign.center,
-  //             ),
-  //           ),
-  //         ),
-  //         SizedBox(
-  //           width: 10.w,
-  //         ),
-  //         SizedBox(
-  //           width: 10.w,
-  //         ),
-  //         Expanded(
-  //           child: Container(
-  //             width: 99.w,
-  //             decoration: BoxDecoration(
-  //                 color: Color(0xFFFFBE4A),
-  //                 borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-  //             padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-  //             child: Text(
-  //               Intl.plural(
-  //                 notComplete,
-  //                 zero: "$notComplete ${appLocalizations.pending}",
-  //                 one: "$notComplete ${appLocalizations.pending}",
-  //                 other:
-  //                     "$notComplete ${appLocalizations.pending}",
-  //                 args: [notComplete],
-  //               ),
-  //               style: TextStyle(
-  //                   color: Colors.black,
-  //                   fontFamily: "Rubik",
-  //                   fontSize: 14.sp,
-  //                   fontWeight: FontWeight.bold),
-  //               textAlign: TextAlign.center,
-  //             ),
-  //           ),
-  //         ),
-  //         if (displayOverdue == true) ...[
-  //           SizedBox(
-  //             width: 10.w,
-  //           ),
-  //           Expanded(
-  //             child: Container(
-  //               width: 99.w,
-  //               decoration: BoxDecoration(
-  //                   color: Color(0xFFFF5E4D),
-  //                   borderRadius: BorderRadius.all(Radius.circular(8.5.r))),
-  //               padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-  //               child: Text(
-  //                 Intl.plural(
-  //                   overdue,
-  //                   zero: "$overdue ${appLocalizations.overdue}",
-  //                   one: "$overdue ${appLocalizations.overdue}",
-  //                   other: "$overdue ${appLocalizations.overdue}",
-  //                   args: [overdue],
-  //                 ),
-  //                 style: TextStyle(
-  //                     color: Colors.black,
-  //                     fontFamily: "Rubik",
-  //                     fontSize: 14.sp,
-  //                     fontWeight: FontWeight.bold),
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //             ),
-  //           ),
-  //         ]
-  //       ],
-  //     ),
   //   );
   // }
 
@@ -1588,7 +1273,7 @@ class TeacherFeedback extends StatelessWidget {
               height: 10.h,
             ),
             Text(
-              '${appLocalizations.teacherFeedbackForLearner}',
+              appLocalizations.teacherFeedbackForLearner,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 17.sp,
@@ -1702,6 +1387,177 @@ class TeacherFeedback extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ActionCard extends StatelessWidget {
+  const _ActionCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    return Card(
+      //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
+      color: Color(0xFFEFEFEF),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+        Radius.circular(10),
+      )),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(
+              appLocalizations.resultMoreThenOneActionCompleted,
+              style: TextStyle(
+                fontSize: 19.sp,
+                color: Color(0xFF4F4F4F),
+                fontWeight: FontWeight.w600,
+                fontFamily: "OpenSans",
+              ),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            // TODO: Actual numbers
+            _ActionStatuses(
+              complete: 0,
+              notComplete: 0,
+              overdue: 0,
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            // TODO: If history is available
+            if (true) ...[
+              if (isViewActionHistory) _buildActionHistoryWidget(),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isViewActionHistory = !isViewActionHistory;
+                  });
+                },
+                child: Text(
+                  isViewActionHistory
+                      ? '${appLocalizations.hideHistory}'
+                      : '${appLocalizations.viewHistory}',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: "Open",
+                    color: Color(0xFF3475F0),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+            ]
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionStatuses extends StatelessWidget {
+  const _ActionStatuses({
+    Key? key,
+    required this.complete,
+    required this.notComplete,
+    this.overdue,
+  }) : super(key: key);
+
+  final int complete;
+  final int notComplete;
+  final int? overdue;
+
+  @override
+  Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 99.w,
+            decoration: BoxDecoration(
+              color: Color(0xFF6DE26B),
+              borderRadius: BorderRadius.all(Radius.circular(8.5.r)),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+            child: Text(
+              Intl.plural(
+                complete,
+                zero: "$complete ${appLocalizations.done}",
+                one: "$complete ${appLocalizations.done}",
+                other: "$complete ${appLocalizations.done}",
+                args: [complete],
+              ),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Rubik",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Container(
+            width: 99.w,
+            decoration: BoxDecoration(
+              color: Color(0xFFFFBE4A),
+              borderRadius: BorderRadius.all(Radius.circular(8.5.r)),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+            child: Text(
+              Intl.plural(
+                notComplete,
+                zero: "$notComplete ${appLocalizations.pending}",
+                one: "$notComplete ${appLocalizations.pending}",
+                other: "$notComplete ${appLocalizations.pending}",
+                args: [notComplete],
+              ),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Rubik",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (overdue != null)
+            Container(
+              width: 99.w,
+              decoration: BoxDecoration(
+                color: Color(0xFFFF5E4D),
+                borderRadius: BorderRadius.all(Radius.circular(8.5.r)),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+              child: Text(
+                Intl.plural(
+                  overdue!,
+                  zero: "$overdue ${appLocalizations.overdue}",
+                  one: "$overdue ${appLocalizations.overdue}",
+                  other: "$overdue ${appLocalizations.overdue}",
+                  args: [overdue!],
+                ),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "Rubik",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+        ],
       ),
     );
   }

@@ -175,13 +175,15 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                   return InkWell(
                     onTap: () {
                       final results = ResultWidgetBottomSheet(
-                        _groupUserResultStatus.group!,
-                        _groupUserResultStatus.groupUser,
-                        _groupUserResultStatus.groupEvaluation,
+                        group: _groupUserResultStatus.group!,
+                        groupUser: _groupUserResultStatus.groupUser,
+                        leanerEvaluationForGroup:
+                            _groupUserResultStatus.groupEvaluation,
                       );
                       showModalBottomSheet(
                         backgroundColor: Colors.transparent,
                         context: context,
+                        isScrollControlled: true,
                         builder: (context) => results,
                       );
                     },
