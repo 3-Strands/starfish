@@ -56,26 +56,30 @@ class DataRepository {
   Stream<List<Group>> get groups => _streamBox(_hiveApi.group);
   List<Group> get currentGroups => _hiveApi.group.asList();
 
+  List<Group> get groupsWithAdminRole => currentGroups
+      .where((group) => group.adminAndTeachers.contains(currentUser))
+      .toList();
+
   Stream<List<EvaluationCategory>> get evaluationCategories =>
       _streamBox(_hiveApi.evaluationCategory);
   List<EvaluationCategory> get currentEvaluationCategories =>
       _hiveApi.evaluationCategory.asList();
 
-  List<Group> get groupsWithAdminRole {
-    final List<Group> _groupsWithAdminRole = [];
-    final userId = getCurrentUser().id;
-    for (final group in currentGroups) {
-      for (final groupUser in group.users) {
-        if (groupUser.userId == userId &&
-                groupUser.role == GroupUser_Role.ADMIN ||
-            groupUser.role == GroupUser_Role.TEACHER) {
-          _groupsWithAdminRole.add(group);
-          break;
-        }
-      }
-    }
-    return _groupsWithAdminRole;
-  }
+  // List<Group> get groupsWithAdminRole {
+  //   final List<Group> _groupsWithAdminRole = [];
+  //   final userId = getCurrentUser().id;
+  //   for (final group in currentGroups) {
+  //     for (final groupUser in group.users) {
+  //       if (groupUser.userId == userId &&
+  //               groupUser.role == GroupUser_Role.ADMIN ||
+  //           groupUser.role == GroupUser_Role.TEACHER) {
+  //         _groupsWithAdminRole.add(group);
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   return _groupsWithAdminRole;
+  // }
 
   List<GroupWithActionsAndRoles> getGroupsWithActionsAndRoles() {
     final userId = getCurrentUser().id;

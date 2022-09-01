@@ -15,9 +15,12 @@ class ResultsCubit extends Cubit<ResultsState> {
       : _dataRepository = dataRepository,
         super(ResultsState(
           groups: dataRepository.currentGroups,
+          groupsWithAdminRole: dataRepository.groupsWithAdminRole,
           actions: dataRepository.currentActions,
           currentUser: dataRepository.currentUser,
-          filterGroup: dataRepository.currentGroups.first,
+          filterGroup: dataRepository.groupsWithAdminRole.length > 0
+              ? dataRepository.groupsWithAdminRole.first
+              : null,
           relatedTransformation: dataRepository
               .getTransformationRelatedToUser(dataRepository.currentUser.id),
           month: Date(
@@ -27,6 +30,7 @@ class ResultsCubit extends Cubit<ResultsState> {
       dataRepository.groups.listen((groups) {
         emit(state.copyWith(
           groups: groups,
+          groupsWithAdminRole: dataRepository.groupsWithAdminRole,
         ));
       }),
       dataRepository.users.listen((users) {

@@ -4,13 +4,15 @@ part of 'results_cubit.dart';
 class ResultsState {
   ResultsState({
     required List<Group> groups,
+    required List<Group> groupsWithAdminRole,
     required List<Action> actions,
     required Date month,
-    required Group? filterGroup,
+    Group? filterGroup,
     required User currentUser,
     required RelatedTransformation relatedTransformation,
     UserGroupRoleFilter userGroupRoleFilter = UserGroupRoleFilter.FILTER_ALL,
   })  : groups = groups,
+        groupsWithAdminRole = groupsWithAdminRole,
         actions = actions,
         month = month,
         filterGroup = filterGroup,
@@ -19,6 +21,7 @@ class ResultsState {
         _userGroupRoleFilter = userGroupRoleFilter;
 
   final List<Group> groups;
+  final List<Group> groupsWithAdminRole;
   final List<Action> actions;
   final Date month;
   final Group? filterGroup;
@@ -27,10 +30,6 @@ class ResultsState {
   final RelatedTransformation relatedTransformation;
 
   UserGroupRoleFilter get userGroupRoleFilter => _userGroupRoleFilter;
-
-  List<Group> get groupsWithAdminRole => groups
-      .where((group) => group.adminAndTeachers.contains(currentUser))
-      .toList();
 
   GroupResultsPageView get groupWithAdminRoleResultsToShow {
     //var groups = _groups;
@@ -70,6 +69,7 @@ class ResultsState {
 
   ResultsState copyWith({
     List<Group>? groups,
+    List<Group>? groupsWithAdminRole,
     List<Action>? actions,
     RelatedActions? relatedActions,
     Date? month,
@@ -80,6 +80,7 @@ class ResultsState {
   }) =>
       ResultsState(
         groups: groups ?? this.groups,
+        groupsWithAdminRole: groupsWithAdminRole ?? this.groupsWithAdminRole,
         actions: actions ?? this.actions,
         month: month ?? this.month,
         filterGroup: filterGroup ?? this.filterGroup,
