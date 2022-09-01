@@ -254,12 +254,13 @@ class DataRepository {
             : action.isPastDueDate
                 ? ActionStatus.OVERDUE
                 : ActionStatus.NOT_DONE;
-      } else {
-        actionsAssignedToGroupWithLeaderRole.add(actionId);
       }
       Group? _group = _hiveApi.group.values
           .firstWhereOrNull((element) => element.id == groupId);
       if (_group != null) {
+        if (_group.adminAndTeachers.contains(currentUser)) {
+          actionsAssignedToGroupWithLeaderRole.add(actionId);
+        }
         List<UserWithActionStatus> _usersWithStatus = _group.learners
             .map((user) => UserWithActionStatus(
                 user: user,
@@ -366,4 +367,25 @@ class RelatedTransformation {
   RelatedTransformation(this.transformations);
 
   final List<Transformation> transformations;
+}
+
+class GroupUserWithActionUser {
+  GroupUserWithActionUser({
+    required this.groupUser,
+    required this.user,
+    required this.groupUserActions,
+  });
+
+  final GroupUser groupUser;
+  final User user;
+
+  // list of all the 'ActionUser' created/assigned for this user
+  final List<ActionUser> groupUserActions;
+}
+
+class RelatedGroupUserWithActionUser {
+  RelatedGroupUserWithActionUser(this.groupUserWithActionUsers);
+
+  // Map<GroupUser.id, GroupUserWithActionUser>
+  final Map<String, GroupUserWithActionUser> groupUserWithActionUsers;
 }

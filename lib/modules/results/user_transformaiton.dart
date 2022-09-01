@@ -146,6 +146,11 @@ class UserTransformationView extends StatelessWidget {
                         current.previouslySelectedFiles ||
                     previous.newlySelectedFiles != current.newlySelectedFiles,
                 builder: (context, state) {
+                  if (state.previouslySelectedFiles.length +
+                          state.newlySelectedFiles.length ==
+                      0) {
+                    return Container();
+                  }
                   return _previewSelectedFiles(context,
                       state.previouslySelectedFiles, state.newlySelectedFiles);
                 }),
@@ -231,25 +236,18 @@ class UserTransformationView extends StatelessWidget {
           context: context,
           file: File(file.path),
           onDelete: () {
-            // setState(() {
-            //   _selectedFiles.remove(file);
-            // });
             context.read<AddEditTransformaitonCubit>().removeFile(file);
           }));
     }
 
-    if (previouslySelectedFiles.isNotEmpty) {
-      for (FileReference fileReference in previouslySelectedFiles) {
-        File file = File(fileReference.filepath!);
-        _widgetList.add(_imagePreview(
-            context: context,
-            file: file,
-            onDelete: () {
-              // setState(() {
-              //   _hiveFile.delete();
-              // });
-            }));
-      }
+    for (FileReference fileReference in previouslySelectedFiles) {
+      File file = File(fileReference.filepath!);
+      _widgetList.add(_imagePreview(
+          context: context,
+          file: file,
+          onDelete: () {
+            context.read<AddEditTransformaitonCubit>().removeFile(file);
+          }));
     }
 
     return GridView.count(
