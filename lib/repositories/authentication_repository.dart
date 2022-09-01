@@ -7,6 +7,7 @@ import 'package:grpc/grpc.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:starfish/apis/grpc_authentication_api.dart';
 import 'package:starfish/apis/grpc_current_user_api.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/models/tokens.dart';
 import 'package:starfish/models/session.dart';
@@ -72,6 +73,19 @@ class AuthenticationRepository {
     _session.stream.listen((session) {
       if (session != null) {
         _cacheSession(session);
+      }
+    });
+    globalHiveApi.user.watch().listen((event) {
+      final currentSession = _session.value;
+      if (currentSession == null) {
+        return;
+      }
+      final currentUserId = currentSession.user.id;
+      if (event.key == currentUserId) {
+        final updatedUser = globalHiveApi.user.get(currentUserId)!;
+        if (updatedUser != currentSession.user) {
+          _session.value = Session(currentSession.tokens, updatedUser);
+        }
       }
     });
   }
