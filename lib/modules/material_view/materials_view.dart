@@ -110,7 +110,6 @@ class _MaterialsViewState extends State<MaterialsView> {
   @override
   Widget build(BuildContext context) {
     final _appLocalizations = AppLocalizations.of(context)!;
-    final dataRepository = context.read<DataRepository>();
 
     return Scaffold(
       backgroundColor: AppColors.materialSceenBG,
