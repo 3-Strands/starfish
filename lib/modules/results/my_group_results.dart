@@ -76,7 +76,7 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                                 .read<ResultsCubit>()
                                 .updateGroupFilter(value!);
                           },
-                          items: state.groups.map((value) {
+                          items: state.groupsWithAdminRole.map((value) {
                             return DropdownMenuItem<Group>(
                               value: value,
                               child: Text(

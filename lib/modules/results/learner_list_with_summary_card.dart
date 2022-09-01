@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
@@ -31,6 +32,7 @@ class LearnerSummary extends StatelessWidget {
     final groupEvaluation = groupUserResultStatus.groupEvaluation;
     final transformation = groupUserResultStatus.transformation;
     final teacherResponses = groupUserResultStatus.teacherResponses;
+    final actionStatus = groupUserResultStatus.actionsStatus;
 
     final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     return Column(
@@ -67,10 +69,9 @@ class LearnerSummary extends StatelessWidget {
                 ),
                 ActionStatusCountWidget(
                   label: "${_appLocalizations.actionsTabItemText}",
-                  done: 0, //hiveGroupUser.getActionsCompletedInMonth(month),
-                  pending:
-                      0, //hiveGroupUser.getActionsNotCompletedInMonth(month),
-                  overdue: 0, //hiveGroupUser.getActionsOverdueInMonth(month),
+                  done: actionStatus[ActionStatus.DONE] ?? 0,
+                  pending: actionStatus[ActionStatus.NOT_DONE] ?? 0,
+                  overdue: actionStatus[ActionStatus.OVERDUE] ?? 0,
                 ),
                 SizedBox(
                   height: 15.h,

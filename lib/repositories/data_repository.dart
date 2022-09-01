@@ -245,20 +245,19 @@ class DataRepository {
     for (final action in getMyActions()) {
       final actionId = action.id;
       final groupId = action.groupId;
-      if (action.isIndividualAction) {
-        final status =
-            actionStatuses[action.id] ?? ActionUser_Status.INCOMPLETE;
+      final status = actionStatuses[actionId] ?? ActionUser_Status.INCOMPLETE;
 
-        actionsAssignedToMe[actionId] = status == ActionUser_Status.COMPLETE
-            ? ActionStatus.DONE
-            : action.isPastDueDate
-                ? ActionStatus.OVERDUE
-                : ActionStatus.NOT_DONE;
-      }
-      Group? _group = _hiveApi.group.values
-          .firstWhereOrNull((element) => element.id == groupId);
+      actionsAssignedToMe[actionId] = status == ActionUser_Status.COMPLETE
+          ? ActionStatus.DONE
+          : action.isPastDueDate
+              ? ActionStatus.OVERDUE
+              : ActionStatus.NOT_DONE;
+
+      Group? _group = _hiveApi.group.get(groupId);
       if (_group != null) {
-        if (_group.adminAndTeachers.contains(currentUser)) {
+        if (_group.adminAndTeachers
+                .firstWhereOrNull((user) => user.id == currentUser.id) !=
+            null) {
           actionsAssignedToGroupWithLeaderRole.add(actionId);
         }
         List<UserWithActionStatus> _usersWithStatus = _group.learners
@@ -301,7 +300,7 @@ class DataRepository {
     throw UnimplementedError();
   }
 
-  // ------------------- Actions -------------------
+  // ------------------- ActionUsers -------------------
   Stream<List<ActionUser>> get actionUsers => _streamBox(_hiveApi.actionUser);
   List<ActionUser> get currentActionUsers => _hiveApi.actionUser.asList();
 
@@ -316,6 +315,11 @@ class DataRepository {
         .where((transformation) => transformation.userId == userId)
         .toList());
   }
+
+  // ------------------- Users ---------------------------
+  Stream<List<User>> get users => _streamBox(_hiveApi.user);
+  List<User> get currentUsers => _hiveApi.user.asList();
+
   // ------------------- Countries -------------------
 
   Stream<List<Country>> get countries => _streamBox(_hiveApi.country);

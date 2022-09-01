@@ -93,6 +93,14 @@ extension GroupExt on Group {
       .map((groupUser) => groupUser.user)
       .toList();
 
+  List<User> get adminAndTeachers => users
+      .where((user) =>
+          user.maybeUser != null &&
+          (user.role == GroupUser_Role.ADMIN ||
+              user.role == GroupUser_Role.TEACHER))
+      .map((groupUser) => groupUser.user)
+      .toList();
+
   List<String> get teachersName => users
       .where((groupUser) =>
           groupUser.role == GroupUser_Role.ADMIN ||
