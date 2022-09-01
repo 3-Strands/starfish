@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart' hide Action;
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
-import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 
 part 'results_state.dart';
@@ -15,29 +15,47 @@ class ResultsCubit extends Cubit<ResultsState> {
       : _dataRepository = dataRepository,
         super(ResultsState(
           groups: dataRepository.currentGroups,
+          groupsWithAdminRole: dataRepository.groupsWithAdminRole,
+          actions: dataRepository.currentActions,
           currentUser: dataRepository.currentUser,
-          filterGroup: dataRepository.currentGroups.first,
+          filterGroup: dataRepository.groupsWithAdminRole.length > 0
+              ? dataRepository.groupsWithAdminRole.first
+              : null,
           relatedTransformation: dataRepository
               .getTransformationRelatedToUser(dataRepository.currentUser.id),
           month: Date(
               year: DateTime.now().year, month: DateTime.now().month, day: 0),
         )) {
-    _subscription = dataRepository.groups.listen((groups) {
-      emit(state.copyWith(
-        groups: groups,
-      ));
-    });
-    _transfomrmationSubscription =
-        dataRepository.transformations.listen((transformations) {
-      emit(state.copyWith(
-        relatedTransformation: dataRepository
-            .getTransformationRelatedToUser(dataRepository.currentUser.id),
-      ));
-    });
+    _subscriptions = [
+      dataRepository.groups.listen((groups) {
+        emit(state.copyWith(
+          groups: groups,
+          groupsWithAdminRole: dataRepository.groupsWithAdminRole,
+        ));
+      }),
+      dataRepository.users.listen((users) {
+        emit(state.copyWith(
+          relatedTransformation: _dataRepository
+              .getTransformationRelatedToUser(dataRepository.currentUser.id),
+        ));
+      }),
+      dataRepository.actions.listen((actions) {
+        emit(state.copyWith(
+          actions: actions,
+          relatedTransformation: _dataRepository
+              .getTransformationRelatedToUser(dataRepository.currentUser.id),
+        ));
+      }),
+      dataRepository.transformations.listen((transformations) {
+        emit(state.copyWith(
+          relatedTransformation: dataRepository
+              .getTransformationRelatedToUser(dataRepository.currentUser.id),
+        ));
+      }),
+    ];
   }
 
-  late StreamSubscription<List<Group>> _subscription;
-  late StreamSubscription<List<Transformation>> _transfomrmationSubscription;
+  late List<StreamSubscription> _subscriptions;
   final DataRepository _dataRepository;
 
   void updateMonthFilter(Date month) {
@@ -64,8 +82,7 @@ class ResultsCubit extends Cubit<ResultsState> {
 
   @override
   Future<void> close() {
-    _subscription.cancel();
-    _transfomrmationSubscription.cancel();
+    _subscriptions.forEach((subscription) => subscription.cancel());
     return super.close();
   }
 }

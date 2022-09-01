@@ -6,7 +6,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:meta/meta.dart';
 import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/enums/action_status.dart';
-import 'package:starfish/enums/user_group_role_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/src/deltas.dart';
@@ -21,15 +20,22 @@ class ActionsCubit extends Cubit<ActionsState> {
           actions: dataRepository.currentActions,
           relatedActions: dataRepository.getActionsRelatedToMe(),
         )) {
-    _subscription = dataRepository.actions.listen((actions) {
-      emit(state.copyWith(
-        actions: actions,
-        relatedActions: dataRepository.getActionsRelatedToMe(),
-      ));
-    });
+    _subscription = [
+      dataRepository.actions.listen((actions) {
+        emit(state.copyWith(
+          actions: actions,
+          relatedActions: dataRepository.getActionsRelatedToMe(),
+        ));
+      }),
+      dataRepository.users.listen((users) {
+        emit(state.copyWith(
+          relatedActions: dataRepository.getActionsRelatedToMe(),
+        ));
+      }),
+    ];
   }
 
-  late StreamSubscription<List<Action>> _subscription;
+  late List<StreamSubscription> _subscription;
   final DataRepository _dataRepository;
 
   void updateActionFilter(ActionFilter actionFilter) {
@@ -50,7 +56,7 @@ class ActionsCubit extends Cubit<ActionsState> {
 
   @override
   Future<void> close() {
-    _subscription.cancel();
+    _subscription.forEach((subscription) => subscription.cancel());
     return super.close();
   }
 }

@@ -17,6 +17,7 @@ import 'package:starfish/db/hive_group_evaluation.dart';
 import 'package:starfish/db/hive_group_user.dart';
 import 'package:starfish/db/hive_teacher_response.dart';
 import 'package:starfish/db/hive_transformation.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
@@ -165,7 +166,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                             SizedBox(
                               height: 10.h,
                             ),
-                            _buildActionCard(_groupUserResultStatus.groupUser),
+                            _buildActionCard(
+                                _groupUserResultStatus.actionsStatus),
                             SizedBox(
                               height: 10.h,
                             ),
@@ -792,7 +794,7 @@ class _MyLifeResultsState extends State<MyLifeResults> {
     );
   }
 
-  Widget _buildActionCard(GroupUser _groupUser) {
+  Widget _buildActionCard(Map<ActionStatus, int> actionsStatus) {
     return Card(
       //   margin: EdgeInsets.only(left: 15.w, right: 15.w),
       color: Color(0xFFEFEFEF),
@@ -836,7 +838,12 @@ class _MyLifeResultsState extends State<MyLifeResults> {
             //         0,
             //     displayOverdue: true),
 
-            _buildMonthlyActionWidget(1, 1, 1, displayOverdue: true),
+            _buildMonthlyActionWidget(
+              actionsStatus[ActionStatus.DONE] ?? 0,
+              actionsStatus[ActionStatus.NOT_DONE] ?? 0,
+              actionsStatus[ActionStatus.OVERDUE] ?? 0,
+              displayOverdue: true,
+            ),
             SizedBox(
               height: 10.h,
             ),
