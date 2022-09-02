@@ -1,17 +1,15 @@
-import 'dart:ui';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/modules/results/action_history.dart';
 import 'package:starfish/modules/results/action_statuses.dart';
+import 'package:starfish/modules/results/teacher_feedback.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
-import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/wrappers/file_system.dart';
 
 class ResultWidgetBottomSheet extends StatefulWidget {
@@ -270,7 +268,12 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   SizedBox(
                     height: 10.h,
                   ),
-                  TeacherFeedback(),
+                  TeacherFeedback(
+                    evaluationCategories: widget.group.evaluationCategoryIds
+                        .map((id) => globalHiveApi.evaluationCategory.get(id)!)
+                        .toList(),
+                    groupUser: widget.groupUser,
+                  ),
                   SizedBox(
                     height: 10.h,
                   ),
@@ -313,252 +316,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
       ),
     );
   }
-
-  // Widget _buildCategoryHistoryWidget() {
-  //   // HiveDate _currentMonth = DateTimeUtils.toHiveDate(DateTime.now());
-  //   // _currentMonth.day = 0;
-
-  //   List<HiveDate> _historyAvailableMonths =
-  //       bloc.resultsBloc.getListOfAvailableHistoryMonths();
-  //   // _historyAvailableMonths.sort((a, b) => b.compareTo(a));
-  //   // if (_historyAvailableMonths.contains(_currentMonth)) {
-  //   //   _historyAvailableMonths.remove(_currentMonth);
-  //   // }
-
-  //   if (_historyAvailableMonths.length == 0) {
-  //     return Container();
-  //   }
-  //   return Column(
-  //     children: [
-  //       Visibility(
-  //         visible: isViewCategoryEvalutionHistory,
-  //         child: Text(
-  //           '${appLocalizations.currentEvaluation}',
-  //           style: TextStyle(
-  //             fontFeatures: [FontFeature.subscripts()],
-  //             color: Color(0xFF434141),
-  //             fontFamily: "OpenSans",
-  //             fontSize: 19.sp,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //       ),
-  //       Visibility(
-  //           visible: isViewCategoryEvalutionHistory,
-  //           child: SizedBox(
-  //             height: 10.h,
-  //           )),
-  //       Visibility(
-  //         visible: isViewCategoryEvalutionHistory,
-  //         child: _buildCurrentEvaluationWidget(
-  //           bloc.resultsBloc.hiveGroupUser!
-  //               .getLearnerEvaluationsByCategoryForMoth(
-  //                   bloc.resultsBloc.hiveDate!),
-  //         ),
-  //       ),
-  //       Visibility(
-  //         visible: isViewCategoryEvalutionHistory,
-  //         child: SizedBox(
-  //           height: 20.h,
-  //         ),
-  //       ),
-  //       Visibility(
-  //         visible: isViewCategoryEvalutionHistory,
-  //         child: Align(
-  //           alignment: Alignment.centerLeft,
-  //           child: Text(
-  //             '${appLocalizations.history}',
-  //             style: TextStyle(
-  //               fontFeatures: [FontFeature.subscripts()],
-  //               color: Color(0xFF434141),
-  //               fontFamily: "OpenSans",
-  //               fontSize: 19.sp,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //             textAlign: TextAlign.left,
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(
-  //         height: 10.h,
-  //       ),
-  //       ListView.builder(
-  //         shrinkWrap: true,
-  //         physics: NeverScrollableScrollPhysics(),
-  //         itemCount: _historyAvailableMonths.length,
-  //         itemBuilder: (BuildContext context, index) {
-  //           return Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: <Widget>[
-  //               SizedBox(
-  //                 height: 10.h,
-  //               ),
-  //               Text(
-  //                 DateTimeUtils.formatHiveDate(
-  //                     _historyAvailableMonths.elementAt(index),
-  //                     requiredDateFormat: "MMM yyyy"), //"JUL 2021",
-  //                 style: TextStyle(
-  //                   fontFamily: "OpenSans",
-  //                   fontSize: 19.sp,
-  //                   color: Color(0xFF434141),
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 10.h,
-  //               ),
-  //               _buildMonthlyEvaluationWidget(
-  //                 bloc.resultsBloc.hiveGroupUser!
-  //                     .getLearnerEvaluationsByCategoryForMoth(
-  //                         _historyAvailableMonths.elementAt(index)),
-  //               ),
-  //               SizedBox(
-  //                 height: 10.h,
-  //               ),
-  //               Divider(
-  //                 thickness: 1.0,
-  //                 color: Colors.grey,
-  //               )
-
-  //               // Row(
-  //               //   children: <Widget>[
-  //               //     Text(
-  //               //       "Category1:",
-  //               //       style: TextStyle(
-  //               //         fontFamily: "OpenSans",
-  //               //         fontSize: 14.sp,
-  //               //         color: Color(0xFF434141),
-  //               //       ),
-  //               //     ),
-  //               //     SizedBox(
-  //               //       width: 5.h,
-  //               //     ),
-  //               //     Text(
-  //               //       "5",
-  //               //       style: TextStyle(
-  //               //         fontFamily: "OpenSans",
-  //               //         fontSize: 14.sp,
-  //               //         color: Color(0xFF434141),
-  //               //       ),
-  //               //     ),
-  //               //   ],
-  //               // ),
-  //               // SizedBox(
-  //               //   height: 5.h,
-  //               // ),
-  //               // Row(
-  //               //   children: <Widget>[
-  //               //     Text(
-  //               //       "Category3: ",
-  //               //       style: TextStyle(
-  //               //         fontFamily: "OpenSans",
-  //               //         fontSize: 14.sp,
-  //               //         color: Color(0xFF434141),
-  //               //       ),
-  //               //     ),
-  //               //     SizedBox(
-  //               //       width: 5.h,
-  //               //     ),
-  //               //     Text(
-  //               //       "5",
-  //               //       style: TextStyle(
-  //               //         fontFamily: "OpenSans",
-  //               //         fontSize: 14.sp,
-  //               //         color: Color(0xFF434141),
-  //               //       ),
-  //               //     ),
-  //               //   ],
-  //               // ),
-  //               // SizedBox(
-  //               //   height: 10.h,
-  //               // ),
-  //               // Row(
-  //               //   children: <Widget>[
-  //               //     Text(
-  //               //       "Category2: ",
-  //               //       style: TextStyle(
-  //               //         fontFamily: "OpenSans",
-  //               //         fontSize: 14.sp,
-  //               //         color: Color(0xFF434141),
-  //               //       ),
-  //               //     ),
-  //               //     SizedBox(
-  //               //       width: 5.h,
-  //               //     ),
-  //               //     Text(
-  //               //       "5",
-  //               //       style: TextStyle(
-  //               //         fontFamily: "OpenSans",
-  //               //         fontSize: 14.sp,
-  //               //         color: Color(0xFF434141),
-  //               //       ),
-  //               //     ),
-  //               //   ],
-  //               // )
-  //             ],
-  //           );
-  //         },
-  //       ),
-  //       // SizedBox(
-  //       //   height: 10.h,
-  //       // ),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildCurrentEvaluation(int count, String categoryName,
-  //     int changeInCount, Color textColor, bool hideGrowthIndicator) {
-  //   return Expanded(
-  //     child: Container(
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         children: [
-  //           Center(
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               mainAxisSize: MainAxisSize.max,
-  //               children: [
-  //                 Text("$count",
-  //                     style: TextStyle(
-  //                       fontFeatures: [FontFeature.subscripts()],
-  //                       color: Color(0xFF434141),
-  //                       fontFamily: "OpenSans",
-  //                       fontSize: 30.sp,
-  //                       fontWeight: FontWeight.bold,
-  //                     ),
-  //                     textAlign: TextAlign.center),
-  //                 Visibility(
-  //                     child: Padding(
-  //                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-  //                       child: Text(
-  //                         changeInCount > 0
-  //                             ? "+$changeInCount"
-  //                             : "$changeInCount",
-  //                         style: TextStyle(
-  //                           fontFeatures: [FontFeature.superscripts()],
-  //                           fontWeight: FontWeight.bold,
-  //                           color:
-  //                               changeInCount > 0 ? Colors.green : Colors.red,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     visible: changeInCount != 0 && !hideGrowthIndicator),
-  //               ],
-  //             ),
-  //           ),
-  //           Text(
-  //             "$categoryName",
-  //             style: TextStyle(
-  //               fontSize: 17.sp,
-  //               fontFamily: "OpenSans",
-  //               color: Color(0x99434141),
-  //             ),
-  //             textAlign: TextAlign.center,
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
   // Widget _buildMonthWiseEvaluation(
   //     int count, String categoryName, int changeInCount, Color textColor) {
@@ -605,102 +362,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //   });
   //   return Row(
   //     children: _currentEvaluationWidget,
-  //   );
-  // }
-
-  // Widget _buildCurrentEvaluationWidget(
-  //     Map<HiveEvaluationCategory, Map<String, int>> _learnersEvaluations) {
-  //   List<Widget> _currentEvaluationWidget = [];
-  //   _learnersEvaluations.forEach(
-  //       (HiveEvaluationCategory category, Map<String, int> countByMonth) {
-  //     _currentEvaluationWidget.add(_buildCurrentEvaluation(
-  //         countByMonth["this-month"] ?? 0,
-  //         category.name!,
-  //         ((countByMonth["this-month"] ?? 0) -
-  //             (countByMonth["last-month"] ?? 0)),
-  //         Color(0xFFFFFFFF),
-  //         countByMonth["last-month"] == 0));
-  //   });
-  //   return Row(
-  //     children: _currentEvaluationWidget,
-  //   );
-  // }
-
-  // Widget _buildCategorySlider(HiveEvaluationCategory _evaluationCategory) {
-  //   HiveLearnerEvaluation? _evaluation = hiveGroupUser.getLearnerEvaluation(
-  //       bloc.resultsBloc.hiveDate!,
-  //       _evaluationCategory.id!,
-  //       CurrentUserProvider().getUserSync().id);
-
-  //   double _value = _evaluation != null &&
-  //           0 <= _evaluation.evaluation! &&
-  //           _evaluation.evaluation! <= 5
-  //       ? _evaluation.evaluation!.toDouble()
-  //       : 0.0;
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         _evaluationCategory.name!,
-  //         style: TextStyle(
-  //           fontFamily: "OpenSans",
-  //           fontSize: 19.sp,
-  //           fontWeight: FontWeight.bold,
-  //           color: Color(0xFF434141),
-  //         ),
-  //         textAlign: TextAlign.left,
-  //       ),
-  //       SizedBox(
-  //         height: 10.h,
-  //       ),
-  //       Container(
-  //         child: SliderTheme(
-  //           data: SliderTheme.of(context).copyWith(
-  //             thumbShape: SliderThumb(),
-  //             valueIndicatorColor: Colors.transparent,
-  //             valueIndicatorTextStyle: TextStyle(
-  //               color: Colors.black,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //             showValueIndicator: ShowValueIndicator.never,
-  //           ),
-  //           child: Slider(
-  //             activeColor: Color(0xFFFCDFBA),
-  //             inactiveColor: Color(0xFFFCDFBA),
-  //             thumbColor: Color(0xFFE5625C),
-  //             max: 5.0,
-  //             min: 0.0,
-  //             divisions: 5,
-  //             value: _value,
-  //             label: sliderLabel(_value.toInt()),
-  //             onChanged: (double value) {
-  //               setState(() {
-  //                 _value = value;
-  //               });
-
-  //               _saveLearnerEvaluation(_evaluationCategory.id!, value.toInt());
-  //             },
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(
-  //         height: 5.h,
-  //       ),
-  //       Text(
-  //         _value.toInt() == 0
-  //             ? "${appLocalizations.dragToSelect}"
-  //             : _evaluationCategory.getEvaluationNameFromValue(_value.toInt()),
-  //         style: TextStyle(
-  //           fontStyle: FontStyle.italic,
-  //           fontFamily: "OpenSans",
-  //           fontSize: 14.sp,
-  //           color: Color(0xFF797979),
-  //         ),
-  //       ),
-  //       SizedBox(
-  //         height: 5.h,
-  //       ),
-  //     ],
   //   );
   // }
 
@@ -763,23 +424,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //     lastDate: DateTime(DateTime.now().year + 10),
   //     hideActions: true,
   //   );
-  // }
-
-  // String sliderLabel(int value) {
-  //   switch (value) {
-  //     case 1:
-  //       return "${appLocalizations.poorText}";
-  //     case 2:
-  //       return "${appLocalizations.notSoGoodText}";
-  //     case 3:
-  //       return "${appLocalizations.acceptableText}";
-  //     case 4:
-  //       return "${appLocalizations.goodText}";
-  //     case 5:
-  //       return "${appLocalizations.greatText}";
-  //     default:
-  //       return "";
-  //   }
   // }
 
   // void _updateLearnerSummary() {
@@ -1166,150 +810,6 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //     children: _widgetList,
   //   );
   // }
-}
-
-class TeacherFeedback extends StatelessWidget {
-  const TeacherFeedback({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final appLocalizations = AppLocalizations.of(context)!;
-    return Card(
-      color: Color(0xFFEFEFEF),
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(
-            10,
-          ),
-        ),
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 15.w, right: 15.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 10.h,
-            ),
-            Text(
-              appLocalizations.teacherFeedbackForLearner,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17.sp,
-                fontFamily: "OpenSans",
-                color: Color(0xFF4F4F4F),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(
-              height: 5.h,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                border: Border.all(
-                  color: Color(0xFF979797),
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-              child: FocusableTextField(
-                // controller: _teacherFeedbackController,
-                keyboardType: TextInputType.text,
-                maxCharacters: 200,
-                decoration: InputDecoration(
-                  counterText: "",
-                  hintText: "",
-                  hintStyle: TextStyle(
-                    fontFamily: "OpenSans",
-                    fontSize: 16.sp,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                onFocusChange: (isFocused) {
-                  if (isFocused) {
-                    return;
-                  }
-                  // TODO
-                  // _saveTeacherFeedback(_teacherFeedbackController.text.trim());
-                },
-                // onChange: (value) {
-                //   _teacherFeedback = value;
-                // },
-              ),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            // if (widget.hiveGroup.groupEvaluationCategories.isNotEmpty) ...[
-            //   widgets.StatefulBuilder(
-            //     builder: (BuildContext context, StateSetter setState) {
-            //       return Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           ListView.builder(
-            //               shrinkWrap: true,
-            //               physics: NeverScrollableScrollPhysics(),
-            //               itemCount:
-            //                   widget.hiveGroup.groupEvaluationCategories.length,
-            //               itemBuilder: (context, index) {
-            //                 HiveEvaluationCategory _category = widget
-            //                     .hiveGroup.groupEvaluationCategories
-            //                     .elementAt(index);
-            //                 return _buildCategorySlider(_category);
-            //               }),
-            //           SizedBox(
-            //             height: 20.h,
-            //           ),
-            //           if (bloc.resultsBloc
-            //               .getListOfAvailableHistoryMonths()
-            //               .isNotEmpty) ...[
-            //             if (isViewCategoryEvalutionHistory)
-            //               _buildCategoryHistoryWidget(),
-            //             SizedBox(
-            //               height: 10.h,
-            //             ),
-            //             InkWell(
-            //               onTap: () {
-            //                 setState(() {
-            //                   isViewCategoryEvalutionHistory =
-            //                       !isViewCategoryEvalutionHistory;
-            //                 });
-            //               },
-            //               child: Center(
-            //                 child: Text(
-            //                   isViewCategoryEvalutionHistory
-            //                       ? '${appLocalizations.hideHistory}'
-            //                       : '${appLocalizations.viewHistory}',
-            //                   style: TextStyle(
-            //                     fontSize: 16.sp,
-            //                     fontFamily: "Open",
-            //                     color: Color(0xFF3475F0),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //             SizedBox(
-            //               height: 10.h,
-            //             )
-            //           ]
-            //         ],
-            //       );
-            //     },
-            //   ),
-            // ],
-            SizedBox(
-              height: 20.h,
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _ActionCard extends StatelessWidget {

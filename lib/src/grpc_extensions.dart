@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
@@ -165,4 +166,14 @@ extension TransformationExt on Transformation {
       .map((filename) => FileReferenceExt.getFileReference(
           entityId: id, entityType: EntityType.MATERIAL, filename: filename))
       .toList();
+}
+
+extension EvaluationCategoryExt on EvaluationCategory {
+  String getEvaluationNameFromValue(int value) =>
+      valueNames
+          .firstWhereOrNull(
+            (element) => element.value == value,
+          )
+          ?.name ??
+      value.toString();
 }
