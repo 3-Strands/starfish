@@ -324,6 +324,18 @@ class DataRepository {
   Stream<List<User>> get users => _streamBox(_hiveApi.user);
   List<User> get currentUsers => _hiveApi.user.asList();
 
+  // ------------------- TeacherResponses ---------------------------
+  Stream<List<TeacherResponse>> get teacherResponses =>
+      _streamBox(_hiveApi.teacherResponse);
+  List<TeacherResponse> get currentTeacherResponses =>
+      _hiveApi.teacherResponse.asList();
+
+  // ------------------- GroupEvaluations ---------------------------
+  Stream<List<GroupEvaluation>> get groupEvaluations =>
+      _streamBox(_hiveApi.groupEvaluation);
+  List<GroupEvaluation> get currentGroupEvaluations =>
+      _hiveApi.groupEvaluation.asList();
+
   // ------------------- Countries -------------------
 
   Stream<List<Country>> get countries => _streamBox(_hiveApi.country);

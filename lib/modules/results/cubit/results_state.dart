@@ -6,6 +6,8 @@ class ResultsState {
     required List<Group> groups,
     required List<Group> groupsWithAdminRole,
     required List<Action> actions,
+    required List<TeacherResponse> teacherResponses,
+    required List<GroupEvaluation> groupEvaluations,
     required Date month,
     Group? filterGroup,
     required User currentUser,
@@ -14,6 +16,8 @@ class ResultsState {
   })  : groups = groups,
         groupsWithAdminRole = groupsWithAdminRole,
         actions = actions,
+        teacherResponses = teacherResponses,
+        groupEvaluations = groupEvaluations,
         month = month,
         filterGroup = filterGroup,
         currentUser = currentUser,
@@ -23,6 +27,8 @@ class ResultsState {
   final List<Group> groups;
   final List<Group> groupsWithAdminRole;
   final List<Action> actions;
+  final List<TeacherResponse> teacherResponses;
+  final List<GroupEvaluation> groupEvaluations;
   final Date month;
   final Group? filterGroup;
   final UserGroupRoleFilter _userGroupRoleFilter;
@@ -42,6 +48,8 @@ class ResultsState {
                 groupUser: element,
                 transformation: _getTransformaiton(element),
                 actionsStatus: _gerActionsStatus(element),
+                teacherResponses: _getTeacherResponses(element, month),
+                groupEvaluation: _getGroupEvaluation(element, month),
               ),
             )
             .toList() ??
@@ -60,6 +68,8 @@ class ResultsState {
             groupUser: element,
             transformation: _getTransformaiton(element),
             actionsStatus: _gerActionsStatus(element),
+            teacherResponses: _getTeacherResponses(element, month),
+            groupEvaluation: _getGroupEvaluation(element, month),
           ),
         )
         .toList();
@@ -71,6 +81,8 @@ class ResultsState {
     List<Group>? groups,
     List<Group>? groupsWithAdminRole,
     List<Action>? actions,
+    List<TeacherResponse>? teacherResponses,
+    List<GroupEvaluation>? groupEvaluations,
     RelatedActions? relatedActions,
     Date? month,
     Group? filterGroup,
@@ -82,6 +94,8 @@ class ResultsState {
         groups: groups ?? this.groups,
         groupsWithAdminRole: groupsWithAdminRole ?? this.groupsWithAdminRole,
         actions: actions ?? this.actions,
+        teacherResponses: teacherResponses ?? this.teacherResponses,
+        groupEvaluations: groupEvaluations ?? this.groupEvaluations,
         month: month ?? this.month,
         filterGroup: filterGroup ?? this.filterGroup,
         userGroupRoleFilter: userGroupRoleFilter ?? this._userGroupRoleFilter,
@@ -99,7 +113,15 @@ class ResultsState {
     );
   }
 
-  GroupEvaluation? _getGroupEvaluation(GroupUser groupUser) {}
+  GroupEvaluation? _getGroupEvaluation(GroupUser groupUser, Date month) {
+    final groupEvaluation = groupEvaluations.firstWhereOrNull(
+        (groupEvaluation) =>
+            groupEvaluation.groupId == groupUser.groupId &&
+            groupEvaluation.userId == groupUser.userId &&
+            groupEvaluation.month == month);
+
+    return groupEvaluation;
+  }
 
   Map<ActionStatus, int> _gerActionsStatus(GroupUser groupUser) {
     final map = {
@@ -124,6 +146,16 @@ class ResultsState {
 
     return map;
   }
+
+  // Returns 'List<TeacherRespnse>' for the 'User' of a 'Group'
+  List<TeacherResponse> _getTeacherResponses(GroupUser groupUser, Date month) {
+    return teacherResponses
+        .where((teacherResponse) =>
+            teacherResponse.groupId == groupUser.groupId &&
+            teacherResponse.learnerId == groupUser.userId &&
+            teacherResponse.month == month)
+        .toList();
+  }
 }
 
 class GroupResultsPageView {
@@ -138,7 +170,7 @@ class GroupUserResultStatus {
     required this.groupUser,
     this.groupEvaluation,
     this.transformation,
-    this.teacherResponses,
+    required this.teacherResponses,
     required this.actionsStatus,
   });
 
@@ -146,7 +178,7 @@ class GroupUserResultStatus {
   final GroupUser groupUser;
   final GroupEvaluation? groupEvaluation;
   final Transformation? transformation;
-  final List<TeacherResponse>? teacherResponses;
+  final List<TeacherResponse> teacherResponses;
   final Map<ActionStatus, int> actionsStatus;
 
   Group? get group => groupUser.group;
