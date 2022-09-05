@@ -1246,9 +1246,9 @@ message SyncRequest {
         CreateUpdateTransformationRequest create_update_transformation = 12;
         CreateUpdateUserRequest create_update_user = 13;
         DeleteActionRequest delete_action = 14;
-        GroupUser delete_group_user = 15;
         DeleteMaterialRequest delete_material = 16;
         UpdateCurrentUserRequest update_current_user = 17;
+        DeleteGroupUserRequest delete_group_user = 18;
     }
 
 }
