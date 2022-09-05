@@ -1454,7 +1454,52 @@ class TeacherResponseCreateDelta extends DeltaBase {
   }
 }
 
-// Users cannot update the TeacherResponse type
+class TeacherResponseUpdateDelta extends DeltaBase {
+  TeacherResponseUpdateDelta(
+    this._model, {
+    String? response,
+  }) {
+    var numUpdatedFields = 0;
+    if (response != null && response != _model.response) {
+      this.response = response;
+      numUpdatedFields += 1;
+    } else {
+      this.response = null;
+    }
+    _hasChangedFields = numUpdatedFields > 0;
+  }
+
+  final TeacherResponse _model;
+  late final bool _hasChangedFields;
+  late final String? response;
+
+  TeacherResponse applyUpdateToModel(TeacherResponse originalModel) {
+    return originalModel.rebuild((other) {
+      if (response != null) {
+        other.response = response!;
+      }
+    });
+  }
+
+  @override
+  bool apply() {
+    if (!_hasChangedFields) {
+      return false;
+    }
+
+    final originalModel = globalHiveApi.teacherResponse.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.teacherResponse.put(updatedModel.id, updatedModel);
+    ensureRevert(19, originalModel.id, originalModel);
+
+    globalHiveApi.putSyncRequest(updatedModel.id,
+        CreateUpdateTeacherResponseRequest(teacherResponse: updatedModel));
+    return true;
+  }
+}
 
 // Users cannot delete the TeacherResponse type
 
@@ -1466,9 +1511,84 @@ void removeGroupEvaluationLocally(String id) {
   globalHiveApi.groupEvaluation.delete(id);
 }
 
-// Users cannot create the GroupEvaluation type
+class GroupEvaluationCreateDelta extends DeltaBase {
+  GroupEvaluationCreateDelta({
+    this.id,
+    this.userId,
+    this.groupId,
+    this.month,
+    this.evaluation,
+  });
 
-// Users cannot update the GroupEvaluation type
+  final String? id;
+  final String? userId;
+  final String? groupId;
+  final Date? month;
+  final GroupEvaluation_Evaluation? evaluation;
+
+  @override
+  bool apply() {
+    final model = GroupEvaluation(
+      id: id ?? UuidGenerator.uuid(),
+      userId: userId,
+      groupId: groupId,
+      month: month,
+      evaluation: evaluation,
+    )..freeze();
+    globalHiveApi.groupEvaluation.put(model.id, model);
+    ensureRevert(20, model.id, null);
+    globalHiveApi.putSyncRequest(
+        model.id, CreateUpdateGroupEvaluationRequest(groupEvaluation: model));
+    return true;
+  }
+}
+
+class GroupEvaluationUpdateDelta extends DeltaBase {
+  GroupEvaluationUpdateDelta(
+    this._model, {
+    GroupEvaluation_Evaluation? evaluation,
+  }) {
+    var numUpdatedFields = 0;
+    if (evaluation != null && evaluation != _model.evaluation) {
+      this.evaluation = evaluation;
+      numUpdatedFields += 1;
+    } else {
+      this.evaluation = null;
+    }
+    _hasChangedFields = numUpdatedFields > 0;
+  }
+
+  final GroupEvaluation _model;
+  late final bool _hasChangedFields;
+  late final GroupEvaluation_Evaluation? evaluation;
+
+  GroupEvaluation applyUpdateToModel(GroupEvaluation originalModel) {
+    return originalModel.rebuild((other) {
+      if (evaluation != null) {
+        other.evaluation = evaluation!;
+      }
+    });
+  }
+
+  @override
+  bool apply() {
+    if (!_hasChangedFields) {
+      return false;
+    }
+
+    final originalModel = globalHiveApi.groupEvaluation.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.groupEvaluation.put(updatedModel.id, updatedModel);
+    ensureRevert(20, originalModel.id, originalModel);
+
+    globalHiveApi.putSyncRequest(updatedModel.id,
+        CreateUpdateGroupEvaluationRequest(groupEvaluation: updatedModel));
+    return true;
+  }
+}
 
 // Users cannot delete the GroupEvaluation type
 
@@ -1652,6 +1772,8 @@ void revertAll() {
       globalHiveApi.learnerEvaluation, globalHiveApi.revert.get(18));
   _revertValuesInBox(
       globalHiveApi.teacherResponse, globalHiveApi.revert.get(19));
+  _revertValuesInBox(
+      globalHiveApi.groupEvaluation, globalHiveApi.revert.get(20));
   _revertValuesInBox(
       globalHiveApi.transformation, globalHiveApi.revert.get(21));
   _revertValuesInBox(globalHiveApi.output, globalHiveApi.revert.get(22));

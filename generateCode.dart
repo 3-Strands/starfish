@@ -248,6 +248,7 @@ class Model extends MessageWrapper {
     this.editableFields,
     this.createUpdateRequest,
     this.deleteRequest,
+    this.ignoreUpdateMask = false,
   });
 
   final Storage storage;
@@ -255,6 +256,7 @@ class Model extends MessageWrapper {
   final List<String>? editableFields;
   final GeneratedMessage? createUpdateRequest;
   final GeneratedMessage? deleteRequest;
+  final bool ignoreUpdateMask;
 
   static Set<String> _globalReadOnlyFields = {
     'editHistory',
@@ -423,8 +425,12 @@ class Model extends MessageWrapper {
       classBuffer.writeln('${field.type}? ${field.name},');
     }
 
+    final shouldHaveFieldMask = !ignoreUpdateMask;
+
     classBuffer.writeln('}) {');
-    classBuffer.writeln('final updateMask = <String>{};');
+    classBuffer.writeln(shouldHaveFieldMask
+        ? 'final updateMask = <String>{};'
+        : 'var numUpdatedFields = 0;');
 
     for (final field in fields) {
       final comparison = field.isIterable
@@ -433,15 +439,19 @@ class Model extends MessageWrapper {
       classBuffer.writeln('''
         if (${field.name} != null && $comparison) {
           this.${field.name} = ${field.name};
-          updateMask.add('${field.protoName}');
+          ${shouldHaveFieldMask ? 'updateMask.add(\'${field.protoName}\');' : 'numUpdatedFields += 1;'}
         } else { this.${field.name} = null; }''');
     }
-    classBuffer.writeln('_updateMask = updateMask;');
+    classBuffer.writeln(shouldHaveFieldMask
+        ? '_updateMask = updateMask;'
+        : '_hasChangedFields = numUpdatedFields > 0;');
     classBuffer.writeln('}');
     classBuffer.writeln();
 
     classBuffer.writeln('final $name _model;');
-    classBuffer.writeln('late final Set<String> _updateMask;');
+    classBuffer.writeln(shouldHaveFieldMask
+        ? 'late final Set<String> _updateMask;'
+        : 'late final bool _hasChangedFields;');
     for (final field in fields) {
       classBuffer.writeln('late final ${field.type}? ${field.name};');
     }
@@ -473,11 +483,12 @@ class Model extends MessageWrapper {
     classBuffer.writeln('''
       @override
       bool apply() {
-        if (_updateMask.isEmpty) {
+        if (${shouldHaveFieldMask ? '_updateMask.isEmpty' : '!_hasChangedFields'}) {
           return false;
         }
 
         ${storage.toUpdateCode(typeId, name, '_model.id', '_model')}
+        ${shouldHaveFieldMask ? '''
         Set<String>? updateMask = _updateMask;
         final $createUpdateRequestName? request = globalHiveApi.getSyncRequest(updatedModel.id);
         if (request != null) {
@@ -488,8 +499,8 @@ class Model extends MessageWrapper {
             // This edit follows a previous edit. Merge the edits.
             updateMask = {...updateMask, ...request.updateMask.paths};
           }
-        }
-        globalHiveApi.putSyncRequest(updatedModel.id, ${_makeCreateUpdateRequestCode('updatedModel', 'updateMask == null ? null : FieldMask(paths: updateMask)')});
+        }''' : ''}
+        globalHiveApi.putSyncRequest(updatedModel.id, ${_makeCreateUpdateRequestCode('updatedModel', shouldHaveFieldMask ? 'updateMask == null ? null : FieldMask(paths: updateMask)' : null)});
         return true;
       }
       ''');
@@ -636,10 +647,15 @@ final messages = <int, MessageWrapper>{
     TeacherResponse(),
     storage: BoxStorage('teacherResponse'),
     createUpdateRequest: CreateUpdateTeacherResponseRequest(),
+    editableFields: ['response'],
+    ignoreUpdateMask: true,
   ),
   20: Model(
     GroupEvaluation(),
     storage: BoxStorage('groupEvaluation'),
+    createUpdateRequest: CreateUpdateGroupEvaluationRequest(),
+    editableFields: ['evaluation'],
+    ignoreUpdateMask: true,
   ),
   21: Model(
     Transformation(),
