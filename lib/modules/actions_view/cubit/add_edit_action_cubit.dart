@@ -5,7 +5,6 @@ import 'package:meta/meta.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/deltas.dart';
-import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
 
@@ -24,6 +23,7 @@ class AddEditActionCubit extends Cubit<AddEditActionState> {
           materials: dataRepository.currentMaterials,
           actions: dataRepository.currentActions,
           selectedGroups: const [],
+          isEditMode: action == null ? false : true,
           name: action?.name ?? '',
           type: action?.type ?? Action_Type.TEXT_INSTRUCTION,
           creatorId: action?.creatorId ?? '',
@@ -93,7 +93,8 @@ class AddEditActionCubit extends Cubit<AddEditActionState> {
             state.type == Action_Type.MATERIAL_RESPONSE) &&
         state.question.isEmpty) {
       error = ActionError.noQuestion;
-    } else if (state.selectedGroups.isEmpty) {
+    } else if (state.isEditMode == false && state.selectedGroups.isEmpty ||
+        (state.isEditMode == true && state.groupId.isEmpty)) {
       error = ActionError.noGroup;
     }
 
