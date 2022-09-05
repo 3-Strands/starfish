@@ -22,6 +22,18 @@ extension DateExt on Date {
           : month < other.month
               ? -1
               : 1;
+
+  // Returns previous month and year
+  Date get previousMonth {
+    int currentMonth = this.month;
+    int currentYear = this.year;
+
+    if (currentMonth > 1) {
+      return Date(year: currentYear, month: currentMonth - 1);
+    } else {
+      return Date(year: currentYear - 1, month: 12);
+    }
+  }
 }
 
 extension FileReferenceExt on FileReference {

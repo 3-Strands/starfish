@@ -336,6 +336,12 @@ class DataRepository {
   List<GroupEvaluation> get currentGroupEvaluations =>
       _hiveApi.groupEvaluation.asList();
 
+  // ------------------- LearnerEvaluations ---------------------------
+  Stream<List<LearnerEvaluation>> get learnerEvaluations =>
+      _streamBox(_hiveApi.learnerEvaluation);
+  List<LearnerEvaluation> get currentLearnerEvaluations =>
+      _hiveApi.learnerEvaluation.asList();
+
   // ------------------- Countries -------------------
 
   Stream<List<Country>> get countries => _streamBox(_hiveApi.country);

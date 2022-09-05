@@ -17,7 +17,9 @@ class ResultsCubit extends Cubit<ResultsState> {
           groups: dataRepository.currentGroups,
           groupsWithAdminRole: dataRepository.groupsWithAdminRole,
           actions: dataRepository.currentActions,
+          evaluationCategories: dataRepository.currentEvaluationCategories,
           teacherResponses: dataRepository.currentTeacherResponses,
+          learnerEvaluations: dataRepository.currentLearnerEvaluations,
           groupEvaluations: dataRepository.currentGroupEvaluations,
           currentUser: dataRepository.currentUser,
           filterGroup: dataRepository.groupsWithAdminRole.length > 0
@@ -47,6 +49,11 @@ class ResultsCubit extends Cubit<ResultsState> {
               .getTransformationRelatedToUser(dataRepository.currentUser.id),
         ));
       }),
+      dataRepository.evaluationCategories.listen((evaluationCategories) {
+        emit(state.copyWith(
+          evaluationCategories: evaluationCategories,
+        ));
+      }),
       dataRepository.transformations.listen((transformations) {
         emit(state.copyWith(
           relatedTransformation: dataRepository
@@ -61,6 +68,11 @@ class ResultsCubit extends Cubit<ResultsState> {
       dataRepository.groupEvaluations.listen((groupEvaluations) {
         emit(state.copyWith(
           groupEvaluations: dataRepository.currentGroupEvaluations,
+        ));
+      }),
+      dataRepository.learnerEvaluations.listen((learnerEvaluations) {
+        emit(state.copyWith(
+          learnerEvaluations: dataRepository.currentLearnerEvaluations,
         ));
       }),
     ];

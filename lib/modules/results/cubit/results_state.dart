@@ -6,8 +6,10 @@ class ResultsState {
     required List<Group> groups,
     required List<Group> groupsWithAdminRole,
     required List<Action> actions,
+    required List<EvaluationCategory> evaluationCategories,
     required List<TeacherResponse> teacherResponses,
     required List<GroupEvaluation> groupEvaluations,
+    required List<LearnerEvaluation> learnerEvaluations,
     required Date month,
     Group? filterGroup,
     required User currentUser,
@@ -16,8 +18,10 @@ class ResultsState {
   })  : groups = groups,
         groupsWithAdminRole = groupsWithAdminRole,
         actions = actions,
+        evaluationCategories = evaluationCategories,
         teacherResponses = teacherResponses,
         groupEvaluations = groupEvaluations,
+        learnerEvaluations = learnerEvaluations,
         month = month,
         filterGroup = filterGroup,
         currentUser = currentUser,
@@ -27,8 +31,10 @@ class ResultsState {
   final List<Group> groups;
   final List<Group> groupsWithAdminRole;
   final List<Action> actions;
+  final List<EvaluationCategory> evaluationCategories;
   final List<TeacherResponse> teacherResponses;
   final List<GroupEvaluation> groupEvaluations;
+  final List<LearnerEvaluation> learnerEvaluations;
   final Date month;
   final Group? filterGroup;
   final UserGroupRoleFilter _userGroupRoleFilter;
@@ -50,6 +56,8 @@ class ResultsState {
                 actionsStatus: _gerActionsStatus(element),
                 teacherResponses: _getTeacherResponses(element, month),
                 groupEvaluation: _getGroupEvaluation(element, month),
+                learnerEvaluations:
+                    _getLearnerEvaluationsByCategory(element, month),
               ),
             )
             .toList() ??
@@ -70,6 +78,8 @@ class ResultsState {
             actionsStatus: _gerActionsStatus(element),
             teacherResponses: _getTeacherResponses(element, month),
             groupEvaluation: _getGroupEvaluation(element, month),
+            learnerEvaluations:
+                _getLearnerEvaluationsByCategory(element, month),
           ),
         )
         .toList();
@@ -81,8 +91,10 @@ class ResultsState {
     List<Group>? groups,
     List<Group>? groupsWithAdminRole,
     List<Action>? actions,
+    List<EvaluationCategory>? evaluationCategories,
     List<TeacherResponse>? teacherResponses,
     List<GroupEvaluation>? groupEvaluations,
+    List<LearnerEvaluation>? learnerEvaluations,
     RelatedActions? relatedActions,
     Date? month,
     Group? filterGroup,
@@ -94,8 +106,10 @@ class ResultsState {
         groups: groups ?? this.groups,
         groupsWithAdminRole: groupsWithAdminRole ?? this.groupsWithAdminRole,
         actions: actions ?? this.actions,
+        evaluationCategories: evaluationCategories ?? this.evaluationCategories,
         teacherResponses: teacherResponses ?? this.teacherResponses,
         groupEvaluations: groupEvaluations ?? this.groupEvaluations,
+        learnerEvaluations: learnerEvaluations ?? this.learnerEvaluations,
         month: month ?? this.month,
         filterGroup: filterGroup ?? this.filterGroup,
         userGroupRoleFilter: userGroupRoleFilter ?? this._userGroupRoleFilter,
@@ -156,6 +170,37 @@ class ResultsState {
             teacherResponse.month == month)
         .toList();
   }
+
+  Map<EvaluationCategory, Map<String, int>> _getLearnerEvaluationsByCategory(
+      GroupUser groupUser, Date hiveDate) {
+    Map<EvaluationCategory, Map<String, int>> _map = Map();
+
+    groupUser.group?.evaluationCategoryIds.forEach((categoryId) {
+      final _evaluationCategory = evaluationCategories.firstWhereOrNull(
+          (evaluationCategory) => evaluationCategory.id == categoryId);
+      if (_evaluationCategory != null) {
+        Map<String, int> _countByMonth = Map();
+        _countByMonth["this-month"] =
+            _categoryLearnerEvaluationsForMonth(categoryId, hiveDate);
+        _countByMonth["last-month"] = _categoryLearnerEvaluationsForMonth(
+            categoryId, hiveDate.previousMonth);
+
+        _map[_evaluationCategory] = _countByMonth;
+      }
+    });
+
+    return _map;
+  }
+
+  int _categoryLearnerEvaluationsForMonth(String categoryId, Date month) {
+    LearnerEvaluation? _learnerEvaluation = learnerEvaluations
+        .where((element) => element.categoryId == categoryId)
+        .where((element) {
+      return element.month == month;
+    }).firstOrNull;
+
+    return _learnerEvaluation == null ? 0 : _learnerEvaluation.evaluation;
+  }
 }
 
 class GroupResultsPageView {
@@ -172,6 +217,7 @@ class GroupUserResultStatus {
     this.transformation,
     required this.teacherResponses,
     required this.actionsStatus,
+    required this.learnerEvaluations,
   });
 
   final User user;
@@ -180,6 +226,7 @@ class GroupUserResultStatus {
   final Transformation? transformation;
   final List<TeacherResponse> teacherResponses;
   final Map<ActionStatus, int> actionsStatus;
+  final Map<EvaluationCategory, Map<String, int>> learnerEvaluations;
 
   Group? get group => groupUser.group;
 }
