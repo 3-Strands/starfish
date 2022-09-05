@@ -1,64 +1,70 @@
+import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/modules/results/action_history.dart';
 import 'package:starfish/modules/results/action_statuses.dart';
-import 'package:starfish/modules/results/teacher_feedback.dart';
+import 'package:starfish/modules/results/cubit/results_cubit.dart';
+import 'package:starfish/modules/results/results_bottomsheet/cubit/results_bottomsheet_cubit.dart';
+import 'package:starfish/modules/results/results_bottomsheet/teacher_feedback.dart';
+import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/extensions/strings.dart';
-import 'package:starfish/wrappers/file_system.dart';
+import 'package:starfish/widgets/box_builder.dart';
+import 'package:starfish/widgets/month_year_picker/dialogs.dart';
 
-class ResultWidgetBottomSheet extends StatefulWidget {
-  final Group group;
-  final GroupUser groupUser;
-  final GroupEvaluation? leanerEvaluationForGroup;
-
-  const ResultWidgetBottomSheet({
+class ResultsBottomSheet extends StatelessWidget {
+  const ResultsBottomSheet({
     Key? key,
     required this.group,
-    required this.groupUser,
-    this.leanerEvaluationForGroup,
+    required this.learner,
+    required this.month,
   }) : super(key: key);
 
+  final Group group;
+  final User learner;
+  final Date month;
+
   @override
-  State<ResultWidgetBottomSheet> createState() =>
-      _ResultWidgetBottomSheetState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ResultsBottomsheetCubit(
+        group: group,
+        initialLearner: learner,
+        initialMonth: month,
+        dataRepository: context.read<DataRepository>(),
+      ),
+      child: BlocListener<ResultsBottomsheetCubit, ResultsBottomsheetState>(
+        listenWhen: (previous, current) => previous.month != current.month,
+        listener: (context, state) {
+          context.read<ResultsCubit>().updateMonthFilter(state.month);
+        },
+        child: ResultWidgetBottomSheetView(
+          group: group,
+        ),
+      ),
+    );
+  }
 }
 
-class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
-  List<File>? imageFiles;
+class ResultWidgetBottomSheetView extends StatelessWidget {
+  const ResultWidgetBottomSheetView({
+    Key? key,
+    required this.group,
+  }) : super(key: key);
 
-  Transformation? _hiveTransformation;
-  TeacherResponse? _hiveTeacherResponse;
-
-  bool _isEditMode = false;
-  bool isViewActionHistory = false;
-  bool isViewCategoryEvalutionHistory = false;
-
-  //double _value = 2.0;
-
-  TextEditingController _teacherFeedbackController = TextEditingController();
-  TextEditingController _transformationController = TextEditingController();
-  List<File> _selectedFiles = [];
-  // List<HiveFile> _hiveFiles = [];
-
-  String _impactStory = '';
-  String _teacherFeedback = '';
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   _hiveTransformation = widget.hiveGroupUser
-  //       .getTransformationForMonth(bloc.resultsBloc.hiveDate!);
-  //   super.initState();
-  // }
+  final Group group;
 
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.80,
       padding: EdgeInsets.only(
@@ -87,7 +93,7 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                         Expanded(
                           child: Center(
                             child: Text(
-                              widget.group.name,
+                              group.name,
                               //overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -108,21 +114,19 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   SizedBox(height: 20.h),
                   InkWell(
                     onTap: () async {
-                      // TODO
-                      // final selected = await _selectMonth(bloc);
-                      // if (selected != null) {
-                      //   HiveDate _hiveDate = HiveDate.create(
-                      //       selected.year, selected.month, 0);
-
-                      //   setState(() {
-                      //     bloc.resultsBloc.hiveDate = _hiveDate;
-                      //     leanerEvaluationForGroup =
-                      //         hiveGroupUser.getGroupEvaluationForMonth(
-                      //             bloc.resultsBloc.hiveDate!);
-                      //   });
-
-                      //   //_updateLearnerSummary();
-                      // }
+                      final thisYear = DateTime.now().year;
+                      final cubit = context.read<ResultsBottomsheetCubit>();
+                      final newDateTime = await showMonthYearPicker(
+                        context: context,
+                        initialDate: cubit.state.month.toDateTime(),
+                        firstDate: DateTime(thisYear - 10),
+                        lastDate: DateTime(thisYear + 10),
+                        hideActions: true,
+                      );
+                      if (newDateTime != null) {
+                        cubit.monthChanged(Date(
+                            year: newDateTime.year, month: newDateTime.month));
+                      }
                     },
                     child: Container(
                       alignment: Alignment.centerLeft,
@@ -139,20 +143,22 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       ),
                       child: ButtonTheme(
                         alignedDropdown: true,
-                        child: Text(
-                          // TODO
-                          'TODO',
-                          // DateTimeUtils.formatHiveDate(
-                          //     bloc.resultsBloc.hiveDate!,
-                          //     requiredDateFormat: "MMMM yyyy"),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 19.sp,
-                            fontFamily: 'OpenSans',
-                          ),
-                          textAlign: TextAlign.left,
+                        child: BlocBuilder<ResultsBottomsheetCubit,
+                            ResultsBottomsheetState>(
+                          builder: (context, state) {
+                            return Text(
+                              DateFormat('MMMM yyyy')
+                                  .format(state.month.toDateTime()),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              textAlign: TextAlign.left,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -167,45 +173,54 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                       child: DropdownButtonHideUnderline(
                         child: ButtonTheme(
                           alignedDropdown: true,
-                          child: DropdownButton2<User>(
-                            offset: Offset(0, -10),
-                            dropdownMaxHeight: 200.h,
-                            scrollbarAlwaysShow: true,
-                            isExpanded: true,
-                            iconSize: 35,
-                            style: TextStyle(
-                              color: Color(0xFFEFEFEF),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            hint: Text(
-                              "${appLocalizations.learner}: ${widget.groupUser.group?.name ?? ''}",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            onChanged: (User? value) {
-                              // TODO
-                            },
-                            items: widget.group.learners
-                                .map<DropdownMenuItem<User>>((User value) {
-                              return DropdownMenuItem<User>(
-                                value: value,
-                                child: Text(
-                                  value.name,
+                          child: BlocBuilder<ResultsBottomsheetCubit,
+                              ResultsBottomsheetState>(
+                            builder: (context, state) {
+                              return DropdownButton2<User>(
+                                offset: Offset(0, -10),
+                                dropdownMaxHeight: 200.h,
+                                scrollbarAlwaysShow: true,
+                                isExpanded: true,
+                                iconSize: 35,
+                                style: TextStyle(
+                                  color: Color(0xFFEFEFEF),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                hint: Text(
+                                  "${appLocalizations.learner}: ${state.learner.name}",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: Color(0xFF434141),
-                                    fontSize: 17.sp,
+                                    fontSize: 19.sp,
                                     fontFamily: 'OpenSans',
                                   ),
+                                  textAlign: TextAlign.left,
                                 ),
+                                onChanged: (User? value) {
+                                  if (value != null) {
+                                    context
+                                        .read<ResultsBottomsheetCubit>()
+                                        .learnerChanged(value);
+                                  }
+                                },
+                                items: group.learners
+                                    .map<DropdownMenuItem<User>>((User value) {
+                                  return DropdownMenuItem<User>(
+                                    value: value,
+                                    child: Text(
+                                      value.name,
+                                      style: TextStyle(
+                                        color: Color(0xFF434141),
+                                        fontSize: 17.sp,
+                                        fontFamily: 'OpenSans',
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                               );
-                            }).toList(),
+                            },
                           ),
                         ),
                       ),
@@ -226,36 +241,71 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (widget.leanerEvaluationForGroup != null) ...[
-                        Image.asset(
-                          widget.leanerEvaluationForGroup!.evaluation ==
-                                  GroupEvaluation_Evaluation.GOOD
-                              ? AssetsPath.thumbsUp
-                              : AssetsPath.thumbsDown,
-                          color: const Color(0xFF797979),
-                          height: 15.sp,
-                        ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Text(
-                          widget.leanerEvaluationForGroup!.evaluation.name
-                              .toCapitalized(),
-                          style: TextStyle(
-                            fontFamily: "Rubik",
-                            fontSize: 15.sp,
-                            color: Color(0xFF797979),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
+                      BoxBuilder<GroupEvaluation>(
+                        box: globalHiveApi.groupEvaluation,
+                        builder: (context, values) {
+                          return BlocBuilder<ResultsBottomsheetCubit,
+                              ResultsBottomsheetState>(
+                            buildWhen: (previous, current) =>
+                                previous.month != current.month ||
+                                previous.learner != current.learner,
+                            builder: (context, state) {
+                              final groupEvaluation = values.firstWhereOrNull(
+                                (groupEvaluation) =>
+                                    groupEvaluation.month == state.month &&
+                                    groupEvaluation.groupId == group.id &&
+                                    groupEvaluation.userId == state.learner.id,
+                              );
+                              if (groupEvaluation == null) {
+                                return const SizedBox();
+                              }
+                              return Row(
+                                children: [
+                                  Image.asset(
+                                    groupEvaluation.evaluation ==
+                                            GroupEvaluation_Evaluation.GOOD
+                                        ? AssetsPath.thumbsUp
+                                        : AssetsPath.thumbsDown,
+                                    color: const Color(0xFF797979),
+                                    height: 15.sp,
+                                  ),
+                                  SizedBox(
+                                    width: 5.w,
+                                  ),
+                                  Text(
+                                    groupEvaluation.evaluation.name
+                                        .toCapitalized(),
+                                    style: TextStyle(
+                                      fontFamily: "Rubik",
+                                      fontSize: 15.sp,
+                                      color: Color(0xFF797979),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                   SizedBox(
                     height: 20.h,
                   ),
-                  _ActionCard(groupUser: widget.groupUser),
+                  BlocBuilder<ResultsBottomsheetCubit, ResultsBottomsheetState>(
+                    buildWhen: (previous, current) =>
+                        previous.learner != current.learner ||
+                        previous.month != current.month,
+                    builder: (context, state) {
+                      return _ActionCard(
+                        groupId: group.id,
+                        userId: state.learner.id,
+                        month: state.month,
+                      );
+                    },
+                  ),
                   SizedBox(
                     height: 5.h,
                   ),
@@ -268,11 +318,23 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
                   SizedBox(
                     height: 10.h,
                   ),
-                  TeacherFeedback(
-                    evaluationCategories: widget.group.evaluationCategoryIds
-                        .map((id) => globalHiveApi.evaluationCategory.get(id)!)
-                        .toList(),
-                    groupUser: widget.groupUser,
+                  BlocBuilder<ResultsBottomsheetCubit, ResultsBottomsheetState>(
+                    buildWhen: (previous, current) =>
+                        previous.learner != current.learner ||
+                        previous.month != current.month ||
+                        previous.teacherResponse != current.teacherResponse,
+                    builder: (context, state) {
+                      return TeacherFeedback(
+                        evaluationCategories: group.evaluationCategoryIds
+                            .map((id) =>
+                                globalHiveApi.evaluationCategory.get(id)!)
+                            .toList(),
+                        teacherFeedback: state.teacherResponse,
+                        groupId: group.id,
+                        userId: state.learner.id,
+                        month: state.month,
+                      );
+                    },
                   ),
                   SizedBox(
                     height: 10.h,
@@ -602,42 +664,28 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
   //             ],
   //           ),
   //           SizedBox(height: 10.h),
-  //           Container(
-  //             decoration: BoxDecoration(
-  //               color: Color(0xFFFFFFFF),
-  //               border: Border.all(
-  //                 color: Color(0xFF979797),
-  //               ),
-  //               borderRadius: BorderRadius.all(
-  //                 Radius.circular(10),
-  //               ),
-  //             ),
-  //             child: FocusableTextField(
-  //               controller: _transformationController,
-  //               keyboardType: TextInputType.text,
-  //               decoration: InputDecoration(
-  //                 hintText:
-  //                     '${appLocalizations.hintTextTransformationsTextField}',
-  //                 hintStyle: TextStyle(
-  //                   fontFamily: "OpenSans",
-  //                   fontSize: 16.sp,
-  //                   fontStyle: FontStyle.italic,
-  //                 ),
-  //               ),
-  //               maxLines: 3,
-  //               textInputAction: TextInputAction.done,
-  //               onFocusChange: (isFocused) {
-  //                 if (isFocused) {
-  //                   return;
-  //                 }
-  //                 _saveTransformation(
-  //                     _transformationController.text.trim(), _selectedFiles);
-  //               },
-  //               onChange: (value) {
-  //                 _impactStory = value;
-  //               },
-  //             ),
-  //           ),
+  // FocusableTextField(
+  //   // controller: _transformationController,
+  //   keyboardType: TextInputType.text,
+  //   decoration: InputDecoration(
+  //     hintText:
+  //         '${appLocalizations.hintTextTransformationsTextField}',
+  //     hintStyle: TextStyle(
+  //       fontFamily: "OpenSans",
+  //       fontSize: 16.sp,
+  //       fontStyle: FontStyle.italic,
+  //     ),
+  //   ),
+  //   maxLines: 3,
+  //   textInputAction: TextInputAction.done,
+  //   onFieldSubmitted: (value) {
+  //     _saveTransformation(
+  //         value.trim(), _selectedFiles);
+  //   },
+  //   onChange: (value) {
+  //     _impactStory = value;
+  //   },
+  // ),
   //           SizedBox(
   //             height: 10.h,
   //           ),
@@ -813,9 +861,16 @@ class _ResultWidgetBottomSheetState extends State<ResultWidgetBottomSheet> {
 }
 
 class _ActionCard extends StatelessWidget {
-  const _ActionCard({Key? key, required this.groupUser}) : super(key: key);
+  const _ActionCard({
+    Key? key,
+    required this.groupId,
+    required this.userId,
+    required this.month,
+  }) : super(key: key);
 
-  final GroupUser groupUser;
+  final String groupId;
+  final String userId;
+  final Date month;
 
   @override
   Widget build(BuildContext context) {
@@ -829,13 +884,10 @@ class _ActionCard extends StatelessWidget {
         Radius.circular(10),
       )),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 10.h,
-            ),
             Text(
               appLocalizations.resultMoreThenOneActionCompleted,
               style: TextStyle(
@@ -848,21 +900,42 @@ class _ActionCard extends StatelessWidget {
             SizedBox(
               height: 10.h,
             ),
-            // TODO: Actual numbers
-            ActionStatuses(
-              complete: 0,
-              notComplete: 0,
-              overdue: 0,
+            BoxItemBuilder<User>(
+              boxKey: userId,
+              box: globalHiveApi.user,
+              builder: (context, user) {
+                var complete = 0;
+                var notComplete = 0;
+                var overdue = 0;
+
+                final now = DateTime.now();
+                final currentDate = Date(year: now.year, month: now.month);
+
+                for (final actionUser in user!.actions) {
+                  final dateDue = actionUser.action?.dateDue;
+                  if (dateDue != null && dateDue.isSameMonth(month)) {
+                    if (actionUser.status == ActionUser_Status.COMPLETE) {
+                      complete += 1;
+                    } else if (dateDue.compareTo(currentDate) <= 0) {
+                      overdue += 1;
+                    } else {
+                      notComplete += 1;
+                    }
+                  }
+                }
+
+                return ActionStatuses(
+                  complete: complete,
+                  notComplete: notComplete,
+                  overdue: overdue,
+                );
+              },
             ),
-            SizedBox(
-              height: 20.h,
+            ActionHistory(
+              groupId: groupId,
+              userId: userId,
+              month: month,
             ),
-            // TODO: If history is available
-            if (true)
-              Padding(
-                padding: EdgeInsets.only(bottom: 10.h),
-                child: ActionHistory(groupUser: groupUser),
-              ),
           ],
         ),
       ),

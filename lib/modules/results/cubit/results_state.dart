@@ -35,7 +35,9 @@ class ResultsState {
     //var groups = _groups;
 
     final groupUsers = filterGroup?.users
-            .where((groupUser) => groupUser.role == GroupUser_Role.LEARNER)
+            .where((groupUser) =>
+                groupUser.role == GroupUser_Role.LEARNER &&
+                globalHiveApi.user.containsKey(groupUser.userId))
             .map(
               (element) => GroupUserResultStatus(
                 user: element.user,

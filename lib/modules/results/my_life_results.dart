@@ -1029,43 +1029,30 @@ class _MyLifeResultsState extends State<MyLifeResults> {
               ],
             ),
             SizedBox(height: 10.h),
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                border: Border.all(
-                  color: Color(0xFF979797),
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+            FocusableTextField(
+              //controller: _transformationController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintText:
+                    '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
+                hintStyle: TextStyle(
+                  fontFamily: "OpenSans",
+                  fontSize: 16.sp,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
-              child: FocusableTextField(
-                //controller: _transformationController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  hintText:
-                      '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
-                  hintStyle: TextStyle(
-                    fontFamily: "OpenSans",
-                    fontSize: 16.sp,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                text: transformation?.impactStory ?? '',
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                onFocusChange: (isFocused) {
-                  if (isFocused) {
-                    return;
-                  }
-                },
-                onChange: (String value) {
-                  userImpactStory = value.trim();
-                  // _saveTransformation(userImpactStory, _selectedFiles,
-                  //     hiveGroupUser, _currentGroupUserTransformation);
-                  context.read<ResultsCubit>().updateTransformation(value);
-                },
-              ),
+              initialValue: transformation?.impactStory ?? '',
+              maxLines: 3,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (value) {
+                // TODO
+              },
+              onChange: (String value) {
+                userImpactStory = value.trim();
+                // _saveTransformation(userImpactStory, _selectedFiles,
+                //     hiveGroupUser, _currentGroupUserTransformation);
+                context.read<ResultsCubit>().updateTransformation(value);
+              },
             ),
             SizedBox(
               height: 10.h,

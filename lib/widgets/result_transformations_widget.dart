@@ -105,39 +105,26 @@
 //               ],
 //             ),
 //             SizedBox(height: 10.h),
-//             Container(
-//               decoration: BoxDecoration(
-//                 color: Color(0xFFFFFFFF),
-//                 border: Border.all(
-//                   color: Color(0xFF979797),
-//                 ),
-//                 borderRadius: BorderRadius.all(
-//                   Radius.circular(10),
+//             FocusableTextField(
+//               // controller: _transformationController,
+//               keyboardType: TextInputType.text,
+//               decoration: InputDecoration(
+//                 hintText:
+//                     '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
+//                 hintStyle: TextStyle(
+//                   fontFamily: "OpenSans",
+//                   fontSize: 16.sp,
+//                   fontStyle: FontStyle.italic,
 //                 ),
 //               ),
-//               child: FocusableTextField(
-//                 controller: _transformationController,
-//                 keyboardType: TextInputType.text,
-//                 decoration: InputDecoration(
-//                   hintText:
-//                       '${AppLocalizations.of(context)!.hintTextTransformationsTextField}',
-//                   hintStyle: TextStyle(
-//                     fontFamily: "OpenSans",
-//                     fontSize: 16.sp,
-//                     fontStyle: FontStyle.italic,
-//                   ),
-//                 ),
-//                 maxLines: 3,
-//                 textInputAction: TextInputAction.done,
-//                 onFocusChange: (isFocused) {
-//                   if (isFocused) {
-//                     return;
-//                   }
-//                 },
-//                 onChange: (String value) {
-//                   widget.onChange(value, _selectedFiles);
-//                 },
-//               ),
+//               maxLines: 3,
+//               textInputAction: TextInputAction.done,
+//               onFieldSubmitted: (value) {
+//                 // TODO
+//               },
+//               onChange: (String value) {
+//                 widget.onChange(value, _selectedFiles);
+//               },
 //             ),
 //             SizedBox(
 //               height: 10.h,

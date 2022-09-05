@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
-import 'package:starfish/modules/results/result_bottomsheet.dart';
+import 'package:starfish/modules/results/results_bottomsheet/results_bottomsheet.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -174,11 +174,10 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       groupUserResultsList.elementAt(index);
                   return InkWell(
                     onTap: () {
-                      final results = ResultWidgetBottomSheet(
+                      final results = ResultsBottomSheet(
                         group: _groupUserResultStatus.group!,
-                        groupUser: _groupUserResultStatus.groupUser,
-                        leanerEvaluationForGroup:
-                            _groupUserResultStatus.groupEvaluation,
+                        learner: _groupUserResultStatus.user,
+                        month: state.month,
                       );
                       showModalBottomSheet(
                         backgroundColor: Colors.transparent,

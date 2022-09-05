@@ -9,11 +9,25 @@ export 'package:starfish/src/generated/google/type/date.pb.dart';
 export 'package:starfish/src/generated/starfish.pb.dart';
 
 extension DateExt on Date {
-  DateTime toDateTime() => DateTime(year, month, day);
+  DateTime toDateTime() => DateTime(year, month, day == 0 ? 1 : day);
 
   bool get isValidDate {
     return this.year != 0 && this.month != 0 && this.day != 0;
   }
+
+  int compareTo(Date other) => year < other.year
+      ? -1
+      : year > other.year
+          ? 1
+          : month < other.month
+              ? -1
+              : month > other.month
+                  ? 1
+                  : day < other.day
+                      ? -1
+                      : day > other.day
+                          ? 1
+                          : 0;
 
   int compareMonthTo(Date other) => year < other.year
       ? -1
@@ -21,7 +35,29 @@ extension DateExt on Date {
           ? 1
           : month < other.month
               ? -1
-              : 1;
+              : month > other.month
+                  ? 1
+                  : 0;
+  bool isSameMonth(Date other) => year == other.year && month == other.month;
+
+  static Date fromDateTime(DateTime dateTime) {
+    return Date(year: dateTime.year, month: dateTime.month, day: dateTime.day);
+  }
+
+  Date nextMonth() {
+    if (month == 12) {
+      return Date(year: year + 1, month: month);
+    }
+    return Date(year: year, month: month + 1);
+  }
+
+  static Iterable<Date> monthsInRange(Date from, Date to) sync* {
+    var current = from;
+    while (current.compareMonthTo(to) <= 0) {
+      yield current;
+      current = current.nextMonth();
+    }
+  }
 }
 
 extension FileReferenceExt on FileReference {

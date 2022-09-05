@@ -75,7 +75,6 @@ dependencies:
   sentry_flutter: ^6.4.0
   connectivity_plus: ^2.2.0
   syncfusion_flutter_core: ^20.1.47
-  flutter_hooks: ^0.18.3
   platform: ^3.1.0
   fixnum: ^1.0.0
   fluttertoast: ^8.0.9

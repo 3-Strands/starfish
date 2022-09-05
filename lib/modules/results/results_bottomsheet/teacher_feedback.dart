@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/modules/results/evaluation/current_evaluation_categories.dart';
 import 'package:starfish/modules/results/evaluation/evaluation_history.dart';
+import 'package:starfish/modules/results/results_bottomsheet/cubit/results_bottomsheet_cubit.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 
@@ -11,13 +13,16 @@ class TeacherFeedback extends StatelessWidget {
     Key? key,
     this.teacherFeedback,
     required this.evaluationCategories,
-    required this.groupUser,
+    required this.groupId,
+    required this.userId,
+    required this.month,
   }) : super(key: key);
 
   final TeacherResponse? teacherFeedback;
   final List<EvaluationCategory> evaluationCategories;
-  final GroupUser groupUser;
-  // final GroupEvaluation? groupEvaluation;
+  final String groupId;
+  final String userId;
+  final Date month;
 
   @override
   Widget build(BuildContext context) {
@@ -54,56 +59,44 @@ class TeacherFeedback extends StatelessWidget {
             SizedBox(
               height: 5.h,
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                border: Border.all(
-                  color: Color(0xFF979797),
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+            FocusableTextField(
+              // controller: _teacherFeedbackController,
+              keyboardType: TextInputType.text,
+              maxCharacters: 200,
+              decoration: InputDecoration(
+                counterText: "",
+                hintText: "",
+                hintStyle: TextStyle(
+                  fontFamily: "OpenSans",
+                  fontSize: 16.sp,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
-              child: FocusableTextField(
-                // controller: _teacherFeedbackController,
-                keyboardType: TextInputType.text,
-                maxCharacters: 200,
-                decoration: InputDecoration(
-                  counterText: "",
-                  hintText: "",
-                  hintStyle: TextStyle(
-                    fontFamily: "OpenSans",
-                    fontSize: 16.sp,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                onFocusChange: (isFocused) {
-                  if (isFocused) {
-                    return;
-                  }
-                  // TODO
-                  // _saveTeacherFeedback(_teacherFeedbackController.text.trim());
-                },
-                // onChange: (value) {
-                //   _teacherFeedback = value;
-                // },
-              ),
+              maxLines: 3,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (value) {
+                context
+                    .read<ResultsBottomsheetCubit>()
+                    .teacherResponseChanged(value.trim());
+              },
             ),
             if (evaluationCategories.isNotEmpty) ...[
               SizedBox(
                 height: 30.h,
               ),
               CurrentEvaluationCategories(
-                groupUser: groupUser,
+                groupId: groupId,
+                userId: userId,
+                month: month,
                 evaluationCategories: evaluationCategories,
               ),
               SizedBox(
                 height: 30.h,
               ),
               EvaluationHistory(
-                groupUser: groupUser,
+                groupId: groupId,
+                userId: userId,
+                month: month,
                 evaluationCategories: evaluationCategories,
               ),
             ],

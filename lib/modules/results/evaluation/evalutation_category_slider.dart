@@ -7,13 +7,11 @@ import 'package:starfish/widgets/shapes/slider_thumb.dart';
 class EvaluationCategorySlider extends StatefulWidget {
   const EvaluationCategorySlider({
     Key? key,
-    required this.groupUser,
     required this.evaluationCategory,
     required this.initialValue,
     this.onChange,
   }) : super(key: key);
 
-  final GroupUser groupUser;
   final EvaluationCategory evaluationCategory;
   final int? initialValue;
   final void Function(int value)? onChange;

@@ -5,11 +5,17 @@ import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/box_builder.dart';
 
 class EvaluationHistory extends StatelessWidget {
-  const EvaluationHistory(
-      {Key? key, required this.groupUser, required this.evaluationCategories})
-      : super(key: key);
+  const EvaluationHistory({
+    Key? key,
+    required this.groupId,
+    required this.userId,
+    required this.evaluationCategories,
+    required this.month,
+  }) : super(key: key);
 
-  final GroupUser groupUser;
+  final String groupId;
+  final String userId;
+  final Date month;
   final List<EvaluationCategory> evaluationCategories;
 
   @override
@@ -17,10 +23,6 @@ class EvaluationHistory extends StatelessWidget {
     return BoxBuilder<LearnerEvaluation>(
       box: globalHiveApi.learnerEvaluation,
       builder: (_, values) {
-        final userId = groupUser.userId;
-        final groupId = groupUser.groupId;
-        final now = DateTime.now();
-        final thisMonth = Date(year: now.year, month: now.month);
         final evaluationCategoryMap = {
           for (final evaluationCategory in evaluationCategories)
             evaluationCategory.id: evaluationCategory.name
@@ -30,7 +32,7 @@ class EvaluationHistory extends StatelessWidget {
             in globalHiveApi.learnerEvaluation.values) {
           if (learnerEvaluation.learnerId == userId &&
               learnerEvaluation.groupId == groupId &&
-              learnerEvaluation.month != thisMonth) {
+              learnerEvaluation.month != month) {
             final monthEvaluations =
                 (monthsToStatusMap[learnerEvaluation.month] ??= {});
             monthEvaluations[

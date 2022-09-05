@@ -92,50 +92,35 @@ class UserTransformationView extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             SizedBox(height: 10.h),
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                border: Border.all(
-                  color: Color(0xFF979797),
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-              child: BlocBuilder<AddEditTransformaitonCubit,
-                  AddEditTransformationState>(
-                builder: (context, state) {
-                  return FocusableTextField(
-                    //controller: _transformationController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      hintText:
-                          '${appLocalizations.hintTextTransformationsTextField}',
-                      hintStyle: TextStyle(
-                        fontFamily: "OpenSans",
-                        fontSize: 16.sp,
-                        fontStyle: FontStyle.italic,
-                      ),
+            BlocBuilder<AddEditTransformaitonCubit, AddEditTransformationState>(
+              builder: (context, state) {
+                return FocusableTextField(
+                  //controller: _transformationController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText:
+                        '${appLocalizations.hintTextTransformationsTextField}',
+                    hintStyle: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic,
                     ),
-                    text: state.impactStory,
-                    maxLines: 3,
-                    textInputAction: TextInputAction.done,
-                    onFocusChange: (isFocused) {
-                      if (isFocused) {
-                        return;
-                      }
-                      context
-                          .read<AddEditTransformaitonCubit>()
-                          .saveImpactStory();
-                    },
-                    onChange: (String value) {
-                      context
-                          .read<AddEditTransformaitonCubit>()
-                          .updateImpactStory(value);
-                    },
-                  );
-                },
-              ),
+                  ),
+                  initialValue: state.impactStory,
+                  maxLines: 3,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) {
+                    context
+                        .read<AddEditTransformaitonCubit>()
+                        .saveImpactStory();
+                  },
+                  onChange: (String value) {
+                    context
+                        .read<AddEditTransformaitonCubit>()
+                        .updateImpactStory(value);
+                  },
+                );
+              },
             ),
             SizedBox(
               height: 10.h,

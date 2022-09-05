@@ -16,12 +16,16 @@ import 'package:starfish/utils/currentUser.dart';
 class CurrentEvaluationCategories extends StatefulWidget {
   const CurrentEvaluationCategories({
     Key? key,
-    required this.groupUser,
+    required this.groupId,
+    required this.userId,
     required this.evaluationCategories,
+    required this.month,
   }) : super(key: key);
 
-  final GroupUser groupUser;
+  final String groupId;
+  final String userId;
   final List<EvaluationCategory> evaluationCategories;
+  final Date month;
 
   @override
   State<CurrentEvaluationCategories> createState() =>
@@ -32,26 +36,20 @@ class _CurrentEvaluationCategoriesState
     extends State<CurrentEvaluationCategories> {
   late final Map<EvaluationCategory, EvaluationResult> _results;
 
-  Date getLastMonth() {
-    final now = DateTime.now();
-    final isFirstMonth = now.month == 1;
+  Date getPreviousMonth() {
+    final month = widget.month;
+    final isFirstMonth = month.month == 1;
     return Date(
-      year: now.year - (isFirstMonth ? 1 : 0),
-      month: isFirstMonth ? 12 : now.month - 3,
+      year: month.year - (isFirstMonth ? 1 : 0),
+      month: isFirstMonth ? 12 : month.month - 1,
     );
-  }
-
-  Date getCurrentMonth() {
-    final now = DateTime.now();
-    return Date(year: now.year, month: now.month);
   }
 
   @override
   void initState() {
-    final userId = widget.groupUser.userId;
-    final groupId = widget.groupUser.groupId;
-    final thisMonth = getCurrentMonth();
-    final lastMonth = getLastMonth();
+    final userId = widget.userId;
+    final month = widget.month;
+    final previousMonth = getPreviousMonth();
     final evalutationCategoryMap = {
       for (final evaluationCategory in widget.evaluationCategories)
         evaluationCategory.id: evaluationCategory
@@ -62,11 +60,11 @@ class _CurrentEvaluationCategoriesState
     };
     for (final learnerEvaluation in globalHiveApi.learnerEvaluation.values) {
       if (learnerEvaluation.learnerId == userId &&
-          learnerEvaluation.groupId == groupId) {
-        if (learnerEvaluation.month == thisMonth) {
+          learnerEvaluation.groupId == widget.groupId) {
+        if (learnerEvaluation.month == month) {
           _results[evalutationCategoryMap[learnerEvaluation.categoryId]!]!
               .result = learnerEvaluation.evaluation;
-        } else if (learnerEvaluation.month == lastMonth) {
+        } else if (learnerEvaluation.month == previousMonth) {
           _results[evalutationCategoryMap[learnerEvaluation.categoryId]!]!
               .lastResult = learnerEvaluation.evaluation;
         }
@@ -84,19 +82,18 @@ class _CurrentEvaluationCategoriesState
       children: [
         for (final evaluationCategory in widget.evaluationCategories) ...[
           EvaluationCategorySlider(
-            groupUser: widget.groupUser,
             evaluationCategory: evaluationCategory,
             initialValue: _results[evaluationCategory]!.result,
             onChange: (value) {
               final dataRepo = context.read<DataRepository>();
               final currentUserId = context.currentUser.id;
-              final thisMonth = getCurrentMonth();
-              final userId = widget.groupUser.userId;
-              final groupId = widget.groupUser.groupId;
+              final month = widget.month;
+              final userId = widget.userId;
+              final groupId = widget.groupId;
               final preexistingLearnerEvaluation = globalHiveApi
                   .learnerEvaluation.values
                   .firstWhereOrNull((eval) =>
-                      eval.month == thisMonth &&
+                      eval.month == month &&
                       eval.learnerId == userId &&
                       eval.groupId == groupId &&
                       eval.evaluatorId == currentUserId &&
@@ -108,7 +105,7 @@ class _CurrentEvaluationCategoriesState
                 evaluatorId: currentUserId,
                 groupId: groupId,
                 learnerId: userId,
-                month: thisMonth,
+                month: month,
               ));
               setState(() {
                 _results[evaluationCategory]!.result = value;
