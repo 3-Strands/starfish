@@ -11,7 +11,6 @@ import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/modules/image_cropper/image_cropper_view.dart';
 import 'package:starfish/modules/results/cubit/add_edit_transformation_cubit.dart';
 import 'package:starfish/repositories/data_repository.dart';
-import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 import 'package:starfish/widgets/image_preview.dart';

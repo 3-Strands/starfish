@@ -229,15 +229,17 @@ class LearnerSummary extends StatelessWidget {
                             color: Color(0xFF4F4F4F),
                             fontWeight: FontWeight.w600),
                       ),
-                      // TextSpan(
-                      //   text: teacherResponse?.response ?? '',
-                      //   style: TextStyle(
-                      //     fontFamily: "OpenSans",
-                      //     fontSize: 17.sp,
-                      //     fontStyle: FontStyle.italic,
-                      //     color: Color(0xFF4F4F4F),
-                      //   ),
-                      // )
+                      TextSpan(
+                        text: teacherResponses.length > 0
+                            ? teacherResponses.first.response
+                            : '',
+                        style: TextStyle(
+                          fontFamily: "OpenSans",
+                          fontSize: 17.sp,
+                          fontStyle: FontStyle.italic,
+                          color: Color(0xFF4F4F4F),
+                        ),
+                      ),
                     ],
                   ),
                   maxLines: 1,

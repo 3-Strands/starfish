@@ -18,6 +18,7 @@ class AssetsPath {
   static const String resultsActiveIcon = 'assets/images/results_active.svg';
   static const String arrowUpIcon = 'assets/images/arrow_green.png';
   static const String arrowDownIcon = 'assets/images/arrow_red.png';
+  static const String arrowRight = 'assets/images/arrow_blue.png';
   static const String thumbsUp = 'assets/images/thumbs_up.png';
   static const String thumbsDown = 'assets/images/thumbs_down.png';
 }

@@ -15,20 +15,6 @@ extension DateExt on Date {
     return this.year != 0 && this.month != 0 && this.day != 0;
   }
 
-  int compareTo(Date other) => year < other.year
-      ? -1
-      : year > other.year
-          ? 1
-          : month < other.month
-              ? -1
-              : month > other.month
-                  ? 1
-                  : day < other.day
-                      ? -1
-                      : day > other.day
-                          ? 1
-                          : 0;
-
   int compareMonthTo(Date other) => year < other.year
       ? -1
       : year > other.year
@@ -56,6 +42,18 @@ extension DateExt on Date {
     while (current.compareMonthTo(to) <= 0) {
       yield current;
       current = current.nextMonth();
+    }
+  }
+
+  // Returns previous month and year
+  Date get previousMonth {
+    int currentMonth = this.month;
+    int currentYear = this.year;
+
+    if (currentMonth > 1) {
+      return Date(year: currentYear, month: currentMonth - 1);
+    } else {
+      return Date(year: currentYear - 1, month: 12);
     }
   }
 }
