@@ -61,6 +61,7 @@ class EvaluationHistory extends StatelessWidget {
               headerBuilder: (context) => Padding(
                 padding: EdgeInsets.only(top: 20.h, bottom: 30.h),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       appLocalizations.currentEvaluation,

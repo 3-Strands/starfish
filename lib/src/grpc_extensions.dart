@@ -47,7 +47,7 @@ extension DateExt on Date {
 
   Date nextMonth() {
     if (month == 12) {
-      return Date(year: year + 1, month: month);
+      return Date(year: year + 1, month: 1);
     }
     return Date(year: year, month: month + 1);
   }

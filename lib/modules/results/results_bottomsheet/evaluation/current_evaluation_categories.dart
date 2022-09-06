@@ -22,6 +22,7 @@ class _CurrentEvaluationCategoriesState
           previous.isDifferentSnapshotFrom(current),
       builder: (context, state) {
         return Column(
+          key: UniqueKey(),
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             for (final evaluationCategoryId

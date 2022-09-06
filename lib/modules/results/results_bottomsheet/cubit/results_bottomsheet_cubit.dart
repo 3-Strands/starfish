@@ -6,6 +6,7 @@ import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/helpers/uuid_generator.dart';
+import 'package:starfish/utils/option.dart';
 
 part 'results_bottomsheet_state.dart';
 
@@ -34,6 +35,15 @@ _CurrentAndPreviousResults _calculateResults(
   return _CurrentAndPreviousResults(currentResults, previousResults);
 }
 
+TeacherResponse? _findTeacherResponse(
+        Date month, String userId, String groupId) =>
+    globalHiveApi.teacherResponse.values.firstWhereOrNull(
+      (response) =>
+          response.learnerId == userId &&
+          response.groupId == groupId &&
+          response.month == month,
+    );
+
 class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
   ResultsBottomsheetCubit({
     required this.group,
@@ -48,6 +58,8 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
           month: initialMonth,
           evaluations:
               _calculateResults(initialMonth, initialLearner.id, group.id),
+          teacherResponse:
+              _findTeacherResponse(initialMonth, initialLearner.id, group.id),
         ));
 
   final DataRepository _dataRepository;
@@ -57,6 +69,8 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
     emit(state.copyWith(
       learner: learner,
       evaluations: _calculateResults(state.month, learner.id, group.id),
+      teacherResponse:
+          Option(_findTeacherResponse(state.month, learner.id, group.id)),
     ));
   }
 
@@ -64,6 +78,8 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
     emit(state.copyWith(
       month: month,
       evaluations: _calculateResults(month, state.learner.id, group.id),
+      teacherResponse:
+          Option(_findTeacherResponse(month, state.learner.id, group.id)),
     ));
   }
 
@@ -102,21 +118,24 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
     if (value.isEmpty && teacherResponse == null) {
       return;
     }
+    final id = teacherResponse?.id ?? UuidGenerator.uuid();
     _dataRepository.addDelta(
       teacherResponse == null
           ? TeacherResponseCreateDelta(
+              id: id,
               groupId: state.group.id,
               learnerId: state.learner.id,
               teacherId: _dataRepository.currentUser.id,
               month: state.month,
+              response: value,
             )
           : TeacherResponseUpdateDelta(
               teacherResponse,
               response: value,
             ),
     );
-    // Since the teacher feedback is calculated lazily in the state,
-    // we just update the state to force the feedback to recalculate.
-    emit(state.copyWith());
+    emit(state.copyWith(
+      teacherResponse: Option(globalHiveApi.teacherResponse.get(id)),
+    ));
   }
 }

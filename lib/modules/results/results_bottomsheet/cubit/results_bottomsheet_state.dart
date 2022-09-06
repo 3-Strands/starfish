@@ -7,20 +7,14 @@ class ResultsBottomsheetState {
     required this.learner,
     required this.month,
     required this.evaluations,
-  }) {
-    teacherResponse = globalHiveApi.teacherResponse.values.firstWhereOrNull(
-      (response) =>
-          response.learnerId == learner.id &&
-          response.groupId == group.id &&
-          response.month == month,
-    );
-  }
+    required this.teacherResponse,
+  });
 
   final Group group;
   final Date month;
   final User learner;
   final _CurrentAndPreviousResults evaluations;
-  late final TeacherResponse? teacherResponse;
+  final TeacherResponse? teacherResponse;
 
   bool isDifferentSnapshotFrom(ResultsBottomsheetState other) =>
       month != other.month || learner != other.learner;
@@ -29,11 +23,13 @@ class ResultsBottomsheetState {
     User? learner,
     Date? month,
     _CurrentAndPreviousResults? evaluations,
+    Option<TeacherResponse>? teacherResponse,
   }) =>
       ResultsBottomsheetState(
         group: group,
         learner: learner ?? this.learner,
         month: month ?? this.month,
         evaluations: evaluations ?? this.evaluations,
+        teacherResponse: teacherResponse == null ? this.teacherResponse : teacherResponse.value,
       );
 }

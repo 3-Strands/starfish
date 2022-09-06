@@ -26,7 +26,7 @@ class _EvaluationCategorySliderState extends State<EvaluationCategorySlider> {
 
   @override
   void initState() {
-    value = widget.initialValue ?? 3;
+    value = widget.initialValue ?? 0;
     super.initState();
   }
 
