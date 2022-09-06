@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:starfish/repositories/data_repository.dart';
+import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/utils/helpers/uuid_generator.dart';
 
 part 'group_evaluation_state.dart';
 
@@ -33,6 +35,19 @@ class GroupEvaluationCubit extends Cubit<GroupEvaluationState> {
 
   void updateGroupEvaluation(GroupEvaluation_Evaluation evaluation) {
     emit(state.copyWith(evaluation: evaluation));
+
+    _dataRepository.addDelta(_groupEvaluation == null
+        ? GroupEvaluationCreateDelta(
+            id: UuidGenerator.uuid(),
+            userId: state.groupUser.userId,
+            groupId: state.groupUser.groupId,
+            month: state.month,
+            evaluation: evaluation,
+          )
+        : GroupEvaluationUpdateDelta(
+            _groupEvaluation!,
+            evaluation: state.evaluation,
+          ));
   }
 
   @override
