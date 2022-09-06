@@ -136,7 +136,7 @@ class SyncRepository {
         }
         controller.close();
         final items = await responseStream.toList();
-        // revertAll();
+        revertAll();
         for (final item in items) {
           item.freeze();
           if (item.hasMetaData())
