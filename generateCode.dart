@@ -642,6 +642,8 @@ final messages = <int, MessageWrapper>{
     LearnerEvaluation(),
     storage: BoxStorage('learnerEvaluation'),
     createUpdateRequest: CreateUpdateLearnerEvaluationRequest(),
+    editableFields: ['evaluation'],
+    ignoreUpdateMask: true,
   ),
   19: Model(
     TeacherResponse(),

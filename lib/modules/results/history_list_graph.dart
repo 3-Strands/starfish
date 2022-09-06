@@ -11,10 +11,12 @@ class HistoryListGraph extends StatefulWidget {
     Key? key,
     required this.monthValuesList,
     this.largestPossible,
+    this.headerBuilder,
   }) : super(key: key);
 
   final List<MonthValues> monthValuesList;
   final int? largestPossible;
+  final Widget Function(BuildContext context)? headerBuilder;
 
   @override
   State<HistoryListGraph> createState() => _HistoryListGraphState();
@@ -62,6 +64,7 @@ class _HistoryListGraphState extends State<HistoryListGraph> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (isActive) ...[
+          if (widget.headerBuilder != null) widget.headerBuilder!(context),
           Text(
             appLocalizations.history,
             style: TextStyle(

@@ -1,28 +1,22 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/modules/results/evaluation/current_evaluation_categories.dart';
-import 'package:starfish/modules/results/evaluation/evaluation_history.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/modules/results/results_bottomsheet/cubit/results_bottomsheet_cubit.dart';
+import 'package:starfish/modules/results/results_bottomsheet/evaluation/current_evaluation_categories.dart';
+import 'package:starfish/modules/results/results_bottomsheet/evaluation/evaluation_history.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/focusable_text_field.dart';
 
 class TeacherFeedback extends StatelessWidget {
   const TeacherFeedback({
     Key? key,
-    this.teacherFeedback,
-    required this.evaluationCategories,
-    required this.groupId,
-    required this.userId,
-    required this.month,
+    required this.group,
   }) : super(key: key);
 
-  final TeacherResponse? teacherFeedback;
-  final List<EvaluationCategory> evaluationCategories;
-  final String groupId;
-  final String userId;
-  final Date month;
+  final Group group;
 
   @override
   Widget build(BuildContext context) {
@@ -57,52 +51,44 @@ class TeacherFeedback extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(
-              height: 5.h,
+              height: 10.h,
             ),
-            FocusableTextField(
-              // controller: _teacherFeedbackController,
-              keyboardType: TextInputType.text,
-              maxCharacters: 200,
-              decoration: InputDecoration(
-                counterText: "",
-                hintText: "",
-                hintStyle: TextStyle(
-                  fontFamily: "OpenSans",
-                  fontSize: 16.sp,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              maxLines: 3,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (value) {
-                context
-                    .read<ResultsBottomsheetCubit>()
-                    .teacherResponseChanged(value.trim());
+            BlocBuilder<ResultsBottomsheetCubit, ResultsBottomsheetState>(
+              buildWhen: (previous, current) =>
+                  previous.isDifferentSnapshotFrom(current),
+              builder: (context, state) {
+                return FocusableTextField(
+                  key: UniqueKey(),
+                  // controller: _teacherFeedbackController,
+                  initialValue: state.teacherResponse?.response,
+                  keyboardType: TextInputType.text,
+                  maxCharacters: 200,
+                  decoration: InputDecoration(
+                    counterText: "",
+                    hintText: "",
+                    hintStyle: TextStyle(
+                      fontFamily: "OpenSans",
+                      fontSize: 16.sp,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  maxLines: 3,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (value) {
+                    context
+                        .read<ResultsBottomsheetCubit>()
+                        .teacherResponseChanged(value.trim());
+                  },
+                );
               },
             ),
-            if (evaluationCategories.isNotEmpty) ...[
-              SizedBox(
-                height: 30.h,
-              ),
-              CurrentEvaluationCategories(
-                groupId: groupId,
-                userId: userId,
-                month: month,
-                evaluationCategories: evaluationCategories,
-              ),
-              SizedBox(
-                height: 30.h,
-              ),
-              EvaluationHistory(
-                groupId: groupId,
-                userId: userId,
-                month: month,
-                evaluationCategories: evaluationCategories,
-              ),
+            SizedBox(height: 20.h),
+            if (group.evaluationCategoryIds.isNotEmpty) ...[
+              const CurrentEvaluationCategories(),
+              SizedBox(height: 20.h),
+              const EvaluationHistory(),
+              SizedBox(height: 20.h),
             ],
-            SizedBox(
-              height: 20.h,
-            )
           ],
         ),
       ),

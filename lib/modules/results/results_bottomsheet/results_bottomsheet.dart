@@ -247,8 +247,7 @@ class ResultWidgetBottomSheetView extends StatelessWidget {
                           return BlocBuilder<ResultsBottomsheetCubit,
                               ResultsBottomsheetState>(
                             buildWhen: (previous, current) =>
-                                previous.month != current.month ||
-                                previous.learner != current.learner,
+                                previous.isDifferentSnapshotFrom(current),
                             builder: (context, state) {
                               final groupEvaluation = values.firstWhereOrNull(
                                 (groupEvaluation) =>
@@ -296,8 +295,7 @@ class ResultWidgetBottomSheetView extends StatelessWidget {
                   ),
                   BlocBuilder<ResultsBottomsheetCubit, ResultsBottomsheetState>(
                     buildWhen: (previous, current) =>
-                        previous.learner != current.learner ||
-                        previous.month != current.month,
+                        previous.isDifferentSnapshotFrom(current),
                     builder: (context, state) {
                       return _ActionCard(
                         groupId: group.id,
@@ -307,34 +305,16 @@ class ResultWidgetBottomSheetView extends StatelessWidget {
                     },
                   ),
                   SizedBox(
-                    height: 5.h,
-                  ),
-                  SizedBox(
-                    height: 10.h,
+                    height: 20.h,
                   ),
                   //_buildTrasnformatonsCard(),
                   // _buildTransformationWidget(),
 
                   SizedBox(
-                    height: 10.h,
+                    height: 20.h,
                   ),
-                  BlocBuilder<ResultsBottomsheetCubit, ResultsBottomsheetState>(
-                    buildWhen: (previous, current) =>
-                        previous.learner != current.learner ||
-                        previous.month != current.month ||
-                        previous.teacherResponse != current.teacherResponse,
-                    builder: (context, state) {
-                      return TeacherFeedback(
-                        evaluationCategories: group.evaluationCategoryIds
-                            .map((id) =>
-                                globalHiveApi.evaluationCategory.get(id)!)
-                            .toList(),
-                        teacherFeedback: state.teacherResponse,
-                        groupId: group.id,
-                        userId: state.learner.id,
-                        month: state.month,
-                      );
-                    },
+                  TeacherFeedback(
+                    group: group,
                   ),
                   SizedBox(
                     height: 10.h,
@@ -472,77 +452,6 @@ class ResultWidgetBottomSheetView extends StatelessWidget {
   //     //if (bloc.resultsBloc.getGroupEvaluation() == GroupEvaluation_Evaluation.EVAL_UNSPECIFIED) {
   //     return Container();
   //   }
-  // }
-
-  // Future<DateTime?> _selectMonth(DataBloc bloc) async {
-  //   // reference for the MonthYearPickerLocalizations is add in app.dart
-  //   return await showMonthYearPicker(
-  //     context: context,
-  //     initialDate: DateTimeUtils.toDateTime(
-  //         DateTimeUtils.formatHiveDate(bloc.resultsBloc.hiveDate!,
-  //             requiredDateFormat: "dd-MMM-yyyy"),
-  //         "dd-MMM-yyyy"),
-  //     firstDate: DateTime(DateTime.now().year - 10),
-  //     lastDate: DateTime(DateTime.now().year + 10),
-  //     hideActions: true,
-  //   );
-  // }
-
-  // void _updateLearnerSummary() {
-  //   _teacherFeedbackController.text = bloc.resultsBloc.hiveGroupUser
-  //           ?.getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!)
-  //           ?.response ??
-  //       '';
-  // }
-
-  // void _saveGroupEvaluation(GroupEvaluation_Evaluation evaluation) {
-  //   HiveGroupEvaluation _hiveGroupEvaluation;
-
-  //   if (_isEditMode) {
-  //     // TODO:
-
-  //     _hiveGroupEvaluation = HiveGroupEvaluation();
-  //   } else {
-  //     _hiveGroupEvaluation = HiveGroupEvaluation();
-  //     _hiveGroupEvaluation.userId = bloc.resultsBloc.hiveGroupUser?.userId;
-  //     _hiveGroupEvaluation.groupId = bloc.resultsBloc.hiveGroupUser?.groupId;
-  //     _hiveGroupEvaluation.month = bloc.resultsBloc.hiveDate!.toMonth;
-  //   }
-  //   _hiveGroupEvaluation.evaluation = evaluation.value;
-
-  //   GroupEvaluationProvider().createUpdateGroupEvaluation(_hiveGroupEvaluation);
-  // }
-
-  // void _saveTeacherFeedback(String feedback) {
-  //   // HiveTeacherResponse? _teacherResponse = hiveGroupUser
-  //   //     .getTeacherResponseForMonth(bloc.resultsBloc.hiveDate!);
-
-  //   if (_hiveTeacherResponse == null) {
-  //     _hiveTeacherResponse = HiveTeacherResponse();
-  //     _hiveTeacherResponse!.id = UuidGenerator.uuid();
-  //     _hiveTeacherResponse!.groupId = hiveGroupUser.groupId;
-  //     _hiveTeacherResponse!.learnerId = hiveGroupUser.userId;
-  //     _hiveTeacherResponse!.teacherId = CurrentUserProvider().getUserSync().id;
-  //     _hiveTeacherResponse!.month = bloc.resultsBloc.hiveDate!.toMonth;
-  //     _hiveTeacherResponse!.isNew = true;
-  //   } else {
-  //     _hiveTeacherResponse!.isUpdated = true;
-  //   }
-
-  //   _hiveTeacherResponse!.response = feedback;
-
-  //   TeacherResponseProvider()
-  //       .createUpdateTeacherResponse(_hiveTeacherResponse!)
-  //       .then((value) {
-  //     setState(() {});
-  //     debugPrint("Feedback saved.");
-  //     FBroadcast.instance().broadcast(
-  //       SyncService.kUpdateTeacherResponse,
-  //       value: _hiveTeacherResponse,
-  //     );
-  //   }).onError((error, stackTrace) {
-  //     debugPrint("Failed to save Feedback.");
-  //   });
   // }
 
   // void _saveTransformation(String? _impactStory, List<File> _files) {

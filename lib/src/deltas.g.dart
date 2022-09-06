@@ -1407,7 +1407,52 @@ class LearnerEvaluationCreateDelta extends DeltaBase {
   }
 }
 
-// Users cannot update the LearnerEvaluation type
+class LearnerEvaluationUpdateDelta extends DeltaBase {
+  LearnerEvaluationUpdateDelta(
+    this._model, {
+    int? evaluation,
+  }) {
+    var numUpdatedFields = 0;
+    if (evaluation != null && evaluation != _model.evaluation) {
+      this.evaluation = evaluation;
+      numUpdatedFields += 1;
+    } else {
+      this.evaluation = null;
+    }
+    _hasChangedFields = numUpdatedFields > 0;
+  }
+
+  final LearnerEvaluation _model;
+  late final bool _hasChangedFields;
+  late final int? evaluation;
+
+  LearnerEvaluation applyUpdateToModel(LearnerEvaluation originalModel) {
+    return originalModel.rebuild((other) {
+      if (evaluation != null) {
+        other.evaluation = evaluation!;
+      }
+    });
+  }
+
+  @override
+  bool apply() {
+    if (!_hasChangedFields) {
+      return false;
+    }
+
+    final originalModel = globalHiveApi.learnerEvaluation.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.learnerEvaluation.put(updatedModel.id, updatedModel);
+    ensureRevert(18, originalModel.id, originalModel);
+
+    globalHiveApi.putSyncRequest(updatedModel.id,
+        CreateUpdateLearnerEvaluationRequest(learnerEvaluation: updatedModel));
+    return true;
+  }
+}
 
 // Users cannot delete the LearnerEvaluation type
 

@@ -174,10 +174,13 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                       groupUserResultsList.elementAt(index);
                   return InkWell(
                     onTap: () {
-                      final results = ResultsBottomSheet(
-                        group: _groupUserResultStatus.group!,
-                        learner: _groupUserResultStatus.user,
-                        month: state.month,
+                      final results = BlocProvider.value(
+                        value: context.read<ResultsCubit>(),
+                        child: ResultsBottomSheet(
+                          group: _groupUserResultStatus.group!,
+                          learner: _groupUserResultStatus.user,
+                          month: state.month,
+                        ),
                       );
                       showModalBottomSheet(
                         backgroundColor: Colors.transparent,

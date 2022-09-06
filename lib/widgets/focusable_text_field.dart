@@ -12,6 +12,7 @@ class FocusableTextField extends StatefulWidget {
 
   final String? initialValue;
   const FocusableTextField({
+    super.key,
     this.decoration = const InputDecoration(),
     this.maxCharacters,
     this.keyboardType,
