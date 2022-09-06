@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/deltas.dart';
@@ -12,67 +11,88 @@ import 'package:starfish/wrappers/file_system.dart';
 
 part 'add_edit_transformation_state.dart';
 
-class AddEditTransformaitonCubit extends Cubit<AddEditTransformationState> {
-  AddEditTransformaitonCubit({
+class AddEditTransformationCubit extends Cubit<AddEditTransformationState> {
+  AddEditTransformationCubit({
     required DataRepository dataRepository,
     required Date month,
-    required GroupUser groupUser,
+    required String groupId,
+    required String userId,
     Transformation? transformation,
   })  : _transformation = transformation,
         _dataRepository = dataRepository,
         _id = transformation?.id ?? UuidGenerator.uuid(),
+        _groupId = groupId,
+        _userId = userId,
         super(AddEditTransformationState(
-          groupUser: groupUser,
           month: month,
-          impactStory: transformation?.impactStory ?? '',
           previouslySelectedFiles: transformation?.fileReferences ?? const [],
           newlySelectedFiles: const [],
-        )) {
-    _subscription = dataRepository.groups.listen((groups) {});
-  }
-
-  late StreamSubscription<List<Group>> _subscription;
+        ));
 
   final DataRepository _dataRepository;
-  final Transformation? _transformation;
+  Transformation? _transformation;
   final String _id;
+  final String _groupId;
+  final String _userId;
 
-  void addFile(File file) {
-    emit(state
-        .copyWith(newlySelectedFiles: [...state.newlySelectedFiles, file]));
+  void fileAdded(File file) {
+    emit(state.copyWith(
+      newlySelectedFiles: [
+        ...state.newlySelectedFiles,
+        file,
+      ],
+    ));
+
+    final files = <String>[
+      ...state.previouslySelectedFiles
+          .map((fileReference) => fileReference.filename),
+      ...state.newlySelectedFiles.map((file) => file.path.split("/").last),
+    ];
+
+    _addTransformationDelta(files: files);
 
     _dataRepository.addDelta(FileReferenceCreateDelta(
-        entityId: _id,
-        entityType: EntityType.TRANSFORMATION,
-        filename: file.path.split("/").last,
-        filepath: file.path));
+      entityId: _id,
+      entityType: EntityType.TRANSFORMATION,
+      filename: file.path.split("/").last,
+      filepath: file.path,
+    ));
   }
 
-  void removeFile(File file) {
-    state.newlySelectedFiles.removeWhere((f) => f == file);
-    emit(state.copyWith(newlySelectedFiles: state.newlySelectedFiles));
+  void fileRemoved(File file) {
+    emit(state.copyWith(
+      newlySelectedFiles:
+          state.newlySelectedFiles.where((f) => f != file).toList(),
+    ));
   }
 
-  void updateImpactStory(String impactStory) {
-    emit(state.copyWith(impactStory: impactStory));
+  void impactStoryChanged(String impactStory) {
+    impactStory = impactStory.trim();
+    if (_transformation == null && impactStory.isEmpty) {
+      // Don't save if they didn't actually do anything
+      return;
+    }
+    _addTransformationDelta(impactStory: impactStory);
   }
 
-  void saveImpactStory() {
+  void _addTransformationDelta({String? impactStory, List<String>? files}) {
     final transformation = _transformation;
-    _dataRepository.addDelta(transformation == null
-        ? TransformationCreateDelta(
-            userId: state.groupUser.userId,
-            groupId: state.groupUser.groupId,
-            month: state.month,
-            impactStory: state.impactStory,
-          )
-        : TransformationUpdateDelta(transformation,
-            impactStory: state.impactStory));
-  }
-
-  @override
-  Future<void> close() {
-    _subscription.cancel();
-    return super.close();
+    _dataRepository.addDelta(
+      transformation == null
+          ? TransformationCreateDelta(
+              id: _id,
+              userId: _userId,
+              groupId: _groupId,
+              month: state.month,
+              impactStory: impactStory,
+              files: files,
+            )
+          : TransformationUpdateDelta(
+              transformation,
+              impactStory: impactStory,
+              files: files,
+            ),
+    );
+    _transformation = globalHiveApi.transformation.get(_id);
   }
 }

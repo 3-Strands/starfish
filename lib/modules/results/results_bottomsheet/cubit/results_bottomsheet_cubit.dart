@@ -44,6 +44,18 @@ TeacherResponse? _findTeacherResponse(
           response.month == month,
     );
 
+Transformation? _findTransformation(
+  Date month,
+  String userId,
+  String groupId,
+) =>
+    globalHiveApi.transformation.values.firstWhereOrNull(
+      (transformation) =>
+          transformation.month == month &&
+          transformation.userId == userId &&
+          transformation.groupId == groupId,
+    );
+
 class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
   ResultsBottomsheetCubit({
     required this.group,
@@ -60,6 +72,8 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
               _calculateResults(initialMonth, initialLearner.id, group.id),
           teacherResponse:
               _findTeacherResponse(initialMonth, initialLearner.id, group.id),
+          transformation:
+              _findTransformation(initialMonth, initialLearner.id, group.id),
         ));
 
   final DataRepository _dataRepository;
@@ -71,6 +85,8 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
       evaluations: _calculateResults(state.month, learner.id, group.id),
       teacherResponse:
           Option(_findTeacherResponse(state.month, learner.id, group.id)),
+      transformation:
+          Option(_findTransformation(state.month, learner.id, group.id)),
     ));
   }
 
@@ -80,6 +96,8 @@ class ResultsBottomsheetCubit extends Cubit<ResultsBottomsheetState> {
       evaluations: _calculateResults(month, state.learner.id, group.id),
       teacherResponse:
           Option(_findTeacherResponse(month, state.learner.id, group.id)),
+      transformation:
+          Option(_findTransformation(month, state.learner.id, group.id)),
     ));
   }
 

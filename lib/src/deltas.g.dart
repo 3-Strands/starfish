@@ -1684,6 +1684,7 @@ class TransformationUpdateDelta extends DeltaBase {
   TransformationUpdateDelta(
     this._model, {
     String? impactStory,
+    List<String>? files,
   }) {
     final updateMask = <String>{};
     if (impactStory != null && impactStory != _model.impactStory) {
@@ -1692,17 +1693,30 @@ class TransformationUpdateDelta extends DeltaBase {
     } else {
       this.impactStory = null;
     }
+    if (files != null && !listsAreSame(files, _model.files)) {
+      this.files = files;
+      updateMask.add('files');
+    } else {
+      this.files = null;
+    }
     _updateMask = updateMask;
   }
 
   final Transformation _model;
   late final Set<String> _updateMask;
   late final String? impactStory;
+  late final List<String>? files;
 
   Transformation applyUpdateToModel(Transformation originalModel) {
     return originalModel.rebuild((other) {
       if (impactStory != null) {
         other.impactStory = impactStory!;
+      }
+
+      if (files != null) {
+        other.files
+          ..clear()
+          ..addAll(files!);
       }
     });
   }

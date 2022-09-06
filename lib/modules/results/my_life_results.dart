@@ -7,7 +7,7 @@ import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
 import 'package:starfish/modules/results/feedback_from_teachers.dart';
 import 'package:starfish/modules/results/group_evaluation_view.dart';
-import 'package:starfish/modules/results/user_transformaiton.dart';
+import 'package:starfish/modules/results/user_transformation.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
 import 'package:starfish/widgets/month_year_picker/dialogs.dart';
@@ -146,7 +146,8 @@ class _MyLifeResultsState extends State<MyLifeResults> {
                               height: 10.h,
                             ),
                             UserTransformation(
-                              groupUser: _groupUserResultStatus.groupUser,
+                              groupId: _groupUserResultStatus.groupUser.groupId,
+                              userId: _groupUserResultStatus.groupUser.userId,
                               month: state.month,
                               transformation:
                                   _groupUserResultStatus.transformation,

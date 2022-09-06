@@ -81,6 +81,15 @@ class File {
     double? width,
     double? height,
   }) {
+    final url = _fs[path];
+    if (url != null) {
+      return Image.network(
+        url,
+        width: width,
+        height: height,
+        fit: fit,
+      );
+    }
     final index = path.lastIndexOf('.');
     final extension = index == -1 ? 'UNK' : path.substring(index + 1);
     Widget widget = SizedBox(

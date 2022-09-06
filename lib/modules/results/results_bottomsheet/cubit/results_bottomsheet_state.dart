@@ -8,6 +8,7 @@ class ResultsBottomsheetState {
     required this.month,
     required this.evaluations,
     required this.teacherResponse,
+    required this.transformation,
   });
 
   final Group group;
@@ -15,6 +16,7 @@ class ResultsBottomsheetState {
   final User learner;
   final _CurrentAndPreviousResults evaluations;
   final TeacherResponse? teacherResponse;
+  final Transformation? transformation;
 
   bool isDifferentSnapshotFrom(ResultsBottomsheetState other) =>
       month != other.month || learner != other.learner;
@@ -24,12 +26,17 @@ class ResultsBottomsheetState {
     Date? month,
     _CurrentAndPreviousResults? evaluations,
     Option<TeacherResponse>? teacherResponse,
+    Option<Transformation>? transformation,
   }) =>
       ResultsBottomsheetState(
         group: group,
         learner: learner ?? this.learner,
         month: month ?? this.month,
         evaluations: evaluations ?? this.evaluations,
-        teacherResponse: teacherResponse == null ? this.teacherResponse : teacherResponse.value,
+        teacherResponse: teacherResponse == null
+            ? this.teacherResponse
+            : teacherResponse.value,
+        transformation:
+            transformation == null ? this.transformation : transformation.value,
       );
 }

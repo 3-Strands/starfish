@@ -63,4 +63,5 @@ final List<String> _kActionUserFieldMask = [
 
 final List<String> _kTransformationFieldMask = [
   'impact_story',
+  'files',
 ];

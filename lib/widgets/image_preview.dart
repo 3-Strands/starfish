@@ -9,7 +9,18 @@ class ImagePreview extends StatelessWidget {
     return Scaffold(
       body: InkWell(
         onTap: () => Navigator.pop(context),
-        child: Hero(tag: file, child: Center(child: file.getImagePreview())),
+        child: Center(
+          child: Hero(
+            tag: file,
+            child: file.getImagePreview(
+              fit: BoxFit.scaleDown,
+            ),
+            // flightShuttleBuilder:
+            //     (flightContext, animation, direction, fromContext, toContext) {
+            //   return CircularProgressIndicator();
+            // },
+          ),
+        ),
       ),
     );
   }
