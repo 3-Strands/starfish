@@ -82,11 +82,14 @@ class ResultsState {
     groupUsers.forEach((groupUserResultStatus) {
       // groupActionsSummary
       groupActionsSummary[ActionStatus.DONE] =
-          groupUserResultStatus.actionsStatus[ActionStatus.DONE] ?? 0 + 1;
+          (groupActionsSummary[ActionStatus.DONE] ?? 0) +
+              (groupUserResultStatus.actionsStatus[ActionStatus.DONE] ?? 0);
       groupActionsSummary[ActionStatus.NOT_DONE] =
-          groupUserResultStatus.actionsStatus[ActionStatus.NOT_DONE] ?? 0 + 1;
+          (groupActionsSummary[ActionStatus.NOT_DONE] ?? 0) +
+              (groupUserResultStatus.actionsStatus[ActionStatus.NOT_DONE] ?? 0);
       groupActionsSummary[ActionStatus.OVERDUE] =
-          groupUserResultStatus.actionsStatus[ActionStatus.OVERDUE] ?? 0 + 1;
+          (groupActionsSummary[ActionStatus.OVERDUE] ?? 0) +
+              (groupUserResultStatus.actionsStatus[ActionStatus.OVERDUE] ?? 0);
 
       // groupEvaluationSummary
       if (groupUserResultStatus.groupEvaluation != null) {
