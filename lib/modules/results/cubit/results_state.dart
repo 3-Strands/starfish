@@ -65,7 +65,65 @@ class ResultsState {
             .toList() ??
         [];
 
-    return GroupResultsPageView(groupUsers);
+    final groupActionsSummary = {
+      ActionStatus.DONE: 0,
+      ActionStatus.NOT_DONE: 0,
+      ActionStatus.OVERDUE: 0
+    };
+
+    final groupEvaluationSummary = {
+      GroupEvaluation_Evaluation.BAD: 0,
+      GroupEvaluation_Evaluation.GOOD: 0
+    };
+
+    final Map<EvaluationCategory, Map<String, int>> groupLearnerEvaluations =
+        {};
+
+    groupUsers.forEach((groupUserResultStatus) {
+      // groupActionsSummary
+      groupActionsSummary[ActionStatus.DONE] =
+          groupUserResultStatus.actionsStatus[ActionStatus.DONE] ?? 0 + 1;
+      groupActionsSummary[ActionStatus.NOT_DONE] =
+          groupUserResultStatus.actionsStatus[ActionStatus.NOT_DONE] ?? 0 + 1;
+      groupActionsSummary[ActionStatus.OVERDUE] =
+          groupUserResultStatus.actionsStatus[ActionStatus.OVERDUE] ?? 0 + 1;
+
+      // groupEvaluationSummary
+      if (groupUserResultStatus.groupEvaluation != null) {
+        if (groupUserResultStatus.groupEvaluation!.evaluation ==
+            GroupEvaluation_Evaluation.BAD) {
+          groupEvaluationSummary[GroupEvaluation_Evaluation.BAD] =
+              groupEvaluationSummary[GroupEvaluation_Evaluation.BAD] ?? 0 + 1;
+        } else if (groupUserResultStatus.groupEvaluation!.evaluation ==
+            GroupEvaluation_Evaluation.GOOD) {
+          groupEvaluationSummary[GroupEvaluation_Evaluation.GOOD] =
+              groupEvaluationSummary[GroupEvaluation_Evaluation.GOOD] ?? 0 + 1;
+        }
+      }
+
+      // groupLearnerEvaluations
+      groupUserResultStatus.learnerEvaluations.forEach((key, value) {
+        if (!groupLearnerEvaluations.containsKey(key)) {
+          groupLearnerEvaluations[key] = value;
+        } else {
+          final _countByMonth = groupLearnerEvaluations[key]!;
+
+          _countByMonth["this-month"] =
+              (_countByMonth['this-month'] ?? 0) + (value['this-month'] ?? 0);
+          _countByMonth["last-month"] =
+              (_countByMonth['last-month'] ?? 0) + (value['last-month'] ?? 0);
+
+          groupLearnerEvaluations[key] = _countByMonth;
+        }
+      });
+    });
+
+    return GroupResultsPageView(
+      groupUserResultsStatusList: groupUsers,
+      groupActionsSummary: groupActionsSummary,
+      groupEvaluationSummary: groupEvaluationSummary,
+      learnerEvaluationsSummary: groupLearnerEvaluations,
+    );
   }
 
   GroupResultsPageView get myLifeResultsToShow {
@@ -86,7 +144,7 @@ class ResultsState {
         )
         .toList();
 
-    return GroupResultsPageView(groupUsers);
+    return GroupResultsPageView(groupUserResultsStatusList: groupUsers);
   }
 
   ResultsState copyWith({
@@ -206,9 +264,17 @@ class ResultsState {
 }
 
 class GroupResultsPageView {
-  const GroupResultsPageView(this.groupUserResultsStatusList);
+  const GroupResultsPageView({
+    required this.groupUserResultsStatusList,
+    this.groupActionsSummary,
+    this.groupEvaluationSummary,
+    this.learnerEvaluationsSummary,
+  });
 
   final List<GroupUserResultStatus> groupUserResultsStatusList;
+  final Map<EvaluationCategory, Map<String, int>>? learnerEvaluationsSummary;
+  final Map<ActionStatus, int>? groupActionsSummary;
+  final Map<GroupEvaluation_Evaluation, int>? groupEvaluationSummary;
 }
 
 class GroupUserResultStatus {
