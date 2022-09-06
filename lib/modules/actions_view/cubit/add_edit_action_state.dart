@@ -15,6 +15,7 @@ class AddEditActionState {
     required this.materials,
     required this.actions,
     required this.selectedGroups,
+    required this.isEditMode,
     required this.name,
     required this.type,
     required this.creatorId,
@@ -32,6 +33,7 @@ class AddEditActionState {
   final List<Material> materials;
   final List<Action> actions;
   final List<Group> selectedGroups;
+  final bool isEditMode;
   final String name;
   final Action_Type type;
   final String creatorId;
@@ -50,6 +52,7 @@ class AddEditActionState {
     List<Material>? materials,
     List<Action>? actions,
     List<Group>? selectedGroups,
+    bool? isEditMode,
     String? name,
     Action_Type? type,
     String? creatorId,
@@ -67,6 +70,7 @@ class AddEditActionState {
         materials: materials ?? this.materials,
         actions: actions ?? this.actions,
         selectedGroups: selectedGroups ?? this.selectedGroups,
+        isEditMode: isEditMode ?? this.isEditMode,
         name: name ?? this.name,
         type: type ?? this.type,
         creatorId: creatorId ?? this.creatorId,

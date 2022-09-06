@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:starfish/src/generated/google/type/date.pb.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/widgets/action_status_count_widget.dart';
 
 class SummaryForAllLearners extends StatelessWidget {
   const SummaryForAllLearners(
       {Key? key,
-      required this.hiveGroup,
+      required this.group,
       required this.month,
-      required this.groupLearnerEvaluationsByCategory,
+      required this.groupActionsSummary,
+      required this.groupLearnerEvaluations,
       required this.groupEvaluationGoodCount,
       required this.groupEvaluationBadCount})
       : super(key: key);
 
-  final Group hiveGroup;
+  final Group group;
   final Date month;
-  final Map<EvaluationCategory, Map<String, int>>
-      groupLearnerEvaluationsByCategory;
+  final Map<ActionStatus, int> groupActionsSummary;
+  final Map<EvaluationCategory, Map<String, int>> groupLearnerEvaluations;
   final int? groupEvaluationGoodCount;
   final int? groupEvaluationBadCount;
 
@@ -64,9 +65,9 @@ class SummaryForAllLearners extends StatelessWidget {
             height: 10.h,
           ),
           ActionStatusCountWidget(
-            done: 0, //hiveGroup.getActionsCompletedInMonth(month),
-            pending: 0, //hiveGroup.getActionsNotYetCompletedInMonth(month),
-            overdue: 0, //hiveGroup.getActionsOverdueInMonth(month)
+            done: groupActionsSummary[ActionStatus.DONE] ?? 0,
+            pending: groupActionsSummary[ActionStatus.NOT_DONE] ?? 0,
+            overdue: groupActionsSummary[ActionStatus.OVERDUE] ?? 0,
           ),
 
           // Uncomment once leaner is allowed to update 'GroupEvaluation'
@@ -147,11 +148,8 @@ class SummaryForAllLearners extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10.h),
-          _buildCategoryAverageWidget(
-              groupLearnerEvaluationsByCategory,
-              (hiveGroup.learners != null && hiveGroup.learners!.length > 0)
-                  ? hiveGroup.learners!.length
-                  : 1),
+          _buildCategoryAverageWidget(groupLearnerEvaluations,
+              (group.learners.length > 0) ? group.learners.length : 1),
           SizedBox(height: 20.h),
         ],
       ),

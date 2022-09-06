@@ -2,9 +2,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
 import 'package:starfish/modules/results/results_bottomsheet/results_bottomsheet.dart';
+import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 
@@ -156,7 +158,21 @@ class _MyGroupResultsState extends State<MyGroupResults> {
           //       hiveGroup: bloc.resultsBloc.hiveGroup!,
           //       hiveDate: bloc.resultsBloc.hiveDate!),
           // ],
-
+          BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
+            final resultsToShow = state.groupWithAdminRoleResultsToShow;
+            return SummaryForAllLearners(
+                groupActionsSummary: resultsToShow.groupActionsSummary ?? {},
+                groupEvaluationGoodCount: resultsToShow.groupEvaluationSummary?[
+                        GroupEvaluation_Evaluation.GOOD] ??
+                    0,
+                groupEvaluationBadCount: resultsToShow.groupEvaluationSummary?[
+                        GroupEvaluation_Evaluation.BAD] ??
+                    0,
+                group: state.filterGroup!,
+                month: state.month,
+                groupLearnerEvaluations:
+                    resultsToShow.learnerEvaluationsSummary ?? {});
+          }),
           SizedBox(
             height: 20.h,
           ),
