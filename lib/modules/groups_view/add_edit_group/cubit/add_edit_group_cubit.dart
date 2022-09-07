@@ -107,6 +107,10 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
   }
 
   bool _hasOtherAdminBesides(User user) =>
+      // If the group is null, that means we are in `create` mode.
+      // In that case, we *are* the admin.
+      _group == null ||
+      // Otherwise, check to see if we have someone else with admin role.
       state.currentMembers.any((groupUser) =>
           groupUser.userId != user.id &&
           (state.roleChanges[groupUser.userId] ?? groupUser.role) ==
