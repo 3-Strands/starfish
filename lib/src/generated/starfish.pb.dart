@@ -4801,6 +4801,69 @@ class RefreshSessionRequest extends $pb.GeneratedMessage {
   void clearRefreshToken() => clearField(2);
 }
 
+class SyncError extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncError', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..aOM<SyncRequest>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'request', subBuilder: SyncRequest.create)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
+    ..hasRequiredFields = false
+  ;
+
+  SyncError._() : super();
+  factory SyncError({
+    SyncRequest? request,
+    $core.String? message,
+  }) {
+    final _result = create();
+    if (request != null) {
+      _result.request = request;
+    }
+    if (message != null) {
+      _result.message = message;
+    }
+    return _result;
+  }
+  factory SyncError.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SyncError.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SyncError clone() => SyncError()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SyncError copyWith(void Function(SyncError) updates) => super.copyWith((message) => updates(message as SyncError)) as SyncError; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SyncError create() => SyncError._();
+  SyncError createEmptyInstance() => create();
+  static $pb.PbList<SyncError> createRepeated() => $pb.PbList<SyncError>();
+  @$core.pragma('dart2js:noInline')
+  static SyncError getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncError>(create);
+  static SyncError? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  SyncRequest get request => $_getN(0);
+  @$pb.TagNumber(1)
+  set request(SyncRequest v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRequest() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRequest() => clearField(1);
+  @$pb.TagNumber(1)
+  SyncRequest ensureRequest() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.String get message => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set message($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearMessage() => clearField(2);
+}
+
 class SyncRequestMetaData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncRequestMetaData', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'getNewRecords')
@@ -4944,9 +5007,9 @@ enum SyncRequest_Update {
   createUpdateTransformation, 
   createUpdateUser, 
   deleteAction, 
-  deleteGroupUser, 
   deleteMaterial, 
   updateCurrentUser, 
+  deleteGroupUser, 
   notSet
 }
 
@@ -4966,13 +5029,13 @@ class SyncRequest extends $pb.GeneratedMessage {
     12 : SyncRequest_Update.createUpdateTransformation,
     13 : SyncRequest_Update.createUpdateUser,
     14 : SyncRequest_Update.deleteAction,
-    15 : SyncRequest_Update.deleteGroupUser,
     16 : SyncRequest_Update.deleteMaterial,
     17 : SyncRequest_Update.updateCurrentUser,
+    18 : SyncRequest_Update.deleteGroupUser,
     0 : SyncRequest_Update.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..oo(0, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
+    ..oo(0, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18])
     ..aOM<SyncRequestMetaData>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metaData', subBuilder: SyncRequestMetaData.create)
     ..aOM<CreateMaterialFeedbacksRequest>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createMaterialFeedback', subBuilder: CreateMaterialFeedbacksRequest.create)
     ..aOM<CreateUpdateActionsRequest>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateAction', subBuilder: CreateUpdateActionsRequest.create)
@@ -4987,9 +5050,9 @@ class SyncRequest extends $pb.GeneratedMessage {
     ..aOM<CreateUpdateTransformationRequest>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateTransformation', subBuilder: CreateUpdateTransformationRequest.create)
     ..aOM<CreateUpdateUserRequest>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createUpdateUser', subBuilder: CreateUpdateUserRequest.create)
     ..aOM<DeleteActionRequest>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteAction', subBuilder: DeleteActionRequest.create)
-    ..aOM<GroupUser>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteGroupUser', subBuilder: GroupUser.create)
     ..aOM<DeleteMaterialRequest>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteMaterial', subBuilder: DeleteMaterialRequest.create)
     ..aOM<UpdateCurrentUserRequest>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'updateCurrentUser', subBuilder: UpdateCurrentUserRequest.create)
+    ..aOM<DeleteGroupUserRequest>(18, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deleteGroupUser', subBuilder: DeleteGroupUserRequest.create)
     ..hasRequiredFields = false
   ;
 
@@ -5009,9 +5072,9 @@ class SyncRequest extends $pb.GeneratedMessage {
     CreateUpdateTransformationRequest? createUpdateTransformation,
     CreateUpdateUserRequest? createUpdateUser,
     DeleteActionRequest? deleteAction,
-    GroupUser? deleteGroupUser,
     DeleteMaterialRequest? deleteMaterial,
     UpdateCurrentUserRequest? updateCurrentUser,
+    DeleteGroupUserRequest? deleteGroupUser,
   }) {
     final _result = create();
     if (metaData != null) {
@@ -5056,14 +5119,14 @@ class SyncRequest extends $pb.GeneratedMessage {
     if (deleteAction != null) {
       _result.deleteAction = deleteAction;
     }
-    if (deleteGroupUser != null) {
-      _result.deleteGroupUser = deleteGroupUser;
-    }
     if (deleteMaterial != null) {
       _result.deleteMaterial = deleteMaterial;
     }
     if (updateCurrentUser != null) {
       _result.updateCurrentUser = updateCurrentUser;
+    }
+    if (deleteGroupUser != null) {
+      _result.deleteGroupUser = deleteGroupUser;
     }
     return _result;
   }
@@ -5245,38 +5308,38 @@ class SyncRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(14)
   DeleteActionRequest ensureDeleteAction() => $_ensure(13);
 
-  @$pb.TagNumber(15)
-  GroupUser get deleteGroupUser => $_getN(14);
-  @$pb.TagNumber(15)
-  set deleteGroupUser(GroupUser v) { setField(15, v); }
-  @$pb.TagNumber(15)
-  $core.bool hasDeleteGroupUser() => $_has(14);
-  @$pb.TagNumber(15)
-  void clearDeleteGroupUser() => clearField(15);
-  @$pb.TagNumber(15)
-  GroupUser ensureDeleteGroupUser() => $_ensure(14);
-
   @$pb.TagNumber(16)
-  DeleteMaterialRequest get deleteMaterial => $_getN(15);
+  DeleteMaterialRequest get deleteMaterial => $_getN(14);
   @$pb.TagNumber(16)
   set deleteMaterial(DeleteMaterialRequest v) { setField(16, v); }
   @$pb.TagNumber(16)
-  $core.bool hasDeleteMaterial() => $_has(15);
+  $core.bool hasDeleteMaterial() => $_has(14);
   @$pb.TagNumber(16)
   void clearDeleteMaterial() => clearField(16);
   @$pb.TagNumber(16)
-  DeleteMaterialRequest ensureDeleteMaterial() => $_ensure(15);
+  DeleteMaterialRequest ensureDeleteMaterial() => $_ensure(14);
 
   @$pb.TagNumber(17)
-  UpdateCurrentUserRequest get updateCurrentUser => $_getN(16);
+  UpdateCurrentUserRequest get updateCurrentUser => $_getN(15);
   @$pb.TagNumber(17)
   set updateCurrentUser(UpdateCurrentUserRequest v) { setField(17, v); }
   @$pb.TagNumber(17)
-  $core.bool hasUpdateCurrentUser() => $_has(16);
+  $core.bool hasUpdateCurrentUser() => $_has(15);
   @$pb.TagNumber(17)
   void clearUpdateCurrentUser() => clearField(17);
   @$pb.TagNumber(17)
-  UpdateCurrentUserRequest ensureUpdateCurrentUser() => $_ensure(16);
+  UpdateCurrentUserRequest ensureUpdateCurrentUser() => $_ensure(15);
+
+  @$pb.TagNumber(18)
+  DeleteGroupUserRequest get deleteGroupUser => $_getN(16);
+  @$pb.TagNumber(18)
+  set deleteGroupUser(DeleteGroupUserRequest v) { setField(18, v); }
+  @$pb.TagNumber(18)
+  $core.bool hasDeleteGroupUser() => $_has(16);
+  @$pb.TagNumber(18)
+  void clearDeleteGroupUser() => clearField(18);
+  @$pb.TagNumber(18)
+  DeleteGroupUserRequest ensureDeleteGroupUser() => $_ensure(16);
 }
 
 enum SyncResponse_Value {
@@ -5296,6 +5359,7 @@ enum SyncResponse_Value {
   user, 
   deletedRecord, 
   metaData, 
+  error, 
   notSet
 }
 
@@ -5317,10 +5381,11 @@ class SyncResponse extends $pb.GeneratedMessage {
     15 : SyncResponse_Value.user,
     16 : SyncResponse_Value.deletedRecord,
     17 : SyncResponse_Value.metaData,
+    18 : SyncResponse_Value.error,
     0 : SyncResponse_Value.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SyncResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
-    ..oo(0, [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
+    ..oo(0, [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
     ..aOM<Action>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'action', subBuilder: Action.create)
     ..aOM<Country>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'country', subBuilder: Country.create)
     ..aOM<EvaluationCategory>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'evaluationCategory', subBuilder: EvaluationCategory.create)
@@ -5337,6 +5402,7 @@ class SyncResponse extends $pb.GeneratedMessage {
     ..aOM<User>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'user', subBuilder: User.create)
     ..aOM<DeletedResource>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'deletedRecord', subBuilder: DeletedResource.create)
     ..aOM<SyncResponseMetaData>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metaData', subBuilder: SyncResponseMetaData.create)
+    ..aOM<SyncError>(18, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'error', subBuilder: SyncError.create)
     ..hasRequiredFields = false
   ;
 
@@ -5358,6 +5424,7 @@ class SyncResponse extends $pb.GeneratedMessage {
     User? user,
     DeletedResource? deletedRecord,
     SyncResponseMetaData? metaData,
+    SyncError? error,
   }) {
     final _result = create();
     if (action != null) {
@@ -5407,6 +5474,9 @@ class SyncResponse extends $pb.GeneratedMessage {
     }
     if (metaData != null) {
       _result.metaData = metaData;
+    }
+    if (error != null) {
+      _result.error = error;
     }
     return _result;
   }
@@ -5609,6 +5679,17 @@ class SyncResponse extends $pb.GeneratedMessage {
   void clearMetaData() => clearField(17);
   @$pb.TagNumber(17)
   SyncResponseMetaData ensureMetaData() => $_ensure(15);
+
+  @$pb.TagNumber(18)
+  SyncError get error => $_getN(16);
+  @$pb.TagNumber(18)
+  set error(SyncError v) { setField(18, v); }
+  @$pb.TagNumber(18)
+  $core.bool hasError() => $_has(16);
+  @$pb.TagNumber(18)
+  void clearError() => clearField(18);
+  @$pb.TagNumber(18)
+  SyncError ensureError() => $_ensure(16);
 }
 
 class TeacherResponse extends $pb.GeneratedMessage {

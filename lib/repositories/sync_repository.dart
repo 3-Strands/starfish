@@ -124,9 +124,8 @@ class SyncRepository {
             syncRequest.createUpdateUser = request;
           else if (request is DeleteActionRequest)
             syncRequest.deleteAction = request;
-          // TODO
-          // else if (request is DeleteGroupUserRequest)
-          //   syncRequest.deleteGroupUser = request;
+          else if (request is DeleteGroupUserRequest)
+            syncRequest.deleteGroupUser = request;
           else if (request is DeleteMaterialRequest)
             syncRequest.deleteMaterial = request;
           else if (request is UpdateCurrentUserRequest)
