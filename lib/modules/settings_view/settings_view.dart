@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/my_teacher_admin_role_cubit.dart';
 import 'package:starfish/bloc/sync_bloc.dart';
@@ -319,8 +320,8 @@ class SettingsView extends StatelessWidget {
                                 children: [
                                   TextSpan(
                                     text: state.isSyncing
-                                        ? 'Syncing...'
-                                        : '${lastSync == null ? 'never' : lastSync.toUtc()}',
+                                        ? appLocalizations.syncing
+                                        : '${lastSync == null ? '' : DateFormat('dd-MMM-yyyy').add_Hm().format(lastSync)}',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontFamily: 'Roboto',
