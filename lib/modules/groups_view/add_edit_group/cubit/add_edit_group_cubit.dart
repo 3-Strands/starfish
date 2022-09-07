@@ -294,6 +294,16 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
       }
     }
 
+    for (final user in state.removedMembers) {
+      // Remove them from the group
+      final groupUser = group?.users
+          .firstWhereOrNull((groupUser) => groupUser.userId == user.id);
+      if (groupUser != null) {
+        _dataRepository.addDelta(GroupUserDeleteDelta(groupUser));
+      }
+      // TODO: delete this user if they don't have a phone number?
+    }
+
     Future.wait(smsSendResults).onError((error, stackTrace) {
       // TODO
       print(error);
