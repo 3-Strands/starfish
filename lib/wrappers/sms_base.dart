@@ -14,4 +14,3 @@ Future<List<User>> getAllContacts() => Future.value([]);
 
 Future<bool> hasContactAccess({bool shouldAskIfUnknown = false}) =>
     Future.value(false);
-const mightBeAbleToAccessContacts = false;

@@ -84,5 +84,3 @@ Future<bool> hasContactAccess({bool shouldAskIfUnknown = false}) async {
   }
   return permission.isGranted;
 }
-
-const mightBeAbleToAccessContacts = true;

@@ -7,7 +7,6 @@ import 'package:starfish/config/routes/routes.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
-import 'package:starfish/modules/groups_view/add_edit_group/cubit/group_navigation_cubit.dart';
 import 'package:starfish/modules/groups_view/contact_list/contact_list.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/error_repository.dart';
@@ -31,43 +30,13 @@ class AddEditGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => AddEditGroupCubit(
-            dataRepository: context.read<DataRepository>(),
-            errorRepository: context.read<ErrorRepository>(),
-            group: group,
-          ),
-        ),
-        BlocProvider(
-          create: (_) => GroupNavigationCubit(),
-        ),
-      ],
-      child: BlocListener<GroupNavigationCubit, GroupNavigationState>(
-        listener: (context, state) {
-          switch (state) {
-            case GroupNavigationState.mainEdit:
-              Navigator.of(context).pop();
-              break;
-            case GroupNavigationState.addUsers:
-              ContactList.showAsBottomSheet(
-                context,
-                selectedUsers: group?.fullUsers,
-              ).then(
-                (newUsers) {
-                  if (newUsers != null) {
-                    context
-                        .read<AddEditGroupCubit>()
-                        .newUsersAddedFromContacts(newUsers);
-                  }
-                },
-              );
-              break;
-          }
-        },
-        child: AddEditGroupView(isEditMode: group != null),
+    return BlocProvider(
+      create: (context) => AddEditGroupCubit(
+        dataRepository: context.read<DataRepository>(),
+        errorRepository: context.read<ErrorRepository>(),
+        group: group,
       ),
+      child: AddEditGroupView(isEditMode: group != null),
     );
   }
 }
@@ -394,9 +363,24 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                             height: 50.h,
                             child: TextButton(
                               onPressed: () {
-                                context
-                                    .read<GroupNavigationCubit>()
-                                    .navigated(GroupNavigationState.addUsers);
+                                final cubit = context.read<AddEditGroupCubit>();
+                                ContactList.showAsBottomSheet(
+                                  context,
+                                  selectedUsers: [
+                                    ...cubit.state.currentMembers.map(
+                                      (member) => member.user,
+                                    ),
+                                    ...cubit.state.newMembers.map(
+                                      (userWithRole) => userWithRole.user,
+                                    ),
+                                  ],
+                                ).then(
+                                  (newUsers) {
+                                    if (newUsers != null) {
+                                      cubit.newUsersAddedFromContacts(newUsers);
+                                    }
+                                  },
+                                );
                               },
                               child: Text(
                                 appLocalizations.inviteFromContactsList,
