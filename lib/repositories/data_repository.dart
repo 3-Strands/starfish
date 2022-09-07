@@ -113,7 +113,7 @@ class DataRepository {
     return currentGroups
         .where((group) => myRoleByGroup.containsKey(group.id))
         .map((group) {
-      final totalUsers = group.users.length;
+      final totalUsers = group.learners.length;
 
       var completedActions = 0;
       var incompleteActions = 0;
