@@ -54,7 +54,9 @@ Future<void> uploadFiles(
     if (uploadStatus.status == UploadStatus_Status.OK) {
       return;
     } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
-      throw Exception('Upload failed');
+      final message = uploadStatus.message;
+      throw Exception(
+          'Upload failed: ${message.isEmpty ? 'unknown error' : message}');
     }
   }
 }
