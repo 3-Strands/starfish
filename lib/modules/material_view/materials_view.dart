@@ -41,13 +41,18 @@ class Materials extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           MaterialsCubit(RepositoryProvider.of<DataRepository>(context)),
-      child: const MaterialsView(),
+      child: MaterialsView(
+          selectedLanguages:
+              context.read<DataRepository>().currentUser.languageIds),
     );
   }
 }
 
 class MaterialsView extends StatefulWidget {
-  const MaterialsView({Key? key}) : super(key: key);
+  const MaterialsView({Key? key, required this.selectedLanguages})
+      : super(key: key);
+
+  final List<String> selectedLanguages;
 
   @override
   State<MaterialsView> createState() => _MaterialsViewState();
@@ -55,10 +60,16 @@ class MaterialsView extends StatefulWidget {
 
 class _MaterialsViewState extends State<MaterialsView> {
   final _scrollController = ScrollController();
+  final _languageSelectController = MultiSelectController<Language>();
 
   @override
   void initState() {
     super.initState();
+    _languageSelectController.value = Set<Language>.from(
+      widget.selectedLanguages
+          .map((languageId) => globalHiveApi.language.get(languageId))
+          .where((language) => language != null),
+    );
     _scrollController.addListener(_loadMoreOnEndScroll);
   }
 
@@ -67,6 +78,7 @@ class _MaterialsViewState extends State<MaterialsView> {
     _scrollController
       ..removeListener(_loadMoreOnEndScroll)
       ..dispose();
+    _languageSelectController.dispose();
     super.dispose();
   }
 
@@ -155,32 +167,46 @@ class _MaterialsViewState extends State<MaterialsView> {
                     SizedBox(height: 14.h),
                     Container(
                       margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      child: BoxBuilder<Language>(
-                        box: globalHiveApi.language,
-                        builder: (context, values) {
-                          return MultiSelect<Language>(
-                            navTitle: _appLocalizations.selectLanugages,
-                            placeholder: _appLocalizations.selectLanugages,
-                            // controller: _languageSelectController,
-                            multilineSummary: true,
-                            items: values.toList(),
-                            initialSelection: Set<Language>.from(
-                              context
-                                  .read<MaterialsCubit>()
-                                  .state
-                                  .selectedLanguages
-                                  .map((languageId) =>
-                                      globalHiveApi.language.get(languageId))
-                                  .where((language) => language != null),
-                            ),
-                            toDisplay: (language) => language.name,
-                            onFinished: (Set<Language> selectedLanguages) {
-                              context
-                                  .read<MaterialsCubit>()
-                                  .selectedLanguagesChanged(selectedLanguages);
-                            },
+                      child: BlocListener<MaterialsCubit, MaterialsState>(
+                        listenWhen: (previous, current) =>
+                            previous.selectedLanguages !=
+                            current.selectedLanguages,
+                        listener: (context, state) {
+                          _languageSelectController.value = Set<Language>.from(
+                            state.selectedLanguages
+                                .map((languageId) =>
+                                    globalHiveApi.language.get(languageId))
+                                .where((language) => language != null),
                           );
                         },
+                        child: BoxBuilder<Language>(
+                          box: globalHiveApi.language,
+                          builder: (context, values) {
+                            return MultiSelect<Language>(
+                              navTitle: _appLocalizations.selectLanugages,
+                              placeholder: _appLocalizations.selectLanugages,
+                              controller: _languageSelectController,
+                              multilineSummary: true,
+                              items: values.toList(),
+                              // initialSelection: Set<Language>.from(
+                              //   context
+                              //       .read<MaterialsCubit>()
+                              //       .state
+                              //       .selectedLanguages
+                              //       .map((languageId) =>
+                              //           globalHiveApi.language.get(languageId))
+                              //       .where((language) => language != null),
+                              // ),
+                              toDisplay: (language) => language.name,
+                              onFinished: (Set<Language> selectedLanguages) {
+                                context
+                                    .read<MaterialsCubit>()
+                                    .selectedLanguagesChanged(
+                                        selectedLanguages);
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
                     SizedBox(height: 10.h),

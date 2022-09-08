@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/enums/action_status.dart';
 import 'package:starfish/enums/material_filter.dart';
 import 'package:starfish/repositories/data_repository.dart';
@@ -19,16 +20,27 @@ class MaterialsCubit extends Cubit<MaterialsState> {
           materials: dataRepository.currentMaterials,
           relatedMaterials: dataRepository.getMaterialsRelatedToMe(),
         )) {
-    _subscription = dataRepository.materials.listen((materials) {
-      emit(state.copyWith(
-        materials: materials,
-        relatedMaterials: dataRepository.getMaterialsRelatedToMe(),
-      ));
-    });
+    final currentUserId = dataRepository.currentUser.id;
+    _subscription = [
+      dataRepository.materials.listen((materials) {
+        emit(state.copyWith(
+          materials: materials,
+          relatedMaterials: dataRepository.getMaterialsRelatedToMe(),
+        ));
+      }),
+      globalHiveApi.user.watch(key: currentUserId).listen((_) {
+        // print(
+        //     'Current languages: ${globalHiveApi.user.get(currentUserId)!.languageIds}');
+        emit(state.copyWith(
+          selectedLanguages:
+              globalHiveApi.user.get(currentUserId)!.languageIds.toSet(),
+        ));
+      }),
+    ];
   }
 
   final DataRepository _dataRepository;
-  late StreamSubscription<List<Material>> _subscription;
+  late List<StreamSubscription> _subscription;
 
   void moreRequested() {
     emit(state.copyWith(
@@ -39,7 +51,10 @@ class MaterialsCubit extends Cubit<MaterialsState> {
   void selectedLanguagesChanged(Set<Language> selectedLanguages) {
     final languageIds =
         selectedLanguages.map((language) => language.id).toSet();
-    // TODO: Handle updated languages
+    _dataRepository.addDelta(UserUpdateDelta(
+      _dataRepository.currentUser,
+      languageIds: languageIds.toList(),
+    ));
     emit(state.copyWith(
       selectedLanguages: languageIds,
     ));
@@ -69,7 +84,7 @@ class MaterialsCubit extends Cubit<MaterialsState> {
 
   @override
   Future<void> close() {
-    _subscription.cancel();
+    _subscription.forEach((s) => s.cancel());
     return super.close();
   }
 }
