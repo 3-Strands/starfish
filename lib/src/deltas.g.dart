@@ -1266,7 +1266,11 @@ class UserUpdateDelta extends DeltaBase {
     this._model, {
     String? name,
     String? phone,
-    String? phoneCountryId,
+    List<String>? countryIds,
+    List<String>? languageIds,
+    bool? linkGroups,
+    ActionTab? selectedActionsTab,
+    ResultsTab? selectedResultsTab,
     String? diallingCode,
   }) {
     final updateMask = <String>{};
@@ -1282,11 +1286,37 @@ class UserUpdateDelta extends DeltaBase {
     } else {
       this.phone = null;
     }
-    if (phoneCountryId != null && phoneCountryId != _model.phoneCountryId) {
-      this.phoneCountryId = phoneCountryId;
-      updateMask.add('phone_country_id');
+    if (countryIds != null && !listsAreSame(countryIds, _model.countryIds)) {
+      this.countryIds = countryIds;
+      updateMask.add('country_ids');
     } else {
-      this.phoneCountryId = null;
+      this.countryIds = null;
+    }
+    if (languageIds != null && !listsAreSame(languageIds, _model.languageIds)) {
+      this.languageIds = languageIds;
+      updateMask.add('language_ids');
+    } else {
+      this.languageIds = null;
+    }
+    if (linkGroups != null && linkGroups != _model.linkGroups) {
+      this.linkGroups = linkGroups;
+      updateMask.add('link_groups');
+    } else {
+      this.linkGroups = null;
+    }
+    if (selectedActionsTab != null &&
+        selectedActionsTab != _model.selectedActionsTab) {
+      this.selectedActionsTab = selectedActionsTab;
+      updateMask.add('selected_actions_tab');
+    } else {
+      this.selectedActionsTab = null;
+    }
+    if (selectedResultsTab != null &&
+        selectedResultsTab != _model.selectedResultsTab) {
+      this.selectedResultsTab = selectedResultsTab;
+      updateMask.add('selected_results_tab');
+    } else {
+      this.selectedResultsTab = null;
     }
     if (diallingCode != null && diallingCode != _model.diallingCode) {
       this.diallingCode = diallingCode;
@@ -1301,7 +1331,11 @@ class UserUpdateDelta extends DeltaBase {
   late final Set<String> _updateMask;
   late final String? name;
   late final String? phone;
-  late final String? phoneCountryId;
+  late final List<String>? countryIds;
+  late final List<String>? languageIds;
+  late final bool? linkGroups;
+  late final ActionTab? selectedActionsTab;
+  late final ResultsTab? selectedResultsTab;
   late final String? diallingCode;
 
   User applyUpdateToModel(User originalModel) {
@@ -1314,8 +1348,28 @@ class UserUpdateDelta extends DeltaBase {
         other.phone = phone!;
       }
 
-      if (phoneCountryId != null) {
-        other.phoneCountryId = phoneCountryId!;
+      if (countryIds != null) {
+        other.countryIds
+          ..clear()
+          ..addAll(countryIds!);
+      }
+
+      if (languageIds != null) {
+        other.languageIds
+          ..clear()
+          ..addAll(languageIds!);
+      }
+
+      if (linkGroups != null) {
+        other.linkGroups = linkGroups!;
+      }
+
+      if (selectedActionsTab != null) {
+        other.selectedActionsTab = selectedActionsTab!;
+      }
+
+      if (selectedResultsTab != null) {
+        other.selectedResultsTab = selectedResultsTab!;
       }
 
       if (diallingCode != null) {

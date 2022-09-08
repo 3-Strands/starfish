@@ -576,7 +576,7 @@ final groupModel = Model(
 final userModel = Model(
   User(),
   storage: BoxStorage('user'),
-  editableFields: _kUserFieldMask,
+  editableFields: _kCurrentUserFieldMask,
   createUpdateRequest: CreateUpdateUserRequest(),
 );
 
