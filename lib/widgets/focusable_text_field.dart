@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class FocusableTextField extends StatefulWidget {
   final InputDecoration? decoration;
+  final TextAlign? textAlign;
   final int? maxLines;
   final int? maxCharacters;
   final TextInputAction? textInputAction;
@@ -14,6 +15,7 @@ class FocusableTextField extends StatefulWidget {
   const FocusableTextField({
     super.key,
     this.decoration = const InputDecoration(),
+    this.textAlign = TextAlign.left,
     this.maxCharacters,
     this.keyboardType,
     this.textInputAction,
@@ -87,6 +89,7 @@ class _FocusableTextFieldState extends State<FocusableTextField> {
         controller: _controller,
         focusNode: _focusNode,
         keyboardType: TextInputType.text,
+        textAlign: widget.textAlign ?? TextAlign.left,
         decoration: widget.decoration,
         maxLines: widget.maxLines,
         maxLength: widget.maxCharacters,

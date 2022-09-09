@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/create_profile/bloc/profile_bloc.dart';
 import 'package:starfish/modules/results/cubit/results_cubit.dart';
 import 'package:starfish/modules/results/learner_list_with_summary_card.dart';
+import 'package:starfish/modules/results/project_report_for_groups.dart';
 import 'package:starfish/modules/results/results_bottomsheet/results_bottomsheet.dart';
 import 'package:starfish/modules/results/summary_for_learners.dart';
 import 'package:starfish/src/generated/google/type/date.pb.dart';
@@ -173,6 +175,23 @@ class _MyGroupResultsState extends State<MyGroupResults> {
                 groupLearnerEvaluations:
                     resultsToShow.learnerEvaluationsSummary ?? {});
           }),
+          SizedBox(
+            height: 20.h,
+          ),
+          BlocBuilder<ResultsCubit, ResultsState>(
+            buildWhen: (previous, current) =>
+                previous.filterGroup != current.filterGroup ||
+                previous.month != current.filterGroup,
+            builder: (context, state) {
+              if (state.filterGroup!.outputMarkers.length == 0) {
+                return Container();
+              }
+              return ProjectReporsForGroup(
+                group: state.filterGroup!,
+                month: state.month,
+              );
+            },
+          ),
           SizedBox(
             height: 20.h,
           ),

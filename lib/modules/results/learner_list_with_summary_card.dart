@@ -208,7 +208,7 @@ class LearnerSummary extends StatelessWidget {
         .forEach((EvaluationCategory category, Map<String, int> countByMonth) {
       _categoryWidgets.add(_buildCategoryStatics(
           countByMonth["this-month"] ?? 0,
-          category.name!,
+          category.name,
           ((countByMonth["this-month"] ?? 0) -
               (countByMonth["last-month"] ?? 0)),
           Color(0xFF797979),

@@ -1852,7 +1852,52 @@ class OutputCreateDelta extends DeltaBase {
   }
 }
 
-// Users cannot update the Output type
+class OutputUpdateDelta extends DeltaBase {
+  OutputUpdateDelta(
+    this._model, {
+    Int64? value,
+  }) {
+    var numUpdatedFields = 0;
+    if (value != null && value != _model.value) {
+      this.value = value;
+      numUpdatedFields += 1;
+    } else {
+      this.value = null;
+    }
+    _hasChangedFields = numUpdatedFields > 0;
+  }
+
+  final Output _model;
+  late final bool _hasChangedFields;
+  late final Int64? value;
+
+  Output applyUpdateToModel(Output originalModel) {
+    return originalModel.rebuild((other) {
+      if (value != null) {
+        other.value = value!;
+      }
+    });
+  }
+
+  @override
+  bool apply() {
+    if (!_hasChangedFields) {
+      return false;
+    }
+
+    final originalModel = globalHiveApi.output.get(_model.id);
+    if (originalModel == null) {
+      return false;
+    }
+    final updatedModel = applyUpdateToModel(originalModel);
+    globalHiveApi.output.put(updatedModel.id, updatedModel);
+    ensureRevert(22, originalModel.id, originalModel);
+
+    globalHiveApi.putSyncRequest(
+        updatedModel.id, CreateUpdateOutputRequest(output: updatedModel));
+    return true;
+  }
+}
 
 // Users cannot delete the Output type
 
