@@ -139,6 +139,11 @@ class AddEditMaterialCubit extends Cubit<AddEditMaterialState> {
               files: files,
             ),
     );
+    _dataRepository.addDelta(UserUpdateDelta(_dataRepository.currentUser,
+        languageIds: {
+          ..._dataRepository.currentUser.languageIds,
+          ...state.selectedLanguages
+        }.toList()));
     return true;
   }
 

@@ -88,7 +88,7 @@ class HiveApi {
         encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox(BACKUP_SYNC_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
-    await Hive.openBox<Map<String, dynamic>>(REVERT_BOX,
+    await Hive.openBox<Map<dynamic, dynamic>>(REVERT_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
     await Hive.openBox<Timestamp>(SYNC_TIMESTAMP_BOX,
         encryptionCipher: encryptionCipher, bytes: bytes);
@@ -124,8 +124,8 @@ class HiveApi {
   @visibleForTesting
   Box<dynamic> get sync => Hive.box(SYNC_BOX);
   Box<dynamic> get _backupSync => Hive.box(BACKUP_SYNC_BOX);
-  Box<Map<String, dynamic>> get revert =>
-      Hive.box<Map<String, dynamic>>(REVERT_BOX);
+  Box<Map<dynamic, dynamic>> get revert =>
+      Hive.box<Map<dynamic, dynamic>>(REVERT_BOX);
   Box<Timestamp> get _syncTimestamp => Hive.box<Timestamp>(SYNC_TIMESTAMP_BOX);
 
   /// Make sure the sync box is not written to for the duration of the passed function.

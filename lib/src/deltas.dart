@@ -53,7 +53,7 @@ extension Edits<T extends GeneratedMessage> on Box<T> {
 }
 
 void ensureRevert(int typeId, dynamic key, dynamic item) {
-  final map = globalHiveApi.revert.get(typeId) ?? {};
+  final map = globalHiveApi.revert.get(typeId) ?? <dynamic, dynamic>{};
   if (!map.containsKey(key)) {
     map[key] = item;
     globalHiveApi.revert.put(typeId, map);
@@ -115,7 +115,7 @@ List<dynamic> orderRequests(Iterable<dynamic> requests) {
     );
 }
 
-void _revertValuesInBox<T>(Box<T> box, Map<String, dynamic>? map) {
+void _revertValuesInBox<T>(Box<T> box, Map<dynamic, dynamic>? map) {
   if (map == null) {
     return;
   }
