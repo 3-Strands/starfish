@@ -1,15 +1,16 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:starfish/db/hive_output_marker.dart';
+import 'package:starfish/modules/results/cubit/project_report_cubit.dart';
+import 'package:starfish/src/grpc_extensions.dart';
+import 'package:starfish/widgets/focusable_text_field.dart';
 
 class MarkerStaticRow extends StatefulWidget {
-  final HiveOutputMarker outputMarker;
-  final String value;
+  final OutputMarker outputMarker;
+  final Output? output;
 
-  final markerValueUpdate;
-
-  const MarkerStaticRow(this.outputMarker, this.value,
-      {this.markerValueUpdate, Key? key})
+  const MarkerStaticRow({Key? key, required this.outputMarker, this.output})
       : super(key: key);
 
   @override
@@ -22,7 +23,8 @@ class _MarkerStaticRowState extends State<MarkerStaticRow> {
   @override
   void initState() {
     super.initState();
-    _markerTextEditingController.text = widget.value.toString();
+    _markerTextEditingController.text =
+        widget.output != null ? widget.output!.value.toString() : '';
   }
 
   @override
@@ -36,7 +38,7 @@ class _MarkerStaticRowState extends State<MarkerStaticRow> {
             children: [
               Expanded(
                 child: Text(
-                  "${widget.outputMarker.markerName ?? ""}",
+                  "${widget.outputMarker.markerName}",
                   style: TextStyle(
                       fontSize: 17.sp,
                       fontFamily: "OpenSans",
@@ -52,15 +54,19 @@ class _MarkerStaticRowState extends State<MarkerStaticRow> {
               Container(
                 height: 50.h,
                 width: 100.w,
-                color: Color(0xFFFFFFFF),
-                child: TextFormField(
+                //color: Color(0xFFFFFFFF),
+                child: FocusableTextField(
                   textAlign: TextAlign.center,
+                  initialValue: '${widget.output?.value ?? 0}',
                   keyboardType: TextInputType.number,
                   controller: _markerTextEditingController,
                   maxLines: 1,
-                  onChanged: (value) {
-                    //widget.value = int.parse(value);
-                    widget.markerValueUpdate(value);
+                  onFieldSubmitted: (value) {
+                    context.read<ProjectReportCubit>().updateOuputMarkerValue(
+                          outputMarker: widget.outputMarker,
+                          output: widget.output,
+                          value: Int64.parseInt(value),
+                        );
                   },
                   // onSaved: (value) {},
                 ),

@@ -342,6 +342,19 @@ class DataRepository {
   List<LearnerEvaluation> get currentLearnerEvaluations =>
       _hiveApi.learnerEvaluation.asList();
 
+  // ------------------- Outputs ---------------------------
+  Stream<List<Output>> get outputs => _streamBox(_hiveApi.output);
+  List<Output> get currentOutputs => _hiveApi.output.asList();
+
+  Map<String, List<Output>> get groupOutputs {
+    final groupOutputs = <String, List<Output>>{};
+    currentOutputs.forEach((output) {
+      groupOutputs[output.groupId] = (groupOutputs[output.groupId] ?? [])
+        ..add(output);
+    });
+
+    return groupOutputs;
+  }
   // ------------------- Countries -------------------
 
   Stream<List<Country>> get countries => _streamBox(_hiveApi.country);

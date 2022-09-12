@@ -669,6 +669,8 @@ final messages = <int, MessageWrapper>{
     Output(),
     storage: BoxStorage('output'),
     createUpdateRequest: CreateUpdateOutputRequest(),
+    editableFields: ['value'],
+    ignoreUpdateMask: true,
   ),
   23: Model(
     OutputMarker(),
