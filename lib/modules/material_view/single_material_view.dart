@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/material_view/add_edit_material_screen.dart';
 import 'package:starfish/modules/material_view/cubit/materials_cubit.dart';
 import 'package:starfish/modules/material_view/enum_display.dart';
 import 'package:starfish/modules/material_view/report_material_dialog_box.dart';
@@ -95,16 +96,15 @@ class SingleMaterialView extends StatelessWidget {
                               onSelected: (value) {
                                 switch (value) {
                                   case 0:
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) =>
-                                    //         AddEditMaterialScreen(
-                                    //       material: material,
-                                    //     ),
-                                    //   ),
-                                    // );
-
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddEditMaterial(
+                                          material: material,
+                                        ),
+                                      ),
+                                    ).whenComplete(
+                                        () => Navigator.pop(context));
                                     break;
                                   case 1:
                                     Alerts.showMessageBox(

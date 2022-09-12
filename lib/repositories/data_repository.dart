@@ -30,8 +30,8 @@ class DataRepository {
       .map((_) => box.asList());
 
   void addDelta(DeltaBase delta) {
-    // TODO: Save the generated request in the DB.
-    print(delta);
+    // TODO: save the delta for later IF a sync is
+    // already in process
     delta.apply();
   }
 

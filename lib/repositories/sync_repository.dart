@@ -77,17 +77,6 @@ class SyncRepository {
     await globalHiveApi.protectSyncBox(
       (requests) =>
           makeAuthenticatedRequest((client, fileTransferClient) async {
-        final fileRequests = List<FileReference>.from(
-            requests.where((request) => request is FileReference));
-        if (fileRequests.isNotEmpty) {
-          // Upload the files
-          await uploadFiles(fileRequests, fileTransferClient);
-          // Delete the requests
-          globalHiveApi.sync
-              .deleteAll(fileRequests.map((fileRequest) => fileRequest.key));
-          // Filter the remaining requests and proceed
-          requests = requests.where((request) => !(request is FileReference));
-        }
         final controller = StreamController<SyncRequest>();
         final responseStream = client.sync(controller.stream);
         controller.add(SyncRequest(
@@ -237,6 +226,18 @@ class SyncRepository {
                   'Unknown ResourceType ${deletedRecord.resourceType}',
                 );
             }
+          }
+        }
+
+        // Upload files
+        final filesNeedingUpload =
+            globalHiveApi.file.values.where((file) => !file.isUploaded);
+        if (filesNeedingUpload.isNotEmpty) {
+          try {
+            // Upload the files
+            await uploadFiles(filesNeedingUpload, fileTransferClient);
+          } catch (error) {
+            // TODO: What to do when files fail to upload?
           }
         }
       }),

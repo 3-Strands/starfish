@@ -14,14 +14,14 @@ class FileReference extends HiveObject {
   @HiveField(3)
   final String filename;
   @HiveField(4)
-  bool isSynced;
+  bool isUploaded;
 
   FileReference({
     required this.entityId,
     required this.entityType,
     this.filepath,
     required this.filename,
-    this.isSynced = false,
+    required this.isUploaded,
   });
 
   @override
@@ -48,7 +48,14 @@ class FileReference extends HiveObject {
 
   @override
   String toString() {
-    return '{entityId: $entityId, entityType: $entityType, filepath: $filepath, filename: $filename, isSynced: $isSynced}';
+    return '''
+FileReference {
+  entityId: $entityId,
+  entityType: $entityType,
+  filepath: $filepath,
+  filename: $filename,
+  isUploaded: $isUploaded
+}''';
   }
 
   static String keyFrom(String entityId, String filename) =>
@@ -57,9 +64,10 @@ class FileReference extends HiveObject {
   String get key => keyFrom(entityId, filename);
 
   FileReference clone() => FileReference(
-      entityId: entityId,
-      filename: filename,
-      filepath: filepath,
-      entityType: entityType,
-      isSynced: isSynced);
+        entityId: entityId,
+        filename: filename,
+        filepath: filepath,
+        entityType: entityType,
+        isUploaded: isUploaded,
+      );
 }

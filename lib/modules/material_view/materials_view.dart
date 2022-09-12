@@ -92,16 +92,19 @@ class _MaterialsViewState extends State<MaterialsView> {
 
   void _onMaterialSelection(Material material, ActionStatus? status,
       bool isAssignedToGroupWithLeaderRole) {
-    final singleMaterialView = Container(
-      height: MediaQuery.of(context).size.height * 0.70,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(34.r)),
-        color: Color(0xFFEFEFEF),
-      ),
-      child: SingleMaterialView(
-        material: material,
-        actionStatus: status,
-        isAssignedToGroupWithLeaderRole: isAssignedToGroupWithLeaderRole,
+    final singleMaterialView = BlocProvider.value(
+      value: context.read<MaterialsCubit>(),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.70,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(34.r)),
+          color: Color(0xFFEFEFEF),
+        ),
+        child: SingleMaterialView(
+          material: material,
+          actionStatus: status,
+          isAssignedToGroupWithLeaderRole: isAssignedToGroupWithLeaderRole,
+        ),
       ),
     );
     showModalBottomSheet(

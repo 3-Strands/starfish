@@ -26,6 +26,7 @@ class AddEditMaterialCubit extends Cubit<AddEditMaterialState> {
           types: dataRepository.currentMaterialTypes,
           topics: dataRepository.currentMaterialTopics,
           selectedLanguages: material?.languageIds.toSet() ?? const {},
+          languageNames: material?.languages ?? {},
           selectedTypes: material?.typeIds.toSet() ?? const {},
           selectedTopics: material?.topics.toSet() ?? const {},
           previouslySelectedFiles: material?.fileReferences ?? const [],

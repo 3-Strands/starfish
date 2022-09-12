@@ -56,8 +56,7 @@ class GeneralFunctions {
             .makeAuthenticatedFileTransferRequest(
               (client) => fs.downloadMaterial(file, client),
             );
-        file.isSynced = true;
-        await file.save();
+        file.save();
         await fs.openFile(file.filepath!);
       } finally {
         EasyLoading.dismiss();

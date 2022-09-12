@@ -52,6 +52,10 @@ Future<void> uploadFiles(
 
   await for (final uploadStatus in responseStream) {
     if (uploadStatus.status == UploadStatus_Status.OK) {
+      for (final file in fileReferences) {
+        file.isUploaded = true;
+        file.save();
+      }
       return;
     } else if (uploadStatus.status == UploadStatus_Status.FAILED) {
       final message = uploadStatus.message;

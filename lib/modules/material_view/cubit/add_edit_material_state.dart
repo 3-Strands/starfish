@@ -14,6 +14,7 @@ class AddEditMaterialState {
     required this.types,
     required this.topics,
     required this.selectedLanguages,
+    required this.languageNames,
     required this.selectedTypes,
     required this.selectedTopics,
     required this.previouslySelectedFiles,
@@ -31,10 +32,12 @@ class AddEditMaterialState {
   final List<MaterialType> types;
   final List<MaterialTopic> topics;
   final Set<String> selectedLanguages;
+  final Map<String, String> languageNames;
   final Set<String> selectedTypes;
   final Set<String> selectedTopics;
   final List<FileReference> previouslySelectedFiles;
   final List<File> newlySelectedFiles;
+
   final String title;
   final String description;
   final String url;
@@ -73,6 +76,7 @@ class AddEditMaterialState {
         types: types ?? this.types,
         topics: topics ?? this.topics,
         selectedLanguages: selectedLanguages ?? this.selectedLanguages,
+        languageNames: languageNames,
         selectedTypes: selectedTypes ?? this.selectedTypes,
         selectedTopics: selectedTopics ?? this.selectedTopics,
         previouslySelectedFiles:

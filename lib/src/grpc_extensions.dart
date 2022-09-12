@@ -88,6 +88,7 @@ extension FileReferenceExt on FileReference {
       entityId: entityId,
       entityType: entityType.value,
       filename: filename,
+      isUploaded: true,
     );
     globalHiveApi.file.put(key, newFileReference);
     return newFileReference;

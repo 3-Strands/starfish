@@ -144,6 +144,7 @@ class AddEditMaterialView extends StatelessWidget {
                       maxLines: null,
                       style: formTitleTextStyle,
                       onChanged: cubit.titleChanged,
+                      initialValue: cubit.state.title,
                       decoration: InputDecoration(
                         // hintText:
                         //     appLocalizations.hintMaterialName,
@@ -180,6 +181,7 @@ class AddEditMaterialView extends StatelessWidget {
                       maxLines: 4,
                       maxLength: 200,
                       onChanged: cubit.descriptionChanged,
+                      initialValue: cubit.state.description,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -214,6 +216,7 @@ class AddEditMaterialView extends StatelessWidget {
                   SizedBox(height: 11.h),
                   TextFormField(
                     onChanged: cubit.urlChanged,
+                    initialValue: cubit.state.url,
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       contentPadding:
@@ -321,8 +324,17 @@ class AddEditMaterialView extends StatelessWidget {
                           placeholder: appLocalizations.selectLanugages,
                           items: state.languages,
                           initialSelection: state.selectedLanguages
-                              .map((languageId) =>
-                                  globalHiveApi.language.get(languageId)!)
+                              .map(
+                                (languageId) =>
+                                    globalHiveApi.language.get(languageId) ??
+                                        Language(
+                                          id: languageId,
+                                          name:
+                                              state.languageNames[languageId] ??
+                                                  '[unk]',
+                                        )
+                                      ..freeze(),
+                              )
                               .toSet(),
                           toDisplay: (language) => language.name,
                           onFinished: (selectedLanguages) {
@@ -388,14 +400,23 @@ class AddEditMaterialView extends StatelessWidget {
                           placeholder: appLocalizations.selectTopics,
                           items: state.topics,
                           initialSelection: state.selectedTopics
-                              .map((id) => globalHiveApi.materialTopic.get(id)!)
+                              .map(
+                                (name) => globalHiveApi.materialTopic.values
+                                    .firstWhere(
+                                  (topic) => topic.name == name,
+                                  orElse: () =>
+                                      // TODO: Should be based on id, NOT name
+                                      MaterialTopic(name: name)..freeze(),
+                                ),
+                              )
                               .toSet(),
                           toDisplay: (topic) => topic.name,
                           onFinished: (selectedTopics) {
                             context
                                 .read<AddEditMaterialCubit>()
-                                .selectedLanguagesChanged(
-                                    selectedTopics.map((l) => l.id).toSet());
+                                .selectedTopicsChanged(
+                                  selectedTopics.map((l) => l.name).toSet(),
+                                );
                           },
                         );
                       },

@@ -96,11 +96,10 @@ class FileReferenceCreateDelta extends DeltaBase {
       entityType: entityType.value,
       filename: filename,
       filepath: filepath,
+      isUploaded: false,
     );
     final key = model.key;
     globalHiveApi.file.put(key, model);
-    // Hive won't allow us to store the same model in two places
-    globalHiveApi.putSyncRequest(key, model.clone());
     return true;
   }
 }

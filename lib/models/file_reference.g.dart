@@ -21,7 +21,7 @@ class FileReferenceAdapter extends TypeAdapter<FileReference> {
       entityType: fields[1] as int,
       filepath: fields[2] as String?,
       filename: fields[3] as String,
-      isSynced: fields[4] as bool,
+      isUploaded: fields[4] as bool,
     );
   }
 
@@ -38,7 +38,7 @@ class FileReferenceAdapter extends TypeAdapter<FileReference> {
       ..writeByte(3)
       ..write(obj.filename)
       ..writeByte(4)
-      ..write(obj.isSynced);
+      ..write(obj.isUploaded);
   }
 
   @override
