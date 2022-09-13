@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/my_teacher_admin_role_cubit.dart';
 import 'package:starfish/bloc/sync_bloc.dart';
@@ -307,7 +308,8 @@ class SettingsView extends StatelessWidget {
                           alignment: FractionalOffset.topLeft,
                           child: BlocBuilder<SyncBloc, SyncState>(
                               builder: (context, state) {
-                            final lastSync = state.lastSync.value;
+                            final lastSync = globalHiveApi.lastSync
+                                ?.toDateTime(toLocal: true);
                             return Text.rich(
                               TextSpan(
                                 text:

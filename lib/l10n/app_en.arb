@@ -437,5 +437,9 @@
   "contactNumber": "Contact Number",
   "role" : "Role",
   "userNameAlreadyAdded": "User with this name already added",
-  "phonenumberAlreadyAdded": "User with this phonenumber already added"  
+  "phonenumberAlreadyAdded": "User with this phonenumber already added",
+
+  "sorryYouNeedToSignInAgain": "Sorry, but something went wrong on our end and we need you to sign in again. Click below to generate a new OTP.",
+  "somethingWentWrong": "Something went wrong",
+  "sendOtp": "Send OTP"
 }

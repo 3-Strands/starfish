@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:starfish/models/session.dart';
@@ -11,10 +13,20 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
   SessionBloc({
     required this.authenticationRepository,
-  }) : super(SessionState.fromSession(authenticationRepository.currentSession)) {
+  }) : super(
+            SessionState.fromSession(authenticationRepository.currentSession)) {
     on<SessionChanged>((event, emit) {
       final session = event.session;
       emit(session == null ? const SessionInactive() : SessionActive(session));
+    });
+    on<SessionReauthenticationChanged>((event, emit) {
+      final state = this.state;
+      if (state is SessionActive) {
+        emit(SessionActive(
+          state.session,
+          pendingReauthenticate: event.completer,
+        ));
+      }
     });
     on<SessionRefreshRequested>((event, emit) async {
       await authenticationRepository.refreshSession();
@@ -23,10 +35,13 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       emit(const SessionInactive());
     });
 
-    // Note that we never close this listener because it will run for the entirety of the app.
+    // Note that we never close these listeners because it will run for the entirety of the app.
     // For testing purposes this would have to be changed.
     authenticationRepository.session.listen((session) {
       add(SessionChanged(session));
+    });
+    authenticationRepository.pendingReauthenticate.listen((completer) {
+      add(SessionReauthenticationChanged(completer));
     });
   }
 

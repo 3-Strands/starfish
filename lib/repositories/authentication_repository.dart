@@ -95,6 +95,8 @@ class AuthenticationRepository {
   final LocalStorageApi _localStorageApi;
   final MakeCurrentUserApi _makeCurrentUserApi;
   final BehaviorSubject<Session?> _session = BehaviorSubject.seeded(null);
+  final BehaviorSubject<Completer<void>?> _pendingReauthenticate =
+      BehaviorSubject.seeded(null);
 
   Future<void> _cacheSession(Session session) => Future.wait([
         _localStorageApi.saveTokens(session.tokens),
@@ -116,6 +118,9 @@ class AuthenticationRepository {
   ///
   /// Emits [null] if the user is not authenticated.
   Stream<Session?> get session => _session.stream;
+
+  Stream<Completer<void>?> get pendingReauthenticate =>
+      _pendingReauthenticate.stream;
 
   Session? get currentSession => _session.value;
 
@@ -201,27 +206,34 @@ class AuthenticationRepository {
   Future<User> _retrieveUserUsingTokens(Tokens tokens) =>
       _makeCurrentUserApi(tokens).getCurrentUser();
 
-  Completer<Session>? _sessionRefreshCompleter;
+  Future<Session>? _sessionRefreshFuture;
 
   Future<Session> refreshSession() {
-    if (_sessionRefreshCompleter != null) {
-      return _sessionRefreshCompleter!.future;
-    }
-    _sessionRefreshCompleter = Completer();
-    _doRefreshSession()
-        .then(_sessionRefreshCompleter!.complete)
-        .onError(_sessionRefreshCompleter!.completeError)
-        .whenComplete(() => _sessionRefreshCompleter = null);
-    return _sessionRefreshCompleter!.future;
+    return _sessionRefreshFuture ??= _doRefreshSession().whenComplete(
+      () => _sessionRefreshFuture = null,
+    );
   }
 
   Future<Session> _doRefreshSession() async {
     final currentSession = this.currentSession!;
-    final newTokens =
-        await _grpcAuthenticationApi.refreshTokens(currentSession.tokens);
-    final session = Session(newTokens, currentSession.user);
-    _session.value = session;
-    return session;
+    try {
+      final newTokens =
+          await _grpcAuthenticationApi.refreshTokens(currentSession.tokens);
+      final session = Session(newTokens, currentSession.user);
+      _session.value = session;
+      return session;
+    } on GrpcError catch (error) {
+      // TODO: Record on sentry
+      if (error.code == StatusCode.invalidArgument ||
+          error.code == StatusCode.unknown) {
+        final completer = Completer();
+        _pendingReauthenticate.add(completer);
+        await completer.future;
+        return _session.value!;
+      } else {
+        throw error;
+      }
+    }
   }
 
   void updateCurrentUser(User user) {

@@ -8,6 +8,7 @@ import 'package:starfish/bloc/app_bloc.dart';
 import 'package:starfish/bloc/session_bloc.dart';
 import 'package:starfish/cubit/error_cubit.dart';
 import 'package:starfish/modules/authentication/authentication.dart';
+import 'package:starfish/modules/authentication/reauthenticate.dart';
 import 'package:starfish/navigation_service.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/error_repository.dart';
@@ -118,7 +119,16 @@ class AppView extends StatelessWidget {
                       }
                     }
                   },
-                  child: BlocBuilder<SessionBloc, SessionState>(
+                  child: BlocConsumer<SessionBloc, SessionState>(
+                    listener: (context, state) {
+                      if (state is SessionActive &&
+                          state.pendingReauthenticate != null) {
+                        final completer = state.pendingReauthenticate!;
+                        Reauthenticate.init(context)
+                            .then(completer.complete)
+                            .onError(completer.completeError);
+                      }
+                    },
                     builder: (context, state) {
                       if (state is SessionActive) {
                         return AuthenticatedApp(session: state.session);

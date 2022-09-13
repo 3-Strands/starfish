@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:grpc/grpc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';

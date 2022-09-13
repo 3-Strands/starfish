@@ -19,8 +19,7 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
       emit(state.copyWith(isSyncing: true));
     });
     on<SyncCompleted>((event, emit) {
-      emit(state.copyWith(
-          isSyncing: false, lastSync: Option.some(DateTime.now())));
+      emit(state.copyWith(isSyncing: false));
     });
 
     on<CountriesAndLanguagesRequested>((event, emit) async {

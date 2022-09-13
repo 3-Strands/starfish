@@ -12,7 +12,8 @@ class LoginFlowBloc extends Bloc<LoginFlowEvent, LoginFlowState> {
   }) : super(const LoginFlowState()) {
     on<SignInRequested>((event, emit) async {
       emit(state.copyWith(isPending: true));
-      final otpHandler = await authenticationRepository.authenticate(event.phoneNumber);
+      final otpHandler =
+          await authenticationRepository.authenticate(event.phoneNumber);
       emit(state.copyWith(
         otpHandler: Option(otpHandler),
         isPending: false,
@@ -26,7 +27,8 @@ class LoginFlowBloc extends Bloc<LoginFlowEvent, LoginFlowState> {
     });
     on<SMSCodeRefreshRequested>((event, emit) async {
       final otpHandler = state.otpHandler.value;
-      assert(otpHandler != null, 'Received a request to refresh the session while not in an OTP state');
+      assert(otpHandler != null,
+          'Received a request to refresh the session while not in an OTP state');
       emit(state.copyWith(isPending: true));
       final newOtpHandler = await otpHandler!.resendOtp();
       emit(state.copyWith(
@@ -36,10 +38,11 @@ class LoginFlowBloc extends Bloc<LoginFlowEvent, LoginFlowState> {
     });
     on<SMSCodeEntered>((event, emit) async {
       final otpHandler = state.otpHandler.value;
-      assert(otpHandler != null, 'Received a request to complete the session while not in an OTP state');
+      assert(otpHandler != null,
+          'Received a request to complete the session while not in an OTP state');
       emit(state.copyWith(isPending: true));
       await otpHandler!.authenticateWithCode(event.code);
-      emit(state.copyWith(isPending: false));
+      emit(state.copyWith(isPending: false, isFinished: true));
     });
   }
 

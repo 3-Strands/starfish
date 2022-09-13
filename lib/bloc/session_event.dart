@@ -11,6 +11,12 @@ class SessionChanged extends SessionEvent {
   final Session? session;
 }
 
+class SessionReauthenticationChanged extends SessionEvent {
+  const SessionReauthenticationChanged(this.completer);
+
+  final Completer<void>? completer;
+}
+
 class SessionRefreshRequested extends SessionEvent {
   const SessionRefreshRequested();
 }

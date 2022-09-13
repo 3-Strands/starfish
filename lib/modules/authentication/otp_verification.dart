@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:starfish/constants/app_colors.dart';
+import 'package:starfish/modules/authentication/otp_field.dart';
+import 'package:starfish/modules/authentication/otp_submit_button.dart';
 import 'package:starfish/widgets/app_logo_widget.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/widgets/title_label_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:template_string/template_string.dart';
-
 import 'authentication_error_handler.dart';
 import 'bloc/login_flow_bloc.dart';
 import 'bloc/otp_bloc.dart';
@@ -72,78 +71,18 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                 ),
                 SizedBox(height: 30.h),
                 Center(
-                  child: Container(
-                    height: 48.h,
+                  child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15.w),
-                    child: BlocBuilder<OtpBloc, OtpState>(
-                      builder: (context, state) {
-                        return PinCodeTextField(
-                          autoFocus: true,
-                          appContext: context,
-                          pastedTextStyle: TextStyle(
-                            color: Colors.green.shade600,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          length: 6,
-                          keyboardType: TextInputType.number,
-                          pinTheme: PinTheme(
-                            shape: PinCodeFieldShape.box,
-                            borderRadius: BorderRadius.circular(5),
-                            fieldHeight: 48.h,
-                            fieldWidth: 48.w,
-                          ),
-                          blinkWhenObscuring: true,
-                          animationType: AnimationType.fade,
-                          cursorColor: Colors.black,
-                          boxShadows: [
-                            BoxShadow(
-                              offset: Offset(0, 1),
-                              color: AppColors.txtFieldBackground,
-                              blurRadius: 10,
-                            )
-                          ],
-                          onChanged: (value) =>
-                              context.read<OtpBloc>().add(OtpChanged(value)),
-                          onSubmitted: state.isComplete
-                              ? (_) => context
-                                  .read<LoginFlowBloc>()
-                                  .add(SMSCodeEntered(state.code))
-                              : null,
-                          onCompleted: (_) {
-                            _buttonFocus.requestFocus();
-                          },
-                        );
+                    child: OtpField(
+                      onCompleted: (_) {
+                        _buttonFocus.requestFocus();
                       },
                     ),
                   ),
                 ),
                 SizedBox(height: 50.h),
                 Center(
-                  child: Container(
-                    height: 46.h,
-                    color: Colors.transparent,
-                    child: BlocBuilder<OtpTimerBloc, OtpTimerState>(
-                      builder: (context, state) {
-                        if (state is TimerTicking) {
-                          return Text(
-                            appLocalizations.waitForSeconds
-                                .insertTemplateValues(
-                                    {'timeout': state.secondsRemaining}),
-                            style: resentOTPTextStyle,
-                          );
-                        }
-                        return TextButton(
-                          onPressed: () => context
-                              .read<LoginFlowBloc>()
-                              .add(const SMSCodeRefreshRequested()),
-                          child: Text(
-                            appLocalizations.resentOTP,
-                            style: resentOTPTextStyle,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  child: ResendOtp(),
                 ),
               ],
             ),
@@ -168,22 +107,19 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                   ),
                   color: AppColors.unselectedButtonBG,
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(0.0),
-                  child: ElevatedButton(
-                    child: Text(
-                      appLocalizations.back,
-                      textAlign: TextAlign.start,
-                      style: buttonTextStyle,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: AppColors.unselectedButtonBG,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+                child: ElevatedButton(
+                  child: Text(
+                    appLocalizations.back,
+                    textAlign: TextAlign.start,
+                    style: buttonTextStyle,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: AppColors.unselectedButtonBG,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
                 ),
@@ -197,34 +133,8 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                   ),
                   color: AppColors.selectedButtonBG,
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(0.0),
-                  child: BlocBuilder<OtpBloc, OtpState>(
-                      buildWhen: (previous, current) =>
-                          previous.isComplete != current.isComplete,
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          child: Text(
-                            appLocalizations.next,
-                            textAlign: TextAlign.start,
-                            style: buttonTextStyle,
-                          ),
-                          focusNode: _buttonFocus,
-                          onPressed: state.isComplete
-                              ? () => context
-                                  .read<LoginFlowBloc>()
-                                  .add(SMSCodeEntered(state.code))
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            primary: state.isComplete
-                                ? AppColors.selectedButtonBG
-                                : Colors.grey,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                        );
-                      }),
+                child: OtpSubmitButton(
+                  focusNode: _buttonFocus,
                 ),
               ),
             ],
