@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart' hide Action;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:starfish/enums/action_status.dart';
+import 'package:starfish/modules/actions_view/add_edit_action.dart';
+import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/src/grpc_extensions.dart';
 import 'package:starfish/utils/date_time_utils.dart';
+import 'package:starfish/utils/helpers/alerts.dart';
 import 'package:starfish/widgets/action_status_widget.dart';
 
 class MyActionListItem extends StatelessWidget {
@@ -22,12 +26,10 @@ class MyActionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final bloc = Provider.of(context);
     final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
     final Action _action = actionWithAssignedStatus.action;
     final ActionStatus _actionStatus =
         actionWithAssignedStatus.status ?? ActionStatus.NOT_DONE;
-    //final ActionUser? _actionUser = actionWithAssignedStatus.actionUser;
 
     return Card(
       margin: EdgeInsets.only(left: 15.w, right: 15.w, top: 5.h),
@@ -87,23 +89,35 @@ class MyActionListItem extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12.r)),
                           enabled: true,
                           onSelected: (value) {
-                            // switch (value) {
-                            //   case 0:
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => AddEditAction(
-                            //           action: action,
-                            //         ),
-                            //       ),
-                            //     ).then((value) => FocusScope.of(context)
-                            //         .requestFocus(new FocusNode()));
-                            //     break;
-                            //   case 1:
-                            //     _deleteAction(context, action);
-
-                            //     break;
-                            // }
+                            switch (value) {
+                              case 0:
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddEditAction(
+                                      action: _action,
+                                    ),
+                                  ),
+                                ).then((value) => FocusScope.of(context)
+                                    .requestFocus(new FocusNode()));
+                                break;
+                              case 1:
+                                Alerts.showMessageBox(
+                                  context: context,
+                                  title: _appLocalizations.deleteActionTitle,
+                                  message:
+                                      _appLocalizations.deleteActionMessage,
+                                  positiveButtonText: _appLocalizations.delete,
+                                  negativeButtonText: _appLocalizations.cancel,
+                                  positiveActionCallback: () {
+                                    context
+                                        .read<ActionsCubit>()
+                                        .deleteAction(_action);
+                                  },
+                                  negativeActionCallback: () {},
+                                );
+                                break;
+                            }
                           },
                           itemBuilder: (context) => [
                             PopupMenuItem(
@@ -148,7 +162,6 @@ class MyActionListItem extends StatelessWidget {
                     width: 130.w,
                   ),
                   Text(
-                    //'${_appLocalizations.due}: ${action.dateDue != null && action.hasValidDueDate ? DateTimeUtils.formatHiveDate(action.dateDue!) : "NA"}',
                     '${_appLocalizations.due}: ${_action.dateDue.isValidDate ? DateTimeUtils.formatHiveDate(_action.dateDue) : _appLocalizations.na}',
                     style: TextStyle(
                       color: Color(0xFF797979),
@@ -163,22 +176,5 @@ class MyActionListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  _deleteAction(BuildContext context, Action action) {
-    // final bloc = Provider.of(context);
-    // final AppLocalizations _appLocalizations = AppLocalizations.of(context)!;
-    // Alerts.showMessageBox(
-    //     context: context,
-    //     title: _appLocalizations.deleteActionTitle,
-    //     message: _appLocalizations.deleteActionMessage,
-    //     positiveButtonText: _appLocalizations.delete,
-    //     negativeButtonText: _appLocalizations.cancel,
-    //     positiveActionCallback: () {
-    //       // Mark this action for deletion
-    //       action.isDirty = true;
-    //       bloc.actionBloc.createUpdateAction(action);
-    //     },
-    //     negativeActionCallback: () {});
   }
 }
