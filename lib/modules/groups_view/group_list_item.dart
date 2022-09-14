@@ -17,10 +17,11 @@ class GroupListItem extends StatelessWidget {
   final Function(Group group) onGroupTap;
   final Function(Group group) onLeaveGroupTap;
 
-  const GroupListItem(
-      {required this.groupPlus,
-      required this.onGroupTap,
-      required this.onLeaveGroupTap});
+  const GroupListItem({
+    required this.groupPlus,
+    required this.onGroupTap,
+    required this.onLeaveGroupTap,
+  });
 
   @override
   Widget build(BuildContext context) {

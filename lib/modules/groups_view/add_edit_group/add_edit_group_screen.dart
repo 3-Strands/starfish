@@ -408,6 +408,7 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                         children: [
                           ...currentMembersWithNumber.map(
                             (member) => GroupMemberListItem(
+                              key: ValueKey(member.user.id),
                               role: member.role,
                               user: member.user,
                               wasAddedPreviously: true,
@@ -415,6 +416,7 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                           ),
                           ...newMembersWithNumber.map(
                             (member) => GroupMemberListItem(
+                              key: ValueKey(member.user.id),
                               role: member.role,
                               user: member.user,
                               wasAddedPreviously: false,
@@ -488,6 +490,7 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                         children: [
                           ...currentMembersWithoutNumber.map(
                             (member) => GroupMemberListItem(
+                              key: ValueKey(member.user.id),
                               role: member.role,
                               user: member.user,
                               wasAddedPreviously: true,
@@ -495,6 +498,7 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                           ),
                           ...newMembersWithoutNumber.map(
                             (member) => GroupMemberListItem(
+                              key: ValueKey(member.user.id),
                               role: member.role,
                               user: member.user,
                               wasAddedPreviously: false,

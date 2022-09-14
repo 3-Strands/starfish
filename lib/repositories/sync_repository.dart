@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:grpc/grpc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:starfish/apis/hive_api.dart';
@@ -78,6 +79,7 @@ class SyncRepository {
     await globalHiveApi.protectSyncBox(
       (requests) =>
           makeAuthenticatedRequest((client, fileTransferClient) async {
+        if (kIsWeb && requests.isNotEmpty) return; // TODO: remove
         final controller = StreamController<SyncRequest>();
         final responseStream = client.sync(controller.stream);
         controller.add(SyncRequest(
