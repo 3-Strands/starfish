@@ -15,7 +15,7 @@ class MultiSelectController<T> extends SelectListController<T, Set<T>> {
 
   bool get hasSelected => value.isNotEmpty;
   bool get isSelectionComplete =>
-      hasMaxLimit && value.length > maxSelectItemLimit!;
+      hasMaxLimit && value.length >= maxSelectItemLimit!;
 
   @override
   bool isSelected(T item) => value.contains(item);
