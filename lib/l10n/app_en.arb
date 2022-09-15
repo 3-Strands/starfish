@@ -441,5 +441,6 @@
 
   "sorryYouNeedToSignInAgain": "Sorry, but something went wrong on our end and we need you to sign in again. Click below to generate a new OTP.",
   "somethingWentWrong": "Something went wrong",
-  "sendOtp": "Send OTP"
+  "sendOtp": "Send OTP",
+  "maxSelectItemLimit": "Maximum {{max_limit}} items can be selected."
 }

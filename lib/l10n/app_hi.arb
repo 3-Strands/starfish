@@ -431,5 +431,10 @@
   "contactNumber": "संपर्क संख्या",
   "role" : "भूमिका",
   "userNameAlreadyAdded": "इस नाम का उपयोगकर्ता पहले ही जोड़ा जा चुका है",
-  "phonenumberAlreadyAdded": "इस फ़ोन नंबर वाला उपयोगकर्ता पहले ही जोड़ा जा चुका है"
+  "phonenumberAlreadyAdded": "इस फ़ोन नंबर वाला उपयोगकर्ता पहले ही जोड़ा जा चुका है",
+
+  "sorryYouNeedToSignInAgain": "क्षमा करें, लेकिन हमारी ओर से कुछ गलत हो गया और हम चाहते हैं कि आप फिर से साइन इन करें। एक नया ओटीपी जनरेट करने के लिए नीचे क्लिक करें।",
+  "somethingWentWrong": "कुछ गलत हो गया",
+  "sendOtp": "OTP भेजें",
+  "maxSelectItemLimit": "अधिकतम {{max_limit}} आइटम चुने जा सकते हैं।"
 }

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:template_string/template_string.dart';
 
 import 'select_list.dart';
 import 'select_list_button.dart';
 
 class MultiSelectController<T> extends SelectListController<T, Set<T>> {
   int? maxSelectItemLimit;
+  String? maxLimitOverAlertMessage;
 
   MultiSelectController({
     Set<T>? initialSelection,
     this.maxSelectItemLimit,
+    this.maxLimitOverAlertMessage,
   }) : super(initialSelection ?? {});
 
   bool get hasMaxLimit => maxSelectItemLimit != null;
@@ -26,7 +29,8 @@ class MultiSelectController<T> extends SelectListController<T, Set<T>> {
   @override
   String? toggleSelected(T item, bool isSelected) {
     if (isSelected && isSelectionComplete) {
-      return 'Maximum $maxSelectItemLimit items can be selected.';
+      return '${maxLimitOverAlertMessage ?? "Maximum {{max_limit}} items can be selected."}'
+          .insertTemplateValues({'max_limit': maxSelectItemLimit!});
     }
     final newValue = {...value};
     if (isSelected) {
@@ -47,6 +51,7 @@ class MultiSelect<T> extends StatefulWidget {
   final String navTitle;
   final String placeholder;
   final int? maxSelectItemLimit;
+  final String? maxLimitOverAlertMessage;
   final Set<T>? initialSelection;
   final bool enableSelectAllOption;
   final bool inverseSelectAll;
@@ -67,6 +72,7 @@ class MultiSelect<T> extends StatefulWidget {
     this.controller,
     this.initialSelection,
     this.maxSelectItemLimit,
+    this.maxLimitOverAlertMessage,
     this.enabled = true,
     this.enableSelectAllOption = false,
     this.inverseSelectAll = false, // Inverse the behaviour of selectAll
@@ -99,6 +105,7 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
       _localController = MultiSelectController<T>(
         initialSelection: widget.initialSelection,
         maxSelectItemLimit: widget.maxSelectItemLimit,
+        maxLimitOverAlertMessage: widget.maxLimitOverAlertMessage,
       );
     }
     _effectiveController.addListener(_rebuild);
@@ -114,6 +121,7 @@ class MultiSelectState<T> extends State<MultiSelect<T>> {
       _localController = MultiSelectController<T>(
         initialSelection: widget.initialSelection,
         maxSelectItemLimit: widget.maxSelectItemLimit,
+        maxLimitOverAlertMessage: widget.maxLimitOverAlertMessage,
       );
       _localController!.value = oldController.value;
     } else if (controller != null && oldController == null) {

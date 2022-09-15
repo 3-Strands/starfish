@@ -313,6 +313,8 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                     builder: (context, state) {
                       return MultiSelect<EvaluationCategory>(
                         maxSelectItemLimit: 3,
+                        maxLimitOverAlertMessage:
+                            appLocalizations.maxSelectItemLimit,
                         navTitle: appLocalizations.selectCategories,
                         placeholder: appLocalizations.selectCategories,
                         items: state.evaluationCategories,
