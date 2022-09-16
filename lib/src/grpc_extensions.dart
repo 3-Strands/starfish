@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import 'package:starfish/apis/hive_api.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/src/generated/file_transfer.pbgrpc.dart';
@@ -118,9 +119,12 @@ extension ActionExt on Action {
 
   bool get isIndividualAction => groupId.isEmpty;
 
-  bool get isPastDueDate => dateDue.isValidDate
-      ? dateDue.toDateTime().isBefore(DateTime.now())
-      : false;
+  bool get isPastDueDate {
+    DateTime now = DateTime.now();
+    return dateDue.isValidDate
+        ? dateDue.toDateTime().isBefore(DateTime(now.year, now.month, now.day))
+        : false;
+  }
 
   bool get hasValidDueDate {
     return this.dateDue.year != 0 &&
