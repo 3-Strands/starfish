@@ -261,7 +261,7 @@
 
   "unspecifiedRole": "अनिर्दिष्ट भूमिका",
   "adminRole": "व्यवस्थापक",
-  "learnerRole": "सिखाने वाला",
+  "learnerRole": "शिक्षार्थी",
   "teacherRole": "शिक्षक",
 
   "contactAccessDenied": "संपर्क डेटा तक पहुंच अस्वीकृत",

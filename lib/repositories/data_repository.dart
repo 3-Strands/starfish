@@ -85,9 +85,12 @@ class DataRepository {
     final userId = getCurrentUser().id;
 
     final completedActions = <String, int>{};
-    for (final actionUser in _hiveApi.actionUser.values) {
-      completedActions[actionUser.actionId] =
-          (completedActions[actionUser.actionId] ?? 0) + 1;
+    for (final user in _hiveApi.user.values) {
+      for (final actionUser in user.actions.where(
+          (actionUser) => actionUser.status == ActionUser_Status.COMPLETE)) {
+        completedActions[actionUser.actionId] =
+            (completedActions[actionUser.actionId] ?? 0) + 1;
+      }
     }
 
     final actionsByGroup = <String, List<_ActionInfo>>{};
