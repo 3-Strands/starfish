@@ -16,7 +16,9 @@ class GroupUsersList extends StatelessWidget {
     final appLocalizations = AppLocalizations.of(context)!;
 
     return ListView.builder(
+      shrinkWrap: true,
       padding: EdgeInsets.symmetric(horizontal: 15.w),
+      physics: NeverScrollableScrollPhysics(),
       itemCount: users.length,
       itemBuilder: (context, index) {
         final groupUser = users[index];
@@ -26,6 +28,7 @@ class GroupUsersList extends StatelessWidget {
           height: 96.h,
           width: MediaQuery.of(context).size.width - 10.0,
           child: Column(
+            mainAxisSize: MainAxisSize.max,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
