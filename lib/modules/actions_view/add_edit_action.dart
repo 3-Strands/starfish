@@ -458,6 +458,8 @@ class AddEditActionView extends StatelessWidget {
                                 placeholder: appLocalizations.selectAMaterial,
                                 items: state.materials,
                                 maxSelectItemLimit: 1,
+                                maxLimitOverAlertMessage:
+                                    appLocalizations.maxSelectItemLimit,
                                 initialSelection: globalHiveApi.material
                                             .get(state.materialId) !=
                                         null

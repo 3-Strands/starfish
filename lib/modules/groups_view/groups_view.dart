@@ -64,51 +64,79 @@ class _GroupsViewState extends State<GroupsView> {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.70,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 40.h),
-                child: Text(
-                  '${group.name}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: AppColors.selectedButtonBG,
-                    fontFamily: 'OpenSans',
-                    fontSize: 21.5.sp,
-                    fontWeight: FontWeight.bold,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  margin: EdgeInsets.only(
+                    top: 40.h,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      //   margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                      child: Column(
+                        // mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15.0.w, vertical: 20.h),
+                            child: Text(
+                              '${group.name}',
+                              // maxLines: 2,
+                              // overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: AppColors.selectedButtonBG,
+                                fontFamily: 'OpenSans',
+                                fontSize: 21.5.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          // Expanded(
+                          //   child:
+                          GroupUsersList(users: group.users),
+                          // Spacer(),
+                          // ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-              Expanded(
-                child: GroupUsersList(users: group.users),
-              ),
-              Container(
-                height: 75.0,
-                decoration: BoxDecoration(
-                  color: Color(0xFFEFEFEF),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 19.0),
-                  child: Container(
-                    height: 37.5.h,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 75.0,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
                     color: Color(0xFFEFEFEF),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40.r),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 19.0),
+                    child: Container(
+                      height: 37.5.h,
+                      color: Color(0xFFEFEFEF),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.r),
+                            ),
                           ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.selectedButtonBG),
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            AppColors.selectedButtonBG),
+                        child: Text(appLocalizations.close),
                       ),
-                      child: Text(appLocalizations.close),
                     ),
                   ),
                 ),

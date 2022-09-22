@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:starfish/src/grpc_adapters.dart';
 import 'package:starfish/wrappers/hive_init.dart';
@@ -19,64 +21,56 @@ const String _dsn =
     'https://47b741149b0a493b9823c47085d69e1c@o1167952.ingest.sentry.io/6259436';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  final localStorageApi = LocalStorageApi();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    final localStorageApi = LocalStorageApi();
 
-  registerAllAdapters();
-  await initHive();
-  await HiveApi.init(
-    encryptionKey: await localStorageApi.getEncryptionKey(),
-    memoryOnly: kIsWeb,
-  );
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await ConfigReader.initialize();
-  FlavorConfig(
-    flavor: Flavor.DEV,
-    values: FlavorValues(
-      baseUrl: ConfigReader.getDevURL(),
-      apiKey: ConfigReader.getDevAPIKey(),
-    ),
-  );
-  GeneralFunctions.configLoading();
-  EasyLoading.instance
-    ..loadingStyle = EasyLoadingStyle.custom
-    ..userInteractions = false
-    ..dismissOnTap = false
-    ..backgroundColor = Colors.transparent
-    ..indicatorColor = Colors.blue
-    ..textColor = Colors.black45
-    ..maskColor = Colors.blue.withOpacity(0.5)
-    ..boxShadow = <BoxShadow>[];
+    registerAllAdapters();
+    await initHive();
+    await HiveApi.init(
+      encryptionKey: await localStorageApi.getEncryptionKey(),
+      memoryOnly: kIsWeb,
+    );
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    await ConfigReader.initialize();
+    FlavorConfig(
+      flavor: Flavor.DEV,
+      values: FlavorValues(
+        baseUrl: ConfigReader.getDevURL(),
+        apiKey: ConfigReader.getDevAPIKey(),
+      ),
+    );
+    GeneralFunctions.configLoading();
+    EasyLoading.instance
+      ..loadingStyle = EasyLoadingStyle.custom
+      ..userInteractions = false
+      ..dismissOnTap = false
+      ..backgroundColor = Colors.transparent
+      ..indicatorColor = Colors.blue
+      ..textColor = Colors.black45
+      ..maskColor = Colors.blue.withOpacity(0.5)
+      ..boxShadow = <BoxShadow>[];
 
-  return runApp(App(
-    authenticationRepository: AuthenticationRepository(),
-    localStorageApi: localStorageApi,
-  ));
-  // return SentryFlutter.init(
-  //   (options) {
-  //     options.dsn = _dsn;
-  //     options.tracesSampleRate = 1.0;
-  //     options.reportPackages = false;
-  //     options.addInAppInclude('DEV');
-  //     options.considerInAppFramesByDefault = false;
-  //   },
-  //   // Init your App.
-  //   appRunner: () {
-  //     runApp(
-  //       DefaultAssetBundle(
-  //         bundle: SentryAssetBundle(
-  //           enableStructuredDataTracing: true,
-  //         ),
-  //         child: App(
-  //           authenticationRepository: AuthenticationRepository(),
-  //           localStorageApi: localStorageApi,
-  //         ),
-  //       ),
-  //     );
-  //   },
-  // );
+    await SentryFlutter.init(
+      (SentryFlutterOptions options) {
+        options.dsn = _dsn;
+        options.tracesSampleRate = 1.0;
+        options.reportPackages = false;
+        //options.addInAppInclude('DEV');
+        options.environment = 'development';
+        options.attachStacktrace = true;
+        options.considerInAppFramesByDefault = false;
+      },
+    );
+    runApp(App(
+      authenticationRepository: AuthenticationRepository(),
+      localStorageApi: localStorageApi,
+    ));
+  }, ((error, stack) async {
+    await Sentry.captureException(error, stackTrace: stack);
+  }));
 }

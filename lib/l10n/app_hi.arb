@@ -66,6 +66,15 @@
   "lastSuccessfullSync": "अंतिम सफल समन्वयन",
 
   "lastSync": "अंतिम समन्वयन",
+  "syncing": "Syncing...",
+  "lastSyncMessage": "अंतिम समन्वयन: {date}",
+  "@lastSyncMessage": {
+    "description": "Shows the last sync time to the user",
+    "placeholders": {
+        "date": {
+        }
+    }
+  },
 
   "forGroupAdmin": "ग्रुप व्यवस्थापक के लिए",
 
@@ -252,7 +261,7 @@
 
   "unspecifiedRole": "अनिर्दिष्ट भूमिका",
   "adminRole": "व्यवस्थापक",
-  "learnerRole": "सिखाने वाला",
+  "learnerRole": "शिक्षार्थी",
   "teacherRole": "शिक्षक",
 
   "contactAccessDenied": "संपर्क डेटा तक पहुंच अस्वीकृत",
@@ -399,7 +408,7 @@
   "teacherFeedbackForLearner":"इस व्यक्ति के लिए शिक्षक प्रतिक्रिया",
   "hideHistory": "इतिहास छुपाएं",
   "viewHistory": "इतिहास देखें",
-  "transformations":"परिवर्तनों",
+  "transformations":"परिवर्तन",
   "hintTextTransformationsTextField":"व्यक्ति द्वारा दर्ज की गई प्रभाव कहानी यहां है और नेता द्वारा संपादन योग्य है",
   "addPhotos": "तस्वीरें जोडो",
   "poorText" : "गरीब",
@@ -431,5 +440,10 @@
   "contactNumber": "संपर्क संख्या",
   "role" : "भूमिका",
   "userNameAlreadyAdded": "इस नाम का उपयोगकर्ता पहले ही जोड़ा जा चुका है",
-  "phonenumberAlreadyAdded": "इस फ़ोन नंबर वाला उपयोगकर्ता पहले ही जोड़ा जा चुका है"
+  "phonenumberAlreadyAdded": "इस फ़ोन नंबर वाला उपयोगकर्ता पहले ही जोड़ा जा चुका है",
+
+  "sorryYouNeedToSignInAgain": "क्षमा करें, लेकिन हमारी ओर से कुछ गलत हो गया और हम चाहते हैं कि आप फिर से साइन इन करें। एक नया ओटीपी जनरेट करने के लिए नीचे क्लिक करें।",
+  "somethingWentWrong": "कुछ गलत हो गया",
+  "sendOtp": "OTP भेजें",
+  "maxSelectItemLimit": "अधिकतम {{max_limit}} आइटम चुने जा सकते हैं।"
 }

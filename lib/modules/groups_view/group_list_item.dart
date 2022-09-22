@@ -80,7 +80,7 @@ class GroupListItem extends StatelessWidget {
                         height: 5.h,
                       ),
                       Text(
-                        '${appLocalizations.adminNamePrifix}: ${groupPlus.myRole == GroupUser_Role.ADMIN ? 'Me' : groupPlus.admin?.name ?? groupPlus.teacher?.name ?? 'Unknown'}',
+                        '${appLocalizations.adminNamePrifix}: ${groupPlus.myRole == GroupUser_Role.ADMIN ? appLocalizations.adminNameMe : groupPlus.admin?.name ?? groupPlus.teacher?.name ?? appLocalizations.unknownUser}',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: 'OpenSans',
