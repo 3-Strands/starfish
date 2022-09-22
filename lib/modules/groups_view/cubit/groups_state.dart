@@ -38,8 +38,8 @@ class GroupsState {
     final Map<UserGroupRoleFilter, List<GroupWithActionsAndRoles>> groupsMap =
         _userRoleFilter == UserGroupRoleFilter.FILTER_ALL
             ? {
+                UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD: [],
                 UserGroupRoleFilter.FILTER_LEARNER: [],
-                UserGroupRoleFilter.FILTER_ADMIN_CO_LEAD: []
               }
             : {_userRoleFilter: []};
 

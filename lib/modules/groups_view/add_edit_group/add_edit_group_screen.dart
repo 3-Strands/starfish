@@ -486,25 +486,28 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
                           newMembersWithoutNumber.isEmpty) {
                         return const SizedBox();
                       }
+                      final children = [
+                        ...currentMembersWithoutNumber.map(
+                          (member) => GroupMemberListItem(
+                            key: ValueKey(member.user.id),
+                            role: member.role,
+                            user: member.user,
+                            wasAddedPreviously: true,
+                          ),
+                        ),
+                        ...newMembersWithoutNumber.map(
+                          (member) => GroupMemberListItem(
+                            key: ValueKey(member.user.id),
+                            role: member.role,
+                            user: member.user,
+                            wasAddedPreviously: false,
+                          ),
+                        ),
+                      ];
+                      children
+                          .sort((a, b) => a.user.name.compareTo(b.user.name));
                       return Column(
-                        children: [
-                          ...currentMembersWithoutNumber.map(
-                            (member) => GroupMemberListItem(
-                              key: ValueKey(member.user.id),
-                              role: member.role,
-                              user: member.user,
-                              wasAddedPreviously: true,
-                            ),
-                          ),
-                          ...newMembersWithoutNumber.map(
-                            (member) => GroupMemberListItem(
-                              key: ValueKey(member.user.id),
-                              role: member.role,
-                              user: member.user,
-                              wasAddedPreviously: false,
-                            ),
-                          ),
-                        ],
+                        children: children,
                       );
                     },
                   ),
