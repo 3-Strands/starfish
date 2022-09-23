@@ -40,7 +40,10 @@ class GroupListItem extends StatelessWidget {
     final goToGroup = myRole != GroupUser_Role.LEARNER
         ? () {
             context.read<DashboardNavigationCubit>().navigationRequested(
-                  const ActionsTab(ActionTab.ACTIONS_MY_GROUPS),
+                  ActionsTab(
+                    currentTab: ActionTab.ACTIONS_MY_GROUPS,
+                    group: group,
+                  ),
                 );
           }
         : null;

@@ -27,9 +27,10 @@ class GroupsTab extends DashboardNavigationTab {
 }
 
 class ActionsTab extends DashboardNavigationTab {
-  const ActionsTab([this.currentTab]);
+  const ActionsTab({this.currentTab, this.group});
 
   final grpc.ActionTab? currentTab;
+  final grpc.Group? group;
   final index = 2;
 }
 

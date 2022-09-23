@@ -7,6 +7,7 @@ import 'package:starfish/enums/action_filter.dart';
 import 'package:starfish/modules/actions_view/cubit/actions_cubit.dart';
 import 'package:starfish/modules/actions_view/my_group_action_list_item.dart';
 import 'package:starfish/modules/actions_view/single_action_user_view.dart';
+import 'package:starfish/modules/dashboard/cubit/dashboard_navigation_cubit.dart';
 import 'package:starfish/repositories/model_wrappers/action_group_user_with_status.dart';
 import 'package:starfish/repositories/model_wrappers/action_with_assigned_status.dart';
 import 'package:starfish/repositories/model_wrappers/user_with_action_status.dart';
@@ -25,19 +26,46 @@ class MyGroupActionsView extends StatefulWidget {
 
 class _MyGroupViewState extends State<MyGroupActionsView> {
   late AppLocalizations _appLocalizations;
+  final _scrollController = ScrollController();
+  final _groupInFocus = GlobalKey();
+  final _scrollKey = GlobalKey();
+  bool _hasAutoScrolled = false;
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _tryToScrollToGroup() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = _groupInFocus.currentContext?.findRenderObject();
+      final scrollBox = _scrollKey.currentContext?.findRenderObject();
+      if (box is RenderBox && scrollBox is RenderBox) {
+        final scrollContainerPosition = scrollBox.localToGlobal(Offset.zero);
+        _scrollController
+            .jumpTo(box.localToGlobal(-scrollContainerPosition).dy);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     _appLocalizations = AppLocalizations.of(context)!;
+    final dashboardTab = context.read<DashboardNavigationCubit>().state;
+    final currentGroup = dashboardTab is ActionsTab ? dashboardTab.group : null;
 
     return Scrollbar(
       thickness: 5.w,
       thumbVisibility: false,
       child: SingleChildScrollView(
+        key: _scrollKey,
+        controller: _scrollController,
         child: Column(
           children: [
             SizedBox(
@@ -148,6 +176,10 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                   ),
                 );
               }
+              if (!_hasAutoScrolled) {
+                _hasAutoScrolled = true;
+                _tryToScrollToGroup();
+              }
               return GroupListView(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -172,6 +204,7 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
                 groupHeaderBuilder: (BuildContext context, int section) {
                   Group _group = groupActionsMap.keys.toList()[section];
                   return Padding(
+                    key: _group == currentGroup ? _groupInFocus : null,
                     padding:
                         EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
                     child: Column(

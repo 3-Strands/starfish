@@ -8,5 +8,9 @@ class DashboardNavigationCubit extends Cubit<DashboardNavigationTab> {
   DashboardNavigationCubit({DashboardNavigationTab? initialTab})
       : super(initialTab ?? const GroupsTab());
 
-  void navigationRequested(DashboardNavigationTab tab) => emit(tab);
+  void navigationRequested(DashboardNavigationTab tab) {
+    if (tab.index != state.index) {
+      emit(tab);
+    }
+  }
 }

@@ -14,11 +14,12 @@ import 'package:starfish/src/grpc_extensions.dart';
 part 'actions_state.dart';
 
 class ActionsCubit extends Cubit<ActionsState> {
-  ActionsCubit(DataRepository dataRepository)
+  ActionsCubit(DataRepository dataRepository, {ActionFilter? initialFilter})
       : _dataRepository = dataRepository,
         super(ActionsState(
           actions: dataRepository.currentActions,
           relatedActions: dataRepository.getActionsRelatedToMe(),
+          actionFilter: initialFilter ?? ActionFilter.THIS_MONTH,
         )) {
     _subscription = [
       dataRepository.actions.listen((actions) {

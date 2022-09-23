@@ -23,7 +23,7 @@ class MyGroupActionListItem extends StatelessWidget {
       onActionTap;
 
   const MyGroupActionListItem({
-    Key? key,
+    super.key,
     required this.actionWithAssignedStatus,
     required this.onActionTap,
     required this.index,
