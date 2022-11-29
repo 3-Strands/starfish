@@ -122,6 +122,9 @@ service Starfish {
     // may fetch multiple resource types which have changed on the server, including deleted records
     rpc Sync (stream SyncRequest) returns (stream SyncResponse) {}
 
+    // The same a Sync except without using streams
+    rpc SyncWeb (SyncWebRequest) returns (SyncWebResponse) {}
+
     // Update the current user.
     // Group or action connections cannot be updated through this procedure.
     rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
@@ -1278,6 +1281,16 @@ message SyncResponse {
         SyncError error = 18;
     }
 
+}
+
+// Since GRPC-web doesn't support client-side streaming we provide
+// a version of sync that doesn't use streaming
+message SyncWebRequest {
+    repeated SyncRequest request_data = 1;
+}
+
+message SyncWebResponse {
+    repeated SyncResponse response_data = 1;
 }
 
 // A response of a teacher to a learner in a group
