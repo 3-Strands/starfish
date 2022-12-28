@@ -94,6 +94,9 @@ class AddEditGroupCubit extends Cubit<AddEditGroupState> {
   }
 
   void userNumberAdded(User user, String diallingCode, String phoneNumber) {
+    // TODO
+    // final number = "+${diallingCode.replaceAll("+", "")}$phoneNumber";
+    // for (final user in state.currentMembersWithNumber)
     emit(state.copyWith(
       diallingCodeChanges: {
         ...state.diallingCodeChanges,
