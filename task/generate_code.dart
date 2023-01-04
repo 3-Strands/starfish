@@ -4,7 +4,9 @@ import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:protobuf/protobuf.dart';
 
-part 'field_masks.dart';
+import '_fs.dart';
+
+part '_field_masks.dart';
 
 abstract class Storage {
   const Storage();
@@ -691,6 +693,8 @@ int findTypeId(Model model) =>
     messages.entries.firstWhere((entry) => entry.value == model).key;
 
 void main() {
+  goToRoot();
+
   final deltaContents = '''
   /// GENERATED CODE - DO NOT MODIFY BY HAND
   /// 
@@ -751,7 +755,7 @@ void main() {
   };
   ''';
 
-  File('lib/src/deltas.g.dart').writeAsString(deltaContents);
+  writeCode('lib/src/deltas.g.dart', deltaContents);
 
   final adapterContents = '''
   // GENERATED CODE - DO NOT MODIFY BY HAND
@@ -765,5 +769,10 @@ void main() {
   }
   ''';
 
-  File('lib/src/grpc_adapters.g.dart').writeAsString(adapterContents);
+  writeCode('lib/src/grpc_adapters.g.dart', adapterContents);
+}
+
+Future<void> writeCode(String path, String contents) async {
+  await File(path).writeAsString(contents);
+  await Process.run('dart', ['format', path]);
 }
