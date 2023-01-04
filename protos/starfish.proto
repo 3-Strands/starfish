@@ -65,7 +65,8 @@ service Starfish {
     rpc DeleteActions (stream DeleteActionRequest) returns (stream DeleteActionResponse) {}
 
     // Remove users from groups.
-    rpc DeleteGroupUsers (stream DeleteGroupUserRequest) returns (stream DeleteGroupUserResponse) {}
+    // The role on GroupUser message is ignored in this procedure
+    rpc DeleteGroupUsers (stream GroupUser) returns (stream DeleteGroupUserResponse) {}
 
     // Delete Materials.
     rpc DeleteMaterials (stream DeleteMaterialRequest) returns (stream DeleteMaterialResponse) {}
@@ -120,6 +121,9 @@ service Starfish {
     // Perform a general sync which allows updates to any resource types and also
     // may fetch multiple resource types which have changed on the server, including deleted records
     rpc Sync (stream SyncRequest) returns (stream SyncResponse) {}
+
+    // The same a Sync except without using streams
+    rpc SyncWeb (SyncWebRequest) returns (SyncWebResponse) {}
 
     // Update the current user.
     // Group or action connections cannot be updated through this procedure.
@@ -1178,6 +1182,18 @@ message RefreshSessionRequest {
 
 }
 
+// When sending update requests through the Sync endpoint, it's possible that the update fails.
+// In that case a corresponding SyncError message is returned in the response stream.
+message SyncError {
+
+    // The request message that triggered the error
+    SyncRequest request = 1;
+
+    // The error message
+    string message = 2;
+
+}
+
 message SyncRequestMetaData {
 
     // Whether the Sync endpoint should respond with a stream of records from the server
@@ -1233,9 +1249,9 @@ message SyncRequest {
         CreateUpdateTransformationRequest create_update_transformation = 12;
         CreateUpdateUserRequest create_update_user = 13;
         DeleteActionRequest delete_action = 14;
-        GroupUser delete_group_user = 15;
         DeleteMaterialRequest delete_material = 16;
         UpdateCurrentUserRequest update_current_user = 17;
+        DeleteGroupUserRequest delete_group_user = 18;
     }
 
 }
@@ -1262,8 +1278,19 @@ message SyncResponse {
         User user = 15;
         DeletedResource deleted_record = 16;
         SyncResponseMetaData meta_data = 17;
+        SyncError error = 18;
     }
 
+}
+
+// Since GRPC-web doesn't support client-side streaming we provide
+// a version of sync that doesn't use streaming
+message SyncWebRequest {
+    repeated SyncRequest request_data = 1;
+}
+
+message SyncWebResponse {
+    repeated SyncResponse response_data = 1;
 }
 
 // A response of a teacher to a learner in a group
