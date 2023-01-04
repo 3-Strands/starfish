@@ -4,7 +4,7 @@ import 'package:starfish/src/generated/google/protobuf/timestamp.pb.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:protobuf/protobuf.dart';
 
-part 'fieldMasks.dart';
+part 'field_masks.dart';
 
 abstract class Storage {
   const Storage();

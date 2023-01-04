@@ -34,6 +34,16 @@ const FileData$json = const {
 
 /// Descriptor for `FileData`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List fileDataDescriptor = $convert.base64Decode('CghGaWxlRGF0YRI5CgltZXRhX2RhdGEYASABKAsyGi5zaWwuc3RhcmZpc2guRmlsZU1ldGFEYXRhSABSCG1ldGFEYXRhEhYKBWNodW5rGAIgASgMSABSBWNodW5rQgYKBGRhdGE=');
+@$core.Deprecated('Use fileDataWrapperDescriptor instead')
+const FileDataWrapper$json = const {
+  '1': 'FileDataWrapper',
+  '2': const [
+    const {'1': 'file_data', '3': 1, '4': 3, '5': 11, '6': '.sil.starfish.FileData', '10': 'fileData'},
+  ],
+};
+
+/// Descriptor for `FileDataWrapper`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List fileDataWrapperDescriptor = $convert.base64Decode('Cg9GaWxlRGF0YVdyYXBwZXISMwoJZmlsZV9kYXRhGAEgAygLMhYuc2lsLnN0YXJmaXNoLkZpbGVEYXRhUghmaWxlRGF0YQ==');
 @$core.Deprecated('Use fileMetaDataDescriptor instead')
 const FileMetaData$json = const {
   '1': 'FileMetaData',
@@ -71,6 +81,16 @@ const UploadStatus_Status$json = const {
 
 /// Descriptor for `UploadStatus`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List uploadStatusDescriptor = $convert.base64Decode('CgxVcGxvYWRTdGF0dXMSQAoOZmlsZV9tZXRhX2RhdGEYASABKAsyGi5zaWwuc3RhcmZpc2guRmlsZU1ldGFEYXRhUgxmaWxlTWV0YURhdGESOQoGc3RhdHVzGAIgASgOMiEuc2lsLnN0YXJmaXNoLlVwbG9hZFN0YXR1cy5TdGF0dXNSBnN0YXR1cxIYCgdtZXNzYWdlGAMgASgJUgdtZXNzYWdlIikKBlN0YXR1cxILCgdVTktOT1dOEAASBgoCT0sQARIKCgZGQUlMRUQQAg==');
+@$core.Deprecated('Use uploadStatusWrapperDescriptor instead')
+const UploadStatusWrapper$json = const {
+  '1': 'UploadStatusWrapper',
+  '2': const [
+    const {'1': 'statuses', '3': 1, '4': 3, '5': 11, '6': '.sil.starfish.UploadStatus', '10': 'statuses'},
+  ],
+};
+
+/// Descriptor for `UploadStatusWrapper`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List uploadStatusWrapperDescriptor = $convert.base64Decode('ChNVcGxvYWRTdGF0dXNXcmFwcGVyEjYKCHN0YXR1c2VzGAEgAygLMhouc2lsLnN0YXJmaXNoLlVwbG9hZFN0YXR1c1IIc3RhdHVzZXM=');
 @$core.Deprecated('Use downloadErrorDescriptor instead')
 const DownloadError$json = const {
   '1': 'DownloadError',
@@ -95,6 +115,16 @@ const DownloadRequest$json = const {
 
 /// Descriptor for `DownloadRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List downloadRequestDescriptor = $convert.base64Decode('Cg9Eb3dubG9hZFJlcXVlc3QSOQoLZW50aXR5X3R5cGUYASABKA4yGC5zaWwuc3RhcmZpc2guRW50aXR5VHlwZVIKZW50aXR5VHlwZRIbCgllbnRpdHlfaWQYAiABKAlSCGVudGl0eUlkEhwKCWZpbGVuYW1lcxgDIAMoCVIJZmlsZW5hbWVz');
+@$core.Deprecated('Use downloadRequestWrapperDescriptor instead')
+const DownloadRequestWrapper$json = const {
+  '1': 'DownloadRequestWrapper',
+  '2': const [
+    const {'1': 'requests', '3': 1, '4': 3, '5': 11, '6': '.sil.starfish.DownloadRequest', '10': 'requests'},
+  ],
+};
+
+/// Descriptor for `DownloadRequestWrapper`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List downloadRequestWrapperDescriptor = $convert.base64Decode('ChZEb3dubG9hZFJlcXVlc3RXcmFwcGVyEjkKCHJlcXVlc3RzGAEgAygLMh0uc2lsLnN0YXJmaXNoLkRvd25sb2FkUmVxdWVzdFIIcmVxdWVzdHM=');
 @$core.Deprecated('Use downloadResponseDescriptor instead')
 const DownloadResponse$json = const {
   '1': 'DownloadResponse',
@@ -110,3 +140,13 @@ const DownloadResponse$json = const {
 
 /// Descriptor for `DownloadResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List downloadResponseDescriptor = $convert.base64Decode('ChBEb3dubG9hZFJlc3BvbnNlEjkKCW1ldGFfZGF0YRgBIAEoCzIaLnNpbC5zdGFyZmlzaC5GaWxlTWV0YURhdGFIAFIIbWV0YURhdGESFgoFY2h1bmsYAiABKAxIAFIFY2h1bmsSMwoFZXJyb3IYAyABKAsyGy5zaWwuc3RhcmZpc2guRG93bmxvYWRFcnJvckgAUgVlcnJvckIKCghyZXNwb25zZQ==');
+@$core.Deprecated('Use downloadResponseWrapperDescriptor instead')
+const DownloadResponseWrapper$json = const {
+  '1': 'DownloadResponseWrapper',
+  '2': const [
+    const {'1': 'responses', '3': 1, '4': 3, '5': 11, '6': '.sil.starfish.DownloadResponse', '10': 'responses'},
+  ],
+};
+
+/// Descriptor for `DownloadResponseWrapper`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List downloadResponseWrapperDescriptor = $convert.base64Decode('ChdEb3dubG9hZFJlc3BvbnNlV3JhcHBlchI8CglyZXNwb25zZXMYASADKAsyHi5zaWwuc3RhcmZpc2guRG93bmxvYWRSZXNwb25zZVIJcmVzcG9uc2Vz');
