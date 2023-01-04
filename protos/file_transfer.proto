@@ -21,10 +21,16 @@ service FileTransfer {
     // For each file uploaded there will be an upload status.
     rpc Upload(stream FileData) returns (stream UploadStatus) {}
 
+    // An upload RPC that does not use streaming
+    rpc UploadWeb(FileDataWrapper) returns (UploadStatusWrapper) {}
+
     // A stream of download request can be given.
     // For each request one or more files may be added to the return stream.
     // Any download request that doesn't point to a real file or files will be ignored.
     rpc Download(stream DownloadRequest) returns (stream DownloadResponse) {}
+
+    // A download RPC that does not use streaming
+    rpc DownloadWeb(DownloadRequestWrapper) returns (DownloadResponseWrapper) {}
 
 }
 
@@ -50,6 +56,11 @@ message FileData {
         bytes chunk = 2;
 
     };
+}
+
+// In situations where FileData cannot be streamed (e.g. gRPC-web) we can use this wrapper
+message FileDataWrapper {
+    repeated FileData file_data = 1;
 }
 
 message FileMetaData {
@@ -93,6 +104,11 @@ message UploadStatus {
 
 }
 
+// In situations where UploadStatus cannot be streamed (e.g. gRPC-web) we can use this wrapper
+message UploadStatusWrapper {
+    repeated UploadStatus statuses = 1;
+}
+
 // When processing download requests and a request can't be processed
 // a DownloadError message is added to the stream
 // It's possible that some of the file was already added to the stream
@@ -124,6 +140,11 @@ message DownloadRequest {
 
 }
 
+// In situations where DownloadRequest cannot be streamed (e.g. gRPC-web) we can use this wrapper
+message DownloadRequestWrapper {
+    repeated DownloadRequest requests = 1;
+}
+
 message DownloadResponse {
 
     oneof response {
@@ -139,4 +160,9 @@ message DownloadResponse {
         DownloadError error = 3;
 
     };
+}
+
+// In situations where DownloadResponse cannot be streamed (e.g. gRPC-web) we can use this wrapper
+message DownloadResponseWrapper {
+    repeated DownloadResponse responses = 1;
 }
