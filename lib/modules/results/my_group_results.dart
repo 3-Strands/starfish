@@ -28,222 +28,217 @@ class _MyGroupResultsState extends State<MyGroupResults> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
-    return Scrollbar(
-      thickness: 5.w,
-      thumbVisibility: false,
-      child: ListView(
-        children: [
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            height: 52.h,
-            margin: EdgeInsets.only(left: 15.w, right: 15.w),
-            decoration: BoxDecoration(
-              color: AppColors.txtFieldBackground,
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
+    return ListView(
+      children: [
+        SizedBox(
+          height: 20.h,
+        ),
+        Container(
+          height: 52.h,
+          margin: EdgeInsets.only(left: 15.w, right: 15.w),
+          decoration: BoxDecoration(
+            color: AppColors.txtFieldBackground,
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
             ),
-            child: Center(
-              child: DropdownButtonHideUnderline(
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: BlocBuilder<ResultsCubit, ResultsState>(
-                    buildWhen: (previous, current) =>
-                        previous.filterGroup != current.filterGroup ||
-                        previous.groups != current.groups,
-                    builder: ((context, state) {
-                      return DropdownButton2<Group>(
-                          dropdownMaxHeight: 350.h,
-                          offset: Offset(0, -5),
-                          isExpanded: true,
-                          iconSize: 35,
+          ),
+          child: Center(
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: BlocBuilder<ResultsCubit, ResultsState>(
+                  buildWhen: (previous, current) =>
+                      previous.filterGroup != current.filterGroup ||
+                      previous.groups != current.groups,
+                  builder: ((context, state) {
+                    return DropdownButton2<Group>(
+                        dropdownMaxHeight: 350.h,
+                        offset: Offset(0, -5),
+                        isExpanded: true,
+                        iconSize: 35,
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 19.sp,
+                          fontFamily: 'OpenSans',
+                        ),
+                        hint: Text(
+                          state.filterGroup?.name ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Color(0xFF434141),
                             fontSize: 19.sp,
                             fontFamily: 'OpenSans',
                           ),
-                          hint: Text(
-                            state.filterGroup?.name ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          onChanged: (Group? value) {
-                            context
-                                .read<ResultsCubit>()
-                                .updateGroupFilter(value!);
-                          },
-                          items: state.groupsWithAdminRole.map((value) {
-                            return DropdownMenuItem<Group>(
-                              value: value,
-                              child: Text(
-                                value.name,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 17.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
+                          textAlign: TextAlign.left,
+                        ),
+                        onChanged: (Group? value) {
+                          context
+                              .read<ResultsCubit>()
+                              .updateGroupFilter(value!);
+                        },
+                        items: state.groupsWithAdminRole.map((value) {
+                          return DropdownMenuItem<Group>(
+                            value: value,
+                            child: Text(
+                              value.name,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 17.sp,
+                                fontFamily: 'OpenSans',
                               ),
-                            );
-                          }).toList());
-                    }),
-                  ),
+                            ),
+                          );
+                        }).toList());
+                  }),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20.h),
-          BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
-            return InkWell(
-              onTap: () async {
-                DateTime? selected = await _selectMonth(state.month);
+        ),
+        SizedBox(height: 20.h),
+        BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
+          return InkWell(
+            onTap: () async {
+              DateTime? selected = await _selectMonth(state.month);
 
-                if (selected != null) {
-                  context.read<ResultsCubit>().updateMonthFilter(
-                      Date(year: selected.year, month: selected.month, day: 0));
-                }
-              },
-              child: Container(
-                alignment: Alignment.centerLeft,
-                height: 52.h,
-                padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
-                margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                decoration: BoxDecoration(
-                  color: AppColors.txtFieldBackground,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: Text(
-                    DateTimeUtils.formatHiveDate(state.month,
-                        requiredDateFormat: "MMMM yyyy"),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 19.sp,
-                      fontFamily: 'OpenSans',
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
+              if (selected != null) {
+                context.read<ResultsCubit>().updateMonthFilter(
+                    Date(year: selected.year, month: selected.month, day: 0));
+              }
+            },
+            child: Container(
+              alignment: Alignment.centerLeft,
+              height: 52.h,
+              padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+              margin: EdgeInsets.only(left: 15.w, right: 15.w),
+              decoration: BoxDecoration(
+                color: AppColors.txtFieldBackground,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
                 ),
               ),
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: Text(
+                  DateTimeUtils.formatHiveDate(state.month,
+                      requiredDateFormat: "MMMM yyyy"),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Color(0xFF434141),
+                    fontSize: 19.sp,
+                    fontFamily: 'OpenSans',
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+          );
+        }),
+        SizedBox(height: 20.h),
+        // SummaryForAllLearners(
+        //     groupEvaluationGoodCount: bloc.resultsBloc
+        //         .getLearnersEvaluationCountByType(
+        //             GroupEvaluation_Evaluation.GOOD),
+        //     groupEvaluationBadCount: bloc.resultsBloc
+        //         .getLearnersEvaluationCountByType(
+        //             GroupEvaluation_Evaluation.BAD),
+        //     hiveGroup: bloc.resultsBloc.hiveGroup!,
+        //     month: bloc.resultsBloc.hiveDate!,
+        //     groupLearnerEvaluationsByCategory:
+        //         bloc.resultsBloc.getGroupLearnerEvaluationsByCategory()),
+        // if (bloc.resultsBloc.shouldDisplayProjectReport() &&
+        //     bloc.resultsBloc.hiveGroup != null) ...[
+        //   SizedBox(
+        //     height: 20.h,
+        //   ),
+        //   ProjectReporsForGroup(
+        //       hiveGroup: bloc.resultsBloc.hiveGroup!,
+        //       hiveDate: bloc.resultsBloc.hiveDate!),
+        // ],
+        BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
+          final resultsToShow = state.groupWithAdminRoleResultsToShow;
+          return SummaryForAllLearners(
+              groupActionsSummary: resultsToShow.groupActionsSummary ?? {},
+              groupEvaluationGoodCount: resultsToShow.groupEvaluationSummary?[
+                      GroupEvaluation_Evaluation.GOOD] ??
+                  0,
+              groupEvaluationBadCount: resultsToShow.groupEvaluationSummary?[
+                      GroupEvaluation_Evaluation.BAD] ??
+                  0,
+              group: state.filterGroup!,
+              month: state.month,
+              groupLearnerEvaluations:
+                  resultsToShow.learnerEvaluationsSummary ?? {});
+        }),
+        SizedBox(
+          height: 20.h,
+        ),
+        BlocBuilder<ResultsCubit, ResultsState>(
+          buildWhen: (previous, current) =>
+              previous.filterGroup != current.filterGroup ||
+              previous.month != current.filterGroup,
+          builder: (context, state) {
+            if (state.filterGroup!.outputMarkers.length == 0) {
+              return Container();
+            }
+            return ProjectReporsForGroup(
+              group: state.filterGroup!,
+              month: state.month,
             );
-          }),
-          SizedBox(height: 20.h),
-          // SummaryForAllLearners(
-          //     groupEvaluationGoodCount: bloc.resultsBloc
-          //         .getLearnersEvaluationCountByType(
-          //             GroupEvaluation_Evaluation.GOOD),
-          //     groupEvaluationBadCount: bloc.resultsBloc
-          //         .getLearnersEvaluationCountByType(
-          //             GroupEvaluation_Evaluation.BAD),
-          //     hiveGroup: bloc.resultsBloc.hiveGroup!,
-          //     month: bloc.resultsBloc.hiveDate!,
-          //     groupLearnerEvaluationsByCategory:
-          //         bloc.resultsBloc.getGroupLearnerEvaluationsByCategory()),
-          // if (bloc.resultsBloc.shouldDisplayProjectReport() &&
-          //     bloc.resultsBloc.hiveGroup != null) ...[
-          //   SizedBox(
-          //     height: 20.h,
-          //   ),
-          //   ProjectReporsForGroup(
-          //       hiveGroup: bloc.resultsBloc.hiveGroup!,
-          //       hiveDate: bloc.resultsBloc.hiveDate!),
-          // ],
-          BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
-            final resultsToShow = state.groupWithAdminRoleResultsToShow;
-            return SummaryForAllLearners(
-                groupActionsSummary: resultsToShow.groupActionsSummary ?? {},
-                groupEvaluationGoodCount: resultsToShow.groupEvaluationSummary?[
-                        GroupEvaluation_Evaluation.GOOD] ??
-                    0,
-                groupEvaluationBadCount: resultsToShow.groupEvaluationSummary?[
-                        GroupEvaluation_Evaluation.BAD] ??
-                    0,
-                group: state.filterGroup!,
-                month: state.month,
-                groupLearnerEvaluations:
-                    resultsToShow.learnerEvaluationsSummary ?? {});
-          }),
-          SizedBox(
-            height: 20.h,
-          ),
-          BlocBuilder<ResultsCubit, ResultsState>(
-            buildWhen: (previous, current) =>
-                previous.filterGroup != current.filterGroup ||
-                previous.month != current.filterGroup,
-            builder: (context, state) {
-              if (state.filterGroup!.outputMarkers.length == 0) {
-                return Container();
-              }
-              return ProjectReporsForGroup(
-                group: state.filterGroup!,
-                month: state.month,
-              );
-            },
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
-            final resultsToShow = state.groupWithAdminRoleResultsToShow;
-            final groupUserResultsList =
-                resultsToShow.groupUserResultsStatusList;
+          },
+        ),
+        SizedBox(
+          height: 20.h,
+        ),
+        BlocBuilder<ResultsCubit, ResultsState>(builder: (context, state) {
+          final resultsToShow = state.groupWithAdminRoleResultsToShow;
+          final groupUserResultsList = resultsToShow.groupUserResultsStatusList;
 
-            return ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: groupUserResultsList.length,
-                itemBuilder: (BuildContext context, index) {
-                  final _groupUserResultStatus =
-                      groupUserResultsList.elementAt(index);
-                  return InkWell(
-                    onTap: () {
-                      final results = BlocProvider.value(
-                        value: context.read<ResultsCubit>(),
-                        child: ResultsBottomSheet(
-                          group: _groupUserResultStatus.group!,
-                          learner: _groupUserResultStatus.user,
-                          month: state.month,
-                        ),
-                      );
-                      showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => results,
-                      );
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        top: index != 0 ? 20.h : 0,
-                      ),
-                      child: LearnerSummary(
-                        groupUserResultStatus: _groupUserResultStatus,
+          return ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: groupUserResultsList.length,
+              itemBuilder: (BuildContext context, index) {
+                final _groupUserResultStatus =
+                    groupUserResultsList.elementAt(index);
+                return InkWell(
+                  onTap: () {
+                    final results = BlocProvider.value(
+                      value: context.read<ResultsCubit>(),
+                      child: ResultsBottomSheet(
+                        group: _groupUserResultStatus.group!,
+                        learner: _groupUserResultStatus.user,
                         month: state.month,
-                        // leanerEvaluationForGroup:
-                        //     _hiveGroupUser.getGroupEvaluationForMonth(
-                        //         bloc.resultsBloc.hiveDate!),
                       ),
+                    );
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => results,
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: index != 0 ? 20.h : 0,
                     ),
-                  );
-                });
-          }),
-          SizedBox(
-            height: 20.h,
-          )
-        ],
-      ),
+                    child: LearnerSummary(
+                      groupUserResultStatus: _groupUserResultStatus,
+                      month: state.month,
+                      // leanerEvaluationForGroup:
+                      //     _hiveGroupUser.getGroupEvaluationForMonth(
+                      //         bloc.resultsBloc.hiveDate!),
+                    ),
+                  ),
+                );
+              });
+        }),
+        SizedBox(
+          height: 20.h,
+        )
+      ],
     );
   }
   // @override

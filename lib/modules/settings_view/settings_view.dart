@@ -87,356 +87,346 @@ class SettingsView extends StatelessWidget {
         },
         child: Stack(
           children: [
-            Scrollbar(
-              thickness: 5.w,
-              thumbVisibility: false,
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 20.h),
-                      //_getNameSection(),
-                      BlocBuilder<ProfileBloc, ProfileState>(
-                        buildWhen: (previous, current) =>
-                            previous.name != current.name,
-                        builder: (context, state) {
-                          return EditName(
-                            lable: appLocalizations.name,
-                            hint: appLocalizations.nameHint,
-                            initialValue: state.name,
-                            onDone: (value) {
-                              // TODO: save chagnes
-                              context
-                                  .read<ProfileBloc>()
-                                  .add(NameChanged(value));
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 5.h),
-                      //_getPhoneNumberSection(),
-                      BlocBuilder<ProfileBloc, ProfileState>(
-                        buildWhen: (previous, current) =>
-                            previous.phone != current.phone ||
-                            previous.diallingCode != current.diallingCode,
-                        builder: (context, state) {
-                          return EditPhoneNumber(
-                            lable: appLocalizations.mobile,
-                            hint: appLocalizations.phoneNumberHint,
-                            initialDiallingCode: state.diallingCode,
-                            initialPhonenumber: state.phone,
-                            onInputChanged: (value) {},
-                            onInputValidated: (isValid) {},
-                            onFieldSubmitted: (_) {},
-                          );
-                        },
-                      ),
-                      SizedBox(height: 5.h),
+            SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 20.h),
+                    //_getNameSection(),
+                    BlocBuilder<ProfileBloc, ProfileState>(
+                      buildWhen: (previous, current) =>
+                          previous.name != current.name,
+                      builder: (context, state) {
+                        return EditName(
+                          lable: appLocalizations.name,
+                          hint: appLocalizations.nameHint,
+                          initialValue: state.name,
+                          onDone: (value) {
+                            // TODO: save chagnes
+                            context.read<ProfileBloc>().add(NameChanged(value));
+                          },
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5.h),
+                    //_getPhoneNumberSection(),
+                    BlocBuilder<ProfileBloc, ProfileState>(
+                      buildWhen: (previous, current) =>
+                          previous.phone != current.phone ||
+                          previous.diallingCode != current.diallingCode,
+                      builder: (context, state) {
+                        return EditPhoneNumber(
+                          lable: appLocalizations.mobile,
+                          hint: appLocalizations.phoneNumberHint,
+                          initialDiallingCode: state.diallingCode,
+                          initialPhonenumber: state.phone,
+                          onInputChanged: (value) {},
+                          onInputValidated: (isValid) {},
+                          onFieldSubmitted: (_) {},
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5.h),
 
-                      //--> App language section
-                      Align(
-                        alignment: FractionalOffset.topLeft,
-                        child: TitleLabel(
-                          title: appLocalizations.appLanguage,
-                          align: TextAlign.left,
+                    //--> App language section
+                    Align(
+                      alignment: FractionalOffset.topLeft,
+                      child: TitleLabel(
+                        title: appLocalizations.appLanguage,
+                        align: TextAlign.left,
+                      ),
+                    ),
+
+                    SizedBox(height: 10.h),
+
+                    Container(
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.txtFieldBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
                         ),
                       ),
-
-                      SizedBox(height: 10.h),
-
-                      Container(
-                        height: 50.h,
-                        decoration: BoxDecoration(
-                          color: AppColors.txtFieldBackground,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                        child: Center(
-                          child: DropdownButtonHideUnderline(
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: BlocBuilder<AppBloc, AppState>(
-                                  builder: (context, state) {
-                                final locale = (state as AppReady).locale;
-                                return DropdownButton2(
-                                  offset: Offset(0, -10),
-                                  dropdownMaxHeight: 200.h,
-                                  isExpanded: true,
-                                  iconSize: 35,
-                                  style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 19.sp,
-                                    fontFamily: 'OpenSans',
-                                  ),
-                                  onChanged: (LanguageCode? value) {
-                                    BlocProvider.of<AppBloc>(context)
-                                        .add(LocaleChanged(value!.code));
-                                    //reinitLanguageFilter();
-                                  },
-                                  value: AppStrings.appLanguageList.firstWhere(
-                                    (item) => item.code == locale,
-                                    orElse: () =>
-                                        AppStrings.appLanguageList.first,
-                                  ),
-                                  items: AppStrings.appLanguageList
-                                      .map(
-                                        (language) => DropdownMenuItem(
-                                          child: Text(language.name),
-                                          value: language,
-                                        ),
-                                      )
-                                      .toList(),
-                                );
-                              }),
-                            ),
+                      child: Center(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: BlocBuilder<AppBloc, AppState>(
+                                builder: (context, state) {
+                              final locale = (state as AppReady).locale;
+                              return DropdownButton2(
+                                offset: Offset(0, -10),
+                                dropdownMaxHeight: 200.h,
+                                isExpanded: true,
+                                iconSize: 35,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 19.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                                onChanged: (LanguageCode? value) {
+                                  BlocProvider.of<AppBloc>(context)
+                                      .add(LocaleChanged(value!.code));
+                                  //reinitLanguageFilter();
+                                },
+                                value: AppStrings.appLanguageList.firstWhere(
+                                  (item) => item.code == locale,
+                                  orElse: () =>
+                                      AppStrings.appLanguageList.first,
+                                ),
+                                items: AppStrings.appLanguageList
+                                    .map(
+                                      (language) => DropdownMenuItem(
+                                        child: Text(language.name),
+                                        value: language,
+                                      ),
+                                    )
+                                    .toList(),
+                              );
+                            }),
                           ),
                         ),
                       ),
+                    ),
 
-                      SizedBox(height: 20.h),
+                    SizedBox(height: 20.h),
 
-                      //--> Select country section
-                      Align(
-                        alignment: FractionalOffset.topLeft,
-                        child: TitleLabel(
-                          title: appLocalizations.myCountry,
-                          align: TextAlign.left,
-                        ),
+                    //--> Select country section
+                    Align(
+                      alignment: FractionalOffset.topLeft,
+                      child: TitleLabel(
+                        title: appLocalizations.myCountry,
+                        align: TextAlign.left,
                       ),
-                      SizedBox(height: 10.h),
-                      BlocBuilder<ProfileBloc, ProfileState>(
-                          builder: (context, state) {
-                        if (!state.hasCountries) {
+                    ),
+                    SizedBox(height: 10.h),
+                    BlocBuilder<ProfileBloc, ProfileState>(
+                        builder: (context, state) {
+                      if (!state.hasCountries) {
+                        return const Loading();
+                      }
+                      final items = [...state.countries];
+                      items.sort((a, b) => a.name.compareTo(b.name));
+
+                      final selectedCountries = state.selectedCountries.toSet();
+                      final initialSelection = selectedCountries.isEmpty
+                          ? null
+                          : items
+                              .where((country) =>
+                                  selectedCountries.contains(country.id))
+                              .toSet();
+
+                      return MultiSelect<Country>(
+                        navTitle: appLocalizations.selectCountry,
+                        placeholder: appLocalizations.selectCountry,
+                        items: state.countries,
+                        initialSelection: initialSelection,
+                        toDisplay: (country) => country.name,
+                        onFinished: (Set<Country> selectedCountries) async {
+                          bool _isNetworkAvailable =
+                              await GeneralFunctions.isNetworkAvailable();
+                          if (!_isNetworkAvailable) {
+                            StarfishSnackbar.showErrorMessage(
+                                context,
+                                appLocalizations
+                                    .internetRequiredToChangeCountriesOrLanguage);
+                            return;
+                          }
+                        },
+                      );
+                    }),
+
+                    SizedBox(height: 20.h),
+
+                    //--> Select language section
+                    Align(
+                      alignment: FractionalOffset.topLeft,
+                      child: TitleLabel(
+                        title: appLocalizations.myLanugages,
+                        align: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+
+                    BlocBuilder<ProfileBloc, ProfileState>(
+                      buildWhen: (previous, current) =>
+                          previous.languages != current.languages,
+                      builder: (context, state) {
+                        if (!state.hasLanguages) {
                           return const Loading();
                         }
-                        final items = [...state.countries];
+                        final items = [...state.languages];
                         items.sort((a, b) => a.name.compareTo(b.name));
 
-                        final selectedCountries =
-                            state.selectedCountries.toSet();
-                        final initialSelection = selectedCountries.isEmpty
+                        final selectedLanguages =
+                            state.selectedLanguages.toSet();
+                        final initialSelection = selectedLanguages.isEmpty
                             ? null
                             : items
                                 .where((country) =>
-                                    selectedCountries.contains(country.id))
+                                    selectedLanguages.contains(country.id))
                                 .toSet();
 
-                        return MultiSelect<Country>(
-                          navTitle: appLocalizations.selectCountry,
-                          placeholder: appLocalizations.selectCountry,
-                          items: state.countries,
+                        return MultiSelect<Language>(
+                          navTitle: appLocalizations.selectLanugages,
+                          placeholder: appLocalizations.selectLanugages,
+                          items: items,
                           initialSelection: initialSelection,
-                          toDisplay: (country) => country.name,
-                          onFinished: (Set<Country> selectedCountries) async {
-                            bool _isNetworkAvailable =
-                                await GeneralFunctions.isNetworkAvailable();
-                            if (!_isNetworkAvailable) {
-                              StarfishSnackbar.showErrorMessage(
-                                  context,
-                                  appLocalizations
-                                      .internetRequiredToChangeCountriesOrLanguage);
-                              return;
-                            }
+                          toDisplay: (language) => language.name,
+                          onFinished: (Set<Language> selectedLanguages) {
+                            context.read<ProfileBloc>().add(
+                                LanguageSelectionChanged(selectedLanguages));
                           },
                         );
-                      }),
+                      },
+                    ),
+                    // //--------------------------
 
-                      SizedBox(height: 20.h),
+                    SizedBox(height: 39.h),
 
-                      //--> Select language section
-                      Align(
+                    //--> Last successfull sync section
+                    Align(
+                      alignment: FractionalOffset.topLeft,
+                      child: TitleLabel(
+                        title: appLocalizations.lastSuccessfullSync,
+                        align: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                    const SeparatorLine(),
+                    SizedBox(height: 20.h),
+
+                    Container(
+                      child: Align(
                         alignment: FractionalOffset.topLeft,
-                        child: TitleLabel(
-                          title: appLocalizations.myLanugages,
-                          align: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-
-                      BlocBuilder<ProfileBloc, ProfileState>(
-                        buildWhen: (previous, current) =>
-                            previous.languages != current.languages,
-                        builder: (context, state) {
-                          if (!state.hasLanguages) {
-                            return const Loading();
-                          }
-                          final items = [...state.languages];
-                          items.sort((a, b) => a.name.compareTo(b.name));
-
-                          final selectedLanguages =
-                              state.selectedLanguages.toSet();
-                          final initialSelection = selectedLanguages.isEmpty
-                              ? null
-                              : items
-                                  .where((country) =>
-                                      selectedLanguages.contains(country.id))
-                                  .toSet();
-
-                          return MultiSelect<Language>(
-                            navTitle: appLocalizations.selectLanugages,
-                            placeholder: appLocalizations.selectLanugages,
-                            items: items,
-                            initialSelection: initialSelection,
-                            toDisplay: (language) => language.name,
-                            onFinished: (Set<Language> selectedLanguages) {
-                              context.read<ProfileBloc>().add(
-                                  LanguageSelectionChanged(selectedLanguages));
-                            },
-                          );
-                        },
-                      ),
-                      // //--------------------------
-
-                      SizedBox(height: 39.h),
-
-                      //--> Last successfull sync section
-                      Align(
-                        alignment: FractionalOffset.topLeft,
-                        child: TitleLabel(
-                          title: appLocalizations.lastSuccessfullSync,
-                          align: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      const SeparatorLine(),
-                      SizedBox(height: 20.h),
-
-                      Container(
-                        child: Align(
-                          alignment: FractionalOffset.topLeft,
-                          child: BlocBuilder<SyncBloc, SyncState>(
-                              builder: (context, state) {
-                            final lastSync = globalHiveApi.lastSync
-                                ?.toDateTime(toLocal: true);
-                            return Text.rich(
-                              TextSpan(
-                                text:
-                                    "${appLocalizations.lastSuccessfullSync}: ",
-                                style: TextStyle(
-                                  color: AppColors.appTitle,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 21.5.sp,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: state.isSyncing
-                                        ? appLocalizations.syncing
-                                        : '${lastSync == null ? '' : DateFormat('dd-MMM-yyyy').add_Hm().format(lastSync)}',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'Roboto',
-                                      fontSize: 21.5.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                        child: BlocBuilder<SyncBloc, SyncState>(
+                            builder: (context, state) {
+                          final lastSync =
+                              globalHiveApi.lastSync?.toDateTime(toLocal: true);
+                          return Text.rich(
+                            TextSpan(
+                              text: "${appLocalizations.lastSuccessfullSync}: ",
+                              style: TextStyle(
+                                color: AppColors.appTitle,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 21.5.sp,
                               ),
-                            );
-                          }),
+                              children: [
+                                TextSpan(
+                                  text: state.isSyncing
+                                      ? appLocalizations.syncing
+                                      : '${lastSync == null ? '' : DateFormat('dd-MMM-yyyy').add_Hm().format(lastSync)}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Roboto',
+                                    fontSize: 21.5.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    //--------------------------
+
+                    SizedBox(height: 50.h),
+                    //--> Group admin section
+                    //_getGroupAdminsSections(),
+                    Column(
+                      children: [
+                        Align(
+                          alignment: FractionalOffset.topLeft,
+                          child: TitleLabel(
+                            title: appLocalizations.forGroupAdmin,
+                            align: TextAlign.left,
+                          ),
                         ),
-                      ),
-                      //--------------------------
+                        SizedBox(height: 5.h),
 
-                      SizedBox(height: 50.h),
-                      //--> Group admin section
-                      //_getGroupAdminsSections(),
-                      Column(
-                        children: [
-                          Align(
-                            alignment: FractionalOffset.topLeft,
-                            child: TitleLabel(
-                              title: appLocalizations.forGroupAdmin,
-                              align: TextAlign.left,
-                            ),
+                        const SeparatorLine(),
+
+                        SizedBox(height: 20.h),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  appLocalizations.linkMyGroups,
+                                  textAlign: TextAlign.left,
+                                  style: titleTextStyle,
+                                ),
+                              ),
+                              Center(
+                                child: BlocBuilder<ProfileBloc, ProfileState>(
+                                  builder: (context, state) {
+                                    return IconButton(
+                                      icon: (state.hasLinkGroups)
+                                          ? Icon(Icons.check_box)
+                                          : Icon(Icons.check_box_outline_blank),
+                                      color: AppColors.selectedButtonBG,
+                                      onPressed: () {
+                                        context.read<ProfileBloc>().add(
+                                            LinkGroupChanged(
+                                                !state.hasLinkGroups));
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 5.h),
+                        ),
+                        //--------------------------
 
-                          const SeparatorLine(),
+                        SizedBox(height: 50.h),
 
-                          SizedBox(height: 20.h),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    appLocalizations.linkMyGroups,
-                                    textAlign: TextAlign.left,
-                                    style: titleTextStyle,
-                                  ),
+                        //--> My groups section
+                        BlocBuilder<MyTeacherAdminRoleCubit,
+                            MyTeacherAdminRoleState>(builder: (context, state) {
+                          if (!context
+                              .read<ProfileBloc>()
+                              .state
+                              .hasLinkGroups) {
+                            return Container();
+                          }
+                          return Column(
+                            children: [
+                              Align(
+                                alignment: FractionalOffset.topLeft,
+                                child: TitleLabel(
+                                  title: appLocalizations.myGroups,
+                                  align: TextAlign.left,
                                 ),
-                                Center(
-                                  child: BlocBuilder<ProfileBloc, ProfileState>(
-                                    builder: (context, state) {
-                                      return IconButton(
-                                        icon: (state.hasLinkGroups)
-                                            ? Icon(Icons.check_box)
-                                            : Icon(
-                                                Icons.check_box_outline_blank),
-                                        color: AppColors.selectedButtonBG,
-                                        onPressed: () {
-                                          context.read<ProfileBloc>().add(
-                                              LinkGroupChanged(
-                                                  !state.hasLinkGroups));
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          //--------------------------
+                              ),
+                              SizedBox(height: 5.h),
+                              const SeparatorLine(),
+                              SizedBox(height: 20.h),
+                              //_myGroupsList(),
 
-                          SizedBox(height: 50.h),
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: state.groupsWhereIAmAdmin.length,
+                                  itemBuilder: (context, index) {
+                                    return EditGroupEamil(
+                                      group: state.groupsWhereIAmAdmin
+                                          .elementAt(index),
+                                    );
+                                  }),
+                            ],
+                          );
+                        })
+                      ],
+                    ),
 
-                          //--> My groups section
-                          BlocBuilder<MyTeacherAdminRoleCubit,
-                                  MyTeacherAdminRoleState>(
-                              builder: (context, state) {
-                            if (!context
-                                .read<ProfileBloc>()
-                                .state
-                                .hasLinkGroups) {
-                              return Container();
-                            }
-                            return Column(
-                              children: [
-                                Align(
-                                  alignment: FractionalOffset.topLeft,
-                                  child: TitleLabel(
-                                    title: appLocalizations.myGroups,
-                                    align: TextAlign.left,
-                                  ),
-                                ),
-                                SizedBox(height: 5.h),
-                                const SeparatorLine(),
-                                SizedBox(height: 20.h),
-                                //_myGroupsList(),
-
-                                ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: state.groupsWhereIAmAdmin.length,
-                                    itemBuilder: (context, index) {
-                                      return EditGroupEamil(
-                                        group: state.groupsWhereIAmAdmin
-                                            .elementAt(index),
-                                      );
-                                    }),
-                              ],
-                            );
-                          })
-                        ],
-                      ),
-
-                      SizedBox(height: 75.h),
-                      //--------------------------
-                      // SizedBox(height: 10.h),
-                    ],
-                  ),
+                    SizedBox(height: 75.h),
+                    //--------------------------
+                    // SizedBox(height: 10.h),
+                  ],
                 ),
               ),
             ),

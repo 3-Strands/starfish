@@ -89,31 +89,27 @@ class ContactListView extends StatelessWidget {
 
                 final contacts = state.contactsToShow;
 
-                return Scrollbar(
-                  thickness: 5.w,
-                  thumbVisibility: false,
-                  child: ListView.builder(
-                    itemCount: contacts.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final contact = contacts[index];
-                      return ContactListItem(
-                        contact: contact,
-                        isSelected: state.isSelected(contact),
-                        onTap: () {
-                          //TODO: check if contact number already registered/selected for any other group member
+                return ListView.builder(
+                  itemCount: contacts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final contact = contacts[index];
+                    return ContactListItem(
+                      contact: contact,
+                      isSelected: state.isSelected(contact),
+                      onTap: () {
+                        //TODO: check if contact number already registered/selected for any other group member
 
-                          if (state.alreadySelectedContacts
-                              .contains(contact.id)) {
-                            StarfishSnackbar.showErrorMessage(context,
-                                appLocalizations.phonenumberAlreadyAdded);
-                            return;
-                          }
+                        if (state.alreadySelectedContacts
+                            .contains(contact.id)) {
+                          StarfishSnackbar.showErrorMessage(context,
+                              appLocalizations.phonenumberAlreadyAdded);
+                          return;
+                        }
 
-                          contactListCubit.contactToggled(contact);
-                        },
-                      );
-                    },
-                  ),
+                        contactListCubit.contactToggled(contact);
+                      },
+                    );
+                  },
                 );
               },
             ),

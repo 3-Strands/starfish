@@ -60,186 +60,181 @@ class _MyGroupViewState extends State<MyGroupActionsView> {
     final dashboardTab = context.read<DashboardNavigationCubit>().state;
     final currentGroup = dashboardTab is ActionsTab ? dashboardTab.group : null;
 
-    return Scrollbar(
-      thickness: 5.w,
-      thumbVisibility: false,
-      child: SingleChildScrollView(
-        key: _scrollKey,
-        controller: _scrollController,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            Container(
-              height: 52.h,
-              margin: EdgeInsets.only(left: 15.w, right: 15.w),
-              decoration: BoxDecoration(
-                color: AppColors.txtFieldBackground,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+    return SingleChildScrollView(
+      key: _scrollKey,
+      controller: _scrollController,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 20.h,
+          ),
+          Container(
+            height: 52.h,
+            margin: EdgeInsets.only(left: 15.w, right: 15.w),
+            decoration: BoxDecoration(
+              color: AppColors.txtFieldBackground,
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
               ),
-              child: Center(
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: BlocBuilder<ActionsCubit, ActionsState>(
-                        buildWhen: (previous, current) =>
-                            previous.actionFilter != current.actionFilter,
-                        builder: (context, state) {
-                          return DropdownButton2<ActionFilter>(
-                            isExpanded: true,
-                            offset: Offset(0, -10),
-                            dropdownMaxHeight: 350.h,
+            ),
+            child: Center(
+              child: DropdownButtonHideUnderline(
+                child: ButtonTheme(
+                  alignedDropdown: true,
+                  child: BlocBuilder<ActionsCubit, ActionsState>(
+                      buildWhen: (previous, current) =>
+                          previous.actionFilter != current.actionFilter,
+                      builder: (context, state) {
+                        return DropdownButton2<ActionFilter>(
+                          isExpanded: true,
+                          offset: Offset(0, -10),
+                          dropdownMaxHeight: 350.h,
 
-                            // icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 35,
+                          // icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 35,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 19.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                          hint: Text(
+                            //bloc.actionBloc.actionFilter.about,
+                            context
+                                .read<ActionsCubit>()
+                                .state
+                                .actionFilter
+                                .about,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Color(0xFF434141),
                               fontSize: 19.sp,
                               fontFamily: 'OpenSans',
                             ),
-                            hint: Text(
-                              //bloc.actionBloc.actionFilter.about,
-                              context
-                                  .read<ActionsCubit>()
-                                  .state
-                                  .actionFilter
-                                  .about,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            onChanged: (ActionFilter? actionFilter) {
-                              if (actionFilter == null) {
-                                return;
-                              }
-                              context
-                                  .read<ActionsCubit>()
-                                  .updateActionFilter(actionFilter);
-                            },
-                            items: ActionFilter.values
-                                .map<DropdownMenuItem<ActionFilter>>(
-                                    (ActionFilter value) {
-                              return DropdownMenuItem<ActionFilter>(
-                                value: value,
-                                child: Text(
-                                  value.about,
-                                  style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 17.sp,
-                                    fontFamily: 'OpenSans',
-                                  ),
+                            textAlign: TextAlign.left,
+                          ),
+                          onChanged: (ActionFilter? actionFilter) {
+                            if (actionFilter == null) {
+                              return;
+                            }
+                            context
+                                .read<ActionsCubit>()
+                                .updateActionFilter(actionFilter);
+                          },
+                          items: ActionFilter.values
+                              .map<DropdownMenuItem<ActionFilter>>(
+                                  (ActionFilter value) {
+                            return DropdownMenuItem<ActionFilter>(
+                              value: value,
+                              child: Text(
+                                value.about,
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 17.sp,
+                                  fontFamily: 'OpenSans',
                                 ),
-                              );
-                            }).toList(),
-                          );
-                        }),
-                  ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }),
                 ),
               ),
             ),
-            SizedBox(height: 10.h),
-            SearchBar(
-              initialValue: '',
-              onValueChanged: (query) {
-                context.read<ActionsCubit>().updateQuery(query);
+          ),
+          SizedBox(height: 10.h),
+          SearchBar(
+            initialValue: '',
+            onValueChanged: (query) {
+              context.read<ActionsCubit>().updateQuery(query);
+            },
+            // TODO: This is actually unnecessary, since we update the query on every change.
+            onDone: (_) {},
+          ),
+          SizedBox(
+            height: 10.h,
+          ),
+          //actionsList(bloc),
+          BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
+            final actionsToShow = state.getGroupActionsToShow();
+            final groupActionsMap = actionsToShow.groupActionsMap;
+            //final hasMore = actionsToShow.hasMore;
+            if (groupActionsMap.isEmpty) {
+              return Container(
+                margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Text(
+                  '${_appLocalizations.noRecordFound}',
+                  style: TextStyle(
+                    color: Color(0xFF434141),
+                    fontSize: 17.sp,
+                    fontFamily: 'OpenSans',
+                  ),
+                ),
+              );
+            }
+            if (!_hasAutoScrolled) {
+              _hasAutoScrolled = true;
+              _tryToScrollToGroup();
+            }
+            return GroupListView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              sectionsCount: groupActionsMap.keys.toList().length,
+              countOfItemInSection: (int section) {
+                return groupActionsMap.values.toList()[section].length;
               },
-              // TODO: This is actually unnecessary, since we update the query on every change.
-              onDone: (_) {},
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            //actionsList(bloc),
-            BlocBuilder<ActionsCubit, ActionsState>(builder: (context, state) {
-              final actionsToShow = state.getGroupActionsToShow();
-              final groupActionsMap = actionsToShow.groupActionsMap;
-              //final hasMore = actionsToShow.hasMore;
-              if (groupActionsMap.isEmpty) {
-                return Container(
-                  margin: EdgeInsets.only(left: 15.0.w, right: 15.0.w),
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
-                  child: Text(
-                    '${_appLocalizations.noRecordFound}',
-                    style: TextStyle(
-                      color: Color(0xFF434141),
-                      fontSize: 17.sp,
-                      fontFamily: 'OpenSans',
-                    ),
+              itemBuilder: (BuildContext context, IndexPath indexPath) {
+                ActionWithAssignedStatus _actionWithAssignedStatus =
+                    groupActionsMap.values.toList()[indexPath.section]
+                        [indexPath.index];
+                final _group = groupActionsMap.keys.toList()[indexPath.section];
+                return MyGroupActionListItem(
+                  index: indexPath.index,
+                  actionWithAssignedStatus: _actionWithAssignedStatus,
+                  onActionTap: _usersActionList,
+                  totalLeaners:
+                      _group.learners.length > 1 ? _group.learners.length : 1,
+                );
+              },
+              groupHeaderBuilder: (BuildContext context, int section) {
+                Group _group = groupActionsMap.keys.toList()[section];
+                return Padding(
+                  key: _group == currentGroup ? _groupInFocus : null,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${_group.name}',
+                        style: TextStyle(
+                          fontSize: 19.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF434141),
+                        ),
+                      ),
+                      Text(
+                        '${_appLocalizations.teacher}: ${_group.teachersName.join(", ")}',
+                        style: TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF797979),
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              }
-              if (!_hasAutoScrolled) {
-                _hasAutoScrolled = true;
-                _tryToScrollToGroup();
-              }
-              return GroupListView(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                sectionsCount: groupActionsMap.keys.toList().length,
-                countOfItemInSection: (int section) {
-                  return groupActionsMap.values.toList()[section].length;
-                },
-                itemBuilder: (BuildContext context, IndexPath indexPath) {
-                  ActionWithAssignedStatus _actionWithAssignedStatus =
-                      groupActionsMap.values.toList()[indexPath.section]
-                          [indexPath.index];
-                  final _group =
-                      groupActionsMap.keys.toList()[indexPath.section];
-                  return MyGroupActionListItem(
-                    index: indexPath.index,
-                    actionWithAssignedStatus: _actionWithAssignedStatus,
-                    onActionTap: _usersActionList,
-                    totalLeaners:
-                        _group.learners.length > 1 ? _group.learners.length : 1,
-                  );
-                },
-                groupHeaderBuilder: (BuildContext context, int section) {
-                  Group _group = groupActionsMap.keys.toList()[section];
-                  return Padding(
-                    key: _group == currentGroup ? _groupInFocus : null,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${_group.name}',
-                          style: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF434141),
-                          ),
-                        ),
-                        Text(
-                          '${_appLocalizations.teacher}: ${_group.teachersName.join(", ")}',
-                          style: TextStyle(
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF797979),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) => SizedBox(height: 10.h),
-                sectionSeparatorBuilder: (context, section) =>
-                    SizedBox(height: 10.h),
-              );
-            }),
-            SizedBox(
-              height: 10.h,
-            ),
-          ],
-        ),
+              },
+              separatorBuilder: (context, index) => SizedBox(height: 10.h),
+              sectionSeparatorBuilder: (context, section) =>
+                  SizedBox(height: 10.h),
+            );
+          }),
+          SizedBox(
+            height: 10.h,
+          ),
+        ],
       ),
     );
   }

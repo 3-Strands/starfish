@@ -186,136 +186,132 @@ class _GroupsViewState extends State<GroupsView> {
       body: Column(
         children: [
           Expanded(
-            child: Scrollbar(
-              thickness: 5.sp,
-              thumbVisibility: false,
-              child: ListView(
-                physics: ScrollPhysics(),
-                children: <Widget>[
-                  SearchBar(
-                    initialValue: "",
-                    onValueChanged: groupsCubit.queryChanged,
-                    // TODO: This is actually unnecessary, since we update the query on every change.
-                    onDone: (_) {},
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Container(
-                    height: 60.h,
-                    // width: 345.w,
-                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
+            child: ListView(
+              physics: ScrollPhysics(),
+              children: <Widget>[
+                SearchBar(
+                  initialValue: "",
+                  onValueChanged: groupsCubit.queryChanged,
+                  // TODO: This is actually unnecessary, since we update the query on every change.
+                  onDone: (_) {},
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Container(
+                  height: 60.h,
+                  // width: 345.w,
+                  margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.txtFieldBackground,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
                     ),
-                    child: Center(
-                      child: DropdownButtonHideUnderline(
-                        child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: BlocBuilder<GroupsCubit, GroupsState>(
-                            builder: (context, state) {
-                              return DropdownButton2<UserGroupRoleFilter>(
-                                offset: Offset(0, -10),
-                                dropdownMaxHeight: 350.h,
-                                isExpanded: true,
-                                iconSize: 35,
-                                style: TextStyle(
-                                  color: Color(0xFF434141),
-                                  fontSize: 19.sp,
-                                  fontFamily: 'OpenSans',
-                                ),
-                                value: state.userRoleFilter,
-                                onChanged: (UserGroupRoleFilter? value) {
-                                  if (value != null) {
-                                    context
-                                        .read<GroupsCubit>()
-                                        .userRoleFilterChanged(value);
-                                  }
-                                },
-                                items: UserGroupRoleFilter.values
-                                    .map<DropdownMenuItem<UserGroupRoleFilter>>(
-                                        (UserGroupRoleFilter value) {
-                                  return DropdownMenuItem<UserGroupRoleFilter>(
-                                    value: value,
-                                    child: Text(
-                                      value.filterLabel,
-                                      style: TextStyle(
-                                        color: Color(0xFF434141),
-                                        fontSize: 17.sp,
-                                        fontFamily: 'OpenSans',
-                                      ),
+                  ),
+                  child: Center(
+                    child: DropdownButtonHideUnderline(
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: BlocBuilder<GroupsCubit, GroupsState>(
+                          builder: (context, state) {
+                            return DropdownButton2<UserGroupRoleFilter>(
+                              offset: Offset(0, -10),
+                              dropdownMaxHeight: 350.h,
+                              isExpanded: true,
+                              iconSize: 35,
+                              style: TextStyle(
+                                color: Color(0xFF434141),
+                                fontSize: 19.sp,
+                                fontFamily: 'OpenSans',
+                              ),
+                              value: state.userRoleFilter,
+                              onChanged: (UserGroupRoleFilter? value) {
+                                if (value != null) {
+                                  context
+                                      .read<GroupsCubit>()
+                                      .userRoleFilterChanged(value);
+                                }
+                              },
+                              items: UserGroupRoleFilter.values
+                                  .map<DropdownMenuItem<UserGroupRoleFilter>>(
+                                      (UserGroupRoleFilter value) {
+                                return DropdownMenuItem<UserGroupRoleFilter>(
+                                  value: value,
+                                  child: Text(
+                                    value.filterLabel,
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 17.sp,
+                                      fontFamily: 'OpenSans',
                                     ),
-                                  );
-                                }).toList(),
-                              );
-                            },
-                          ),
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  BlocBuilder<GroupsCubit, GroupsState>(
-                    builder: (context, state) {
-                      final map = state.calculateGroupsToShow();
-                      final keys = map.keys.toList();
-                      final sections = map.values.toList();
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                BlocBuilder<GroupsCubit, GroupsState>(
+                  builder: (context, state) {
+                    final map = state.calculateGroupsToShow();
+                    final keys = map.keys.toList();
+                    final sections = map.values.toList();
 
-                      return GroupListView(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
-                        sectionsCount: keys.length,
-                        countOfItemInSection: (int section) =>
-                            sections[section].length,
-                        itemBuilder: (context, indexPath) {
-                          return GroupListItem(
-                            groupPlus: sections[indexPath.section]
-                                [indexPath.index],
-                            onGroupTap: _onGroupSelection,
-                            onLeaveGroupTap: (Group group) {
-                              Alerts.showMessageBox(
-                                  context: context,
-                                  title: appLocalizations.dialogAlert,
-                                  message: appLocalizations.alertLeaveThisGroup,
-                                  negativeButtonText: appLocalizations.cancel,
-                                  positiveButtonText: appLocalizations.leave,
-                                  negativeActionCallback: () {},
-                                  positiveActionCallback: () {
-                                    context
-                                        .read<GroupsCubit>()
-                                        .leaveGroupRequested(group);
-                                  });
-                            },
-                          );
-                        },
-                        groupHeaderBuilder: (context, section) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10.w, vertical: 8.h),
-                            child: Text(
-                              keys[section].about,
-                              style: TextStyle(
-                                  fontSize: 19.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF434141)),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
-                        sectionSeparatorBuilder: (context, section) =>
-                            SizedBox(height: 10),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                    return GroupListView(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(left: 10.0.w, right: 10.0.w),
+                      sectionsCount: keys.length,
+                      countOfItemInSection: (int section) =>
+                          sections[section].length,
+                      itemBuilder: (context, indexPath) {
+                        return GroupListItem(
+                          groupPlus: sections[indexPath.section]
+                              [indexPath.index],
+                          onGroupTap: _onGroupSelection,
+                          onLeaveGroupTap: (Group group) {
+                            Alerts.showMessageBox(
+                                context: context,
+                                title: appLocalizations.dialogAlert,
+                                message: appLocalizations.alertLeaveThisGroup,
+                                negativeButtonText: appLocalizations.cancel,
+                                positiveButtonText: appLocalizations.leave,
+                                negativeActionCallback: () {},
+                                positiveActionCallback: () {
+                                  context
+                                      .read<GroupsCubit>()
+                                      .leaveGroupRequested(group);
+                                });
+                          },
+                        );
+                      },
+                      groupHeaderBuilder: (context, section) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 8.h),
+                          child: Text(
+                            keys[section].about,
+                            style: TextStyle(
+                                fontSize: 19.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF434141)),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      sectionSeparatorBuilder: (context, section) =>
+                          SizedBox(height: 10),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           const LastSyncBottomWidget(),

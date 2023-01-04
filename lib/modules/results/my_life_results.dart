@@ -30,159 +30,153 @@ class _MyLifeResultsState extends State<MyLifeResults> {
   @override
   Widget build(BuildContext context) {
     appLocalizations = AppLocalizations.of(context)!;
-    return Scrollbar(
-      thickness: 5.w,
-      thumbVisibility: false,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-            ),
-            BlocBuilder<ResultsCubit, ResultsState>(
-                buildWhen: (previous, current) =>
-                    previous.month != current.month,
-                builder: (context, state) {
-                  return InkWell(
-                    onTap: () async {
-                      DateTime? selected = await _selectMonth(state.month);
-                      if (selected != null) {
-                        context.read<ResultsCubit>().updateMonthFilter(
-                              Date(year: selected.year, month: selected.month),
-                            );
-                      }
-                    },
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      height: 52.h,
-                      //width: 345.w,
-                      padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
-                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.txtFieldBackground,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 20.h,
+          ),
+          BlocBuilder<ResultsCubit, ResultsState>(
+              buildWhen: (previous, current) => previous.month != current.month,
+              builder: (context, state) {
+                return InkWell(
+                  onTap: () async {
+                    DateTime? selected = await _selectMonth(state.month);
+                    if (selected != null) {
+                      context.read<ResultsCubit>().updateMonthFilter(
+                            Date(year: selected.year, month: selected.month),
+                          );
+                    }
+                  },
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    height: 52.h,
+                    //width: 345.w,
+                    padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 0),
+                    margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.txtFieldBackground,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
                       ),
-                      child: ButtonTheme(
-                        alignedDropdown: true,
+                    ),
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: Text(
+                        DateTimeUtils.formatHiveDate(state.month,
+                            requiredDateFormat: "MMMM yyyy"),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Color(0xFF434141),
+                          fontSize: 19.sp,
+                          fontFamily: 'OpenSans',
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+          SizedBox(
+            height: 20.h,
+          ),
+          BlocBuilder<ResultsCubit, ResultsState>(
+              buildWhen: (previous, current) => previous.month != current.month,
+              builder: (context, state) {
+                final resultsToShow = state.myLifeResultsToShow;
+                final groupUserResultsList =
+                    resultsToShow.groupUserResultsStatusList;
+
+                if (groupUserResultsList.isEmpty) {
+                  return Container(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
                         child: Text(
-                          DateTimeUtils.formatHiveDate(state.month,
-                              requiredDateFormat: "MMMM yyyy"),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          '${appLocalizations.joinOrCreateGroupMessage}',
                           style: TextStyle(
-                            color: Color(0xFF434141),
-                            fontSize: 19.sp,
-                            fontFamily: 'OpenSans',
+                            fontSize: 16.sp,
+                            fontFamily: "OpenSans",
+                            fontStyle: FontStyle.italic,
+                            color: Color(0xFF797979),
                           ),
-                          textAlign: TextAlign.left,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
                   );
-                }),
-            SizedBox(
-              height: 20.h,
-            ),
-            BlocBuilder<ResultsCubit, ResultsState>(
-                buildWhen: (previous, current) =>
-                    previous.month != current.month,
-                builder: (context, state) {
-                  final resultsToShow = state.myLifeResultsToShow;
-                  final groupUserResultsList =
-                      resultsToShow.groupUserResultsStatusList;
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: groupUserResultsList.length,
+                  itemBuilder: (BuildContext context, index) {
+                    final _groupUserResultStatus =
+                        groupUserResultsList.elementAt(index);
 
-                  if (groupUserResultsList.isEmpty) {
                     return Container(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            '${appLocalizations.joinOrCreateGroupMessage}',
+                      margin: EdgeInsets.only(left: 15.w, right: 15.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          index != 0
+                              ? SizedBox(
+                                  height: 10.h,
+                                )
+                              : Container(),
+                          Text(
+                            '${_groupUserResultStatus.group?.name}',
                             style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: "OpenSans",
-                              fontStyle: FontStyle.italic,
-                              color: Color(0xFF797979),
-                            ),
-                            textAlign: TextAlign.center,
+                                fontFamily: "OpenSans",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 19.sp),
                           ),
-                        ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _buildActionCard(
+                              _groupUserResultStatus.actionsStatus),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          UserTransformation(
+                            groupId: _groupUserResultStatus.groupUser.groupId,
+                            userId: _groupUserResultStatus.groupUser.userId,
+                            month: state.month,
+                            transformation:
+                                _groupUserResultStatus.transformation,
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          FeedbackFromTeachers(
+                            groupUser: _groupUserResultStatus.groupUser,
+                            teacherResponses:
+                                _groupUserResultStatus.teacherResponses,
+                            month: state.month,
+                            learnerEvaluations:
+                                _groupUserResultStatus.learnerEvaluations,
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          GroupEvaluationWidget(
+                            groupUser: _groupUserResultStatus.groupUser,
+                            month: state.month,
+                            groupEvaluation:
+                                _groupUserResultStatus.groupEvaluation,
+                          ),
+                        ],
                       ),
                     );
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: groupUserResultsList.length,
-                    itemBuilder: (BuildContext context, index) {
-                      final _groupUserResultStatus =
-                          groupUserResultsList.elementAt(index);
-
-                      return Container(
-                        margin: EdgeInsets.only(left: 15.w, right: 15.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            index != 0
-                                ? SizedBox(
-                                    height: 10.h,
-                                  )
-                                : Container(),
-                            Text(
-                              '${_groupUserResultStatus.group?.name}',
-                              style: TextStyle(
-                                  fontFamily: "OpenSans",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 19.sp),
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            _buildActionCard(
-                                _groupUserResultStatus.actionsStatus),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            UserTransformation(
-                              groupId: _groupUserResultStatus.groupUser.groupId,
-                              userId: _groupUserResultStatus.groupUser.userId,
-                              month: state.month,
-                              transformation:
-                                  _groupUserResultStatus.transformation,
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            FeedbackFromTeachers(
-                              groupUser: _groupUserResultStatus.groupUser,
-                              teacherResponses:
-                                  _groupUserResultStatus.teacherResponses,
-                              month: state.month,
-                              learnerEvaluations:
-                                  _groupUserResultStatus.learnerEvaluations,
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            GroupEvaluationWidget(
-                              groupUser: _groupUserResultStatus.groupUser,
-                              month: state.month,
-                              groupEvaluation:
-                                  _groupUserResultStatus.groupEvaluation,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }),
-            SizedBox(
-              height: 20.h,
-            ),
-          ],
-        ),
+                  },
+                );
+              }),
+          SizedBox(
+            height: 20.h,
+          ),
+        ],
       ),
     );
   }

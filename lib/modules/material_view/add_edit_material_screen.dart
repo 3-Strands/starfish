@@ -123,104 +123,33 @@ class AddEditMaterialView extends StatelessWidget {
           }
           StarfishSnackbar.showErrorMessage(context, errorMessage);
         },
-        child: Scrollbar(
-          thickness: 5.w,
-          thumbVisibility: false,
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    appLocalizations.materialName,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    child: TextFormField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      style: formTitleTextStyle,
-                      onChanged: cubit.titleChanged,
-                      initialValue: cubit.state.title,
-                      decoration: InputDecoration(
-                        // hintText:
-                        //     appLocalizations.hintMaterialName,
-                        // hintStyle: formTitleHintStyle,
-                        labelText: appLocalizations.hintMaterialName,
-                        labelStyle: formTitleHintStyle,
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        alignLabelWithHint: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 21.h),
-
-                  // Description
-                  Text(
-                    appLocalizations.descripton,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    child: TextFormField(
-                      maxLines: 4,
-                      maxLength: 200,
-                      onChanged: cubit.descriptionChanged,
-                      initialValue: cubit.state.description,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        labelText: appLocalizations.hintMaterialDescription,
-                        labelStyle: formTitleHintStyle,
-                        alignLabelWithHint: true,
-                        // hintText: appLocalizations
-                        //     .hintMaterialDescription,
-                        // hintStyle: formTitleHintStyle,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 21.h),
-
-                  // Web Link
-                  Text(
-                    appLocalizations.addWebLink,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  TextFormField(
-                    onChanged: cubit.urlChanged,
-                    initialValue: cubit.state.url,
-                    keyboardType: TextInputType.url,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  appLocalizations.materialName,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  child: TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    style: formTitleTextStyle,
+                    onChanged: cubit.titleChanged,
+                    initialValue: cubit.state.title,
                     decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                      // hintText:
+                      //     appLocalizations.hintMaterialName,
+                      // hintStyle: formTitleHintStyle,
+                      labelText: appLocalizations.hintMaterialName,
+                      labelStyle: formTitleHintStyle,
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      alignLabelWithHint: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -231,347 +160,412 @@ class AddEditMaterialView extends StatelessWidget {
                         ),
                       ),
                       filled: true,
-                      fillColor: AppColors.txtFieldBackground,
+                      fillColor: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 21.h),
+                ),
+                SizedBox(height: 21.h),
 
-                  // Upload Material
-                  Text(
-                    appLocalizations.uploadAMaterial,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
+                // Description
+                Text(
+                  appLocalizations.descripton,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  child: TextFormField(
+                    maxLines: 4,
+                    maxLength: 200,
+                    onChanged: cubit.descriptionChanged,
+                    initialValue: cubit.state.description,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      labelText: appLocalizations.hintMaterialDescription,
+                      labelStyle: formTitleHintStyle,
+                      alignLabelWithHint: true,
+                      // hintText: appLocalizations
+                      //     .hintMaterialDescription,
+                      // hintStyle: formTitleHintStyle,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
                   ),
-                  SizedBox(height: 11.h),
+                ),
+                SizedBox(height: 21.h),
 
-                  BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
-                    buildWhen: (previous, current) =>
-                        previous.previouslySelectedFiles !=
-                        current.previouslySelectedFiles,
-                    builder: (context, state) =>
-                        _PreviewOldFiles(files: state.previouslySelectedFiles),
+                // Web Link
+                Text(
+                  appLocalizations.addWebLink,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                TextFormField(
+                  onChanged: cubit.urlChanged,
+                  initialValue: cubit.state.url,
+                  keyboardType: TextInputType.url,
+                  decoration: InputDecoration(
+                    contentPadding:
+                        EdgeInsets.fromLTRB(15.0.w, 0.0, 5.0.w, 0.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: AppColors.txtFieldBackground,
                   ),
+                ),
+                SizedBox(height: 21.h),
 
-                  SizedBox(height: 10.h),
+                // Upload Material
+                Text(
+                  appLocalizations.uploadAMaterial,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
 
-                  BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
-                    buildWhen: (previous, current) =>
-                        previous.newlySelectedFiles !=
-                        current.newlySelectedFiles,
-                    builder: (context, state) =>
-                        _PreviewNewFiles(files: state.newlySelectedFiles),
-                  ),
+                BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                  buildWhen: (previous, current) =>
+                      previous.previouslySelectedFiles !=
+                      current.previouslySelectedFiles,
+                  builder: (context, state) =>
+                      _PreviewOldFiles(files: state.previouslySelectedFiles),
+                ),
 
-                  // Add Materials
-                  DottedBorder(
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(30.r),
-                    color: Color(0xFF3475F0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 50.h,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final cubit = context.read<AddEditMaterialCubit>();
+                SizedBox(height: 10.h),
 
-                          if (cubit.state.hasMaxFilesSelected) {
-                            StarfishSnackbar.showErrorMessage(
-                                context, appLocalizations.maxFilesSelected);
-                          } else {
-                            final file = await getPickerFileWithCrop(
-                              context,
-                              type: FileType.custom,
-                              allowedExtensions: ALLOWED_FILE_TYPES,
-                            );
+                BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                  buildWhen: (previous, current) =>
+                      previous.newlySelectedFiles != current.newlySelectedFiles,
+                  builder: (context, state) =>
+                      _PreviewNewFiles(files: state.newlySelectedFiles),
+                ),
 
-                            if (file != null) {
-                              cubit.addFile(file);
-                            }
+                // Add Materials
+                DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(30.r),
+                  color: Color(0xFF3475F0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 50.h,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final cubit = context.read<AddEditMaterialCubit>();
+
+                        if (cubit.state.hasMaxFilesSelected) {
+                          StarfishSnackbar.showErrorMessage(
+                              context, appLocalizations.maxFilesSelected);
+                        } else {
+                          final file = await getPickerFileWithCrop(
+                            context,
+                            type: FileType.custom,
+                            allowedExtensions: ALLOWED_FILE_TYPES,
+                          );
+
+                          if (file != null) {
+                            cubit.addFile(file);
                           }
-                        },
-                        child: Text(
-                          appLocalizations.addMaterials,
-                          style: TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 17.sp,
-                            color: Color(0xFF3475F0),
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent,
+                        }
+                      },
+                      child: Text(
+                        appLocalizations.addMaterials,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 17.sp,
+                          color: Color(0xFF3475F0),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 21.h),
-
-                  // Language Selection
-                  Text(
-                    appLocalizations.lanugages,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    child:
-                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
-                      buildWhen: (previous, current) =>
-                          previous.languages != current.languages,
-                      builder: (context, state) {
-                        return MultiSelect<Language>(
-                          navTitle: appLocalizations.selectLanugages,
-                          placeholder: appLocalizations.selectLanugages,
-                          items: state.languages,
-                          initialSelection: state.selectedLanguages
-                              .map(
-                                (languageId) =>
-                                    globalHiveApi.language.get(languageId) ??
-                                        Language(
-                                          id: languageId,
-                                          name:
-                                              state.languageNames[languageId] ??
-                                                  '[unk]',
-                                        )
-                                      ..freeze(),
-                              )
-                              .toSet(),
-                          toDisplay: (language) => language.name,
-                          onFinished: (selectedLanguages) {
-                            context
-                                .read<AddEditMaterialCubit>()
-                                .selectedLanguagesChanged(
-                                    selectedLanguages.map((l) => l.id).toSet());
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 21.h),
-
-                  // Type Selection
-                  Text(
-                    appLocalizations.type,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    child:
-                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
-                      buildWhen: (previous, current) =>
-                          previous.types != current.types,
-                      builder: (context, state) {
-                        return MultiSelect<MaterialType>(
-                          navTitle: appLocalizations.selectType,
-                          placeholder: appLocalizations.selectType,
-                          items: state.types,
-                          initialSelection: state.selectedTypes
-                              .map((id) => globalHiveApi.materialType.get(id)!)
-                              .toSet(),
-                          toDisplay: (type) => type.name,
-                          onFinished: (selectedTypes) {
-                            context
-                                .read<AddEditMaterialCubit>()
-                                .selectedTypesChanged(
-                                    selectedTypes.map((l) => l.id).toSet());
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 21.h),
-
-                  // Topic Selection
-                  Text(
-                    appLocalizations.topics,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    child:
-                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
-                      buildWhen: (previous, current) =>
-                          previous.topics != current.topics,
-                      builder: (context, state) {
-                        return MultiSelect<MaterialTopic>(
-                          navTitle: appLocalizations.selectTopics,
-                          placeholder: appLocalizations.selectTopics,
-                          items: state.topics,
-                          initialSelection: state.selectedTopics
-                              .map(
-                                (name) => globalHiveApi.materialTopic.values
-                                    .firstWhere(
-                                  (topic) => topic.name == name,
-                                  orElse: () =>
-                                      // TODO: Should be based on id, NOT name
-                                      MaterialTopic(name: name)..freeze(),
-                                ),
-                              )
-                              .toSet(),
-                          toDisplay: (topic) => topic.name,
-                          onFinished: (selectedTopics) {
-                            context
-                                .read<AddEditMaterialCubit>()
-                                .selectedTopicsChanged(
-                                  selectedTopics.map((l) => l.name).toSet(),
-                                );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 21.h),
-
-                  //Seen by
-                  Text(
-                    appLocalizations.seenBy,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    height: 52.h,
-                    width: double.infinity,
-                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: BlocBuilder<AddEditMaterialCubit,
-                          AddEditMaterialState>(
-                        builder: (context, state) {
-                          return DropdownButton2<Material_Visibility>(
-                            //   dropdownMaxHeight: 350.h,
-                            isExpanded: true,
-                            offset: Offset(0, -5),
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            value: state.visibility ==
-                                    Material_Visibility.UNSPECIFIED_VISIBILITY
-                                ? null
-                                : state.visibility,
-                            hint: Text(
-                              appLocalizations.seenBy,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                            ),
-                            onChanged: cubit.visibilityChanged,
-                            items: VisibilityDisplay.displayList
-                                .map(
-                                  (visibility) =>
-                                      DropdownMenuItem<Material_Visibility>(
-                                    value: visibility,
-                                    child: Text(
-                                      visibility.toLocaleString(context),
-                                      style: TextStyle(
-                                        color: Color(0xFF434141),
-                                        fontSize: 17.sp,
-                                        fontFamily: 'OpenSans',
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          );
-                        },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent,
                       ),
                     ),
                   ),
-                  SizedBox(height: 21.h),
+                ),
+                SizedBox(height: 21.h),
 
-                  //Edited by
-                  Text(
-                    appLocalizations.editedOrDeletedBy,
-                    textAlign: TextAlign.left,
-                    style: titleTextStyle,
-                  ),
-                  SizedBox(height: 11.h),
-                  Container(
-                    height: 52.h,
-                    width: double.infinity,
-                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.txtFieldBackground,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: BlocBuilder<AddEditMaterialCubit,
-                          AddEditMaterialState>(
-                        builder: (context, state) {
-                          return DropdownButton2<Material_Editability>(
-                            offset: Offset(0, -10),
-                            dropdownMaxHeight: 90.h,
-                            scrollbarAlwaysShow: true,
-                            style: TextStyle(
-                              color: Color(0xFF434141),
-                              fontSize: 19.sp,
-                              fontFamily: 'OpenSans',
-                            ),
-                            hint: Text(
-                              appLocalizations.editedOrDeletedBy,
-                              style: TextStyle(
-                                color: Color(0xFF434141),
-                                fontSize: 19.sp,
-                                fontFamily: 'OpenSans',
-                              ),
-                            ),
-                            value: state.editability ==
-                                    Material_Editability.UNSPECIFIED_EDITABILITY
-                                ? null
-                                : state.editability,
-                            // onTap: () {
-                            //   _dismissFieldFocus();
-                            // },
-                            onChanged: cubit.editabilityChanged,
-                            items: EditabilityDisplay.displayList
-                                .map((editability) {
-                              return DropdownMenuItem<Material_Editability>(
-                                value: editability,
-                                child: Text(
-                                  editability.toLocaleString(context),
-                                  style: TextStyle(
-                                    color: Color(0xFF434141),
-                                    fontSize: 17.sp,
-                                    fontFamily: 'OpenSans',
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 21.h),
-
-                  BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                // Language Selection
+                Text(
+                  appLocalizations.lanugages,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  child:
+                      BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                    buildWhen: (previous, current) =>
+                        previous.languages != current.languages,
                     builder: (context, state) {
-                      if (state.history.isEmpty) {
-                        return const SizedBox();
-                      }
-                      return EditHistory(
-                        history: state.history,
+                      return MultiSelect<Language>(
+                        navTitle: appLocalizations.selectLanugages,
+                        placeholder: appLocalizations.selectLanugages,
+                        items: state.languages,
+                        initialSelection: state.selectedLanguages
+                            .map(
+                              (languageId) =>
+                                  globalHiveApi.language.get(languageId) ??
+                                      Language(
+                                        id: languageId,
+                                        name: state.languageNames[languageId] ??
+                                            '[unk]',
+                                      )
+                                    ..freeze(),
+                            )
+                            .toSet(),
+                        toDisplay: (language) => language.name,
+                        onFinished: (selectedLanguages) {
+                          context
+                              .read<AddEditMaterialCubit>()
+                              .selectedLanguagesChanged(
+                                  selectedLanguages.map((l) => l.id).toSet());
+                        },
                       );
                     },
                   ),
+                ),
+                SizedBox(height: 21.h),
 
-                  SizedBox(height: 75.h),
-                ],
-              ),
+                // Type Selection
+                Text(
+                  appLocalizations.type,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  child:
+                      BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                    buildWhen: (previous, current) =>
+                        previous.types != current.types,
+                    builder: (context, state) {
+                      return MultiSelect<MaterialType>(
+                        navTitle: appLocalizations.selectType,
+                        placeholder: appLocalizations.selectType,
+                        items: state.types,
+                        initialSelection: state.selectedTypes
+                            .map((id) => globalHiveApi.materialType.get(id)!)
+                            .toSet(),
+                        toDisplay: (type) => type.name,
+                        onFinished: (selectedTypes) {
+                          context
+                              .read<AddEditMaterialCubit>()
+                              .selectedTypesChanged(
+                                  selectedTypes.map((l) => l.id).toSet());
+                        },
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 21.h),
+
+                // Topic Selection
+                Text(
+                  appLocalizations.topics,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  child:
+                      BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                    buildWhen: (previous, current) =>
+                        previous.topics != current.topics,
+                    builder: (context, state) {
+                      return MultiSelect<MaterialTopic>(
+                        navTitle: appLocalizations.selectTopics,
+                        placeholder: appLocalizations.selectTopics,
+                        items: state.topics,
+                        initialSelection: state.selectedTopics
+                            .map(
+                              (name) =>
+                                  globalHiveApi.materialTopic.values.firstWhere(
+                                (topic) => topic.name == name,
+                                orElse: () =>
+                                    // TODO: Should be based on id, NOT name
+                                    MaterialTopic(name: name)..freeze(),
+                              ),
+                            )
+                            .toSet(),
+                        toDisplay: (topic) => topic.name,
+                        onFinished: (selectedTopics) {
+                          context
+                              .read<AddEditMaterialCubit>()
+                              .selectedTopicsChanged(
+                                selectedTopics.map((l) => l.name).toSet(),
+                              );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 21.h),
+
+                //Seen by
+                Text(
+                  appLocalizations.seenBy,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  height: 52.h,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.txtFieldBackground,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child:
+                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      builder: (context, state) {
+                        return DropdownButton2<Material_Visibility>(
+                          //   dropdownMaxHeight: 350.h,
+                          isExpanded: true,
+                          offset: Offset(0, -5),
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 19.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                          value: state.visibility ==
+                                  Material_Visibility.UNSPECIFIED_VISIBILITY
+                              ? null
+                              : state.visibility,
+                          hint: Text(
+                            appLocalizations.seenBy,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                          ),
+                          onChanged: cubit.visibilityChanged,
+                          items: VisibilityDisplay.displayList
+                              .map(
+                                (visibility) =>
+                                    DropdownMenuItem<Material_Visibility>(
+                                  value: visibility,
+                                  child: Text(
+                                    visibility.toLocaleString(context),
+                                    style: TextStyle(
+                                      color: Color(0xFF434141),
+                                      fontSize: 17.sp,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 21.h),
+
+                //Edited by
+                Text(
+                  appLocalizations.editedOrDeletedBy,
+                  textAlign: TextAlign.left,
+                  style: titleTextStyle,
+                ),
+                SizedBox(height: 11.h),
+                Container(
+                  height: 52.h,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.txtFieldBackground,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child:
+                        BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                      builder: (context, state) {
+                        return DropdownButton2<Material_Editability>(
+                          offset: Offset(0, -10),
+                          dropdownMaxHeight: 90.h,
+                          scrollbarAlwaysShow: true,
+                          style: TextStyle(
+                            color: Color(0xFF434141),
+                            fontSize: 19.sp,
+                            fontFamily: 'OpenSans',
+                          ),
+                          hint: Text(
+                            appLocalizations.editedOrDeletedBy,
+                            style: TextStyle(
+                              color: Color(0xFF434141),
+                              fontSize: 19.sp,
+                              fontFamily: 'OpenSans',
+                            ),
+                          ),
+                          value: state.editability ==
+                                  Material_Editability.UNSPECIFIED_EDITABILITY
+                              ? null
+                              : state.editability,
+                          // onTap: () {
+                          //   _dismissFieldFocus();
+                          // },
+                          onChanged: cubit.editabilityChanged,
+                          items:
+                              EditabilityDisplay.displayList.map((editability) {
+                            return DropdownMenuItem<Material_Editability>(
+                              value: editability,
+                              child: Text(
+                                editability.toLocaleString(context),
+                                style: TextStyle(
+                                  color: Color(0xFF434141),
+                                  fontSize: 17.sp,
+                                  fontFamily: 'OpenSans',
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 21.h),
+
+                BlocBuilder<AddEditMaterialCubit, AddEditMaterialState>(
+                  builder: (context, state) {
+                    if (state.history.isEmpty) {
+                      return const SizedBox();
+                    }
+                    return EditHistory(
+                      history: state.history,
+                    );
+                  },
+                ),
+
+                SizedBox(height: 75.h),
+              ],
             ),
           ),
         ),

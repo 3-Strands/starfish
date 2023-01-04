@@ -79,6 +79,7 @@ class AppView extends StatelessWidget {
         if (state is AppReady) {
           return MaterialApp(
             locale: Locale(state.locale),
+            scrollBehavior: const _StarfishScrollBehavior(),
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -170,5 +171,25 @@ class AppView extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _StarfishScrollBehavior extends MaterialScrollBehavior {
+  const _StarfishScrollBehavior();
+
+  @override
+  Widget buildScrollbar(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    switch (axisDirectionToAxis(details.direction)) {
+      case Axis.horizontal:
+        return child;
+      case Axis.vertical:
+        // Always show a scrollbar on all platforms
+        return Scrollbar(
+          controller: details.controller,
+          thickness: 5,
+          child: child,
+        );
+    }
   }
 }
