@@ -1,4 +1,4 @@
-part of 'generateCode.dart';
+part of 'generate_code.dart';
 
 final List<String> _kMaterialFieldMask = [
   'title',

@@ -201,6 +201,12 @@ class StarfishClient extends $grpc.Client {
       '/sil.starfish.Starfish/Sync',
       ($0.SyncRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.SyncResponse.fromBuffer(value));
+  static final _$syncWeb =
+      $grpc.ClientMethod<$0.SyncWebRequest, $0.SyncWebResponse>(
+          '/sil.starfish.Starfish/SyncWeb',
+          ($0.SyncWebRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.SyncWebResponse.fromBuffer(value));
   static final _$updateCurrentUser =
       $grpc.ClientMethod<$0.UpdateCurrentUserRequest, $0.User>(
           '/sil.starfish.Starfish/UpdateCurrentUser',
@@ -449,6 +455,11 @@ class StarfishClient extends $grpc.Client {
       $async.Stream<$0.SyncRequest> request,
       {$grpc.CallOptions? options}) {
     return $createStreamingCall(_$sync, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.SyncWebResponse> syncWeb($0.SyncWebRequest request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$syncWeb, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.User> updateCurrentUser(
@@ -748,6 +759,13 @@ abstract class StarfishServiceBase extends $grpc.Service {
         true,
         ($core.List<$core.int> value) => $0.SyncRequest.fromBuffer(value),
         ($0.SyncResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.SyncWebRequest, $0.SyncWebResponse>(
+        'SyncWeb',
+        syncWeb_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.SyncWebRequest.fromBuffer(value),
+        ($0.SyncWebResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UpdateCurrentUserRequest, $0.User>(
         'UpdateCurrentUser',
         updateCurrentUser_Pre,
@@ -850,6 +868,11 @@ abstract class StarfishServiceBase extends $grpc.Service {
     return refreshSession(call, await request);
   }
 
+  $async.Future<$0.SyncWebResponse> syncWeb_Pre(
+      $grpc.ServiceCall call, $async.Future<$0.SyncWebRequest> request) async {
+    return syncWeb(call, await request);
+  }
+
   $async.Future<$0.User> updateCurrentUser_Pre($grpc.ServiceCall call,
       $async.Future<$0.UpdateCurrentUserRequest> request) async {
     return updateCurrentUser(call, await request);
@@ -933,6 +956,8 @@ abstract class StarfishServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.RefreshSessionRequest request);
   $async.Stream<$0.SyncResponse> sync(
       $grpc.ServiceCall call, $async.Stream<$0.SyncRequest> request);
+  $async.Future<$0.SyncWebResponse> syncWeb(
+      $grpc.ServiceCall call, $0.SyncWebRequest request);
   $async.Future<$0.User> updateCurrentUser(
       $grpc.ServiceCall call, $0.UpdateCurrentUserRequest request);
 }

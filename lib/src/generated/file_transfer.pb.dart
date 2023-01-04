@@ -92,6 +92,47 @@ class FileData extends $pb.GeneratedMessage {
   void clearChunk() => clearField(2);
 }
 
+class FileDataWrapper extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FileDataWrapper', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..pc<FileData>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fileData', $pb.PbFieldType.PM, subBuilder: FileData.create)
+    ..hasRequiredFields = false
+  ;
+
+  FileDataWrapper._() : super();
+  factory FileDataWrapper({
+    $core.Iterable<FileData>? fileData,
+  }) {
+    final _result = create();
+    if (fileData != null) {
+      _result.fileData.addAll(fileData);
+    }
+    return _result;
+  }
+  factory FileDataWrapper.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory FileDataWrapper.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  FileDataWrapper clone() => FileDataWrapper()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  FileDataWrapper copyWith(void Function(FileDataWrapper) updates) => super.copyWith((message) => updates(message as FileDataWrapper)) as FileDataWrapper; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static FileDataWrapper create() => FileDataWrapper._();
+  FileDataWrapper createEmptyInstance() => create();
+  static $pb.PbList<FileDataWrapper> createRepeated() => $pb.PbList<FileDataWrapper>();
+  @$core.pragma('dart2js:noInline')
+  static FileDataWrapper getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FileDataWrapper>(create);
+  static FileDataWrapper? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<FileData> get fileData => $_getList(0);
+}
+
 class FileMetaData extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FileMetaData', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'entityId')
@@ -272,6 +313,47 @@ class UploadStatus extends $pb.GeneratedMessage {
   void clearMessage() => clearField(3);
 }
 
+class UploadStatusWrapper extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UploadStatusWrapper', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..pc<UploadStatus>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'statuses', $pb.PbFieldType.PM, subBuilder: UploadStatus.create)
+    ..hasRequiredFields = false
+  ;
+
+  UploadStatusWrapper._() : super();
+  factory UploadStatusWrapper({
+    $core.Iterable<UploadStatus>? statuses,
+  }) {
+    final _result = create();
+    if (statuses != null) {
+      _result.statuses.addAll(statuses);
+    }
+    return _result;
+  }
+  factory UploadStatusWrapper.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UploadStatusWrapper.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UploadStatusWrapper clone() => UploadStatusWrapper()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UploadStatusWrapper copyWith(void Function(UploadStatusWrapper) updates) => super.copyWith((message) => updates(message as UploadStatusWrapper)) as UploadStatusWrapper; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UploadStatusWrapper create() => UploadStatusWrapper._();
+  UploadStatusWrapper createEmptyInstance() => create();
+  static $pb.PbList<UploadStatusWrapper> createRepeated() => $pb.PbList<UploadStatusWrapper>();
+  @$core.pragma('dart2js:noInline')
+  static UploadStatusWrapper getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UploadStatusWrapper>(create);
+  static UploadStatusWrapper? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<UploadStatus> get statuses => $_getList(0);
+}
+
 class DownloadError extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DownloadError', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
     ..aOM<DownloadRequest>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'request', subBuilder: DownloadRequest.create)
@@ -420,6 +502,47 @@ class DownloadRequest extends $pb.GeneratedMessage {
   $core.List<$core.String> get filenames => $_getList(2);
 }
 
+class DownloadRequestWrapper extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DownloadRequestWrapper', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..pc<DownloadRequest>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'requests', $pb.PbFieldType.PM, subBuilder: DownloadRequest.create)
+    ..hasRequiredFields = false
+  ;
+
+  DownloadRequestWrapper._() : super();
+  factory DownloadRequestWrapper({
+    $core.Iterable<DownloadRequest>? requests,
+  }) {
+    final _result = create();
+    if (requests != null) {
+      _result.requests.addAll(requests);
+    }
+    return _result;
+  }
+  factory DownloadRequestWrapper.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DownloadRequestWrapper.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DownloadRequestWrapper clone() => DownloadRequestWrapper()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DownloadRequestWrapper copyWith(void Function(DownloadRequestWrapper) updates) => super.copyWith((message) => updates(message as DownloadRequestWrapper)) as DownloadRequestWrapper; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DownloadRequestWrapper create() => DownloadRequestWrapper._();
+  DownloadRequestWrapper createEmptyInstance() => create();
+  static $pb.PbList<DownloadRequestWrapper> createRepeated() => $pb.PbList<DownloadRequestWrapper>();
+  @$core.pragma('dart2js:noInline')
+  static DownloadRequestWrapper getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DownloadRequestWrapper>(create);
+  static DownloadRequestWrapper? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<DownloadRequest> get requests => $_getList(0);
+}
+
 enum DownloadResponse_Response {
   metaData, 
   chunk, 
@@ -514,5 +637,46 @@ class DownloadResponse extends $pb.GeneratedMessage {
   void clearError() => clearField(3);
   @$pb.TagNumber(3)
   DownloadError ensureError() => $_ensure(2);
+}
+
+class DownloadResponseWrapper extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DownloadResponseWrapper', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'sil.starfish'), createEmptyInstance: create)
+    ..pc<DownloadResponse>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'responses', $pb.PbFieldType.PM, subBuilder: DownloadResponse.create)
+    ..hasRequiredFields = false
+  ;
+
+  DownloadResponseWrapper._() : super();
+  factory DownloadResponseWrapper({
+    $core.Iterable<DownloadResponse>? responses,
+  }) {
+    final _result = create();
+    if (responses != null) {
+      _result.responses.addAll(responses);
+    }
+    return _result;
+  }
+  factory DownloadResponseWrapper.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DownloadResponseWrapper.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DownloadResponseWrapper clone() => DownloadResponseWrapper()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DownloadResponseWrapper copyWith(void Function(DownloadResponseWrapper) updates) => super.copyWith((message) => updates(message as DownloadResponseWrapper)) as DownloadResponseWrapper; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DownloadResponseWrapper create() => DownloadResponseWrapper._();
+  DownloadResponseWrapper createEmptyInstance() => create();
+  static $pb.PbList<DownloadResponseWrapper> createRepeated() => $pb.PbList<DownloadResponseWrapper>();
+  @$core.pragma('dart2js:noInline')
+  static DownloadResponseWrapper getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DownloadResponseWrapper>(create);
+  static DownloadResponseWrapper? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<DownloadResponse> get responses => $_getList(0);
 }
 
