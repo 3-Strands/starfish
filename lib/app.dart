@@ -72,105 +72,103 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: Size(375, 812),
-      builder: (_) => BlocConsumer<AppBloc, AppState>(
-        listenWhen: (previous, current) => previous is AppBooting,
-        listener: (context, state) => removeSplashScreen(),
-        builder: (context, state) {
-          if (state is AppReady) {
-            return MaterialApp(
-              locale: Locale(state.locale),
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: L10n.all,
-              navigatorKey: NavigationService.navigatorKey, // set property
-              debugShowCheckedModeBanner: false,
-              title: '',
-              theme: AppStyles.defaultTheme(),
-              // home: SplashScreen(),
-              // initialRoute: _initialRoute,
-              // routes: Routes.routes,
-              onGenerateRoute: (settings) {
-                final loginGuard = BlocListener<ErrorCubit, UserFacingError?>(
-                  listener: (context, error) {
-                    if (error != null) {
-                      final appLocalizations = AppLocalizations.of(context)!;
-                      String message;
-                      switch (error.type) {
-                        case ErrorType.groupMustHaveAdmin:
-                          message =
-                              appLocalizations.alertGroupCanNotBeWithoutAdmin;
-                          break;
-                      }
-                      if (error.severity == Severity.low) {
-                        StarfishSnackbar.showErrorMessage(context, message);
-                      } else {
-                        Alerts.showMessageBox(
-                          context: context,
-                          title: appLocalizations.dialogAlert,
-                          message: message,
-                          callback: () {},
-                        );
-                      }
+    return BlocConsumer<AppBloc, AppState>(
+      listenWhen: (previous, current) => previous is AppBooting,
+      listener: (context, state) => removeSplashScreen(),
+      builder: (context, state) {
+        if (state is AppReady) {
+          return MaterialApp(
+            locale: Locale(state.locale),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: L10n.all,
+            navigatorKey: NavigationService.navigatorKey, // set property
+            debugShowCheckedModeBanner: false,
+            title: '',
+            theme: AppStyles.defaultTheme(),
+            // home: SplashScreen(),
+            // initialRoute: _initialRoute,
+            // routes: Routes.routes,
+            onGenerateRoute: (settings) {
+              final loginGuard = BlocListener<ErrorCubit, UserFacingError?>(
+                listener: (context, error) {
+                  if (error != null) {
+                    final appLocalizations = AppLocalizations.of(context)!;
+                    String message;
+                    switch (error.type) {
+                      case ErrorType.groupMustHaveAdmin:
+                        message =
+                            appLocalizations.alertGroupCanNotBeWithoutAdmin;
+                        break;
+                    }
+                    if (error.severity == Severity.low) {
+                      StarfishSnackbar.showErrorMessage(context, message);
+                    } else {
+                      Alerts.showMessageBox(
+                        context: context,
+                        title: appLocalizations.dialogAlert,
+                        message: message,
+                        callback: () {},
+                      );
+                    }
+                  }
+                },
+                child: BlocConsumer<SessionBloc, SessionState>(
+                  listener: (context, state) {
+                    if (state is SessionActive &&
+                        state.pendingReauthenticate != null) {
+                      final completer = state.pendingReauthenticate!;
+                      Reauthenticate.init(context)
+                          .then(completer.complete)
+                          .onError(completer.completeError);
                     }
                   },
-                  child: BlocConsumer<SessionBloc, SessionState>(
-                    listener: (context, state) {
-                      if (state is SessionActive &&
-                          state.pendingReauthenticate != null) {
-                        final completer = state.pendingReauthenticate!;
-                        Reauthenticate.init(context)
-                            .then(completer.complete)
-                            .onError(completer.completeError);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is SessionActive) {
-                        return AuthenticatedApp(session: state.session);
-                      }
-                      return const Authentication();
-                    },
-                  ),
-                );
+                  builder: (context, state) {
+                    if (state is SessionActive) {
+                      return AuthenticatedApp(session: state.session);
+                    }
+                    return const Authentication();
+                  },
+                ),
+              );
 
-                return MaterialPageRoute<void>(
-                  settings: settings,
-                  builder: (BuildContext context) => loginGuard,
+              return MaterialPageRoute<void>(
+                settings: settings,
+                builder: (BuildContext context) => loginGuard,
+              );
+            },
+            // onGenerateInitialRoutes: _initialRoute == null ? null : (String route) =>
+            //   [Routes.onGenerateRoute(RouteSettings(name: route))],
+            builder: EasyLoading.init(
+              builder: (context, widget) {
+                Widget wrapper = MediaQuery(
+                  //Setting font does not change with system font size
+                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                  child: widget!,
+                );
+                if (Platform.isWeb) {
+                  wrapper = ConstrainCenter(child: wrapper);
+                }
+                return ScreenUtilInit(
+                  designSize: MediaQuery.of(context).size,
+                  builder: (context, child) => child!,
+                  child: wrapper,
                 );
               },
-              // onGenerateInitialRoutes: _initialRoute == null ? null : (String route) =>
-              //   [Routes.onGenerateRoute(RouteSettings(name: route))],
-              builder: EasyLoading.init(
-                builder: (context, widget) {
-                  ScreenUtil.setContext(context);
-                  Widget wrapper = MediaQuery(
-                    //Setting font does not change with system font size
-                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                    child: widget!,
-                  );
-                  if (Platform.isWeb) {
-                    ScreenUtil().uiSize = MediaQuery.of(context).size;
-                    wrapper = ConstrainCenter(child: wrapper);
-                  }
-                  return wrapper;
-                },
-              ),
-            );
-          }
-          return MaterialApp(
-            onGenerateRoute: (_) => MaterialPageRoute(
-              builder: (_) => Platform.isWeb
-                  ? const SizedBox.shrink()
-                  : const SplashScreen(),
             ),
           );
-        },
-      ),
+        }
+        return MaterialApp(
+          onGenerateRoute: (_) => MaterialPageRoute(
+            builder: (_) =>
+                Platform.isWeb ? const SizedBox.shrink() : const SplashScreen(),
+          ),
+        );
+      },
     );
   }
 }

@@ -44,7 +44,7 @@ dependencies:
   flutter_svg: ^1.1.2
   flutter_easyloading: ^3.0.3
   pin_code_fields: ^7.3.0
-  flutter_screenutil: 5.4.0
+  flutter_screenutil: ^5.6.0
   hive: ^2.0.4
   hive_flutter: ^1.1.0
   path_provider: ^2.0.3
@@ -62,18 +62,18 @@ dependencies:
   synchronized: ^3.0.0
   focus_detector: ^2.0.0
   swipedetector: ^1.2.0
-  firebase_core: ^1.20.0
-  firebase_auth: ^3.6.0
+  firebase_core: ^2.4.1
+  firebase_auth: ^4.2.4
   #firebase_auth_web: ^4.0.0
   file_picker: ^4.6.1
   open_file: ^3.2.1
   crop_your_image: ^0.7.2
-  phone_number: ^0.12.0+1
+  phone_number: ^1.0.0
   telephony: ^0.2.0
   template_string: ^0.6.0
   jiffy: ^5.0.0
   sentry_flutter: ^6.4.0
-  connectivity_plus: ^2.2.0
+  connectivity_plus: ^3.0.2
   syncfusion_flutter_core: ^20.1.47
   platform: ^3.1.0
   fixnum: ^1.0.0
