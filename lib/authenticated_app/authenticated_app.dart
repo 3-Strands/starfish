@@ -10,7 +10,6 @@ import 'package:starfish/modules/dashboard/dashboard.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/sync_repository.dart';
-import 'package:starfish/utils/currentUser.dart';
 
 import '../models/session.dart';
 

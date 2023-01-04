@@ -74,26 +74,24 @@ extension DateExt on Date {
   }
 }
 
-extension FileReferenceExt on FileReference {
-  static FileReference getFileReference({
-    required String entityId,
-    required EntityType entityType,
-    required String filename,
-  }) {
-    final key = FileReference.keyFrom(entityId, filename);
-    final fileReference = globalHiveApi.file.get(key);
-    if (fileReference != null) {
-      return fileReference;
-    }
-    final newFileReference = FileReference(
-      entityId: entityId,
-      entityType: entityType.value,
-      filename: filename,
-      isUploaded: true,
-    );
-    globalHiveApi.file.put(key, newFileReference);
-    return newFileReference;
+FileReference getFileReference({
+  required String entityId,
+  required EntityType entityType,
+  required String filename,
+}) {
+  final key = FileReference.keyFrom(entityId, filename);
+  final fileReference = globalHiveApi.file.get(key);
+  if (fileReference != null) {
+    return fileReference;
   }
+  final newFileReference = FileReference(
+    entityId: entityId,
+    entityType: entityType.value,
+    filename: filename,
+    isUploaded: true,
+  );
+  globalHiveApi.file.put(key, newFileReference);
+  return newFileReference;
 }
 
 extension MaterialExt on Material {
@@ -109,7 +107,7 @@ extension MaterialExt on Material {
       .toList();
 
   List<FileReference> get fileReferences => files
-      .map((filename) => FileReferenceExt.getFileReference(
+      .map((filename) => getFileReference(
           entityId: id, entityType: EntityType.MATERIAL, filename: filename))
       .toList();
 }
@@ -217,7 +215,7 @@ extension TeacherResponseExt on TeacherResponse {
 
 extension TransformationExt on Transformation {
   List<FileReference> get fileReferences => files
-      .map((filename) => FileReferenceExt.getFileReference(
+      .map((filename) => getFileReference(
           entityId: id, entityType: EntityType.MATERIAL, filename: filename))
       .toList();
 }

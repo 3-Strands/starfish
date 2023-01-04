@@ -24,7 +24,7 @@ class LocalStorageApi {
   LocalStorageApi._(this._storage);
 
   factory LocalStorageApi() {
-    _instance = _instance ?? LocalStorageApi._(PlatformStorage());
+    _instance ??= LocalStorageApi._(PlatformStorage());
     return _instance!;
   }
 

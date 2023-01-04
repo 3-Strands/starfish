@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:starfish/apis/local_storage_api.dart';
 import 'package:starfish/models/file_reference.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:starfish/wrappers/platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -64,7 +64,7 @@ class GeneralFunctions {
     }
 
     if (Platform.isWeb &&
-        !(await StarfishSharedPreference().hasBeenRemindedToDeleteFiles())) {
+        !(await LocalStorageApi().hasBeenRemindedToDeleteFiles())) {
       final l18n = AppLocalizations.of(context)!;
       showCupertinoDialog(
         context: context,
@@ -85,7 +85,7 @@ class GeneralFunctions {
           ],
         ),
       );
-      StarfishSharedPreference().setHasBeenRemindedToDeleteFiles();
+      LocalStorageApi().setHasBeenRemindedToDeleteFiles();
     }
   }
 

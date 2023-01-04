@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-// import 'package:starfish/bloc/data_bloc.dart';
 import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/modules/dashboard/cubit/dashboard_navigation_cubit.dart';
@@ -9,7 +8,6 @@ import 'package:starfish/modules/actions_view/actions_view.dart';
 import 'package:starfish/modules/groups_view/groups_view.dart';
 import 'package:starfish/modules/material_view/materials_view.dart';
 import 'package:starfish/modules/results/results_views.dart';
-import 'package:starfish/utils/services/local_storage_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -115,9 +113,6 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    StarfishSharedPreference()
-        .getAccessToken()
-        .then((value) => debugPrint("AccessToken: $value"));
     final appLocalizations = AppLocalizations.of(context)!;
     return BlocListener<DashboardNavigationCubit, DashboardNavigationTab>(
       listener: (context, state) {

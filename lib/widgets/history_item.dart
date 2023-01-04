@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:starfish/db/hive_edit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:starfish/src/generated/starfish.pb.dart';
 import 'package:starfish/utils/date_time_utils.dart';

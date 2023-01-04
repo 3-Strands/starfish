@@ -1,12 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:starfish/db/hive_material.dart';
-import 'package:starfish/db/hive_material_feedback.dart';
 import 'package:starfish/repositories/authentication_repository.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/src/deltas.dart';
 import 'package:starfish/src/grpc_extensions.dart';
-import 'package:starfish/utils/helpers/uuid_generator.dart';
 
 part 'report_material_state.dart';
 
