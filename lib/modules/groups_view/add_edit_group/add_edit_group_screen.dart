@@ -8,6 +8,7 @@ import 'package:starfish/constants/app_colors.dart';
 import 'package:starfish/constants/assets_path.dart';
 import 'package:starfish/constants/text_styles.dart';
 import 'package:starfish/modules/groups_view/contact_list/contact_list.dart';
+import 'package:starfish/modules/settings_view/settings_view.dart';
 import 'package:starfish/repositories/data_repository.dart';
 import 'package:starfish/repositories/error_repository.dart';
 import 'package:starfish/select_items/multi_select.dart';
@@ -161,9 +162,11 @@ class _AddEditGroupViewState extends State<AddEditGroupView> {
               IconButton(
                 icon: SvgPicture.asset(AssetsPath.settings),
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    Routes.settings,
+                    MaterialPageRoute(
+                      builder: (context) => const Settings(),
+                    ),
                   );
                 },
               ),

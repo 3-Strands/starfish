@@ -94,7 +94,8 @@ class AddEditActionCubit extends Cubit<AddEditActionState> {
         state.question.isEmpty) {
       error = ActionError.noQuestion;
     } else if (state.isEditMode == false && state.selectedGroups.isEmpty ||
-        (state.isEditMode == true && state.groupId.isEmpty)) {
+        (state.isEditMode == true && !(_action?.isIndividualAction ?? false)) &&
+            state.groupId.isEmpty) {
       error = ActionError.noGroup;
     }
 
